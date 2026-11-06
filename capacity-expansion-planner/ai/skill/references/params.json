@@ -1,0 +1,434 @@
+{
+ "skill": "brotools-capacity-expansion-planner",
+ "tool": "Capacity Expansion Planner",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "capacity-expansion-planner",
+   "url": "/capacity-expansion-planner/",
+   "base": "https://tool.adjiebrotots.com/capacity-expansion-planner/",
+   "lang": "en",
+   "title": "Capacity Expansion Planner",
+   "reference": "references/capacity-expansion-planner.md",
+   "decides": "Which plants and batteries to build, how big and in which year, so that a growing demand is met hour by hour at the least cost over the whole plan. It plans from a first year to a last year in decision years, with a few typical days a season, and reports what to build, the energy by source, the cost by year and the emissions.",
+   "important": [
+    "cxPeak",
+    "cxGrowth",
+    "cxCarbon",
+    "cxStart",
+    "cxEnd",
+    "cxClimate",
+    "cxNetZero",
+    "cxNzYear"
+   ],
+   "fields": [
+    {
+     "key": "cxCur",
+     "label": "Currency Symbol",
+     "group": "Demand",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$"
+    },
+    {
+     "key": "cxPeak",
+     "label": "Peak demand now",
+     "group": "Demand: Demand",
+     "kind": "number",
+     "unit": "MW",
+     "min": 1,
+     "max": 1000000,
+     "default": "1000",
+     "important": true
+    },
+    {
+     "key": "cxGrowth",
+     "label": "Demand growth",
+     "group": "Demand: Demand",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": -2,
+     "max": 10,
+     "default": "3",
+     "important": true
+    },
+    {
+     "key": "cxClimate",
+     "label": "Climate",
+     "group": "Demand: Load profile",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "sum",
+       "label": "Summer peak, Dec to Feb"
+      },
+      {
+       "value": "sum-n",
+       "label": "Summer peak, Jun to Aug"
+      },
+      {
+       "value": "win",
+       "label": "Winter peak, Jun to Aug"
+      },
+      {
+       "value": "win-n",
+       "label": "Winter peak, Dec to Feb"
+      },
+      {
+       "value": "trop",
+       "label": "Tropical, wet Nov to Apr"
+      },
+      {
+       "value": "trop-n",
+       "label": "Tropical, wet May to Oct"
+      }
+     ],
+     "default": "sum",
+     "important": true
+    },
+    {
+     "key": "cxStart",
+     "label": "First year",
+     "group": "Demand: Planning years",
+     "kind": "number",
+     "min": 2000,
+     "max": 2100,
+     "default": "2026",
+     "important": true
+    },
+    {
+     "key": "cxEnd",
+     "label": "Last year",
+     "group": "Demand: Planning years",
+     "kind": "number",
+     "min": 2000,
+     "max": 2150,
+     "default": "2050",
+     "important": true
+    },
+    {
+     "key": "cxStep",
+     "label": "Years between decisions",
+     "group": "Demand: Planning years",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "1",
+       "label": "1 yr"
+      },
+      {
+       "value": "2",
+       "label": "2 yrs"
+      },
+      {
+       "value": "3",
+       "label": "3 yrs"
+      },
+      {
+       "value": "5",
+       "label": "5 yrs"
+      },
+      {
+       "value": "10",
+       "label": "10 yrs"
+      }
+     ],
+     "default": "5"
+    },
+    {
+     "key": "cxDetail",
+     "label": "Detail",
+     "group": "Supply",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "simple",
+       "label": "Simple"
+      },
+      {
+       "value": "detailed",
+       "label": "Detailed"
+      }
+     ],
+     "default": "simple"
+    },
+    {
+     "key": "cxShed",
+     "label": "Allow load shedding",
+     "group": "Policy: Reliability",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "cxVoll",
+     "label": "Value of lost load (VoLL)",
+     "group": "Policy: Reliability",
+     "kind": "number",
+     "unit": "$ /MWh",
+     "min": 500,
+     "max": 100000,
+     "default": "20000"
+    },
+    {
+     "key": "cxCarbon",
+     "label": "Carbon price",
+     "group": "Policy: Emissions",
+     "kind": "number",
+     "unit": "$ /t",
+     "min": 0,
+     "max": 2000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "cxCarbonGrow",
+     "label": "Carbon price growth",
+     "group": "Policy: Emissions",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 20,
+     "default": "0"
+    },
+    {
+     "key": "cxNetZero",
+     "label": "Net-zero year",
+     "group": "Policy: Emissions",
+     "kind": "checkbox",
+     "default": false,
+     "important": true
+    },
+    {
+     "key": "cxNzYear",
+     "label": "No CO2 from",
+     "group": "Policy: Emissions",
+     "kind": "number",
+     "min": 2000,
+     "max": 2150,
+     "default": "2045",
+     "important": true
+    },
+    {
+     "key": "cxRateMode",
+     "label": "Discount rate",
+     "group": "Assumptions",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "real",
+       "label": "Real"
+      },
+      {
+       "value": "nominal",
+       "label": "Nominal"
+      }
+     ],
+     "default": "real"
+    },
+    {
+     "key": "cxRate",
+     "label": "Real discount rate",
+     "group": "Assumptions",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 15,
+     "default": "7"
+    },
+    {
+     "key": "cxNomRate",
+     "label": "Nominal discount rate",
+     "group": "Assumptions",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 25,
+     "default": "10.2"
+    },
+    {
+     "key": "cxInflation",
+     "label": "Inflation",
+     "group": "Assumptions",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 15,
+     "default": "3"
+    },
+    {
+     "key": "cxStress",
+     "label": "Still, overcast peak day",
+     "group": "Assumptions: Typical days",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "cxTime",
+     "label": "Time limit",
+     "group": "Assumptions: Solver",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "10",
+       "label": "10 s"
+      },
+      {
+       "value": "30",
+       "label": "30 s"
+      },
+      {
+       "value": "60",
+       "label": "60 s"
+      },
+      {
+       "value": "300",
+       "label": "5 min"
+      }
+     ],
+     "default": "60"
+    },
+    {
+     "key": "cxGap",
+     "label": "Optimality gap",
+     "group": "Assumptions: Solver",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0.0001",
+       "label": "0.01%"
+      },
+      {
+       "value": "0.001",
+       "label": "0.1%"
+      },
+      {
+       "value": "0.01",
+       "label": "1%"
+      }
+     ],
+     "default": "0.001"
+    }
+   ],
+   "lists": [
+    "loadShape"
+   ],
+   "families": [
+    "tech."
+   ],
+   "json": true,
+   "quickStarts": [
+    {
+     "key": "grow",
+     "title": "Growing grid"
+    },
+    {
+     "key": "nz",
+     "title": "Net zero"
+    },
+    {
+     "key": "coal",
+     "title": "Coal exit"
+    },
+    {
+     "key": "island",
+     "title": "Island"
+    }
+   ]
+  }
+ ]
+}

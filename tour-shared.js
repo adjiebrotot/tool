@@ -454,6 +454,21 @@
       guide.title = GUIDE_TITLE;
       btn.parentNode.insertBefore(guide, btn.nextSibling);
     }
+    // "Use in AI": the tool's skill page, where the page's generated AI pointer names it
+    // (_ref/agent-doc.mjs writes data-ai on #agentHelp). On a narrow screen only the ✨ shows.
+    var ref = document.getElementById('agentHelp');
+    var aiHref = ref && ref.getAttribute('data-ai');
+    if (aiHref && !nav.querySelector('[data-abt-ai-link]')) {
+      var idLang = /^id\b/i.test(document.documentElement.lang || '');
+      var ai = document.createElement('a');
+      ai.className = btn.className;
+      ai.href = aiHref;
+      ai.setAttribute('data-abt-ai-link', '');
+      setLabel(ai, idLang ? '✨ Pakai di AI' : '✨ Use in AI');
+      ai.title = idLang ? 'Pakai alat ini lewat asisten AI Anda (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
+      var after = nav.querySelector('[data-pf-guide-link]') || btn;
+      after.parentNode.insertBefore(ai, after.nextSibling);
+    }
   }
 
   function init() {

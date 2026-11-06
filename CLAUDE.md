@@ -57,7 +57,7 @@ write each change as that.
 Before shipping a change to a tool's inputs, run `node _ref/share-check.mjs` (its kept-links
 checks, F1 and F2, fail when a field an old link names is gone), `node _ref/scenario-check.mjs`
 and `node _ref/agent-check.mjs` (its A2 fails the same way for a kept AI link), and regenerate
-the AI docs with `node _ref/agent-doc.mjs`. When a field does fail F2 or A2, fix the tool so
+the AI docs (each tool's skill and AI page under `<tool>/ai/`) with `node _ref/agent-doc.mjs`. When a field does fail F2 or A2, fix the tool so
 the old name still loads. Don't edit the kept link.
 
 A tool with a live guide (`<tool>/guides/scenes.js`) is driven by scripts that name its parts:

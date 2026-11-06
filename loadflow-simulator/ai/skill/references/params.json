@@ -1,0 +1,193 @@
+{
+ "skill": "brotools-loadflow-simulator",
+ "tool": "Load Flow Simulator",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "loadflow-simulator",
+   "url": "/loadflow-simulator/",
+   "base": "https://tool.adjiebrotots.com/loadflow-simulator/",
+   "lang": "en",
+   "title": "Load Flow Simulator",
+   "reference": "references/loadflow-simulator.md",
+   "decides": "How a power network behaves at one operating point: the voltage at every bus, the active and reactive power on every line, transformer and link, the losses, and which buses or branches fall outside their limits. It solves an AC (Newton-Raphson) or DC load flow on a single-line diagram.",
+   "important": [
+    "lfMethod",
+    "lfDistSlack",
+    "lfVmin",
+    "lfVmax",
+    "lfLoadMax"
+   ],
+   "fields": [
+    {
+     "key": "lfMethod",
+     "label": "Load flow",
+     "group": "Load flow: Method",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ac",
+       "label": "AC, Newton-Raphson"
+      },
+      {
+       "value": "dc",
+       "label": "DC, linear"
+      }
+     ],
+     "default": "ac",
+     "important": true
+    },
+    {
+     "key": "lfTol",
+     "label": "Tolerance",
+     "group": "Load flow: Newton-Raphson",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "1e-4",
+       "label": "0.0001 MW / MVAr"
+      },
+      {
+       "value": "1e-6",
+       "label": "0.000001 MW / MVAr"
+      },
+      {
+       "value": "1e-8",
+       "label": "0.00000001 MW / MVAr"
+      },
+      {
+       "value": "1e-10",
+       "label": "0.0000000001 MW / MVAr"
+      }
+     ],
+     "default": "1e-6"
+    },
+    {
+     "key": "lfSeed",
+     "label": "Initial guess",
+     "group": "Load flow: Newton-Raphson",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dc",
+       "label": "DC load flow"
+      },
+      {
+       "value": "flat",
+       "label": "Flat start"
+      }
+     ],
+     "default": "dc"
+    },
+    {
+     "key": "lfDistSlack",
+     "label": "Distributed slack",
+     "group": "Load flow: Newton-Raphson",
+     "kind": "checkbox",
+     "default": false,
+     "important": true
+    },
+    {
+     "key": "lfSlackW",
+     "label": "Shared in proportion to",
+     "group": "Load flow: Newton-Raphson",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "p_set",
+       "label": "Dispatch"
+      },
+      {
+       "value": "p_nom",
+       "label": "Rating"
+      }
+     ],
+     "default": "p_set"
+    },
+    {
+     "key": "lfVmin",
+     "label": "Lowest voltage",
+     "group": "Load flow: Limits",
+     "kind": "number",
+     "unit": "p.u.",
+     "min": 0.5,
+     "max": 1,
+     "default": "0.95",
+     "important": true
+    },
+    {
+     "key": "lfVmax",
+     "label": "Highest voltage",
+     "group": "Load flow: Limits",
+     "kind": "number",
+     "unit": "p.u.",
+     "min": 1,
+     "max": 1.5,
+     "default": "1.05",
+     "important": true
+    },
+    {
+     "key": "lfLoadMax",
+     "label": "Highest loading",
+     "group": "Load flow: Limits",
+     "kind": "number",
+     "unit": "%",
+     "min": 10,
+     "max": 200,
+     "default": "100",
+     "important": true
+    },
+    {
+     "key": "colourBy",
+     "label": "Colour by",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "Nothing"
+      },
+      {
+       "value": "voltage",
+       "label": "Bus voltage"
+      },
+      {
+       "value": "loading",
+       "label": "Branch loading"
+      },
+      {
+       "value": "both",
+       "label": "Both"
+      }
+     ],
+     "default": "both"
+    }
+   ],
+   "lists": [],
+   "families": [
+    "el."
+   ],
+   "json": true,
+   "quickStarts": [
+    {
+     "key": "wscc9",
+     "title": "WSCC 9-bus"
+    },
+    {
+     "key": "3bus",
+     "title": "3-bus ring"
+    },
+    {
+     "key": "feeder",
+     "title": "20/0.4 kV feeder"
+    },
+    {
+     "key": "hvdc",
+     "title": "HVDC link"
+    }
+   ]
+  }
+ ]
+}

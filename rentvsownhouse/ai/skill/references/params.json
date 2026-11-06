@@ -1,0 +1,4421 @@
+{
+ "skill": "brotools-rentvsownhouse",
+ "tool": "Rent vs Own",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "rentvsownhouse",
+   "url": "/rentvsownhouse/",
+   "base": "https://tool.adjiebrotots.com/rentvsownhouse/",
+   "lang": "en",
+   "title": "Rent vs Own",
+   "reference": "references/rentvsownhouse.md",
+   "decides": "Whether buying a home with a mortgage or renting it and investing the difference leaves you with more net wealth after a set number of years, and the year owning pulls ahead for good, if it does.",
+   "important": [
+    "propertyPrice",
+    "rentAmount",
+    "rentFreq",
+    "currencySymbol",
+    "downPaymentPct",
+    "mortgageRate",
+    "mortgageTerm",
+    "houseGrowth",
+    "rentInflation",
+    "riskFreeRate",
+    "horizon",
+    "setupCost",
+    "ownOngoingCost"
+   ],
+   "fields": [
+    {
+     "key": "currencySymbol",
+     "label": "Currency Symbol",
+     "group": "Home",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "propertyPrice",
+     "label": "Property price",
+     "group": "Home: Property",
+     "kind": "amount",
+     "unit": "$",
+     "min": 50000,
+     "max": 1000000000000,
+     "default": 800000,
+     "important": true
+    },
+    {
+     "key": "downPaymentPct",
+     "label": "Down payment",
+     "group": "Home: Property",
+     "kind": "slider",
+     "unit": "% of price",
+     "min": 0,
+     "max": 100,
+     "default": "20",
+     "important": true
+    },
+    {
+     "key": "mortgageType",
+     "label": "Mortgage type",
+     "group": "Home: Mortgage",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pi",
+       "label": "Principal & Interest"
+      },
+      {
+       "value": "io",
+       "label": "Interest Only"
+      }
+     ],
+     "default": "pi"
+    },
+    {
+     "key": "costInterestOnly",
+     "label": "Cost = interest only",
+     "group": "Home: Mortgage",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "mortgageRate",
+     "label": "Mortgage rate",
+     "group": "Home: Mortgage",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 25,
+     "default": "6",
+     "important": true
+    },
+    {
+     "key": "mortgageTerm",
+     "label": "Mortgage term",
+     "group": "Home: Mortgage",
+     "kind": "number",
+     "unit": "yrs",
+     "min": 5,
+     "max": 50,
+     "default": "30",
+     "important": true
+    },
+    {
+     "key": "setupCost",
+     "label": "Setup cost (stamp duty, legal, etc.)",
+     "group": "Home: Costs of owning",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": 32000,
+     "unitSetBy": [
+      "setupCostType"
+     ],
+     "important": true
+    },
+    {
+     "key": "setupCostType",
+     "label": "Setup cost (stamp duty, legal, etc.)",
+     "group": "Home: Costs of owning",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "$"
+      },
+      {
+       "value": "pct",
+       "label": "%"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "ownOngoingCost",
+     "label": "Ongoing costs of owning",
+     "group": "Home: Costs of owning",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": 6000,
+     "unitSetBy": [
+      "ownOngoingCostFreq"
+     ],
+     "important": true
+    },
+    {
+     "key": "ownOngoingCostFreq",
+     "label": "Ongoing costs of owning",
+     "group": "Home: Costs of owning",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "a year"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "weekly",
+       "label": "a week"
+      }
+     ],
+     "default": "yearly"
+    },
+    {
+     "key": "ownOngoingCostType",
+     "label": "Ongoing costs of owning",
+     "group": "Home: Costs of owning",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "Fixed amount"
+      },
+      {
+       "value": "pct",
+       "label": "% of property value"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "ownOngoingInflation",
+     "label": "Ongoing cost growth",
+     "group": "Home: Costs of owning",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "rentAmount",
+     "label": "Rent amount",
+     "group": "Rent: Rental payments",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": 2800,
+     "unitSetBy": [
+      "rentFreq"
+     ],
+     "important": true
+    },
+    {
+     "key": "rentFreq",
+     "label": "Rent amount",
+     "group": "Rent: Rental payments",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "weekly",
+       "label": "a week"
+      },
+      {
+       "value": "yearly",
+       "label": "a year"
+      }
+     ],
+     "default": "monthly",
+     "important": true
+    },
+    {
+     "key": "rentInflation",
+     "label": "Rent growth",
+     "group": "Rent: Rental payments",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": -10,
+     "max": 25,
+     "default": "3",
+     "important": true
+    },
+    {
+     "key": "rentOngoingCost",
+     "label": "Ongoing costs of renting",
+     "group": "Rent: Costs of renting",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": 1200,
+     "unitSetBy": [
+      "rentOngoingCostFreq"
+     ]
+    },
+    {
+     "key": "rentOngoingCostFreq",
+     "label": "Ongoing costs of renting",
+     "group": "Rent: Costs of renting",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "a year"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "weekly",
+       "label": "a week"
+      }
+     ],
+     "default": "yearly"
+    },
+    {
+     "key": "rentOngoingCostType",
+     "label": "Ongoing costs of renting",
+     "group": "Rent: Costs of renting",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "Fixed amount"
+      },
+      {
+       "value": "pct",
+       "label": "% of yearly rent"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "rentOngoingInflation",
+     "label": "Ongoing cost growth",
+     "group": "Rent: Costs of renting",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "rtbEnabled",
+     "label": "Enable Rent-Then-Buy",
+     "group": "Rent: Rent-Then-Buy scenario",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "rtbBuyYear",
+     "label": "Buy at year",
+     "group": "Rent: Rent-Then-Buy scenario",
+     "kind": "slider",
+     "unit": "yrs",
+     "min": 1,
+     "max": 29,
+     "default": "5"
+    },
+    {
+     "key": "generalInflation",
+     "label": "General inflation",
+     "group": "Assumptions: Prices",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
+    },
+    {
+     "key": "riskFreeRate",
+     "label": "Risk-Free Rate",
+     "group": "Assumptions: Savings and time horizon",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": -10,
+     "max": 25,
+     "default": "4.5",
+     "important": true
+    },
+    {
+     "key": "horizon",
+     "label": "Time horizon",
+     "group": "Assumptions: Savings and time horizon",
+     "kind": "slider",
+     "unit": "yrs",
+     "min": 5,
+     "max": 100,
+     "default": "30",
+     "important": true
+    },
+    {
+     "key": "houseGrowth",
+     "label": "House price growth (RPPI)",
+     "group": "Assumptions: Property growth",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": -10,
+     "max": 25,
+     "default": "5",
+     "important": true
+    },
+    {
+     "key": "sellingCostPct",
+     "label": "Selling cost",
+     "group": "Assumptions: Property growth",
+     "kind": "slider",
+     "unit": "% of sale",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
+    },
+    {
+     "key": "initialCash",
+     "label": "Initial cash (optional)",
+     "group": "Assumptions: Cash",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": ""
+    },
+    {
+     "key": "monthlyBudget",
+     "label": "Monthly housing budget (optional)",
+     "group": "Assumptions: Cash",
+     "kind": "amount",
+     "unit": "$ /mo",
+     "min": 0,
+     "max": 100000000000,
+     "default": 0
+    },
+    {
+     "key": "monthlyBudgetIncrease",
+     "label": "Budget annual increase",
+     "group": "Assumptions: Cash",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 25,
+     "default": "0"
+    },
+    {
+     "key": "showReal",
+     "label": "Show in today’s money",
+     "group": "Beside the results",
+     "kind": "checkbox",
+     "default": true
+    }
+   ],
+   "lists": [
+    "ratePeriods",
+    "ownSetupCosts",
+    "ownOngoingCosts",
+    "rentOngoingCosts"
+   ],
+   "families": [],
+   "json": false,
+   "quickStarts": [
+    {
+     "key": "perth",
+     "title": "Perth, Australia (AUD, figures as of 2026-09) (loads perth/apt-2br)"
+    },
+    {
+     "key": "perth/apt-1br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "perth/apt-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "perth/house-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "perth/house-4br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "melbourne",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10) (loads melbourne/apt-2br)"
+    },
+    {
+     "key": "melbourne/apt-1br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "melbourne/apt-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "melbourne/house-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "melbourne/house-4br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "sydney",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06) (loads sydney/apt-2br)"
+    },
+    {
+     "key": "sydney/apt-studio",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Studio apartment"
+    },
+    {
+     "key": "sydney/apt-1br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 1-bedroom apartment"
+    },
+    {
+     "key": "sydney/apt-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 2-bedroom apartment"
+    },
+    {
+     "key": "sydney/house-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 2-bedroom landed house"
+    },
+    {
+     "key": "sydney/house-4br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 4-bedroom landed house"
+    },
+    {
+     "key": "brisbane",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06) (loads brisbane/apt-2br)"
+    },
+    {
+     "key": "brisbane/apt-1br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 1-bedroom apartment"
+    },
+    {
+     "key": "brisbane/apt-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 2-bedroom apartment"
+    },
+    {
+     "key": "brisbane/house-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 2-bedroom landed house"
+    },
+    {
+     "key": "brisbane/house-4br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 4-bedroom landed house"
+    },
+    {
+     "key": "auckland",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09) (loads auckland/apt-2br)"
+    },
+    {
+     "key": "auckland/apt-1br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "auckland/apt-2br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "auckland/house-2br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "auckland/house-4br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "singapore",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10) (loads singapore/apt-2br)"
+    },
+    {
+     "key": "singapore/apt-1br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "singapore/apt-2br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "singapore/apt-4br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "singapore/house-4br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "kualalumpur",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09) (loads kualalumpur/apt-2br)"
+    },
+    {
+     "key": "kualalumpur/apt-studio",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "kualalumpur/apt-1br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/apt-2br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/apt-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/house-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "jakarta",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10) (loads jakarta/apt-2br)"
+    },
+    {
+     "key": "jakarta/apt-studio",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "jakarta/apt-1br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "jakarta/apt-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "jakarta/apt-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "jakarta/house-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "jakarta/house-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "bali",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10) (loads bali/house-2br)"
+    },
+    {
+     "key": "bali/house-2br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "bali/house-4br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "bangkok",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09) (loads bangkok/apt-2br)"
+    },
+    {
+     "key": "bangkok/apt-studio",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "bangkok/apt-1br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "bangkok/apt-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "bangkok/apt-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "bangkok/house-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "bangkok/house-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "manila",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09) (loads manila/apt-2br)"
+    },
+    {
+     "key": "manila/apt-studio",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "manila/apt-1br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "manila/apt-2br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "manila/apt-4br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "manila/house-2br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "manila/house-4br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "hochiminh",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09) (loads hochiminh/apt-2br)"
+    },
+    {
+     "key": "hochiminh/apt-studio",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "hochiminh/apt-1br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "hochiminh/apt-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "hochiminh/house-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "hochiminh/house-4br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "hongkong",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09) (loads hongkong/apt-2br)"
+    },
+    {
+     "key": "hongkong/apt-studio",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "hongkong/apt-1br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "hongkong/apt-2br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "hongkong/apt-4br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "hongkong/house-4br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "taipei",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09) (loads taipei/apt-2br)"
+    },
+    {
+     "key": "taipei/apt-studio",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "taipei/apt-1br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "taipei/apt-2br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "taipei/apt-4br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "shanghai",
+     "title": "Shanghai, China (CNY, figures as of 2026-10) (loads shanghai/apt-2br)"
+    },
+    {
+     "key": "shanghai/apt-studio",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "shanghai/apt-1br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "shanghai/apt-2br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "shanghai/apt-4br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "shanghai/house-4br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "beijing",
+     "title": "Beijing, China (CNY, figures as of 2026-10) (loads beijing/apt-2br)"
+    },
+    {
+     "key": "beijing/apt-1br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "beijing/apt-2br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "beijing/apt-4br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "beijing/house-4br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "tokyo",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09) (loads tokyo/apt-2br)"
+    },
+    {
+     "key": "tokyo/apt-studio",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "tokyo/apt-1br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "tokyo/apt-2br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "tokyo/apt-4br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "tokyo/house-4br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "seoul",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09) (loads seoul/apt-2br)"
+    },
+    {
+     "key": "seoul/apt-studio",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "seoul/apt-1br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "seoul/apt-2br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "seoul/apt-4br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "seoul/house-4br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "mumbai",
+     "title": "Mumbai, India (INR, figures as of 2026-10) (loads mumbai/apt-2br)"
+    },
+    {
+     "key": "mumbai/apt-studio",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "mumbai/apt-1br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "mumbai/apt-2br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "mumbai/apt-4br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "dubai",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09) (loads dubai/apt-2br)"
+    },
+    {
+     "key": "dubai/apt-studio",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "dubai/apt-1br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "dubai/apt-2br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "dubai/apt-4br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "dubai/house-2br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "dubai/house-4br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "abudhabi",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09) (loads abudhabi/apt-2br)"
+    },
+    {
+     "key": "abudhabi/apt-studio",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "abudhabi/apt-1br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "abudhabi/apt-2br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "abudhabi/house-2br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "abudhabi/house-4br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "london",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10) (loads london/apt-2br)"
+    },
+    {
+     "key": "london/apt-studio",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "london/apt-1br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "london/apt-2br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "london/house-2br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "london/house-4br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "zurich",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08) (loads zurich/apt-2br)"
+    },
+    {
+     "key": "zurich/apt-studio",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): Studio apartment"
+    },
+    {
+     "key": "zurich/apt-1br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 1-bedroom apartment"
+    },
+    {
+     "key": "zurich/apt-2br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 2-bedroom apartment"
+    },
+    {
+     "key": "zurich/apt-4br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 4-bedroom apartment"
+    },
+    {
+     "key": "zurich/house-4br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 4-bedroom landed house"
+    },
+    {
+     "key": "paris",
+     "title": "Paris, France (EUR, figures as of 2026-09) (loads paris/apt-2br)"
+    },
+    {
+     "key": "paris/apt-studio",
+     "title": "Paris, France (EUR, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "paris/apt-1br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "paris/apt-2br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "paris/apt-4br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "paris/house-2br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "paris/house-4br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "berlin",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10) (loads berlin/apt-2br)"
+    },
+    {
+     "key": "berlin/apt-studio",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "berlin/apt-1br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "berlin/apt-2br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "berlin/apt-4br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "berlin/house-4br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "amsterdam",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10) (loads amsterdam/apt-2br)"
+    },
+    {
+     "key": "amsterdam/apt-studio",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "amsterdam/apt-1br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/apt-2br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/apt-4br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/house-4br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "losangeles",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10) (loads losangeles/apt-2br)"
+    },
+    {
+     "key": "losangeles/apt-studio",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "losangeles/apt-1br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "losangeles/apt-2br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "losangeles/house-2br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "losangeles/house-4br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "sanfrancisco",
+     "title": "San Francisco, United States (USD, figures as of 2026-10) (loads sanfrancisco/apt-2br)"
+    },
+    {
+     "key": "sanfrancisco/apt-studio",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "sanfrancisco/apt-1br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "sanfrancisco/apt-2br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "sanfrancisco/house-2br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "sanfrancisco/house-4br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "houston",
+     "title": "Houston, United States (USD, figures as of 2026-10) (loads houston/apt-2br)"
+    },
+    {
+     "key": "houston/apt-1br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "houston/apt-2br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "houston/house-2br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "houston/house-4br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "newyork",
+     "title": "New York, United States (USD, figures as of 2026-09) (loads newyork/apt-2br)"
+    },
+    {
+     "key": "newyork/apt-studio",
+     "title": "New York, United States (USD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "newyork/apt-1br",
+     "title": "New York, United States (USD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "newyork/apt-2br",
+     "title": "New York, United States (USD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "newyork/apt-4br",
+     "title": "New York, United States (USD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "newyork/house-2br",
+     "title": "New York, United States (USD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "newyork/house-4br",
+     "title": "New York, United States (USD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "chicago",
+     "title": "Chicago, United States (USD, figures as of 2026-09) (loads chicago/apt-2br)"
+    },
+    {
+     "key": "chicago/apt-studio",
+     "title": "Chicago, United States (USD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "chicago/apt-1br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "chicago/apt-2br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "chicago/house-2br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "chicago/house-4br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "toronto",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09) (loads toronto/apt-2br)"
+    },
+    {
+     "key": "toronto/apt-studio",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "toronto/apt-1br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "toronto/apt-2br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "toronto/house-2br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "toronto/house-4br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "vancouver",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09) (loads vancouver/apt-2br)"
+    },
+    {
+     "key": "vancouver/apt-studio",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "vancouver/apt-1br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "vancouver/apt-2br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "vancouver/house-4br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 4-bedroom landed house"
+    }
+   ]
+  },
+  {
+   "page": "rentvsownhouse/id",
+   "url": "/rentvsownhouse/id/",
+   "base": "https://tool.adjiebrotots.com/rentvsownhouse/id/",
+   "lang": "id",
+   "title": "Rent vs Own",
+   "reference": "references/rentvsownhouse-id.md",
+   "decides": "Whether buying a home with a mortgage or renting it and investing the difference leaves you with more net wealth after a set number of years, and the year owning pulls ahead for good, if it does.",
+   "important": [
+    "propertyPrice",
+    "rentAmount",
+    "rentFreq",
+    "currencySymbol",
+    "downPaymentPct",
+    "mortgageRate",
+    "mortgageTerm",
+    "houseGrowth",
+    "rentInflation",
+    "riskFreeRate",
+    "horizon",
+    "setupCost",
+    "ownOngoingCost"
+   ],
+   "fields": [
+    {
+     "key": "currencySymbol",
+     "label": "Simbol Mata Uang",
+     "group": "Rumah",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dolar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Filipina)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Franc Swiss"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UEA)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Zloty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Rubel"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "propertyPrice",
+     "label": "Harga properti",
+     "group": "Rumah: Properti",
+     "kind": "amount",
+     "unit": "$",
+     "min": 50000,
+     "max": 1000000000000,
+     "default": 800000,
+     "important": true
+    },
+    {
+     "key": "downPaymentPct",
+     "label": "Uang Muka (DP)",
+     "group": "Rumah: Properti",
+     "kind": "slider",
+     "unit": "% dari harga",
+     "min": 0,
+     "max": 100,
+     "default": "20",
+     "important": true
+    },
+    {
+     "key": "mortgageType",
+     "label": "Jenis KPR",
+     "group": "Rumah: KPR",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pi",
+       "label": "Pokok & Bunga"
+      },
+      {
+       "value": "io",
+       "label": "Bunga Saja"
+      }
+     ],
+     "default": "pi"
+    },
+    {
+     "key": "costInterestOnly",
+     "label": "Biaya = bunga saja",
+     "group": "Rumah: KPR",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "mortgageRate",
+     "label": "Bunga KPR",
+     "group": "Rumah: KPR",
+     "kind": "number",
+     "unit": "%/thn",
+     "min": 0,
+     "max": 25,
+     "default": "6",
+     "important": true
+    },
+    {
+     "key": "mortgageTerm",
+     "label": "Jangka waktu KPR",
+     "group": "Rumah: KPR",
+     "kind": "number",
+     "unit": "thn",
+     "min": 5,
+     "max": 50,
+     "default": "30",
+     "important": true
+    },
+    {
+     "key": "setupCost",
+     "label": "Biaya awal pembelian (BPHTB, notaris, dll.)",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": 32000,
+     "unitSetBy": [
+      "setupCostType"
+     ],
+     "important": true
+    },
+    {
+     "key": "setupCostType",
+     "label": "Biaya awal pembelian (BPHTB, notaris, dll.)",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "$"
+      },
+      {
+       "value": "pct",
+       "label": "%"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "ownOngoingCost",
+     "label": "Biaya rutin kepemilikan",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": 6000,
+     "unitSetBy": [
+      "ownOngoingCostFreq"
+     ],
+     "important": true
+    },
+    {
+     "key": "ownOngoingCostFreq",
+     "label": "Biaya rutin kepemilikan",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "per tahun"
+      },
+      {
+       "value": "monthly",
+       "label": "per bulan"
+      },
+      {
+       "value": "weekly",
+       "label": "per minggu"
+      }
+     ],
+     "default": "yearly"
+    },
+    {
+     "key": "ownOngoingCostType",
+     "label": "Biaya rutin kepemilikan",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "Jumlah tetap"
+      },
+      {
+       "value": "pct",
+       "label": "% dari nilai properti"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "ownOngoingInflation",
+     "label": "Kenaikan biaya rutin",
+     "group": "Rumah: Biaya kepemilikan",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "rentAmount",
+     "label": "Biaya sewa",
+     "group": "Sewa: Pembayaran sewa",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": 2800,
+     "unitSetBy": [
+      "rentFreq"
+     ],
+     "important": true
+    },
+    {
+     "key": "rentFreq",
+     "label": "Biaya sewa",
+     "group": "Sewa: Pembayaran sewa",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "monthly",
+       "label": "per bulan"
+      },
+      {
+       "value": "weekly",
+       "label": "per minggu"
+      },
+      {
+       "value": "yearly",
+       "label": "per tahun"
+      }
+     ],
+     "default": "monthly",
+     "important": true
+    },
+    {
+     "key": "rentInflation",
+     "label": "Kenaikan sewa tahunan",
+     "group": "Sewa: Pembayaran sewa",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": -10,
+     "max": 25,
+     "default": "3",
+     "important": true
+    },
+    {
+     "key": "rentOngoingCost",
+     "label": "Biaya rutin menyewa",
+     "group": "Sewa: Biaya menyewa",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": 1200,
+     "unitSetBy": [
+      "rentOngoingCostFreq"
+     ]
+    },
+    {
+     "key": "rentOngoingCostFreq",
+     "label": "Biaya rutin menyewa",
+     "group": "Sewa: Biaya menyewa",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "per tahun"
+      },
+      {
+       "value": "monthly",
+       "label": "per bulan"
+      },
+      {
+       "value": "weekly",
+       "label": "per minggu"
+      }
+     ],
+     "default": "yearly"
+    },
+    {
+     "key": "rentOngoingCostType",
+     "label": "Biaya rutin menyewa",
+     "group": "Sewa: Biaya menyewa",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "dollar",
+       "label": "Jumlah tetap"
+      },
+      {
+       "value": "pct",
+       "label": "% dari sewa tahunan"
+      }
+     ],
+     "default": "dollar"
+    },
+    {
+     "key": "rentOngoingInflation",
+     "label": "Kenaikan biaya rutin",
+     "group": "Sewa: Biaya menyewa",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "rtbEnabled",
+     "label": "Aktifkan Sewa Dulu, Beli Kemudian",
+     "group": "Sewa: Skenario Sewa Dulu, Beli Kemudian",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "rtbBuyYear",
+     "label": "Beli di tahun",
+     "group": "Sewa: Skenario Sewa Dulu, Beli Kemudian",
+     "kind": "slider",
+     "unit": "thn",
+     "min": 1,
+     "max": 29,
+     "default": "5"
+    },
+    {
+     "key": "generalInflation",
+     "label": "Inflasi umum",
+     "group": "Asumsi: Harga",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
+    },
+    {
+     "key": "riskFreeRate",
+     "label": "Suku Bunga Bebas Risiko",
+     "group": "Asumsi: Tabungan dan jangka waktu",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": -10,
+     "max": 25,
+     "default": "4.5",
+     "important": true
+    },
+    {
+     "key": "horizon",
+     "label": "Jangka waktu",
+     "group": "Asumsi: Tabungan dan jangka waktu",
+     "kind": "slider",
+     "unit": "thn",
+     "min": 5,
+     "max": 100,
+     "default": "30",
+     "important": true
+    },
+    {
+     "key": "houseGrowth",
+     "label": "Kenaikan harga properti (RPPI)",
+     "group": "Asumsi: Pertumbuhan properti",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": -10,
+     "max": 25,
+     "default": "5",
+     "important": true
+    },
+    {
+     "key": "sellingCostPct",
+     "label": "Biaya penjualan",
+     "group": "Asumsi: Pertumbuhan properti",
+     "kind": "slider",
+     "unit": "% harga jual",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
+    },
+    {
+     "key": "initialCash",
+     "label": "Modal awal (opsional)",
+     "group": "Asumsi: Kas",
+     "kind": "amount",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": ""
+    },
+    {
+     "key": "monthlyBudget",
+     "label": "Anggaran perumahan bulanan (opsional)",
+     "group": "Asumsi: Kas",
+     "kind": "amount",
+     "unit": "$ /bln",
+     "min": 0,
+     "max": 100000000000,
+     "default": 0
+    },
+    {
+     "key": "monthlyBudgetIncrease",
+     "label": "Kenaikan anggaran tahunan",
+     "group": "Asumsi: Kas",
+     "kind": "slider",
+     "unit": "%/thn",
+     "min": 0,
+     "max": 25,
+     "default": "0"
+    },
+    {
+     "key": "showReal",
+     "label": "Tampilkan dalam nilai hari ini",
+     "group": "Beside the results",
+     "kind": "checkbox",
+     "default": true
+    }
+   ],
+   "lists": [
+    "ratePeriods",
+    "ownSetupCosts",
+    "ownOngoingCosts",
+    "rentOngoingCosts"
+   ],
+   "families": [],
+   "json": false,
+   "quickStarts": [
+    {
+     "key": "perth",
+     "title": "Perth, Australia (AUD, figures as of 2026-09) (loads perth/apt-2br)"
+    },
+    {
+     "key": "perth/apt-1br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "perth/apt-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "perth/house-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "perth/house-4br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "melbourne",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10) (loads melbourne/apt-2br)"
+    },
+    {
+     "key": "melbourne/apt-1br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "melbourne/apt-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "melbourne/house-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "melbourne/house-4br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "sydney",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06) (loads sydney/apt-2br)"
+    },
+    {
+     "key": "sydney/apt-studio",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen studio"
+    },
+    {
+     "key": "sydney/apt-1br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "sydney/apt-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "sydney/house-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "sydney/house-4br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "brisbane",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06) (loads brisbane/apt-2br)"
+    },
+    {
+     "key": "brisbane/apt-1br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "brisbane/apt-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "brisbane/house-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "brisbane/house-4br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "auckland",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09) (loads auckland/apt-2br)"
+    },
+    {
+     "key": "auckland/apt-1br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "auckland/apt-2br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "auckland/house-2br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "auckland/house-4br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "singapore",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10) (loads singapore/apt-2br)"
+    },
+    {
+     "key": "singapore/apt-1br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "singapore/apt-2br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "singapore/apt-4br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "singapore/house-4br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "kualalumpur",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09) (loads kualalumpur/apt-2br)"
+    },
+    {
+     "key": "kualalumpur/apt-studio",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "kualalumpur/apt-1br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/apt-2br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/apt-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/house-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "jakarta",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10) (loads jakarta/apt-2br)"
+    },
+    {
+     "key": "jakarta/apt-studio",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "jakarta/apt-1br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "jakarta/apt-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "jakarta/apt-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "jakarta/house-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "jakarta/house-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "bali",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10) (loads bali/house-2br)"
+    },
+    {
+     "key": "bali/house-2br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "bali/house-4br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "bangkok",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09) (loads bangkok/apt-2br)"
+    },
+    {
+     "key": "bangkok/apt-studio",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "bangkok/apt-1br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "bangkok/apt-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "bangkok/apt-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "bangkok/house-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "bangkok/house-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "manila",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09) (loads manila/apt-2br)"
+    },
+    {
+     "key": "manila/apt-studio",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "manila/apt-1br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "manila/apt-2br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "manila/apt-4br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "manila/house-2br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "manila/house-4br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "hochiminh",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09) (loads hochiminh/apt-2br)"
+    },
+    {
+     "key": "hochiminh/apt-studio",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "hochiminh/apt-1br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "hochiminh/apt-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "hochiminh/house-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "hochiminh/house-4br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "hongkong",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09) (loads hongkong/apt-2br)"
+    },
+    {
+     "key": "hongkong/apt-studio",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "hongkong/apt-1br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "hongkong/apt-2br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "hongkong/apt-4br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "hongkong/house-4br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "taipei",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09) (loads taipei/apt-2br)"
+    },
+    {
+     "key": "taipei/apt-studio",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "taipei/apt-1br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "taipei/apt-2br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "taipei/apt-4br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "shanghai",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10) (loads shanghai/apt-2br)"
+    },
+    {
+     "key": "shanghai/apt-studio",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "shanghai/apt-1br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "shanghai/apt-2br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "shanghai/apt-4br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "shanghai/house-4br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "beijing",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10) (loads beijing/apt-2br)"
+    },
+    {
+     "key": "beijing/apt-1br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "beijing/apt-2br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "beijing/apt-4br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "beijing/house-4br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "tokyo",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09) (loads tokyo/apt-2br)"
+    },
+    {
+     "key": "tokyo/apt-studio",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "tokyo/apt-1br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "tokyo/apt-2br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "tokyo/apt-4br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "tokyo/house-4br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "seoul",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09) (loads seoul/apt-2br)"
+    },
+    {
+     "key": "seoul/apt-studio",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "seoul/apt-1br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "seoul/apt-2br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "seoul/apt-4br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "seoul/house-4br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "mumbai",
+     "title": "Mumbai, India (INR, figures as of 2026-10) (loads mumbai/apt-2br)"
+    },
+    {
+     "key": "mumbai/apt-studio",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "mumbai/apt-1br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "mumbai/apt-2br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "mumbai/apt-4br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "dubai",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09) (loads dubai/apt-2br)"
+    },
+    {
+     "key": "dubai/apt-studio",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "dubai/apt-1br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "dubai/apt-2br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "dubai/apt-4br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "dubai/house-2br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "dubai/house-4br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "abudhabi",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09) (loads abudhabi/apt-2br)"
+    },
+    {
+     "key": "abudhabi/apt-studio",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "abudhabi/apt-1br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "abudhabi/apt-2br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "abudhabi/house-2br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "abudhabi/house-4br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "london",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10) (loads london/apt-2br)"
+    },
+    {
+     "key": "london/apt-studio",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "london/apt-1br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "london/apt-2br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "london/house-2br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "london/house-4br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "zurich",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08) (loads zurich/apt-2br)"
+    },
+    {
+     "key": "zurich/apt-studio",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen studio"
+    },
+    {
+     "key": "zurich/apt-1br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "zurich/apt-2br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "zurich/apt-4br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "zurich/house-4br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "paris",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09) (loads paris/apt-2br)"
+    },
+    {
+     "key": "paris/apt-studio",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "paris/apt-1br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "paris/apt-2br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "paris/apt-4br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "paris/house-2br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "paris/house-4br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "berlin",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10) (loads berlin/apt-2br)"
+    },
+    {
+     "key": "berlin/apt-studio",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "berlin/apt-1br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "berlin/apt-2br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "berlin/apt-4br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "berlin/house-4br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "amsterdam",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10) (loads amsterdam/apt-2br)"
+    },
+    {
+     "key": "amsterdam/apt-studio",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "amsterdam/apt-1br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "amsterdam/apt-2br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "amsterdam/apt-4br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "amsterdam/house-4br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "losangeles",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10) (loads losangeles/apt-2br)"
+    },
+    {
+     "key": "losangeles/apt-studio",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "losangeles/apt-1br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "losangeles/apt-2br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "losangeles/house-2br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "losangeles/house-4br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10) (loads sanfrancisco/apt-2br)"
+    },
+    {
+     "key": "sanfrancisco/apt-studio",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "sanfrancisco/apt-1br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/apt-2br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/house-2br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/house-4br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "houston",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10) (loads houston/apt-2br)"
+    },
+    {
+     "key": "houston/apt-1br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "houston/apt-2br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "houston/house-2br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "houston/house-4br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "newyork",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09) (loads newyork/apt-2br)"
+    },
+    {
+     "key": "newyork/apt-studio",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "newyork/apt-1br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "newyork/apt-2br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "newyork/apt-4br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "newyork/house-2br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "newyork/house-4br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "chicago",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09) (loads chicago/apt-2br)"
+    },
+    {
+     "key": "chicago/apt-studio",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "chicago/apt-1br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "chicago/apt-2br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "chicago/house-2br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "chicago/house-4br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "toronto",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09) (loads toronto/apt-2br)"
+    },
+    {
+     "key": "toronto/apt-studio",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "toronto/apt-1br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "toronto/apt-2br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "toronto/house-2br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "toronto/house-4br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "vancouver",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09) (loads vancouver/apt-2br)"
+    },
+    {
+     "key": "vancouver/apt-studio",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "vancouver/apt-1br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "vancouver/apt-2br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "vancouver/house-4br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    }
+   ]
+  },
+  {
+   "page": "rentvsownhouse/sensitivity",
+   "url": "/rentvsownhouse/sensitivity/",
+   "base": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/",
+   "lang": "en",
+   "title": "Rent vs Own: Sensitivity Tool",
+   "reference": "references/rentvsownhouse-sensitivity.md",
+   "decides": "How sensitive buying a home with a mortgage, against renting it and investing the difference, is to each assumption: a table of scenarios side by side, the first the base case and the others the same case with one figure changed (the mortgage rate, house price growth, rent inflation, the costs) or a different home, each read as net equity, liquid cash or accumulated cost, for owning and for renting, at one chosen year.",
+   "important": [
+    "propertyPrice",
+    "rentAmount",
+    "rentFreq",
+    "vary",
+    "mortgageRate",
+    "houseGrowth",
+    "rentInflation",
+    "downPaymentPct",
+    "horizon",
+    "riskFreeRate",
+    "setupCost",
+    "ownOngoingCost",
+    "currencySelect"
+   ],
+   "fields": [
+    {
+     "key": "currencySelect",
+     "label": "Currency Symbol:",
+     "group": "",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    }
+   ],
+   "lists": [
+    "propertyPrice",
+    "downPaymentPct",
+    "mortgageType",
+    "mortgageRate",
+    "mortgageTerm",
+    "houseGrowth",
+    "sellingCostPct",
+    "setupCost",
+    "setupCostType",
+    "ownOngoingCost",
+    "ownOngoingCostFreq",
+    "ownOngoingCostType",
+    "ownOngoingInflation",
+    "costInterestOnly",
+    "rentAmount",
+    "rentFreq",
+    "rentInflation",
+    "rentOngoingCost",
+    "rentOngoingCostFreq",
+    "rentOngoingCostType",
+    "rentOngoingInflation",
+    "horizon",
+    "riskFreeRate",
+    "initialCash",
+    "monthlyBudget",
+    "monthlyBudgetIncrease",
+    "vary",
+    "baseName",
+    "metric",
+    "year"
+   ],
+   "families": [],
+   "json": true,
+   "quickStarts": [
+    {
+     "key": "perth",
+     "title": "Perth, Australia (AUD, figures as of 2026-09) (loads perth/apt-2br)"
+    },
+    {
+     "key": "perth/apt-1br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "perth/apt-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "perth/house-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "perth/house-4br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "melbourne",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10) (loads melbourne/apt-2br)"
+    },
+    {
+     "key": "melbourne/apt-1br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "melbourne/apt-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "melbourne/house-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "melbourne/house-4br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "sydney",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06) (loads sydney/apt-2br)"
+    },
+    {
+     "key": "sydney/apt-studio",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Studio apartment"
+    },
+    {
+     "key": "sydney/apt-1br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 1-bedroom apartment"
+    },
+    {
+     "key": "sydney/apt-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 2-bedroom apartment"
+    },
+    {
+     "key": "sydney/house-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 2-bedroom landed house"
+    },
+    {
+     "key": "sydney/house-4br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): 4-bedroom landed house"
+    },
+    {
+     "key": "brisbane",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06) (loads brisbane/apt-2br)"
+    },
+    {
+     "key": "brisbane/apt-1br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 1-bedroom apartment"
+    },
+    {
+     "key": "brisbane/apt-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 2-bedroom apartment"
+    },
+    {
+     "key": "brisbane/house-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 2-bedroom landed house"
+    },
+    {
+     "key": "brisbane/house-4br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): 4-bedroom landed house"
+    },
+    {
+     "key": "auckland",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09) (loads auckland/apt-2br)"
+    },
+    {
+     "key": "auckland/apt-1br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "auckland/apt-2br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "auckland/house-2br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "auckland/house-4br",
+     "title": "Auckland, New Zealand (NZD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "singapore",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10) (loads singapore/apt-2br)"
+    },
+    {
+     "key": "singapore/apt-1br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "singapore/apt-2br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "singapore/apt-4br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "singapore/house-4br",
+     "title": "Singapore, Singapore (SGD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "kualalumpur",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09) (loads kualalumpur/apt-2br)"
+    },
+    {
+     "key": "kualalumpur/apt-studio",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "kualalumpur/apt-1br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/apt-2br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/apt-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "kualalumpur/house-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "jakarta",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10) (loads jakarta/apt-2br)"
+    },
+    {
+     "key": "jakarta/apt-studio",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "jakarta/apt-1br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "jakarta/apt-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "jakarta/apt-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "jakarta/house-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "jakarta/house-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "bali",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10) (loads bali/house-2br)"
+    },
+    {
+     "key": "bali/house-2br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "bali/house-4br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "bangkok",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09) (loads bangkok/apt-2br)"
+    },
+    {
+     "key": "bangkok/apt-studio",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "bangkok/apt-1br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "bangkok/apt-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "bangkok/apt-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "bangkok/house-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "bangkok/house-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "manila",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09) (loads manila/apt-2br)"
+    },
+    {
+     "key": "manila/apt-studio",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "manila/apt-1br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "manila/apt-2br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "manila/apt-4br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "manila/house-2br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "manila/house-4br",
+     "title": "Manila, Philippines (PHP, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "hochiminh",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09) (loads hochiminh/apt-2br)"
+    },
+    {
+     "key": "hochiminh/apt-studio",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "hochiminh/apt-1br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "hochiminh/apt-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "hochiminh/house-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "hochiminh/house-4br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "hongkong",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09) (loads hongkong/apt-2br)"
+    },
+    {
+     "key": "hongkong/apt-studio",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "hongkong/apt-1br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "hongkong/apt-2br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "hongkong/apt-4br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "hongkong/house-4br",
+     "title": "Hong Kong, Hong Kong SAR (China) (HKD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "taipei",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09) (loads taipei/apt-2br)"
+    },
+    {
+     "key": "taipei/apt-studio",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "taipei/apt-1br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "taipei/apt-2br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "taipei/apt-4br",
+     "title": "Taipei, Taiwan (China) (TWD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "shanghai",
+     "title": "Shanghai, China (CNY, figures as of 2026-10) (loads shanghai/apt-2br)"
+    },
+    {
+     "key": "shanghai/apt-studio",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "shanghai/apt-1br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "shanghai/apt-2br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "shanghai/apt-4br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "shanghai/house-4br",
+     "title": "Shanghai, China (CNY, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "beijing",
+     "title": "Beijing, China (CNY, figures as of 2026-10) (loads beijing/apt-2br)"
+    },
+    {
+     "key": "beijing/apt-1br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "beijing/apt-2br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "beijing/apt-4br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "beijing/house-4br",
+     "title": "Beijing, China (CNY, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "tokyo",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09) (loads tokyo/apt-2br)"
+    },
+    {
+     "key": "tokyo/apt-studio",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "tokyo/apt-1br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "tokyo/apt-2br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "tokyo/apt-4br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "tokyo/house-4br",
+     "title": "Tokyo, Japan (JPY, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "seoul",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09) (loads seoul/apt-2br)"
+    },
+    {
+     "key": "seoul/apt-studio",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "seoul/apt-1br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "seoul/apt-2br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "seoul/apt-4br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "seoul/house-4br",
+     "title": "Seoul, South Korea (KRW, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "mumbai",
+     "title": "Mumbai, India (INR, figures as of 2026-10) (loads mumbai/apt-2br)"
+    },
+    {
+     "key": "mumbai/apt-studio",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "mumbai/apt-1br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "mumbai/apt-2br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "mumbai/apt-4br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "dubai",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09) (loads dubai/apt-2br)"
+    },
+    {
+     "key": "dubai/apt-studio",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "dubai/apt-1br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "dubai/apt-2br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "dubai/apt-4br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "dubai/house-2br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "dubai/house-4br",
+     "title": "Dubai, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "abudhabi",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09) (loads abudhabi/apt-2br)"
+    },
+    {
+     "key": "abudhabi/apt-studio",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "abudhabi/apt-1br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "abudhabi/apt-2br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "abudhabi/house-2br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "abudhabi/house-4br",
+     "title": "Abu Dhabi, United Arab Emirates (AED, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "london",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10) (loads london/apt-2br)"
+    },
+    {
+     "key": "london/apt-studio",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "london/apt-1br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "london/apt-2br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "london/house-2br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "london/house-4br",
+     "title": "London, United Kingdom (GBP, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "zurich",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08) (loads zurich/apt-2br)"
+    },
+    {
+     "key": "zurich/apt-studio",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): Studio apartment"
+    },
+    {
+     "key": "zurich/apt-1br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 1-bedroom apartment"
+    },
+    {
+     "key": "zurich/apt-2br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 2-bedroom apartment"
+    },
+    {
+     "key": "zurich/apt-4br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 4-bedroom apartment"
+    },
+    {
+     "key": "zurich/house-4br",
+     "title": "Zurich, Switzerland (CHF, figures as of 2026-08): 4-bedroom landed house"
+    },
+    {
+     "key": "paris",
+     "title": "Paris, France (EUR, figures as of 2026-09) (loads paris/apt-2br)"
+    },
+    {
+     "key": "paris/apt-studio",
+     "title": "Paris, France (EUR, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "paris/apt-1br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "paris/apt-2br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "paris/apt-4br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "paris/house-2br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "paris/house-4br",
+     "title": "Paris, France (EUR, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "berlin",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10) (loads berlin/apt-2br)"
+    },
+    {
+     "key": "berlin/apt-studio",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "berlin/apt-1br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "berlin/apt-2br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "berlin/apt-4br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "berlin/house-4br",
+     "title": "Berlin, Germany (EUR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "amsterdam",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10) (loads amsterdam/apt-2br)"
+    },
+    {
+     "key": "amsterdam/apt-studio",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "amsterdam/apt-1br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/apt-2br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/apt-4br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 4-bedroom apartment"
+    },
+    {
+     "key": "amsterdam/house-4br",
+     "title": "Amsterdam, Netherlands (EUR, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "losangeles",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10) (loads losangeles/apt-2br)"
+    },
+    {
+     "key": "losangeles/apt-studio",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "losangeles/apt-1br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "losangeles/apt-2br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "losangeles/house-2br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "losangeles/house-4br",
+     "title": "Los Angeles, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "sanfrancisco",
+     "title": "San Francisco, United States (USD, figures as of 2026-10) (loads sanfrancisco/apt-2br)"
+    },
+    {
+     "key": "sanfrancisco/apt-studio",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): Studio apartment"
+    },
+    {
+     "key": "sanfrancisco/apt-1br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "sanfrancisco/apt-2br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "sanfrancisco/house-2br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "sanfrancisco/house-4br",
+     "title": "San Francisco, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "houston",
+     "title": "Houston, United States (USD, figures as of 2026-10) (loads houston/apt-2br)"
+    },
+    {
+     "key": "houston/apt-1br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 1-bedroom apartment"
+    },
+    {
+     "key": "houston/apt-2br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 2-bedroom apartment"
+    },
+    {
+     "key": "houston/house-2br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 2-bedroom landed house"
+    },
+    {
+     "key": "houston/house-4br",
+     "title": "Houston, United States (USD, figures as of 2026-10): 4-bedroom landed house"
+    },
+    {
+     "key": "newyork",
+     "title": "New York, United States (USD, figures as of 2026-09) (loads newyork/apt-2br)"
+    },
+    {
+     "key": "newyork/apt-studio",
+     "title": "New York, United States (USD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "newyork/apt-1br",
+     "title": "New York, United States (USD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "newyork/apt-2br",
+     "title": "New York, United States (USD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "newyork/apt-4br",
+     "title": "New York, United States (USD, figures as of 2026-09): 4-bedroom apartment"
+    },
+    {
+     "key": "newyork/house-2br",
+     "title": "New York, United States (USD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "newyork/house-4br",
+     "title": "New York, United States (USD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "chicago",
+     "title": "Chicago, United States (USD, figures as of 2026-09) (loads chicago/apt-2br)"
+    },
+    {
+     "key": "chicago/apt-studio",
+     "title": "Chicago, United States (USD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "chicago/apt-1br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "chicago/apt-2br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "chicago/house-2br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "chicago/house-4br",
+     "title": "Chicago, United States (USD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "toronto",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09) (loads toronto/apt-2br)"
+    },
+    {
+     "key": "toronto/apt-studio",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "toronto/apt-1br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "toronto/apt-2br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "toronto/house-2br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 2-bedroom landed house"
+    },
+    {
+     "key": "toronto/house-4br",
+     "title": "Toronto, Canada (CAD, figures as of 2026-09): 4-bedroom landed house"
+    },
+    {
+     "key": "vancouver",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09) (loads vancouver/apt-2br)"
+    },
+    {
+     "key": "vancouver/apt-studio",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): Studio apartment"
+    },
+    {
+     "key": "vancouver/apt-1br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 1-bedroom apartment"
+    },
+    {
+     "key": "vancouver/apt-2br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 2-bedroom apartment"
+    },
+    {
+     "key": "vancouver/house-4br",
+     "title": "Vancouver, Canada (CAD, figures as of 2026-09): 4-bedroom landed house"
+    }
+   ]
+  },
+  {
+   "page": "rentvsownhouse/sensitivity/id",
+   "url": "/rentvsownhouse/sensitivity/id/",
+   "base": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/",
+   "lang": "id",
+   "title": "Sewa vs Beli: Analisis Sensitivitas",
+   "reference": "references/rentvsownhouse-sensitivity-id.md",
+   "decides": "How sensitive buying a home with a mortgage, against renting it and investing the difference, is to each assumption: a table of scenarios side by side, the first the base case and the others the same case with one figure changed (the mortgage rate, house price growth, rent inflation, the costs) or a different home, each read as net equity, liquid cash or accumulated cost, for owning and for renting, at one chosen year.",
+   "important": [
+    "propertyPrice",
+    "rentAmount",
+    "rentFreq",
+    "vary",
+    "mortgageRate",
+    "houseGrowth",
+    "rentInflation",
+    "downPaymentPct",
+    "horizon",
+    "riskFreeRate",
+    "setupCost",
+    "ownOngoingCost",
+    "currencySelect"
+   ],
+   "fields": [
+    {
+     "key": "currencySelect",
+     "label": "Simbol Mata Uang:",
+     "group": "",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dolar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Filipina)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Franc Swiss"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UEA)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Zloty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Rubel"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    }
+   ],
+   "lists": [
+    "propertyPrice",
+    "downPaymentPct",
+    "mortgageType",
+    "mortgageRate",
+    "mortgageTerm",
+    "houseGrowth",
+    "sellingCostPct",
+    "setupCost",
+    "setupCostType",
+    "ownOngoingCost",
+    "ownOngoingCostFreq",
+    "ownOngoingCostType",
+    "ownOngoingInflation",
+    "costInterestOnly",
+    "rentAmount",
+    "rentFreq",
+    "rentInflation",
+    "rentOngoingCost",
+    "rentOngoingCostFreq",
+    "rentOngoingCostType",
+    "rentOngoingInflation",
+    "horizon",
+    "riskFreeRate",
+    "initialCash",
+    "monthlyBudget",
+    "monthlyBudgetIncrease",
+    "vary",
+    "baseName",
+    "metric",
+    "year"
+   ],
+   "families": [],
+   "json": true,
+   "quickStarts": [
+    {
+     "key": "perth",
+     "title": "Perth, Australia (AUD, figures as of 2026-09) (loads perth/apt-2br)"
+    },
+    {
+     "key": "perth/apt-1br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "perth/apt-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "perth/house-2br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "perth/house-4br",
+     "title": "Perth, Australia (AUD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "melbourne",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10) (loads melbourne/apt-2br)"
+    },
+    {
+     "key": "melbourne/apt-1br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "melbourne/apt-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "melbourne/house-2br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "melbourne/house-4br",
+     "title": "Melbourne, Australia (AUD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "sydney",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06) (loads sydney/apt-2br)"
+    },
+    {
+     "key": "sydney/apt-studio",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen studio"
+    },
+    {
+     "key": "sydney/apt-1br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "sydney/apt-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "sydney/house-2br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "sydney/house-4br",
+     "title": "Sydney, Australia (AUD, figures as of 2026-06): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "brisbane",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06) (loads brisbane/apt-2br)"
+    },
+    {
+     "key": "brisbane/apt-1br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "brisbane/apt-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "brisbane/house-2br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "brisbane/house-4br",
+     "title": "Brisbane, Australia (AUD, figures as of 2026-06): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "auckland",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09) (loads auckland/apt-2br)"
+    },
+    {
+     "key": "auckland/apt-1br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "auckland/apt-2br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "auckland/house-2br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "auckland/house-4br",
+     "title": "Auckland, Selandia Baru (NZD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "singapore",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10) (loads singapore/apt-2br)"
+    },
+    {
+     "key": "singapore/apt-1br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "singapore/apt-2br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "singapore/apt-4br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "singapore/house-4br",
+     "title": "Singapore, Singapura (SGD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "kualalumpur",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09) (loads kualalumpur/apt-2br)"
+    },
+    {
+     "key": "kualalumpur/apt-studio",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "kualalumpur/apt-1br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/apt-2br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/apt-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "kualalumpur/house-4br",
+     "title": "Kuala Lumpur, Malaysia (MYR, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "jakarta",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10) (loads jakarta/apt-2br)"
+    },
+    {
+     "key": "jakarta/apt-studio",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "jakarta/apt-1br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "jakarta/apt-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "jakarta/apt-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "jakarta/house-2br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "jakarta/house-4br",
+     "title": "Jakarta, Indonesia (IDR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "bali",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10) (loads bali/house-2br)"
+    },
+    {
+     "key": "bali/house-2br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "bali/house-4br",
+     "title": "Bali, Indonesia (IDR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "bangkok",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09) (loads bangkok/apt-2br)"
+    },
+    {
+     "key": "bangkok/apt-studio",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "bangkok/apt-1br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "bangkok/apt-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "bangkok/apt-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "bangkok/house-2br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "bangkok/house-4br",
+     "title": "Bangkok, Thailand (THB, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "manila",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09) (loads manila/apt-2br)"
+    },
+    {
+     "key": "manila/apt-studio",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "manila/apt-1br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "manila/apt-2br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "manila/apt-4br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "manila/house-2br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "manila/house-4br",
+     "title": "Manila, Filipina (PHP, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "hochiminh",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09) (loads hochiminh/apt-2br)"
+    },
+    {
+     "key": "hochiminh/apt-studio",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "hochiminh/apt-1br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "hochiminh/apt-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "hochiminh/house-2br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "hochiminh/house-4br",
+     "title": "Ho Chi Minh City, Vietnam (VND, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "hongkong",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09) (loads hongkong/apt-2br)"
+    },
+    {
+     "key": "hongkong/apt-studio",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "hongkong/apt-1br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "hongkong/apt-2br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "hongkong/apt-4br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "hongkong/house-4br",
+     "title": "Hong Kong, Hong Kong (HKD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "taipei",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09) (loads taipei/apt-2br)"
+    },
+    {
+     "key": "taipei/apt-studio",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "taipei/apt-1br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "taipei/apt-2br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "taipei/apt-4br",
+     "title": "Taipei, Taiwan (TWD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "shanghai",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10) (loads shanghai/apt-2br)"
+    },
+    {
+     "key": "shanghai/apt-studio",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "shanghai/apt-1br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "shanghai/apt-2br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "shanghai/apt-4br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "shanghai/house-4br",
+     "title": "Shanghai, Tiongkok (CNY, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "beijing",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10) (loads beijing/apt-2br)"
+    },
+    {
+     "key": "beijing/apt-1br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "beijing/apt-2br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "beijing/apt-4br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "beijing/house-4br",
+     "title": "Beijing, Tiongkok (CNY, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "tokyo",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09) (loads tokyo/apt-2br)"
+    },
+    {
+     "key": "tokyo/apt-studio",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "tokyo/apt-1br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "tokyo/apt-2br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "tokyo/apt-4br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "tokyo/house-4br",
+     "title": "Tokyo, Jepang (JPY, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "seoul",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09) (loads seoul/apt-2br)"
+    },
+    {
+     "key": "seoul/apt-studio",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "seoul/apt-1br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "seoul/apt-2br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "seoul/apt-4br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "seoul/house-4br",
+     "title": "Seoul, Korea Selatan (KRW, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "mumbai",
+     "title": "Mumbai, India (INR, figures as of 2026-10) (loads mumbai/apt-2br)"
+    },
+    {
+     "key": "mumbai/apt-studio",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "mumbai/apt-1br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "mumbai/apt-2br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "mumbai/apt-4br",
+     "title": "Mumbai, India (INR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "dubai",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09) (loads dubai/apt-2br)"
+    },
+    {
+     "key": "dubai/apt-studio",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "dubai/apt-1br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "dubai/apt-2br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "dubai/apt-4br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "dubai/house-2br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "dubai/house-4br",
+     "title": "Dubai, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "abudhabi",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09) (loads abudhabi/apt-2br)"
+    },
+    {
+     "key": "abudhabi/apt-studio",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "abudhabi/apt-1br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "abudhabi/apt-2br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "abudhabi/house-2br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "abudhabi/house-4br",
+     "title": "Abu Dhabi, Uni Emirat Arab (AED, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "london",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10) (loads london/apt-2br)"
+    },
+    {
+     "key": "london/apt-studio",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "london/apt-1br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "london/apt-2br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "london/house-2br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "london/house-4br",
+     "title": "London, Inggris Raya (GBP, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "zurich",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08) (loads zurich/apt-2br)"
+    },
+    {
+     "key": "zurich/apt-studio",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen studio"
+    },
+    {
+     "key": "zurich/apt-1br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "zurich/apt-2br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "zurich/apt-4br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "zurich/house-4br",
+     "title": "Zurich, Swiss (CHF, figures as of 2026-08): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "paris",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09) (loads paris/apt-2br)"
+    },
+    {
+     "key": "paris/apt-studio",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "paris/apt-1br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "paris/apt-2br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "paris/apt-4br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "paris/house-2br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "paris/house-4br",
+     "title": "Paris, Prancis (EUR, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "berlin",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10) (loads berlin/apt-2br)"
+    },
+    {
+     "key": "berlin/apt-studio",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "berlin/apt-1br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "berlin/apt-2br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "berlin/apt-4br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "berlin/house-4br",
+     "title": "Berlin, Jerman (EUR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "amsterdam",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10) (loads amsterdam/apt-2br)"
+    },
+    {
+     "key": "amsterdam/apt-studio",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "amsterdam/apt-1br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "amsterdam/apt-2br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "amsterdam/apt-4br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "amsterdam/house-4br",
+     "title": "Amsterdam, Belanda (EUR, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "losangeles",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10) (loads losangeles/apt-2br)"
+    },
+    {
+     "key": "losangeles/apt-studio",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "losangeles/apt-1br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "losangeles/apt-2br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "losangeles/house-2br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "losangeles/house-4br",
+     "title": "Los Angeles, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10) (loads sanfrancisco/apt-2br)"
+    },
+    {
+     "key": "sanfrancisco/apt-studio",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen studio"
+    },
+    {
+     "key": "sanfrancisco/apt-1br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/apt-2br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/house-2br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "sanfrancisco/house-4br",
+     "title": "San Francisco, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "houston",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10) (loads houston/apt-2br)"
+    },
+    {
+     "key": "houston/apt-1br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "houston/apt-2br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "houston/house-2br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "houston/house-4br",
+     "title": "Houston, Amerika Serikat (USD, figures as of 2026-10): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "newyork",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09) (loads newyork/apt-2br)"
+    },
+    {
+     "key": "newyork/apt-studio",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "newyork/apt-1br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "newyork/apt-2br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "newyork/apt-4br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Apartemen 4 kamar tidur"
+    },
+    {
+     "key": "newyork/house-2br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "newyork/house-4br",
+     "title": "New York, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "chicago",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09) (loads chicago/apt-2br)"
+    },
+    {
+     "key": "chicago/apt-studio",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "chicago/apt-1br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "chicago/apt-2br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "chicago/house-2br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "chicago/house-4br",
+     "title": "Chicago, Amerika Serikat (USD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "toronto",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09) (loads toronto/apt-2br)"
+    },
+    {
+     "key": "toronto/apt-studio",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "toronto/apt-1br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "toronto/apt-2br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "toronto/house-2br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Rumah tapak 2 kamar tidur"
+    },
+    {
+     "key": "toronto/house-4br",
+     "title": "Toronto, Kanada (CAD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    },
+    {
+     "key": "vancouver",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09) (loads vancouver/apt-2br)"
+    },
+    {
+     "key": "vancouver/apt-studio",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen studio"
+    },
+    {
+     "key": "vancouver/apt-1br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen 1 kamar tidur"
+    },
+    {
+     "key": "vancouver/apt-2br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Apartemen 2 kamar tidur"
+    },
+    {
+     "key": "vancouver/house-4br",
+     "title": "Vancouver, Kanada (CAD, figures as of 2026-09): Rumah tapak 4 kamar tidur"
+    }
+   ]
+  }
+ ]
+}

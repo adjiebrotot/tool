@@ -3273,7 +3273,7 @@
 
   /* ── SharedAgent — a link an AI assistant wrote opens the tool set up ─────
      A reader asks a chatbot about a tool; the chatbot reads the tool's AI
-     section (<tool>/agent.txt) and replies with a link that opens the tool on
+     skill (<tool>/ai/, written by _ref/agent-doc.mjs) and replies with a link that opens the tool on
      that scenario. The answer is the tool's, worked out on screen; a banner
      over the inputs lists what the assistant assumed, so the reader checks it.
 

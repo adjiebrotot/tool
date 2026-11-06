@@ -1,7 +1,7 @@
 # PowerFactory Scripter (the form): notes for the AI section
 
 Hand-written. `node _ref/agent-doc.mjs` merges these notes with the fields it reads from the page
-and writes `powerfactory-scripter/legacy/agent.txt`, the AI section in `index.html` and the lines in
+and writes the skill reference (`ai/skill/references/`), the AI section in `index.html` and the lines in
 `llms.txt`. Edit here, never the generated text, then run the generator. Text above the first
 heading (this) is not published. The headings are the same as in `rentvsownhouse/agent-notes.md`.
 
@@ -13,7 +13,7 @@ outages), which a link cannot change, so they are not link keys (`index.html` ma
 sample (`script.js`, "AI links": the mini cache keeps the whole configuration as its extra, so a
 field a link sets goes into that too). The script is written once the link has applied, unless the
 link says `run=0`. For a study that needs other inputs or outputs, the Workflow Builder takes a whole
-workflow in a link (`powerfactory-scripter/builder/agent.txt`).
+workflow in a link (its reference is in the same skill).
 
 ## Decides
 
@@ -56,7 +56,7 @@ Which kind of PowerFactory study a Python script runs: a sweep of input values, 
 
 The Quick Starts are worked examples on the IEEE 9-bus system, listed with their input and output variables under QUICK START FIGURES. A link cannot change those tables, so pick the one whose study is closest to what the user wants and set the fields on top of it. Its fields are put back to its own values first, so name each field the user wants different. Without qs the form opens as it starts, with one input and one output variable to fill in.
 
-For a study none of them is near (other inputs or outputs, a study built from steps), use the Workflow Builder, which takes a whole workflow in a link: https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.txt
+For a study none of them is near (other inputs or outputs, a study built from steps), use the Workflow Builder, which takes a whole workflow in a link: its reference is references/powerfactory-scripter-builder.md in this skill (page powerfactory-scripter/builder).
 
 ## Example
 

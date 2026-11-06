@@ -1,7 +1,7 @@
 # Rent vs Own: notes for the AI section
 
 Hand-written. `node _ref/agent-doc.mjs` merges these notes with the fields it reads from the
-page and writes `rentvsownhouse/agent.txt` and `id/agent.txt`, the AI section in `index.html`
+page and writes the skill reference (`ai/skill/references/`), the AI section in `index.html`
 and `id/index.html`, and the lines in `llms.txt`. Edit here, never the generated text, then run
 the generator. Text above the first heading (this) is not published.
 
@@ -102,6 +102,31 @@ Assumptions:
 2. Setup cost: {setupCost}% of the price, for Victorian stamp duty on $850,000 (about $46,000) plus transfer, registration and legal fees.
 3. Ongoing costs of owning: ${ownOngoingCost} a year for council rates, insurance and upkeep, a little under the Quick Start's figure for a dearer home.
 4. Ongoing costs of renting: ${rentOngoingCost} a year for contents insurance and moving, from the Quick Start.
+
+## AI page example
+
+Request: Should I buy an $800,000 house or keep renting for $700 per week?
+
+Searches:
+- Western Australia transfer duty on $800,000
+- Average variable mortgage rate in Australia, November 2026
+
+Link:
+- qs=perth/house-2br
+- propertyPrice=800000
+- rentAmount=700
+- setupCost=4.4
+- why.setupCost=WA transfer duty on $800,000 (about $32,300) plus conveyancing and inspections
+- ownOngoingCost=7500
+- why.ownOngoingCost=Council and water rates, insurance and upkeep on an $800,000 house, about 0.9% a year
+- note=Assumed Perth, November 2026, 2-bedroom house
+
+Assumptions:
+1. Place: you did not say where. A rent quoted per week in dollars is how Australia quotes it, and $800,000 buys a 2-bedroom house in Perth, so the link starts from the Perth 2-bedroom house Quick Start (qs=perth/house-2br). Tell me your city and I will send a new link.
+2. Loan: a {downPaymentPct}% deposit and a mortgage at {mortgageRate}% a year over {mortgageTerm} years, near the going variable rate for an owner-occupier in November 2026.
+3. Setup cost: {setupCost}% of the price, for Western Australian transfer duty on $800,000 (about $32,300) plus conveyancing and inspections.
+4. Ongoing costs of owning: ${ownOngoingCost} a year for council and water rates, insurance and upkeep.
+5. Growth and returns, from the Quick Start: house prices {houseGrowth}% a year, rent {rentInflation}% a year, spare cash earning {riskFreeRate}% a year, selling costs of {sellingCostPct}%, compared over {horizon} years.
 
 ## Compact lists
 

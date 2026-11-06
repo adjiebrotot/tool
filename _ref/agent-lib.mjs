@@ -76,7 +76,7 @@ export function buildLink(base, pairs) {
 }
 
 /* ── Pages ───────────────────────────────────────────────────────────────────
-   page        folder from the repo root; agent.txt and the HTML section are written there
+   page        folder from the repo root; its reference (in its tool's skill) and the HTML section are written from it
    url         path of the page on the site (the link base is SITE + url)
    lang        'en' or 'id': the language of the section's lines for people (the rules and
                the reference stay in English, since their reader is the chatbot)
@@ -95,7 +95,7 @@ export function buildLink(base, pairs) {
    solved      Engineering pages only, run IN the page: true once the tool has solved. It
                makes check A6 open each of the page's kept links marked "model": true (a
                whole custom model in json) and wait for it
-   reference   optional, run IN the page (it may wait for the editor): generated reference sections for agent.txt, [{ title, lines }],
+   reference   optional, run IN the page (it may wait for the editor): generated reference sections for the page reference, [{ title, lines }],
                printed last under "REFERENCE: <title>" (the builder's block types)
    virtual     a page with no (or too few) form fields of its own: compact keys that stand in
                as number boxes for the checks' hand edits and range tests, [{ key, min, max,
@@ -880,7 +880,7 @@ export async function pfbQuickStarts() {
   }
   return {
     groups: [{ title: '', items }],
-    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked example workflow. Change its blocks by id with blk.<id>.<setting> (agent.txt lists each one\'s blocks), or send a whole workflow in json.']
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked example workflow. Change its blocks by id with blk.<id>.<setting> (the reference lists each one\'s blocks), or send a whole workflow in json.']
   };
 }
 // The block types a json workflow is made of, from the registry: kind, wires and settings, in palette order.

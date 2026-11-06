@@ -282,3 +282,9 @@
 
 .gd-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); font: italic 800 .7rem/1 Georgia, serif; vertical-align: 1px; }
 .gd-end .gd-more { order: 1; flex-basis: 100%; text-align: center; font-size: .9rem; font-weight: 400; color: var(--muted); }
+
+/* ---- The AI card on a guide page (links to <tool>/ai/) ------------------------------------------------------------ */
+.gd-ai { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; }
+.gd-ai h2 { margin: 0 0 4px; font-size: 1.3rem; font-weight: 700; }
+.gd-ai .gd-sub { margin: 0; }
+.gd .gd-ai .btn-primary { display: inline-flex; align-items: center; padding: 10px 20px; text-decoration: none; white-space: nowrap; }

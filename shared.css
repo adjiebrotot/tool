@@ -936,6 +936,11 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
   .nav-long,.pf-tour-word{display:none;}
   .nav-short{display:inline;}
 }
+/* With "Use in AI" beside Tour and Guide, the emoji-only buttons sit a little closer on a phone. */
+@media(max-width:440px){
+  body .header-right{gap:5px;}
+  body .header-right .btn-theme.btn-theme:is([data-pf-tour-launch],[data-pf-guide-link],[data-abt-ai-link]){padding:0 8px;}
+}
 
 /* ── The pointer to a tool's AI reference (written by _ref/agent-doc.mjs) ──
    In the page's HTML for an assistant that reads it, never shown to people. */
