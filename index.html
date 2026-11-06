@@ -300,49 +300,6 @@
       color: var(--brand);
     }
 
-    .install-banner {
-      margin-bottom: 14px;
-      padding: 11px 18px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      background: rgba(141, 187, 255, 0.07);
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.5;
-    }
-
-    .install-banner[hidden],
-    .install-banner:not([data-mode="ios"]) .install-ios,
-    .install-banner[data-mode="ios"] .install-prompt {
-      display: none;
-    }
-
-    .install-banner p {
-      margin: 0;
-    }
-
-    .install-banner strong {
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    .install-link {
-      padding: 0;
-      border: 0;
-      background: none;
-      color: var(--accent-strong);
-      font: inherit;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .install-link:hover,
-    .install-link:focus-visible {
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
     .typewriter {
       white-space: nowrap;
     }
@@ -1672,10 +1629,6 @@
 
   <main>
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
-      <div class="install-banner" data-pwa-install hidden>
-        <p class="install-prompt">Want these tools offline? <button type="button" class="install-link" data-pwa-install-go>Install Adjie Brotools as an app</button>.</p>
-        <p class="install-ios">Want these tools offline? Tap <strong>Share</strong> in Safari, then <strong>Add to Home Screen</strong>.</p>
-      </div>
       <div class="section-heading">
         <div>
           <h2 id="tool-directory-heading">Tool directory</h2>
