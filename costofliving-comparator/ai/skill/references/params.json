@@ -1,0 +1,171 @@
+{
+ "skill": "brotools-costofliving-comparator",
+ "tool": "Cost of Living Comparator",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "costofliving-comparator",
+   "url": "/costofliving-comparator/",
+   "base": "https://tool.adjiebrotots.com/costofliving-comparator/",
+   "lang": "en",
+   "title": "Cost of Living Comparator",
+   "reference": "references/costofliving-comparator.md",
+   "decides": "How far a salary goes when the user moves between cities: from the user's home city, its monthly take-home pay and costs, either what they would save in each destination city, or the net salary each destination needs to leave them saving the same share of pay (or the same amount).",
+   "important": [
+    "cities",
+    "salary",
+    "rows",
+    "goal",
+    "detail",
+    "expense",
+    "toSalaries",
+    "freq"
+   ],
+   "fields": [
+    {
+     "key": "salary",
+     "label": "salary",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100000000000,
+     "default": "0"
+    },
+    {
+     "key": "expense",
+     "label": "expense",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100000000000,
+     "default": "0"
+    }
+   ],
+   "lists": [
+    "cities",
+    "detail",
+    "goal",
+    "housing",
+    "target",
+    "toSalaries",
+    "rows",
+    "customFx",
+    "fxShock",
+    "freq",
+    "incomeFreq",
+    "savingsFreq"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "sg-au",
+     "title": "Singapore vs Australia"
+    },
+    {
+     "key": "sea",
+     "title": "Southeast Asia"
+    },
+    {
+     "key": "us",
+     "title": "US cities"
+    },
+    {
+     "key": "eu",
+     "title": "European capitals"
+    },
+    {
+     "key": "me",
+     "title": "Middle East"
+    },
+    {
+     "key": "ea",
+     "title": "East Asia"
+    }
+   ]
+  },
+  {
+   "page": "costofliving-comparator/map",
+   "url": "/costofliving-comparator/map/",
+   "base": "https://tool.adjiebrotots.com/costofliving-comparator/map/",
+   "lang": "en",
+   "title": "Cost of Living Comparator: Map View",
+   "reference": "references/costofliving-comparator-map.md",
+   "decides": "From one home city, its monthly take-home pay and costs, how every other city compares: the net salary each city needs for the same lifestyle and savings, what the user's own salary saves in each city, or what the same multiple of local pay saves there.",
+   "important": [
+    "cities",
+    "salary",
+    "expense",
+    "detail",
+    "rows",
+    "salaryMode",
+    "target"
+   ],
+   "fields": [
+    {
+     "key": "salary",
+     "label": "Net salary",
+     "group": "You",
+     "kind": "number",
+     "unit": "¤ /mo",
+     "min": 0,
+     "max": 100000000000,
+     "default": "",
+     "important": true
+    },
+    {
+     "key": "expense",
+     "label": "Living cost",
+     "group": "Lifestyle",
+     "kind": "number",
+     "unit": "¤ /mo",
+     "min": 0,
+     "max": 100000000000,
+     "default": "",
+     "important": true
+    }
+   ],
+   "lists": [
+    "cities",
+    "detail",
+    "housing",
+    "salaryMode",
+    "target",
+    "scale",
+    "rows"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "sg",
+     "title": "Singapore"
+    },
+    {
+     "key": "jkt",
+     "title": "Jakarta"
+    },
+    {
+     "key": "per",
+     "title": "Perth"
+    },
+    {
+     "key": "nyc",
+     "title": "New York"
+    },
+    {
+     "key": "lon",
+     "title": "London"
+    },
+    {
+     "key": "dxb",
+     "title": "Dubai"
+    }
+   ]
+  }
+ ]
+}

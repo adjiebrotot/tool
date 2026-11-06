@@ -3512,6 +3512,21 @@
     "problemType": "optimisation",
     "objective": "total_losses"
    }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "Quick Start, then retirement spending as a monthly amount (not cut to the 1,000% share bound)",
+   "link": "#load&v=1&qs=geoarbitrage&retireExpense=3500&retireExpensePeriod=monthly&why.retireExpense=What%20the%20user%20expects%20to%20spend%20in%20Bali",
+   "expect": {
+    "retireExpense": "3,500",
+    "retireExpensePeriod": "monthly"
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "a part name with a space, its key percent-encoded as the skill script writes it",
+   "link": "#load&v=1&qs=areas&el.HVDC%20link.p_nom=400&why.el.HVDC%20link.p_nom=The%20user%27s%20new%20link%20rating&run=0",
+   "expect": {}
   }
  ]
 }

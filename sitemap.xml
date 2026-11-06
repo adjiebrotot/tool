@@ -14,16 +14,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/borrowingcapacity/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/borrowingcapacity/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
@@ -38,16 +38,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
@@ -56,16 +56,16 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/costofliving-comparator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/costofliving-comparator/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/map/</loc>
@@ -74,22 +74,10 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/costofliving-comparator/map/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/dcasimulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/guides/</loc>
@@ -98,16 +86,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/dcasimulator/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/ticker/</loc>
@@ -134,16 +122,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/ed-uc-simulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/ed-uc-simulator/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/ed-uc-simulator/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/eggprice/</loc>
@@ -158,16 +146,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/financialfreedom/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/financialfreedom/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financialfreedom/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/</loc>
@@ -176,16 +164,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/financingvscash/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financingvscash/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/loan-types/</loc>
@@ -212,16 +200,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/loadflow-simulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/loadflow-simulator/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/loadflow-simulator/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
@@ -239,16 +227,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pisahvsgabung/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
@@ -258,12 +246,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/</loc>
@@ -278,28 +260,22 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/samples/</loc>
@@ -827,16 +803,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
@@ -846,12 +822,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/</loc>
@@ -869,12 +839,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -882,12 +846,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/sankeycreator/</loc>
@@ -902,16 +860,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/valuateeverything/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/valuateeverything/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/valuateeverything/ai/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>

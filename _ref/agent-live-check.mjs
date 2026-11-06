@@ -3,11 +3,11 @@
 // fetches them: a plain GET, no script run, with a browser's and each AI reader's
 // User-Agent. agent-check holds the files in the repo; this holds what the server sends.
 //
-// For each page in PAGES (_ref/agent-lib.mjs), and for every User-Agent below:
-//   <page>/agent.txt   200, text/plain, no Content-Disposition, the page's title line first
-//                      and AI_RULES in the body;
-//   <page>/agent.html  200, text/html, AI_RULES in its pre.agent-rules, no script but the copy button's;
-//   <page>/            200, and its HTML links to agent.html with a plain <a href>.
+// For each tool in TOOLS (_ref/ai-skill.mjs), and for every User-Agent below:
+//   <tool>/ai/                      200, text/html, matches the repo;
+//   <tool>/ai/skill/SKILL.md        200, matches the repo (an assistant that browses reads it);
+//   <tool>/ai/<skill>.zip           200, the repo's bytes, not served as text/html;
+// and for each page in PAGES: 200, and its HTML links to its tool's AI page with a plain <a href>.
 // And once: /robots.txt is 200 text/plain and disallows none of those paths for any of the
 // User-Agents; /llms.txt and /sitemap.xml are 200.
 //
@@ -19,7 +19,8 @@
 // Run: node _ref/agent-live-check.mjs [page]     page: part of a PAGES page, e.g. builder
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { AI_RULES, PAGES, ROOT, SITE } from './agent-lib.mjs';
+import { PAGES, ROOT, SITE } from './agent-lib.mjs';
+import { TOOLS, toolOf, skillName, aiUrl } from './ai-skill.mjs';
 
 const AGENTS = {
   browser: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
@@ -31,7 +32,7 @@ const AGENTS = {
 };
 const ONLY = process.argv[2] || '';
 const pages = PAGES.filter(P => P.page.includes(ONLY));
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const tools = TOOLS.filter(T => pages.some(P => toolOf(P.page) === T.tool));
 
 let pass = 0, fail = 0;
 function check(name, ok, why = '') {
@@ -41,7 +42,8 @@ function check(name, ok, why = '') {
 async function get(path, ua) {
   try {
     const r = await fetch(SITE + path, { headers: { 'User-Agent': ua }, redirect: 'follow' });
-    return { status: r.status, type: r.headers.get('content-type') || '', disp: r.headers.get('content-disposition') || '', body: await r.text() };
+    const buf = Buffer.from(await r.arrayBuffer());
+    return { status: r.status, type: r.headers.get('content-type') || '', disp: r.headers.get('content-disposition') || '', body: buf.toString('utf8'), buf };
   } catch (e) {
     return { status: 0, type: '', disp: '', body: '', err: (e.cause && e.cause.code) || e.message };
   }
@@ -79,7 +81,7 @@ function robotsBlocks(robots, ua, path) {
   return !!best && !best.allow;
 }
 
-console.log(`agent-live-check: ${SITE}, ${pages.length} pages, ${Object.keys(AGENTS).length} User-Agents`);
+console.log(`agent-live-check: ${SITE}, ${tools.length} tools, ${pages.length} pages, ${Object.keys(AGENTS).length} User-Agents`);
 const robots = await get('/robots.txt', AGENTS.browser);
 check('/robots.txt is 200 text/plain', robots.status === 200 && robots.type.startsWith('text/plain'), said(robots));
 for (const path of ['/llms.txt', '/sitemap.xml']) {
@@ -87,30 +89,31 @@ for (const path of ['/llms.txt', '/sitemap.xml']) {
   check(`${path} is 200`, r.status === 200, said(r));
 }
 
-for (const P of pages) {
-  console.log(`── ${P.url}`);
-  const txtLocal = local(P.page + '/agent.txt');
-  const htmlLocal = local(P.page + '/agent.html');
-  const title = (txtLocal || '').split('\n')[0];
-  const href = `<a href="${SITE + P.url}agent.html">`;
+for (const T of tools) {
+  const dir = '/' + T.tool + '/ai/';
+  console.log(`── ${dir}`);
+  const zipName = skillName(T) + '.zip';
   for (const [name, ua] of Object.entries(AGENTS)) {
-    for (const path of [P.url, P.url + 'agent.txt', P.url + 'agent.html']) {
+    for (const path of [dir, dir + 'skill/SKILL.md', dir + zipName]) {
       if (robots.status === 200) check(`robots.txt lets ${name} fetch ${path}`, !robotsBlocks(robots.body, ua, path));
     }
-    const txt = await get(P.url + 'agent.txt', ua);
-    check(`${name}: agent.txt is 200 text/plain`, txt.status === 200 && txt.type.startsWith('text/plain'), said(txt));
-    check(`${name}: agent.txt is not a download`, !/attachment/i.test(txt.disp), txt.disp);
-    check(`${name}: agent.txt is the reference, AI_RULES included`, txt.body.startsWith(title) && txt.body.includes(AI_RULES),
-      txt.body.slice(0, 80).replace(/\s+/g, ' '));
-    check(`${name}: agent.txt matches the repo`, txt.body === txtLocal, 'not deployed yet, or changed since');
-    const html = await get(P.url + 'agent.html', ua);
-    check(`${name}: agent.html is 200 text/html`, html.status === 200 && html.type.startsWith('text/html'), said(html));
-    check(`${name}: agent.html carries AI_RULES, with no outside script`,
-      html.body.includes(`<pre class="agent-rules">${esc(AI_RULES)}</pre>`) && !/<script\b[^>]*\bsrc=/i.test(html.body), html.body.slice(0, 80).replace(/\s+/g, ' '));
-    check(`${name}: agent.html matches the repo`, html.body === htmlLocal, 'not deployed yet, or changed since');
-    const page = await get(P.url, ua);
-    check(`${name}: the page is 200 and links to agent.html`, page.status === 200 && page.body.includes(href), said(page));
+    const page = await get(dir, ua);
+    check(`${name}: ${dir} is 200 text/html`, page.status === 200 && page.type.startsWith('text/html'), said(page));
+    check(`${name}: ${dir} matches the repo`, page.body === local(T.tool + '/ai/index.html'), 'not deployed yet, or changed since');
+    const md = await get(dir + 'skill/SKILL.md', ua);
+    check(`${name}: SKILL.md is 200`, md.status === 200, said(md));
+    check(`${name}: SKILL.md matches the repo`, md.body === local(T.tool + '/ai/skill/SKILL.md'), 'not deployed yet, or changed since');
+    const zip = await get(dir + zipName, ua);
+    const zipLocal = existsSync(join(ROOT, T.tool, 'ai', zipName)) ? readFileSync(join(ROOT, T.tool, 'ai', zipName)) : null;
+    check(`${name}: ${zipName} is 200 and not a web page`, zip.status === 200 && !zip.type.startsWith('text/html'), said(zip));
+    check(`${name}: ${zipName} matches the repo`, !!zip.buf && !!zipLocal && zip.buf.equals(zipLocal), 'not deployed yet, or changed since');
   }
+}
+for (const P of pages) {
+  const T = TOOLS.find(T => T.tool === toolOf(P.page));
+  const href = `<a href="${aiUrl(T)}">`;
+  const page = await get(P.url, AGENTS.browser);
+  check(`${P.url} is 200 and links to ${aiUrl(T)}`, page.status === 200 && page.body.includes(href), said(page));
 }
 
 console.log(`\nagent-live-check: ${pass} passed, ${fail} failed`);

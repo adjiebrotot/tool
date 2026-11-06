@@ -1,6 +1,6 @@
 // AI links for the Workflow Builder (SharedAgent in shared.js, Phase 3 of _ref/ai-drive-plan.md).
 //
-// A reader asks a chatbot for a PowerFactory script; the chatbot reads builder/agent.txt and
+// A reader asks a chatbot for a PowerFactory script; the chatbot reads its skill (powerfactory-scripter/ai/) and
 // replies with a link that opens the Builder on a workflow:
 //
 //   builder/#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&blk.n5.trafos=false&why.blk.n5.trafos=...

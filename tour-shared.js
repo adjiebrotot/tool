@@ -442,7 +442,9 @@
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.
-    if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
+    var aiBtn = nav.querySelector('[data-abt-ai-link]');
+    if (aiBtn && aiBtn.parentNode) aiBtn.parentNode.insertBefore(btn, aiBtn);
+    else if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
     else nav.appendChild(btn);
     if (GUIDE_HREF) {
       // The guide beside it, a link dressed as the same header button.
@@ -454,6 +456,8 @@
       guide.title = GUIDE_TITLE;
       btn.parentNode.insertBefore(guide, btn.nextSibling);
     }
+    // "Use in AI" (SharedAiLink in shared.js) goes after Tour and Guide.
+    if (window.SharedAiLink) window.SharedAiLink.add();
   }
 
   function init() {

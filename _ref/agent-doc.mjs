@@ -10,15 +10,17 @@
 // For each page in PAGES (_ref/agent-lib.mjs) it opens the page on empty storage, reads every
 // persistable control the way Persist does (key, label, unit, min/max/step, default, options,
 // group) and the Quick Starts, merges the hand-written <tool>/agent-notes.md, and writes:
-//   <page>/agent.txt     the full reference, plain text;
-//   <page>/agent.html    the same text as a web page, for readers that open web pages but
-//                        not plain text files (some chatbots' browsers);
-//   <page>/index.html    a hidden pointer to agent.html and agent.txt (never shown to
-//                        people) between <!-- agent:start --> and <!-- agent:end -->;
+//   <tool>/ai/...        per tool (TOOLS in _ref/ai-skill.mjs): the skill (a .zip and the
+//                        same files unzipped under skill/) and the AI page people see. The
+//                        skill's references/<page>.md is each page's full reference, plain
+//                        text (what <page>/agent.txt used to be);
+//   <page>/index.html    a hidden pointer to the AI page and SKILL.md (never shown to
+//                        people) between <!-- agent:start --> and <!-- agent:end -->, which
+//                        also tells the header where its "Use in AI" button goes;
 //   llms.txt             the site-wide section between the same markers: the #load protocol,
-//                        the rules, one line per page.
-// Each of agent.txt, agent.html and llms.txt carries AI_RULES verbatim (in HTML, escaped
-// inside a <pre>).
+//                        the rules, one line per tool.
+// Each page reference and llms.txt carry AI_RULES verbatim. Old <page>/agent.txt and
+// agent.html files are removed.
 //
 // Order with _ref/bake-id.mjs: either order is stable. bake-id rebuilds an id/ page from its
 // English page but keeps the id/ page's own AI section (the one this script wrote, in which
@@ -28,8 +30,10 @@
 //
 // It fails (exit 1, nothing written) when the notes name a key the page does not have, or the
 // example link uses a key or value the tool would not take as it is.
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { rmSync } from 'node:fs';
+import { TOOLS, toolOf, skillFiles, aiPage, aiUrl, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
 import {
   AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE, LIST_KEY_RE,
   buildLink, serve, launch, openPage, readFields, parseNotes, defaultQuickStarts
@@ -43,13 +47,13 @@ const problem = (page, msg) => problems.push(page + ': ' + msg);
 const PEOPLE = {
   en: {
     summary: 'Use this tool with an AI assistant',
-    lead: 'Ask an AI assistant that can read web pages (Claude, ChatGPT, Gemini, Perplexity and others) to use this page for your question. ' +
+    lead: 'Install this tool\'s skill in your AI assistant (Claude, ChatGPT, Grok and others) and ask your question. ' +
       'It replies with a link that opens this tool on your scenario and lists what it assumed, and the tool works out the answer. ' +
-      'The rest of this section is written for the assistant.',
+      'The rest of this file is written for the assistant.',
   },
   id: {
     summary: 'Pakai alat ini dengan asisten AI',
-    lead: 'Minta asisten AI yang bisa membaca halaman web (Claude, ChatGPT, Gemini, Perplexity, dan lainnya) memakai halaman ini untuk pertanyaan Anda. ' +
+    lead: 'Pasang skill alat ini di asisten AI Anda (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan pertanyaan Anda. ' +
       'Asisten akan membalas dengan tautan yang membuka alat ini pada skenario Anda, lengkap dengan daftar asumsinya, lalu alat inilah yang menghitung hasilnya. ' +
       'Bagian di bawah ini ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.',
   },
@@ -88,6 +92,12 @@ function model(P, read, qs, notes) {
   const M = { P, base, fields, byKey, compact, hide, important, notes, qs, qsKeys, qsItems, qsAlias, example,
     title: read.h1, source: read.source };
   checkExample(M);
+  // The conversation the tool's AI page plays: its own section when the notes have one.
+  if (S['ai page example']) {
+    const D = { ...M, example: parseExample(S['ai page example']) };
+    checkExample(D);
+    M.demo = { ...D.example, link: D.link, state: D.exampleState };
+  } else M.demo = { ...M.example, link: M.link, state: M.exampleState };
   return M;
 }
 
@@ -95,7 +105,7 @@ function model(P, read, qs, notes) {
    order, then "Assumptions:" with the numbered list a reply gives, where {key} stands for the
    value that key has once the link applies (Quick Start, then the link). */
 function parseExample(text) {
-  const ex = { request: '', pairs: [], assumptions: [] };
+  const ex = { request: '', pairs: [], assumptions: [], searches: [] };
   let part = '';
   for (const raw of text.split('\n')) {
     const line = raw.replace(/\s+$/, '');
@@ -103,9 +113,11 @@ function parseExample(text) {
     if ((m = /^Request:\s*(.*)$/i.exec(line))) { ex.request = m[1].trim(); part = 'request'; continue; }
     if (/^Link:\s*$/i.test(line)) { part = 'link'; continue; }
     if (/^Assumptions:\s*$/i.test(line)) { part = 'assumptions'; continue; }
+    if (/^Searches:\s*$/i.test(line)) { part = 'searches'; continue; }
     if (!line.trim()) continue;
     if (part === 'link' && (m = /^[-*] +([^=\s]+)=(.*)$/.exec(line))) ex.pairs.push([m[1], m[2].trim()]);
     else if (part === 'assumptions' && (m = /^\d+\. +(.*)$/.exec(line))) ex.assumptions.push(m[1].trim());
+    else if (part === 'searches' && (m = /^[-*] +(.*)$/.exec(line))) ex.searches.push(m[1].trim());
     else if (part === 'assumptions' && ex.assumptions.length && /^\s+\S/.test(raw)) ex.assumptions[ex.assumptions.length - 1] += ' ' + line.trim();
     else if (part === 'request') ex.request += ' ' + line.trim();
   }
@@ -187,6 +199,7 @@ function checkExample(M) {
 function show(v) {
   if (typeof v === 'boolean') return v ? 'on' : 'off';
   const n = toNumber(v);
+  if (/^(1[89]|2[0-2])\d\d$/.test(String(v))) return String(v);   // a year reads 2030, not 2,030
   if (typeof v === 'number' || (Number.isFinite(n) && /^[\d.,$\s-]+$/.test(String(v)))) {
     return Number.isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
   }
@@ -220,7 +233,7 @@ function protocolLines(M) {
   return [
     'After #load come key=value pairs joined by &. Percent-encode each value (a space is %20, & is %26, # is %23, + is %2B).',
     'v=1 is the format version.' + (M.qs ? ' qs=<key> starts from that Quick Start; without it the tool starts from its defaults.' : ' The tool starts from its defaults.'),
-    ('Then each key in the link is set, in the units its label shows on screen. ' + unitExample(M)).trim() + ' Numbers may carry $, commas and a trailing %. A checkbox takes true or false. A select or a choice takes the value listed, or its visible label.',
+    ('Then each key in the link is set, in the units its label shows on screen. ' + unitExample(M)).trim() + ' Write numbers plainly (800000, 6.5): a field also takes $, thousands commas and a trailing %, but inside a list a comma separates the items, so never put one in a number there. A checkbox takes true or false. A select or a choice takes the value listed, or its visible label.',
     'Anything the link does not name keeps the value it started from, so send only what differs.',
     `why.<key>=<text>: your reason for that value, shown to the user beside it (${WHY_MAX} characters at most). note=<text>: one line shown above the list, for example the place and the date.`,
     'A number outside a field\'s range is pulled into range and the user is told; a key the tool does not know is skipped and listed. Never use the keys s, open or embed.',
@@ -314,6 +327,7 @@ function agentTxt(M) {
   const L = [];
   const para = (s, indent = '') => L.push(...wrapText(s, 100, indent));
   L.push(`${M.title}: use this tool with an AI assistant`, M.base, '');
+  L.push('This is the full reference for one page of the skill ' + skillName(TOOLS.find(T => T.tool === toolOf(P.page))) + ': read SKILL.md first.', '');
   if (P.lang !== 'en') { para(PEOPLE[P.lang].lead); L.push(''); }
   para('For people: ' + PEOPLE.en.lead);
   L.push('', 'WHAT THIS TOOL DECIDES');
@@ -323,8 +337,12 @@ function agentTxt(M) {
   L.push('', 'EXAMPLE');
   para('Request: ' + M.example.request);
   L.push('A reply in that form:');
+  const said = userInputs(M, M.example);
+  if (said.length) { L.push('Your inputs:'); said.forEach(r => para(`- ${r.label}: ${r.value}`)); }
+  L.push('Assumptions:');
   M.example.assumptions.forEach((a, i) => para(`${i + 1}. ${a}`));
-  L.push(M.link, '```', M.link, '```', 'Open the link to see the result.');
+  const link = canonicalLink(M.base, M.example.pairs);
+  L.push(link, '```', link, '```', 'Open the link to see the result.');
   // The Quick Starts in brief here; their figures, which can run long, close the file, so a
   // reader that stops early still has every field.
   if (M.qs) {
@@ -371,109 +389,24 @@ function agentTxt(M) {
   return L.join('\n').replace(/\n{3,}/g, '\n\n') + '\n';
 }
 
-/* ── agent.html: agent.txt as a web page ──────────────────────────────────── */
-// Some chatbots' browsers read a tool's page but return nothing for a .txt file, so the
-// reference is also a plain web page: every word in the HTML the server sends (its one
-// script only copies that text, as Markdown, for the Copy system prompt button).
-// It is agent.txt itself, cut at its headings: each heading becomes an h2 and the text under
-// it a pre, so nothing is reworded and the two cannot drift apart.
-const HEADING_RE = /^[A-Z][A-Z0-9 :]*[A-Z]( \(.*\))?$/;
-const RULES_HEAD = AI_RULES.split('\n')[0];
-function agentHtml(M, txt) {
-  const lines = txt.replace(/\n$/, '').split('\n');
-  const intro = [], secs = [];
-  for (let i = 3; i < lines.length; i++) {
-    if (lines[i - 1] === '' && HEADING_RE.test(lines[i])) secs.push({ head: lines[i], body: [] });
-    else (secs.length ? secs[secs.length - 1].body : intro).push(lines[i]);
-  }
-  const trim = a => a.join('\n').replace(/^\n+|\n+$/g, '');
-  const sentence = h => h.replace(/^([^(]*)/, m => m.charAt(0) + m.slice(1).toLowerCase());
-  const txtUrl = M.base + 'agent.txt';
-  const title = `${M.title}: use this tool with an AI assistant`;
-  const desc = `How an AI assistant opens ${M.title} on its user's own scenario with one link: every key with its range and default, the Quick Starts and an example.`;
-  const H = [
-    '<!DOCTYPE html>',
-    '<html lang="en">',
-    '<head>',
-    '<meta charset="UTF-8">',
-    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-    `<title>${esc(title)} | Adjie Brotools</title>`,
-    `<meta name="description" content="${attr(desc)}">`,
-    '<meta name="robots" content="index, follow">',
-    `<link rel="canonical" href="${attr(M.base + 'agent.html')}">`,
-    `<link rel="alternate" type="text/plain" href="${attr(txtUrl)}">`,
-    '<style>',
-    ':root{--bg:#fff;--fg:#1a1a1a;--muted:#555;--line:#ddd;--code:#f5f5f4;--link:#0b57d0;color-scheme:light dark;}',
-    '@media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#e8e8e8;--muted:#aaa;--line:#333;--code:#1d1d1d;--link:#8ab4f8;}}',
-    'body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;}',
-    'main{max-width:860px;margin:0 auto;padding:24px 16px 48px;}',
-    'h1{font-size:1.5rem;line-height:1.3;margin:0 0 8px;}',
-    'h2{font-size:1.1rem;margin:28px 0 8px;border-top:1px solid var(--line);padding-top:16px;}',
-    'a{color:var(--link);}',
-    '.links{color:var(--muted);}',
-    '.copy{padding:0;border:0;background:none;font:inherit;color:var(--link);text-decoration:underline;cursor:pointer;}',
-    'pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px;margin:0;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;}',
-    '</style>',
-    '</head>',
-    '<body>',
-    `<!-- Generated by _ref/agent-doc.mjs from ${M.P.notes} and the page itself, the same text as agent.txt: edit those, then run it. -->`,
-    '<main>',
-    `<h1>${esc(title)}</h1>`,
-    `<p class="links"><a href="${attr(M.base)}">Open ${esc(M.title)}</a> · <a href="${attr(txtUrl)}">The same reference as plain text (agent.txt)</a> · <button type="button" id="copyPrompt" class="copy" data-tool="${attr(M.base)}">Copy system prompt</button></p>`,
-  ];
-  // The lines for people, one paragraph each (an id/ page's Indonesian one first).
-  for (const para of trim(intro).split(/\n\s*\n/)) {
-    const lang = M.P.lang !== 'en' && !para.startsWith('For people:') ? ` lang="${M.P.lang}"` : '';
-    H.push(`<p${lang}>${esc(para.replace(/\n/g, ' '))}</p>`);
-  }
-  for (const sec of secs) {
-    const rules = sec.head === RULES_HEAD;
-    H.push(`<h2>${esc(sentence(sec.head))}</h2>`);
-    // The rules keep their heading inside the pre, so the page carries AI_RULES verbatim.
-    H.push(`<pre${rules ? ' class="agent-rules"' : ''}>${esc(trim(rules ? [sec.head, ...sec.body] : sec.body))}</pre>`);
-  }
-  H.push('</main>', `<script>${COPY_SCRIPT}</script>`, '</body>', '</html>', '');
-  return H.join('\n');
-}
-
-// "Copy system prompt": the page's reference as Markdown, for pasting into an assistant's
-// system prompt. Built from the page itself at click time, so it cannot drift from it: the
-// h1 becomes #, each h2 ##, a [Group] line in a section ###, the rest as it is. Every word is
-// already in the HTML above; the script only copies it.
-const COPY_SCRIPT = `(function(){
-var b=document.getElementById('copyPrompt');if(!b)return;
-function md(){
-var m=document.querySelector('main'),out=['# '+m.querySelector('h1').textContent,'','Tool: '+b.getAttribute('data-tool')];
-m.querySelectorAll('h2').forEach(function(h){
-var pre=h.nextElementSibling,t=pre&&pre.tagName==='PRE'?pre.textContent:'';
-var lines=t.split('\\n');
-if(lines[0]&&lines[0].toLowerCase()===h.textContent.toLowerCase())lines.shift();
-out.push('','## '+h.textContent,'');
-lines.forEach(function(l){var g=/^\\[(.+)\\]$/.exec(l);out.push(g?'### '+g[1]:l);});
-});
-return out.join('\\n').replace(/\\n{3,}/g,'\\n\\n').trim()+'\\n';
-}
-function done(ok){var w=b.textContent;b.textContent=ok?'Copied':'Copy failed';setTimeout(function(){b.textContent=w;},1600);}
-function fallback(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}a.remove();done(ok);}
-b.addEventListener('click',function(){var t=md();if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(function(){done(true);},function(){fallback(t);});else fallback(t);});
-})();`;
-
 /* ── The hidden pointer on the tool page ──────────────────────────────────── */
 // Text inside an element; attr() for an attribute value.
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const attr = s => esc(s).replace(/"/g, '&quot;');
 
-// The tool page carries no visible AI text: people never see it. Only a hidden pointer to
-// agent.html and agent.txt, in the HTML the server sends, so an assistant that reads the page
-// finds the reference (llms.txt lists the same pages).
+// The tool page carries no visible AI text: people never see it. Only a hidden pointer to the
+// tool's AI page and its SKILL.md, in the HTML the server sends, so an assistant that reads the
+// page finds them (llms.txt lists the same). data-ai is where the header's "Use in AI" button
+// goes (tour-shared.js).
 function section(M) {
   const { P } = M;
-  const txtUrl = M.base + 'agent.txt';
-  const htmlUrl = M.base + 'agent.html';
+  const T = TOOLS.find(T => T.tool === toolOf(P.page));
+  const ai = aiUrl(T);
+  const md = ai + 'skill/SKILL.md';
   return [
     MARK_START,
     `<!-- Generated by _ref/agent-doc.mjs from ${P.notes} and the page itself: edit those, then run it. -->`,
-    `<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en">For AI assistants: how to open this tool on your user's scenario with one link: <a href="${attr(htmlUrl)}">${esc(htmlUrl)}</a> (plain text: <a href="${attr(txtUrl)}">${esc(txtUrl)}</a>)</div>`,
+    `<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en" data-ai="/${T.tool}/ai/">For AI assistants: this tool has a skill that opens it on your user's scenario with one link: <a href="${attr(ai)}">${esc(ai)}</a> (instructions: <a href="${attr(md)}">${esc(md)}</a>)</div>`,
     MARK_END,
   ].join('\n');
 }
@@ -488,26 +421,23 @@ function withSection(html, M) {
 
 /* ── llms.txt ────────────────────────────────────────────────────────────── */
 function llmsSection() {
-  const L = [MARK_START, '## Use a tool through an AI assistant (the #load link)', ''];
+  const L = [MARK_START, '## Use a tool through an AI assistant (skills and the #load link)', ''];
   L.push(
-    'An AI assistant can open a tool on the user\'s own scenario with one link, and the tool computes the answer in the user\'s browser. The full reference for each page (every key, its range and default, the Quick Starts and an example) is in that page\'s agent.html (a web page) and agent.txt (the same text, plain), listed below.',
+    'Each tool below has a skill (a .zip with SKILL.md, a reference per page and a script that builds the link) that people install in Claude, ChatGPT, Grok and other assistants. With it, the assistant opens the tool on the user\'s own scenario with one link, and the tool computes the answer in the user\'s browser. The skill\'s files are also published unzipped, so an assistant that browses can read SKILL.md and its references directly.',
     '',
     AI_RULES,
     '',
     'Link format (version 1):',
     SITE + '/<tool>/#load&v=1&qs=<quick start>&<key>=<value>&...&why.<key>=<your reason>&note=<one line>',
     '- The fragment starts with load, then key=value pairs joined by &, each value percent-encoded. No base64, no compression.',
-    '- Keys are the tool\'s own field keys, listed in its agent.txt. Reserved keys: v (format version, 1), qs (a Quick Start to start from), why.<key> (your reason for a value, shown to the user, ' + WHY_MAX + ' characters at most), note (one line shown at the top), json (structured state, for tools whose agent.txt defines it), run (0 opens a heavy optimiser without solving). Never use s, open or embed: they belong to Share links and embeds.',
+    '- Keys are the tool\'s own field keys, listed in its skill\'s references. Reserved keys: v (format version, 1), qs (a Quick Start to start from), why.<key> (your reason for a value, shown to the user, ' + WHY_MAX + ' characters at most), note (one line shown at the top), json (structured state, for tools whose reference defines it), run (0 opens a heavy optimiser without solving). Never use s, open or embed: they belong to Share links and embeds.',
     '- Values are what the field shows on screen, in the units of its label: mortgageRate=6.1 means 6.1 %/yr, not 0.061.',
     '- Base, then overrides: the Quick Start (or the tool\'s defaults), then each key in the link. Anything not named keeps its base value, so send only what differs.',
     '- Long links are fine: everything after # stays in the browser. Give a long link both as a link and inside a code block.',
     '',
-    'Pages with an AI reference (web page, then plain text):',
+    'Tools with a skill (AI page, then the skill):',
+    ...llmsLines(),
   );
-  for (const M of models) {
-    const lang = M.P.lang === 'id' ? ' (Indonesian page)' : '';
-    L.push(`- ${M.title}${lang}: ${M.base}agent.html (plain text: ${M.base}agent.txt)`);
-  }
   L.push(MARK_END);
   return L.join('\n');
 }
@@ -546,21 +476,31 @@ try {
 
 /* ── Write, or compare ───────────────────────────────────────────────────── */
 const outputs = [];
+const refTexts = new Map();
 for (const M of models) {
-  const txt = agentTxt(M);
-  outputs.push([join(M.P.page, 'agent.txt'), txt]);
-  outputs.push([join(M.P.page, 'agent.html'), agentHtml(M, txt)]);
+  refTexts.set(M.P.page, agentTxt(M));
   const htmlPath = join(ROOT, M.P.page, 'index.html');
   outputs.push([join(M.P.page, 'index.html'), withSection(readFileSync(htmlPath, 'utf8'), M)]);
 }
+for (const T of TOOLS) {
+  const ms = models.filter(M => toolOf(M.P.page) === T.tool);
+  if (!ms.length) { problem(T.tool, 'no page of this tool is in PAGES'); continue; }
+  const main = ms.find(M => M.P.page === T.main);
+  if (!main) { problem(T.tool, `its main page ${T.main} is not in PAGES`); continue; }
+  const sk = skillFiles(T, ms, refTexts);
+  for (const [rel, body] of sk.files) outputs.push([join(T.tool, 'ai', 'skill', rel), body]);
+  outputs.push([join(T.tool, 'ai', sk.name + '.zip'), sk.zip]);
+  outputs.push([join(T.tool, 'ai', 'index.html'), aiPage(T, ms, main.demo)]);
+}
+for (const M of models) if (!TOOLS.some(T => T.tool === toolOf(M.P.page))) problem(M.P.page, 'its tool is not in TOOLS (_ref/ai-skill.mjs)');
 outputs.push(['llms.txt', withLlms(readFileSync(join(ROOT, 'llms.txt'), 'utf8'))]);
+// The old per-page reference files, replaced by the skills.
+const retired = PAGES.flatMap(P => ['agent.txt', 'agent.html'].map(f => join(P.page, f))).filter(rel => existsSync(join(ROOT, rel)));
 
 // Every generated text carries the rules exactly (check A7 in agent-check holds them to it too).
 for (const [rel, text] of outputs) {
-  if (rel.endsWith('index.html')) continue;
-  const body = text;
-  const rules = rel.endsWith('.html') ? esc(AI_RULES) : AI_RULES;
-  if (!body.includes(rules)) problem(rel, 'the generated text lacks the rules block');
+  if (!/references\/[^/]+\.md$/.test(rel) && rel !== 'llms.txt') continue;
+  if (!text.includes(AI_RULES)) problem(rel, 'the generated text lacks the rules block');
 }
 
 if (problems.length) {
@@ -571,10 +511,15 @@ if (problems.length) {
 const stale = [];
 for (const [rel, text] of outputs) {
   const file = join(ROOT, rel);
-  const now = existsSync(file) ? readFileSync(file, 'utf8') : null;
-  if (now === text) continue;
+  if (Buffer.isBuffer(text)) {
+    if (existsSync(file) && readFileSync(file).equals(text)) continue;
+  } else if ((existsSync(file) ? readFileSync(file, 'utf8') : null) === text) continue;
   stale.push(rel);
-  if (!CHECK) writeFileSync(file, text);
+  if (!CHECK) { mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, text); }
+}
+for (const rel of retired) {
+  stale.push(rel + ' (retired: remove it)');
+  if (!CHECK) rmSync(join(ROOT, rel));
 }
 const via = [...new Set(models.map(M => M.source))].join(', ');
 if (CHECK) {
@@ -584,6 +529,6 @@ if (CHECK) {
   }
   console.log(`agent-doc --check: ${outputs.length} files up to date (fields read via ${via}).`);
 } else {
-  console.log(stale.length ? stale.map(s => s + ' written').join('\n') : 'agent-doc: every file already up to date.');
+  console.log(stale.length ? stale.map(s => s.endsWith(')') ? s.replace(' (retired: remove it)', ' removed') : s + ' written').join('\n') : 'agent-doc: every file already up to date.');
   console.log(`(fields read via ${via})`);
 }

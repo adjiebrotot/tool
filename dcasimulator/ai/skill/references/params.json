@@ -1,0 +1,592 @@
+{
+ "skill": "brotools-dcasimulator",
+ "tool": "DCA Scenario Explorer",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "dcasimulator",
+   "url": "/dcasimulator/",
+   "base": "https://tool.adjiebrotots.com/dcasimulator/",
+   "lang": "en",
+   "title": "DCA Scenario Explorer",
+   "reference": "references/dcasimulator.md",
+   "decides": "How a plan of regular purchases (dollar cost averaging) would have gone on past prices. Each scenario is one real ticker bought on one schedule, such as $500 a month into SPY, and the tool shows what was put in, what it was worth at the end, the return and the risk, with the scenarios side by side. Compare tickers, schedules or buying rules over any past date range.",
+   "important": [
+    "tickers",
+    "amount",
+    "startDate",
+    "endDate",
+    "style"
+   ],
+   "fields": [
+    {
+     "key": "currencySymbol",
+     "label": "Currency Symbol",
+     "group": "Data",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      },
+      {
+       "value": "",
+       "label": "None (no symbol)"
+      }
+     ],
+     "default": "$"
+    },
+    {
+     "key": "startDate",
+     "label": "Start date",
+     "group": "Data: Data Download",
+     "kind": "date",
+     "default": "set from today",
+     "important": true
+    },
+    {
+     "key": "endDate",
+     "label": "End date",
+     "group": "Data: Data Download",
+     "kind": "date",
+     "default": "set from today",
+     "important": true
+    },
+    {
+     "key": "randomSeed",
+     "label": "Simulation Seed",
+     "group": "Assumptions: Simulation and metrics",
+     "kind": "number",
+     "min": 0,
+     "max": null,
+     "step": 1,
+     "default": "25823952204"
+    },
+    {
+     "key": "execTiming",
+     "label": "Trade at",
+     "group": "Assumptions: Simulation and metrics",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "close",
+       "label": "Same day's close"
+      },
+      {
+       "value": "next-open",
+       "label": "Next day's open"
+      },
+      {
+       "value": "next-close",
+       "label": "Next day's close"
+      }
+     ],
+     "default": "next-open"
+    },
+    {
+     "key": "riskFreeRate",
+     "label": "Risk-Free Rate",
+     "group": "Assumptions: Simulation and metrics",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 30,
+     "default": "4"
+    }
+   ],
+   "lists": [
+    "tickers",
+    "amount",
+    "yearlyIncrease",
+    "style",
+    "dayOrDate",
+    "period",
+    "momentumPct"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "monthly-weekly",
+     "title": "Monthly vs Weekly"
+    },
+    {
+     "key": "equity-mmf",
+     "title": "Equity vs Money Market"
+    },
+    {
+     "key": "stock-etf",
+     "title": "Stock vs ETF"
+    }
+   ]
+  },
+  {
+   "page": "dcasimulator/portfolio",
+   "url": "/dcasimulator/portfolio/",
+   "base": "https://tool.adjiebrotots.com/dcasimulator/portfolio/",
+   "lang": "en",
+   "title": "Portfolio DCA Simulator",
+   "reference": "references/dcasimulator-portfolio.md",
+   "decides": "How portfolios of several real tickers would have gone on past prices when money is added on a schedule (top-ups) and the holdings are kept to target weights by a chosen rebalancing method. Each portfolio is a mix such as 60% VOO and 40% BND, and the tool shows what was put in, what it was worth at the end, the return and the risk, with the portfolios side by side. Compare mixes, rebalancing methods or schedules over any past date range.",
+   "important": [
+    "p1",
+    "p2",
+    "topupAmount",
+    "startDate",
+    "endDate",
+    "rebalMethod"
+   ],
+   "fields": [
+    {
+     "key": "currencySymbol",
+     "label": "Currency Symbol",
+     "group": "Data",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      },
+      {
+       "value": "",
+       "label": "None (no symbol)"
+      }
+     ],
+     "default": "$"
+    },
+    {
+     "key": "startDate",
+     "label": "Start date",
+     "group": "Data: Data Download",
+     "kind": "date",
+     "default": "set from today",
+     "important": true
+    },
+    {
+     "key": "endDate",
+     "label": "End date",
+     "group": "Data: Data Download",
+     "kind": "date",
+     "default": "set from today",
+     "important": true
+    },
+    {
+     "key": "topupAmount",
+     "label": "Amount per top-up",
+     "group": "Portfolios: Contribution",
+     "kind": "amount",
+     "currency": true,
+     "min": 0,
+     "max": 100000000000,
+     "default": 5000,
+     "important": true
+    },
+    {
+     "key": "topupYearlyInc",
+     "label": "Yearly increase",
+     "group": "Portfolios: Contribution",
+     "kind": "amount",
+     "currency": true,
+     "min": 0,
+     "max": 100,
+     "default": 0
+    },
+    {
+     "key": "topupPeriod",
+     "label": "Top-up period",
+     "group": "Portfolios: Contribution",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "weekly",
+       "label": "Weekly"
+      },
+      {
+       "value": "fortnightly",
+       "label": "Fortnightly"
+      },
+      {
+       "value": "monthly",
+       "label": "Monthly"
+      },
+      {
+       "value": "quarterly",
+       "label": "Quarterly"
+      },
+      {
+       "value": "yearly",
+       "label": "Yearly"
+      }
+     ],
+     "default": "monthly"
+    },
+    {
+     "key": "rfRate",
+     "label": "Risk-free rate",
+     "group": "Portfolios: Risk-Free Account",
+     "kind": "amount",
+     "currency": true,
+     "min": 0,
+     "max": 30,
+     "default": 0
+    },
+    {
+     "key": "rebalMethod",
+     "label": "Rebalancing method",
+     "group": "Portfolios",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "towards-weight",
+       "label": "Towards Weight"
+      },
+      {
+       "value": "constant-weight",
+       "label": "Constant Weight"
+      },
+      {
+       "value": "constant-allocation",
+       "label": "Constant Allocation"
+      },
+      {
+       "value": "dynamic-momentum",
+       "label": "Trend Following"
+      },
+      {
+       "value": "rule-trigger",
+       "label": "Rule-Based Triggers"
+      }
+     ],
+     "default": "towards-weight",
+     "important": true
+    },
+    {
+     "key": "lookbackMonths",
+     "label": "Momentum lookback",
+     "group": "Portfolios",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "1",
+       "label": "1 month"
+      },
+      {
+       "value": "3",
+       "label": "3 months"
+      },
+      {
+       "value": "6",
+       "label": "6 months"
+      },
+      {
+       "value": "12",
+       "label": "12 months"
+      }
+     ],
+     "default": "6"
+    },
+    {
+     "key": "cwTiming",
+     "label": "Rebalance timing",
+     "group": "Portfolios",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "at-topup",
+       "label": "At top-up"
+      },
+      {
+       "value": "schedule",
+       "label": "Separate schedule"
+      }
+     ],
+     "default": "at-topup"
+    },
+    {
+     "key": "rebalPeriod",
+     "label": "Rebalance period",
+     "group": "Portfolios",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "weekly",
+       "label": "Weekly"
+      },
+      {
+       "value": "fortnightly",
+       "label": "Fortnightly"
+      },
+      {
+       "value": "monthly",
+       "label": "Monthly"
+      },
+      {
+       "value": "quarterly",
+       "label": "Quarterly"
+      },
+      {
+       "value": "yearly",
+       "label": "Yearly"
+      }
+     ],
+     "default": "quarterly"
+    },
+    {
+     "key": "buyFee",
+     "label": "Buying fee",
+     "group": "Portfolios: Fees",
+     "kind": "amount",
+     "currency": true,
+     "min": 0,
+     "max": 10,
+     "default": 0.1
+    },
+    {
+     "key": "sellFee",
+     "label": "Selling fee",
+     "group": "Portfolios: Fees",
+     "kind": "amount",
+     "currency": true,
+     "min": 0,
+     "max": 10,
+     "default": 0.1
+    },
+    {
+     "key": "randomSeed",
+     "label": "Simulation Seed",
+     "group": "Assumptions: Simulation",
+     "kind": "number",
+     "min": 0,
+     "max": null,
+     "step": 1,
+     "default": "25823952204"
+    },
+    {
+     "key": "execTiming",
+     "label": "Trade at",
+     "group": "Assumptions: Simulation",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "close",
+       "label": "Same day's close"
+      },
+      {
+       "value": "next-open",
+       "label": "Next day's open"
+      },
+      {
+       "value": "next-close",
+       "label": "Next day's close"
+      }
+     ],
+     "default": "next-open"
+    }
+   ],
+   "lists": [
+    "p1",
+    "p2",
+    "p3",
+    "p4",
+    "p5",
+    "p6"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "alloc",
+     "title": "80/20 vs 60/40"
+    },
+    {
+     "key": "rebal-freq",
+     "title": "Rebal Monthly vs Quarterly"
+    },
+    {
+     "key": "rebal-vs-alloc",
+     "title": "Rebal vs Constant Alloc"
+    }
+   ]
+  }
+ ]
+}

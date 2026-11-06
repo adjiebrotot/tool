@@ -1,7 +1,7 @@
 # Valuate Everything: notes for the AI section
 
 Hand-written. `node _ref/agent-doc.mjs` merges these notes with the fields it reads from the
-page and writes `valuateeverything/agent.txt`, the AI section in `index.html` and the line in
+page and writes the skill reference (`ai/skill/references/`), the AI section in `index.html` and the line in
 `llms.txt`. Edit here, never the generated text, then run the generator. Text above the first
 heading (this) is not published. Same headings as `rentvsownhouse/agent-notes.md`.
 

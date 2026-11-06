@@ -265,7 +265,7 @@ Scale the rigor to the risk:
   as `worldclock/`) adds `data-bmc-drag` to the `bmc.js` tag so a reader can drag it. One whose
   footer is a bar floating over the canvas also adds `data-bmc-dock="<footer selector>"`: the
   button then sits at the bar's right end whenever the bar is open and more than a line tall. Not on
-  pages with nothing to thank for (the home page, privacy, disclaimer, 404), `agent.html` pages or
+  pages with nothing to thank for (the home page, privacy, disclaimer, 404), AI pages (`<tool>/ai/`) or
   the embed viewer.
 - **Every tool** carries the links row `p.footer-links`: Disclaimer · Privacy Policy · Blog,
   linking `<root>/disclaimer/`, `<root>/privacy/` and https://blog.adjiebrotots.com/ with
@@ -317,11 +317,16 @@ mode included, must be reachable that way: add the page to `PAGES` in `_ref/agen
 `<tool>/agent-notes.md` (Rent vs Own's is the worked example), register an adapter for state
 beyond plain fields, run `node _ref/agent-doc.mjs`, add kept links to `_ref/agent-links.json`
 and get `node _ref/agent-check.mjs <tool>` green. A tool whose solve is heavy honours `run=0`.
-`agent-doc` writes `<tool>/agent.txt` and the same text as a web page, `<tool>/agent.html`, for
-chatbots whose browser skips `.txt` files (its Copy system prompt button copies it as Markdown),
-and puts only a hidden pointer to them in the tool page: no AI text is ever shown to people there.
-Add the `agent.html` to `sitemap.xml` after the tool's own entry, and after the deploy run
-`node _ref/agent-live-check.mjs <tool>`.
+Add the tool to `TOOLS` in `_ref/ai-skill.mjs` (its name and when an assistant should use it).
+`agent-doc` then writes the tool's **skill** and its **AI page** under `<tool>/ai/`: a `.zip`
+people install in Claude, ChatGPT or Grok (SKILL.md, a reference per page, `params.json` and
+`scripts/build_link.py`, which builds and checks the link), the same files unzipped under
+`skill/`, and `index.html` with the download, the animated install steps and a worked
+conversation (the notes' `## AI page example`, else their `## Example`). The tool page gets
+only a hidden pointer (whose `data-ai` puts the **✨ Use in AI** header button there, through
+`tour-shared.js`), and the guide a **Use it in your AI** card after its Shortcuts card (or
+before its closing buttons). Add `<tool>/ai/` to `sitemap.xml` after the tool's guide entry, and
+after the deploy run `node _ref/agent-live-check.mjs <tool>`.
 
 For a multi-language tool (an `en` page and an `id/` page sharing one `script.js`), use a
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is

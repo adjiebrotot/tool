@@ -1,7 +1,7 @@
 # PowerFactory Workflow Builder: notes for the AI section
 
 Hand-written. `node _ref/agent-doc.mjs` merges these notes with what it reads from the page and
-writes `powerfactory-scripter/builder/agent.txt`, the AI section in `index.html` (in the Quick
+writes the skill reference (`ai/skill/references/`), the AI section in `index.html` (in the Quick
 start list) and the lines in `llms.txt`. Edit here, never the generated text, then run the
 generator. Text above the first heading (this) is not published. The headings are the same as in
 `rentvsownhouse/agent-notes.md`.

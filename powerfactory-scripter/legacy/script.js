@@ -2380,7 +2380,7 @@ document.querySelectorAll('.quick-start-btn').forEach(btn => {
   }
 
   /* ── AI links (SharedAgent) ─────────────────────────────────────────────
-     A chatbot's link (#load&v=1&qs=<sample>&<field>=<value>, see agent.txt) starts
+     A chatbot's link (#load&v=1&qs=<sample>&<field>=<value>, see the skill in ../ai/) starts
      from one of the worked examples and sets the form's fields by their ids. The
      tables (input variables, output variables, constraints, contingencies) belong
      to the example: they are not link keys (index.html marks them data-no-persist),

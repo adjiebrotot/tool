@@ -34,11 +34,12 @@ user: if they want something this tool does not do, help them as you normally wo
    figures come from its own model and data, and a figure worked out separately can differ from
    what the user then sees on screen, so leave results, estimates, verdicts and recommendations
    to the tool rather than stating or previewing them.
-2. A reply that works well has three parts, in this order:
-   a. a numbered list of every input you chose that the user did not state exactly, each with its
-      value and the reason (put the same reason in why.<key>);
-   b. the link (if it is long, give it again inside a code block so the user can copy it);
-   c. the sentence: Open the link to see the result.
+2. A reply that works well has four parts, in this order, in the user's language:
+   a. Your inputs: what the user stated, each with the value it takes in the link;
+   b. Assumptions: every other input you chose, each with its value and its source (with its
+      date) or your reason (put the same reason, shortened, in why.<key>);
+   c. the link (if it is long, give it again inside a code block so the user can copy it);
+   d. the sentence: Open the link to see the result.
 3. Build the link in the format below, using only the keys listed here. Start from the nearest
    Quick Start (qs) and send only what differs from it. Write json compactly: no spaces or line
    breaks, defaults left out.
@@ -68,15 +69,17 @@ export function encodeValue(s) {
     .replace(/[()']/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
 }
 // base: the page's absolute URL; pairs: [[key, value], ...] in link order.
+// A key is encoded too (a part name may hold a space: el.HVDC link.p_nom), keeping its dots.
+export const encodeKey = k => encodeValue(k).replace(/=/g, '%3D');
 export function buildLink(base, pairs) {
-  let link = base + '#load' + pairs.map(([k, v]) => '&' + k + '=' + encodeValue(v)).join('');
+  let link = base + '#load' + pairs.map(([k, v]) => '&' + encodeKey(k) + '=' + encodeValue(v)).join('');
   // A link that ends on punctuation loses it to the link detector.
   if (/[.,:]$/.test(link)) link = link.slice(0, -1) + '%' + link.slice(-1).charCodeAt(0).toString(16).toUpperCase();
   return link;
 }
 
 /* ── Pages ───────────────────────────────────────────────────────────────────
-   page        folder from the repo root; agent.txt and the HTML section are written there
+   page        folder from the repo root; its reference (in its tool's skill) and the HTML section are written from it
    url         path of the page on the site (the link base is SITE + url)
    lang        'en' or 'id': the language of the section's lines for people (the rules and
                the reference stay in English, since their reader is the chatbot)
@@ -95,7 +98,7 @@ export function buildLink(base, pairs) {
    solved      Engineering pages only, run IN the page: true once the tool has solved. It
                makes check A6 open each of the page's kept links marked "model": true (a
                whole custom model in json) and wait for it
-   reference   optional, run IN the page (it may wait for the editor): generated reference sections for agent.txt, [{ title, lines }],
+   reference   optional, run IN the page (it may wait for the editor): generated reference sections for the page reference, [{ title, lines }],
                printed last under "REFERENCE: <title>" (the builder's block types)
    virtual     a page with no (or too few) form fields of its own: compact keys that stand in
                as number boxes for the checks' hand edits and range tests, [{ key, min, max,
@@ -880,7 +883,7 @@ export async function pfbQuickStarts() {
   }
   return {
     groups: [{ title: '', items }],
-    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked example workflow. Change its blocks by id with blk.<id>.<setting> (agent.txt lists each one\'s blocks), or send a whole workflow in json.']
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked example workflow. Change its blocks by id with blk.<id>.<setting> (the reference lists each one\'s blocks), or send a whole workflow in json.']
   };
 }
 // The block types a json workflow is made of, from the registry: kind, wires and settings, in palette order.
