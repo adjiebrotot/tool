@@ -163,6 +163,11 @@ export const PAGES = [
     insertBefore: '<!-- AI-CARD -->', quickStarts: pfbQuickStarts, reference: pfbReference, probe: pfbProbe, solved: pfbSolved, families: ['blk.', 'graph.'],
     virtual: [{ key: 'blk.n1.connectTimeout', min: 10, max: 1000000, value: '120' }, { key: 'graph.dpi', min: 50, max: 600, value: '150' }],
     virtualRead: pfbVirtualRead, virtualWrite: pfbVirtualWrite },
+  // The PSCAD Workflow Builder is the same builder on PSCAD's blocks, and shares its helpers.
+  { page: 'pscad-scripter/builder', url: '/pscad-scripter/builder/', lang: 'en', notes: 'pscad-scripter/builder/agent-notes.md',
+    insertBefore: '<!-- AI-CARD -->', quickStarts: pfbQuickStarts, reference: pfbReference, probe: pfbProbe, solved: pfbSolved, families: ['blk.', 'graph.'],
+    virtual: [{ key: 'blk.n1.connectTimeout', min: 10, max: 1000000, value: '120' }, { key: 'graph.dpi', min: 50, max: 600, value: '150' }],
+    virtualRead: pfbVirtualRead, virtualWrite: pfbVirtualWrite },
   // The form-based scripter: flat fields and one of six worked examples (qs, a sample name); its tables come with the example.
   { page: 'powerfactory-scripter/legacy', url: '/powerfactory-scripter/legacy/', lang: 'en', notes: 'powerfactory-scripter/legacy/agent-notes.md',
     insertBefore: '<!-- Sub-tool banner:', quickStarts: pflQuickStarts, probe: pflProbe },
@@ -850,13 +855,14 @@ export function cxSolved() {
   return a.solvedKey === X.solveKey() && /\d/.test(npv.textContent);
 }
 
-// PowerFactory Workflow Builder: each Quick Start is a worked example workflow (templates/index.json). The docs list its blocks
+// The Workflow Builders (PowerFactory, window.PFB; PSCAD, window.PXB): each Quick Start is a worked example workflow
+// (templates/index.json). The two share these helpers, each finding whichever builder the page holds. The docs list its blocks
 // by id, name and kind, and what the example sets that its block kind does not by default, so a blk.<id>.<setting> patch can
 // name the block it means. Read from the template files and the block registry, so it never goes stale. No "=" in the text: the
 // checks read key=value pairs out of these lines.
 export async function pfbQuickStarts() {
-  for (let i = 0; i < 200 && !(window.PFB && window.PFB.ready); i++) await new Promise(r => setTimeout(r, 100));
-  const P = window.PFB;
+  for (let i = 0; i < 200 && !((window.PXB || window.PFB) && (window.PXB || window.PFB).ready); i++) await new Promise(r => setTimeout(r, 100));
+  const P = window.PXB || window.PFB;
   if (!P) return null;
   await Promise.all([P.canvasReady, P.runtimeReady, P.templatesReady]);
   const R = P.registry, W = P.workflow, list = P.templates();
@@ -888,10 +894,10 @@ export async function pfbQuickStarts() {
 }
 // The block types a json workflow is made of, from the registry: kind, wires and settings, in palette order.
 export async function pfbReference() {
-  for (let i = 0; i < 200 && !(window.PFB && window.PFB.ready); i++) await new Promise(r => setTimeout(r, 100));
-  const P = window.PFB;
+  for (let i = 0; i < 200 && !((window.PXB || window.PFB) && (window.PXB || window.PFB).ready); i++) await new Promise(r => setTimeout(r, 100));
+  const P = window.PXB || window.PFB;
   if (!P) return null;
-  const R = P.registry;
+  const R = P.registry, pscad = !!window.PXB;
   const num = n => String(+Number(n).toFixed(6));
   const dflt = st => st.default === undefined || st.default === null || st.default === '' ? '' : ' default ' + (typeof st.default === 'boolean' ? (st.default ? 'yes' : 'no') : num2(st.default));
   const num2 = v => typeof v === 'number' ? num(v) : String(v).replace(/\s+/g, ' ').slice(0, 40);
@@ -902,12 +908,12 @@ export async function pfbReference() {
         : typeof st.min === 'number' ? ' (at least ' + num(st.min) + ')' : typeof st.max === 'number' ? ' (at most ' + num(st.max) + ')' : '') + (st.unit ? ' in ' + st.unit : '') + dflt(st);
       case 'bool': return label + ' yes or no' + dflt(st);
       case 'select': return label + ' one of ' + R.optionPairs(st).map(o => o[0] === '' ? '(blank)' : o[0]).join(' | ') + dflt(st);
-      case 'element': return label + ' element with cls, name (a * matches anything) and match (one, first or all)' + (st.default && st.default.cls ? ', default cls ' + st.default.cls : '');
+      case 'element': return label + (pscad ? ' component with cls (its definition, such as master:resistor), name (a * matches anything) and match (one, first or all)' : ' element with cls, name (a * matches anything) and match (one, first or all)') + (st.default && st.default.cls ? ', default cls ' + st.default.cls : '');
       case 'list': return label + ' rows' + (st.columns && st.columns.length ? ' with id and ' + st.columns.map(c => c.key).join(', ') : '');
       case 'schedule': return label + ' rows with id, t and v';
       case 'code': return label + ' python (not taken from a link)';
       case 'file': return null;
-      case 'attr': return label + ' attribute name such as c:loading' + dflt(st);
+      case 'attr': return label + (pscad ? ' parameter name such as R' : ' attribute name such as c:loading') + dflt(st);
       default: return label + (st.kind === 'textarea' ? ' text, one value per line' : ' text') + dflt(st);
     }
   };
@@ -934,7 +940,7 @@ export async function pfbReference() {
 }
 // What the builder holds, for a kept link's "probe": the workflow on the canvas (without where its blocks sit), block by block.
 export function pfbProbe() {
-  const P = window.PFB;
+  const P = window.PXB || window.PFB;
   if (!P) return {};
   const o = P.workflow.serialize(P.store.get().wf), blocks = {};
   o.nodes.forEach(n => { blocks[n.id] = { type: n.type, label: n.label, s: n.s }; });
@@ -943,7 +949,7 @@ export function pfbProbe() {
 // True once the workflow is on the canvas and the script for exactly that workflow is written (its last line holds the
 // workflow it was written from, so a script of an earlier workflow does not count).
 export function pfbSolved() {
-  const P = window.PFB;
+  const P = window.PXB || window.PFB;
   if (!P || !P.ready) return false;
   const s = P.store.get(), g = s.gen;
   if (!g || typeof g.code !== 'string' || (g.problems || []).some(p => /could not write this workflow/.test(p.msg || ''))) return false;
@@ -951,9 +957,10 @@ export function pfbSolved() {
   const key = o => JSON.stringify([o.name, o.nodes, o.edges]);
   return !!emb && now.nodes.length > 1 && /^def main\b/m.test(g.code) && key(emb) === key(now);
 }
-// The checks type into the builder the way a reader would (window.__PFB_AGENT, js/ui/agent.js), once it has booted.
-export async function pfbVirtualRead(key) { await window.__PFB_AGENT.ready; return window.__PFB_AGENT.get(key); }
-export async function pfbVirtualWrite([key, value]) { await window.__PFB_AGENT.ready; window.__PFB_AGENT.set(key, value); }
+// The checks type into the builder the way a reader would (window.__PFB_AGENT, or __PXB_AGENT on the PSCAD one, js/ui/agent.js),
+// once it has booted.
+export async function pfbVirtualRead(key) { const A = window.__PXB_AGENT || window.__PFB_AGENT; await A.ready; return A.get(key); }
+export async function pfbVirtualWrite([key, value]) { const A = window.__PXB_AGENT || window.__PFB_AGENT; await A.ready; A.set(key, value); }
 
 // PowerFactory Scripter (the form): each Quick Start is a sample configuration (samples/json-samples/<key>.json). The values are
 // the form fields it sets, as a link carries them; the tables come with the sample and are said in a line (no "=" in the text).

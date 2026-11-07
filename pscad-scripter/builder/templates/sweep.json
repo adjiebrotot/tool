@@ -170,7 +170,7 @@
     "stem": "sweep",
     "table": "Sweep",
     "x": "Value",
-    "ys": "[object Object]",
+    "ys": "Peak",
     "kind": "line",
     "group": "",
     "title": "",

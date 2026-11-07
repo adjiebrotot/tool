@@ -34,7 +34,7 @@
    "y": -260,
    "label": "About this template",
    "s": {
-    "text": "A snapshot is the whole state of the case at one instant. A long start-up is simulated once, and each case after it begins there, which is often most of the run time of a study saved. Set the snapshot time past the point where your case has settled."
+    "text": "A snapshot is the whole state of the case at one instant. A long start-up is simulated once, and each case after it begins there, which is often most of the run time of a study saved. Set the snapshot time past the point where your case has settled. A run from the snapshot carries on from the snapshot time, so the fault is timed after it: 2.1 s here, 0.1 s after the 2 s snapshot."
    },
    "pin": [],
    "sv": 1
@@ -106,11 +106,11 @@
    "label": "Fault",
    "s": {
     "el": {
-     "cls": "master:tpflt",
+     "cls": "master:tfaultn",
      "name": "",
      "match": "one"
     },
-    "at": 0.1,
+    "at": 2.1,
     "duration": 0.12,
     "phases": "",
     "resistance": null,

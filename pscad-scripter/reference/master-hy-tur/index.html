@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:hy_tur parameters: PSCAD Hydro Turbine</title>
+<meta name="description" content="Every parameter of master:hy_tur (Hydro Turbine) in PSCAD: 47 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-tur/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:hy_tur parameters (PSCAD Hydro Turbine)">
+<meta property="og:description" content="Every parameter of master:hy_tur (Hydro Turbine) in PSCAD: 47 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-tur/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:hy_tur parameters (PSCAD Hydro Turbine)">
+<meta name="twitter:description" content="Every parameter of master:hy_tur (Hydro Turbine) in PSCAD: 47 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:hy_tur parameters (PSCAD Hydro Turbine)",
+  "description": "Every parameter of master:hy_tur (Hydro Turbine) in PSCAD: 47 names with units, defaults, ranges and meaning, and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-tur/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:hy_tur (Hydro Turbine)",
+    "description": "Hydro Turbine, a component of PSCAD's Master Library, filed under machines, exciters and governors."
+  },
+  "keywords": "master:hy_tur parameters, PSCAD Hydro Turbine parameters, Hydro Turbine PSCAD, master:hy_tur mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:hy_tur",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-tur/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:hy_tur</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:hy_tur parameters<span class="dx-h1-sub">PSCAD Hydro Turbine</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Hydro Turbine (<code>master:hy_tur</code>): 47 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:hy_tur is</h2>
+  <p>Hydro Turbine, a component of PSCAD's Master Library, filed under machines, exciters and governors.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:hy_tur</code></dd><dt>PSCAD name</dt><dd>Hydro Turbine</dd><dt>Category</dt><dd>Machines, exciters and governors</dd><dt>Parameters</dt><dd>47, in 9 groups; 29 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:hy_tur in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:hy_tur&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;D_1&quot;</span>]))            <span class="py-c"># Turbine Damping Constant (D), in pu</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:hy_tur&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(D_1=<span class="py-s">&quot;1 [pu]&quot;</span>)            <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "D_1")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:hy_tur parameters"><li><a href="#g1">Tur1:  Non-Elastic Water Column and No Surge Tank<span class="dx-n">3</span></a></li><li><a href="#g2">Tur2:  Elastic Water Column and No Surge Tank<span class="dx-n">4</span></a></li><li><a href="#g3">Tur3:  Non-Elastic Water Column With Surge Tank<span class="dx-n">7</span></a></li><li><a href="#g4">Tur4:  Elastic Water Column With Surge Tank<span class="dx-n">8</span></a></li><li><a href="#g5">Internal Output Variables 1<span class="dx-n">7</span></a></li><li><a href="#g6">Initial Conditions<span class="dx-n">2</span></a></li><li><a href="#g7">Rated Conditions<span class="dx-n">6</span></a></li><li><a href="#g8">Configuration<span class="dx-n">6</span></a></li><li><a href="#g9">Internal Output Variables 2<span class="dx-n">4</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Tur1:  Non-Elastic Water Column and No Surge Tank</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>D_1</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Turbine Damping Constant (D)<small>At least 0</small></td></tr>
+<tr><td><code>FP_1</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Penstock Head Loss Coefficient (fp)<small>At least 0</small></td></tr>
+<tr><td><code>TW_1</code><small>Real</small></td><td>s</td><td>2.0</td><td>Water Starting Time (TW)<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Tur2:  Elastic Water Column and No Surge Tank</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>D_2</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Turbine Damping Constant (D)<small>At least 0</small></td></tr>
+<tr><td><code>FP_2</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Penstock Head Loss Coefficient ( fp )<small>At least 0</small></td></tr>
+<tr><td><code>TE_2</code><small>Real</small></td><td>s</td><td>2.0</td><td>Penstock Elastic Time (Te)<small>At least 0</small></td></tr>
+<tr><td><code>TW_2</code><small>Real</small></td><td>s</td><td>2.0</td><td>Water Starting Time (TW)<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Tur3:  Non-Elastic Water Column With Surge Tank</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>D_3</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Turbine Damping Constant (D)<small>At least 0</small></td></tr>
+<tr><td><code>FO_3</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Orifice Head Loss Coefficient (f0)<small>At least 0</small></td></tr>
+<tr><td><code>FP1_3</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Penstock Head Loss Coefficient (fp1)<small>At least 0</small></td></tr>
+<tr><td><code>FP2_3</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Tunnel Head Loss Coefficient (fp2)<small>At least 0</small></td></tr>
+<tr><td><code>TS_3</code><small>Real</small></td><td>s</td><td>100.0</td><td>Surge Tank Riser Time  ( Cs )<small>At least 0</small></td></tr>
+<tr><td><code>TW1_3</code><small>Real</small></td><td>s</td><td>2.0</td><td>Penstock Water Starting Time (TW1)<small>At least 0</small></td></tr>
+<tr><td><code>TW2_3</code><small>Real</small></td><td>s</td><td>2.0</td><td>Tunnel Water Starting Time (TW2)<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Tur4:  Elastic Water Column With Surge Tank</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>D_4</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Turbine Damping Constant (D)<small>At least 0</small></td></tr>
+<tr><td><code>FO_4</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Orifice Head Loss Coefficient (f0)<small>At least 0</small></td></tr>
+<tr><td><code>FP1_4</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Penstock Head Loss Coefficient (fp1)<small>At least 0</small></td></tr>
+<tr><td><code>FP2_4</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Tunnel Head Loss Coefficient (fp2)<small>At least 0</small></td></tr>
+<tr><td><code>TE_4</code><small>Real</small></td><td>s</td><td>2.0</td><td>Penstock Elastic Time (Tep)<small>At least 0</small></td></tr>
+<tr><td><code>TS_4</code><small>Real</small></td><td>s</td><td>100.0</td><td>Surge Tank Riser Time  ( Cs )<small>At least 0</small></td></tr>
+<tr><td><code>TW1_4</code><small>Real</small></td><td>s</td><td>2.0</td><td>Penstock Water Starting Time (TW1)<small>At least 0</small></td></tr>
+<tr><td><code>TW2_4</code><small>Real</small></td><td>s</td><td>2.0</td><td>Tunnel Water Starting Time (TW2)<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Internal Output Variables 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>FLOW</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Flow Before Reduction [pu]</td></tr>
+<tr><td><code>HEAD</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Turbine Head [pu]</td></tr>
+<tr><td><code>P_IN</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Power Input to the Turbine</td></tr>
+<tr><td><code>P_OUT</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Power Output of the Turbine</td></tr>
+<tr><td><code>Q_DEF</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Output name for Jet Deflector Flow [pu]<small>Used when (JD==1)</small></td></tr>
+<tr><td><code>Q_NT</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Net Turbine Flow [pu]</td></tr>
+<tr><td><code>Q_RLF</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Relief Valve Flow [pu]<small>Used when (RV==1)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Initial Conditions</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>HI</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Initial Operating Head<small>Range 0 to 2</small></td></tr>
+<tr><td><code>PM0</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Initial Output Power<small>Range 0 to 2</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Rated Conditions</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>HR</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Head at Rated Conditions<small>Range 0.01 to 2</small></td></tr>
+<tr><td><code>PR</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Output Power at Rated Conditions<small>Range 0.01 to 2</small></td></tr>
+<tr><td><code>QG</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>FLOW</td><td>Rated No-Load Conditions<small>Written as FLOW (Flow), GATE (Gate)</small><small>Used when (WC+ST==0)</small></td></tr>
+<tr><td><code>QNL</code><small>Real</small></td><td>pu</td><td>0.05</td><td>Rated No-load Flow<small>Range 0 to 1</small><small>Used when ( !(WC+ST==0) || (QG==0))</small></td></tr>
+<tr><td><code>ZNL</code><small>Real</small></td><td>pu</td><td>0.05</td><td>Rated No-Load Gate<small>Range 0 to 1</small><small>Used when ((QG==1) &amp;&amp; (WC+ST==0))</small></td></tr>
+<tr><td><code>ZR</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Gate Position at Rated Conditions<small>Range 0.01 to 1</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>INIT</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Turbine Status: 0-Initialize;1-Normal<small>Range -2147483648 to 2147483647</small></td></tr>
+<tr><td><code>JD</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Input Signal for Jet Deflecter Required?<small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small></td></tr>
+<tr><td><code>RV</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Input Signal for Relief Valve Required?<small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>ST</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Surge Tank<small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>WC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Elastic Water Column<small>Written as NO (No), YES (Yes)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">Internal Output Variables 2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>P_FLOW</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Penstock Flow Rate [pu]</td></tr>
+<tr><td><code>P_HEAD</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Penstock Head [pu]</td></tr>
+<tr><td><code>S_FLOW</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Surge Tank Flow Rate [pu]</td></tr>
+<tr><td><code>S_HEAD</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Surge Tank Head [pu]</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-hydro-gov/"><code>master:hydro_gov</code> Hydro Governor/Turbine</a> · <a href="../master-macdefn/"><code>master:macdefn</code> macdefn</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

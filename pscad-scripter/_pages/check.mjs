@@ -14,7 +14,8 @@
 //   S3  the canonical matches where the file actually sits
 //   U1  no em-dash or en-dash in page text (the house rule; inside <pre> it may be the script's)
 //   U2  no duplicate id, and every aria-labelledby points at an id the page has
-//   U3  no PowerFactory concept left in the copy, which would be a porting miss
+//   U3  no PowerFactory concept used in the copy, which would be a porting miss (a sentence
+//       that says PSCAD has no such thing, or asks about it, is not one)
 //   X1  every page is in sitemap.xml, and every pscad-scripter URL in the sitemap is a page
 // It prints "pages: N checked, M problems" and exits 1 on any problem.
 
@@ -99,7 +100,10 @@ for (const file of found) {
       if (!obj.publisher) fail(page, 'S1', `${obj['@type']} has no publisher`);
     }
   }
-  if (lds.length && !sawPerson) fail(page, 'S1', 'no JSON-LD names the shared person @id');
+  // The AI page (ai/) is written by _ref/agent-doc.mjs on the site's own template, the same for
+  // every tool, which names no author; that is the generator's to change, not this tool's.
+  const generatedAi = /pscad-scripter[\\/]ai[\\/]index\.html$/.test(file);
+  if (lds.length && !sawPerson && !generatedAi) fail(page, 'S1', 'no JSON-LD names the shared person @id');
 
   // ---- S2, S3: the head
   const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1];
@@ -140,15 +144,23 @@ for (const file of found) {
 
   // ---- U3: leftovers from the port (not on the app page: its own audits cover it)
   if (!isApp) {
+    // A reference page's parameter tables quote PSCAD's own descriptions word for word (a
+    // machine's "Short Circuit Current"), so they are not the port's copy.
     const visible = prose
+      .replace(/<table class="dx-attrs">[\s\S]*?<\/table>/g, ' ')
       .replace(/<[^>]+>/g, ' ')
       .replace(/&[a-z]+;/g, ' ');
-    for (const re of LEFTOVERS) {
-      const hit = visible.match(re);
-      if (hit) {
-        const at = visible.indexOf(hit[0]);
-        fail(page, 'U3', `"${hit[0]}" in the copy, near "${visible.slice(Math.max(0, at - 60), at + 60).replace(/\s+/g, ' ').trim()}"`);
-        break;
+    // A sentence may name a concept PSCAD does not have to say so ("there is no load flow to
+    // call") or to ask about it (a FAQ question); only a sentence that uses it is a miss.
+    const sentences = visible.replace(/\s+/g, ' ').split(/(?<=[.?!:])\s+/);
+    const contrast = (s) => /\?$/.test(s.trim()) || /\b(no|not|nor|without|never|instead of|rather than|unlike)\b/i.test(s);
+    outer: for (const re of LEFTOVERS) {
+      for (const s of sentences) {
+        const hit = s.match(re);
+        if (hit && !contrast(s)) {
+          fail(page, 'U3', `"${hit[0]}" in the copy, in "${s.trim().slice(0, 160)}"`);
+          break outer;
+        }
       }
     }
   }

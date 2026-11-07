@@ -50,6 +50,9 @@ export const TOOLS = [
   { tool: 'powerfactory-scripter', research: 'the PowerFactory object and variable names, the study standard (IEC 60909, the grid code\'s fault ride-through curve), and the user\'s project and study case names as they gave them', main: 'powerfactory-scripter/builder', name: 'PowerFactory Scripter',
     extra: 'Never write the PowerFactory Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.',
     use: 'writing DIgSILENT PowerFactory Python scripts: load flow, N-1 contingency, short circuit, RMS/EMT simulation, fault ride-through, critical clearing time, parameter sweeps and result export, built as a workflow the tool turns into one ready-to-run script.' },
+  { tool: 'pscad-scripter', research: 'the PSCAD component definitions and parameter names (the tool\'s component reference), the grid code\'s fault ride-through curve or harmonic limits, and the user\'s case, component Names and output channel names as they gave them', main: 'pscad-scripter/builder', name: 'PSCAD Scripter',
+    extra: 'Never write the PSCAD Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.',
+    use: 'writing PSCAD Python automation scripts (mhi.pscad, EMTDC): build and run a case, fault ride-through, critical clearing time, parameter sweeps over values, layers and substitution sets, harmonics and THD, snapshots and simulation sets, damping and control tuning, built as a workflow the tool turns into one ready-to-run script.' },
 ];
 
 export const toolOf = page => page.split('/')[0];
