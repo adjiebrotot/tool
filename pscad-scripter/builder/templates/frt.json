@@ -34,7 +34,7 @@
    "y": -260,
    "label": "About this template",
    "s": {
-    "text": "Set the Fault component to the three phase fault in your own case (its definition is usually master:tpflt, and a Name narrows it when the case has several), and the channel names to the output channels your case records. The fault start is 1 s; give the case long enough before it to settle."
+    "text": "Set the Fault component to the timed fault logic that drives the fault in your own case (master:tfaultn, or the older master:tfault: they hold the start time TF and the duration DF, which the Three Phase Fault master:tpflt has no parameters for; a Name narrows it when the case has several), and the channel names to the output channels your case records. The fault start is 1 s; give the case long enough before it to settle."
    },
    "pin": [],
    "sv": 1
@@ -64,7 +64,7 @@
    "label": "Fault",
    "s": {
     "el": {
-     "cls": "master:tpflt",
+     "cls": "master:tfaultn",
      "name": "",
      "match": "one"
     },
