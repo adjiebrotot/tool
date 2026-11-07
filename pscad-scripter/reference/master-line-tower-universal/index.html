@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:Line_Tower_Universal parameters: PSCAD Universal Tower</title>
+<meta name="description" content="Every parameter of master:Line_Tower_Universal (Universal Tower) in PSCAD: 109 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-universal/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:Line_Tower_Universal parameters (PSCAD Universal Tower)">
+<meta property="og:description" content="Every parameter of master:Line_Tower_Universal (Universal Tower) in PSCAD: 109 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-universal/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:Line_Tower_Universal parameters (PSCAD Universal Tower)">
+<meta name="twitter:description" content="Every parameter of master:Line_Tower_Universal (Universal Tower) in PSCAD: 109 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:Line_Tower_Universal parameters (PSCAD Universal Tower)",
+  "description": "Every parameter of master:Line_Tower_Universal (Universal Tower) in PSCAD: 109 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-universal/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:Line_Tower_Universal (Universal Tower)",
+    "description": "Universal Tower (Line Constants Manual Entry of XY Positions), a component of PSCAD's Master Library, filed under lines, cables and towers."
+  },
+  "keywords": "master:Line_Tower_Universal parameters, PSCAD Universal Tower parameters, Universal Tower PSCAD, master:Line_Tower_Universal mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:Line_Tower_Universal",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-universal/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:Line_Tower_Universal</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:Line_Tower_Universal parameters<span class="dx-h1-sub">PSCAD Universal Tower</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Universal Tower (<code>master:Line_Tower_Universal</code>): 109 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:Line_Tower_Universal is</h2>
+  <p>Universal Tower (Line Constants Manual Entry of XY Positions), a component of PSCAD's Master Library, filed under lines, cables and towers.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:Line_Tower_Universal</code></dd><dt>PSCAD name</dt><dd>Universal Tower</dd><dt>Category</dt><dd>Lines, cables and towers</dd><dt>Parameters</dt><dd>109, in 7 groups; 71 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:Line_Tower_Universal in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_Tower_Universal&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;BSP&quot;</span>]))            <span class="py-c"># Sub-conductor spacing, in m</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_Tower_Universal&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(BSP=<span class="py-s">&quot;0.9144 [m]&quot;</span>)        <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "BSP")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:Line_Tower_Universal parameters"><li><a href="#g1">Conductor Data<span class="dx-n">16</span></a></li><li><a href="#g2">Ground Wire Data<span class="dx-n">14</span></a></li><li><a href="#g3">Phase/Node Connection Information<span class="dx-n">14</span></a></li><li><a href="#g4">Configuration<span class="dx-n">7</span></a></li><li><a href="#g5">Asymmetrical Bundling Position Data<span class="dx-n">30</span></a></li><li><a href="#g6">Conductor Coordinates<span class="dx-n">24</span></a></li><li><a href="#g7">Ground Wires Coordinates<span class="dx-n">4</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Conductor Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>BSP</code><small>Real</small></td><td>m</td><td>0.4572</td><td>Sub-conductor spacing<small>Enter the distance between sub-conductors in the bundle.</small><small>Range 1E-38 to 100</small><small>Used when (NCondB&gt;=2)&amp;&amp;(BundSym==0)</small></td></tr>
+<tr><td><code>BundSym</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SYMMETRICAL</td><td>Bundle configuration is<small>Select whether or not the bundle is symmetrical. If not, then the individual sub-conductor positions must be entered.</small><small>Written as SYMMETRICAL (symmetrical), ASYMMETRICAL (asymmetrical)</small><small>Used when NCondB&gt;=2</small></td></tr>
+<tr><td><code>CDataType</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DIRECT</td><td>Data entry method<small>Select direct to enter data values within this dialog.</small><small>Written as FROM_LIBRARY_FILE (from library file), DIRECT (direct)</small></td></tr>
+<tr><td><code>CLName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>..\conductor.clb</td><td>Path to conductor library file<small>Enter the path to the library file, including the filename.</small><small>Used when CDataType==0</small></td></tr>
+<tr><td><code>CName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>chukar</td><td>Name<small>Enter a descriptive name for this conductor type.</small></td></tr>
+<tr><td><code>DCResC</code><small>Real</small></td><td>ohm/km</td><td>0.03206</td><td>DC resistance per unit length (entire conductor)<small>Enter the DC resistance of the entire conductor assembly per unit length (i.e. all strands included if stranded) [ohm/km].</small><small>Range 1E-38 to 100</small><small>Used when CDataType==1</small></td></tr>
+<tr><td><code>Hollow</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SOLID_CORE</td><td>Conductor style is<small>Enter the style of conductor on this tower. This can be solid core, hollow or stranded.</small><small>Written as SOLID_CORE (solid core), HOLLOW (hollow), STRANDED (stranded)</small><small>Used when CDataType == 1</small></td></tr>
+<tr><td><code>NCondB</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Total bundled sub-conductors<small>Enter the total number of sub-conductors per bundle (maximum 15).</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10, 11 = 11, 12 = 12, 13 = 13, 14 = 14, 15 = 15</small></td></tr>
+<tr><td><code>PERMC</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor.</small><small>Range 1E-38 to 1</small><small>Used when CDataType==1</small></td></tr>
+<tr><td><code>RadiusC</code><small>Real</small></td><td>m</td><td>0.0203454</td><td>Outer radius<small>Enter the outer radius of the conductor assembly. If stranded, then this value is the radius to the edge of the outer strands [m].</small><small>Range 1E-38 to 10</small><small>Used when CDataType==1</small></td></tr>
+<tr><td><code>RadiusCin</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner radius<small>Enter the inner radius of the conductor assembly if hollow style.</small><small>Range 0 to 10</small><small>Used when (CDataType==1) &amp;&amp; (Hollow==1)</small></td></tr>
+<tr><td><code>RadiusS</code><small>Real</small></td><td>m</td><td>0.003</td><td>Strand radius<small>Enter the radius of a single conductor strand [m].</small><small>Range 1E-38 to 1E+38</small><small>Used when Hollow == 2</small></td></tr>
+<tr><td><code>SAGC</code><small>Real</small></td><td>m</td><td>10.0</td><td>Sag (all conductors)<small>Enter the sag for all conductors. This is the difference between the height at the tower, to the height mid-span [m].</small><small>Range 0 to 10000</small></td></tr>
+<tr><td><code>SHBund</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VISIBLE</td><td>Bundle graphic is<small>Written as HIDDEN (hidden), VISIBLE (visible)</small><small>Used when NCondB&gt;=2</small></td></tr>
+<tr><td><code>num_out_strnd</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>12</td><td>Total number of outer strands<small>Enter the total number of strands that line the outer circumference of the conductor assembly.</small><small>Range 1 to 1000</small><small>Used when Hollow == 2</small></td></tr>
+<tr><td><code>num_tot_strnd</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>19</td><td>Total number of strands<small>Enter the total number of strands that make up the entire conductor.</small><small>Range 1 to 1000</small><small>Used when Hollow == 2</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Ground Wire Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DCResG</code><small>Real</small></td><td>ohm/km</td><td>2.8645</td><td>DC resistance per unit length<small>Enter the DC resistance of the conducting material per unit length [ohm/km].</small><small>Range 1E-32 to 100</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;0)</small></td></tr>
+<tr><td><code>DCResG2</code><small>Real</small></td><td>ohm/km</td><td>2.8645</td><td>DC resistance per unit length<small>Enter the DC resistance of the conducting material per unit length [ohm/km].</small><small>Range 1E-32 to 100</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</small></td></tr>
+<tr><td><code>ElimGW</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ENABLED</td><td>Ground wire elimination is<small>Select whether or not to mathematically eliminate the ground wires.</small><small>Written as DISABLED (disabled), ENABLED (enabled)</small><small>Used when NG&gt;0</small></td></tr>
+<tr><td><code>G2Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>1/2_HighStrengthSteel</td><td>Name<small>Enter a descriptive name for this ground wire type.</small><small>Used when (GWSame==0)&amp;&amp;(NG&gt;1)</small></td></tr>
+<tr><td><code>GDataType</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DIRECT</td><td>Data entry method<small>Select direct to enter data values within this dialog.</small><small>Written as FROM_LIBRARY_FILE (from library file), DIRECT (direct)</small><small>Used when (NG&gt;0)</small></td></tr>
+<tr><td><code>GLName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>..\conductor.clb</td><td>Path to ground wire library file<small>Enter the path to the library file, including the filename.</small><small>Used when (GDataType==0)&amp;&amp;(NG&gt;0)</small></td></tr>
+<tr><td><code>GName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>1/2_HighStrengthSteel</td><td>Name<small>Enter a descriptive name for this ground wire type.</small><small>Used when NG&gt;0</small></td></tr>
+<tr><td><code>GWSame</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>IDENTICAL</td><td>Ground wires are<small>Select whether or not the ground wires are identical.</small><small>Written as IDENTICAL (identical), DIFFERENT (different)</small><small>Used when (NG&gt;1)</small></td></tr>
+<tr><td><code>NG</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>2</td><td>Total number of ground wires is<small>Select the number of ground wires (1 or 2).</small><small>Written as 0 = 0, 1 = 1, 2 = 2</small></td></tr>
+<tr><td><code>PERMG</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor.</small><small>Range 0 to 1</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;0)</small></td></tr>
+<tr><td><code>PERMG2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor.</small><small>Range 0 to 1</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</small></td></tr>
+<tr><td><code>RadiusG</code><small>Real</small></td><td>m</td><td>0.0055245</td><td>Outer radius<small>Enter the outer radius of the ground wire [m].</small><small>Range 0 to 10</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;0)</small></td></tr>
+<tr><td><code>RadiusG2</code><small>Real</small></td><td>m</td><td>0.0055245</td><td>Outer radius<small>Enter the outer radius of the ground wire [m].</small><small>Range 0 to 10</small><small>Used when (GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</small></td></tr>
+<tr><td><code>SAGG</code><small>Real</small></td><td>m</td><td>10.0</td><td>Sag (all ground wires)<small>Enter the sag for all ground wires. This is the difference between the height at the tower, to the height mid-span [m].</small><small>Range 0 to 10000</small><small>Used when (NG&gt;0)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Phase/Node Connection Information</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>NC1</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Conductor 1 (C1)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small></td></tr>
+<tr><td><code>NC10</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>10</td><td>Conductor 10 (C10)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=10</small></td></tr>
+<tr><td><code>NC11</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>11</td><td>Conductor 11 (C11)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=11</small></td></tr>
+<tr><td><code>NC12</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>12</td><td>Conductor 12 (C12)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=12</small></td></tr>
+<tr><td><code>NC2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>2</td><td>Conductor 2 (C2)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=2</small></td></tr>
+<tr><td><code>NC3</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Conductor 3 (C3)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=3</small></td></tr>
+<tr><td><code>NC4</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>4</td><td>Conductor 4 (C4)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=4</small></td></tr>
+<tr><td><code>NC5</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>5</td><td>Conductor 5 (C5)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=5</small></td></tr>
+<tr><td><code>NC6</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>6</td><td>Conductor 6 (C6)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=6</small></td></tr>
+<tr><td><code>NC7</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>7</td><td>Conductor 7 (C7)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=7</small></td></tr>
+<tr><td><code>NC8</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>8</td><td>Conductor 8 (C8)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=8</small></td></tr>
+<tr><td><code>NC9</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>9</td><td>Conductor 9 (C9)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when Nc&gt;=9</small></td></tr>
+<tr><td><code>NG1</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>4</td><td>Ground Wire 1 (G1)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when (NG&gt;0)&amp;&amp;(ElimGW==0)</small></td></tr>
+<tr><td><code>NG2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>5</td><td>Ground Wire 2 (G2)<small>Enter a number for this conductor to coincide with the external node connection.</small><small>Range 1 to 30</small><small>Used when (NG&gt;1)&amp;&amp;(ElimGW==0)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Nc</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Total number of conductors<small>Enter the total number of conductors, excluding ground wires (maximum 12).</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10, 11 = 11, 12 = 12</small></td></tr>
+<tr><td><code>SHSag</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>HIDDEN</td><td>Graphic of conductor sag is<small>Select whether or not to diplay conductor sag graphic.</small><small>Written as HIDDEN (hidden), VISIBLE (visible)</small></td></tr>
+<tr><td><code>STL</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Grouping<small>Enable grouping of conductors if you would like to organize them into circuits. This is important for the display of double-circuit line constants in load flow RXB format in the output file.</small><small>Written as NONE (None), ORGANIZE_CONDUCTORS_INTO_CIRCUITS (Organize conductors into circuits)</small><small>Used when ((Nc==6) || (Nc==9) || (Nc==12)) &amp;&amp; (Transp==1)</small></td></tr>
+<tr><td><code>ShuntG</code><small>Real</small></td><td>mho/m</td><td>1.0E-11</td><td>Shunt conductance<small>Enter a shunt conductance value for all conductors in this tower. Typically this value is around 1e-11 [mho/m].</small><small>Range 1E-38 to 1</small></td></tr>
+<tr><td><code>TName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>3H5</td><td>Name<small>Enter a descriptive name for this tower.</small></td></tr>
+<tr><td><code>Transp</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ENABLED</td><td>Ideal transposition of circuit(s)<small>Select whether or not to ideally transpose the circuit(s). Ideal transposition ensures a perfectly balanced impedance.</small><small>Written as DISABLED (disabled), ENABLED (enabled)</small></td></tr>
+<tr><td><code>X</code><small>Real</small></td><td>m</td><td>0.0</td><td>Relative x-position of tower centre<small>Enter the local horizontal placement of the tower. This value is relational to other towers in this cross-section [m].</small><small>Range -1E+38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Asymmetrical Bundling Position Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>XB1</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  1 - X Position</td></tr>
+<tr><td><code>XB10</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 10 - X Position<small>Used when NCondB&gt;=10</small></td></tr>
+<tr><td><code>XB11</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 11 - X Position<small>Used when NCondB&gt;=11</small></td></tr>
+<tr><td><code>XB12</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 12 - X Position<small>Used when NCondB&gt;=12</small></td></tr>
+<tr><td><code>XB13</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 13 - X Position<small>Used when NCondB&gt;=13</small></td></tr>
+<tr><td><code>XB14</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 14 - X Position<small>Used when NCondB&gt;=14</small></td></tr>
+<tr><td><code>XB15</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor 15 - X Position<small>Used when NCondB==15</small></td></tr>
+<tr><td><code>XB2</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  2 - X Position</td></tr>
+<tr><td><code>XB3</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  3 - X Position<small>Used when NCondB&gt;=3</small></td></tr>
+<tr><td><code>XB4</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  4 - X Position<small>Used when NCondB&gt;=4</small></td></tr>
+<tr><td><code>XB5</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  5 - X Position<small>Used when NCondB&gt;=5</small></td></tr>
+<tr><td><code>XB6</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  6 - X Position<small>Used when NCondB&gt;=6</small></td></tr>
+<tr><td><code>XB7</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  7 - X Position<small>Used when NCondB&gt;=7</small></td></tr>
+<tr><td><code>XB8</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  8 - X Position<small>Used when NCondB&gt;=8</small></td></tr>
+<tr><td><code>XB9</code><small>Real</small></td><td>m</td><td>-0.1</td><td>Sub-Conductor  9 - X Position<small>Used when NCondB&gt;=9</small></td></tr>
+<tr><td><code>YB1</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  1 - Y Position</td></tr>
+<tr><td><code>YB10</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 10 - Y Position<small>Used when NCondB&gt;=10</small></td></tr>
+<tr><td><code>YB11</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 11 - Y Position<small>Used when NCondB&gt;=11</small></td></tr>
+<tr><td><code>YB12</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 12 - Y Position<small>Used when NCondB&gt;=12</small></td></tr>
+<tr><td><code>YB13</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 13 - Y Position<small>Used when NCondB&gt;=13</small></td></tr>
+<tr><td><code>YB14</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 14 - Y Position<small>Used when NCondB&gt;=14</small></td></tr>
+<tr><td><code>YB15</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor 15 - Y Position<small>Used when NCondB==15</small></td></tr>
+<tr><td><code>YB2</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  2 - Y Position</td></tr>
+<tr><td><code>YB3</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  3 - Y Position<small>Used when NCondB&gt;=3</small></td></tr>
+<tr><td><code>YB4</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  4 - Y Position<small>Used when NCondB&gt;=4</small></td></tr>
+<tr><td><code>YB5</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  5 - Y Position<small>Used when NCondB&gt;=5</small></td></tr>
+<tr><td><code>YB6</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  6 - Y Position<small>Used when NCondB&gt;=6</small></td></tr>
+<tr><td><code>YB7</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  7 - Y Position<small>Used when NCondB&gt;=7</small></td></tr>
+<tr><td><code>YB8</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  8 - Y Position<small>Used when NCondB&gt;=8</small></td></tr>
+<tr><td><code>YB9</code><small>Real</small></td><td>m</td><td>0.1</td><td>Sub-Conductor  9 - Y Position<small>Used when NCondB&gt;=9</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Conductor Coordinates</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>XC1</code><small>Real</small></td><td>m</td><td>-5</td><td>Conductor  1 - X Position</td></tr>
+<tr><td><code>XC10</code><small>Real</small></td><td>m</td><td>40</td><td>Conductor 10 - X Position<small>Used when Nc&gt;=10</small></td></tr>
+<tr><td><code>XC11</code><small>Real</small></td><td>m</td><td>45</td><td>Conductor 11 - X Position<small>Used when Nc&gt;=11</small></td></tr>
+<tr><td><code>XC12</code><small>Real</small></td><td>m</td><td>50</td><td>Conductor 12 - X Position<small>Used when Nc&gt;=12</small></td></tr>
+<tr><td><code>XC2</code><small>Real</small></td><td>m</td><td>0</td><td>Conductor  2 - X Position<small>Used when Nc&gt;=2</small></td></tr>
+<tr><td><code>XC3</code><small>Real</small></td><td>m</td><td>5</td><td>Conductor  3 - X Position<small>Used when Nc&gt;=3</small></td></tr>
+<tr><td><code>XC4</code><small>Real</small></td><td>m</td><td>10</td><td>Conductor  4 - X Position<small>Used when Nc&gt;=4</small></td></tr>
+<tr><td><code>XC5</code><small>Real</small></td><td>m</td><td>15</td><td>Conductor  5 - X Position<small>Used when Nc&gt;=5</small></td></tr>
+<tr><td><code>XC6</code><small>Real</small></td><td>m</td><td>20</td><td>Conductor  6 - X Position<small>Used when Nc&gt;=6</small></td></tr>
+<tr><td><code>XC7</code><small>Real</small></td><td>m</td><td>25</td><td>Conductor  7 - X Position<small>Used when Nc&gt;=7</small></td></tr>
+<tr><td><code>XC8</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  8 - X Position<small>Used when Nc&gt;=8</small></td></tr>
+<tr><td><code>XC9</code><small>Real</small></td><td>m</td><td>35</td><td>Conductor  9 - X Position<small>Used when Nc&gt;=9</small></td></tr>
+<tr><td><code>YC1</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  1 - Y Position</td></tr>
+<tr><td><code>YC10</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor 10 - Y Position<small>Used when Nc&gt;=10</small></td></tr>
+<tr><td><code>YC11</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor 11 - Y Position<small>Used when Nc&gt;=11</small></td></tr>
+<tr><td><code>YC12</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor 12 - Y Position<small>Used when Nc&gt;=12</small></td></tr>
+<tr><td><code>YC2</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  2 - Y Position<small>Used when Nc&gt;=2</small></td></tr>
+<tr><td><code>YC3</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  3 - Y Position<small>Used when Nc&gt;=3</small></td></tr>
+<tr><td><code>YC4</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  4 - Y Position<small>Used when Nc&gt;=4</small></td></tr>
+<tr><td><code>YC5</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  5 - Y Position<small>Used when Nc&gt;=5</small></td></tr>
+<tr><td><code>YC6</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  6 - Y Position<small>Used when Nc&gt;=6</small></td></tr>
+<tr><td><code>YC7</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  7 - Y Position<small>Used when Nc&gt;=7</small></td></tr>
+<tr><td><code>YC8</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  8 - Y Position<small>Used when Nc&gt;=8</small></td></tr>
+<tr><td><code>YC9</code><small>Real</small></td><td>m</td><td>30</td><td>Conductor  9 - Y Position<small>Used when Nc&gt;=9</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Ground Wires Coordinates</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>XG1</code><small>Real</small></td><td>m</td><td>-2.5</td><td>Ground Wire G1 - X Position<small>Used when NG&gt;0</small></td></tr>
+<tr><td><code>XG2</code><small>Real</small></td><td>m</td><td>2.5</td><td>Ground Wire G2 - X Position<small>Used when NG&gt;1</small></td></tr>
+<tr><td><code>YG1</code><small>Real</small></td><td>m</td><td>40</td><td>Ground Wire G1 - Y Position<small>Used when NG&gt;0</small></td></tr>
+<tr><td><code>YG2</code><small>Real</small></td><td>m</td><td>40</td><td>Ground Wire G2 - Y Position<small>Used when NG&gt;1</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-svcalloc1/"><code>master:svcalloc1</code> TSC/TCR Non-Linear Susceptance Characteristics</a> · <a href="../master-vector/"><code>master:vector</code> vector</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

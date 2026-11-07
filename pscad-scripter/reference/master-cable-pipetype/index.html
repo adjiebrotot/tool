@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:Cable_PipeType parameters: PSCAD Pipe-Type Cable</title>
+<meta name="description" content="Every parameter of master:Cable_PipeType (Pipe-Type Cable) in PSCAD: 454 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-pipetype/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:Cable_PipeType parameters (PSCAD Pipe-Type Cable)">
+<meta property="og:description" content="Every parameter of master:Cable_PipeType (Pipe-Type Cable) in PSCAD: 454 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-pipetype/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:Cable_PipeType parameters (PSCAD Pipe-Type Cable)">
+<meta name="twitter:description" content="Every parameter of master:Cable_PipeType (Pipe-Type Cable) in PSCAD: 454 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:Cable_PipeType parameters (PSCAD Pipe-Type Cable)",
+  "description": "Every parameter of master:Cable_PipeType (Pipe-Type Cable) in PSCAD: 454 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-pipetype/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:Cable_PipeType (Pipe-Type Cable)",
+    "description": "Pipe-Type Cable (Cable Constants Pipe-Type Cable Data), a component of PSCAD's Master Library, filed under lines, cables and towers."
+  },
+  "keywords": "master:Cable_PipeType parameters, PSCAD Pipe-Type Cable parameters, Pipe-Type Cable PSCAD, master:Cable_PipeType mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:Cable_PipeType",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-pipetype/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:Cable_PipeType</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:Cable_PipeType parameters<span class="dx-h1-sub">PSCAD Pipe-Type Cable</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Pipe-Type Cable (<code>master:Cable_PipeType</code>): 454 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:Cable_PipeType is</h2>
+  <p>Pipe-Type Cable (Cable Constants Pipe-Type Cable Data), a component of PSCAD's Master Library, filed under lines, cables and towers.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:Cable_PipeType</code></dd><dt>PSCAD name</dt><dd>Pipe-Type Cable</dd><dt>Category</dt><dd>Lines, cables and towers</dd><dt>Parameters</dt><dd>454, in 18 groups; 200 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:Cable_PipeType in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Cable_PipeType&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;FLT&quot;</span>]))            <span class="py-c"># Loss Tangent is Defined at, in Hz</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Cable_PipeType&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(FLT=<span class="py-s">&quot;120 [Hz]&quot;</span>)          <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "FLT")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:Cable_PipeType parameters"><li><a href="#g1">Inner Cable 1 Configuration<span class="dx-n">15</span></a></li><li><a href="#g2">Inner Cable 2 Configuration<span class="dx-n">15</span></a></li><li><a href="#g3">Inner Cable 3 Configuration<span class="dx-n">15</span></a></li><li><a href="#g4">Inner Cable 4 Configuration<span class="dx-n">15</span></a></li><li><a href="#g5">Inner Cable 5 Configuration<span class="dx-n">15</span></a></li><li><a href="#g6">Inner Cable 6 Configuration<span class="dx-n">15</span></a></li><li><a href="#g7">Inner Cable 7 Configuration<span class="dx-n">15</span></a></li><li><a href="#g8">Inner Cable 8 Configuration<span class="dx-n">15</span></a></li><li><a href="#g9">Inner Cable 1 Data<span class="dx-n">38</span></a></li><li><a href="#g10">Inner Cable 2 Data<span class="dx-n">39</span></a></li><li><a href="#g11">Inner Cable 3 Data<span class="dx-n">39</span></a></li><li><a href="#g12">Inner Cable 4 Data<span class="dx-n">39</span></a></li><li><a href="#g13">Inner Cable 5 Data<span class="dx-n">39</span></a></li><li><a href="#g14">Inner Cable 6 Data<span class="dx-n">39</span></a></li><li><a href="#g15">Inner Cable 7 Data<span class="dx-n">39</span></a></li><li><a href="#g16">Inner Cable 8 Data<span class="dx-n">39</span></a></li><li><a href="#g17">Pipe Data<span class="dx-n">11</span></a></li><li><a href="#g18">Pipe Configuration<span class="dx-n">12</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Inner Cable 1 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND1==1)</small></td></tr>
+<tr><td><code>CBC21</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND1==1) &amp;&amp; (LL1&gt;=2)</small></td></tr>
+<tr><td><code>CBC31</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND1==1) &amp;&amp; (LL1&gt;=4)</small></td></tr>
+<tr><td><code>CBC41</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND1==1) &amp;&amp; (LL1&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND1==1)</small></td></tr>
+<tr><td><code>LC1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL1==3)||(LL1==5)||(LL1==7)</small></td></tr>
+<tr><td><code>LL1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC1</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang1</code><small>Real</small></td><td>deg</td><td>270.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc1</code><small>Real</small></td><td>m</td><td>0.022</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC1 == 3) &amp;&amp; ((LL1 == 3) || (LL1 == 5) || (LL1 == 7))</small></td></tr>
+<tr><td><code>elim21</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC1 == 3) &amp;&amp; ((LL1 == 5) || (LL1 == 7))</small></td></tr>
+<tr><td><code>elim31</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC1 == 3) &amp;&amp; (LL1 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Inner Cable 2 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND2==1)</small></td></tr>
+<tr><td><code>CBC22</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND2==1) &amp;&amp; (LL2&gt;=2)</small></td></tr>
+<tr><td><code>CBC32</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND2==1) &amp;&amp; (LL2&gt;=4)</small></td></tr>
+<tr><td><code>CBC42</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND2==1) &amp;&amp; (LL2&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND2==1)</small></td></tr>
+<tr><td><code>LC2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL2==3)||(LL2==5)||(LL2==7)</small></td></tr>
+<tr><td><code>LL2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>2</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang2</code><small>Real</small></td><td>deg</td><td>30.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc2</code><small>Real</small></td><td>m</td><td>0.022</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC2 == 3) &amp;&amp; ((LL2 == 3) || (LL2 == 5) || (LL2 == 7))</small></td></tr>
+<tr><td><code>elim22</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC2 == 3) &amp;&amp; ((LL2 == 5) || (LL2 == 7))</small></td></tr>
+<tr><td><code>elim32</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small><small>Used when (LC2 == 3) &amp;&amp; (LL2 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Inner Cable 3 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC13</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND3==1)</small></td></tr>
+<tr><td><code>CBC23</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND3==1) &amp;&amp; (LL3&gt;=2)</small></td></tr>
+<tr><td><code>CBC33</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND3==1) &amp;&amp; (LL3&gt;=4)</small></td></tr>
+<tr><td><code>CBC43</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND3==1) &amp;&amp; (LL3&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND3==1)</small></td></tr>
+<tr><td><code>LC3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL3==3)||(LL3==5)||(LL3==7)</small></td></tr>
+<tr><td><code>LL3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC3</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang3</code><small>Real</small></td><td>deg</td><td>150.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc3</code><small>Real</small></td><td>m</td><td>0.022</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim13</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC3 == 3) &amp;&amp; ((LL3 == 3) || (LL3 == 5) || (LL3 == 7))</small></td></tr>
+<tr><td><code>elim23</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC3 == 3) &amp;&amp; ((LL3 == 5) || (LL3 == 7))</small></td></tr>
+<tr><td><code>elim33</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC3 == 3) &amp;&amp; (LL3 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Inner Cable 4 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC14</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND4==1)</small></td></tr>
+<tr><td><code>CBC24</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND4==1) &amp;&amp; (LL4&gt;=2)</small></td></tr>
+<tr><td><code>CBC34</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND4==1) &amp;&amp; (LL4&gt;=4)</small></td></tr>
+<tr><td><code>CBC44</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (yes)</small><small>Used when (CROSSBOND4==1) &amp;&amp; (LL4&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND4==1)</small></td></tr>
+<tr><td><code>LC4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL4==3)||(LL4==5)||(LL4==7)</small></td></tr>
+<tr><td><code>LL4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC4</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>4</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang4</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc4</code><small>Real</small></td><td>m</td><td>0.01</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim14</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC4 == 3) &amp;&amp; ((LL4 == 3) || (LL4 == 5) || (LL4 == 7))</small></td></tr>
+<tr><td><code>elim24</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC4 == 3) &amp;&amp; ((LL4 == 5) || (LL4 == 7))</small></td></tr>
+<tr><td><code>elim34</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC4 == 3) &amp;&amp; (LL4 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Inner Cable 5 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC15</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND5==1)</small></td></tr>
+<tr><td><code>CBC25</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND5==1) &amp;&amp; (LL5&gt;=2)</small></td></tr>
+<tr><td><code>CBC35</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND5==1) &amp;&amp; (LL5&gt;=4)</small></td></tr>
+<tr><td><code>CBC45</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND5==1) &amp;&amp; (LL5&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND5==1)</small></td></tr>
+<tr><td><code>LC5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL5==3)||(LL5==5)||(LL5==7)</small></td></tr>
+<tr><td><code>LL5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC5</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>5</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang5</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc5</code><small>Real</small></td><td>m</td><td>0.01</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim15</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC5 == 3) &amp;&amp; ((LL5 == 3) || (LL5 == 5) || (LL5 == 7))</small></td></tr>
+<tr><td><code>elim25</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC5 == 3) &amp;&amp; ((LL5 == 5) || (LL5 == 7))</small></td></tr>
+<tr><td><code>elim35</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC5 == 3) &amp;&amp; (LL5 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Inner Cable 6 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC16</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND6==1)</small></td></tr>
+<tr><td><code>CBC26</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND6==1) &amp;&amp; (LL6&gt;=2)</small></td></tr>
+<tr><td><code>CBC36</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND6==1) &amp;&amp; (LL6&gt;=4)</small></td></tr>
+<tr><td><code>CBC46</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND6==1) &amp;&amp; (LL6&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND6==1)</small></td></tr>
+<tr><td><code>LC6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL6==3)||(LL6==5)||(LL6==7)</small></td></tr>
+<tr><td><code>LL6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC6</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>6</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang6</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc6</code><small>Real</small></td><td>m</td><td>0.01</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim16</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC6 == 3) &amp;&amp; ((LL6 == 3) || (LL6 == 5) || (LL6 == 7))</small></td></tr>
+<tr><td><code>elim26</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC6 == 3) &amp;&amp; ((LL6 == 5) || (LL6 == 7))</small></td></tr>
+<tr><td><code>elim36</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC6 == 3) &amp;&amp; (LL6 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Inner Cable 7 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC17</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND7==1)</small></td></tr>
+<tr><td><code>CBC27</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND7==1) &amp;&amp; (LL7&gt;=2)</small></td></tr>
+<tr><td><code>CBC37</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND7==1) &amp;&amp; (LL7&gt;=4)</small></td></tr>
+<tr><td><code>CBC47</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND7==1) &amp;&amp; (LL7&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND7==1)</small></td></tr>
+<tr><td><code>LC7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL7==3)||(LL7==5)||(LL7==7)</small></td></tr>
+<tr><td><code>LL7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC7</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>7</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang7</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc7</code><small>Real</small></td><td>m</td><td>0.01</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim17</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC7 == 3) &amp;&amp; ((LL7 == 3) || (LL7 == 5) || (LL7 == 7))</small></td></tr>
+<tr><td><code>elim27</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC7 == 3) &amp;&amp; ((LL7 == 5) || (LL7 == 7))</small></td></tr>
+<tr><td><code>elim37</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC7 == 3) &amp;&amp; (LL7 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Inner Cable 8 Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CBC18</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of Conducting Core<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND8==1)</small></td></tr>
+<tr><td><code>CBC28</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Cross-bonding of 1st Conducting Layer<small>Written as YES (Yes), NO (No), TRANSPOSE_ONLY (Transpose only)</small><small>Used when (CROSSBOND8==1) &amp;&amp; (LL8&gt;=2)</small></td></tr>
+<tr><td><code>CBC38</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 2nd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND8==1) &amp;&amp; (LL8&gt;=4)</small></td></tr>
+<tr><td><code>CBC48</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Transposition of 3rd Conducting Layer<small>Written as NO (No), YES (Yes)</small><small>Used when (CROSSBOND8==1) &amp;&amp; (LL8&gt;=6)</small></td></tr>
+<tr><td><code>CROSSBOND8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding/Transposition is<small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>GROUPNO8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding/Transposition Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small><small>Used when (CROSSBOND8==1)</small></td></tr>
+<tr><td><code>LC8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small><small>Used when (LL7==3)||(LL7==5)||(LL7==7)</small></td></tr>
+<tr><td><code>LL8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2</td><td>Layer Configuration<small>Select the configuration of the coax cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1_I1_C2_I2_C3_I3_C4_I4 (C1), C1_I1_C2_I2 (C1 | I1), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>NC8</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>8</td><td>Cable Number<small>Enter a unique number for this coax cable to coincide with the external node connection.</small><small>Range 1 to 8</small></td></tr>
+<tr><td><code>RorT8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>ang8</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Angular Position of Cable Centre<small>Enter a value to represent the angular position of the centre of this coax cable, in relation to the origin.</small></td></tr>
+<tr><td><code>dcc8</code><small>Real</small></td><td>m</td><td>0.01</td><td>Distance from Pipe Centre to Cable Centre<small>Enter a value to represent the distance between the centre of this coax cable, and the centre of the encompassing pipe.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>elim18</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC8 == 3) &amp;&amp; ((LL8 == 3) || (LL8 == 5) || (LL8 == 7))</small></td></tr>
+<tr><td><code>elim28</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC8 == 3) &amp;&amp; ((LL8 == 5) || (LL8 == 7))</small></td></tr>
+<tr><td><code>elim38</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINIATE (Eliminiate)</small><small>Used when (LC8 == 3) &amp;&amp; (LL8 == 7)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">Inner Cable 1 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS21</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.72</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS31</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS41</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF21</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF31</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF41</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM21</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM31</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM41</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R11</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R21</code><small>Real</small></td><td>m</td><td>0.00915</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R31</code><small>Real</small></td><td>m</td><td>0.01535</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R41</code><small>Real</small></td><td>m</td><td>0.01642</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R51</code><small>Real</small></td><td>m</td><td>0.01792</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R61</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R71</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R81</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R91</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA1</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC1</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO1</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS1</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL11</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL21</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T31</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T41</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T51</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T61</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T71</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T81</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T91</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10">
+  <h2 id="g10">Inner Cable 2 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS22</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.72</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS32</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS42</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF22</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF32</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF42</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM22</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM32</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM42</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R12</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R22</code><small>Real</small></td><td>m</td><td>0.00915</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R32</code><small>Real</small></td><td>m</td><td>0.01535</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R42</code><small>Real</small></td><td>m</td><td>0.01642</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R52</code><small>Real</small></td><td>m</td><td>0.01792</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R62</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R72</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R82</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R92</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA2</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC2</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO2</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS2</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL12</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL22</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T32</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T42</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T52</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T62</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T72</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T82</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T92</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g11">
+  <h2 id="g11">Inner Cable 3 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS13</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.72</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS33</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS43</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF13</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF33</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF43</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM13</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM33</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM43</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R13</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R23</code><small>Real</small></td><td>m</td><td>0.00915</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R33</code><small>Real</small></td><td>m</td><td>0.01535</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R43</code><small>Real</small></td><td>m</td><td>0.01642</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R53</code><small>Real</small></td><td>m</td><td>0.01792</td><td>Outer radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R63</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R73</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R83</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R93</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA3</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC3</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO3</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS3</code><small>Real</small></td><td>ohm*m</td><td>1.72e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL13</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL23</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T33</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T43</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T53</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T63</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T73</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T83</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T93</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g12">
+  <h2 id="g12">Inner Cable 4 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS14</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS24</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS34</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS44</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF14</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF24</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF34</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF44</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM14</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM24</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM34</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM44</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R14</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R24</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R34</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R44</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R54</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R64</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R74</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R84</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R94</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA4</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC4</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO4</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS4</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL14</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL24</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T34</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T44</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T54</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T64</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T74</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T84</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T94</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g13">
+  <h2 id="g13">Inner Cable 5 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS15</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS25</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS35</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS45</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF15</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF25</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF35</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF45</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM15</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM25</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM35</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM45</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R15</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R25</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R35</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R45</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R55</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R65</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R75</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R85</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R95</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA5</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC5</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO5</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS5</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL15</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL25</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T35</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T45</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T55</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T65</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T75</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T85</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T95</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g14">
+  <h2 id="g14">Inner Cable 6 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS16</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS26</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS36</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS46</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF26</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF36</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF46</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM16</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM26</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM36</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM46</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R16</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R26</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R36</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R46</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R56</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R66</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R76</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R86</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R96</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA6</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC6</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO6</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS6</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL16</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL26</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T36</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T46</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T56</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T66</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T76</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T86</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T96</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g15">
+  <h2 id="g15">Inner Cable 7 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS17</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS27</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS37</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS47</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF17</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF27</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF37</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF47</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM17</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM27</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM37</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM47</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R17</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (enter 0.0 for a solid core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R27</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R37</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R47</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R57</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R67</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R77</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R87</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R97</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA7</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC7</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO7</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS7</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL17</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL27</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T37</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T47</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T57</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T67</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T77</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T87</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T97</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g16">
+  <h2 id="g16">Inner Cable 8 Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS18</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS28</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS38</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPS48</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LF18</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF28</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF38</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>LF48</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 100</small></td></tr>
+<tr><td><code>PERM18</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM28</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM38</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERM48</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMA8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMC8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMO8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMS8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R18</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core)<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R28</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R38</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R48</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R58</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R68</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>R78</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R88</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>R98</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOA8</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOC8</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOO8</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RHOS8</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>SL18</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL28</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T38</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T48</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T58</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T68</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T78</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T88</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T98</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g17">
+  <h2 id="g17">Pipe Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPSPipeI</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>3.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>EPSPipeO</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small><small>Used when poins</small></td></tr>
+<tr><td><code>LFPipeI</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0 to 100</small></td></tr>
+<tr><td><code>LFPipeO</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0 to 100</small><small>Used when poins</small></td></tr>
+<tr><td><code>PERMPipe</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>200.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMPipeI</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>PERMPipeO</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small><small>Used when poins</small></td></tr>
+<tr><td><code>RHOPipe</code><small>Real</small></td><td>ohm*m</td><td>1.71e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>RP1</code><small>Real</small></td><td>m</td><td>0.041</td><td>Outer Radius<small>Enter the outer radius of the outer pipe insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RP2</code><small>Real</small></td><td>m</td><td>0.042</td><td>Outer Radius<small>Enter the outer radius of the pipe conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RP3</code><small>Real</small></td><td>m</td><td>0.043</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small><small>Used when poins</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g18">
+  <h2 id="g18">Pipe Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>FLT</code><small>Real</small></td><td>Hz</td><td>60.0</td><td>Loss Tangent is Defined at<small>Enter the frequency at which loss tangents are defined [Hz].</small><small>Range 1e-6 to 1000</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small></td></tr>
+<tr><td><code>OHC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>UNDERGROUND</td><td>Placement in Relation to Ground Plane<small>Choose whether this cable is placed above or below the ground plane.</small><small>Written as UNDERGROUND (Underground), AERIAL (Aerial)</small></td></tr>
+<tr><td><code>SHRad</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SHOW</td><td>Detailed Graphic Labels<small>Select whether or not to show detailed graphic labels</small><small>Written as HIDE (Hide), SHOW (Show)</small></td></tr>
+<tr><td><code>X</code><small>Real</small></td><td>m</td><td>0.0</td><td>Horizontal Translation from Centre<small>Enter the translation of the pipe centre-point along the horizontal (x) axis [m]. This value is relative to a local x=0 point, which is derived given the position of all cables in this segment. The x-coordinate of all coax cables included in this pipe must be relative to this depth.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>Y</code><small>Real</small></td><td>m</td><td>1.0</td><td>Depth Below Ground Surface<small>Enter the depth of the pipe centre-point below the earth surface [m]. The y-coordinate of all coax cables included in this pipe must be relative to this depth.</small><small>Range 1E-38 to 1E+38</small><small>Used when OHC==0</small></td></tr>
+<tr><td><code>Y10</code><small>Real</small></td><td>m</td><td>3.0</td><td>Height Above Ground Surface<small>Enter the height of the pipe centre-point above the earth surface [m]. The y-coordinate of all coax cables included in this pipe must be relative to this height.</small><small>Range 1E-38 to 1E+38</small><small>Used when OHC==1</small></td></tr>
+<tr><td><code>cnum</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Number of Inner Cables<small>Select the number of cables to be included within this pipe.</small><small>Written as 0 = 0, 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8</small></td></tr>
+<tr><td><code>elimp</code><small>Boolean</small></td><td><span aria-label="no unit">·</span></td><td>False</td><td>Eliminate Pipe<small>Select whether or not to eliminate the pipe mathematically</small><small>Written as False, True</small><small>Used when poins</small></td></tr>
+<tr><td><code>icabsame</code><small>Boolean</small></td><td><span aria-label="no unit">·</span></td><td>False</td><td>Each Inner Cable is<small>Indicate whether or not all inner cables are identical. This option can be used to simplify data entry.</small><small>Written as False, True</small></td></tr>
+<tr><td><code>pnum</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Pipe Number<small>Select the pipe number</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5</small></td></tr>
+<tr><td><code>poins</code><small>Boolean</small></td><td><span aria-label="no unit">·</span></td><td>True</td><td>Pipe Outer Insulation Layer<small>Select whether or not insulation layer exists outside the pipe</small><small>Written as False, True</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-pi-section2/"><code>master:pi_section2</code> pi_section2</a> · <a href="../master-tline-interface-v2/"><code>master:tline_interface_v2</code> tline_interface_v2</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

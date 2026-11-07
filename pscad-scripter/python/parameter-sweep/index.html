@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sweep a PSCAD parameter with Python: values, layers and substitution sets</title>
+<meta name="description" content="Run a PSCAD case once per value of a component parameter from Python, then once per layer and once per global substitution set, and table what a channel did.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sweep a PSCAD parameter with Python">
+<meta property="og:description" content="Run a PSCAD case once per value of a component parameter from Python, then once per layer and once per global substitution set, and table what a channel did.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sweep a PSCAD parameter with Python">
+<meta name="twitter:description" content="Run a PSCAD case once per value of a component parameter from Python, then once per layer and once per global substitution set, and table what a channel did.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Sweep a PSCAD parameter with Python",
+  "description": "Run a PSCAD case once per value of a component parameter from Python, then once per layer and once per global substitution set, and table what a channel did.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Beginner",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad parameter sweep python, pscad sweep script, pscad layers python, pscad global substitution, mhi.pscad parameters, pscad multiple run python",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Parameter sweep"
+    },
+    {
+      "@type": "Thing",
+      "name": "Sensitivity analysis"
+    },
+    {
+      "@type": "Thing",
+      "name": "Python"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I change a component parameter in PSCAD from Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Find the component with project.find_all(\"master:resistor\") (or by its Name), then call comp.parameters(R=\"12.5 [ohm]\"). comp.parameters() with no arguments gives every parameter and its current value."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a Python sweep and Multiple Run?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Multiple Run steps up to six variables inside the case, in one go of the executable. A Python sweep starts a run per value and can change anything in the case between runs, including layers, substitution sets and the run settings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I switch layers in PSCAD from a script?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Set the layer's state on the project, enabled or disabled, then run. The Builder's runtime does it with layer_set(app, name, \"Enabled\") and puts every layer back the way it found it at the end."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Parameter sweep",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Parameter sweep</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Sweep a PSCAD parameter with Python</h1>
+    <p class="dx-lead">A sweep is the simplest study there is: <strong>write a value, run, read, put it back</strong>, once for each value. PSCAD adds two ways of holding variants that a sweep can go over as well: <strong>layers</strong>, which switch whole groups of components in and out, and <strong>global substitution sets</strong>, which give every <code>$(name)</code> in the case a different value at once.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a parameter sweep in PSCAD is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a parameter sweep in PSCAD is</h2>
+  <p>Every component in a PSCAD case has parameters, read and written from Python as a dictionary: <code>comp.parameters()</code> gives them, <code>comp.parameters(R="12.5 [ohm]")</code> writes one. A sweep writes one parameter over a range of values and runs the case for each, recording what an output channel did.</p>
+  <p>Two things make a sweep in PSCAD different from a hand edit. A value that carries a unit is written with it, and PSCAD keeps the unit it is given. And each write <strong>changes the case on disk</strong> when it is saved, so the script records each value it replaces and puts it back.</p>
+  <p>PSCAD's own <a href="../../reference/master-mrun/">Multiple Run</a> component sweeps up to six variables inside one run of the executable. A Python sweep is slower to start each run, but it can change anything in the case, including what Multiple Run cannot reach: a layer, a substitution set, a component's definition, the run settings.</p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Find the component</strong> by definition and Name, and check the parameter's name and unit in the <a href="../../reference/">component reference</a>.</li>
+    <li><strong>Loop over the values.</strong> Each pass opens a mark, writes the value, runs, reads, records a row, and undoes the mark.</li>
+    <li><strong>Graph the result</strong> against the swept value from the table.</li>
+  </ol>
+  <h3>One parameter over a range</h3>
+  <pre><code class="language-python">resistor = <span class="py-f">px_find</span>(app, <span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;Rload&quot;</span>)
+<span class="py-k">for</span> r <span class="py-k">in</span> <span class="py-f">num_range</span>(<span class="py-n">1</span>, <span class="py-n">10</span>, <span class="py-n">1</span>):
+    mark = <span class="py-f">px_mark</span>()
+    <span class="py-f">px_set</span>(resistor, <span class="py-s">&quot;R&quot;</span>, r, unit=<span class="py-s">&quot;ohm&quot;</span>)      <span class="py-c"># written in the unit R already carries</span>
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">1</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    <span class="py-f">table</span>(<span class="py-s">&quot;Sweep&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;R (ohm)&quot;</span>: r, <span class="py-s">&quot;Peak&quot;</span>: <span class="py-f">peak</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>), kind=<span class="py-s">&quot;abs&quot;</span>).value})
+    <span class="py-f">px_undo</span>(mark)
+<span class="py-f">plot_table</span>(<span class="py-s">&quot;Sweep&quot;</span>, <span class="py-s">&quot;R (ohm)&quot;</span>, [<span class="py-s">&quot;Peak&quot;</span>])</code></pre>
+  <h3>Every layer, one at a time</h3>
+  <p>A layer is a named group of components that is enabled or disabled together, so one case can hold several network arrangements: a line in or out, a second transformer, a different filter. Going over the layers puts each one in while the others are out.</p>
+  <pre><code class="language-python"><span class="py-k">for</span> name <span class="py-k">in</span> <span class="py-f">each_layer</span>(app, <span class="py-f">layer_list</span>(app, <span class="py-s">&quot;*&quot;</span>), <span class="py-s">&quot;Enabled&quot;</span>, <span class="py-s">&quot;Disabled&quot;</span>):
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">2</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    <span class="py-f">table</span>(<span class="py-s">&quot;Arrangements&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Peak&quot;</span>: <span class="py-f">peak</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>), kind=<span class="py-s">&quot;abs&quot;</span>).value})</code></pre>
+  <h3>Every global substitution set</h3>
+  <p>A global substitution is a named value that any component parameter written as <code>$(name)</code> takes, and a set holds one value for each. Switching the active set changes every one of them at once, which is how one case covers several parameter sets: a weak and a strong grid, summer and winter.</p>
+  <pre><code class="language-python"><span class="py-k">for</span> name <span class="py-k">in</span> <span class="py-f">each_gs_set</span>(app, [n <span class="py-k">for</span> n <span class="py-k">in</span> <span class="py-f">gs_sets</span>(app) <span class="py-k">if</span> n]):
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">2</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    <span class="py-f">table</span>(<span class="py-s">&quot;Sets&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Final value&quot;</span>: <span class="py-f">final_value</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>))})</code></pre>
+  <p>Make the sets once in PSCAD, or load them from a CSV with <code>gs_load</code>. A case with no named sets has one set whose name is empty, which is why the loop leaves it out.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Sweep one parameter Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=sweep">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python scripts from the Builder</h2>
+  <p>The Sweep one parameter Quick Start steps a resistor's <code>R</code> from 1 to 10, runs the case for each value and tables the peak of a channel, with a graph of the peak against the value. Change the component, the parameter and the channel to your own. This is the file with the case set to <code>C:/Studies/filter/filter.pscx</code>:</p>
+  <p class="dx-file"><span><code>sweep_one_parameter.py</code> as the Builder writes it: the settings and the workflow</span><a href="sweep_one_parameter.py" download>⬇ Download the full file (.py, 3,383 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Parameter sweep</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 parameter_sweep.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Parameter sweep&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/Studies/filter/filter.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: Choose the component and the parameter to sweep (the Component block takes a definition such as master:resistor and, when the case has several, a Name), and the channel to read. Each pass writes th...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-s">&quot;one&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: filter.pscx) --</span>
+        <span class="py-c"># -- Step 2: Value (1 to 10, step 1) --</span>
+        value_values = <span class="py-f">num_range</span>(<span class="py-n">1</span>, <span class="py-n">10</span>, <span class="py-n">1</span>)
+        <span class="py-k">for</span> value_pass_no, value <span class="py-k">in</span> <span class="py-f">enumerate</span>(value_values, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Value&quot;</span>, value, value_pass_no, <span class="py-f">len</span>(value_values))
+            mark = <span class="py-f">px_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Set parameter (master:resistor.R = 1) --</span>
+                resistor = <span class="py-f">px_find</span>(app, <span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-s">&quot;one&quot;</span>)  <span class="py-c"># Component</span>
+                <span class="py-f">px_set</span>(resistor, <span class="py-s">&quot;R&quot;</span>, value, <span class="py-k">None</span>)
+                <span class="py-c"># -- Step 4: Run simulation (1 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">1</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=(), build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: skips to the next pass of Value</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># Stopped early: skips to the next pass of Value</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Sweep&quot;, saved at the end automatically) --</span>
+                vbus = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+                peak_result = <span class="py-f">peak</span>(vbus, kind=<span class="py-s">&quot;abs&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Peak</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Sweep&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Peak&quot;</span>: peak_result.value}, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">px_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Sweep&quot;</span>])
+        <span class="py-c"># -- Step 6: Draw graph from results table (Peak against Value) --</span>
+        <span class="py-f">plot_table</span>(<span class="py-s">&quot;Sweep&quot;</span>, <span class="py-s">&quot;Value&quot;</span>, [<span class="py-s">&quot;Peak&quot;</span>], kind=<span class="py-s">&quot;line&quot;</span>, group=<span class="py-k">None</span>, title=<span class="py-s">&quot;&quot;</span>, ylabel=<span class="py-s">&quot;&quot;</span>, yunit=<span class="py-s">&quot;&quot;</span>, limits=[], stem=<span class="py-s">&quot;sweep&quot;</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 3,233 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><code>px_find(app, "master:resistor", "", "one")</code> wants exactly one resistor. Give a Name when the case has several; with none, the error lists the Names it found.</li>
+    <li><code>px_set(resistor, "R", value, None)</code> writes the value in the unit <code>R</code> already carries and records the old one.</li>
+    <li>A pass that does not build or stops early is skipped with a note in the table, and the next value is tried.</li>
+    <li><code>plot_table("Sweep", "Value", ["Peak"])</code> draws the table's Peak column against the swept value when the loop ends.</li>
+  </ul>
+  <p>The Run every network arrangement Quick Start goes over the layers instead: each layer in turn is enabled and the others disabled, and each arrangement is run and tabled:</p>
+  <p class="dx-file"><span>The Run every network arrangement Quick Start, as the Builder writes it</span><a href="run_every_arrangement.py" download>⬇ Download the full file (.py, 2,371 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Every arrangement</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 every_arrangement.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Every arrangement&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/Studies/substation/substation.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: A PSCAD layer switches a whole group of components in or out of the build together, so one case can hold several network arrangements. Type the layer names of your own case, or leave a single * to...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: substation.pscx) --</span>
+        <span class="py-c"># -- Step 2: Arrangement (Each layer in the case) --</span>
+        arrangement_layers = <span class="py-f">list</span>(<span class="py-f">layer_list</span>(app, <span class="py-s">&quot;*&quot;</span>))
+        <span class="py-k">if</span> <span class="py-k">not</span> arrangement_layers:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Arrangement: no layer to loop over.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-k">for</span> arrangement_pass_no, arrangement <span class="py-k">in</span> <span class="py-f">enumerate</span>(<span class="py-f">each_layer</span>(app, arrangement_layers, <span class="py-s">&quot;Enabled&quot;</span>, <span class="py-s">&quot;Disabled&quot;</span>), <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Arrangement&quot;</span>, arrangement, arrangement_pass_no, <span class="py-f">len</span>(arrangement_layers))
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Run simulation (2 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">2</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=(), build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: skips to the next pass of Arrangement</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># Stopped early: skips to the next pass of Arrangement</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 4: Add row to results table (Into &quot;Arrangements&quot;, saved at the end automatically) --</span>
+                vbus = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+                peak_result = <span class="py-f">peak</span>(vbus, kind=<span class="py-s">&quot;abs&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Peak</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Arrangements&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Peak&quot;</span>: peak_result.value,
+                    <span class="py-s">&quot;Reached (s)&quot;</span>: run.t_end,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Arrangements&quot;</span>])
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>A unit you did not mean.</strong> PSCAD stores a written unit as given: write <code>"2500 [mohm]"</code> and the parameter is in mohm from then on. <code>px_set</code> writes in the unit the parameter already carries, converting from the one you name.</li>
+    <li><strong>A value read as a plain number loses its unit.</strong> A unit-carrying value comes back as a number whose unit is only in its text. Read it as text first, or use <code>px_get</code> with a unit.</li>
+    <li><strong>A Choice written as its words.</strong> A Choice takes its symbol, the capitals in the reference, such as <code>"YES"</code> or <code>"RR_L"</code>, not the words in the dialog.</li>
+    <li><strong>A component that is in the case twice.</strong> <code>find_all</code> gives every instance, on every page and inside every module. Name the one to change, or the sweep writes on all of them.</li>
+    <li><strong>Enabling a component needs PSCAD 5.0.2.</strong> <code>Component.enabled</code> is not there on 5.0.0; <code>enable()</code> and <code>disable()</code> are, which is what the runtime uses.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I change a component parameter in PSCAD from Python?</h3>
+  <p>Find the component with <code>project.find_all("master:resistor")</code> (or by its Name), then call <code>comp.parameters(R="12.5 [ohm]")</code>. <code>comp.parameters()</code> with no arguments gives every parameter and its current value.</p>
+  <h3>What is the difference between a Python sweep and Multiple Run?</h3>
+  <p>Multiple Run steps up to six variables inside the case, in one go of the executable. A Python sweep starts a run per value and can change anything in the case between runs, including layers, substitution sets and the run settings.</p>
+  <h3>How do I switch layers in PSCAD from a script?</h3>
+  <p>Set the layer's state on the project, enabled or disabled, then run. The Builder's runtime does it with <code>layer_set(app, name, "Enabled")</code> and puts every layer back the way it found it at the end.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build and run a PSCAD case from Python</a></li>
+    <li><a href="../fault-studies/">Fault studies in PSCAD with Python: ride through and critical clearing time</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD run</a></li>
+    <li><a href="../snapshots-and-batch/">Snapshots, simulation sets and batch runs</a></li>
+    <li><a href="../control-tuning/">Control tuning: overshoot, rise time and damping</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>
