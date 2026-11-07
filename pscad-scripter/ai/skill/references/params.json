@@ -1,0 +1,90 @@
+{
+ "skill": "brotools-pscad-scripter",
+ "tool": "PSCAD Scripter",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "pscad-scripter/builder",
+   "url": "/pscad-scripter/builder/",
+   "base": "https://tool.adjiebrotots.com/pscad-scripter/builder/",
+   "lang": "en",
+   "title": "PSCAD Workflow Builder",
+   "reference": "references/pscad-scripter-builder.md",
+   "decides": "Which study the PSCAD Python script runs, and in what order: a workflow of blocks (build the case, write component parameters, time a fault on its timed fault logic, run the EMT simulation, read output channels, check them for a peak, a nadir, THD, RMS, a sequence component, overshoot or damping, loops over values, layers and substitution sets, snapshots and simulation sets, results tables and graphs), the PSCAD case it opens and where its results go. The tool writes one ready-to-run Python script for PSCAD 5 and its Automation Library (mhi-pscad) from that workflow, and the user downloads it. It does not run PSCAD or work out a simulation result. The script comes from the tool, so a link to it gives the user the whole script.",
+   "important": [],
+   "fields": [
+    {
+     "key": "blk.n1.connectTimeout",
+     "label": "blk.n1.connectTimeout",
+     "group": "",
+     "kind": "number",
+     "min": 10,
+     "max": 1000000,
+     "default": "120"
+    },
+    {
+     "key": "graph.dpi",
+     "label": "graph.dpi",
+     "group": "",
+     "kind": "number",
+     "min": 50,
+     "max": 600,
+     "default": "150"
+    }
+   ],
+   "lists": [
+    "template"
+   ],
+   "families": [
+    "blk.",
+    "graph."
+   ],
+   "json": true,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "build-check",
+     "title": "Build the case and report its errors"
+    },
+    {
+     "key": "frt",
+     "title": "Fault ride through over fault durations"
+    },
+    {
+     "key": "sweep",
+     "title": "Sweep one parameter"
+    },
+    {
+     "key": "harmonics",
+     "title": "Harmonics and THD from an EMT run"
+    },
+    {
+     "key": "cct",
+     "title": "Critical clearing time"
+    },
+    {
+     "key": "layers",
+     "title": "Run every network arrangement"
+    },
+    {
+     "key": "snapshot",
+     "title": "Initialise once, then branch"
+    },
+    {
+     "key": "substitutions",
+     "title": "A run for each parameter set"
+    },
+    {
+     "key": "parallel",
+     "title": "Run several cases at once"
+    },
+    {
+     "key": "damping",
+     "title": "Damping of a ringdown"
+    }
+   ]
+  }
+ ]
+}

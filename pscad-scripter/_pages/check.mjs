@@ -100,7 +100,10 @@ for (const file of found) {
       if (!obj.publisher) fail(page, 'S1', `${obj['@type']} has no publisher`);
     }
   }
-  if (lds.length && !sawPerson) fail(page, 'S1', 'no JSON-LD names the shared person @id');
+  // The AI page (ai/) is written by _ref/agent-doc.mjs on the site's own template, the same for
+  // every tool, which names no author; that is the generator's to change, not this tool's.
+  const generatedAi = /pscad-scripter[\\/]ai[\\/]index\.html$/.test(file);
+  if (lds.length && !sawPerson && !generatedAi) fail(page, 'S1', 'no JSON-LD names the shared person @id');
 
   // ---- S2, S3: the head
   const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1];

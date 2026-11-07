@@ -794,6 +794,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/pscad-scripter/python/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>

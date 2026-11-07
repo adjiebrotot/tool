@@ -3527,6 +3527,200 @@
    "name": "a part name with a space, its key percent-encoded as the skill script writes it",
    "link": "#load&v=1&qs=areas&el.HVDC%20link.p_nom=400&why.el.HVDC%20link.p_nom=The%20user%27s%20new%20link%20rating&run=0",
    "expect": {}
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "docs example: fault ride through from 0.1 to 0.3 s, a named case, Excel tables",
+   "link": "#load&v=1&qs=frt&blk.n1.project=C:/Studies/wind_farm.pscx&why.blk.n1.project=The%20case%20the%20user%20named,%20as%20they%20wrote%20it&blk.n2.from=0.1&why.blk.n2.from=The%20user%27s%20shortest%20fault%20duration&blk.n2.to=0.3&why.blk.n2.to=The%20user%27s%20longest%20fault%20duration&blk.n1.tableFmt=xlsx&why.blk.n1.tableFmt=The%20user%20wants%20the%20results%20as%20Excel%20files&note=Fault%20ride%20through,%200.1%20to%200.3%20s,%20Excel%20tables",
+   "expect": {},
+   "probe": {
+    "name": "Fault ride through",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "C:/Studies/wind_farm.pscx",
+       "tableFmt": "xlsx"
+      }
+     },
+     "n2": {
+      "s": {
+       "from": 0.1,
+       "to": 0.3
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "template (the router's name for qs) written after blk keys: harmonics up to the 40th, a finer plot step",
+   "link": "#load&v=1&blk.n1.project=inverter.pscx&template=harmonics&blk.n4.harmonics=40&why.blk.n4.harmonics=The%20grid%20code%20limits%20up%20to%20the%2040th&blk.n2.plotStep=25&blk.n3.channel=Vpcc&note=THD%20at%20the%20point%20of%20connection",
+   "expect": {},
+   "probe": {
+    "name": "Harmonics",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "inverter.pscx"
+      }
+     },
+     "n2": {
+      "s": {
+       "plotStep": 25
+      }
+     },
+     "n3": {
+      "s": {
+       "channel": "Vpcc"
+      }
+     },
+     "n4": {
+      "s": {
+       "harmonics": 40
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "sweep: a named resistor by its el parts, a wider range and another channel",
+   "link": "#load&v=1&qs=sweep&blk.n2.el.name=Rload&blk.n4.el.name=Rload&why.blk.n4.el.name=The%20load%20resistor%20the%20user%20named&blk.n3.from=10&blk.n3.to=100&blk.n3.step=10&blk.n6.channel=Vload",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n2": {
+      "s": {
+       "el": {
+        "cls": "master:resistor",
+        "name": "Rload",
+        "match": "one"
+       }
+      }
+     },
+     "n3": {
+      "s": {
+       "from": 10,
+       "to": 100,
+       "step": 10
+      }
+     },
+     "n4": {
+      "s": {
+       "param": "R"
+      }
+     },
+     "n6": {
+      "s": {
+       "channel": "Vload"
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "cct: a tighter tolerance and a lower speed limit, the block renamed",
+   "link": "#load&v=1&qs=cct&blk.n2.tol=0.002&why.blk.n2.tol=The%20user%20wants%20the%20CCT%20to%202%20ms&blk.n7.limit=1.03&blk.n7.label=Speed%20below%201.03%20pu",
+   "expect": {},
+   "probe": {
+    "name": "Critical clearing time",
+    "blocks": {
+     "n2": {
+      "s": {
+       "tol": 0.002,
+       "lower": 0.05,
+       "upper": 0.5
+      }
+     },
+     "n7": {
+      "label": "Speed below 1.03 pu",
+      "s": {
+       "limit": 1.03,
+       "op": "le"
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "damping: the ieee graph style at 300 dpi with the key on the right",
+   "link": "#load&v=1&qs=damping&graph.template=ieee&graph.dpi=300&why.graph.dpi=Print%20quality%20for%20a%20paper&graph.legend=right",
+   "expect": {},
+   "probe": {
+    "graph": {
+     "template": "ieee",
+     "dpi": 300,
+     "legend": "right"
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "snapshot: the Start block by blk.start, a 50 Hz case and the PSCAD that is open",
+   "link": "#load&v=1&qs=snapshot&blk.start.fNominal=50&why.blk.start.fNominal=The%20user%20is%20on%20a%2050%20Hz%20grid&blk.start.runMode=connect&blk.start.connectTimeout=300&blk.start.project=hvdc.pscx",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n1": {
+      "s": {
+       "fNominal": "50",
+       "runMode": "connect",
+       "connectTimeout": 300,
+       "project": "hvdc.pscx"
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "name": "json: a whole workflow (run, read a channel, its peak into a table)",
+   "link": "#load&v=1&json=%7B%22name%22:%22Peak%20voltage%22,%22nodes%22:%5B%7B%22id%22:%22n1%22,%22type%22:%22start%22,%22s%22:%7B%22project%22:%22vdiv.pscx%22%7D%7D,%7B%22id%22:%22n2%22,%22type%22:%22px.run%22,%22s%22:%7B%22duration%22:2%7D%7D,%7B%22id%22:%22n3%22,%22type%22:%22px.series%22,%22s%22:%7B%22channel%22:%22Vbus%22%7D%7D,%7B%22id%22:%22n4%22,%22type%22:%22sig.peak%22,%22label%22:%22Highest%20voltage%22%7D,%7B%22id%22:%22n5%22,%22type%22:%22out.table.add%22,%22s%22:%7B%22table%22:%22Peak%22,%22cols%22:%5B%7B%22id%22:%22c1%22,%22name%22:%22Highest%20voltage%22%7D%5D%7D%7D%5D,%22edges%22:%5B%7B%22from%22:%22n1%22,%22out%22:%22next%22,%22to%22:%22n2%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n2%22,%22out%22:%22ok%22,%22to%22:%22n5%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n2%22,%22out%22:%22result%22,%22to%22:%22n3%22,%22in%22:%22run%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22series%22,%22to%22:%22n4%22,%22in%22:%22series%22%7D,%7B%22from%22:%22n4%22,%22out%22:%22value%22,%22to%22:%22n5%22,%22in%22:%22c1%22%7D%5D%7D&note=Peak%20voltage%20of%20one%20run",
+   "expect": {},
+   "probe": {
+    "name": "Peak voltage",
+    "counts": {
+     "blocks": 5,
+     "wires": 5
+    },
+    "blocks": {
+     "n3": {
+      "type": "px.series",
+      "s": {
+       "channel": "Vbus"
+      }
+     },
+     "n4": {
+      "type": "sig.peak",
+      "label": "Highest voltage"
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/pscad-scripter/builder/",
+   "via": "/pscad-scripter/",
+   "name": "router: template and blk keys sent to pscad-scripter/ land on the builder",
+   "link": "#load&v=1&template=layers&blk.n1.project=substation.pscx&blk.n3.duration=3",
+   "expect": {},
+   "probe": {
+    "name": "Every arrangement",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "substation.pscx"
+      }
+     },
+     "n3": {
+      "s": {
+       "duration": 3
+      }
+     }
+    }
+   }
   }
  ]
 }
