@@ -8,6 +8,12 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
@@ -21,7 +27,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -45,7 +51,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -63,7 +69,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -87,7 +93,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -129,7 +135,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/ed-uc-simulator/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -153,7 +159,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financialfreedom/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -171,7 +177,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -207,7 +213,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/loadflow-simulator/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -234,7 +240,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -273,7 +279,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2958,7 +2964,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -3015,7 +3021,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/valuateeverything/ai/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

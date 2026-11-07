@@ -1,6 +1,6 @@
 ---
 name: brotools-pscad-scripter
-description: Opens Adjie Brotools' PSCAD Scripter (https://tool.adjiebrotots.com/pscad-scripter/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about writing PSCAD Python automation scripts (mhi.pscad, EMTDC): build and run a case, fault ride-through, critical clearing time, parameter sweeps over values, layers and substitution sets, harmonics and THD, snapshots and simulation sets, damping and control tuning, built as a workflow the tool turns into one ready-to-run script. Also use when they mention tool.adjiebrotots.com/pscad-scripter.
+description: "Opens Adjie Brotools' PSCAD Scripter (https://tool.adjiebrotots.com/pscad-scripter/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about writing PSCAD Python automation scripts (mhi.pscad, EMTDC): build and run a case, fault ride-through, critical clearing time, parameter sweeps over values, layers and substitution sets, harmonics and THD, snapshots and simulation sets, damping and control tuning, built as a workflow the tool turns into one ready-to-run script. Also use when they mention tool.adjiebrotots.com/pscad-scripter."
 ---
 
 # PSCAD Scripter on tool.adjiebrotots.com

@@ -3,7 +3,7 @@
 //
 // Per tool (TOOLS below), under <tool>/ai/:
 //   index.html                 the page people see: download the skill, how to install it in
-//                              Claude, ChatGPT and Grok (animated), a worked conversation, ads
+//                              Claude, ChatGPT, Grok, Gemini and Copilot (animated), a worked conversation, ads
 //   <skill>.zip                the skill: one folder <skill>/ holding everything under skill/
 //   skill/SKILL.md             what the assistant reads first (YAML name + description)
 //   skill/references/<p>.md    one per page of the tool: every key, range, default, Quick
@@ -129,7 +129,9 @@ function skillMd(T, models) {
   const desc = `Opens Adjie Brotools' ${T.name} (${SITE}/${T.tool}/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about ${T.use} Also use when they mention tool.adjiebrotots.com/${T.tool}.`;
   if (desc.length > 1024) throw new Error(name + ': description over 1024 characters');
   const L = [];
-  L.push('---', `name: ${name}`, `description: ${desc.replace(/\s+/g, ' ')}`, '---', '');
+  // The description is one double-quoted YAML string (a JSON string is one): left bare, its
+  // colons ("planning: which plants") make strict parsers such as Copilot's reject the skill.
+  L.push('---', `name: ${name}`, `description: ${JSON.stringify(desc.replace(/\s+/g, ' '))}`, '---', '');
   L.push(`# ${T.name} on tool.adjiebrotots.com`, '');
   L.push(`${T.name} is a free calculator that runs in the user's browser. This skill turns the user's question into **one link** that opens the tool on their scenario. The tool, not you, works out the result: its figures come from its own model and data, and anything you work out separately can differ from what the user then sees.`, '');
   L.push('## What it decides', '');
@@ -349,21 +351,49 @@ export function userInputs(M, ex) {
   return demoRows(M, { ...ex, state }).filter(r => r.user);
 }
 
-export function aiPage(T, models, demo) {
-  const M = models.find(m => m.P.page === T.main) || models[0];
-  const name = skillName(T);
-  const zipName = name + '.zip';
-  const url = aiUrl(T);
-  const title = `Use ${T.name} in your AI`;
-  const desc = `Download the ${T.name} skill for Claude, ChatGPT or Grok. Your AI researches the assumptions and sends one link that opens ${T.name} on your scenario.`;
-  demo = { ...demo, link: canonicalLink(M.base, demo.pairs) };
-  const rows = demoRows(M, demo);
-  const guide = existsSync(join(ROOT, T.tool, 'guides', 'index.html'));
-  const H = [];
-  H.push(`<!DOCTYPE html>
+/* ── The install card, shared by every <tool>/ai/ page and the /ai/ hub ────────────────────────
+   zip and skill name the download (the hub uses a placeholder); hub is the path to /ai/ from
+   the page. The steps themselves are drawn by ai-page.js. */
+export const AI_ASOF = '7 November 2026';
+// Each assistant's mark on its tab: Claude, ChatGPT and Grok as in jastip-app-js's MCP guide,
+// Gemini and Copilot from @lobehub/icons (MIT). ChatGPT and Grok take the tab's text colour.
+const AI_LOGOS = {
+  claude: '<path fill="#d97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/>',
+  chatgpt: '<path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/>',
+  grok: '<path fill="currentColor" d="M9.27 15.29l7.978-5.897c.391-.29.95-.177 1.137.272.98 2.369.542 5.215-1.41 7.169-1.951 1.954-4.667 2.382-7.149 1.406l-2.711 1.257c3.889 2.661 8.611 2.003 11.562-.953 2.341-2.344 3.066-5.539 2.388-8.42l.006.007c-.983-4.232.242-5.924 2.75-9.383.06-.082.12-.164.179-.248l-3.301 3.305v-.01L9.267 15.292M7.623 16.723c-2.792-2.67-2.31-6.801.071-9.184 1.761-1.763 4.647-2.483 7.166-1.425l2.705-1.25a7.808 7.808 0 00-1.829-1A8.975 8.975 0 005.984 5.83c-2.533 2.536-3.33 6.436-1.962 9.764 1.022 2.487-.653 4.246-2.34 6.022-.599.63-1.199 1.259-1.682 1.925l7.62-6.815"/>',
+  gemini: '<path d="M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z" fill="#3186FF"/><path d="M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z" fill="url(#ai-lg-gemini-0)"/><path d="M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z" fill="url(#ai-lg-gemini-1)"/><path d="M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z" fill="url(#ai-lg-gemini-2)"/><defs><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-gemini-0" x1="7" x2="11" y1="15.5" y2="12"><stop stop-color="#08B962"/><stop offset="1" stop-color="#08B962" stop-opacity="0"/></linearGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-gemini-1" x1="8" x2="11.5" y1="5.5" y2="11"><stop stop-color="#F94543"/><stop offset="1" stop-color="#F94543" stop-opacity="0"/></linearGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-gemini-2" x1="3.5" x2="17.5" y1="13.5" y2="12"><stop stop-color="#FABC12"/><stop offset=".46" stop-color="#FABC12" stop-opacity="0"/></linearGradient></defs>',
+  copilot: '<path d="M16.295 5.29l-0.242 0.986h-2.32c-1.721 0-3.22 1.197-3.638 2.902l-2.101 8.593H3.798c-2.44 0-4.229-2.342-3.637-4.761l2.106-8.612c0.557-2.274 2.556-3.87 4.85-3.87h5.54c2.44 0 4.23 2.343 3.638 4.761" fill="url(#ai-lg-copilot-0)"/><path d="M16.295 5.29l-0.242 0.986h-2.32c-1.721 0-3.22 1.197-3.638 2.902l-2.101 8.593H3.798c-2.44 0-4.229-2.342-3.637-4.761l2.106-8.612c0.557-2.274 2.556-3.87 4.85-3.87h5.54c2.44 0 4.23 2.343 3.638 4.761" fill="url(#ai-lg-copilot-1)"/><path d="M7.752 18.758l0.242-0.986h2.321c1.72 0 3.22-1.197 3.637-2.903l2.102-8.593h4.196c2.439 0 4.228 2.343 3.637 4.762l-2.107 8.611c-0.556 2.274-2.555 3.87-4.85 3.87h-5.54c-2.44 0-4.229-2.342-3.638-4.761" fill="url(#ai-lg-copilot-2)"/><path d="M7.752 18.758l0.242-0.986h2.321c1.72 0 3.22-1.197 3.637-2.903l2.102-8.593h4.196c2.439 0 4.228 2.343 3.637 4.762l-2.107 8.611c-0.556 2.274-2.555 3.87-4.85 3.87h-5.54c-2.44 0-4.229-2.342-3.638-4.761" fill="url(#ai-lg-copilot-3)"/><defs><radialGradient cx="0" cy="0" gradientTransform="matrix(-9.77133 19.8405 38.9403 15.7727 12.674 0.587)" gradientUnits="userSpaceOnUse" id="ai-lg-copilot-0" r="1"><stop offset=".25" stop-color="#109df2"/><stop offset=".72" stop-color="#aad445"/><stop offset=".97" stop-color="#ffd400"/></radialGradient><radialGradient cx="0" cy="0" gradientTransform="matrix(-9.94414 20.7959 24.6537 12.5336 21.948 4.756)" gradientUnits="userSpaceOnUse" id="ai-lg-copilot-2" r="1"><stop offset=".07" stop-color="#8c48ff"/><stop offset=".5" stop-color="#f2598a"/><stop offset=".9" stop-color="#ffb152"/></radialGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-copilot-1" x1="8.275" x2="8.177" y1="0.534" y2="17.776"><stop stop-color="#3dcbff"/><stop offset=".25" stop-color="#0588f7" stop-opacity="0"/></linearGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-copilot-3" x1="15.839" x2="15.829" y1="5.211" y2="9.907"><stop offset=".06" stop-color="#f8adfa"/><stop offset=".71" stop-color="#a86edd" stop-opacity="0"/></linearGradient></defs>',
+};
+const AI_APPS = [['claude', 'Claude'], ['chatgpt', 'ChatGPT'], ['grok', 'Grok'], ['gemini', 'Gemini'], ['copilot', 'Copilot']];
+export function installSection(zipName, name, hub) {
+  return `    <section class="gd-sec card" id="install" aria-labelledby="install-h">
+      <h2 id="install-h">Install the skill</h2>
+      <p class="gd-sub">Pick your assistant. The demo plays the steps; press a step to jump to it.</p>
+      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}" data-hub="${attr(hub)}">
+        <div class="ai-tabs" role="tablist" aria-label="Assistant">
+${AI_APPS.map(([k, v], i) => `          <button type="button" role="tab" class="ai-tab" data-app="${k}" aria-selected="${i === 0}"><svg class="ai-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${AI_LOGOS[k]}</svg><span>${v}</span></button>`).join('\n')}
+        </div>
+        <p class="ai-app-note" hidden></p>
+        <div class="gd-demo">
+          <figure class="gd-screen">
+            <div class="ai-stage" aria-hidden="true"></div>
+            <div class="gd-bar"><span class="gd-cap ai-cap"></span><button type="button" class="btn-sm btn-theme ai-play">Pause</button></div>
+          </figure>
+          <ol class="gd-steps ai-steps"></ol>
+        </div>
+      </div>
+      <p class="gd-note">Menus move as these apps update: look for <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT and Grok: Plugins; Gemini: Customise; Copilot: inside an agent). Gemini takes the unzipped folder; the others take the zip as it is. No skill support on your plan? Attach <code>${esc(zipName)}</code> or its <code>SKILL.md</code> to the chat and say "use this skill".</p>
+      <p class="ai-asof">Effective ${AI_ASOF}. AI changes quickly: the UI, plans and features may be different by the time you see this.</p>
+    </section>`;
+}
+
+/* The page around an AI page's main: head (analytics, ads, SEO, JSON-LD) and footer. up is the
+   path back to the site root ('../../' from <tool>/ai/, '../' from /ai/). */
+function pageTop({ up, comment, title, desc, url, image, ld }) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Generated by _ref/agent-doc.mjs (_ref/ai-skill.mjs) from ${esc(M.P.notes)} and the tool itself: edit those, then run it. -->
+  <!-- Generated by _ref/agent-doc.mjs (_ref/ai-skill.mjs) ${comment} -->
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
@@ -380,7 +410,7 @@ export function aiPage(T, models, demo) {
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
        crossorigin="anonymous"></script>
-  <script src="../../consent.js" defer></script>
+  <script src="${up}consent.js" defer></script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -393,86 +423,55 @@ export function aiPage(T, models, demo) {
 <meta property="og:description" content="${attr(desc)}">
 <meta property="og:url" content="${attr(url)}">
 <meta property="og:site_name" content="Adjie Brotot Tools">
-<meta property="og:image" content="https://tool.adjiebrotots.com/og/${attr(T.tool)}.jpg">
+<meta property="og:image" content="${attr(image)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${attr(title)}">
 <meta name="twitter:description" content="${attr(desc)}">
 <script type="application/ld+json">
-${JSON.stringify({
-    '@context': 'https://schema.org', '@type': 'HowTo', name: title, url, description: desc, inLanguage: 'en',
-    isPartOf: { '@type': 'WebApplication', name: T.name, url: SITE + '/' + T.tool + '/' },
-    step: [
-      { '@type': 'HowToStep', name: 'Download the skill', text: `Download ${zipName} from this page.` },
-      { '@type': 'HowToStep', name: 'Install it in your AI', text: 'Upload the zip as a skill in Claude, ChatGPT or Grok and switch it on.' },
-      { '@type': 'HowToStep', name: 'Ask your question', text: `Ask your question. The AI lists your inputs and its assumptions and sends a link that opens ${T.name} on your scenario.` },
-    ],
-  }, null, 2)}
+${JSON.stringify(ld, null, 2)}
 </script>
-<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
-<link rel="manifest" href="../../manifest.webmanifest">
-<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
-<script src="../../pwa.js" defer></script>
-<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../fonts.css">
-<link rel="stylesheet" href="../../dark.css">
-<link rel="stylesheet" href="../../light.css">
-<link rel="stylesheet" href="../../shared.css">
-<link rel="stylesheet" href="../../guide-shared.css">
-<link rel="stylesheet" href="../../ai-page.css">
+<link rel="icon" type="image/svg+xml" href="${up}logos/logo.svg">
+<link rel="manifest" href="${up}manifest.webmanifest">
+<link rel="apple-touch-icon" href="${up}logos/apple-touch-icon.png">
+<script src="${up}pwa.js" defer></script>
+<link rel="preload" href="${up}assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="${up}fonts.css">
+<link rel="stylesheet" href="${up}dark.css">
+<link rel="stylesheet" href="${up}light.css">
+<link rel="stylesheet" href="${up}shared.css">
+<link rel="stylesheet" href="${up}guide-shared.css">
+<link rel="stylesheet" href="${up}ai-page.css">
 </head>
 <body class="light">
 <!--email_off-->
-<script src="../../theme.js"></script>
+<script src="${up}theme.js"></script>
 <div class="container gd ai">
-
-  <nav class="gd-top" aria-label="Site">
-    <a class="btn-theme btn-back" href="../">← ${esc(T.name)}</a>
-    <div class="gd-top-r">
-      <a class="btn-primary gd-open gd-open-top" href="${attr(zipName)}" download>Download skill</a>
-      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+`;
+}
+function pageEnd(up) {
+  return `  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="${up}disclaimer/">Disclaimer</a> · <a href="${up}privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="${up}logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="${up}logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="${up}logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
     </div>
-  </nav>
+  </footer>
+</div>
+<script src="${up}shared.js" defer></script>
+<script src="${up}ai-page.js" defer></script>
+<!--/email_off-->
+</body>
+</html>
+`;
+}
 
-  <main>
-    <header class="gd-hero">
-      <h1>${glyph(T, M)}Use ${esc(T.name)} in your AI</h1>
-      <p class="gd-lead">Install one skill in Claude, ChatGPT or Grok, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens ${esc(T.name)} on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
-      <div class="gd-hero-btns">
-        <a class="btn-primary gd-open ai-dl" href="${attr(zipName)}" download><span aria-hidden="true">⬇</span>&nbsp;Download ${esc(zipName)}</a>
-        <a class="gd-skip" href="../">Open the tool</a>
-      </div>
-      <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link). <a href="skill/SKILL.md">Read SKILL.md</a></p>
-    </header>
-
-    <section class="gd-sec card" id="install" aria-labelledby="install-h">
-      <h2 id="install-h">Install the skill</h2>
-      <p class="gd-sub">Pick your assistant. The demo plays the steps; press a step to jump to it.</p>
-      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}">
-        <div class="ai-tabs" role="tablist" aria-label="Assistant">
-          <button type="button" role="tab" class="ai-tab" data-app="claude" aria-selected="true">Claude</button>
-          <button type="button" role="tab" class="ai-tab" data-app="chatgpt" aria-selected="false">ChatGPT</button>
-          <button type="button" role="tab" class="ai-tab" data-app="grok" aria-selected="false">Grok</button>
-        </div>
-        <div class="gd-demo">
-          <figure class="gd-screen">
-            <div class="ai-stage" aria-hidden="true"></div>
-            <div class="gd-bar"><span class="gd-cap ai-cap"></span><button type="button" class="btn-sm btn-theme ai-play">Pause</button></div>
-          </figure>
-          <ol class="gd-steps ai-steps"></ol>
-        </div>
-      </div>
-      <p class="gd-note">Menus move as these apps update; look for <strong>Skills</strong> in Settings. Skills need the app's code tool switched on (Claude: <strong>Code execution and file creation</strong>). No skill support on your plan? Attach <code>${esc(zipName)}</code> or <a href="skill/SKILL.md">SKILL.md</a> to the chat and say "use this skill".</p>
-    </section>
-
-    <!-- In-article ad: between cards (.ad-slot in shared.css) -->
-    <div class="ad-slot">
-      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="1433722275"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
-    <section class="gd-sec card" id="use" aria-labelledby="use-h">
+/* The worked conversation (How to use it): a request, the AI's inputs, assumptions and link. */
+function useSection(T, demo, rows, name, sub) {
+  return `    <section class="gd-sec card" id="use" aria-labelledby="use-h">
       <h2 id="use-h">How to use it</h2>
-      <p class="gd-sub">Ask as you would ask a friend. With the skill on, the AI keeps your figures, researches the rest, and hands you the link. It does not give the answer itself: the tool does, once you open the link.</p>
+      ${sub || ''}<p class="gd-sub">Ask as you would ask a friend. With the skill on, the AI keeps your figures, researches the rest, and hands you the link. It does not give the answer itself: the tool does, once you open the link.</p>
       <div class="ai-chat" aria-label="An example conversation">
         <div class="ai-msg ai-user"><p>${esc(demo.request)}</p></div>
         <div class="ai-work">
@@ -497,7 +496,58 @@ ${JSON.stringify({
         <li><strong>Checked before you see it.</strong> The skill's script checks every input's name, range and choices before the AI sends the link, so it opens the scenario listed.</li>
         <li><strong>The tool shows what the AI chose.</strong> When the link opens, a banner lists each value the AI set and why, with an Undo back to your own inputs.</li>
       </ul>
-    </section>
+    </section>`;
+}
+
+export function aiPage(T, models, demo) {
+  const M = models.find(m => m.P.page === T.main) || models[0];
+  const name = skillName(T);
+  const zipName = name + '.zip';
+  const url = aiUrl(T);
+  const title = `Use ${T.name} in your AI`;
+  const desc = `Download the ${T.name} skill for Claude, ChatGPT, Grok, Gemini or Copilot. Your AI researches the assumptions and sends one link that opens ${T.name} on your scenario.`;
+  demo = { ...demo, link: canonicalLink(M.base, demo.pairs) };
+  const rows = demoRows(M, demo);
+  const guide = existsSync(join(ROOT, T.tool, 'guides', 'index.html'));
+  const H = [];
+  H.push(pageTop({ up: '../../', comment: `from ${esc(M.P.notes)} and the tool itself: edit those, then run it.`, title, desc, url, image: `https://tool.adjiebrotots.com/og/${T.tool}.jpg`,
+    ld: {
+    '@context': 'https://schema.org', '@type': 'HowTo', name: title, url, description: desc, inLanguage: 'en',
+    isPartOf: { '@type': 'WebApplication', name: T.name, url: SITE + '/' + T.tool + '/' },
+    step: [
+      { '@type': 'HowToStep', name: 'Download the skill', text: `Download ${zipName} from this page.` },
+      { '@type': 'HowToStep', name: 'Install it in your AI', text: 'Upload the zip as a skill in Claude, ChatGPT, Grok or Copilot (in Gemini, upload the unzipped folder) and switch it on.' },
+      { '@type': 'HowToStep', name: 'Ask your question', text: `Ask your question. The AI lists your inputs and its assumptions and sends a link that opens ${T.name} on your scenario.` },
+    ],
+  } }) + `
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← ${esc(T.name)}</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="${attr(zipName)}" download>Download skill</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1>${glyph(T, M)}Use ${esc(T.name)} in your AI</h1>
+      <p class="gd-lead">Install one skill in Claude, ChatGPT, Grok, Gemini or Copilot, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens ${esc(T.name)} on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open ai-dl" href="${attr(zipName)}" download><span aria-hidden="true">⬇</span>&nbsp;Download ${esc(zipName)}</a>
+        <a class="gd-skip" href="../">Open the tool</a>
+      </div>
+      <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link).</p>
+    </header>
+
+${installSection(zipName, name, '../../ai/')}
+
+    <!-- In-article ad: between cards (.ad-slot in shared.css) -->
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="1433722275"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+${useSection(T, demo, rows, name)}
 
     <!-- Multiplex ad: before the closing buttons (.ad-slot in shared.css) -->
     <div class="ad-slot">
@@ -510,25 +560,11 @@ ${JSON.stringify({
       <a class="btn-primary gd-open" href="${attr(zipName)}" download>Download the skill</a>
       ${guide ? '<a class="gd-skip" href="../guides/">Read the guide</a>' : ''}
       <a class="gd-skip" href="../">Open the tool</a>
+      <a class="gd-skip" href="../../ai/">All Brotools skills</a>
     </section>
   </main>
 
-  <footer>
-    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
-    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
-    <div class="gd-made">
-      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
-      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
-      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
-    </div>
-  </footer>
-</div>
-<script src="../../shared.js" defer></script>
-<script src="../../ai-page.js" defer></script>
-<!--/email_off-->
-</body>
-</html>
-`);
+` + pageEnd('../../'));
   return H.join('\n');
 }
 
@@ -541,3 +577,106 @@ export function llmsLines() {
   return L;
 }
 export { AI_RULES };
+
+/* ── The hub, /ai/: every tool with a skill ────────────────────────────────────
+   The same three parts as a tool's AI page: how to install a skill, how to use one (the first
+   tool's worked example), then each tool with a link to open it and one to its AI page. */
+export const HUB_URL = SITE + '/ai/';
+function metaDesc(M) {
+  const html = readFileSync(join(ROOT, M.P.page, 'index.html'), 'utf8');
+  const m = /<meta name="description" content="([^"]*)"/.exec(html);
+  return m ? m[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"') : '';
+}
+export function aiHub(list) {   // list: [{ T, models, demo }] in TOOLS order
+  const title = 'Use Adjie Brotools in your AI';
+  const desc = `Free skills for Claude, ChatGPT, Grok, Gemini and Copilot that open ${list.length} Adjie Brotools calculators on your own scenario with one link: property, tax, investing, retirement and power systems.`;
+  const items = list.map(({ T, models }) => {
+    const M = models.find(m => m.P.page === T.main) || models[0];
+    return { T, M, name: skillName(T), glyph: glyph(T, M), about: metaDesc(M) };
+  });
+  const first = list[0];
+  const M0 = first.models.find(m => m.P.page === first.T.main) || first.models[0];
+  const demo = { ...first.demo, link: canonicalLink(M0.base, first.demo.pairs) };
+  const rows = demoRows(M0, demo);
+  const ld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'CollectionPage', name: title, url: HUB_URL, description: desc, inLanguage: 'en',
+        isPartOf: { '@type': 'WebSite', name: 'Adjie Brotools', url: SITE + '/' },
+        mainEntity: { '@type': 'ItemList', numberOfItems: items.length,
+          itemListElement: items.map((x, i) => ({ '@type': 'ListItem', position: i + 1, name: `${x.T.name} skill`, url: aiUrl(x.T) })) } },
+      { '@type': 'HowTo', name: 'Install a Brotools skill in your AI', url: HUB_URL + '#install', inLanguage: 'en',
+        step: [
+          { '@type': 'HowToStep', name: 'Pick a tool', text: 'Choose a tool below and download its skill (a .zip) from its AI page.' },
+          { '@type': 'HowToStep', name: 'Install it in your AI', text: 'Upload the zip as a skill in Claude, ChatGPT, Grok or Copilot (in Gemini, upload the unzipped folder) and switch it on.' },
+          { '@type': 'HowToStep', name: 'Ask your question', text: 'Ask in plain words. The AI lists your inputs and its assumptions and sends a link that opens the tool on your scenario.' },
+        ] },
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Adjie Brotools', item: SITE + '/' },
+        { '@type': 'ListItem', position: 2, name: 'Use in AI', item: HUB_URL },
+      ] },
+    ],
+  };
+  const cards = items.map(x => `        <li class="ai-tool card">
+          <h3>${x.glyph}${esc(x.T.name)}</h3>
+          <p>${esc(x.about)}</p>
+          <p class="ai-tool-skill"><code>${esc(x.name)}</code></p>
+          <div class="ai-tool-btns">
+            <a class="btn-sm btn-primary" href="../${attr(x.T.tool)}/ai/">Get the skill</a>
+            <a class="btn-sm btn-theme" href="../${attr(x.T.tool)}/">Open the tool</a>
+          </div>
+        </li>`).join('\n');
+  return pageTop({ up: '../', comment: 'from TOOLS and each tool\'s main page: edit those, then run it.', title, desc, url: HUB_URL,
+    image: SITE + '/og/home.jpg', ld }) + `
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← All tools</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="#tools">Pick a skill</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1>Use Adjie Brotools in your AI</h1>
+      <p class="gd-lead">${items.length} of these free calculators come with a skill for Claude, ChatGPT, Grok, Gemini and Copilot. Install the ones you need, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens the tool on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="#tools">See the ${items.length} skills</a>
+        <a class="gd-skip" href="#install">How to install</a>
+      </div>
+      <p class="ai-files">Each skill is a .zip: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link). Each tool's AI page has the download.</p>
+    </header>
+
+${installSection('brotools-<tool>.zip', 'brotools-<tool>', './')}
+
+    <!-- In-article ad: between cards (.ad-slot in shared.css) -->
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="1433722275"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+${useSection(first.T, demo, rows, skillName(first.T), `<p class="gd-sub">An example with ${esc(first.T.name)}. Every tool works the same way, and its AI page shows one of its own.</p>\n      `)}
+
+    <section class="gd-sec card" id="tools" aria-labelledby="tools-h">
+      <h2 id="tools-h">Tools with a skill</h2>
+      <p class="gd-sub">Open a tool to use it yourself, or get its skill to use it through your AI. In Copilot, one agent can hold all of them.</p>
+      <ul class="ai-tools">
+${cards}
+      </ul>
+    </section>
+
+    <!-- Multiplex ad: before the closing buttons (.ad-slot in shared.css) -->
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="gd-end">
+      <p>Ready to try it?</p>
+      <a class="btn-primary gd-open" href="#tools">Pick a skill</a>
+      <a class="gd-skip" href="../">See all tools</a>
+    </section>
+  </main>
+
+` + pageEnd('../');
+}

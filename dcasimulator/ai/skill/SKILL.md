@@ -1,6 +1,6 @@
 ---
 name: brotools-dcasimulator
-description: Opens Adjie Brotools' DCA Scenario Explorer (https://tool.adjiebrotots.com/dcasimulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about backtesting regular investing (dollar cost averaging) into stocks, ETFs or crypto on past prices, comparing tickers, schedules and buying rules, and multi-ticker portfolios with rebalancing. Also use when they mention tool.adjiebrotots.com/dcasimulator.
+description: "Opens Adjie Brotools' DCA Scenario Explorer (https://tool.adjiebrotots.com/dcasimulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about backtesting regular investing (dollar cost averaging) into stocks, ETFs or crypto on past prices, comparing tickers, schedules and buying rules, and multi-ticker portfolios with rebalancing. Also use when they mention tool.adjiebrotots.com/dcasimulator."
 ---
 
 # DCA Scenario Explorer on tool.adjiebrotots.com

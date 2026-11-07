@@ -1,6 +1,6 @@
 ---
 name: brotools-capacity-expansion-planner
-description: Opens Adjie Brotools' Capacity Expansion Planner (https://tool.adjiebrotots.com/capacity-expansion-planner/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about electricity generation capacity expansion planning: which plants, renewables and batteries to build and when to meet growing demand at least cost, with carbon prices, emissions and costs by year. Also use when they mention tool.adjiebrotots.com/capacity-expansion-planner.
+description: "Opens Adjie Brotools' Capacity Expansion Planner (https://tool.adjiebrotots.com/capacity-expansion-planner/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about electricity generation capacity expansion planning: which plants, renewables and batteries to build and when to meet growing demand at least cost, with carbon prices, emissions and costs by year. Also use when they mention tool.adjiebrotots.com/capacity-expansion-planner."
 ---
 
 # Capacity Expansion Planner on tool.adjiebrotots.com

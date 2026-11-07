@@ -1,6 +1,6 @@
 ---
 name: brotools-borrowingcapacity
-description: Opens Adjie Brotools' Borrowing Capacity (https://tool.adjiebrotots.com/borrowingcapacity/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about how much an Australian bank would lend for a home loan: borrowing power from income, expenses, dependants, debts, deposit, rate and term, and what limit (serviceability, DTI, LVR, deposit) holds it down. Also use when they mention tool.adjiebrotots.com/borrowingcapacity.
+description: "Opens Adjie Brotools' Borrowing Capacity (https://tool.adjiebrotots.com/borrowingcapacity/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about how much an Australian bank would lend for a home loan: borrowing power from income, expenses, dependants, debts, deposit, rate and term, and what limit (serviceability, DTI, LVR, deposit) holds it down. Also use when they mention tool.adjiebrotots.com/borrowingcapacity."
 ---
 
 # Borrowing Capacity on tool.adjiebrotots.com

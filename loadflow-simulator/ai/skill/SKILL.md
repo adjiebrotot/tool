@@ -1,6 +1,6 @@
 ---
 name: brotools-loadflow-simulator
-description: Opens Adjie Brotools' Load Flow Simulator (https://tool.adjiebrotots.com/loadflow-simulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about power system load flow (power flow) studies: bus voltages, line loading and losses on a network such as the IEEE/WSCC 9-bus, a distribution feeder or an HVDC case, AC Newton-Raphson or DC. Also use when they mention tool.adjiebrotots.com/loadflow-simulator.
+description: "Opens Adjie Brotools' Load Flow Simulator (https://tool.adjiebrotots.com/loadflow-simulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about power system load flow (power flow) studies: bus voltages, line loading and losses on a network such as the IEEE/WSCC 9-bus, a distribution feeder or an HVDC case, AC Newton-Raphson or DC. Also use when they mention tool.adjiebrotots.com/loadflow-simulator."
 ---
 
 # Load Flow Simulator on tool.adjiebrotots.com
