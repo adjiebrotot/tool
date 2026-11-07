@@ -62,6 +62,22 @@ Each was a real fault found by the checks or by reading the generated scripts:
 - On an empty canvas the starter card hid the Start block on a short screen (1280 x 720); Fit
   view now keeps Start above the card.
 - The component picker's Name field ignored the block's own example (`F1`, `BRK1`).
+- Forty-three of the 106 blocks had no icon of their own and fell through to the per-kind
+  fallback, so the palette showed the same three glyphs over and over. Every block now has its
+  own picture, after PSCAD's own symbols; the fourteen leftover PowerFactory ones that no longer
+  mapped to anything are gone. 106 blocks, 106 distinct icons.
+- `Component.range()` hands a Choice parameter's symbolic values back as a **set**, with no
+  order and no tie to the form's own list of choices, so `pair_choices` has to pair them by
+  spelling. It scored a containing match the same as an exact one, so the label "R" took
+  whichever of `R`, `RL`, `RC` and `RLC` the set happened to yield first: **24 definitions
+  carried wrong values** (`master:Dload` wrote `RLC` for "R"), and the file came out different
+  on every run. Exact now beats containing beats a shared opening, over a sorted list, and the
+  reference was rebuilt against the engine.
+- `components.json` was throwing away the order of the component's own dialog, because the file
+  is written with sorted keys. Each parameter now carries `i`, its place in the form, and each
+  definition carries `groups`, the order of the form's sections. Both are additive and only in
+  `components.json`: `params.json`, which the editor downloads, is unchanged, and
+  `_pages/reference.mjs` does not read them yet.
 
 ---
 

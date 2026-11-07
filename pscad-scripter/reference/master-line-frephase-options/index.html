@@ -168,7 +168,7 @@ comp.<span class="py-f">parameters</span>(AMaxE=<span class="py-s">&quot;0.4 [%]
 <tr><td><code>FE</code><small>Real</small></td><td>Hz</td><td>1.0E6</td><td>Upper Limit<small>Range 1E-08 to 100000000</small></td></tr>
 <tr><td><code>FS</code><small>Real</small></td><td>Hz</td><td>0.01</td><td>Lower Limit<small>Range 1E-08 to 100000000</small></td></tr>
 <tr><td><code>MaxRPtol</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2000000.0</td><td>Maximum Residue/Pole Ratio Tolerance<small>At least 1</small></td></tr>
-<tr><td><code>Numf</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>100</td><td>Total Solution Increments<small>Written as 1000 (100), 200, 500, 100 (1000)</small></td></tr>
+<tr><td><code>Numf</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>100</td><td>Total Solution Increments<small>Written as 100, 200, 500, 1000</small></td></tr>
 <tr><td><code>W1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>0 to F0<small>Range 1 to 100000000</small></td></tr>
 <tr><td><code>W2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>F0<small>Range 1 to 100000000</small></td></tr>
 <tr><td><code>W3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>F0 to Fmax<small>Range 1 to 100000000</small></td></tr>
@@ -186,7 +186,7 @@ comp.<span class="py-f">parameters</span>(AMaxE=<span class="py-s">&quot;0.4 [%]
 <tr><td><code>FSP</code><small>Real</small></td><td>Hz</td><td>0.001</td><td>Lower Frequency Limit<small>Lower frequency limit for passivity checking.</small><small>Range 1E-06 to 100000000</small><small>Used when CPASS != 0</small></td></tr>
 <tr><td><code>MER_PE</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.0</td><td>Maximum Percentage Error<small>Range 1E-10 to 100</small><small>Used when CPASS == 2</small></td></tr>
 <tr><td><code>MIT_PE</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>5</td><td>Maximum Number of Iterations<small>Range 1 to 20</small><small>Used when CPASS == 2</small></td></tr>
-<tr><td><code>NFP</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1000</td><td>Total Frequency Samples<small>Choose the number of frequency samples between the specified lower and upper limits. These samples are exclusive from those used in the actual curve fitting of the results.</small><small>Written as 100, 5000 (500), 1000, 2000, 500 (5000)</small><small>Used when CPASS != 0</small></td></tr>
+<tr><td><code>NFP</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1000</td><td>Total Frequency Samples<small>Choose the number of frequency samples between the specified lower and upper limits. These samples are exclusive from those used in the actual curve fitting of the results.</small><small>Written as 100, 500, 1000, 2000, 5000</small><small>Used when CPASS != 0</small></td></tr>
 </tbody></table></div>
 </section>
     <div class="ad-slot">

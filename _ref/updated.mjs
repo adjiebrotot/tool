@@ -9,9 +9,11 @@
 // the /id/ pages it writes, so they keep their stamp.
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL, fileURLToPath } from 'url';
 import { cardFor } from './og.mjs';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+// fileURLToPath, not URL.pathname: on Windows the pathname is /D:/... and resolves to D:\D:\...
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://tool.adjiebrotots.com/';
 const MONTHS = {
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -60,7 +62,7 @@ export function stamp(html, p) {
   return html;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   let n = 0, nofoot = [];
   (function walk(d) {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {

@@ -154,7 +154,7 @@ project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_ca
     <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;N&quot;</span>]))              <span class="py-c"># Type of Multiplexer</span>
 
 comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:mux1&quot;</span>)[<span class="py-n">0</span>]
-comp.<span class="py-f">parameters</span>(N=<span class="py-s">&quot;8_3_SELECT&quot;</span>)          <span class="py-c"># a Choice is written as its symbol</span></code></pre>
+comp.<span class="py-f">parameters</span>(N=<span class="py-s">&quot;8_3_LINES&quot;</span>)           <span class="py-c"># a Choice is written as its symbol</span></code></pre>
   <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
   <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "N")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
 </section>
@@ -163,7 +163,7 @@ comp.<span class="py-f">parameters</span>(N=<span class="py-s">&quot;8_3_SELECT&
 <section class="dx-sec dx-group" aria-labelledby="g1">
   <h2 id="g1">Configurations</h2>
   <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>N</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>4_2_SELECT</td><td>Type of Multiplexer<small>Written as 4_2_SELECT (4 X 1 (4 inputs, 2 select lines)), 8_3_SELECT (8 X 1 (8 inputs, 3 select lines))</small></td></tr>
+<tr><td><code>N</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>4_2_LINES</td><td>Type of Multiplexer<small>Written as 4_2_LINES (4 X 1 (4 inputs, 2 select lines)), 8_3_LINES (8 X 1 (8 inputs, 3 select lines))</small></td></tr>
 <tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small></td></tr>
 </tbody></table></div>
 </section>
