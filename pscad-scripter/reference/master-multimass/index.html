@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:multimass parameters: PSCAD Torsional Shaft Model</title>
+<meta name="description" content="Every parameter of master:multimass (Torsional Shaft Model) in PSCAD: 221 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:multimass parameters (PSCAD Torsional Shaft Model)">
+<meta property="og:description" content="Every parameter of master:multimass (Torsional Shaft Model) in PSCAD: 221 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:multimass parameters (PSCAD Torsional Shaft Model)">
+<meta name="twitter:description" content="Every parameter of master:multimass (Torsional Shaft Model) in PSCAD: 221 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:multimass parameters (PSCAD Torsional Shaft Model)",
+  "description": "Every parameter of master:multimass (Torsional Shaft Model) in PSCAD: 221 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:multimass (Torsional Shaft Model)",
+    "description": "Torsional Shaft Model (Torsional Shaft Model (Obsolete)), a component of PSCAD's Master Library, filed under control blocks."
+  },
+  "keywords": "master:multimass parameters, PSCAD Torsional Shaft Model parameters, Torsional Shaft Model PSCAD, master:multimass mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:multimass",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:multimass</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:multimass parameters<span class="dx-h1-sub">PSCAD Torsional Shaft Model</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Torsional Shaft Model (<code>master:multimass</code>): 221 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:multimass is</h2>
+  <p>Torsional Shaft Model (Torsional Shaft Model (Obsolete)), a component of PSCAD's Master Library, filed under control blocks.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:multimass</code></dd><dt>PSCAD name</dt><dd>Torsional Shaft Model</dd><dt>Category</dt><dd>Control blocks</dd><dt>Parameters</dt><dd>221, in 12 groups; 30 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:multimass in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimass&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;F&quot;</span>]))              <span class="py-c"># Electrical base frequency, in Hz</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimass&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(F=<span class="py-s">&quot;120 [Hz]&quot;</span>)            <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "F")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:multimass parameters"><li><a href="#g1">Configuration<span class="dx-n">9</span></a></li><li><a href="#g2">Inertia Constants<span class="dx-n">25</span></a></li><li><a href="#g3">Generator and Exciter Data<span class="dx-n">8</span></a></li><li><a href="#g4">Shaft Spring Constant<span class="dx-n">24</span></a></li><li><a href="#g5">Mutual Damping<span class="dx-n">24</span></a></li><li><a href="#g6">Internal Output Variable Names - 2<span class="dx-n">26</span></a></li><li><a href="#g7">Self Damping<span class="dx-n">25</span></a></li><li><a href="#g8">Internal Output Variable Names - 1<span class="dx-n">25</span></a></li><li><a href="#g9">Turbine Torque Share<span class="dx-n">25</span></a></li><li><a href="#g10">Internal Output Variable Names - 3<span class="dx-n">27</span></a></li><li><a href="#g11">Uniform Modal Damping<span class="dx-n">1</span></a></li><li><a href="#g12">Initialization Data Interface<span class="dx-n">2</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Enab</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Initialization switch: 0-Init;1-Release<small>Range 0 to 1</small></td></tr>
+<tr><td><code>Exc</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Model Exciter Mass<small>Select whether to model the exciter mass or not</small><small>Written as NO (No), YES (Yes)</small><small>Used when SQC==0</small></td></tr>
+<tr><td><code>F</code><small>Real</small></td><td>Hz</td><td>60.0</td><td>Electrical base frequency<small>Enter the electrical base frequency</small><small>At least 1e-307</small></td></tr>
+<tr><td><code>MVA</code><small>Real</small></td><td>MVA</td><td>892.4</td><td>Machine total MVA<small>Enter the MVA rating of the machine</small><small>At least 1e-307</small></td></tr>
+<tr><td><code>N</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>4</td><td>Number of Turbines<small>Enter the number of turbines (number of masses other than machine and exciter) in the multimass system</small><small>Range 1 to 25</small></td></tr>
+<tr><td><code>RPM</code><small>Real</small></td><td>rev/min</td><td>3600.0</td><td>Machine mechanical synchronous speed<small>Enter the mechanical synchronous speed of masses</small><small>At least 1e-307</small></td></tr>
+<tr><td><code>SQC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SYNCHRONOUS_MACHINE</td><td>For Use With ...<small>Select the type of machine this component is connected</small><small>Written as SYNCHRONOUS_MACHINE (Synchronous Machine), INDUCTION_MACHINE (Induction Machine), DC_MACHINE (DC Machine), PM_MACHINE (PM Machine)</small></td></tr>
+<tr><td><code>Units</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>S_KPU_DPU</td><td>Unit System Number (see help)<small>Choose the appropriate unit system used</small><small>Written as LBFTFT_KLBFT_RAD (1 : H(lb.ft.ft.) K(lb.ft/rad)), INLBFS_2_KLBFIN_RAD (2 : H(in.lbf.s^2) K(lbf.in/rad)), LBININ_KLBFIN_RAD (3 : H(lb.in.in.) K(lbf.in/rad)), S_KPU (4 : H(s) K(pu)), KGM_2_KNM_RAD (5 : H(kg.m^2) K(N.m/rad)), LBFT_2_KLBFT_RAD_DLBFFTS_RAD (6 : H(lb.ft^2) K(lb.ft/rad) D(lbf.ft.s/rad)), INLBFS_2_KLBFIN_RAD_DLBFINS_RAD (7 : H(in.lbf.s^2) K(lbf.in/rad) D(lbf.in.s/rad)), LBIN_2_KLBFIN_RAD_DLBFINS_RAD (8 : H(lb.in^2) K(lbf.in/rad) D(lbf.in.s/rad)), S_KPU_DPU (9 : H(s) K(pu) D(pu)), KGM_2_KNM_RAD_DNMS_RAD (10 : H(kg.m^2) K(N.m/rad) D(N.m.s/rad))</small></td></tr>
+<tr><td><code>spdini</code><small>Real</small></td><td>pu</td><td>1</td><td>Machine initial electrical speed<small>Enter the initial electrical speed</small><small>Range 0 to 2</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Inertia Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>H1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0929</td><td>Turbine #1 Inertia Constant<small>At least 0</small></td></tr>
+<tr><td><code>H10</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #10 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=10)</small></td></tr>
+<tr><td><code>H11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #11 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=11)</small></td></tr>
+<tr><td><code>H12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #12 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=12)</small></td></tr>
+<tr><td><code>H13</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #13 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=13)</small></td></tr>
+<tr><td><code>H14</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #14 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=14)</small></td></tr>
+<tr><td><code>H15</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #15 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=15)</small></td></tr>
+<tr><td><code>H16</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #16 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=16)</small></td></tr>
+<tr><td><code>H17</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #17 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=17)</small></td></tr>
+<tr><td><code>H18</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #18 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=18)</small></td></tr>
+<tr><td><code>H19</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #19 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=19)</small></td></tr>
+<tr><td><code>H2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.1556</td><td>Turbine #2 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=2)</small></td></tr>
+<tr><td><code>H20</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #20 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=20)</small></td></tr>
+<tr><td><code>H21</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #21 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=21)</small></td></tr>
+<tr><td><code>H22</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #22 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=22)</small></td></tr>
+<tr><td><code>H23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #23 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=23)</small></td></tr>
+<tr><td><code>H24</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #24 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=24)</small></td></tr>
+<tr><td><code>H25</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #25 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=25)</small></td></tr>
+<tr><td><code>H3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.8587</td><td>Turbine #3 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=3)</small></td></tr>
+<tr><td><code>H4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.8842</td><td>Turbine #4 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=4)</small></td></tr>
+<tr><td><code>H5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #5 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=5)</small></td></tr>
+<tr><td><code>H6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #6 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=6)</small></td></tr>
+<tr><td><code>H7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #7 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=7)</small></td></tr>
+<tr><td><code>H8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #8 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=8)</small></td></tr>
+<tr><td><code>H9</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #9 Inertia Constant<small>At least 0</small><small>Used when (N&gt;=9)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Generator and Exciter Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>HE</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0342</td><td>Exciter Inertia Constant<small>At least 0</small><small>Used when (Exc)&amp;&amp;(SQC==0)</small></td></tr>
+<tr><td><code>HG</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.8685</td><td>Generator Inertia Constant<small>At least 0</small></td></tr>
+<tr><td><code>KGE</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1064.0</td><td>Spring Constant From Generator to Exciter<small>At least 0</small><small>Used when (Exc)&amp;&amp;(SQC==0)</small></td></tr>
+<tr><td><code>KLG</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>26713.0</td><td>Spring Constant From Last Turbine to Generator<small>At least 0</small></td></tr>
+<tr><td><code>MDGE</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Generator and Exciter<small>At least 0</small><small>Used when (Exc)&amp;&amp;(SQC==0)&amp;&amp;(Units&gt;5)</small></td></tr>
+<tr><td><code>MDLG</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Last Turbine and Generator<small>At least 0</small><small>Used when (Units&gt;5)</small></td></tr>
+<tr><td><code>SDE</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Exciter Self Damping<small>At least 0</small><small>Used when (Exc)&amp;&amp;(SQC==0)&amp;&amp;(Units&gt;5)</small></td></tr>
+<tr><td><code>SDG</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Generator Self Damping<small>At least 0</small><small>Used when (Units&gt;5)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Shaft Spring Constant</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>K10_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #10 to #11<small>At least 0</small><small>Used when (N&gt;=11)</small></td></tr>
+<tr><td><code>K11_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #11 to #12<small>At least 0</small><small>Used when (N&gt;=12)</small></td></tr>
+<tr><td><code>K12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>7277.0</td><td>Spring Constant From Turbine #1 to #2<small>At least 0</small><small>Used when (N&gt;=2)</small></td></tr>
+<tr><td><code>K12_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #12 to #13<small>At least 0</small><small>Used when (N&gt;=13)</small></td></tr>
+<tr><td><code>K13_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #13 to #14<small>At least 0</small><small>Used when (N&gt;=14)</small></td></tr>
+<tr><td><code>K14_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #14 to #15<small>At least 0</small><small>Used when (N&gt;=15)</small></td></tr>
+<tr><td><code>K15_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #15 to #16<small>At least 0</small><small>Used when (N&gt;=16)</small></td></tr>
+<tr><td><code>K16_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #16 to #17<small>At least 0</small><small>Used when (N&gt;=17)</small></td></tr>
+<tr><td><code>K17_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #17 to #18<small>At least 0</small><small>Used when (N&gt;=18)</small></td></tr>
+<tr><td><code>K18_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #18 to #19<small>At least 0</small><small>Used when (N&gt;=19)</small></td></tr>
+<tr><td><code>K19_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #19 to #20<small>At least 0</small><small>Used when (N&gt;=20)</small></td></tr>
+<tr><td><code>K20_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #20 to #21<small>At least 0</small><small>Used when (N&gt;=21)</small></td></tr>
+<tr><td><code>K21_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #21 to #22<small>At least 0</small><small>Used when (N&gt;=22)</small></td></tr>
+<tr><td><code>K22_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #22 to #23<small>At least 0</small><small>Used when (N&gt;=23)</small></td></tr>
+<tr><td><code>K23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>13168.0</td><td>Spring Constant From Turbine #2 to #3<small>At least 0</small><small>Used when (N&gt;=3)</small></td></tr>
+<tr><td><code>K23_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #23 to #24<small>At least 0</small><small>Used when (N&gt;=24)</small></td></tr>
+<tr><td><code>K24_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #24 to #25<small>At least 0</small><small>Used when (N&gt;=25)</small></td></tr>
+<tr><td><code>K34</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>19618.0</td><td>Spring Constant From Turbine #3 to #4<small>At least 0</small><small>Used when (N&gt;=4)</small></td></tr>
+<tr><td><code>K45</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #4 to #5<small>At least 0</small><small>Used when (N&gt;=5)</small></td></tr>
+<tr><td><code>K5_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #5 to #6<small>At least 0</small><small>Used when (N&gt;=6)</small></td></tr>
+<tr><td><code>K6_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #6 to #7<small>At least 0</small><small>Used when (N&gt;=7)</small></td></tr>
+<tr><td><code>K7_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #7 to #8<small>At least 0</small><small>Used when (N&gt;=8)</small></td></tr>
+<tr><td><code>K8_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #8 to #9<small>At least 0</small><small>Used when (N&gt;=9)</small></td></tr>
+<tr><td><code>K9_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Spring Constant From Turbine #9 to #10<small>At least 0</small><small>Used when (N&gt;=10)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Mutual Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>MD10_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #10 and #11<small>At least 0</small><small>Used when (N&gt;=11)</small></td></tr>
+<tr><td><code>MD11_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #11 and #12<small>At least 0</small><small>Used when (N&gt;=12)</small></td></tr>
+<tr><td><code>MD12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #1 and #2<small>At least 0</small><small>Used when (N&gt;=2)</small></td></tr>
+<tr><td><code>MD12_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #12 and #13<small>At least 0</small><small>Used when (N&gt;=13)</small></td></tr>
+<tr><td><code>MD13_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #13 and #14<small>At least 0</small><small>Used when (N&gt;=14)</small></td></tr>
+<tr><td><code>MD14_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #14 and #15<small>At least 0</small><small>Used when (N&gt;=15)</small></td></tr>
+<tr><td><code>MD15_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #15 and #16<small>At least 0</small><small>Used when (N&gt;=16)</small></td></tr>
+<tr><td><code>MD16_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #16 and #17<small>At least 0</small><small>Used when (N&gt;=17)</small></td></tr>
+<tr><td><code>MD17_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #17 and #18<small>At least 0</small><small>Used when (N&gt;=18)</small></td></tr>
+<tr><td><code>MD18_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #18 and #19<small>At least 0</small><small>Used when (N&gt;=19)</small></td></tr>
+<tr><td><code>MD19_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #19 and #20<small>At least 0</small><small>Used when (N&gt;=20)</small></td></tr>
+<tr><td><code>MD20_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #20 and #21<small>At least 0</small><small>Used when (N&gt;=21)</small></td></tr>
+<tr><td><code>MD21_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #21 and #22<small>At least 0</small><small>Used when (N&gt;=22)</small></td></tr>
+<tr><td><code>MD22_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #22 and #23<small>At least 0</small><small>Used when (N&gt;=23)</small></td></tr>
+<tr><td><code>MD23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #2 and #3<small>At least 0</small><small>Used when (N&gt;=3)</small></td></tr>
+<tr><td><code>MD23_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #23 and #24<small>At least 0</small><small>Used when (N&gt;=24)</small></td></tr>
+<tr><td><code>MD24_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #24 and #25<small>At least 0</small><small>Used when (N&gt;=25)</small></td></tr>
+<tr><td><code>MD34</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #3 and #4<small>At least 0</small><small>Used when (N&gt;=4)</small></td></tr>
+<tr><td><code>MD45</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #4 and #5<small>At least 0</small><small>Used when (N&gt;=5)</small></td></tr>
+<tr><td><code>MD5_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #5 and #6<small>At least 0</small><small>Used when (N&gt;=6)</small></td></tr>
+<tr><td><code>MD6_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #6 and #7<small>At least 0</small><small>Used when (N&gt;=7)</small></td></tr>
+<tr><td><code>MD7_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #7 and #8<small>At least 0</small><small>Used when (N&gt;=8)</small></td></tr>
+<tr><td><code>MD8_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #8 and #9<small>At least 0</small><small>Used when (N&gt;=9)</small></td></tr>
+<tr><td><code>MD9_</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Damping Between Turbine #9 and #10<small>At least 0</small><small>Used when (N&gt;=10)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Internal Output Variable Names - 2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>P1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 1 relative to Generator</td></tr>
+<tr><td><code>P10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 10 relative to Generator</td></tr>
+<tr><td><code>P11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 11 relative to Generator</td></tr>
+<tr><td><code>P12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 12 relative to Generator</td></tr>
+<tr><td><code>P13</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 13 relative to Generator</td></tr>
+<tr><td><code>P14</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 14 relative to Generator</td></tr>
+<tr><td><code>P15</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 15 relative to Generator</td></tr>
+<tr><td><code>P16</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 16 relative to Generator</td></tr>
+<tr><td><code>P17</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 17 relative to Generator</td></tr>
+<tr><td><code>P18</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 18 relative to Generator</td></tr>
+<tr><td><code>P19</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 19 relative to Generator</td></tr>
+<tr><td><code>P2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 2 relative to Generator</td></tr>
+<tr><td><code>P20</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 20 relative to Generator</td></tr>
+<tr><td><code>P21</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 21 relative to Generator</td></tr>
+<tr><td><code>P22</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 22 relative to Generator</td></tr>
+<tr><td><code>P23</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 23 relative to Generator</td></tr>
+<tr><td><code>P24</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 24 relative to Generator</td></tr>
+<tr><td><code>P25</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 25 relative to Generator</td></tr>
+<tr><td><code>P26</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 26 relative to Generator</td></tr>
+<tr><td><code>P3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 3 relative to Generator</td></tr>
+<tr><td><code>P4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 4 relative to Generator</td></tr>
+<tr><td><code>P5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 5 relative to Generator</td></tr>
+<tr><td><code>P6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 6 relative to Generator</td></tr>
+<tr><td><code>P7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 7 relative to Generator</td></tr>
+<tr><td><code>P8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 8 relative to Generator</td></tr>
+<tr><td><code>P9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Position of Mass 9 relative to Generator</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Self Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>SD1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #1 Self Damping<small>At least 0</small></td></tr>
+<tr><td><code>SD10</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #10 Self Damping<small>At least 0</small><small>Used when (N&gt;=10)</small></td></tr>
+<tr><td><code>SD11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #11 Self Damping<small>At least 0</small><small>Used when (N&gt;=11)</small></td></tr>
+<tr><td><code>SD12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #12 Self Damping<small>At least 0</small><small>Used when (N&gt;=12)</small></td></tr>
+<tr><td><code>SD13</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #13 Self Damping<small>At least 0</small><small>Used when (N&gt;=13)</small></td></tr>
+<tr><td><code>SD14</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #14 Self Damping<small>At least 0</small><small>Used when (N&gt;=14)</small></td></tr>
+<tr><td><code>SD15</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #15 Self Damping<small>At least 0</small><small>Used when (N&gt;=15)</small></td></tr>
+<tr><td><code>SD16</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #16 Self Damping<small>At least 0</small><small>Used when (N&gt;=16)</small></td></tr>
+<tr><td><code>SD17</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #17 Self Damping<small>At least 0</small><small>Used when (N&gt;=17)</small></td></tr>
+<tr><td><code>SD18</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #18 Self Damping<small>At least 0</small><small>Used when (N&gt;=18)</small></td></tr>
+<tr><td><code>SD19</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #19 Self Damping<small>At least 0</small><small>Used when (N&gt;=19)</small></td></tr>
+<tr><td><code>SD2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #2 Self Damping<small>At least 0</small><small>Used when (N&gt;=2)</small></td></tr>
+<tr><td><code>SD20</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #20 Self Damping<small>At least 0</small><small>Used when (N&gt;=20)</small></td></tr>
+<tr><td><code>SD21</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #21 Self Damping<small>At least 0</small><small>Used when (N&gt;=21)</small></td></tr>
+<tr><td><code>SD22</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #22 Self Damping<small>At least 0</small><small>Used when (N&gt;=22)</small></td></tr>
+<tr><td><code>SD23</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #23 Self Damping<small>At least 0</small><small>Used when (N&gt;=23)</small></td></tr>
+<tr><td><code>SD24</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #24 Self Damping<small>At least 0</small><small>Used when (N&gt;=24)</small></td></tr>
+<tr><td><code>SD25</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #25 Self Damping<small>At least 0</small><small>Used when (N&gt;=25)</small></td></tr>
+<tr><td><code>SD3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #3 Self Damping<small>At least 0</small><small>Used when (N&gt;=3)</small></td></tr>
+<tr><td><code>SD4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #4 Self Damping<small>At least 0</small><small>Used when (N&gt;=4)</small></td></tr>
+<tr><td><code>SD5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #5 Self Damping<small>At least 0</small><small>Used when (N&gt;=5)</small></td></tr>
+<tr><td><code>SD6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #6 Self Damping<small>At least 0</small><small>Used when (N&gt;=6)</small></td></tr>
+<tr><td><code>SD7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #7 Self Damping<small>At least 0</small><small>Used when (N&gt;=7)</small></td></tr>
+<tr><td><code>SD8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #8 Self Damping<small>At least 0</small><small>Used when (N&gt;=8)</small></td></tr>
+<tr><td><code>SD9</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Turbine #9 Self Damping<small>At least 0</small><small>Used when (N&gt;=9)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Internal Output Variable Names - 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>T10_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 10 - 11</td></tr>
+<tr><td><code>T11_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 11 - 12</td></tr>
+<tr><td><code>T12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 1 - 2</td></tr>
+<tr><td><code>T12_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 12 - 13</td></tr>
+<tr><td><code>T13_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 13 - 14</td></tr>
+<tr><td><code>T14_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 14 - 15</td></tr>
+<tr><td><code>T15_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 15 - 16</td></tr>
+<tr><td><code>T16_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 16 - 17</td></tr>
+<tr><td><code>T17_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 17 - 18</td></tr>
+<tr><td><code>T18_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 18 - 19</td></tr>
+<tr><td><code>T19_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 19 - 20</td></tr>
+<tr><td><code>T20_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 20 - 21</td></tr>
+<tr><td><code>T21_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 21 - 22</td></tr>
+<tr><td><code>T22_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 22 - 23</td></tr>
+<tr><td><code>T23</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 2 - 3</td></tr>
+<tr><td><code>T23_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 23 - 24</td></tr>
+<tr><td><code>T24_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 24 - 25</td></tr>
+<tr><td><code>T25_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 25 - 26</td></tr>
+<tr><td><code>T34</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 3 - 4</td></tr>
+<tr><td><code>T45</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 4 - 5</td></tr>
+<tr><td><code>T56</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 5 - 6</td></tr>
+<tr><td><code>T6_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 6 - 7</td></tr>
+<tr><td><code>T7_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 7 - 8</td></tr>
+<tr><td><code>T8_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 8 - 9</td></tr>
+<tr><td><code>T9_</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Torque on Shaft from Mass 9 - 10</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">Turbine Torque Share</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>TF1</code><small>Real</small></td><td>pu</td><td>0.30</td><td>Torque Share for Turbine #1<small>Range 0 to 1</small><small>Used when (N&gt;1)</small></td></tr>
+<tr><td><code>TF10</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #10<small>Range 0 to 1</small><small>Used when (N&gt;=10)</small></td></tr>
+<tr><td><code>TF11</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #11<small>Range 0 to 1</small><small>Used when (N&gt;=11)</small></td></tr>
+<tr><td><code>TF12</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #12<small>Range 0 to 1</small><small>Used when (N&gt;=12)</small></td></tr>
+<tr><td><code>TF13</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #13<small>Range 0 to 1</small><small>Used when (N&gt;=13)</small></td></tr>
+<tr><td><code>TF14</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #14<small>Range 0 to 1</small><small>Used when (N&gt;=14)</small></td></tr>
+<tr><td><code>TF15</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #15<small>Range 0 to 1</small><small>Used when (N&gt;=15)</small></td></tr>
+<tr><td><code>TF16</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #16<small>Range 0 to 1</small><small>Used when (N&gt;=16)</small></td></tr>
+<tr><td><code>TF17</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #17<small>Range 0 to 1</small><small>Used when (N&gt;=17)</small></td></tr>
+<tr><td><code>TF18</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #18<small>Range 0 to 1</small><small>Used when (N&gt;=18)</small></td></tr>
+<tr><td><code>TF19</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #19<small>Range 0 to 1</small><small>Used when (N&gt;=19)</small></td></tr>
+<tr><td><code>TF2</code><small>Real</small></td><td>pu</td><td>0.26</td><td>Torque Share for Turbine #2<small>Range 0 to 1</small><small>Used when (N&gt;=2)</small></td></tr>
+<tr><td><code>TF20</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #20<small>Range 0 to 1</small><small>Used when (N&gt;=20)</small></td></tr>
+<tr><td><code>TF21</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #21<small>Range 0 to 1</small><small>Used when (N&gt;=21)</small></td></tr>
+<tr><td><code>TF22</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #22<small>Range 0 to 1</small><small>Used when (N&gt;=22)</small></td></tr>
+<tr><td><code>TF23</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #23<small>Range 0 to 1</small><small>Used when (N&gt;=23)</small></td></tr>
+<tr><td><code>TF24</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #24<small>Range 0 to 1</small><small>Used when (N&gt;=24)</small></td></tr>
+<tr><td><code>TF25</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #25<small>Range 0 to 1</small><small>Used when (N&gt;=25)</small></td></tr>
+<tr><td><code>TF3</code><small>Real</small></td><td>pu</td><td>0.22</td><td>Torque Share for Turbine #3<small>Range 0 to 1</small><small>Used when (N&gt;=3)</small></td></tr>
+<tr><td><code>TF4</code><small>Real</small></td><td>pu</td><td>0.22</td><td>Torque Share for Turbine #4<small>Range 0 to 1</small><small>Used when (N&gt;=4)</small></td></tr>
+<tr><td><code>TF5</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #5<small>Range 0 to 1</small><small>Used when (N&gt;=5)</small></td></tr>
+<tr><td><code>TF6</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #6<small>Range 0 to 1</small><small>Used when (N&gt;=6)</small></td></tr>
+<tr><td><code>TF7</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #7<small>Range 0 to 1</small><small>Used when (N&gt;=7)</small></td></tr>
+<tr><td><code>TF8</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #8<small>Range 0 to 1</small><small>Used when (N&gt;=8)</small></td></tr>
+<tr><td><code>TF9</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Torque Share for Turbine #9<small>Range 0 to 1</small><small>Used when (N&gt;=9)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10">
+  <h2 id="g10">Internal Output Variable Names - 3</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>W1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 1</td></tr>
+<tr><td><code>W10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 10</td></tr>
+<tr><td><code>W11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 11</td></tr>
+<tr><td><code>W12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 12</td></tr>
+<tr><td><code>W13</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 13</td></tr>
+<tr><td><code>W14</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 14</td></tr>
+<tr><td><code>W15</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 15</td></tr>
+<tr><td><code>W16</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 16</td></tr>
+<tr><td><code>W17</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 17</td></tr>
+<tr><td><code>W18</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 18</td></tr>
+<tr><td><code>W19</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 19</td></tr>
+<tr><td><code>W2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 2</td></tr>
+<tr><td><code>W20</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 20</td></tr>
+<tr><td><code>W21</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 21</td></tr>
+<tr><td><code>W22</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 22</td></tr>
+<tr><td><code>W23</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 23</td></tr>
+<tr><td><code>W24</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 24</td></tr>
+<tr><td><code>W25</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 25</td></tr>
+<tr><td><code>W26</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 26</td></tr>
+<tr><td><code>W3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 3</td></tr>
+<tr><td><code>W4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 4</td></tr>
+<tr><td><code>W5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 5</td></tr>
+<tr><td><code>W6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 6</td></tr>
+<tr><td><code>W7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 7</td></tr>
+<tr><td><code>W8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 8</td></tr>
+<tr><td><code>W9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Delta Mechanical Speed of Mass 9</td></tr>
+<tr><td><code>Wbas</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Rated Mechanical Speed of the System</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g11">
+  <h2 id="g11">Uniform Modal Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>sigma</code><small>Real</small></td><td>1/s</td><td>0.0</td><td>Modal Damping for all modes<small>At least 0</small><small>Used when (Units&lt;=5)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g12">
+  <h2 id="g12">Initialization Data Interface</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>tei</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Input initialized steady Electrical Torque<small>Select Yes or No</small><small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>tmi</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Output initialized Mechanical Torque<small>Select Yes or No</small><small>Written as NO (No), YES (Yes)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-timerdefn/"><code>master:timerdefn</code> timerdefn</a> · <a href="../master-multimass2/"><code>master:multimass2</code> Torsional Shaft Model</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

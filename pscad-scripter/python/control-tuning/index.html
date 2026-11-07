@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD control tuning with Python: overshoot, rise time and damping ratio</title>
+<meta name="description" content="Measure a PSCAD step response's overshoot and rise time and a ringdown's damping ratio and frequency in Python, and fail a run whose oscillation is growing.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/control-tuning/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Control tuning in PSCAD with Python: overshoot, rise time and damping">
+<meta property="og:description" content="Measure a PSCAD step response's overshoot and rise time and a ringdown's damping ratio and frequency in Python, and fail a run whose oscillation is growing.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/control-tuning/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Control tuning in PSCAD with Python: overshoot, rise time and damping">
+<meta name="twitter:description" content="Measure a PSCAD step response's overshoot and rise time and a ringdown's damping ratio and frequency in Python, and fail a run whose oscillation is growing.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Control tuning in PSCAD with Python: overshoot, rise time and damping",
+  "description": "Measure a PSCAD step response's overshoot and rise time and a ringdown's damping ratio and frequency in Python, and fail a run whose oscillation is growing.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/control-tuning/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Advanced",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad damping ratio, pscad control tuning python, pscad overshoot rise time, ringdown analysis, control interaction emt, subsynchronous oscillation pscad",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Control engineering"
+    },
+    {
+      "@type": "Thing",
+      "name": "Damping ratio"
+    },
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Control interaction"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I measure damping in PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Record the quantity that oscillates, run past the disturbance for several periods, find the peaks after the disturbance has cleared and fit them with an exponential. The decay rate and the period give the damping ratio; a negative ratio is a growing oscillation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I measure overshoot and rise time from a PSCAD run?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Find the value before the step and the final value after it, then the highest point past the final value as a percentage of the step (the overshoot), and the time from 10 % to 90 % of the step (the rise time). The Builder's Overshoot and rise time block does it from any recorded channel."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a script retune a controller in PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Write the gain on its component, run, read the response, and repeat. The Builder's Optimise block searches the gains for you against the checks you wire into it."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Control tuning",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/control-tuning/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Control tuning</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Control tuning in PSCAD with Python: overshoot, rise time and damping</h1>
+    <p class="dx-lead">A control review asks a few numbers of every response: <strong>how far a step overshoots, how fast it rises, and whether the oscillation after a disturbance dies away</strong>. In PSCAD all three come out of the recorded waveform. A script that reads them can retune a gain, run again, and keep going until the numbers pass.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a control check reads from a run</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a control check reads from a run</h2>
+  <p><strong>A step response</strong> is a set-point change or a disturbance that a controlled quantity follows to a new value. Its overshoot is how far it goes past the final value, as a percentage of the step, and its rise time how long it takes from 10 % to 90 % of the step.</p>
+  <p><strong>A ringdown</strong> is the oscillation after a disturbance. Its peaks fall away along an exponential when it is damped and grow when it is not. The damping ratio is read from that exponential and the frequency from the spacing of the peaks: a negative ratio is an oscillation that is growing, which is what a converter control interaction or a subsynchronous oscillation looks like in an EMT run.</p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Disturb the case</strong> with what the requirement names: a set-point step on a constant, a short fault, a switching.</li>
+    <li><strong>Run long enough</strong> to see several periods of the slowest mode you care about.</li>
+    <li><strong>Start the analysis after the disturbance itself</strong>, so its own step is not read as the first peak.</li>
+    <li><strong>Check and record</strong>: overshoot and rise time against their limits, a damping ratio above the minimum.</li>
+  </ol>
+  <h3>Overshoot and rise time of a step</h3>
+  <pre><code class="language-python">ref = <span class="py-f">px_find</span>(app, <span class="py-s">&quot;master:const&quot;</span>, <span class="py-s">&quot;Vref&quot;</span>)
+<span class="py-f">px_set</span>(ref, <span class="py-s">&quot;Value&quot;</span>, <span class="py-n">1.02</span>)                         <span class="py-c"># the step, on a constant read by the control</span>
+run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">3</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">100</span>)
+r = <span class="py-f">overshoot</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vrms&quot;</span>), t_event=<span class="py-n">1.0</span>)
+<span class="py-f">print</span>(r.value, r.rise)                             <span class="py-c"># overshoot in %, rise time in s</span></code></pre>
+  <p>A step needs a time: the constant here is written before the run, so the step is where the case's own logic switches to it. Wire the set-point through a timed component, or step it from a snapshot.</p>
+  <h3>Damping of a ringdown</h3>
+  <pre><code class="language-python"><span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tfaultn&quot;</span>, <span class="py-s">&quot;&quot;</span>, at=<span class="py-n">1.0</span>, duration=<span class="py-n">0.05</span>)   <span class="py-c"># a short disturbance</span>
+run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">10</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">500</span>)
+d = <span class="py-f">damping</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>), t_start=<span class="py-n">1.2</span>, t_end=<span class="py-k">None</span>, min_peaks=<span class="py-n">3</span>)
+<span class="py-f">print</span>(d.value, d.frequency, d.stable)              <span class="py-c"># ratio, Hz, ratio above zero</span></code></pre>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Damping of a ringdown Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=damping">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Damping of a ringdown Quick Start applies a 50 ms disturbance at 1 s, runs for 10 s, reads the damping ratio and the frequency of the oscillation from 1.2 s on, and passes the run when the ratio is at least 0.03. This is the file with the case set to <code>C:/Studies/statcom/statcom.pscx</code>:</p>
+  <p class="dx-file"><span><code>damping_of_a_ringdown.py</code> as the Builder writes it: the settings and the workflow</span><a href="damping_of_a_ringdown.py" download>⬇ Download the full file (.py, 2,473 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Damping check</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 damping_check.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Damping check&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/Studies/statcom/statcom.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: A control interaction, a subsynchronous oscillation or a badly tuned loop shows up as an oscillation that does not decay. Start the damping window after the disturbance itself, so its own step is n...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: statcom.pscx) --</span>
+        <span class="py-c"># -- Step 2: Disturbance (master:tfaultn: 1 to 1.05 s) --</span>
+        fault = <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tfaultn&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-n">1</span>, <span class="py-n">0.05</span>, <span class="py-k">True</span>, <span class="py-s">&quot;one&quot;</span>, <span class="py-k">None</span>, <span class="py-k">None</span>)
+        <span class="py-c"># -- Step 3: Run simulation (10 s, 50 us step) --</span>
+        run = <span class="py-f">px_run</span>(app, <span class="py-n">10</span>, <span class="py-n">50</span>, <span class="py-n">500</span>, <span class="py-k">None</span>, events=[(<span class="py-n">1</span>, <span class="py-s">&quot;Disturbance&quot;</span>)], build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+        <span class="py-c"># Did not build: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The case did not build. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># Stopped early: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The simulation stopped before the end. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 4: Well damped (Value ≥ 0.03) --</span>
+        machine_speed = run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+        damping_result = <span class="py-f">damping</span>(machine_speed, t_start=<span class="py-n">1.2</span>, t_end=<span class="py-k">None</span>, min_peaks=<span class="py-n">3</span>)  <span class="py-c"># Damping of a ringdown</span>
+        well_damped_result = <span class="py-f">verdict</span>(damping_result.value, <span class="py-s">&quot;ge&quot;</span>, <span class="py-n">0.03</span>, <span class="py-n">0</span>)
+        <span class="py-k">if</span> well_damped_result.ok <span class="py-k">is</span> <span class="py-k">None</span>:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Well damped: NO DATA (&quot;</span> + <span class="py-f">str</span>(well_damped_result.<span class="py-f">get</span>(<span class="py-s">&quot;reason&quot;</span>) <span class="py-k">or</span> <span class="py-s">&quot;nothing to check&quot;</span>) + <span class="py-s">&quot;), so it takes Fail.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Damping&quot;, saved at the end automatically) --</span>
+        <span class="py-f">table</span>(<span class="py-s">&quot;Damping&quot;</span>).<span class="py-f">add</span>({
+            <span class="py-s">&quot;Damping ratio&quot;</span>: damping_result.value,
+            <span class="py-s">&quot;Mode (Hz)&quot;</span>: damping_result.frequency,
+        })
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 2,371 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><code>set_fault(app, "master:tfaultn", "", 1, 0.05, ...)</code> is the disturbance: a 50 ms fault on the Timed Fault Logic, put back at the end.</li>
+    <li>The 500 us plot step keeps a 10 s run small, and is fine for electromechanical modes of a few hertz. Lower it for a faster control mode.</li>
+    <li><code>damping(machine_speed, t_start=1.2, ...)</code> starts 0.15 s after the fault clears and needs at least three peaks to fit; with fewer it says the signal may not be oscillating rather than giving a number.</li>
+    <li><code>verdict(damping_result.value, "ge", 0.03, 0)</code> is the pass test: 3 % damping or more. A ratio of none (nothing to fit) is reported as no data and takes the fail side.</li>
+  </ul>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>The disturbance read as the first peak.</strong> Start the window after the fault has cleared, or the ratio describes the fault, not the oscillation.</li>
+    <li><strong>Two modes at once.</strong> The fit assumes one dominant oscillation. When two modes beat, the peaks do not lie on one exponential; filter the signal or read a quantity where one mode dominates.</li>
+    <li><strong>A plot step too coarse for the mode.</strong> Each period needs many samples for its peaks to be found. A 500 us plot step suits a mode of a few hertz, not a control mode of a few hundred.</li>
+    <li><strong>A run too short.</strong> Fewer than three peaks after the window starts gives no answer. Run until the slowest mode has shown several periods.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I measure damping in PSCAD?</h3>
+  <p>Record the quantity that oscillates, run past the disturbance for several periods, find the peaks after the disturbance has cleared and fit them with an exponential. The decay rate and the period give the damping ratio; a negative ratio is a growing oscillation.</p>
+  <h3>How do I measure overshoot and rise time from a PSCAD run?</h3>
+  <p>Find the value before the step and the final value after it, then the highest point past the final value as a percentage of the step (the overshoot), and the time from 10 % to 90 % of the step (the rise time). The Builder's Overshoot and rise time block does it from any recorded channel.</p>
+  <h3>Can a script retune a controller in PSCAD?</h3>
+  <p>Yes. Write the gain on its component, run, read the response, and repeat. The Builder's Optimise block searches the gains for you against the checks you wire into it.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build and run a PSCAD case from Python</a></li>
+    <li><a href="../fault-studies/">Fault studies in PSCAD with Python: ride through and critical clearing time</a></li>
+    <li><a href="../parameter-sweep/">Sweep a PSCAD parameter with Python</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD run</a></li>
+    <li><a href="../snapshots-and-batch/">Snapshots, simulation sets and batch runs</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

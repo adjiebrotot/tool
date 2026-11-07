@@ -41,6 +41,8 @@ export const CARDS = [
   ['pisahvsgabung-id', 'pisahvsgabung/id/'],
   ['powerfactory-scripter', 'powerfactory-scripter/'],
   ['powerfactory-scripter-builder', 'powerfactory-scripter/builder/'],
+  ['pscad-scripter', 'pscad-scripter/'],
+  ['pscad-scripter-builder', 'pscad-scripter/builder/'],
   ['randompicker', 'randompicker/'],
   ['rentvsownhouse', 'rentvsownhouse/'],
   ['rentvsownhouse-id', 'rentvsownhouse/id/'],

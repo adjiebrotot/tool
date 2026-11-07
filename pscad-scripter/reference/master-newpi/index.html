@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:newpi parameters: PSCAD Coupled PI Section</title>
+<meta name="description" content="Every parameter of master:newpi (Coupled PI Section) in PSCAD: 44 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-newpi/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:newpi parameters (PSCAD Coupled PI Section)">
+<meta property="og:description" content="Every parameter of master:newpi (Coupled PI Section) in PSCAD: 44 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-newpi/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:newpi parameters (PSCAD Coupled PI Section)">
+<meta name="twitter:description" content="Every parameter of master:newpi (Coupled PI Section) in PSCAD: 44 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:newpi parameters (PSCAD Coupled PI Section)",
+  "description": "Every parameter of master:newpi (Coupled PI Section) in PSCAD: 44 names with units, defaults, ranges and meaning, and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-newpi/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:newpi (Coupled PI Section)",
+    "description": "The coupled PI section: a short line from its sequence data, entered per metre."
+  },
+  "keywords": "master:newpi parameters, PSCAD Coupled PI Section parameters, Coupled PI Section PSCAD, master:newpi mhi.pscad, Rp master:newpi, Lp master:newpi, Cp master:newpi, F master:newpi",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:newpi",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-newpi/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:newpi</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:newpi parameters<span class="dx-h1-sub">PSCAD Coupled PI Section</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Coupled PI Section (<code>master:newpi</code>): 44 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:newpi is</h2>
+  <p>The coupled PI section: a short line from its sequence data, entered per metre.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:newpi</code></dd><dt>PSCAD name</dt><dd>Coupled PI Section</dd><dt>Category</dt><dd>Lines, cables and towers</dd><dt>Parameters</dt><dd>44, in 7 groups; 36 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used master:newpi parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Rp</code></td><td>ohm/m</td><td>Positive Sequence Resistance<small>positive sequence resistance</small></td></tr>
+<tr><td><code>Lp</code></td><td>H/m</td><td>Positive Sequence Inductance<small>positive sequence inductance</small></td></tr>
+<tr><td><code>Cp</code></td><td>uF/m</td><td>Positive Sequence Capacitance<small>positive sequence capacitance</small></td></tr>
+<tr><td><code>F</code></td><td>Hz</td><td>Line Rated Frequency<small>rated frequency</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:newpi in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:newpi&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;Rp&quot;</span>]))             <span class="py-c"># Positive Sequence Resistance, in ohm/m</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:newpi&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(Rp=<span class="py-s">&quot;0.000035632 [ohm/m]&quot;</span>) <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "Rp")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:newpi parameters"><li><a href="#g1">R,X,B Data [pu]<span class="dx-n">8</span></a></li><li><a href="#g2">R, Xl, Xc Data [ohm]<span class="dx-n">6</span></a></li><li><a href="#g3">Main Configuration<span class="dx-n">7</span></a></li><li><a href="#g4">R, L, C Data [ohm,H,uF]<span class="dx-n">6</span></a></li><li><a href="#g5">R,Xl,Xc Data [pu]<span class="dx-n">8</span></a></li><li><a href="#g6">Zero Sequence Estimation Parameters<span class="dx-n">3</span></a></li><li><a href="#g7">Surge Impedance,Travel Time Data [ohm,s]<span class="dx-n">6</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">R,X,B Data [pu]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>BPUP2</code><small>Real</small></td><td>pu/m</td><td>1.933869E-6</td><td>Positive Sequence Capacitive Susceptance<small>At least 1E-307</small></td></tr>
+<tr><td><code>BPUZ2</code><small>Real</small></td><td>pu/m</td><td>1.277271E-6</td><td>Zero Sequence Capacitive Susceptance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>MVA2</code><small>Real</small></td><td>MVA</td><td>100.0</td><td>MVA for All Phases<small>Base 3 phase MVA of per unit quantities</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>RPUP2</code><small>Real</small></td><td>pu/m</td><td>.336786E-7</td><td>Positive Sequence Resistance<small>At least 1E-307</small></td></tr>
+<tr><td><code>RPUZ2</code><small>Real</small></td><td>pu/m</td><td>.558072E-6</td><td>Zero Sequence Resistance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>VR2</code><small>Real</small></td><td>kV</td><td>230.0</td><td>Rated Voltage L-L<small>Line-Line rated voltage</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>XLPUP2</code><small>Real</small></td><td>pu/m</td><td>.593346E-6</td><td>Positive Sequence Inductive Reactance<small>At least 1E-307</small></td></tr>
+<tr><td><code>XLPUZ2</code><small>Real</small></td><td>pu/m</td><td>.196578E-5</td><td>Zero Sequence Inductive Reactance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">R, Xl, Xc Data [ohm]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Bp</code><small>Real</small></td><td>Mohm*m</td><td>273.5448</td><td>Positive Sequence Capacitive Reactance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Bz</code><small>Real</small></td><td>Mohm*m</td><td>414.1642</td><td>Zero Sequence Capacitive Reactance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>Rp</code><small>Real</small></td><td>ohm/m</td><td>.1781598E-4</td><td>Positive Sequence Resistance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Rz</code><small>Real</small></td><td>ohm/m</td><td>.2952201E-3</td><td>Zero Sequence Resistance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>Xp</code><small>Real</small></td><td>ohm/m</td><td>.31388E-3</td><td>Positive Sequence Inductive Reactance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Xz</code><small>Real</small></td><td>ohm/m</td><td>.1039898E-2</td><td>Zero Sequence Inductive Reactance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Main Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Config</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>COUPLED</td><td>Nominal PI or Coupled PI Model:<small>Select Coupled PI or Nominal, Coupled PI is recommended.</small><small>Written as NOMINAL (Nominal), COUPLED (Coupled)</small></td></tr>
+<tr><td><code>Estim</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ENTER</td><td>Enter 0 Sequence Data, or Estimate:<small>Zero sequence data: specify or estimate</small><small>Written as ENTER (Enter), ESTIMATE (Estimate)</small></td></tr>
+<tr><td><code>F</code><small>Real</small></td><td>Hz</td><td>60.0</td><td>Line Rated Frequency<small>Enter the rated frequency</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Line</td><td>T-LINE NAME<small>Enter a name for identification</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>PU</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>R_XL_XC_OHM</td><td>Enter Impedance,Admittance Data in:<small>Select the form of data from available options</small><small>Written as R_XL_XC_PU (R,Xl,Xc [pu]), R_XL_XC_OHM (R,Xl,Xc [ohm]), ZSURGE_TAU (Zsurge,Tau..), R_X_B_PU (R,X,B [pu]), R_L_C_OHM_H_UF (R,L,C [ohm,H,uF])</small></td></tr>
+<tr><td><code>View</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SUPER_COMPACT</td><td>Graphics Display<small>Select the form of graphical representation</small><small>Written as 3_PHASE (3 phase view), SINGLE_LINE (Single line view), COMPACT_SINGLE_LINE (Compact single line view), SUPER_COMPACT (Super compact view)</small></td></tr>
+<tr><td><code>len</code><small>Real</small></td><td>m</td><td>1.0E5</td><td>Line Length<small>Enter the line length</small><small>At least 1E-307</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">R, L, C Data [ohm,H,uF]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Cp</code><small>Real</small></td><td>uF/m</td><td>9.697067E-6</td><td>Positive Sequence Capacitance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Cz</code><small>Real</small></td><td>uF/m</td><td>6.4046636E-6</td><td>Zero Sequence Capacitance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>Lp</code><small>Real</small></td><td>H/m</td><td>8.3259256E-7</td><td>Positive Sequence Inductance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Lz</code><small>Real</small></td><td>H/m</td><td>2.758415E-6</td><td>Zero Sequence Inductance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>Rp2</code><small>Real</small></td><td>ohm/m</td><td>1.781598E-5</td><td>Positive Sequence Resistance<small>At least 1E-307</small></td></tr>
+<tr><td><code>Rz2</code><small>Real</small></td><td>ohm/m</td><td>2.952201E-4</td><td>Zero Sequence Resistance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">R,Xl,Xc Data [pu]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>MVA</code><small>Real</small></td><td>MVA</td><td>100.0</td><td>MVA for All Phases<small>Base 3 phase MVA of per unit quantities</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>RPUP</code><small>Real</small></td><td>pu/m</td><td>.336786E-7</td><td>Positive Sequence Resistance<small>At least 1E-307</small></td></tr>
+<tr><td><code>RPUZ</code><small>Real</small></td><td>pu/m</td><td>.558072E-6</td><td>Zero Sequence Resistance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>VR</code><small>Real</small></td><td>kV</td><td>230.0</td><td>Rated Voltage L-L<small>Line-Line rated voltage</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>XCPUP</code><small>Real</small></td><td>pu*m</td><td>.517098E6</td><td>Positive Sequence Capacitive Reactance<small>At least 1E-307</small></td></tr>
+<tr><td><code>XCPUZ</code><small>Real</small></td><td>pu*m</td><td>.782919E6</td><td>Zero Sequence Capacitive Reactance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>XLPUP</code><small>Real</small></td><td>pu/m</td><td>.593346E-6</td><td>Positive Sequence Inductive Reactance<small>At least 1E-307</small></td></tr>
+<tr><td><code>XLPUZ</code><small>Real</small></td><td>pu/m</td><td>.196578E-5</td><td>Zero Sequence Inductive Reactance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Zero Sequence Estimation Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>REst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.5</td><td>0 Sequence R / +ve Sequence R<small>Ratio of zero sequence resistance divided by positive sequence resistance</small><small>At least 1</small></td></tr>
+<tr><td><code>TEst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.5</td><td>0 Seq. Travel Time / +ve Seq. Travel Time<small>Ratio of zero sequence travel time divided by positive sequence travel time</small><small>At least 1</small></td></tr>
+<tr><td><code>ZEst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.5</td><td>0 Sequence Z / +ve Sequence Z<small>Ratio of zero sequence reactance divided by positive sequence reactance</small><small>At least 1</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Surge Impedance,Travel Time Data [ohm,s]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>RTP</code><small>Real</small></td><td>ohm/m</td><td>.1781598E-4</td><td>Positive Sequence Resistance<small>At least 1E-307</small><small>Used when PU==2</small></td></tr>
+<tr><td><code>RTZ</code><small>Real</small></td><td>ohm/m</td><td>.2952201E-3</td><td>Zero Sequence Resistance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>TTP</code><small>Real</small></td><td>ms</td><td>.2841427</td><td>Positive Sequence Travel Time<small>At least 1E-307</small><small>Used when PU==2</small></td></tr>
+<tr><td><code>TTZ</code><small>Real</small></td><td>ms</td><td>.4203179</td><td>Zero Sequence Travel Time<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+<tr><td><code>ZTP</code><small>Real</small></td><td>ohm</td><td>293.0192</td><td>Positive Sequence Surge Impedance<small>At least 1E-307</small><small>Used when PU==2</small></td></tr>
+<tr><td><code>ZTZ</code><small>Real</small></td><td>ohm</td><td>656.2685</td><td>Zero Sequence Surge Impedance<small>At least 1E-307</small><small>Used when Estim==0</small></td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-cable-coax/"><code>master:Cable_Coax</code> Coax Cable Cross-Section</a> · <a href="../master-pi-double-cct/"><code>master:pi_double_cct</code> Double Circuit Pi section</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

@@ -220,7 +220,7 @@ defineBlock({
     { id: 'clear', label: 'Cleared at', type: 'num', unit: 's', var: 'fault_clear', more: true },
   ],
   settings: [
-    elementSetting('el', 'Fault component', 'master:tpflt', { example: 'F1' }),
+    elementSetting('el', 'Fault component', 'master:tfaultn', { example: 'F1' }),
     { key: 'at', label: 'Starts at', kind: 'number', default: 1, unit: 's', min: 0, step: 0.1, required: true },
     { key: 'duration', label: 'Lasts', kind: 'number', default: 0.12, unit: 's', min: 0, step: 0.01, required: true,
       tip: 'How long the fault stays on. The clearing time is the start plus this.' },

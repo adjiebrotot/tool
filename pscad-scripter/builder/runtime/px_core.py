@@ -25,6 +25,7 @@ _PX = {
     "said": set(),      # messages logged once
     "fnom": {},         # project name -> nominal frequency (f_nominal)
     "built": set(),     # project names already built in this run
+    "snap_start": {},   # project name -> the snapshot its runs start from (snapshot_use)
 }
 PXB = "PXB_"
 

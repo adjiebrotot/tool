@@ -522,7 +522,7 @@ defineBlock({
 defineBlock({
   type: 'out.plot.table', cat: CAT, kind: 'action', oncePerRun: true,
   title: 'Draw graph from results table',
-  desc: 'Draws columns of a results table against another column to a PNG, e.g. Nadir (Hz) against Dispatch (MW), one line per study case. Connect it after the loop.',
+  desc: 'Draws columns of a results table against another column to a PNG, e.g. Peak (kV) against Fault duration (s), one line per layer. Connect it after the loop.',
   keywords: ['graph', 'plot', 'chart', 'table', 'results', 'column', 'against', 'summary graph', 'draw', 'PNG', 'sweep', 'matplotlib'],
   outputs: [fileOut()],
   settings: [

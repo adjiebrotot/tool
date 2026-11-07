@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:Line_ManualYZ parameters: PSCAD Manual Data Entry</title>
+<meta name="description" content="Every parameter of master:Line_ManualYZ (Manual Data Entry) in PSCAD: 52 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-manualyz/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:Line_ManualYZ parameters (PSCAD Manual Data Entry)">
+<meta property="og:description" content="Every parameter of master:Line_ManualYZ (Manual Data Entry) in PSCAD: 52 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-manualyz/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:Line_ManualYZ parameters (PSCAD Manual Data Entry)">
+<meta name="twitter:description" content="Every parameter of master:Line_ManualYZ (Manual Data Entry) in PSCAD: 52 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:Line_ManualYZ parameters (PSCAD Manual Data Entry)",
+  "description": "Every parameter of master:Line_ManualYZ (Manual Data Entry) in PSCAD: 52 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-manualyz/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:Line_ManualYZ (Manual Data Entry)",
+    "description": "Manual Data Entry (Line/Cable Constants Manual Data Entry), a component of PSCAD's Master Library, filed under lines, cables and towers."
+  },
+  "keywords": "master:Line_ManualYZ parameters, PSCAD Manual Data Entry parameters, Manual Data Entry PSCAD, master:Line_ManualYZ mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:Line_ManualYZ",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-manualyz/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:Line_ManualYZ</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:Line_ManualYZ parameters<span class="dx-h1-sub">PSCAD Manual Data Entry</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Manual Data Entry (<code>master:Line_ManualYZ</code>): 52 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:Line_ManualYZ is</h2>
+  <p>Manual Data Entry (Line/Cable Constants Manual Data Entry), a component of PSCAD's Master Library, filed under lines, cables and towers.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:Line_ManualYZ</code></dd><dt>PSCAD name</dt><dd>Manual Data Entry</dd><dt>Category</dt><dd>Lines, cables and towers</dd><dt>Parameters</dt><dd>52, in 8 groups; 40 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:Line_ManualYZ in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_ManualYZ&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;BPUP2&quot;</span>]))          <span class="py-c"># Positive Sequence Capactive Susceptance, in pu/m</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_ManualYZ&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(BPUP2=<span class="py-s">&quot;0.00000346 [pu/m]&quot;</span>) <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "BPUP2")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:Line_ManualYZ parameters"><li><a href="#g1">R,X,B Data Entry [pu/m]<span class="dx-n">11</span></a></li><li><a href="#g2">Manual YZ Data Configuration<span class="dx-n">6</span></a></li><li><a href="#g3">R,Xl,Xc Data Entry [pu/m]<span class="dx-n">11</span></a></li><li><a href="#g4">COPIED DATA FROM ABOVE<span class="dx-n">1</span></a></li><li><a href="#g5">R,Xl,Xc Data Entry [ohm/m]<span class="dx-n">9</span></a></li><li><a href="#g6">Zsurge and Travel Time<span class="dx-n">9</span></a></li><li><a href="#g7">Y,Z Direct Entry<span class="dx-n">3</span></a></li><li><a href="#g8">Y,Z Direct Entry (Multiple Frequencies)<span class="dx-n">2</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">R,X,B Data Entry [pu/m]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>BPUP2</code><small>Real</small></td><td>pu/m</td><td>1.73e-6</td><td>Positive Sequence Capactive Susceptance<small>At least 0</small></td></tr>
+<tr><td><code>BPUZ2</code><small>Real</small></td><td>pu/m</td><td>1.23e-6</td><td>Zero Sequence Capactive Susceptance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>BPUZM2</code><small>Real</small></td><td>pu/m</td><td>1.85e-8</td><td>Zero Sequence Mutual Capactive Susceptance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>MVA2</code><small>Real</small></td><td>MVA</td><td>100</td><td>Total MVA Rating<small>At least 0.01</small></td></tr>
+<tr><td><code>RPUP2</code><small>Real</small></td><td>pu/m</td><td>6.76e-8</td><td>Positive Sequence Resistance<small>At least 0</small></td></tr>
+<tr><td><code>RPUZ2</code><small>Real</small></td><td>pu/m</td><td>6.86e-7</td><td>Zero Sequence Resistance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>RPUZM2</code><small>Real</small></td><td>pu/m</td><td>5.35e-7</td><td>Zero Sequence Mutual Resistance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>VR2</code><small>Real</small></td><td>kV</td><td>230</td><td>Rated Voltage (L-L RMS)<small>At least 0.01</small></td></tr>
+<tr><td><code>XLPUP2</code><small>Real</small></td><td>pu/m</td><td>9.6e-7</td><td>Positive Sequence Inductive Reactance<small>At least 0</small></td></tr>
+<tr><td><code>XLPUZ2</code><small>Real</small></td><td>pu/m</td><td>2.5e-6</td><td>Zero Sequence Inductive Reactance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>XLPUZM2</code><small>Real</small></td><td>pu/m</td><td>6.37e-7</td><td>Zero Sequence Mutual Inductive Reactance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Manual YZ Data Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Estim</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ENTER_0_DATA</td><td>0 Sequence Data Representation?<small>Select from Enter, Estimate or Assume same as postive sequence</small><small>Written as ENTER_0_DATA (Enter 0 Sequence Data), ESTIMATE_0_DATA (Estimate 0 Sequence Data), SAME_AS_POSITIVE (Same as Positive Sequence)</small><small>Used when (NCond&gt;=2) &amp;&amp; (PU!=4)&amp;&amp; (PU!=5)</small></td></tr>
+<tr><td><code>LONGLN</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Has the Entered Data Been Corrected for Long Line Effects?<small>Select Yes or No</small><small>Written as NO (No), YES (Yes)</small><small>Used when (PU!=5)</small></td></tr>
+<tr><td><code>PU</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>R_XL_XC_PU_M</td><td>Data Entry Method:<small>Select the data entry method from available options</small><small>Written as R_XL_XC_PU_M (R,Xl,Xc (pu/m)), R_XL_XC_OHM_M (R,Xl,Xc (ohm/m)), ZSURGE_AND_TRAVEL_TIME (Zsurge and Travel Time), R_X_B_PU_M (R,X,B (pu/m)), Y_Z_MHO_M_OHM_M (Y,Z (mho/m,ohm/m)), Y_Z_MULTIPLE_FREQUENCIES (Y,Z (multiple frequencies))</small></td></tr>
+<tr><td><code>REst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>10.15</td><td>0 Seq. R / +ve Seq. R Ratio<small>Enter ratio of Resistances (Zero Seq./+ve Seq.)</small><small>At least 0</small><small>Used when (Estim==1)&amp;&amp;(NCond&gt;=2)</small></td></tr>
+<tr><td><code>TEst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.36</td><td>0 Seq. Travel Time / +ve Seq. Travel Time Ratio<small>Enter ratio of travel times (Zero Seq. /+ve Seq.)</small><small>At least 0</small><small>Used when (Estim==1)&amp;&amp;(NCond&gt;=2)</small></td></tr>
+<tr><td><code>ZEst</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.915</td><td>0 Seq. Zsurge / +ve Seq. Zsurge  Ratio<small>Enter ratio of Surge Impedances (Zero Seq. /+ve Seq.)</small><small>At least 0</small><small>Used when (Estim==1)&amp;&amp;(NCond&gt;=2)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">R,Xl,Xc Data Entry [pu/m]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>MVA</code><small>Real</small></td><td>MVA</td><td>100</td><td>Total MVA Rating<small>At least 0.01</small></td></tr>
+<tr><td><code>RPUP</code><small>Real</small></td><td>pu/m</td><td>6.76e-8</td><td>Positive Sequence Resistance<small>At least 0</small></td></tr>
+<tr><td><code>RPUZ</code><small>Real</small></td><td>pu/m</td><td>6.86e-7</td><td>Zero Sequence Resistance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>RPUZM</code><small>Real</small></td><td>pu/m</td><td>5.35e-7</td><td>Zero Sequence Mutual Resistance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>VR</code><small>Real</small></td><td>kV</td><td>230</td><td>Rated Voltage (L-L RMS)<small>At least 0.01</small></td></tr>
+<tr><td><code>XCPUP</code><small>Real</small></td><td>pu*m</td><td>5.78e5</td><td>Positive Sequence Capactive Reactance<small>At least 0</small></td></tr>
+<tr><td><code>XCPUZ</code><small>Real</small></td><td>pu*m</td><td>8.14e5</td><td>Zero Sequence Capactive Reactance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>XCPUZM</code><small>Real</small></td><td>pu*m</td><td>5.4e7</td><td>Zero Sequence Mutual Capactive Reactance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>XLPUP</code><small>Real</small></td><td>pu/m</td><td>9.6e-7</td><td>Positive Sequence Inductive Reactance<small>At least 0</small></td></tr>
+<tr><td><code>XLPUZ</code><small>Real</small></td><td>pu/m</td><td>2.5e-6</td><td>Zero Sequence Inductive Reactance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>XLPUZM</code><small>Real</small></td><td>pu/m</td><td>6.37e-7</td><td>Zero Sequence Mutual Inductive Reactance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">COPIED DATA FROM ABOVE</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>NCond</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Number of Conductors<small>Enter the number of conductors</small><small>Range 1 to 6</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">R,Xl,Xc Data Entry [ohm/m]</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>RP</code><small>Real</small></td><td>ohm/m</td><td>3.576e-5</td><td>Positive Sequence Resistance<small>At least 0</small></td></tr>
+<tr><td><code>RZ</code><small>Real</small></td><td>ohm/m</td><td>3.63e-4</td><td>Zero Sequence Resistance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>RZM</code><small>Real</small></td><td>ohm/m</td><td>2.83e-4</td><td>Zero Sequence Mutual Resistance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>XCP</code><small>Real</small></td><td>Mohm*m</td><td>305.8</td><td>Positive Sequence Capactive Reactance<small>At least 0</small></td></tr>
+<tr><td><code>XCZ</code><small>Real</small></td><td>Mohm*m</td><td>430.6</td><td>Zero Sequence Capactive Reactance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>XCZM</code><small>Real</small></td><td>Mohm*m</td><td>28560.0</td><td>Zero Sequence Mutual Capactive Reactance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>XLP</code><small>Real</small></td><td>ohm/m</td><td>5.078e-4</td><td>Positive Sequence Inductive Reactance<small>At least 0</small></td></tr>
+<tr><td><code>XLZ</code><small>Real</small></td><td>ohm/m</td><td>1.323e-3</td><td>Zero Sequence Inductive Reactance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>XLZM</code><small>Real</small></td><td>ohm/m</td><td>3.37e-4</td><td>Zero Sequence Mutual Inductive Reactance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Zsurge and Travel Time</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>RTP</code><small>Real</small></td><td>ohm/m</td><td>3.576e-5</td><td>Positive Sequence Resistance<small>At least 0</small></td></tr>
+<tr><td><code>RTZ</code><small>Real</small></td><td>ohm/m</td><td>3.63e-4</td><td>Zero Sequence Resistance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>RTZM</code><small>Real</small></td><td>ohm/m</td><td>2.83e-4</td><td>Zero Sequence Mutual Resistance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>TTP</code><small>Real</small></td><td>s/m</td><td>3.4185e-9</td><td>Positive Sequence Travel Time for unit length<small>At least 0</small></td></tr>
+<tr><td><code>TTZ</code><small>Real</small></td><td>s/m</td><td>4.65e-9</td><td>Zero Sequence Travel Time for unit length<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>TTZM</code><small>Real</small></td><td>s/m</td><td>0.288e-9</td><td>Zero Sequence Mutual Travel Time for 1 m<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+<tr><td><code>ZTP</code><small>Real</small></td><td>ohm</td><td>394.06</td><td>Positive Sequence Surge Impedance<small>At least 0</small></td></tr>
+<tr><td><code>ZTZ</code><small>Real</small></td><td>ohm</td><td>754.77</td><td>Zero Sequence Surge Impedance<small>At least 0</small><small>Used when (NCond&gt;=2)&amp;&amp;(Estim==0)</small></td></tr>
+<tr><td><code>ZTZM</code><small>Real</small></td><td>ohm</td><td>3102.4</td><td>Zero Sequence Mutual Surge Impedance<small>At least 0</small><small>Used when NCond&gt;=6</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Y,Z Direct Entry</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>dformat</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PER_METRE</td><td>Y,Z Data Given in:<small>Written as PER_METRE (Per metre), TOTAL (Total)</small></td></tr>
+<tr><td><code>fname</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>inputYZ.txt</td><td>YZ Input File Name</td></tr>
+<tr><td><code>path</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RELATIVE</td><td>Path to the File Given as:<small>Written as RELATIVE (Relative path), ABSOLUTE (Absolute path)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Y,Z Direct Entry (Multiple Frequencies)</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>fname2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>inputYZ.txt</td><td>YZ Input File Name</td></tr>
+<tr><td><code>path2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RELATIVE</td><td>Path to the File Given As:<small>Written as RELATIVE (Relative path), ABSOLUTE (Absolute path)</small></td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-line-constants-debug/"><code>master:Line_Constants_Debug</code> Line_Constants_Debug</a> · <a href="../master-coupled-2lines/"><code>master:coupled_2lines</code> Mutually Coupled 2 Wires</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

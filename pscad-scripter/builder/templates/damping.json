@@ -47,7 +47,7 @@
    "label": "Disturbance",
    "s": {
     "el": {
-     "cls": "master:tpflt",
+     "cls": "master:tfaultn",
      "name": "",
      "match": "one"
     },

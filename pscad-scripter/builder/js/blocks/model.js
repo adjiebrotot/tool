@@ -31,7 +31,7 @@ export function elementSetting(key, label, cls, o = {}) {
   const st = {
     key, label, kind: 'element', default: { cls, name: '', match: o.match || 'one' },
     placeholder: 'A Name, e.g. ' + (o.example || EXAMPLE[cls] || 'Src1') + ' (or leave empty)',
-    tip: o.tip || 'Used while nothing is wired in. The definition alone is enough when only one component of it is in the case; a Name narrows it. Letter case counts in a Name; * matches anything (then choose first or all).',
+    tip: o.tip || 'Used while nothing is wired in. The definition alone is enough when the case has only one of it; a Name narrows it. Letter case counts in a Name; * matches anything (then choose first or all).',
   };
   if (o.more) st.more = true;
   if (o.showIf) st.showIf = o.showIf;

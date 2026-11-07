@@ -65,6 +65,7 @@ Tools with a skill (AI page, then the skill):
 - ED/UC Simulator: https://tool.adjiebrotots.com/ed-uc-simulator/ai/ (skill: https://tool.adjiebrotots.com/ed-uc-simulator/ai/brotools-ed-uc-simulator.zip; read directly: https://tool.adjiebrotots.com/ed-uc-simulator/ai/skill/SKILL.md)
 - Capacity Expansion Planner: https://tool.adjiebrotots.com/capacity-expansion-planner/ai/ (skill: https://tool.adjiebrotots.com/capacity-expansion-planner/ai/brotools-capacity-expansion-planner.zip; read directly: https://tool.adjiebrotots.com/capacity-expansion-planner/ai/skill/SKILL.md)
 - PowerFactory Scripter: https://tool.adjiebrotots.com/powerfactory-scripter/ai/ (skill: https://tool.adjiebrotots.com/powerfactory-scripter/ai/brotools-powerfactory-scripter.zip; read directly: https://tool.adjiebrotots.com/powerfactory-scripter/ai/skill/SKILL.md)
+- PSCAD Scripter: https://tool.adjiebrotots.com/pscad-scripter/ai/ (skill: https://tool.adjiebrotots.com/pscad-scripter/ai/brotools-pscad-scripter.zip; read directly: https://tool.adjiebrotots.com/pscad-scripter/ai/skill/SKILL.md)
 <!-- agent:end -->
 
 ## Why these tools stand out

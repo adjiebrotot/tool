@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:wound_rotor parameters: PSCAD Wound Rotor Induction Machine</title>
+<meta name="description" content="Every parameter of master:wound_rotor (Wound Rotor Induction Machine) in PSCAD: 81 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-wound-rotor/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:wound_rotor parameters (PSCAD Wound Rotor Induction Machine)">
+<meta property="og:description" content="Every parameter of master:wound_rotor (Wound Rotor Induction Machine) in PSCAD: 81 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-wound-rotor/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:wound_rotor parameters (PSCAD Wound Rotor Induction Machine)">
+<meta name="twitter:description" content="Every parameter of master:wound_rotor (Wound Rotor Induction Machine) in PSCAD: 81 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:wound_rotor parameters (PSCAD Wound Rotor Induction Machine)",
+  "description": "Every parameter of master:wound_rotor (Wound Rotor Induction Machine) in PSCAD: 81 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-wound-rotor/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:wound_rotor (Wound Rotor Induction Machine)",
+    "description": "Wound Rotor Induction Machine, a component of PSCAD's Master Library, filed under machines, exciters and governors."
+  },
+  "keywords": "master:wound_rotor parameters, PSCAD Wound Rotor Induction Machine parameters, Wound Rotor Induction Machine PSCAD, master:wound_rotor mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:wound_rotor",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-wound-rotor/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:wound_rotor</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:wound_rotor parameters<span class="dx-h1-sub">PSCAD Wound Rotor Induction Machine</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Wound Rotor Induction Machine (<code>master:wound_rotor</code>): 81 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:wound_rotor is</h2>
+  <p>Wound Rotor Induction Machine, a component of PSCAD's Master Library, filed under machines, exciters and governors.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:wound_rotor</code></dd><dt>PSCAD name</dt><dd>Wound Rotor Induction Machine</dd><dt>Category</dt><dd>Machines, exciters and governors</dd><dt>Parameters</dt><dd>81, in 7 groups; 63 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:wound_rotor in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:wound_rotor&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;D&quot;</span>]))              <span class="py-c"># Mechanical Damping, in pu</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:wound_rotor&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(D=<span class="py-s">&quot;0.02 [pu]&quot;</span>)           <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "D")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:wound_rotor parameters"><li><a href="#g1">Options<span class="dx-n">7</span></a></li><li><a href="#g2">General Data<span class="dx-n">9</span></a></li><li><a href="#g3">Leakage Saturation Curve (I, V)<span class="dx-n">21</span></a></li><li><a href="#g4">Mutual Saturation Curve (I,V)<span class="dx-n">21</span></a></li><li><a href="#g5">Internal Output Variables<span class="dx-n">6</span></a></li><li><a href="#g6">Stator and Rotor Resistances<span class="dx-n">5</span></a></li><li><a href="#g7">Stator and Rotor Inductances<span class="dx-n">12</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Options</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Cage</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Rotor Squirrel Cages Exists<small>Select to model squirrel cages in addition to wound rotor</small><small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>ERC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>External Connection to Rotor<small>Enable or Disable external connection to the rotor</small><small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>Lsat</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Leakage Saturation<small>Select Disabled, Enabled on stator or Enabled on both stator and rotor</small><small>Written as DISABLED (Disabled), ENABLED_ON_STATOR (Enabled on stator), ENABLED_ON_BOTH_STATOR_AND_WOUND_ROTOR (Enabled on both stator and wound rotor)</small></td></tr>
+<tr><td><code>MM</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLE</td><td>Multimass Interface<small>Enable or Disable multimass interface</small><small>Written as DISABLE (Disable), ENABLE (Enable)</small></td></tr>
+<tr><td><code>Msat</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Mutual Saturation<small>Select Enabled or Disabled</small><small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>NCW</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Number of Rotor Squirrel Cages<small>Select the number of squirrel cages</small><small>Written as 1 = 1, 2 = 2, 3 = 3</small><small>Used when Cage==1</small></td></tr>
+<tr><td><code>SNP</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>YES</td><td>Stator Winding Neutral Grounded<small>Select to ground the neutral of stator winding or externally available</small><small>Written as NO (No), YES (Yes)</small><small>Used when View!=2</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">General Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>D</code><small>Real</small></td><td>pu</td><td>0.01</td><td>Mechanical Damping<small>At least 0</small></td></tr>
+<tr><td><code>J</code><small>Real</small></td><td>s</td><td>0.7267</td><td>Angular Moment of Inertia (J=2H)<small>At least 0</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>IndMachine</td><td>Motor Name<small>Enter a name for identification</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>OMEG</code><small>Real</small></td><td>rad/s</td><td>376.991118430775</td><td>Base Angular Frequency<small>At least 0</small></td></tr>
+<tr><td><code>Pbase</code><small>Real</small></td><td>MVA</td><td>2.2</td><td>Rated MVA<small>Rated MVA of the machine</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>TRN</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.637687</td><td>Stator / Rotor Turns Ratio<small>Number of turns in stator/Number of turns in rotor</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>Vbase</code><small>Real</small></td><td>kV</td><td>0.69</td><td>Rated Voltage (L-L)<small>Rated RMS Line-Line voltage</small><small>At least 1E-307</small><small>Used when View!=2</small></td></tr>
+<tr><td><code>View</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SINGLE_LINE_VIEW</td><td>Graphics Display<small>Select Sinle ine or 3 phase view</small><small>Written as 3_PHASE_VIEW (3 phase view), SINGLE_LINE_VIEW (Single line view), OPEN_TERMINALS (Open terminals)</small></td></tr>
+<tr><td><code>Vwdg</code><small>Real</small></td><td>kV</td><td>0.3983</td><td>Rated Voltage Across Stator Winding<small>Rated voltage across a stator winding</small><small>At least 1E-307</small><small>Used when View==2</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Leakage Saturation Curve (I, V)</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>I1</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point  1 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I10</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point 10 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I2</code><small>Real</small></td><td>pu</td><td>1.196</td><td>Point  2 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I3</code><small>Real</small></td><td>pu</td><td>1.82</td><td>Point  3 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I4</code><small>Real</small></td><td>pu</td><td>2.861</td><td>Point  4 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I5</code><small>Real</small></td><td>pu</td><td>5.882</td><td>Point  5 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I6</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  6 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I7</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  7 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I8</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  8 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>I9</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  9 - Short Circuit Current<small>At least -1</small></td></tr>
+<tr><td><code>NpntsL</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>10</td><td>Number of Data Points Available<small>Written as 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10</small></td></tr>
+<tr><td><code>V1</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point  1 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V10</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point 10 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V2</code><small>Real</small></td><td>pu</td><td>0.286</td><td>Point  2 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V3</code><small>Real</small></td><td>pu</td><td>0.4</td><td>Point  3 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V4</code><small>Real</small></td><td>pu</td><td>0.564</td><td>Point  4 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V5</code><small>Real</small></td><td>pu</td><td>0.981</td><td>Point  5 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V6</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  6 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V7</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  7 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V8</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  8 - Short Circuit Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V9</code><small>Real</small></td><td>pu</td><td>-1.0</td><td>Point  9 - Short Circuit Voltage<small>At least -1</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Mutual Saturation Curve (I,V)</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>I10M</code><small>Real</small></td><td>pu</td><td>4.2</td><td>Point 10 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I1M</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point  1 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I2M</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Point  2 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I3M</code><small>Real</small></td><td>pu</td><td>0.8</td><td>Point  3 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I4M</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Point  4 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I5M</code><small>Real</small></td><td>pu</td><td>1.2</td><td>Point  5 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I6M</code><small>Real</small></td><td>pu</td><td>1.5</td><td>Point  6 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I7M</code><small>Real</small></td><td>pu</td><td>1.8</td><td>Point  7 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I8M</code><small>Real</small></td><td>pu</td><td>2.2</td><td>Point  8 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>I9M</code><small>Real</small></td><td>pu</td><td>3.2</td><td>Point  9 - Magnetizing Current<small>At least -1</small></td></tr>
+<tr><td><code>NpntsM</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>10</td><td>Number of Data Points Available<small>Written as 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10</small></td></tr>
+<tr><td><code>V10M</code><small>Real</small></td><td>pu</td><td>1.5</td><td>Point 10 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V1M</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point  1 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V2M</code><small>Real</small></td><td>pu</td><td>0.5</td><td>Point  2 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V3M</code><small>Real</small></td><td>pu</td><td>0.79</td><td>Point  3 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V4M</code><small>Real</small></td><td>pu</td><td>0.947</td><td>Point  4 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V5M</code><small>Real</small></td><td>pu</td><td>1.076</td><td>Point  5 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V6M</code><small>Real</small></td><td>pu</td><td>1.2</td><td>Point  6 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V7M</code><small>Real</small></td><td>pu</td><td>1.26</td><td>Point  7 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V8M</code><small>Real</small></td><td>pu</td><td>1.32</td><td>Point  8 - Magnetizing Voltage<small>At least -1</small></td></tr>
+<tr><td><code>V9M</code><small>Real</small></td><td>pu</td><td>1.42</td><td>Point  9 - Magnetizing Voltage<small>At least -1</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Internal Output Variables</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>LSF</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Leakage Saturation Factor [pu]<small>Range 0 to 0</small></td></tr>
+<tr><td><code>MSF</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mutual Saturation Factor [pu]<small>Range 0 to 0</small></td></tr>
+<tr><td><code>Spd</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Speed [pu]<small>Range 0 to 0</small></td></tr>
+<tr><td><code>Tel</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Electrical Torque [pu]<small>Range 0 to 0</small></td></tr>
+<tr><td><code>ThetaR</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Rotor Position [rad]<small>Range 0 to 0</small></td></tr>
+<tr><td><code>TmOp</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Mechanical Torque [pu]<small>Range 0 to 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Stator and Rotor Resistances</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>R1</code><small>Real</small></td><td>pu</td><td>0.0054</td><td>Stator Resistance<small>At least 0</small></td></tr>
+<tr><td><code>R2</code><small>Real</small></td><td>pu</td><td>0.00607</td><td>Wound Rotor Resistance<small>Range 0 to 3</small></td></tr>
+<tr><td><code>R3</code><small>Real</small></td><td>pu</td><td>0.298</td><td>First Squirrel Cage Resistance<small>Range 0 to 3</small><small>Used when NCW*Cage&gt;=1</small></td></tr>
+<tr><td><code>R4</code><small>Real</small></td><td>pu</td><td>0.018</td><td>Second Squirrel Cage Resistance<small>Range 0 to 3</small><small>Used when NCW*Cage&gt;1</small></td></tr>
+<tr><td><code>R5</code><small>Real</small></td><td>pu</td><td>0.018</td><td>Third Squirrel Cage Resistance<small>Range 0 to 3</small><small>Used when NCW*Cage==3</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Stator and Rotor Inductances</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Xa</code><small>Real</small></td><td>pu</td><td>0.102</td><td>Stator Leakage Inductance<small>At least 1E-06</small></td></tr>
+<tr><td><code>Xkd1</code><small>Real</small></td><td>pu</td><td>0.11</td><td>Wound Rotor Leakage Inductance<small>At least 1E-06</small></td></tr>
+<tr><td><code>Xkd12</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : Wound Rotor - 1st Cage<small>At least 0</small><small>Used when NCW*Cage&gt;=1</small></td></tr>
+<tr><td><code>Xkd13</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : Wound Rotor - 2nd Cage<small>Range 0 to 10</small><small>Used when NCW*Cage&gt;1</small></td></tr>
+<tr><td><code>Xkd14</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : Wound Rotor - 3rd Cage<small>Range 0 to 10</small><small>Used when NCW*Cage==3</small></td></tr>
+<tr><td><code>Xkd2</code><small>Real</small></td><td>pu</td><td>0.05</td><td>First Cage Leakage Inductance<small>Range 1E-06 to 10</small><small>Used when NCW*Cage&gt;=1</small></td></tr>
+<tr><td><code>Xkd23</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : 1st - 2nd Cages<small>Range 0 to 10</small><small>Used when NCW*Cage&gt;1</small></td></tr>
+<tr><td><code>Xkd24</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : 1st - 3rd Cages<small>Range 0 to 10</small><small>Used when NCW*Cage==3</small></td></tr>
+<tr><td><code>Xkd3</code><small>Real</small></td><td>pu</td><td>0.05</td><td>Second Cage Leakage Inductance<small>Range 1E-06 to 10</small><small>Used when NCW*Cage&gt;1</small></td></tr>
+<tr><td><code>Xkd34</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Mutual Inductance : 2nd - 3rd Cages<small>Range 0 to 10</small><small>Used when NCW*Cage==3</small></td></tr>
+<tr><td><code>Xkd4</code><small>Real</small></td><td>pu</td><td>0.05</td><td>Third Cage Leakage Inductance<small>Range 1E-06 to 10</small><small>Used when NCW*Cage==3</small></td></tr>
+<tr><td><code>Xmd</code><small>Real</small></td><td>pu</td><td>4.362</td><td>Magnetizing Inductance<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-wind-governor/"><code>master:wind_governor</code> Wind Turbine Governor</a> · <a href="../master-breaker3/"><code>master:breaker3</code> 3 Phase Breaker</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

@@ -122,7 +122,6 @@
    "label": "",
    "s": {
     "stem": "spectrum",
-    "shape": "bars",
     "xlabel": "Harmonic order",
     "ylabel": "Percent of the fundamental",
     "lines": [
@@ -131,7 +130,7 @@
       "name": "Harmonic"
      }
     ],
-    "kind": "line",
+    "kind": "bar",
     "title": "",
     "xunit": "",
     "yunit": "",

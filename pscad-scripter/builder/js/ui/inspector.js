@@ -139,13 +139,15 @@ export function mountInspector(app) {
     if (!text && !html) return null;
     return el('span', { class: 'tip-icon', 'data-tip': html || esc(tipText(text)) }, '?');
   }
-  // Classes with a page in the attribute reference (../reference/<cls>/).
-  const REF_CLASSES = new Set(["ElmArea", "ElmAsm", "ElmAsmsc", "ElmBbone", "ElmBmu", "ElmBoundary", "ElmBranch", "ElmCabsys", "ElmComp", "ElmCoup", "ElmDcu", "ElmDsl", "ElmFeeder", "ElmFile", "ElmFilter", "ElmGenstat", "ElmGndswt", "ElmIac", "ElmLne", "ElmLnesec", "ElmLod", "ElmLodlv", "ElmLodmv", "ElmMdl", "ElmNec", "ElmNet", "ElmPvsys", "ElmRecmono", "ElmRelay", "ElmRes", "ElmSecctrl", "ElmShnt", "ElmSind", "ElmStactrl", "ElmSubstat", "ElmSvs", "ElmSym", "ElmTerm", "ElmTow", "ElmTr2", "ElmTr3", "ElmTr4", "ElmTrain", "ElmTrb", "ElmTrfstat", "ElmTrmult", "ElmVac", "ElmVoltreg", "ElmVsc", "ElmVscmono", "ElmXnet", "ElmZone", "ElmZpu", "EvtGen", "EvtLod", "EvtOutage", "EvtParam", "EvtShc", "EvtSwitch", "EvtSym", "EvtTap", "StaPll", "TypAsm", "TypGeo", "TypLne", "TypLod", "TypLodlv", "TypSwitch", "TypSym", "TypTow", "TypTr2", "TypTr3", "TypTr4"]);
-  // Beside an attribute field: opens the attribute list for its element class in a new tab.
+  // A Master Library definition has a page in the component reference, addressed by its slug
+  // (_pages/definitions.mjs slugOf: "master:tpflt" -> "master-tpflt"); a definition of the case
+  // itself has none, so it opens the reference's index.
+  const refSlug = (cls) => String(cls).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  // Beside a parameter field: opens the parameter list for its definition in a new tab.
   function refIcon(cls) {
-    const has = cls && REF_CLASSES.has(cls);
-    const label = has ? 'See the ' + cls + ' attribute list' : 'See the attribute reference';
-    return el('a', { class: 'pxb-ref', href: '../reference/' + (has ? cls + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
+    const has = cls && /^master:/i.test(cls);
+    const label = has ? 'See the ' + cls + ' parameter list' : 'See the component reference';
+    return el('a', { class: 'pxb-ref', href: '../reference/' + (has ? refSlug(cls) + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
   }
   function reqMark() { return el('span', { class: 'pxb-req', text: 'Required' }); }
 
