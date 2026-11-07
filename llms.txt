@@ -50,6 +50,8 @@ https://tool.adjiebrotots.com/<tool>/#load&v=1&qs=<quick start>&<key>=<value>&..
 - Base, then overrides: the Quick Start (or the tool's defaults), then each key in the link. Anything not named keeps its base value, so send only what differs.
 - Long links are fine: everything after # stays in the browser. Give a long link both as a link and inside a code block.
 
+All the skills on one page: https://tool.adjiebrotots.com/ai/
+
 Tools with a skill (AI page, then the skill):
 - Rent vs Own: https://tool.adjiebrotots.com/rentvsownhouse/ai/ (skill: https://tool.adjiebrotots.com/rentvsownhouse/ai/brotools-rentvsownhouse.zip; read directly: https://tool.adjiebrotots.com/rentvsownhouse/ai/skill/SKILL.md)
 - Pisah vs Gabung Harta: https://tool.adjiebrotots.com/pisahvsgabung/ai/ (skill: https://tool.adjiebrotots.com/pisahvsgabung/ai/brotools-pisahvsgabung.zip; read directly: https://tool.adjiebrotots.com/pisahvsgabung/ai/skill/SKILL.md)

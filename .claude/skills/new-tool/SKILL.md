@@ -319,10 +319,11 @@ beyond plain fields, run `node _ref/agent-doc.mjs`, add kept links to `_ref/agen
 and get `node _ref/agent-check.mjs <tool>` green. A tool whose solve is heavy honours `run=0`.
 Add the tool to `TOOLS` in `_ref/ai-skill.mjs` (its name and when an assistant should use it).
 `agent-doc` then writes the tool's **skill** and its **AI page** under `<tool>/ai/`: a `.zip`
-people install in Claude, ChatGPT or Grok (SKILL.md, a reference per page, `params.json` and
+people install in Claude, ChatGPT, Grok, Gemini or Copilot (SKILL.md, a reference per page, `params.json` and
 `scripts/build_link.py`, which builds and checks the link), the same files unzipped under
 `skill/`, and `index.html` with the download, the animated install steps and a worked
-conversation (the notes' `## AI page example`, else their `## Example`). The tool page gets
+conversation (the notes' `## AI page example`, else their `## Example`), and adds the tool to
+the hub at `/ai/` (every tool with a skill). The tool page gets
 only a hidden pointer (whose `data-ai` puts the **✨ Use in AI** header button there, through
 `tour-shared.js`), and the guide a **Use it in your AI** card after its Shortcuts card (or
 before its closing buttons). Add `<tool>/ai/` to `sitemap.xml` after the tool's guide entry, and

@@ -14,6 +14,8 @@
 //                        same files unzipped under skill/) and the AI page people see. The
 //                        skill's references/<page>.md is each page's full reference, plain
 //                        text (what <page>/agent.txt used to be);
+//   ai/index.html        the hub: install a skill, how to use one, and every tool in TOOLS
+//                        with links to open it and to its AI page (aiHub in ai-skill.mjs);
 //   <page>/index.html    a hidden pointer to the AI page and SKILL.md (never shown to
 //                        people) between <!-- agent:start --> and <!-- agent:end -->, which
 //                        also tells the header where its "Use in AI" button goes;
@@ -33,7 +35,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { rmSync } from 'node:fs';
-import { TOOLS, toolOf, skillFiles, aiPage, aiUrl, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
+import { TOOLS, toolOf, skillFiles, aiPage, aiHub, aiUrl, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
 import {
   AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE, LIST_KEY_RE,
   buildLink, serve, launch, openPage, readFields, parseNotes, defaultQuickStarts
@@ -435,6 +437,8 @@ function llmsSection() {
     '- Base, then overrides: the Quick Start (or the tool\'s defaults), then each key in the link. Anything not named keeps its base value, so send only what differs.',
     '- Long links are fine: everything after # stays in the browser. Give a long link both as a link and inside a code block.',
     '',
+    'All the skills on one page: ' + SITE + '/ai/',
+    '',
     'Tools with a skill (AI page, then the skill):',
     ...llmsLines(),
   );
@@ -482,6 +486,7 @@ for (const M of models) {
   const htmlPath = join(ROOT, M.P.page, 'index.html');
   outputs.push([join(M.P.page, 'index.html'), withSection(readFileSync(htmlPath, 'utf8'), M)]);
 }
+const hub = [];
 for (const T of TOOLS) {
   const ms = models.filter(M => toolOf(M.P.page) === T.tool);
   if (!ms.length) { problem(T.tool, 'no page of this tool is in PAGES'); continue; }
@@ -491,7 +496,9 @@ for (const T of TOOLS) {
   for (const [rel, body] of sk.files) outputs.push([join(T.tool, 'ai', 'skill', rel), body]);
   outputs.push([join(T.tool, 'ai', sk.name + '.zip'), sk.zip]);
   outputs.push([join(T.tool, 'ai', 'index.html'), aiPage(T, ms, main.demo)]);
+  hub.push({ T, models: ms, demo: main.demo });
 }
+if (hub.length) outputs.push([join('ai', 'index.html'), aiHub(hub)]);
 for (const M of models) if (!TOOLS.some(T => T.tool === toolOf(M.P.page))) problem(M.P.page, 'its tool is not in TOOLS (_ref/ai-skill.mjs)');
 outputs.push(['llms.txt', withLlms(readFileSync(join(ROOT, 'llms.txt'), 'utf8'))]);
 // The old per-page reference files, replaced by the skills.
