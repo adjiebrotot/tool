@@ -1,0 +1,279 @@
+/* =============================================================================================
+   PSCAD Scripter: the landing page
+   A light front door to the Workflow Builder (builder/) and the form-based Legacy Scripter
+   (legacy/): static text a search engine can read, and one animation drawn in CSS and inline SVG,
+   with no script of its own. Colours come only from the site tokens (dark.css, light.css); the
+   block colours are the Builder's categories (builder/style.css) so the picture matches the tool.
+   Class prefix: .pfl-
+   ============================================================================================= */
+
+.pfl { max-width: 1120px; }
+.pfl code { font-family: 'DM Mono', monospace; font-size: .88em; background: var(--input-bg); padding: 1px 5px; border-radius: var(--radius-sm); }
+.pfl a:not(.btn-theme):not(.btn-primary) { color: var(--accent-strong); }
+
+/* ---- Top bar ------------------------------------------------------------------------------ */
+.pfl-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.pfl-top-r { display: flex; align-items: center; gap: 8px; }
+
+/* ---- Hero: words left, animation right; stacked on a phone --------------------------------- */
+.pfl-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 32px;
+  align-items: center;
+  min-height: min(68vh, 560px);
+  padding: 24px 0 40px;
+}
+/* The hero reads as one column until its animated diagram is drawn: a 4fr / 8fr grid with
+   nothing in the wide half would squeeze the copy into a third of the page. */
+.pfl-hero.pfl-nofig { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.pfl-hero.pfl-nofig .pfl-copy { max-width: 62ch; }
+.pfl-copy h1 {
+  margin: 0 0 14px;
+  font-size: clamp(2rem, 3.6vw, 2.75rem);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.pfl-copy h1 .tool-glyph { vertical-align: -.12em; margin-right: .22em; }
+.pfl-lead { margin: 0 0 28px; font-size: clamp(1.05rem, 1.6vw, 1.25rem); line-height: 1.5; color: var(--text); max-width: 26em; }
+.pfl .pfl-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15rem;
+  padding: 14px 28px;
+  font-size: 1.15rem;
+  text-decoration: none;
+}
+.pfl-alt { margin: 12px 0 0; font-size: .95rem; color: var(--text); }
+.pfl .pfl-alt a { color: var(--text); font-weight: 700; text-decoration: none; }
+.pfl .pfl-alt a:hover { text-decoration: underline; }
+.pfl-stage { margin: 0; min-width: 0; }
+
+/* ---- Sections under the hero -------------------------------------------------------------- */
+.pfl-sec { padding: 24px 28px; margin-bottom: 18px; }
+.pfl-sec h2 { margin: 0 0 6px; font-size: 1.2rem; font-weight: 700; }
+.pfl-grid { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pfl-grid > li { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.pfl-grid h3 { margin: 0 0 4px; font-size: .98rem; font-weight: 700; }
+.pfl-grid p { margin: 0; font-size: .88rem; line-height: 1.55; color: var(--muted); }
+.pfl-tags { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.pfl-tags li { padding: 2px 10px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .8rem; font-weight: 600; color: var(--text); }
+
+footer { padding: 6px 4px 24px; }
+.pfl-made { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: center; }
+.pfl-made .pfl-flag { grid-row: 1 / 3; height: 36px; width: auto; object-fit: contain; }
+.pfl-made div { display: flex; align-items: center; gap: 10px; }
+.pfl-made div img { height: 16px; width: auto; flex-shrink: 0; border-radius: 3px; }
+.pfl-made span { color: var(--muted); font-size: .76rem; }
+
+@media (max-width: 900px) {
+  .pfl-hero { grid-template-columns: minmax(0, 1fr); gap: 24px; min-height: 0; padding: 12px 0 28px; }
+}
+@media (max-width: 600px) {
+  .pfl.container { padding: 16px; }
+  .pfl .pfl-cta { width: 100%; min-width: 0; }
+  .pfl-grid { grid-template-columns: minmax(0, 1fr); }
+  .pfl-sec { padding: 18px; }
+}
+
+/* =============================================================================================
+   The animation: the Workflow Builder's N-1 screening, drawn in the Builder's own look (block
+   heads, category colours, icons, arrow flow ports, React Flow bezier wires, the loop frame) so
+   the picture is the tool. On each pass of Contingency the load flow feeds Line loading and
+   Transformer loading into the results table. The reader drags Read attribute in from the Blocks
+   panel, renames it Busbar voltage, wires it after the load flow, drops its Lowest on the table
+   and downloads the script. The SVG and the coordinates in pflCur / pflDrag are written together
+   by one script, so they agree; every part runs on the same 20 s clock.
+   The un-animated style is the finished workflow: what a reader who asks for reduced motion sees.
+   ============================================================================================= */
+.pfl-anim {
+  --pfl-t: 20s;
+  /* builder/style.css: block categories and wire types */
+  --cat-study: var(--gold);
+  --cat-model: var(--accent);
+  --cat-result: color-mix(in srgb, var(--accent2) 45%, var(--accent));
+  --cat-check: var(--line-d);
+  --cat-flow: color-mix(in srgb, var(--line-d) 45%, var(--accent));
+  --t-num: var(--gold);
+  --t-obj: color-mix(in srgb, var(--gold) 50%, var(--line-d));
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.pfl-study  { --cat: var(--cat-study); }
+.pfl-model  { --cat: var(--cat-model); }
+.pfl-result { --cat: var(--cat-result); }
+.pfl-check  { --cat: var(--cat-check); }
+.pfl-flow   { --cat: var(--cat-flow); }
+.pfl-dot { fill: var(--muted); opacity: .28; }
+
+/* A block (.pxb-node) */
+.pfl-node  { fill: var(--panel-raised); }
+.pfl-edge  { fill: none; stroke: var(--border); stroke-width: 1.2; }
+.pfl-head  { fill: color-mix(in srgb, var(--cat) 16%, var(--panel-raised)); }
+.pfl-strip { fill: none; stroke: var(--cat); stroke-width: 3; }
+.pfl-hline { stroke: var(--border); stroke-width: 1; }
+.pfl-ico   { color: var(--cat); }
+.pfl-cut   { fill: color-mix(in srgb, var(--cat) 16%, var(--panel-raised)); }
+.pfl-title { fill: var(--text); font-size: 12.5px; font-weight: 700; }
+.pfl-step rect { fill: var(--input-bg); stroke: var(--border); stroke-width: 1; }
+.pfl-step text { fill: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; }
+.pfl-warn path:first-child { fill: var(--warning-text); stroke: var(--warning-text); stroke-width: 1.4; stroke-linejoin: round; }
+.pfl-warn-mark { stroke: var(--panel-raised); stroke-width: 1.8; stroke-linecap: round; }
+.pfl-end   { fill: var(--muted); font-size: 10.5px; font-style: italic; }
+.pfl-sum   { fill: var(--muted); font-size: 11.5px; }
+.pfl-fl    { fill: var(--text); font-size: 12px; font-weight: 700; }
+.pfl-rl    { fill: var(--text); font-size: 12px; }
+.pfl-mut   { fill: var(--muted); }
+.pfl-miss  { fill: var(--warning-text); font-weight: 600; }
+.pfl-fb    { fill: var(--muted); font-family: 'DM Mono', monospace; font-size: 10.5px; font-weight: 400; }
+.pfl-more  { fill: var(--muted); font-size: 10.5px; font-weight: 700; }
+
+/* Ports and wires: a flow port is an arrow, a value port a ring in its type colour */
+.pfl-fp    { fill: var(--text); }
+.pfl-dp    { fill: var(--panel-raised); stroke-width: 2; }
+.pfl-num   { --hc: var(--t-num); }
+.pfl-obj   { --hc: var(--t-obj); }
+.pfl-dp.pfl-num, .pfl-dp.pfl-obj { stroke: var(--hc); }
+.pfl-dp.pfl-req { fill: var(--hc); }
+.pfl-dp.pfl-idle { stroke: var(--muted); opacity: .45; }
+.pfl-fw    { fill: none; stroke: var(--text); stroke-width: 2.6; }
+.pfl-dw    { fill: none; stroke: var(--hc); stroke-width: 1.7; }
+.pfl-arrow { fill: var(--text); stroke: var(--text); stroke-width: 1; stroke-linejoin: round; }
+.pfl-new   { stroke-dasharray: 100 100; stroke-dashoffset: 0; }
+
+/* The loop frame and its tab (.pxb-frame) */
+.pfl-frame { --cat: var(--cat-study); fill: color-mix(in srgb, var(--cat) 6%, transparent); stroke: color-mix(in srgb, var(--cat) 60%, transparent); stroke-width: 1.5; stroke-dasharray: 9 6; stroke-linecap: round; }
+.pfl-fshort { opacity: 0; }
+.pfl-tab { --cat: var(--cat-study); }
+.pfl-tab rect { fill: color-mix(in srgb, var(--cat) 15%, var(--bg)); stroke: color-mix(in srgb, var(--cat) 35%, var(--bg)); stroke-width: 1; }
+.pfl-tab text { fill: color-mix(in srgb, var(--cat) 55%, var(--text)); font-size: 11px; font-weight: 700; }
+.pfl-tab-sep { opacity: .55; }
+
+/* The Blocks panel (.pxb-card) */
+.pfl-pal { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
+.pfl-pal-g { --cat: var(--cat-model); }
+.pfl-pal-grip, .pfl-pal-chev { fill: var(--muted); font-size: 12px; }
+.pfl-pal-h { fill: var(--text); font-size: 13px; font-weight: 700; }
+.pfl-pal-line { stroke: var(--border); stroke-width: 1; }
+.pfl-pal-dot { fill: var(--cat); }
+.pfl-pal-cat { fill: var(--text); font-size: 11.5px; font-weight: 700; }
+.pfl-pal-it { fill: var(--text); font-size: 12.5px; }
+.pfl-pal-ico .pfl-cut { fill: var(--panel); }
+.pfl-pal-hi { fill: var(--input-bg); stroke: var(--border); stroke-width: 1; opacity: 0; }
+
+/* The new block: before (s0) and after (s1) it is named; renaming draws the Builder's box */
+.pfl-slot { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 5; opacity: 0; }
+.pfl-s0, .pfl-ren, .pfl-w5, .pfl-a5, .pfl-ashort, .pfl-drop0 { opacity: 0; }
+.pfl-ren-box { fill: var(--panel-raised); stroke: var(--accent); stroke-width: 1.5; }
+.pfl-ren-cover { fill: var(--panel-raised); transform-box: fill-box; transform-origin: right center; transform: scaleX(0); }
+.pfl-ren-caret { fill: var(--text); }
+
+/* Download (.btn-primary) and the toast */
+.pfl-btn rect { fill: var(--accent); stroke: var(--ink-line); stroke-width: 1.5; }
+.pfl-btn text { fill: var(--text-inv); font-size: 13px; font-weight: 700; }
+.pfl-toast rect { fill: var(--panel-raised); stroke: var(--border); stroke-width: 1; }
+.pfl-toast-bar { stroke: var(--accent2); stroke-width: 3; stroke-linecap: round; }
+.pfl-toast-ok { fill: none; stroke: var(--accent2); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pfl-toast text { fill: var(--text); font-size: 12px; font-weight: 600; }
+.pfl-toast { opacity: 0; }
+.pfl-cur { opacity: 0; }
+.pfl-cur path { fill: var(--text); stroke: var(--panel-raised); stroke-width: 1.2; stroke-linejoin: round; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pfl-anim * { animation-duration: var(--pfl-t); animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+  .pfl-cur       { animation-name: pflCur; opacity: 1; }
+  .pfl-drag      { animation-name: pflDrag; }
+  .pfl-pal-hi    { animation-name: pflPalHi; }
+  .pfl-slot      { animation-name: pflSlot; }
+  .pfl-s0        { animation-name: pflS0; }
+  .pfl-s1        { animation-name: pflS1; }
+  .pfl-t0        { animation-name: pflT0; }
+  .pfl-ren       { animation-name: pflRen; }
+  .pfl-ren-cover { animation-name: pflType; animation-timing-function: steps(14, end); }
+  .pfl-ren-caret { animation-name: pflCaret; animation-timing-function: steps(14, end); }
+  .pfl-w1        { animation-name: pflW1; }
+  .pfl-a1        { animation-name: pflA1; }
+  .pfl-w5        { animation-name: pflWarn; }
+  .pfl-st5       { animation-name: pflStep; }
+  .pfl-a5        { animation-name: pflA5; }
+  .pfl-a6        { animation-name: pflA6; }
+  .pfl-fshort    { animation-name: pflFShort; }
+  .pfl-ftall     { animation-name: pflFTall; }
+  .pfl-w2        { animation-name: pflW2; }
+  .pfl-drop0, .pfl-ashort { animation-name: pflBefore; }
+  .pfl-lowv, .pfl-drop1, .pfl-atall { animation-name: pflAfter; }
+  .pfl-w3        { animation-name: pflW3; }
+  .pfl-btn       { animation-name: pflBtn; }
+  .pfl-toast     { animation-name: pflToast; }
+}
+
+/* 0-12 % pick Read attribute out of the Blocks panel; 12-28 drag it below Transformer loading;
+   31-46 double-click its title and type Busbar voltage; 51-62 wire Converged to it (it joins the
+   loop: the frame grows, it becomes step 5); 65-75 drop its Lowest on the table's "+ drop a
+   value"; 78-86 wire it on to the table; 89-97 Download; 97-100 put the canvas back. */
+@keyframes pflCur {
+  0%, 4% { transform: translate(984px, 462px); }
+  10%, 12% { transform: translate(74px, 398px); }
+  26%, 28% { transform: translate(576px, 342px); }
+  31%, 33.5% { transform: translate(596px, 346px); }
+  36%, 45% { transform: translate(684px, 372px); }
+  51%, 53% { transform: translate(474px, 135.5px); }
+  61%, 62% { transform: translate(510px, 344px); }
+  65.5%, 67% { transform: translate(722px, 435px); }
+  74%, 75% { transform: translate(770px, 185px); }
+  78.5%, 80% { transform: translate(728px, 344px); }
+  86%, 86.5% { transform: translate(764px, 56px); }
+  89.5%, 96% { transform: translate(942px, 337px); }
+  100% { transform: translate(984px, 462px); }
+}
+@keyframes pflDrag {
+  0%, 11.5% { opacity: 0; transform: translate(-502px, 56px); }
+  12.5%, 12.6% { opacity: 1; transform: translate(-502px, 56px); }
+  26%, 97% { opacity: 1; transform: translate(0, 0); }
+  99.5%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+@keyframes pflPalHi { 0%, 8% { opacity: 0; } 10%, 13% { opacity: 1; } 16%, 100% { opacity: 0; } }
+@keyframes pflSlot { 0%, 13% { opacity: 0; } 15%, 26% { opacity: .9; } 27.5%, 100% { opacity: 0; } }
+@keyframes pflS0 { 0%, 46% { opacity: 1; } 47%, 99.5% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes pflS1 { 0%, 46% { opacity: 0; } 47%, 99.5% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pflT0 { 0%, 33.5% { opacity: 1; } 34%, 99.5% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes pflRen { 0%, 33.5% { opacity: 0; } 34%, 100% { opacity: 1; } }
+@keyframes pflType { 0%, 35% { transform: scaleX(1); } 45%, 99.5% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes pflCaret { 0%, 35% { transform: translateX(0); } 45%, 99.5% { transform: translateX(93px); } 100% { transform: translateX(0); } }
+@keyframes pflW1 {
+  0%, 53% { stroke-dashoffset: 100; opacity: 1; }
+  61.5%, 97% { stroke-dashoffset: 0; opacity: 1; }
+  99.4% { stroke-dashoffset: 0; opacity: 0; }
+  99.6% { stroke-dashoffset: 100; opacity: 0; }
+  100% { stroke-dashoffset: 100; opacity: 1; }
+}
+@keyframes pflW2 {
+  0%, 67% { stroke-dashoffset: 100; opacity: 1; }
+  74.5%, 97% { stroke-dashoffset: 0; opacity: 1; }
+  99.4% { stroke-dashoffset: 0; opacity: 0; }
+  99.6% { stroke-dashoffset: 100; opacity: 0; }
+  100% { stroke-dashoffset: 100; opacity: 1; }
+}
+@keyframes pflW3 {
+  0%, 80% { stroke-dashoffset: 100; opacity: 1; }
+  86%, 97% { stroke-dashoffset: 0; opacity: 1; }
+  99.4% { stroke-dashoffset: 0; opacity: 0; }
+  99.6% { stroke-dashoffset: 100; opacity: 0; }
+  100% { stroke-dashoffset: 100; opacity: 1; }
+}
+@keyframes pflA1 { 0%, 61.4% { opacity: 0; } 61.6%, 97% { opacity: 1; } 99.4%, 100% { opacity: 0; } }
+@keyframes pflWarn { 0%, 61.5% { opacity: 1; } 62%, 99.5% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes pflStep { 0%, 61.5% { opacity: 0; } 62%, 99.5% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pflA5 { 0%, 61.5% { opacity: 1; } 62%, 97% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+@keyframes pflA6 { 0%, 61.5% { opacity: 0; } 62%, 97% { opacity: 1; } 99.5%, 100% { opacity: 0; } }
+@keyframes pflFShort { 0%, 61.5% { opacity: 1; } 63.5%, 97% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+@keyframes pflFTall { 0%, 61.5% { opacity: 0; } 63.5%, 97% { opacity: 1; } 99.5%, 100% { opacity: 0; } }
+@keyframes pflBefore { 0%, 74.5% { opacity: 1; } 75.5%, 97% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+@keyframes pflAfter { 0%, 74.5% { opacity: 0; } 75.5%, 97% { opacity: 1; } 99.5%, 100% { opacity: 0; } }
+@keyframes pflBtn { 0%, 89.5% { transform: translate(0, 0); } 90.2%, 91% { transform: translate(1.5px, 1.5px); } 92%, 100% { transform: translate(0, 0); } }
+@keyframes pflToast { 0%, 91% { opacity: 0; transform: translateY(8px); } 92.5%, 97% { opacity: 1; transform: translateY(0); } 99%, 100% { opacity: 0; transform: translateY(0); } }

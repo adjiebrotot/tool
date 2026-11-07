@@ -1,0 +1,5 @@
+[21:53:59] Cleared NoDefaultCurrentDirectoryInExePath for this run so EMTDC can start the case it builds.
+[21:54:00] Using the PSCAD that is already running.
+[21:54:01] PSCAD 5.0.0 connected in 1.5s (connect), Automation Library 3.1.3.
+[21:54:02] Loaded project vdiv.pscx.
+[21:54:02] Project vdiv is open.

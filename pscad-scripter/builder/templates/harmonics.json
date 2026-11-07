@@ -1,0 +1,221 @@
+{
+ "app": "pscad-builder",
+ "v": 1,
+ "name": "Harmonics",
+ "nodes": [
+  {
+   "id": "n1",
+   "type": "start",
+   "x": 0,
+   "y": 160,
+   "label": "",
+   "s": {
+    "project": "",
+    "workspace": "",
+    "libraries": "",
+    "outputDir": "",
+    "undoChanges": true,
+    "tableFmt": "csv",
+    "fNominal": "auto",
+    "runMode": "auto",
+    "showPscad": false,
+    "fortran": "",
+    "pscadVersion": "",
+    "port": 0,
+    "connectTimeout": 120
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n0",
+   "type": "note",
+   "x": 0,
+   "y": -260,
+   "label": "About this template",
+   "s": {
+    "text": "PSCAD has no frequency-domain harmonic scan: harmonics come out of the time-domain result. Give the run long enough to settle and take the window at the end. The plot step sets how far up the spectrum is real: 100 us resolves to about 5 kHz, so lower it for high orders."
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n2",
+   "type": "px.run",
+   "x": 320,
+   "y": 160,
+   "label": "",
+   "s": {
+    "duration": 1,
+    "step": 20,
+    "plotStep": 50,
+    "build": "auto",
+    "read": "out",
+    "keepFiles": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n3",
+   "type": "px.series",
+   "x": 660,
+   "y": 400,
+   "label": "",
+   "s": {
+    "channel": "Vbus",
+    "combine": "one",
+    "label": ""
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n4",
+   "type": "sig.thd",
+   "x": 980,
+   "y": 400,
+   "label": "",
+   "s": {
+    "cycles": 2,
+    "harmonics": 50,
+    "frequency": null,
+    "at": null,
+    "includeDc": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n5",
+   "type": "out.table.add",
+   "x": 1300,
+   "y": 160,
+   "label": "",
+   "s": {
+    "table": "Harmonics",
+    "cols": [
+     {
+      "id": "c1",
+      "name": "THD (%)"
+     },
+     {
+      "id": "c2",
+      "name": "Worst (%)"
+     },
+     {
+      "id": "c3",
+      "name": "Worst order"
+     }
+    ],
+    "ctx": true,
+    "onSkip": true
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n6",
+   "type": "out.plot.xy",
+   "x": 1620,
+   "y": 160,
+   "label": "",
+   "s": {
+    "stem": "spectrum",
+    "shape": "bars",
+    "xlabel": "Harmonic order",
+    "ylabel": "Percent of the fundamental",
+    "lines": [
+     {
+      "id": "l1",
+      "name": "Harmonic"
+     }
+    ],
+    "kind": "line",
+    "title": "",
+    "xunit": "",
+    "yunit": "",
+    "limits": []
+   },
+   "pin": [],
+   "sv": 1
+  }
+ ],
+ "edges": [
+  {
+   "id": "e1",
+   "from": "n1",
+   "out": "next",
+   "to": "n2",
+   "in": "in"
+  },
+  {
+   "id": "e2",
+   "from": "n2",
+   "out": "ok",
+   "to": "n5",
+   "in": "in"
+  },
+  {
+   "id": "e3",
+   "from": "n5",
+   "out": "next",
+   "to": "n6",
+   "in": "in"
+  },
+  {
+   "id": "e4",
+   "from": "n2",
+   "out": "result",
+   "to": "n3",
+   "in": "run"
+  },
+  {
+   "id": "e5",
+   "from": "n3",
+   "out": "series",
+   "to": "n4",
+   "in": "series"
+  },
+  {
+   "id": "e6",
+   "from": "n4",
+   "out": "value",
+   "to": "n5",
+   "in": "c1"
+  },
+  {
+   "id": "e7",
+   "from": "n4",
+   "out": "worst",
+   "to": "n5",
+   "in": "c2"
+  },
+  {
+   "id": "e8",
+   "from": "n4",
+   "out": "order",
+   "to": "n5",
+   "in": "c3"
+  },
+  {
+   "id": "e9",
+   "from": "n4",
+   "out": "orders",
+   "to": "n6",
+   "in": "x"
+  },
+  {
+   "id": "e10",
+   "from": "n4",
+   "out": "pct",
+   "to": "n6",
+   "in": "l1"
+  }
+ ],
+ "view": {
+  "x": 0,
+  "y": 0,
+  "zoom": 1
+ }
+}

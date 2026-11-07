@@ -1,0 +1,64 @@
+{
+  "templates": [
+    {
+      "id": "build-check",
+      "title": "Build the case and report its errors",
+      "desc": "Compiles the case and tables what the Fortran compiler said, so a model that will not build is found before anything is run.",
+      "file": "build-check.json"
+    },
+    {
+      "id": "frt",
+      "title": "Fault ride through over fault durations",
+      "desc": "For each fault duration: writes the fault component’s timing, runs the EMT simulation and tables the voltage dip and the machine speed nadir, with every run on one graph.",
+      "file": "frt.json"
+    },
+    {
+      "id": "sweep",
+      "title": "Sweep one parameter",
+      "desc": "Steps one component parameter through a range, runs the case at each value and tables what a channel did, with a 2D graph of the result against the parameter.",
+      "file": "sweep.json"
+    },
+    {
+      "id": "harmonics",
+      "title": "Harmonics and THD from an EMT run",
+      "desc": "Runs the case, takes the harmonic spectrum of a voltage once it has settled, and tables the THD, the worst harmonic and every order, with a bar chart of the spectrum.",
+      "file": "harmonics.json"
+    },
+    {
+      "id": "cct",
+      "title": "Critical clearing time",
+      "desc": "Halves the gap to find the longest fault the case rides through: for each try the fault duration is written, the case is run and the machine speed decides pass or fail.",
+      "file": "cct.json"
+    },
+    {
+      "id": "layers",
+      "title": "Run every network arrangement",
+      "desc": "Puts each layer of the case in turn and leaves the others out, runs the EMT simulation for each and tables what a channel did: one case, every arrangement.",
+      "file": "layers.json"
+    },
+    {
+      "id": "snapshot",
+      "title": "Initialise once, then branch",
+      "desc": "Runs the case to a settled state and saves a snapshot, then starts each fault from it instead of simulating the start-up again every time.",
+      "file": "snapshot.json"
+    },
+    {
+      "id": "substitutions",
+      "title": "A run for each parameter set",
+      "desc": "Switches the case to each of its global substitution sets in turn and runs it, so one model covers every parameter set it was built with.",
+      "file": "substitutions.json"
+    },
+    {
+      "id": "parallel",
+      "title": "Run several cases at once",
+      "desc": "Puts cases into a simulation set and runs them several at a time. This is where a PSCAD study gets real parallelism: four at a time finish in about the time of one.",
+      "file": "parallel.json"
+    },
+    {
+      "id": "damping",
+      "title": "Damping of a ringdown",
+      "desc": "Disturbs the case, measures the damping ratio and frequency of the oscillation that follows, and fails the pass when it is growing: a control interaction check.",
+      "file": "damping.json"
+    }
+  ]
+}

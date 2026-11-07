@@ -1,0 +1,8 @@
+[22:26:53] Using the PSCAD that is already running.
+[22:26:53] PSCAD 5.0.0 connected in 0.7s (connect), Automation Library 3.1.3.
+[22:26:54] Loaded project vdiv.pscx.
+[22:26:55] Project vdiv is open.
+[22:27:02] Simulation settings: PlotType=OUT, sample_step=100.0, time_duration=1.5, time_step=20.0.
+[22:27:03] Created layer PXB_undo (Enabled).
+[22:27:07] Put back 5 changed values.
+[22:27:07] Removed 1 thing the workflow made.

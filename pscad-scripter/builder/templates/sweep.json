@@ -1,0 +1,262 @@
+{
+ "app": "pscad-builder",
+ "v": 1,
+ "name": "Parameter sweep",
+ "nodes": [
+  {
+   "id": "n1",
+   "type": "start",
+   "x": 0,
+   "y": 200,
+   "label": "",
+   "s": {
+    "project": "",
+    "workspace": "",
+    "libraries": "",
+    "outputDir": "",
+    "undoChanges": true,
+    "tableFmt": "csv",
+    "fNominal": "auto",
+    "runMode": "auto",
+    "showPscad": false,
+    "fortran": "",
+    "pscadVersion": "",
+    "port": 0,
+    "connectTimeout": 120
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n0",
+   "type": "note",
+   "x": 0,
+   "y": -240,
+   "label": "About this template",
+   "s": {
+    "text": "Choose the component and the parameter to sweep (the Component block takes a definition such as master:resistor and, when the case has several, a Name), and the channel to read. Each pass writes the parameter, runs the case and puts the value back, so the case is left as it was found."
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n2",
+   "type": "px.component",
+   "x": 320,
+   "y": 440,
+   "label": "",
+   "s": {
+    "el": {
+     "cls": "master:resistor",
+     "name": "",
+     "match": "one"
+    },
+    "enabled": false,
+    "page": ""
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n3",
+   "type": "flow.range",
+   "x": 320,
+   "y": 200,
+   "label": "Value",
+   "s": {
+    "from": 1,
+    "to": 10,
+    "step": 1,
+    "name": "",
+    "restore": "pass",
+    "onError": "skip"
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n4",
+   "type": "px.set",
+   "x": 660,
+   "y": 60,
+   "label": "",
+   "s": {
+    "param": "R",
+    "vtype": "num",
+    "value": 1,
+    "el": {
+     "cls": "master:resistor",
+     "name": "",
+     "match": "one"
+    },
+    "text": "",
+    "unit": "none"
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n5",
+   "type": "px.run",
+   "x": 980,
+   "y": 60,
+   "label": "",
+   "s": {
+    "duration": 1,
+    "step": 50,
+    "plotStep": 250,
+    "build": "auto",
+    "read": "out",
+    "keepFiles": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n6",
+   "type": "px.series",
+   "x": 1300,
+   "y": 300,
+   "label": "",
+   "s": {
+    "channel": "Vbus",
+    "combine": "one",
+    "label": ""
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n7",
+   "type": "sig.peak",
+   "x": 1620,
+   "y": 300,
+   "label": "",
+   "s": {
+    "kind": "abs",
+    "after": null,
+    "before": null
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n8",
+   "type": "out.table.add",
+   "x": 1960,
+   "y": 60,
+   "label": "",
+   "s": {
+    "table": "Sweep",
+    "cols": [
+     {
+      "id": "c1",
+      "name": "Peak"
+     }
+    ],
+    "ctx": true,
+    "onSkip": true
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n9",
+   "type": "out.plot.table",
+   "x": 2280,
+   "y": 60,
+   "label": "",
+   "s": {
+    "stem": "sweep",
+    "table": "Sweep",
+    "x": "Value",
+    "ys": "[object Object]",
+    "kind": "line",
+    "group": "",
+    "title": "",
+    "ylabel": "",
+    "yunit": "",
+    "limits": []
+   },
+   "pin": [],
+   "sv": 1
+  }
+ ],
+ "edges": [
+  {
+   "id": "e1",
+   "from": "n1",
+   "out": "next",
+   "to": "n3",
+   "in": "in"
+  },
+  {
+   "id": "e2",
+   "from": "n3",
+   "out": "body",
+   "to": "n4",
+   "in": "in"
+  },
+  {
+   "id": "e3",
+   "from": "n4",
+   "out": "next",
+   "to": "n5",
+   "in": "in"
+  },
+  {
+   "id": "e4",
+   "from": "n5",
+   "out": "ok",
+   "to": "n8",
+   "in": "in"
+  },
+  {
+   "id": "e5",
+   "from": "n3",
+   "out": "done",
+   "to": "n9",
+   "in": "in"
+  },
+  {
+   "id": "e6",
+   "from": "n2",
+   "out": "el",
+   "to": "n4",
+   "in": "obj"
+  },
+  {
+   "id": "e7",
+   "from": "n3",
+   "out": "value",
+   "to": "n4",
+   "in": "value"
+  },
+  {
+   "id": "e8",
+   "from": "n5",
+   "out": "result",
+   "to": "n6",
+   "in": "run"
+  },
+  {
+   "id": "e9",
+   "from": "n6",
+   "out": "series",
+   "to": "n7",
+   "in": "series"
+  },
+  {
+   "id": "e10",
+   "from": "n7",
+   "out": "value",
+   "to": "n8",
+   "in": "c1"
+  }
+ ],
+ "view": {
+  "x": 0,
+  "y": 0,
+  "zoom": 1
+ }
+}

@@ -1,0 +1,22 @@
+[22:26:02] Using the PSCAD that is already running.
+[22:26:03] PSCAD 5.0.0 connected in 1.1s (connect), Automation Library 3.1.3.
+[22:26:03] Loaded project vdiv.pscx.
+[22:26:04] Project vdiv is open.
+[22:26:07] Created case C:\Users\adjie\pscad-sandbox\pxb_built_75166.pscx.
+[22:26:07] Project pxb_built_75166 is the one in use.
+[22:26:07] Added master:source_1 at (10, 10).
+[22:26:08] Added master:resistor at (16, 10).
+[22:26:08] Added master:ground at (16, 16).
+[22:26:08] Drew a wire through 2 points.
+[22:26:09] Drew a bus TestBus through 2 points.
+[22:26:09] Added master:pgb at (28, 10).
+[22:26:10] Added output channel Vbuilt.
+[22:26:10] Added a graph for Vbuilt (master:pgb).
+[22:26:11] Saved project pxb_built_75166.
+[22:26:11] Added master:resistor at (40, 10).
+[22:26:12] Deleted 1 component.
+[22:26:12] WARNING Could not remove the component master:resistor: No component 1410888577 in project 'pxb_built_75166'
+[22:26:12] WARNING Could not remove the component graph: unpickling stack underflow
+[22:26:12] WARNING Could not remove the component master:pgb: unpickling stack underflow
+[22:26:14] Unloaded the project pxb_built_75166.pscx (its file is still there).
+[22:26:14] Removed 6 things the workflow made.
