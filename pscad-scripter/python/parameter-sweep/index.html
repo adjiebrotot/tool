@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD parameter sweep with Python: one value per run, one table</title>
+<meta name="description" content="Change one PSCAD component parameter over a range from Python, run the EMT simulation for each value, read a channel back and collect every pass in one results table.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sweep a parameter in PSCAD and collect the results">
+<meta property="og:description" content="Change one PSCAD component parameter over a range from Python, run the EMT simulation for each value, read a channel back and collect every pass in one results table.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sweep a parameter in PSCAD and collect the results">
+<meta name="twitter:description" content="Change one PSCAD component parameter over a range from Python, run the EMT simulation for each value, read a channel back and collect every pass in one results table.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Sweep a parameter in PSCAD and collect the results",
+  "description": "Change one PSCAD component parameter over a range from Python, run the EMT simulation for each value, read a channel back and collect every pass in one results table.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Beginner",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad parameter sweep, pscad python loop, pscad batch simulation, pscad multiple run, sweep pscad parameter python, pscad results table",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Parameter sweep"
+    },
+    {
+      "@type": "Thing",
+      "name": "Electromagnetic transient simulation"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I sweep a parameter in PSCAD with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Find the component once, then loop: write the parameter with its unit, run the case, read the channel you care about, take a number off it and add a row. Put the parameter back at the end of each pass, because a value a script writes is written in the case itself."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I use the Multiple Run component or a Python loop?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Multiple Run component is faster for a small, self-contained sweep because PSCAD does not restart the case between runs. A Python loop is easier to read and check, and it is the only option once the sweep changes several things, reads results between passes, or decides what to try next."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I write a value with its unit in PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Write it as text with the unit in brackets: \"250 [MVA]\", \"2.5 [ohm]\". PSCAD keeps the unit you wrote rather than converting it, so a value written in milliohms stays in milliohms and reads back that way."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I sweep a dropdown parameter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Choice parameter is written with its symbolic value rather than the label shown in the dialog. The component reference lists the symbolic value beside the label for every Choice in the Master Library."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Parameter sweep",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/parameter-sweep/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Parameter sweep</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Sweep a parameter in PSCAD and collect the results</h1>
+    <p class="dx-lead">A sweep is the first thing worth automating in PSCAD, because an EMT run takes as long as it takes and a sweep of them is an afternoon of starting the next one by hand. The script is short: <strong>write the parameter, build, run, read a channel, take a number off it, record the row, put the parameter back</strong>. What makes it worth getting right is the last step, and the units.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a sweep changes</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a sweep changes</h2>
+  <p>A PSCAD sweep writes one parameter on one component before each run. The parameter is named exactly as the component's dialog names it, and the <a href="../../reference/">component reference</a> lists every one with its unit, range and default: <code>R</code> on a <a href="../../reference/resistor/">resistor</a>, <code>Tmva</code> on a <a href="../../reference/xfmr-3p2w/">transformer</a>, <code>Es</code> on a <a href="../../reference/source3/">source</a>.</p>
+  <p>Two things about PSCAD values are worth knowing before the first sweep.</p>
+  <ul class="dx-prose">
+    <li><strong>A value carries its unit in its text.</strong> A resistance reads back as <code>2.5 [ohm]</code>, not as <code>2.5</code>. PSCAD keeps the unit that was written rather than normalising it, so a value written as <code>2500 [mohm]</code> stays in milliohms and reads back that way. Write the unit you mean.</li>
+    <li><strong>A written value is written in the case</strong>, not in a session. There is no read-only mode: the last value of a sweep becomes the case's new setting unless the script puts it back.</li>
+  </ul>
+  <p>PSCAD also has its own <a href="../../reference/mrun/">Multiple Run</a> component, which runs the case once per combination without the script restarting it. It is faster for a small self-contained sweep. A script loop is easier to read, easier to check, and the only option once the sweep has to change several things or decide what to try next, so these guides use the loop.</p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Find the component once</strong>, before the loop. Finding it every pass is wasted time and hides a model that has two of them.</li>
+    <li><strong>Open a mark</strong> at the top of each pass so the pass can be undone at the bottom.</li>
+    <li><strong>Write the parameter</strong>, in the unit it already carries.</li>
+    <li><strong>Run.</strong> PSCAD builds the case again by itself when the change needs it.</li>
+    <li><strong>Read the channel</strong> the study cares about, and take one number off it.</li>
+    <li><strong>Add a row.</strong> The loop value is added for you, so the table always says which pass a row came from.</li>
+    <li><strong>Undo the mark</strong>, so the next pass starts from the case as it was.</li>
+  </ol>
+  <pre><code class="language-python">load = <span class="py-f">px_find</span>(app, <span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;Load&quot;</span>)       <span class="py-c"># once, before the loop</span>
+
+<span class="py-k">for</span> value <span class="py-k">in</span> <span class="py-f">num_range</span>(<span class="py-n">1.0</span>, <span class="py-n">10.0</span>, <span class="py-n">1.0</span>):
+    mark = <span class="py-f">px_mark</span>()
+    <span class="py-f">px_set</span>(load, <span class="py-s">&quot;R&quot;</span>, value, unit=<span class="py-s">&quot;ohm&quot;</span>)
+
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">1.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    v = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>)
+    worst = <span class="py-f">peak</span>(v, kind=<span class="py-s">&quot;abs&quot;</span>)
+
+    <span class="py-f">table</span>(<span class="py-s">&quot;Sweep&quot;</span>).<span class="py-f">add</span>({
+        <span class="py-s">&quot;R (ohm)&quot;</span>: value,
+        <span class="py-s">&quot;Peak voltage&quot;</span>: worst.value,
+        <span class="py-s">&quot;At (s)&quot;</span>: worst.time,
+    })
+    <span class="py-f">px_undo</span>(mark)</code></pre>
+  <h3>Sweeping two things at once</h3>
+  <p>Nest the loops. The results table records both loop values on every row, so a two dimensional sweep comes out as a long table that pivots into a surface rather than as a grid you have to reassemble.</p>
+  <pre><code class="language-python"><span class="py-k">for</span> r <span class="py-k">in</span> <span class="py-f">num_range</span>(<span class="py-n">1.0</span>, <span class="py-n">10.0</span>, <span class="py-n">1.0</span>):
+    <span class="py-k">for</span> mva <span class="py-k">in</span> (<span class="py-n">100</span>, <span class="py-n">200</span>, <span class="py-n">400</span>):
+        mark = <span class="py-f">px_mark</span>()
+        <span class="py-f">px_set</span>(load, <span class="py-s">&quot;R&quot;</span>, r, unit=<span class="py-s">&quot;ohm&quot;</span>)
+        <span class="py-f">px_set</span>(source, <span class="py-s">&quot;MVA&quot;</span>, mva, unit=<span class="py-s">&quot;MVA&quot;</span>)
+        run = <span class="py-f">px_run</span>(app)
+        <span class="py-f">table</span>(<span class="py-s">&quot;Sweep&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Peak&quot;</span>: <span class="py-f">peak</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>), kind=<span class="py-s">&quot;abs&quot;</span>).value})
+        <span class="py-f">px_undo</span>(mark)</code></pre>
+  <h3>Sweeping something that is not a number</h3>
+  <p>A Choice parameter takes a symbolic value, not the label the dialog shows. The <a href="../../reference/">component reference</a> lists both for every Choice, so a sweep over winding connections writes <code>YD1="Y"</code> and <code>YD1="D"</code> rather than the words beside them.</p>
+  <pre><code class="language-python"><span class="py-k">for</span> connection <span class="py-k">in</span> (<span class="py-s">&quot;Y&quot;</span>, <span class="py-s">&quot;D&quot;</span>):
+    <span class="py-f">px_set</span>(xfmr, <span class="py-s">&quot;YD1&quot;</span>, connection)</code></pre>
+  <h3>What the table is for</h3>
+  <p>One row per pass, every loop value on the row, and the numbers the checks produced. It is saved as CSV or Excel into the run folder when the script ends, so the sweep leaves something that can be plotted, diffed against the last model, and attached to a report without being retyped.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Sweep one parameter Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=sweep">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The sweep Quick Start is the loop, wired: a component, a range, a parameter write, a run, a channel and a table. Point the component at yours and change the range, and it is your sweep. This is the file the Builder writes:</p>
+  <p class="dx-file"><span><code>parameter_sweep.py</code> as the Builder writes it: the settings and the workflow</span><a href="parameter_sweep.py" download>⬇ Download the full file (.py, 3,379 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Parameter sweep</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 parameter_sweep.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Parameter sweep&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: Choose the component and the parameter to sweep (the Component block takes a definition such as master:resistor and, when the case has several, a Name), and the channel to read. Each pass writes th...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-s">&quot;one&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Value (1 to 10, step 1) --</span>
+        value_values = <span class="py-f">num_range</span>(<span class="py-n">1</span>, <span class="py-n">10</span>, <span class="py-n">1</span>)
+        <span class="py-k">for</span> value_pass_no, value <span class="py-k">in</span> <span class="py-f">enumerate</span>(value_values, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Value&quot;</span>, value, value_pass_no, <span class="py-f">len</span>(value_values))
+            mark = <span class="py-f">px_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Set parameter (master:resistor.R = 1) --</span>
+                resistor = <span class="py-f">px_find</span>(app, <span class="py-s">&quot;master:resistor&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-s">&quot;one&quot;</span>)  <span class="py-c"># Component</span>
+                <span class="py-f">px_set</span>(resistor, <span class="py-s">&quot;R&quot;</span>, value, <span class="py-k">None</span>)
+                <span class="py-c"># -- Step 4: Run simulation (1 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">1</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=(), build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: skips to the next pass of Value</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># Stopped early: skips to the next pass of Value</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Sweep&quot;, saved at the end automatically) --</span>
+                vbus = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+                peak_result = <span class="py-f">peak</span>(vbus, kind=<span class="py-s">&quot;abs&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Peak</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Sweep&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Peak&quot;</span>: peak_result.value}, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">px_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Sweep&quot;</span>])
+        <span class="py-c"># -- Step 6: Draw graph from results table ([object Object] against Value) --</span>
+        <span class="py-f">plot_table</span>(<span class="py-s">&quot;Sweep&quot;</span>, <span class="py-s">&quot;Value&quot;</span>, [<span class="py-s">&quot;[object Object]&quot;</span>], kind=<span class="py-s">&quot;line&quot;</span>, group=<span class="py-k">None</span>, title=<span class="py-s">&quot;&quot;</span>, ylabel=<span class="py-s">&quot;&quot;</span>, yunit=<span class="py-s">&quot;&quot;</span>, limits=[], stem=<span class="py-s">&quot;sweep&quot;</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 3,229 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li>The <strong>Component</strong> block finds the component once and hands it to the <strong>Set parameter</strong> block, so it is found before the loop rather than inside it.</li>
+    <li>The <strong>For a range of numbers</strong> block is the sweep. Its value output goes into Set parameter, so the range is in one place.</li>
+    <li><code>px_set</code> records the old value as it writes, which is what makes the undo at the end of the pass cheap and exact.</li>
+    <li>Every pass is wrapped in <code>px_mark()</code> and <code>px_undo(mark)</code>, so the parameter goes back before the next value is written and the case ends as it started.</li>
+    <li>The <strong>Add row</strong> block writes the loop value as well as the check, so the table says which pass each row came from without being told.</li>
+    <li><strong>Draw graph from results table</strong> plots the collected column against the swept one after the loop, which is the picture a sweep is usually for.</li>
+  </ul>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Dropping the unit.</strong> <code>px_set(obj, "R", 2.5)</code> writes 2.5 in whatever unit the parameter already carries. If that is milliohms, the sweep is a thousand times off and nothing complains. Name the unit.</li>
+    <li><strong>Not putting the value back.</strong> A PSCAD parameter a script writes is written in the case. Without the undo, the case on disk ends up holding the last value of the sweep.</li>
+    <li><strong>Finding the component inside the loop.</strong> It costs a search per pass and, worse, it hides the case where two components match: the script quietly works on whichever came first.</li>
+    <li><strong>A range that steps past its end.</strong> Floating point means a range from 0.1 to 0.5 in steps of 0.1 may give four values or five. Where the end point matters, list the values instead.</li>
+    <li><strong>Sweeping something that needs a rebuild and not allowing for the time.</strong> Some parameters are used when the Fortran is generated, so writing them costs a build per pass. The first pass of a sweep will tell you which kind you have.</li>
+    <li><strong>Reading a channel the case does not record.</strong> The sweep runs to the end and the column is empty. Run once with <code>run.names()</code> printed, and copy the titles from there.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I sweep a parameter in PSCAD with Python?</h3>
+  <p>Find the component once, then loop: write the parameter with its unit, run the case, read the channel you care about, take a number off it and add a row. Put the parameter back at the end of each pass, because a value a script writes is written in the case itself.</p>
+  <h3>Should I use the Multiple Run component or a Python loop?</h3>
+  <p>The Multiple Run component is faster for a small, self-contained sweep because PSCAD does not restart the case between runs. A Python loop is easier to read and check, and it is the only option once the sweep changes several things, reads results between passes, or decides what to try next.</p>
+  <h3>How do I write a value with its unit in PSCAD?</h3>
+  <p>Write it as text with the unit in brackets: "250 [MVA]", "2.5 [ohm]". PSCAD keeps the unit you wrote rather than converting it, so a value written in milliohms stays in milliohms and reads back that way.</p>
+  <h3>How do I sweep a dropdown parameter?</h3>
+  <p>A Choice parameter is written with its symbolic value rather than the label shown in the dialog. The component reference lists the symbolic value beside the label for every Choice in the Master Library.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build a PSCAD case and run it from Python</a></li>
+    <li><a href="../fault-studies/">Fault ride through and critical clearing time in PSCAD</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD EMT run</a></li>
+    <li><a href="../snapshots-and-batch/">PSCAD snapshots and running cases in a batch</a></li>
+    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

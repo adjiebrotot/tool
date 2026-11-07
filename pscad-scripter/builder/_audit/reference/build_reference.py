@@ -146,13 +146,34 @@ def squash(text):
     return _SQUASH.sub("", str(text).upper())
 
 
+def match_score(want, got):
+    """How well a symbolic value spells a choice's label, strongest first.
+
+    An exact spelling always wins: "R" is the symbol for the label "R", even though
+    "RL", "RC" and "RLC" all contain it. Only then does one containing the other count
+    ("BEHIND_SOURCE_IMPEDANCE" for "Behind the Source Impedance"), nearest length first,
+    and last a shared opening. The score is a tuple so the ranks never bleed into
+    each other, which is how "R" used to end up on "RLC"."""
+    if not got or not want:
+        return (0, 0)
+    if got == want:
+        return (3, 0)
+    if got in want or want in got:
+        return (2, -abs(len(got) - len(want)))
+    shared = len(os.path.commonprefix([want, got]))
+    return (1, shared) if shared else (0, 0)
+
+
 def pair_choices(choice_texts, symbols):
     """Pair each symbolic value with the choice text it came from.
 
     The texts come from the form in order; the symbols come back from PSCAD as an
     unordered set, so they are paired by how much of the text each symbol spells. Both
     "BEHIND_SOURCE_IMPEDANCE" from "Behind the Source Impedance" and "RR_L" from "R-R//L"
-    pair correctly this way. A symbol nothing matches keeps a label made from itself."""
+    pair correctly this way. A symbol nothing matches keeps a label made from itself.
+
+    The symbols are sorted before they are matched: a set has no order of its own, and
+    without this the pairing came out differently every run."""
     # A choice text reads "1 = Resistive": the label is what follows the first "=".
     labels = []
     for text in choice_texts:
@@ -160,19 +181,16 @@ def pair_choices(choice_texts, symbols):
         labels.append((bits[1] if len(bits) > 1 else bits[0]).strip())
     # A Logical parameter's range comes back as the Python values {True, False}, not as text,
     # so everything here works on the written form and the written form is what is stored.
-    left = [sym if isinstance(sym, str) else str(sym) for sym in symbols]
+    left = sorted(sym if isinstance(sym, str) else str(sym) for sym in symbols)
     out = []
     for label in labels:
         want = squash(label)
-        best, score = None, -1
+        best, score = None, (0, 0)
         for sym in left:
-            got = squash(sym)
-            hit = len(os.path.commonprefix([want, got]))
-            if got and (got in want or want in got):
-                hit += 10
+            hit = match_score(want, squash(sym))
             if hit > score:
                 best, score = sym, hit
-        if best is not None and score > 0:
+        if best is not None:
             out.append([best, label])
             left.remove(best)
     for sym in left:
@@ -198,10 +216,16 @@ def main(argv):
                 print("  skipped %s: %s" % (name, str(err)[:60]))
                 continue
             title, desc, params = parse_form(xml)
+            # The files are written with sorted keys, so the form's own order would be lost.
+            # "i" is where a parameter sits in the form and "groups" is the order of the
+            # form's own sections, which is how the reference pages lay a definition out.
+            for i, par in enumerate(params):
+                par["i"] = i
             defs["master:" + name] = {
                 "name": title or name,
                 "desc": desc,
                 "group": group_of(name, desc or title),
+                "groups": list(dict.fromkeys(par["group"] for par in params)),
                 "params": {p["name"]: p for p in params},
             }
         print("  read %d forms in %.0fs" % (len(defs), time.time() - started))
@@ -292,11 +316,12 @@ def write_all(full):
     for key, rec in full["defs"].items():
         params = {}
         for name, p in rec["params"].items():
-            keep = {k: p[k] for k in ("type", "unit", "group", "default", "options")
+            keep = {k: p[k] for k in ("type", "unit", "group", "default", "options", "i")
                     if k in p}
             keep["desc"] = p.get("desc", "")
             params[name] = keep
-        lean[key] = {"name": rec["name"], "group": rec["group"], "params": params}
+        lean[key] = {"name": rec["name"], "group": rec["group"],
+                     "groups": rec.get("groups", []), "params": params}
     write(os.path.join(OUT, "params.json"),
           {"generated": full["generated"], "pscad": full["pscad"], "defs": lean},
           indent=None)

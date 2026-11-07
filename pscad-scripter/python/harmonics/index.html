@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD harmonics and THD with Python: a spectrum from the time domain</title>
+<meta name="description" content="Get total harmonic distortion and a harmonic spectrum out of PSCAD with Python: run in the time domain, window the waveform, take a DFT and read the orders back.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/harmonics/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Harmonics and THD from a PSCAD EMT run">
+<meta property="og:description" content="Get total harmonic distortion and a harmonic spectrum out of PSCAD with Python: run in the time domain, window the waveform, take a DFT and read the orders back.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/harmonics/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Harmonics and THD from a PSCAD EMT run">
+<meta name="twitter:description" content="Get total harmonic distortion and a harmonic spectrum out of PSCAD with Python: run in the time domain, window the waveform, take a DFT and read the orders back.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Harmonics and THD from a PSCAD EMT run",
+  "description": "Get total harmonic distortion and a harmonic spectrum out of PSCAD with Python: run in the time domain, window the waveform, take a DFT and read the orders back.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/harmonics/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad thd, pscad harmonics python, pscad harmonic spectrum, pscad fft, total harmonic distortion pscad, EMT harmonics, pscad plot step harmonics",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Total harmonic distortion"
+    },
+    {
+      "@type": "Thing",
+      "name": "Harmonic analysis"
+    },
+    {
+      "@type": "Thing",
+      "name": "Electromagnetic transient simulation"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I get THD out of PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run the case in the time domain, record the voltage or current on an output channel, and take a discrete Fourier transform over a whole number of cycles of the settled waveform. PSCAD has no frequency domain harmonic scan, so this is the only route; PSCAD also has an on-line THD component if you want it plotted against time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can PSCAD do a harmonic load flow or frequency scan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. PSCAD solves in the time domain and has no harmonic load flow command. A harmonic impedance scan is done by injecting a current at a swept frequency and running the case at each one, which is a parameter sweep rather than a single calculation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What plot step do I need for harmonics in PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The plot step sets the sampling rate of the recorded channel, so the highest real frequency is half of one over the plot step. 250 us resolves to about 2 kHz, which is roughly the 40th harmonic of 50 Hz; 50 us resolves to about 10 kHz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my PSCAD THD much higher than expected?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually the window. A window that is not a whole number of cycles, or one that includes the start-up transient before the case has settled, spreads energy across every order and inflates the THD. Check the fundamental you windowed with matches the case as well."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Harmonics and THD",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/harmonics/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Harmonics and THD</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Harmonics and THD from a PSCAD EMT run</h1>
+    <p class="dx-lead">PSCAD has <strong>no frequency domain harmonic scan</strong>. There is no command that returns a spectrum, because PSCAD solves in the time domain and nothing else. A harmonic study is therefore a normal EMT run, with the spectrum worked out from the waveform the run recorded. That makes two things matter more than they would elsewhere: <strong>the plot step</strong>, which sets how far up the spectrum is real, and <strong>the window</strong>, which sets whether the numbers mean anything at all.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">Why there is no harmonic scan</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">Why there is no harmonic scan</h2>
+  <p>A load flow tool can answer a harmonic question directly, by injecting a current at each order and solving the network at that frequency. PSCAD cannot, and does not try: it integrates the network in the time domain, one step at a time. What comes out is a waveform, and a waveform holds its harmonics implicitly.</p>
+  <p>Getting them out is a <strong>discrete Fourier transform over a whole number of cycles</strong> of the settled waveform. That is a small amount of arithmetic, and it is the only honest route. The things that go wrong are not in the transform; they are in what it is given.</p>
+  <ul class="dx-prose">
+    <li><strong>The plot step caps the spectrum.</strong> A channel recorded every 250 us has a sampling rate of 4 kHz, so nothing above 2 kHz exists in it. Orders above that are not small, they are absent, and anything that appears up there is an artefact.</li>
+    <li><strong>The window has to be a whole number of cycles</strong> of the fundamental, and it has to sit in the settled part of the run. A window that starts during the initialisation transient measures the transient.</li>
+    <li><strong>The fundamental has to be the right one.</strong> A case running at 60 Hz windowed as 50 Hz spreads every order across its neighbours and the THD comes out high and meaningless.</li>
+  </ul>
+  <p>PSCAD also has an <a href="../../reference/thd/">on-line THD component</a> that does this inside the run. It is useful when you want THD plotted against time; a script that takes the transform afterwards can choose its own window and keep the whole spectrum.</p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <h3>What the plot step lets you see</h3>
+  <div class="dx-tw"><table><thead><tr><th>Plot step</th><th>Highest real frequency</th><th>What it is good for</th></tr></thead><tbody>
+<tr><td>1000 us</td><td>500 Hz</td><td>Too coarse for harmonics. Enough for an envelope, nothing more.</td></tr>
+<tr><td>250 us</td><td>2 kHz</td><td>About the 40th harmonic of 50 Hz. The usual choice for a harmonic study.</td></tr>
+<tr><td>50 us</td><td>10 kHz</td><td>Comfortably past any harmonic order a grid code asks for.</td></tr>
+<tr><td>20 us</td><td>25 kHz</td><td>For switching ripple and anything above the audible range.</td></tr>
+</tbody></table></div>
+  <p class="dx-note">The solution step matters too, but differently: it has to be small enough to solve the switching that creates the harmonics in the first place. A converter solved at 50 us and recorded at 250 us gives a spectrum that is real up to 2 kHz and a solution that is honest about where the harmonics came from.</p>
+  <h3>Running, windowing, transforming</h3>
+  <ol class="dx-steps">
+    <li><strong>Run long enough to settle, plus whole cycles to measure.</strong> One second at 50 Hz is fifty cycles; the last ten of them are usually a good window.</li>
+    <li><strong>Record at a plot step that covers the orders you need</strong>, from the table above.</li>
+    <li><strong>Read the channel</strong> back as a series of time and value.</li>
+    <li><strong>Take the window</strong>: a whole number of cycles, ending at the end of the run.</li>
+    <li><strong>Transform</strong>, and read the orders off as a fraction of the fundamental.</li>
+    <li><strong>Record THD and the orders that matter</strong>, usually 2nd to 50th, each as its own column.</li>
+  </ol>
+  <pre><code class="language-python">run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">1.0</span>, step=<span class="py-n">20</span>, plot_step=<span class="py-n">250</span>)
+v = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>)
+
+h = <span class="py-f">spectrum</span>(v, f0=<span class="py-n">50.0</span>, cycles=<span class="py-n">10</span>)      <span class="py-c"># the last 10 cycles of the settled waveform</span>
+<span class="py-f">print</span>(h.thd)                              <span class="py-c"># as a fraction: 0.031 is 3.1 %</span>
+<span class="py-f">print</span>(h.<span class="py-f">order</span>(<span class="py-n">5</span>), h.<span class="py-f">order</span>(<span class="py-n">7</span>))             <span class="py-c"># the orders people ask about first</span>
+
+<span class="py-f">table</span>(<span class="py-s">&quot;Harmonics&quot;</span>).<span class="py-f">add</span>({
+    <span class="py-s">&quot;THD (%)&quot;</span>: h.thd * <span class="py-n">100</span>,
+    <span class="py-s">&quot;5th (%)&quot;</span>: h.<span class="py-f">order</span>(<span class="py-n">5</span>) * <span class="py-n">100</span>,
+    <span class="py-s">&quot;7th (%)&quot;</span>: h.<span class="py-f">order</span>(<span class="py-n">7</span>) * <span class="py-n">100</span>,
+    <span class="py-s">&quot;11th (%)&quot;</span>: h.<span class="py-f">order</span>(<span class="py-n">11</span>) * <span class="py-n">100</span>,
+    <span class="py-s">&quot;13th (%)&quot;</span>: h.<span class="py-f">order</span>(<span class="py-n">13</span>) * <span class="py-n">100</span>,
+})</code></pre>
+  <h3>THD over a sweep</h3>
+  <p>The useful harmonic study is rarely one number. It is THD against something: the number of converters on, the short circuit level at the connection point, the filter that is in service. That is <a href="../parameter-sweep/">a sweep</a> with a spectrum at the end of each pass, and a table with one row per pass.</p>
+  <pre><code class="language-python"><span class="py-k">for</span> mva <span class="py-k">in</span> (<span class="py-n">500</span>, <span class="py-n">1000</span>, <span class="py-n">2000</span>, <span class="py-n">5000</span>):
+    mark = <span class="py-f">px_mark</span>()
+    <span class="py-f">px_set</span>(source, <span class="py-s">&quot;MVA&quot;</span>, mva, unit=<span class="py-s">&quot;MVA&quot;</span>)
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">1.0</span>, step=<span class="py-n">20</span>, plot_step=<span class="py-n">250</span>)
+    h = <span class="py-f">spectrum</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>), f0=<span class="py-n">50.0</span>, cycles=<span class="py-n">10</span>)
+    <span class="py-f">table</span>(<span class="py-s">&quot;Harmonics&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Short circuit (MVA)&quot;</span>: mva, <span class="py-s">&quot;THD (%)&quot;</span>: h.thd * <span class="py-n">100</span>})
+    <span class="py-f">px_undo</span>(mark)</code></pre>
+  <h3>What to look at</h3>
+  <p>The THD number is the headline, but the <strong>shape of the spectrum says what is happening</strong>. A six pulse converter puts its energy at the 5th, 7th, 11th and 13th; energy at even orders or at the 3rd says something is unbalanced or has a DC offset; a broad floor with no clear orders usually means the window was wrong or the waveform had not settled.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Harmonics and THD from an EMT run Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=harmonics">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The harmonics Quick Start is a run, a channel and a THD block, with the spectrum drawn as a bar chart and the orders written into a table. This is the file the Builder writes:</p>
+  <p class="dx-file"><span><code>harmonics_and_thd.py</code> as the Builder writes it: the settings and the workflow</span><a href="harmonics_and_thd.py" download>⬇ Download the full file (.py, 3,708 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Harmonics</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 harmonics.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Harmonics&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: PSCAD has no frequency-domain harmonic scan: harmonics come out of the time-domain result. Give the run long enough to settle and take the window at the end. The plot step sets how far up the spect...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Run simulation (1 s, 20 us step) --</span>
+        run = <span class="py-f">px_run</span>(app, <span class="py-n">1</span>, <span class="py-n">20</span>, <span class="py-n">50</span>, <span class="py-k">None</span>, events=(), build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+        <span class="py-c"># Did not build: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The case did not build. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># Stopped early: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The simulation stopped before the end. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 3: Add row to results table (Into &quot;Harmonics&quot;, saved at the end automatically) --</span>
+        vbus = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+        thd_result = <span class="py-f">thd</span>(vbus, frequency=<span class="py-f">f_nominal</span>(app), at=<span class="py-k">None</span>, cycles=<span class="py-n">2</span>, harmonics=<span class="py-n">50</span>, include_dc=<span class="py-k">False</span>)  <span class="py-c"># Harmonic distortion (THD)</span>
+        <span class="py-f">table</span>(<span class="py-s">&quot;Harmonics&quot;</span>).<span class="py-f">add</span>({
+            <span class="py-s">&quot;THD (%)&quot;</span>: thd_result.value,
+            <span class="py-s">&quot;Worst (%)&quot;</span>: thd_result.worst,
+            <span class="py-s">&quot;Worst order&quot;</span>: thd_result.worst_order,
+        })
+        <span class="py-c"># -- Step 4: Draw 2D graph (Lines) --</span>
+        <span class="py-f">plot_xy</span>(thd_result.orders, [thd_result.pct], labels=[<span class="py-s">&quot;Harmonic&quot;</span>], kind=<span class="py-s">&quot;line&quot;</span>, title=<span class="py-s">&quot;&quot;</span>, xlabel=<span class="py-s">&quot;Harmonic order&quot;</span>, xunit=<span class="py-s">&quot;&quot;</span>, ylabel=<span class="py-s">&quot;Percent of the fundamental&quot;</span>, yunit=<span class="py-s">&quot;&quot;</span>, limits=[], stem=<span class="py-s">&quot;spectrum&quot;</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 3,574 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li>The run is set up with a <strong>20 us solution step</strong> and a <strong>250 us plot step</strong>: fine enough to solve the switching, recorded finely enough to resolve up to about 2 kHz.</li>
+    <li>The <strong>Harmonic distortion (THD)</strong> block takes the DFT over a whole number of cycles of the settled part of the waveform, so there is nothing to line up by hand.</li>
+    <li>Its outputs are the THD and the individual orders, so one block feeds both the headline number and the per-order columns of the table.</li>
+    <li>The <strong>Draw 2D graph</strong> block plots order against magnitude, which is the spectrum as a report wants it.</li>
+    <li>The fundamental is read from the case rather than assumed, so a 60 Hz model does not need the script edited.</li>
+  </ul>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Expecting a harmonic load flow.</strong> There is not one. Every harmonic number in PSCAD comes out of a time domain waveform, so the run has to be long enough, settled, and recorded finely enough before any of it means anything.</li>
+    <li><strong>A plot step that hides the orders you are reporting.</strong> At 1000 us nothing above 500 Hz exists. Reporting a 25th harmonic from that recording is reporting noise.</li>
+    <li><strong>Windowing the initialisation.</strong> An EMT case starts from zero. A window that includes the first cycles measures the start-up, not the steady state. Window the end of the run, or <a href="../snapshots-and-batch/">start from a snapshot</a>.</li>
+    <li><strong>A window that is not a whole number of cycles.</strong> The energy of each order leaks into its neighbours and every number comes out wrong in a way that looks plausible.</li>
+    <li><strong>The wrong fundamental.</strong> 50 Hz assumed on a 60 Hz case, or a case running slightly off nominal, smears the spectrum. Read the frequency from the case.</li>
+    <li><strong>Comparing THD measured different ways.</strong> THD as a fraction of the fundamental and THD as a fraction of the RMS are different numbers. Say which one the column is.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I get THD out of PSCAD?</h3>
+  <p>Run the case in the time domain, record the voltage or current on an output channel, and take a discrete Fourier transform over a whole number of cycles of the settled waveform. PSCAD has no frequency domain harmonic scan, so this is the only route; PSCAD also has an on-line THD component if you want it plotted against time.</p>
+  <h3>Can PSCAD do a harmonic load flow or frequency scan?</h3>
+  <p>No. PSCAD solves in the time domain and has no harmonic load flow command. A harmonic impedance scan is done by injecting a current at a swept frequency and running the case at each one, which is a parameter sweep rather than a single calculation.</p>
+  <h3>What plot step do I need for harmonics in PSCAD?</h3>
+  <p>The plot step sets the sampling rate of the recorded channel, so the highest real frequency is half of one over the plot step. 250 us resolves to about 2 kHz, which is roughly the 40th harmonic of 50 Hz; 50 us resolves to about 10 kHz.</p>
+  <h3>Why is my PSCAD THD much higher than expected?</h3>
+  <p>Usually the window. A window that is not a whole number of cycles, or one that includes the start-up transient before the case has settled, spreads energy across every order and inflates the THD. Check the fundamental you windowed with matches the case as well.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build a PSCAD case and run it from Python</a></li>
+    <li><a href="../fault-studies/">Fault ride through and critical clearing time in PSCAD</a></li>
+    <li><a href="../parameter-sweep/">Sweep a parameter in PSCAD and collect the results</a></li>
+    <li><a href="../snapshots-and-batch/">PSCAD snapshots and running cases in a batch</a></li>
+    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

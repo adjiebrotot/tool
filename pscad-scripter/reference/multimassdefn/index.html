@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>multimassdefn parameters (master:multimassdefn)</title>
+<meta name="description" content="Every parameter of the PSCAD multimassdefn (master:multimassdefn): 57 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="multimassdefn (master:multimassdefn) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD multimassdefn (master:multimassdefn): 57 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="multimassdefn (master:multimassdefn) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD multimassdefn (master:multimassdefn): 57 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "multimassdefn (master:multimassdefn) parameters",
+  "description": "Every parameter of the PSCAD multimassdefn (master:multimassdefn): 57 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:multimassdefn (multimassdefn)",
+    "description": "The PSCAD Master Library definition master:multimassdefn."
+  },
+  "keywords": "master:multimassdefn parameters, PSCAD multimassdefn parameters, multimassdefn PSCAD, master:multimassdefn Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "multimassdefn",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">multimassdefn</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>multimassdefn<span class="dx-h1-sub">master:multimassdefn</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD multimassdefn (<code>master:multimassdefn</code>): 57 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What multimassdefn is</h2>
+  <p>multimassdefn is a Master Library definition in the Control group of PSCAD 5.0.0. Multimass Torsional Model. Its 57 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:multimassdefn</code></dd><dt>PSCAD name</dt><dd>multimassdefn</dd><dt>Library group</dt><dd>Control</dd><dt>Parameters</dt><dd>57 parameters, in 8 sections of the dialog</dd><dt>Description</dt><dd>Multimass Torsional Model</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write multimassdefn in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimassdefn&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimassdefn&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(N=<span class="py-n">4</span>, Exc=<span class="py-n">1</span>, MVA=<span class="py-s">&quot;892.4 [MVA]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;N&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All multimassdefn parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">7</span></a></li><li><a href="#g1-inertia-constants">Inertia Constants<span class="dx-n">7</span></a></li><li><a href="#g2-shaft-spring-constant">Shaft Spring Constant<span class="dx-n">6</span></a></li><li><a href="#g3-turbine-torque-share">Turbine Torque Share<span class="dx-n">5</span></a></li><li><a href="#g4-uniform-modal-damping">Uniform Modal Damping<span class="dx-n">1</span></a></li><li><a href="#g5-self-damping">Self Damping<span class="dx-n">7</span></a></li><li><a href="#g6-mutual-damping">Mutual Damping<span class="dx-n">6</span></a></li><li><a href="#g7-internal-output-variable-names">Internal Output Variable Names<span class="dx-n">18</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>N</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 5</td><td>4</td><td>Number of Turbines (1 to 5)</td></tr>
+<tr><td><code>Exc</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>0 to 1</td><td>1</td><td>Model Exciter Mass (1=Yes, 0=No)</td></tr>
+<tr><td><code>MVA</code></td><td>MVA</td><td>Real</td><td>·</td><td>892.4</td><td>Machine 3 phase MVA</td></tr>
+<tr><td><code>F</code></td><td>Hz</td><td>Real</td><td>·</td><td>60.0</td><td>Electrical base frequency</td></tr>
+<tr><td><code>RPM</code></td><td>rev/min</td><td>Real</td><td>·</td><td>3600.0</td><td>Machine rated speed</td></tr>
+<tr><td><code>Units</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 10</td><td>9</td><td>Unit System Number (See Help)</td></tr>
+<tr><td><code>Ngata</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 2</td><td>1</td><td>Icon input: No. of enable inputs</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-inertia-constants">
+  <h2 id="g1-inertia-constants">Inertia Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>H1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0929</td><td>Turbine #1 Inertia Constant</td></tr>
+<tr><td><code>H2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.1556</td><td>Turbine #2 Inertia Constant<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>H3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.8587</td><td>Turbine #3 Inertia Constant<small>Used only when <code>(N&gt;=3)</code>.</small></td></tr>
+<tr><td><code>H4</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.8842</td><td>Turbine #4 Inertia Constant<small>Used only when <code>(N&gt;=4)</code>.</small></td></tr>
+<tr><td><code>H5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #5 Inertia Constant<small>Used only when <code>(N&gt;=5)</code>.</small></td></tr>
+<tr><td><code>HG</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.8685</td><td>Generator Inertia Constant</td></tr>
+<tr><td><code>HE</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0342</td><td>Exciter Inertia Constant<small>Used only when <code>(Exc)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-shaft-spring-constant">
+  <h2 id="g2-shaft-spring-constant">Shaft Spring Constant</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>K12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>7277</td><td>Spring Constant From Turbine #1 to #2<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>K23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>13168</td><td>Spring Constant From Turbine #2 to #3<small>Used only when <code>(N&gt;=3)</code>.</small></td></tr>
+<tr><td><code>K34</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>19618</td><td>Spring Constant From Turbine #3 to #4<small>Used only when <code>(N&gt;=4)</code>.</small></td></tr>
+<tr><td><code>K45</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Spring Constant From Turbine #4 to #5<small>Used only when <code>(N&gt;=5)</code>.</small></td></tr>
+<tr><td><code>KLG</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>26713</td><td>Spring Const. From Last Turb. to Gen.</td></tr>
+<tr><td><code>KGE</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>1064</td><td>Spring Const. From Generator to Exciter<small>Used only when <code>(Exc)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-turbine-torque-share">
+  <h2 id="g3-turbine-torque-share">Turbine Torque Share</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TF1</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.30</td><td>Torque Share for Turbine #1<small>Used only when <code>(N&gt;1)</code>.</small></td></tr>
+<tr><td><code>TF2</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.26</td><td>Torque Share for Turbine #2<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>TF3</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.22</td><td>Torque Share for Turbine #3<small>Used only when <code>(N&gt;=3)</code>.</small></td></tr>
+<tr><td><code>TF4</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.22</td><td>Torque Share for Turbine #4<small>Used only when <code>(N&gt;=4)</code>.</small></td></tr>
+<tr><td><code>TF5</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Turbine #5<small>Used only when <code>(N&gt;=5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-uniform-modal-damping">
+  <h2 id="g4-uniform-modal-damping">Uniform Modal Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>sigma</code></td><td>1/s</td><td>Real</td><td>·</td><td>0.0</td><td>Modal Damping for all modes<small>Used only when <code>(Units&lt;=5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-self-damping">
+  <h2 id="g5-self-damping">Self Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>SD1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #1 Self Damping<small>Used only when <code>(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SD2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #2 Self Damping<small>Used only when <code>(N&gt;=2)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SD3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #3 Self Damping<small>Used only when <code>(N&gt;=3)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SD4</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #4 Self Damping<small>Used only when <code>(N&gt;=4)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SD5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Turbine #5 Self Damping<small>Used only when <code>(N&gt;=5)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SDG</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Generator Self Damping<small>Used only when <code>(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>SDE</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Exciter Self Damping<small>Used only when <code>(Exc)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-mutual-damping">
+  <h2 id="g6-mutual-damping">Mutual Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>MD12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Turbine #1 and #2<small>Used only when <code>(N&gt;=2)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>MD23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Turbine #2 and #3<small>Used only when <code>(N&gt;=3)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>MD34</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Turbine #3 and #4<small>Used only when <code>(N&gt;=4)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>MD45</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Turbine #4 and #5<small>Used only when <code>(N&gt;=5)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>MDLG</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Last Turbine and Gen.<small>Used only when <code>(Units&gt;5)</code>.</small></td></tr>
+<tr><td><code>MDGE</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>Damping Between Generator and Exciter<small>Used only when <code>(Exc)&amp;&amp;(Units&gt;5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7-internal-output-variable-names">
+  <h2 id="g7-internal-output-variable-names">Internal Output Variable Names</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>T12</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 1 - 2</td></tr>
+<tr><td><code>T23</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 2 - 3</td></tr>
+<tr><td><code>T34</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 3 - 4</td></tr>
+<tr><td><code>T45</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 4 - 5</td></tr>
+<tr><td><code>T56</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 5 - 6</td></tr>
+<tr><td><code>P1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 1 wrt Gen.</td></tr>
+<tr><td><code>P2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 2 wrt Gen.</td></tr>
+<tr><td><code>P3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 3 wrt Gen.</td></tr>
+<tr><td><code>P4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 4 wrt Gen.</td></tr>
+<tr><td><code>P5</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 5 wrt Gen.</td></tr>
+<tr><td><code>P6</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mech. Pos.  of Mass 6 wrt Gen.</td></tr>
+<tr><td><code>W1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 1</td></tr>
+<tr><td><code>W2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 2</td></tr>
+<tr><td><code>W3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 3</td></tr>
+<tr><td><code>W4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 4</td></tr>
+<tr><td><code>W5</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 5</td></tr>
+<tr><td><code>W6</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mech. Speed of Mass 6</td></tr>
+<tr><td><code>Wbas</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Rated Mech. Speed of the System</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/control-tuning/">Tune a control with a search</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../mmc-multidimcomparator/">Multi Dimensional Comparator</a> · <a href="../mrun/">Multiple Run</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

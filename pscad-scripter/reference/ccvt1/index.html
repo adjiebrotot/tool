@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CCVT parameters (master:ccvt1) | Adjie Brotools</title>
+<meta name="description" content="Every parameter of the PSCAD CCVT (master:ccvt1): 32 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="CCVT (master:ccvt1) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD CCVT (master:ccvt1): 32 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CCVT (master:ccvt1) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD CCVT (master:ccvt1): 32 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "CCVT (master:ccvt1) parameters",
+  "description": "Every parameter of the PSCAD CCVT (master:ccvt1): 32 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:ccvt1 (CCVT)",
+    "description": "The PSCAD Master Library definition master:ccvt1."
+  },
+  "keywords": "master:ccvt1 parameters, PSCAD CCVT parameters, CCVT PSCAD, master:ccvt1 Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "CCVT",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">CCVT</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>CCVT<span class="dx-h1-sub">master:ccvt1</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD CCVT (<code>master:ccvt1</code>): 32 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What CCVT is</h2>
+  <p>CCVT is a Master Library definition in the Protection group of PSCAD 5.0.0. CCVT - Lucas Model. Its 32 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:ccvt1</code></dd><dt>PSCAD name</dt><dd>CCVT</dd><dt>Library group</dt><dd>Protection</dd><dt>Parameters</dt><dd>32 parameters, in 6 sections of the dialog</dd><dt>Description</dt><dd>CCVT - Lucas Model</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write CCVT in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ccvt1&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ccvt1&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(C1P=<span class="py-s">&quot;2920 [pF]&quot;</span>, C2P=<span class="py-s">&quot;134952 [pF]&quot;</span>, LCP=<span class="py-s">&quot;42 [H]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;C1P&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All CCVT parameters"><li><a href="#g0-main-data">Main Data<span class="dx-n">4</span></a></li><li><a href="#g1-vt-data-general">VT Data - General<span class="dx-n">11</span></a></li><li><a href="#g2-vt-data-saturation">VT Data - Saturation<span class="dx-n">5</span></a></li><li><a href="#g3-burden">Burden<span class="dx-n">3</span></a></li><li><a href="#g4-ferro-resonance-filter">Ferro-resonance Filter<span class="dx-n">6</span></a></li><li><a href="#g5-internal-outputs">Internal Outputs<span class="dx-n">3</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-main-data">
+  <h2 id="g0-main-data">Main Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for Identification<small>Enter a name for identification.</small></td></tr>
+<tr><td><code>C1P</code></td><td>pF</td><td>Real</td><td>1E-307 to 1E+308</td><td>2920.0</td><td>Capacitor-1</td></tr>
+<tr><td><code>C2P</code></td><td>pF</td><td>Real</td><td>1E-307 to 1E+308</td><td>134952.0</td><td>Capacitor-2</td></tr>
+<tr><td><code>LCP</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>42.0</td><td>Compensating Inductance</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-vt-data-general">
+  <h2 id="g1-vt-data-general">VT Data - General</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>VTrat</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1E-307 to 1E+308</td><td>43.48</td><td>VT Ratio</td></tr>
+<tr><td><code>Lp</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.47e-3</td><td>Primary Inductance (referred to sec.)<small>Primary inductance referred to secondary.</small></td></tr>
+<tr><td><code>Rp</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.05</td><td>Primary Resistance (referred to sec.)<small>Primary resistance referred to secondary.</small></td></tr>
+<tr><td><code>Ls</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.47e-3</td><td>Seondary Inductance</td></tr>
+<tr><td><code>Rs</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.18</td><td>Secondry Resistance</td></tr>
+<tr><td><code>Leddy</code></td><td>W</td><td>Real</td><td>0 to 1E+308</td><td>2.5</td><td>Eddy Current Loss @ Normal Conditions</td></tr>
+<tr><td><code>Vop</code></td><td>V</td><td>Real</td><td>1E-307 to 1E+308</td><td>115</td><td>Secondary Operating Voltage</td></tr>
+<tr><td><code>Bop</code></td><td>T</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.8</td><td>Operating Flux Density</td></tr>
+<tr><td><code>ClosH</code></td><td>W</td><td>Real</td><td>0 to 1E+308</td><td>5.0</td><td>Hysteresis Loss @ Normal Conditions</td></tr>
+<tr><td><code>Remn</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Initial Remanence</td></tr>
+<tr><td><code>Freq</code></td><td>Hz</td><td>Real</td><td>1 to 1E+308</td><td>60.0</td><td>Operating Frequency</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-vt-data-saturation">
+  <h2 id="g2-vt-data-saturation">VT Data - Saturation</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Indx2</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>2 to 2147483647</td><td>8</td><td>Index-2</td></tr>
+<tr><td><code>Indx3</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>2 to 2147483647</td><td>32</td><td>Index-3</td></tr>
+<tr><td><code>Cnst1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.6</td><td>Coefficient-1</td></tr>
+<tr><td><code>Cnst2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.03</td><td>Coefficient-2</td></tr>
+<tr><td><code>Cnst3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>1.0e-7</td><td>Coefficient-3</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-burden">
+  <h2 id="g3-burden">Burden</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>BurRs</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>301.0</td><td>Burden Resistance - series</td></tr>
+<tr><td><code>BurLs</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>2.4</td><td>Burden Inductance - series</td></tr>
+<tr><td><code>BurRp</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>785.0</td><td>Burden Resistance - parallel</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-ferro-resonance-filter">
+  <h2 id="g4-ferro-resonance-filter">Ferro-resonance Filter</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Lfer1</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.01</td><td>Inductance - 1</td></tr>
+<tr><td><code>Rfer1</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>5.5</td><td>Resistance - 1</td></tr>
+<tr><td><code>Cfer1</code></td><td>F</td><td>Real</td><td>1E-307 to 1E+308</td><td>8.0e-6</td><td>Capacitance - 1</td></tr>
+<tr><td><code>Lfer2</code></td><td>H</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.394</td><td>Inductance - 2</td></tr>
+<tr><td><code>Rfer2</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>3.9</td><td>Resistance - 2</td></tr>
+<tr><td><code>Rfer3</code></td><td>ohm</td><td>Real</td><td>1E-307 to 1E+308</td><td>40.0</td><td>Resistance - common</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-internal-outputs">
+  <h2 id="g5-internal-outputs">Internal Outputs</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Bout</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Flux Density</td></tr>
+<tr><td><code>Itotl</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Total Core Current</td></tr>
+<tr><td><code>Imagn</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Magnetizing Current</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ct-double/">2 CT model</a> · <a href="../dscd87/">Dual Slope Current Differential Relay</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

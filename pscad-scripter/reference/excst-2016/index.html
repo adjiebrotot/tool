@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Type ST Exciter parameters (master:excst_2016)</title>
+<meta name="description" content="Every parameter of the PSCAD Type ST Exciter (master:excst_2016): 294 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Type ST Exciter (master:excst_2016) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD Type ST Exciter (master:excst_2016): 294 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Type ST Exciter (master:excst_2016) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD Type ST Exciter (master:excst_2016): 294 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Type ST Exciter (master:excst_2016) parameters",
+  "description": "Every parameter of the PSCAD Type ST Exciter (master:excst_2016): 294 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:excst_2016 (Type ST Exciter)",
+    "description": "The PSCAD Master Library definition master:excst_2016."
+  },
+  "keywords": "master:excst_2016 parameters, PSCAD Type ST Exciter parameters, Type ST Exciter PSCAD, master:excst_2016 Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Type ST Exciter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Type ST Exciter</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Type ST Exciter<span class="dx-h1-sub">master:excst_2016</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Type ST Exciter (<code>master:excst_2016</code>): 294 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Type ST Exciter is</h2>
+  <p>Type ST Exciter is a Master Library definition in the Machines group of PSCAD 5.0.0. Type ST Exciter IEEE Std. 421.5-2016. Its 294 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:excst_2016</code></dd><dt>PSCAD name</dt><dd>Type ST Exciter</dd><dt>Library group</dt><dd>Machines</dd><dt>Parameters</dt><dd>294 parameters, in 26 sections of the dialog</dd><dt>Description</dt><dd>Type ST Exciter IEEE Std. 421.5-2016</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Type ST Exciter in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:excst_2016&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:excst_2016&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(INIT=<span class="py-n">1</span>, RC=<span class="py-s">&quot;0 [pu]&quot;</span>, XC=<span class="py-s">&quot;0 [pu]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;INIT&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Type ST Exciter parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">8</span></a></li><li><a href="#g1-excitation-limiters">Excitation Limiters<span class="dx-n">76</span></a></li><li><a href="#g2-st1c-forward-lead-lag-parameters">ST1C Forward Lead-Lag Parameters<span class="dx-n">5</span></a></li><li><a href="#g3-st1c-feedback-and-regulator-parameters">ST1C Feedback and Regulator Parameters<span class="dx-n">6</span></a></li><li><a href="#g4-st1c-field-circuit-constants">ST1C Field Circuit Constants<span class="dx-n">8</span></a></li><li><a href="#g5-st2c-feedback-and-regulator-parameters">ST2C Feedback and Regulator Parameters<span class="dx-n">10</span></a></li><li><a href="#g6-st2c-exciter-and-compounding-parameters">ST2C Exciter and Compounding Parameters<span class="dx-n">9</span></a></li><li><a href="#g7-st3c-forward-and-regulator-parameters">ST3C Forward and Regulator Parameters<span class="dx-n">12</span></a></li><li><a href="#g8-st3c-inner-loop-field-regulator">ST3C Inner Loop Field Regulator<span class="dx-n">7</span></a></li><li><a href="#g9-st3c-compounding-parameters">ST3C Compounding Parameters<span class="dx-n">7</span></a></li><li><a href="#g10-st4c-regulator-constants">ST4C Regulator Constants<span class="dx-n">5</span></a></li><li><a href="#g11-st4c-inner-loop-field-regulator">ST4C Inner Loop Field Regulator<span class="dx-n">10</span></a></li><li><a href="#g12-st4c-compounding-parameters">ST4C Compounding Parameters<span class="dx-n">7</span></a></li><li><a href="#g13-st5c-forward-lead-lag-parameters">ST5C Forward Lead-Lag Parameters<span class="dx-n">14</span></a></li><li><a href="#g14-st5c-field-circuit-constants">ST5C Field Circuit Constants<span class="dx-n">4</span></a></li><li><a href="#g15-st6c-regulator-constants">ST6C Regulator Constants<span class="dx-n">4</span></a></li><li><a href="#g16-st6c-inner-loop-field-regulator">ST6C Inner Loop Field Regulator<span class="dx-n">12</span></a></li><li><a href="#g17-st6c-compounding-parameters">ST6C Compounding Parameters<span class="dx-n">7</span></a></li><li><a href="#g18-st7c-regulator-constants">ST7C Regulator Constants<span class="dx-n">7</span></a></li><li><a href="#g19-st7c-other-parameters">ST7C Other Parameters<span class="dx-n">8</span></a></li><li><a href="#g20-st8c-regulator-constants">ST8C Regulator Constants<span class="dx-n">12</span></a></li><li><a href="#g21-st8c-compounding-parameters">ST8C Compounding Parameters<span class="dx-n">12</span></a></li><li><a href="#g22-st9c-feedback-and-regulator-parameters">ST9C Feedback and Regulator Parameters<span class="dx-n">11</span></a></li><li><a href="#g23-st9c-exciter-and-compounding-parameters">ST9C Exciter and Compounding Parameters<span class="dx-n">7</span></a></li><li><a href="#g24-st10c-forward-lead-lag-parameters">ST10C Forward Lead-Lag Parameters<span class="dx-n">15</span></a></li><li><a href="#g25-st10c-field-circuit-constants">ST10C Field Circuit Constants<span class="dx-n">11</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name<small>Name for easy identification.</small></td></tr>
+<tr><td><code>TYPE</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>ST2C</td><td>Static Exciter Type<small>Select the ST Exciter Type. Takes <code>ST1C</code>, <code>ST2C</code>, <code>ST3C</code>, <code>ST4C</code>, <code>ST5C</code>, <code>ST6C</code>, <code>ST7C</code>, <code>ST8C</code>, <code>ST9C</code>, <code>ST10C</code>.</small></td></tr>
+<tr><td><code>INIT</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>-2147483648 to 2147483647</td><td>1</td><td>Exciter Status: 0-Initialize,1-Normal</td></tr>
+<tr><td><code>OVR</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Output internally computed initial Vref?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>RC</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Load Compensating Resistance [Rc]</td></tr>
+<tr><td><code>XC</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Load Compensating Reactance [Xc]</td></tr>
+<tr><td><code>TR</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Transducer Time Constant [Tr]</td></tr>
+<tr><td><code>STAB</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Is There a Stabilizer?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-excitation-limiters">
+  <h2 id="g1-excitation-limiters">Excitation Limiters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>UEL_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>OEL_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>SCLu_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Select None, Summation, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>SCLo_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select None, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>UEL_2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>OEL_2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLu_2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLo_2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select between None and Regulator Input. Takes <code>NONE</code> None, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>UEL_3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>OEL_3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLu_3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLo_3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select between None and Regulator Input. Takes <code>NONE</code> None, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>UEL_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Select None, Summation, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>OEL_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Select None, Summation, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>SCLu_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Select None, Summation, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>SCLo_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select None, Regulator or Inner-loop. Takes <code>NONE</code> None, <code>REGULATOR_INPUT</code> Regulator Input, <code>INNERLOOP_OUTPUT</code> Inner-loop Output.</small></td></tr>
+<tr><td><code>UEL_5</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>OEL_5</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Select None, Summation, Regulator. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLu_5</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Select None, Summation, Regulator. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>SCLo_5</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select None or Regulator. Takes <code>NONE</code> None, <code>REGULATOR_INPUT</code> Regulator Input.</small></td></tr>
+<tr><td><code>UEL_6</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>1ST_SUMMATION</code> 1st Summation, <code>1ST_REGULATOR</code> 1st Regulator, <code>2ND_SUMMATION</code> 2nd Summation, <code>2ND_REGULATOR</code> 2nd Regulator.</small></td></tr>
+<tr><td><code>OEL_6</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>1ST_SUMMATION</code> 1st Summation, <code>1ST_REGULATOR</code> 1st Regulator, <code>2ND_SUMMATION</code> 2nd Summation, <code>2ND_REGULATOR</code> 2nd Regulator.</small></td></tr>
+<tr><td><code>SCLu_6</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limit Input Signal?<small>Takes <code>NONE</code> None, <code>1ST_SUMMATION</code> 1st Summation, <code>1ST_REGULATOR</code> 1st Regulator, <code>2ND_SUMMATION</code> 2nd Summation, <code>2ND_REGULATOR</code> 2nd Regulator.</small></td></tr>
+<tr><td><code>SCLo_6</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limit Input Signal?<small>Select between None, 1st Regulator or 2nd Regulator. Takes <code>NONE</code> None, <code>1ST_REGULATOR</code> 1st Regulator, <code>2ND_REGULATOR</code> 2nd Regulator.</small></td></tr>
+<tr><td><code>UEL_7</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>VOLTAGE_REFERENCE</code> Voltage Reference, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>OEL_7</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>VOLTAGE_REFERENCE</code> Voltage Reference, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>UEL_8</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR</code> Regulator.</small></td></tr>
+<tr><td><code>OEL_8</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR</code> Regulator.</small></td></tr>
+<tr><td><code>SCLu_8</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>REGULATOR</code> Regulator.</small></td></tr>
+<tr><td><code>SCLo_8</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limit Input Signal?<small>Select between None or Regulator. Takes <code>NONE</code> None, <code>REGULATOR</code> Regulator.</small></td></tr>
+<tr><td><code>UEL_9</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>TAKEOVER</code> Take-over.</small></td></tr>
+<tr><td><code>OEL_9</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>TAKEOVER</code> Take-over.</small></td></tr>
+<tr><td><code>SCLu_9</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>TAKEOVER</code> Take-over.</small></td></tr>
+<tr><td><code>SCLo_9</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select between None or Take-over. Takes <code>NONE</code> None, <code>TAKEOVER</code> Take-over.</small></td></tr>
+<tr><td><code>UEL_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Limit Input Signal?<small>Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>VOLTAGE_ERROR</code> Voltage Error, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>OEL_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Limit Input Signal?<small>Select None, Summation, Regulator. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>VOLTAGE_ERROR</code> Voltage Error, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>SCLu_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Under Excitation Stator Current Limiter Input Signal?<small>Select None, Summation, Voltage Error or Regulator. Takes <code>NONE</code> None, <code>SUMMATION</code> Summation, <code>VOLTAGE_ERROR</code> Voltage Error, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>SCLo_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Over Excitation Stator Current Limiter Input Signal?<small>Select None, Voltage Error or Regulator. Takes <code>NONE</code> None, <code>VOLTAGE_ERROR</code> Voltage Error, <code>VOLTAGE_REGULATOR</code> Voltage Regulator.</small></td></tr>
+<tr><td><code>VUEL_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_1!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_1!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_1!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_1!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_2!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_2!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_2!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_2!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_3!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_3!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_3!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_3!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_4!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_4!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_4!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_4!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_5!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_5!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_5!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_5!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_6!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_6!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_6!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_6!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_7!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_7!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_8!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_8!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_8!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_8!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_9!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_9!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_9!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_9!=0)</code>.</small></td></tr>
+<tr><td><code>VUEL_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Under Excitation Limiter Input [VUEL]<small>Used only when <code>(UEL_10!=0)</code>.</small></td></tr>
+<tr><td><code>VOEL_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Over Excitation Limiter Input [VOEL]<small>Used only when <code>(OEL_10!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLu_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0E10</td><td>Statot Current Limiter Input [VSCLu]<small>Used only when <code>(SCLu_10!=0)</code>.</small></td></tr>
+<tr><td><code>VSCLo_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0E10</td><td>Statot Current Limiter Input [VSCLo]<small>Used only when <code>(SCLo_10!=0)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-st1c-forward-lead-lag-parameters">
+  <h2 id="g2-st1c-forward-lead-lag-parameters">ST1C Forward Lead-Lag Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>STAB_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>EXCITER (On Exciter)</td><td>Stabilizer Input Signal?<small>Takes <code>REGULATOR</code> On Regulator, <code>EXCITER</code> On Exciter.</small></td></tr>
+<tr><td><code>TC_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>1st Lead Time Constant [TC]</td></tr>
+<tr><td><code>TB_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>1st Lag Time Constant [TB]</td></tr>
+<tr><td><code>TC1_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>2nd Lead Time Constant [TC1]</td></tr>
+<tr><td><code>TB1_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>2nd Lag Time Constant [TB1]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-st1c-feedback-and-regulator-parameters">
+  <h2 id="g3-st1c-feedback-and-regulator-parameters">ST1C Feedback and Regulator Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KF_1</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Rate Feedback Gain [KF]</td></tr>
+<tr><td><code>TF_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Rate Feedback Time Constant [TF]</td></tr>
+<tr><td><code>KA_1</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>210.0</td><td>Regulator Gain [KA]</td></tr>
+<tr><td><code>TA_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Regulator Time Constant [TA]</td></tr>
+<tr><td><code>VAMX_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>6.43</td><td>Maximum Regulator Output [VAMAX]</td></tr>
+<tr><td><code>VAMN_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-6.</td><td>Minimum Regulator Output [VAMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-st1c-field-circuit-constants">
+  <h2 id="g4-st1c-field-circuit-constants">ST1C Field Circuit Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>ILR_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.4</td><td>Exciter Output Current Limit Reference [ILR]</td></tr>
+<tr><td><code>KLR_1</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>4.54</td><td>Exciter Output Current Limit Gain [KLR]</td></tr>
+<tr><td><code>VRMX_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>6.43</td><td>Maximum Field Voltage [VRMAX]</td></tr>
+<tr><td><code>VRMN_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-6.0</td><td>Minimum Field Voltage [VRMIN]</td></tr>
+<tr><td><code>IBSF_1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>BUS_FED (Bus Fed)</td><td>Exciter Voltage Supply<small>Takes <code>BUS_FED</code> Bus Fed, <code>INDEPENDENT</code> Independent.</small></td></tr>
+<tr><td><code>KC_1</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.038</td><td>Field Current Commutating Impedance [KC]</td></tr>
+<tr><td><code>VIMX_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>99.</td><td>Upper Limit on Error Signal [VIMAX]</td></tr>
+<tr><td><code>VIMN_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-99.</td><td>Lower Limit on Error Signal [VIMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-st2c-feedback-and-regulator-parameters">
+  <h2 id="g5-st2c-feedback-and-regulator-parameters">ST2C Feedback and Regulator Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KF_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.05</td><td>Rate Feedback Gain [KF]</td></tr>
+<tr><td><code>TF_2</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Rate Feedback Time Constant [TF]</td></tr>
+<tr><td><code>KA_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>120.0</td><td>Regulator Gain [KA]</td></tr>
+<tr><td><code>TA_2</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.15</td><td>Regulator Time Constant [TA]</td></tr>
+<tr><td><code>VRMX_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Maximum Regulator Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Minimum Regulator Output [VRMIN]</td></tr>
+<tr><td><code>KPR_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>80.0</td><td>Voltage Regulator Proportional Gain [KPR]</td></tr>
+<tr><td><code>KIR_2</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>5.0</td><td>Voltage Regulator Integral Gain [KIR]</td></tr>
+<tr><td><code>VPIMX_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.2</td><td>Maximum PI Output [VPIMAX]</td></tr>
+<tr><td><code>VPIMN_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-0.2</td><td>Minimum PI Output [VPIMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-st2c-exciter-and-compounding-parameters">
+  <h2 id="g6-st2c-exciter-and-compounding-parameters">ST2C Exciter and Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TE_2</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.50</td><td>Exciter Time Constant [TE]</td></tr>
+<tr><td><code>KE_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.00</td><td>Exciter Constant Related to Field [KE]</td></tr>
+<tr><td><code>EDMX_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.4</td><td>Max Exciter Output Voltage [EFDMAX]</td></tr>
+<tr><td><code>KP_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>4.88</td><td>Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>KI_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>KC_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Rectifier Loading Factor [KC]</td></tr>
+<tr><td><code>XL_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Reactance Associated With Potential Source [XL]</td></tr>
+<tr><td><code>TP_2</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Potential Circuit Phase Angle [ThetaP]</td></tr>
+<tr><td><code>VBMX_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>5.2</td><td>Maximum Available Exciter Voltage [VBMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7-st3c-forward-and-regulator-parameters">
+  <h2 id="g7-st3c-forward-and-regulator-parameters">ST3C Forward and Regulator Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>VIMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.2</td><td>Upper Limit on Error Signal [VIMAX]</td></tr>
+<tr><td><code>VIMN_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-0.2</td><td>Lower Limit on Error Signal [VIMIN]</td></tr>
+<tr><td><code>KPR_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>80.0</td><td>Voltage Regulator Proportional Gain [KPR]</td></tr>
+<tr><td><code>KIR_3</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>5.0</td><td>Voltage Regulator Integral Gain [KIR]</td></tr>
+<tr><td><code>VPIMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.2</td><td>Maximum PI Output [VPIMAX]</td></tr>
+<tr><td><code>VPIMN_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-0.2</td><td>Minimum PI Output [VPIMIN]</td></tr>
+<tr><td><code>TC_3</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Lead Time Constant [TC]</td></tr>
+<tr><td><code>TB_3</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>10.0</td><td>Lag Time Constant [TB]</td></tr>
+<tr><td><code>KA_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>200.0</td><td>Regulator Gain [KA]</td></tr>
+<tr><td><code>TA_3</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Regulator Time Constant [TA]</td></tr>
+<tr><td><code>VRMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>10.0</td><td>Maximum Regulator Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-10.0</td><td>Minimum Regulator Output [VRMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8-st3c-inner-loop-field-regulator">
+  <h2 id="g8-st3c-inner-loop-field-regulator">ST3C Inner Loop Field Regulator</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TM_3</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.40</td><td>Field Inner Loop Time Constant [TM]</td></tr>
+<tr><td><code>KM_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>7.04</td><td>Field Inner Loop Gain Constant [KM]</td></tr>
+<tr><td><code>VMMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.00</td><td>Field Inner Loop Maximum Output [VMMAX]</td></tr>
+<tr><td><code>VMMN_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.00</td><td>Field Inner Loop Minimum Output [VMMIN]</td></tr>
+<tr><td><code>KG_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.00</td><td>Field Inner Loop Feedback Gain [KG]</td></tr>
+<tr><td><code>VGMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>5.8</td><td>Field Inner Loop Feedback Maximum [VGMAX]</td></tr>
+<tr><td><code>EDMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>8.63</td><td>Maximum Exciter Output Voltage [EFDMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9-st3c-compounding-parameters">
+  <h2 id="g9-st3c-compounding-parameters">ST3C Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KP_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>6.15</td><td>Magnitude of Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_3</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Angle of Compounding Circuit Voltage Multiplier [ThetaP]</td></tr>
+<tr><td><code>XL_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.081</td><td>Potential Source Reactance [XL]</td></tr>
+<tr><td><code>KI_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>KC_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.2</td><td>Rectifier Loading Factor [KC]</td></tr>
+<tr><td><code>VBMX_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>6.9</td><td>Maximum Available Exciter Voltage [VBMAX]</td></tr>
+<tr><td><code>SW1_3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10-st4c-regulator-constants">
+  <h2 id="g10-st4c-regulator-constants">ST4C Regulator Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>STAB_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>AFTER (After Take-over)</td><td>Stabilizer Input Signal?<small>Takes <code>BEFORE</code> Before Take-over, <code>AFTER</code> After Take-over.</small></td></tr>
+<tr><td><code>KPR_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>10.75</td><td>Regulator Proporational Gain [KPR]</td></tr>
+<tr><td><code>KIR_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>10.75</td><td>Regulator Integral Gain [KIR]</td></tr>
+<tr><td><code>VRMX_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Maximum Regulator Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-0.87</td><td>Minimum Regulator Output [VRMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g11-st4c-inner-loop-field-regulator">
+  <h2 id="g11-st4c-inner-loop-field-regulator">ST4C Inner Loop Field Regulator</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KPM_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Inner Loop Proporational Gain [KPM]</td></tr>
+<tr><td><code>KIM_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Inner Loop Integral Gain  [KIM]</td></tr>
+<tr><td><code>VMMX_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>99.</td><td>Field Inner Loop Max output [VMMAX]</td></tr>
+<tr><td><code>VMMN_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-99.</td><td>Field Inner Loop Min output [VMMIN]</td></tr>
+<tr><td><code>TA_4</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.02</td><td>Regulator Time Constant [TA]</td></tr>
+<tr><td><code>VAMX_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>99.0</td><td>Maximum Exciter Output [VAMAX]</td></tr>
+<tr><td><code>VAMN_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-99.0</td><td>Minimum Exciter Output [VAMIN]</td></tr>
+<tr><td><code>KG_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Field Inner Loop Feedback Gain [KG]</td></tr>
+<tr><td><code>TG_4</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Field Inner Loop Feedback Time Constant [TG]</td></tr>
+<tr><td><code>VGMX_4</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>99.0</td><td>Maximum Field Inner Loop Feedback Voltage [VGMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g12-st4c-compounding-parameters">
+  <h2 id="g12-st4c-compounding-parameters">ST4C Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>SW1_4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+<tr><td><code>KP_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>9.3</td><td>Magnitude of Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_4</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Angle of Compounding Circuit Voltage Multiplier [ThetaP]</td></tr>
+<tr><td><code>XL_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.124</td><td>Potential Source Reactance [XL]</td></tr>
+<tr><td><code>KI_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>KC_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.113</td><td>Rectifier Loading Factor [KC]</td></tr>
+<tr><td><code>VBMX_4</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>11.63</td><td>Maximum Exciter Available Voltage [VBMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g13-st5c-forward-lead-lag-parameters">
+  <h2 id="g13-st5c-forward-lead-lag-parameters">ST5C Forward Lead-Lag Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TC1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.8</td><td>1st Lead Time Constant [TC1]</td></tr>
+<tr><td><code>TB1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>6.0</td><td>1st Lag Time Constant [TB1]</td></tr>
+<tr><td><code>TC2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.08</td><td>2nd Lead Time Constant [TC2]</td></tr>
+<tr><td><code>TB2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.01</td><td>2nd Lag Time Constant [TB2]</td></tr>
+<tr><td><code>TUC1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>Underexcitation: 1st Lead Time Constant [TUC1]</td></tr>
+<tr><td><code>TUB1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>10.0</td><td>Underexcitation: 1st Lag Time Constant [TUB1]</td></tr>
+<tr><td><code>TUC2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Underexcitation: 2nd Lead Time Constant [TUC2]</td></tr>
+<tr><td><code>TUB2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.05</td><td>Underexcitation: 2nd Lag Time Constant [TUB2]</td></tr>
+<tr><td><code>TOC1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Overexcitation: 1st Lead Time Constant [TOC1]</td></tr>
+<tr><td><code>TOB1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>Overexcitation: 1st Lag Time Constant [TOB1]</td></tr>
+<tr><td><code>TOC2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.08</td><td>Overexcitation: 2nd Lead Time Constant [TOC2]</td></tr>
+<tr><td><code>TOB2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.08</td><td>Overexcitation: 2nd Lag Time Constant [TOB2]</td></tr>
+<tr><td><code>KR_5</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>200.0</td><td>Regulator Gain [KR]</td></tr>
+<tr><td><code>T1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.004</td><td>Regulator Time Constant [T1]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g14-st5c-field-circuit-constants">
+  <h2 id="g14-st5c-field-circuit-constants">ST5C Field Circuit Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>VRMX_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>5.0</td><td>Maximum Field Voltage [VRMAX]</td></tr>
+<tr><td><code>VRMN_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-4.0</td><td>Minimum Field Voltage [VRMIN]</td></tr>
+<tr><td><code>IBSF_5</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>BUS_FED (Bus Fed)</td><td>Exciter Voltage Supply<small>Takes <code>BUS_FED</code> Bus Fed, <code>INDEPENDENT</code> Independent.</small></td></tr>
+<tr><td><code>KC_5</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.004</td><td>Field Current Commutating Impednace [KC]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g15-st6c-regulator-constants">
+  <h2 id="g15-st6c-regulator-constants">ST6C Regulator Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KPA_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>18.038</td><td>Regulator Proportional Gain [KPA]</td></tr>
+<tr><td><code>KIA_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>45.094</td><td>Regulator Integral Gain [KIA]</td></tr>
+<tr><td><code>VAMX_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.81</td><td>Maximum Regulator Output [VAMAX]</td></tr>
+<tr><td><code>VAMN_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-3.85</td><td>Minimum Regulator Output [VAMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g16-st6c-inner-loop-field-regulator">
+  <h2 id="g16-st6c-inner-loop-field-regulator">ST6C Inner Loop Field Regulator</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>VRMX_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.81</td><td>Field Inner Loop Maximum Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-3.85</td><td>Field Inner Loop Minimum Output [VRMIN]</td></tr>
+<tr><td><code>KG_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Field Inner Loop Feedback Gain [KG]</td></tr>
+<tr><td><code>TG_6</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.02</td><td>Field Inner Loop Time Constant [TG]</td></tr>
+<tr><td><code>KFF_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Pre-control Gain Constant [KFF]</td></tr>
+<tr><td><code>KM_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Forward Gain Constant [KM]</td></tr>
+<tr><td><code>ILR_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.164</td><td>Current Limit Ref. [ILR]</td></tr>
+<tr><td><code>KCI_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0577</td><td>Current Limit Adjustment  [KCI]</td></tr>
+<tr><td><code>KLR_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>17.33</td><td>Current Limit Gain  [KLR]</td></tr>
+<tr><td><code>TA_6</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.02</td><td>Thyristor Bridge Equivalent Time Constant [TA]</td></tr>
+<tr><td><code>VMMX_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.81</td><td>Rectifier Maximum Output [VMMAX]</td></tr>
+<tr><td><code>VMMN_6</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-3.85</td><td>Rectifier Minimum Output [VMMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g17-st6c-compounding-parameters">
+  <h2 id="g17-st6c-compounding-parameters">ST6C Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>SW1_6</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+<tr><td><code>KP_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Magnitude of Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_6</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Angle of Compounding Circuit Voltage Multiplier [ThetaP]</td></tr>
+<tr><td><code>XL_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Potential Source Reactance  [XL]</td></tr>
+<tr><td><code>KI_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>KC_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Rectifier Loading Factor [KC]</td></tr>
+<tr><td><code>VBMX_6</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>99.0</td><td>Maximum Exciter Available Voltage [VBMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g18-st7c-regulator-constants">
+  <h2 id="g18-st7c-regulator-constants">ST7C Regulator Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KPA_7</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>40</td><td>Regulator Proporational Gain [KPA]</td></tr>
+<tr><td><code>VMX_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.1</td><td>Maximum Voltage Output [VMAX]</td></tr>
+<tr><td><code>VMN_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.9</td><td>Minimum Voltage Output [VMIN]</td></tr>
+<tr><td><code>TC_7</code></td><td>s</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Lead Time Constant [TC]</td></tr>
+<tr><td><code>TB_7</code></td><td>s</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Lag Time Constant [TB]</td></tr>
+<tr><td><code>VRMX_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>5</td><td>Maximum Regulator Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-4.5</td><td>Minimum Regulator Output [VRMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g19-st7c-other-parameters">
+  <h2 id="g19-st7c-other-parameters">ST7C Other Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TG_7</code></td><td>s</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Exciter Lead Time Constant [TG]</td></tr>
+<tr><td><code>TF_7</code></td><td>s</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Exciter Lag Time Constant [TF]</td></tr>
+<tr><td><code>KL_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Low Band Gain [KL]</td></tr>
+<tr><td><code>KH_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>High Band Gain [KH]</td></tr>
+<tr><td><code>KIA_7</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Feedback Gain [KIA]</td></tr>
+<tr><td><code>TIA_7</code></td><td>s</td><td>Real</td><td>-1E+308 to 1E+308</td><td>3</td><td>Feedback Time Constant [TIA]</td></tr>
+<tr><td><code>TA_7</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.02</td><td>Thyristor Bridge Equivalent Time Constant [TA]</td></tr>
+<tr><td><code>VFB</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for VFB signal</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g20-st8c-regulator-constants">
+  <h2 id="g20-st8c-regulator-constants">ST8C Regulator Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KPR_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>6.6</td><td>Voltage Regulator Proportional Gain [KPR]</td></tr>
+<tr><td><code>KIR_8</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>30.0</td><td>Voltage Regulator Integral Gain [KIR]</td></tr>
+<tr><td><code>VPIMX_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>16.0</td><td>Maximum Voltage Regulator Output [VPIMAX]</td></tr>
+<tr><td><code>VPIMN_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-16.0</td><td>Minimum Voltage Regulator Output [VPIMIN]</td></tr>
+<tr><td><code>KPA_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>2.38</td><td>Field Current Regulator Proportional Gain [KPA]</td></tr>
+<tr><td><code>KIA_8</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Field Current Regulator Integral Gain [KIA]</td></tr>
+<tr><td><code>VAMX_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Maximum Field Current Regulator Output [VAMAX]</td></tr>
+<tr><td><code>VAMN_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-1.0</td><td>Minimum Field Current Regulator Output [VAMIN]</td></tr>
+<tr><td><code>KA_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>4.295</td><td>Rectifier Bridge Equivalent Proportional Gain [KA]</td></tr>
+<tr><td><code>TA_8</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0017</td><td>Rectifier Bridge Equivalent Time Constant [TA]</td></tr>
+<tr><td><code>VRMX_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>4.27</td><td>Maximum Rectifier Bridge Regulator Output [VRMAX]</td></tr>
+<tr><td><code>VRMN_8</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-3.64</td><td>Minimum Rectifier Bridge Regulator Output [VRMIN]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g21-st8c-compounding-parameters">
+  <h2 id="g21-st8c-compounding-parameters">ST8C Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KF_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Exciter Field Current Feedback Gain [KF]</td></tr>
+<tr><td><code>TF_8</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0226</td><td>Field Current Feedback Time Constant [TF]</td></tr>
+<tr><td><code>SW1_8</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+<tr><td><code>KP_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Magnitude of Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_8</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Angle of Compounding Circuit Voltage Multiplier [ThetaP]</td></tr>
+<tr><td><code>XL_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Potential Source Reactance  [XL]</td></tr>
+<tr><td><code>KC1_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.062</td><td>Rectifier Loading Factor [KC1]</td></tr>
+<tr><td><code>KI1_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI1]</td></tr>
+<tr><td><code>VBMX1_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>Maximum Exciter Available Voltage [VBMAX1]</td></tr>
+<tr><td><code>KC2_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Rectifier Loading Factor [KC2]</td></tr>
+<tr><td><code>KI2_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI2]</td></tr>
+<tr><td><code>VBMX2_8</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Maximum Exciter Available Voltage [VBMAX2]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g22-st9c-feedback-and-regulator-parameters">
+  <h2 id="g22-st9c-feedback-and-regulator-parameters">ST9C Feedback and Regulator Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TCD_9</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.06</td><td>Regulator Differential Time Constant [TCD]</td></tr>
+<tr><td><code>TBD_9</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.03</td><td>Regulator Differential Filter Time Constant [TBD]</td></tr>
+<tr><td><code>ZA_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.036</td><td>Regulator Differential Deadband [ZA]</td></tr>
+<tr><td><code>KA_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>12.0</td><td>Regulator Gain [KA]</td></tr>
+<tr><td><code>KU_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>10000.0</td><td>UEL Takeover Activation Gain [KU]</td></tr>
+<tr><td><code>TA_9</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>Regulator Time Constant [TA]</td></tr>
+<tr><td><code>TAUEL_9</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>Underexcitation Limiter Time Constant [TAUEL]</td></tr>
+<tr><td><code>VRMN_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-0.866</td><td>Minimum Regulator Output [VRMIN]</td></tr>
+<tr><td><code>VRMX_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>Maximum Regulator Output [VRMAX]</td></tr>
+<tr><td><code>KAS_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>6.10</td><td>Power Converter Gain [KAS]</td></tr>
+<tr><td><code>TAS_9</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.0018</td><td>Power Converter Time Constant [TAS]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g23-st9c-exciter-and-compounding-parameters">
+  <h2 id="g23-st9c-exciter-and-compounding-parameters">ST9C Exciter and Compounding Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>KP_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_9</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Potential Circuit Phase Angle [ThetaP]</td></tr>
+<tr><td><code>KI_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>XL_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Reactance Associated With Potential Source [XL]</td></tr>
+<tr><td><code>SW1_9</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+<tr><td><code>KC_9</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Rectifier Loading Factor [KC]</td></tr>
+<tr><td><code>VBMX_9</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.2</td><td>Maximum Available Exciter Voltage [VBMAX]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g24-st10c-forward-lead-lag-parameters">
+  <h2 id="g24-st10c-forward-lead-lag-parameters">ST10C Forward Lead-Lag Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>STAB_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>VOLTAGE_ERROR_TAKEOVER (Voltage Error Take-over)</td><td>Stabilizer Input Signal?<small>Takes <code>VOLTAGE_ERROR_SUMMATION</code> Voltage Error Summation, <code>VOLTAGE_ERROR_TAKEOVER</code> Voltage Error Take-over, <code>AVR_OUTPUT</code> AVR Output.</small></td></tr>
+<tr><td><code>TC1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.5</td><td>1st Lead Time Constant [TC1]</td></tr>
+<tr><td><code>TB1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>12.5</td><td>1st Lag Time Constant [TB1]</td></tr>
+<tr><td><code>TC2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>2nd Lead Time Constant [TC2]</td></tr>
+<tr><td><code>TB2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>2nd Lag Time Constant [TB2]</td></tr>
+<tr><td><code>TUC1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.5</td><td>Underexcitation: 1st Lead Time Constant [TUC1]</td></tr>
+<tr><td><code>TUB1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>12.5</td><td>Underexcitation: 1st Lag Time Constant [TUB1]</td></tr>
+<tr><td><code>TUC2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Underexcitation: 2nd Lead Time Constant [TUC2]</td></tr>
+<tr><td><code>TUB2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Underexcitation: 2nd Lag Time Constant [TUB2]</td></tr>
+<tr><td><code>TOC1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.5</td><td>Overexcitation: 1st Lead Time Constant [TOC1]</td></tr>
+<tr><td><code>TOB1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>12.5</td><td>Overexcitation: 1st Lag Time Constant [TOB1]</td></tr>
+<tr><td><code>TOC2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Overexcitation: 2nd Lead Time Constant [TOC2]</td></tr>
+<tr><td><code>TOB2_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Overexcitation: 2nd Lag Time Constant [TOB2]</td></tr>
+<tr><td><code>KR_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>500.0</td><td>Regulator Gain [KR]</td></tr>
+<tr><td><code>T1_10</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.004</td><td>Regulator Time Constant [T1]</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g25-st10c-field-circuit-constants">
+  <h2 id="g25-st10c-field-circuit-constants">ST10C Field Circuit Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>VRMX_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>10.0</td><td>Maximum Field Voltage [VRMAX]</td></tr>
+<tr><td><code>VRMN_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-8.7</td><td>Minimum Field Voltage [VRMIN]</td></tr>
+<tr><td><code>VRSMX_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>5.0</td><td>Maximum PSS Regulator Output [VRSMAX]</td></tr>
+<tr><td><code>VRSMN_10</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>-5.0</td><td>Minimum PSS Regulator Output [VRSMIN]</td></tr>
+<tr><td><code>KC_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.01</td><td>Field Current Commutating Impednace [KC]</td></tr>
+<tr><td><code>SW1_10</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>B</td><td>Power Source Selector [SW1]?<small>Select Between Positions 0_A and 1_B. Takes <code>B</code>, <code></code>.</small></td></tr>
+<tr><td><code>KP_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Magnitude of Compounding Circuit Voltage Multiplier [KP]</td></tr>
+<tr><td><code>TP_10</code></td><td>deg</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Angle of Compounding Circuit Voltage Multiplier [ThetaP]</td></tr>
+<tr><td><code>KI_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Compounding Circuit Current Multiplier [KI]</td></tr>
+<tr><td><code>XL_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Potential Source Reactance  [XL]</td></tr>
+<tr><td><code>VBMX_10</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.5</td><td>Maximum Exciter Available Voltage [VBMAX]</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../excst/">Type ST Exciter</a> · <a href="../wind-turbine/">Wind Turbine</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

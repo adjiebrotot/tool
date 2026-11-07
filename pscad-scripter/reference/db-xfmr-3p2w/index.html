@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Duality based 3 phase 2 winding transformer parameters (master:db_xfmr_3p2w)</title>
+<meta name="description" content="All master:db_xfmr_3p2w parameters in PSCAD 5.0.0: 142 parameters, with units, ranges, defaults and Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Duality based 3 phase 2 winding transformer (master:db_xfmr_3p2w) parameters">
+<meta property="og:description" content="All master:db_xfmr_3p2w parameters in PSCAD 5.0.0: 142 parameters, with units, ranges, defaults and Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Duality based 3 phase 2 winding transformer (master:db_xfmr_3p2w) parameters">
+<meta name="twitter:description" content="All master:db_xfmr_3p2w parameters in PSCAD 5.0.0: 142 parameters, with units, ranges, defaults and Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Duality based 3 phase 2 winding transformer (master:db_xfmr_3p2w) parameters",
+  "description": "All master:db_xfmr_3p2w parameters in PSCAD 5.0.0: 142 parameters, with units, ranges, defaults and Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:db_xfmr_3p2w (Duality based 3 phase 2 winding transformer)",
+    "description": "The PSCAD Master Library definition master:db_xfmr_3p2w."
+  },
+  "keywords": "master:db_xfmr_3p2w parameters, PSCAD Duality based 3 phase 2 winding transformer parameters, Duality based 3 phase 2 winding transformer PSCAD, master:db_xfmr_3p2w Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Duality based 3 phase 2 winding transformer",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Duality based 3 phase 2 winding transformer</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Duality based 3 phase 2 winding transformer<span class="dx-h1-sub">master:db_xfmr_3p2w</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Duality based 3 phase 2 winding transformer (<code>master:db_xfmr_3p2w</code>): 142 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Duality based 3 phase 2 winding transformer is</h2>
+  <p>Duality based 3 phase 2 winding transformer is a Master Library definition in the Transformers group of PSCAD 5.0.0. Its 142 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:db_xfmr_3p2w</code></dd><dt>PSCAD name</dt><dd>Duality based 3 phase 2 winding transformer</dd><dt>Library group</dt><dd>Transformers</dd><dt>Parameters</dt><dd>142 parameters, in 7 sections of the dialog</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Duality based 3 phase 2 winding transformer in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:db_xfmr_3p2w&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:db_xfmr_3p2w&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(Tmva=<span class="py-s">&quot;100 [MVA]&quot;</span>, f_=<span class="py-s">&quot;60 [Hz]&quot;</span>, TCuL_=<span class="py-s">&quot;0.002 [pu]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;Tmva&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Duality based 3 phase 2 winding transformer parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">11</span></a></li><li><a href="#g1-winding-settings">Winding Settings<span class="dx-n">13</span></a></li><li><a href="#g2-magnetization-branch">Magnetization Branch<span class="dx-n">58</span></a></li><li><a href="#g3-core-geometry">Core Geometry<span class="dx-n">10</span></a></li><li><a href="#g4-tap-settings">Tap Settings<span class="dx-n">10</span></a></li><li><a href="#g5-stray-capacitances">Stray Capacitances<span class="dx-n">6</span></a></li><li><a href="#g6-internal-outputs">Internal Outputs<span class="dx-n">34</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Transformer Name<small>Enter an optional name for easy identification.</small></td></tr>
+<tr><td><code>CoreType</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>5_LIMB (5 limb)</td><td>Transformer Core Model<small>Select transformer's core construction. Takes <code>3_PHASE_BANK</code> 3 phase bank, <code>5_LIMB</code> 5 limb, <code>3_LIMB</code> 3 limb, <code>3_LIMB_ZERO_SEQUENCE</code> 3 limb with zero sequence.</small></td></tr>
+<tr><td><code>Tmva</code></td><td>MVA</td><td>Real</td><td>1E-06 to 1E+308</td><td>100.0</td><td>3 Phase Transformer MVA<small>Enter the apparent power rating of the transformer.</small></td></tr>
+<tr><td><code>f_</code></td><td>Hz</td><td>Real</td><td>0.0001 to 1E+308</td><td>60</td><td>Base Operation Frequency<small>Enter the base frequency.</small></td></tr>
+<tr><td><code>TCuL_</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.002</td><td>Total Copper Losses<small>Enter the total copper losses based on transformer base impedance.</small></td></tr>
+<tr><td><code>CuLAlpha_</code></td><td>%</td><td>Real</td><td>0 to 100</td><td>50</td><td>% of Copper Loss for Winding 1<small>Enter the percentage of copper loss to be placed at winding 1. The remaining percentage will be placed at winding 2.</small></td></tr>
+<tr><td><code>CoreEddyLoss_</code></td><td>%</td><td>Real</td><td>0 to 1</td><td>0.03</td><td>Core Eddy Current Losses<small>Enter the core eddy current loss portion of no load losses based on transformer rating. Hysteresis loss may also be added here if hysteresis is not modelled.</small></td></tr>
+<tr><td><code>Xl_</code></td><td>pu</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.1</td><td>Total Positive Sequence Leakage Reactance<small>Enter the total leakage reactance based on transformer base impedance.</small></td></tr>
+<tr><td><code>XlAlpha_</code></td><td>%</td><td>Real</td><td>0.1 to 99.9</td><td>50</td><td>% of Positive Sequence Leakage Reactance for Winding 1<small>Enter the percentage of leakage reactance to be placed at winding 1. The remaining percentage will be placed at winding 2. Used only when <code>CoreType&lt;4</code>.</small></td></tr>
+<tr><td><code>Rz0_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0.01 to 1</td><td>0.9</td><td>Leakage Reactance Ratio (Zero/Positive Sequence)<small>Enter the ratio of zero sequence leakage reactance over positive sequence leakage reactance. Used only when <code>CoreType==4</code>.</small></td></tr>
+<tr><td><code>Dtls</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Display Details?<small>Select Yes or No to display transformer details on canvas. Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-winding-settings">
+  <h2 id="g1-winding-settings">Winding Settings</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>V1LL</code></td><td>kV</td><td>Real</td><td>0.0001 to 1E+308</td><td>230</td><td>Winding 1 Line to Line Voltage (RMS)<small>Enter the RMS line to line voltage rating of winding 1. Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>V2LL</code></td><td>kV</td><td>Real</td><td>0.0001 to 1E+308</td><td>230</td><td>Winding 2 Line to Line Voltage (RMS)<small>Enter the RMS line to line voltage rating of winding 2. Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>OT</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Open Terminals?<small>Select Yes to access all transformer terminals. Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>W1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>Y</td><td>Winding 1 Connection<small>Select whether winding 1 connection is Y or Δ. Takes <code>Y</code>, <code>_</code>  . Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>W2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>Y</td><td>Winding 2 Connection<small>Select whether winding 2 connection is Y or Δ. Takes <code>Y</code>, <code>_</code>  . Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>V1</code></td><td>kV</td><td>Real</td><td>0.0001 to 1E+308</td><td>132.79</td><td>Single Phase Winding 1 Voltage (RMS)<small>Enter the RMS voltage rating across a single winding on winding 1 side of the transformer. Used only when <code>OT==1</code>.</small></td></tr>
+<tr><td><code>Yy</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>YY0 (Yy0)</td><td>Vector Group<small>Select transformer’s vector group. Regardless of RMS winding voltages, winding 1 is the reference winding (Y or D) and the phase shift is imposed on winding 2 (y or d). Takes <code>YY0</code> Yy0, <code>YY2</code> Yy2, <code>YY4</code> Yy4, <code>YY6</code> Yy6, <code>YY8</code> Yy8, <code>YY10</code> Yy10. Used only when <code>OT==0 &amp;&amp; W1==0 &amp;&amp; W2==0</code>.</small></td></tr>
+<tr><td><code>Yd</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>YD3 (Yd3)</td><td>Vector Group<small>Select transformer’s vector group. Regardless of RMS winding voltages, winding 1 is the reference winding (Y or D) and the phase shift is imposed on winding 2 (y or d). Takes <code>YD1</code> Yd1, <code>YD3</code> Yd3, <code>YD5</code> Yd5, <code>YD7</code> Yd7, <code>YD9</code> Yd9, <code>YD11</code> Yd11. Used only when <code>OT==0 &amp;&amp; W1==0 &amp;&amp; W2==1</code>.</small></td></tr>
+<tr><td><code>Dy</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DY3 (Dy3)</td><td>Vector Group<small>Select transformer’s vector group. Regardless of RMS winding voltages, winding 1 is the reference winding (Y or D) and the phase shift is imposed on winding 2 (y or d). Takes <code>DY1</code> Dy1, <code>DY3</code> Dy3, <code>DY5</code> Dy5, <code>DY7</code> Dy7, <code>DY9</code> Dy9, <code>DY11</code> Dy11. Used only when <code>OT==0 &amp;&amp; W1==1 &amp;&amp; W2==0</code>.</small></td></tr>
+<tr><td><code>Dd</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DD0 (Dd0)</td><td>Vector Group<small>Select transformer’s vector group. Regardless of RMS winding voltages, winding 1 is the reference winding (Y or D) and the phase shift is imposed on winding 2 (y or d). Takes <code>DD0</code> Dd0, <code>DD2</code> Dd2, <code>DD4</code> Dd4, <code>DD6</code> Dd6, <code>DD8</code> Dd8, <code>DD10</code> Dd10. Used only when <code>OT==0 &amp;&amp; W1==1 &amp;&amp; W2==1</code>.</small></td></tr>
+<tr><td><code>YN1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SOLIDLY_GROUNDED (Solidly grounded)</td><td>Y Neutral for Winding 1<small>Select the type of Y connection neutral for winding 1. Takes <code>SOLIDLY_GROUNDED</code> Solidly grounded, <code>UNGROUNDED</code> Ungrounded, <code>EXTERNAL</code> External. Used only when <code>OT==0 &amp;&amp; W1==0</code>.</small></td></tr>
+<tr><td><code>YN2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SOLIDLY_GROUNDED (Solidly grounded)</td><td>Y Neutral for Winding 2<small>Select the type of Y connection neutral for winding 2. Takes <code>SOLIDLY_GROUNDED</code> Solidly grounded, <code>UNGROUNDED</code> Ungrounded, <code>EXTERNAL</code> External. Used only when <code>OT==0 &amp;&amp; W2==0</code>.</small></td></tr>
+<tr><td><code>V2</code></td><td>kV</td><td>Real</td><td>0.0001 to 1E+308</td><td>132.79</td><td>Single Phase Winding 2 Voltage (RMS)<small>Enter the RMS voltage rating across a single winding on winding 2 side of the transformer. Used only when <code>OT==1</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-magnetization-branch">
+  <h2 id="g2-magnetization-branch">Magnetization Branch</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>MagModel</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>BASIC_HYSTERESIS (Basic hysteresis)</td><td>Magnetization Model<small>Select the type of magnetizing branch. Takes <code>LINEAR</code> Linear, <code>BASIC_HYSTERESIS</code> Basic hysteresis, <code>JILES_ATHERTON_HYSTERESIS</code> Jiles - Atherton hysteresis, <code>V_I_ASPECT_RATIOS</code> V - I with aspect ratios, <code>B_H_ASPECT_RATIOS</code> B - H with aspect ratios, <code>B_H_DIMENSIONS</code> B - H with dimensions.</small></td></tr>
+<tr><td><code>Iexc_</code></td><td>%</td><td>Real</td><td>0.0001 to 50</td><td>0.1</td><td>Excitation Current<small>Enter the RMS exciting current as a percentage of base current. Used only when <code>MagModel&lt;3</code>.</small></td></tr>
+<tr><td><code>Xair_</code></td><td>pu</td><td>Real</td><td>0.001 to 10</td><td>0.2</td><td>Air-core Reactance<small>Enter the air core reactance based on transformer base impedance. Used only when <code>MagModel!=1</code>.</small></td></tr>
+<tr><td><code>Vknee_</code></td><td>pu</td><td>Real</td><td>1E-307 to 1E+308</td><td>1.17</td><td>Knee Voltage for Winding-limb<small>Enter the knee point voltage corresponding to saturation curve for winding-limb. Used only when <code>MagModel==2</code>.</small></td></tr>
+<tr><td><code>LoopW_</code></td><td>%</td><td>Real</td><td>0 to 100</td><td>10</td><td>Loop Width<small>Enter the loop width as a percentage of magnetizing current. Used only when <code>MagModel==2</code>.</small></td></tr>
+<tr><td><code>Fremn1_</code></td><td>pu</td><td>Real</td><td>-1.5 to 1.5</td><td>0</td><td>Remanent Flux for Core 1<small>Enter the remanent flux as a per unit value of the peak flux at rated voltage. Used only when <code>(MagModel==2)||(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>Fremn2_</code></td><td>pu</td><td>Real</td><td>-1.5 to 1.5</td><td>0</td><td>Remanent Flux for Core 2<small>Enter the remanent flux as a per unit value of the peak flux at rated voltage. Used only when <code>(MagModel==2)||(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>Fremn3_</code></td><td>pu</td><td>Real</td><td>-1.5 to 1.5</td><td>0</td><td>Remanent Flux for Core 3<small>Enter the remanent flux as a per unit value of the peak flux at rated voltage. Used only when <code>(MagModel==2)||(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>Bn_</code></td><td>T</td><td>Real</td><td>0.1 to 3</td><td>1.667</td><td>Nominal Magnetic Flux Density<small>Enter the nominal magnetic flux density corresponding to saturation curve. Used only when <code>(MagModel==3)||(MagModel==5)</code>.</small></td></tr>
+<tr><td><code>C_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0.001 to 0.5</td><td>0.1</td><td>Domain Flexing Parameter<small>This parameter represents the contribution of reversible magnetization process. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>K_</code></td><td>A/m</td><td>Real</td><td>1E-07 to 1E+308</td><td>5E-05</td><td>Domain Pinning Parameter<small>This parameter has a direct impact on the width of the loop. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>BETA_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 0.98</td><td>0.96</td><td>Parameter to Adjust K with M<small>This parameter adjusts domain pinning parameter with magnetization for better representation of shoulder area. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>alpha_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1E-08 to 1E+308</td><td>1.325E-05</td><td>Interdomain Coupling<small>This is a mean field parameter corresponding to the interdomain coupling. It is typically determined experimentally. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>Msat_</code></td><td>A/m</td><td>Real</td><td>100000 to 1E+308</td><td>1720000</td><td>Saturated Anhysteretic Magnetization<small>This parameter is typically known for a particular material and thus can be obtained from data sheets, etc. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>F1_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>2730</td><td>Coefficient 1 of Anhysteretic Curve<small>Coefficient 1 of the improved anhysteretic function. This function offers more flexibility for obtaining a better overall shape of the simulated B - H loop compared to the Langevin function. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>F2_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>3209</td><td>Coefficient 2 of Anhysteretic Curve<small>Coefficient 2 of the improved anhysteretic function. This function offers more flexibility for obtaining a better overall shape of the simulated B - H loop compared to the Langevin function. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>F3_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>20294</td><td>Coefficient 3 of Anhysteretic Curve<small>Coefficient 3 of the improved anhysteretic function. This function offers more flexibility for obtaining a better overall shape of the simulated B - H loop compared to the Langevin function. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>Fb_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1 to 1E+308</td><td>2</td><td>Coefficient 4 of Anhysteretic Curve<small>Coefficient 4 of the improved anhysteretic function. This function offers more flexibility for obtaining a better overall shape of the simulated B - H loop compared to the Langevin function. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>I1E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.0331929</td><td>Point  1 - (I1)<small>Saturation characteristics RMS current - 1st point. Used only when <code>MagModel==4</code>.</small></td></tr>
+<tr><td><code>V1E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>0.883683326000335</td><td>Point  1 - (V1)<small>Saturation characteristics RMS voltage - 1st point. Used only when <code>MagModel==4</code>.</small></td></tr>
+<tr><td><code>I2E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.0466800780614</td><td>Point  2 - (I2)<small>Saturation characteristics RMS current - 2nd point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;1</code>.</small></td></tr>
+<tr><td><code>V2E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>0.984583072139087</td><td>Point  2 - (V2)<small>Saturation characteristics RMS voltage - 2nd point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;1</code>.</small></td></tr>
+<tr><td><code>I3E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.0731678980372</td><td>Point  3 - (I3)<small>Saturation characteristics RMS current - 3rd point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;2</code>.</small></td></tr>
+<tr><td><code>V3E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.04337131381924</td><td>Point  3 - (V3)<small>Saturation characteristics RMS voltage - 3rd point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;2</code>.</small></td></tr>
+<tr><td><code>I4E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.120398186657</td><td>Point  4 - (I4)<small>Saturation characteristics RMS current - 4th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;3</code>.</small></td></tr>
+<tr><td><code>V4E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.07948409085133</td><td>Point  4 - (V4)<small>Saturation characteristics RMS voltage - 4th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;3</code>.</small></td></tr>
+<tr><td><code>I5E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.203466242547</td><td>Point  5 - (I5)<small>Saturation characteristics RMS current - 5th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;4</code>.</small></td></tr>
+<tr><td><code>V5E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.10365925554225</td><td>Point  5 - (V5)<small>Saturation characteristics RMS voltage - 5th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;4</code>.</small></td></tr>
+<tr><td><code>I6E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.358220650592</td><td>Point  6 - (I6)<small>Saturation characteristics RMS current - 6th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;5</code>.</small></td></tr>
+<tr><td><code>V6E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.12267545208573</td><td>Point  6 - (V6)<small>Saturation characteristics RMS voltage - 6th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;5</code>.</small></td></tr>
+<tr><td><code>I7E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>0.650477978394</td><td>Point  7 - (I7)<small>Saturation characteristics RMS current - 7th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;6</code>.</small></td></tr>
+<tr><td><code>V7E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.13905217655377</td><td>Point  7 - (V7)<small>Saturation characteristics RMS voltage - 7th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;6</code>.</small></td></tr>
+<tr><td><code>I8E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>1.12997230406</td><td>Point  8 - (I8)<small>Saturation characteristics RMS current - 8th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;7</code>.</small></td></tr>
+<tr><td><code>V8E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.15134971690523</td><td>Point  8 - (V8)<small>Saturation characteristics RMS voltage - 8th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;7</code>.</small></td></tr>
+<tr><td><code>I9E_</code></td><td>%</td><td>Real</td><td>0 to 1000</td><td>4.34196438342</td><td>Point  9 - (I9)<small>Saturation characteristics RMS current - 9th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;8</code>.</small></td></tr>
+<tr><td><code>V9E_</code></td><td>pu</td><td>Real</td><td>0 to 1000</td><td>1.16580682531841</td><td>Point  9 - (V9)<small>Saturation characteristics RMS voltage - 9th point. Used only when <code>MagModel==4 &amp;&amp; N_Sat&gt;8</code>.</small></td></tr>
+<tr><td><code>kVPerTurn_</code></td><td>kV</td><td>Real</td><td>1E-308 to 1E+308</td><td>0.05554714</td><td>Voltage per Turn<small>Enter the ratio of single phase RMS voltage rating over the number of turns. This number is the same on both sides of the transformer. Used only when <code>MagModel==6</code>.</small></td></tr>
+<tr><td><code>N_Sat</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>6</td><td># of Saturation Characteristics Points<small>Select the number of points used to represent the saturation curve. One of: 1, 2, 3, 4, 5, 6, 7, 8, 9. Used only when <code>MagModel&gt;3</code>.</small></td></tr>
+<tr><td><code>H1_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>16.628</td><td>Point 1 (H1)<small>Saturation characteristics magnetic field intensity H - 1st point. Used only when <code>MagModel&gt;4</code>.</small></td></tr>
+<tr><td><code>B1_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.4731</td><td>Point 1 (B1)<small>Saturation characteristics magnetic flux density B - 1st point. Used only when <code>MagModel&gt;4</code>.</small></td></tr>
+<tr><td><code>H2_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>30.111</td><td>Point 2 (H2)<small>Saturation characteristics magnetic field intensity H - 2nd point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;1</code>.</small></td></tr>
+<tr><td><code>B2_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.6413</td><td>Point 2 (B2)<small>Saturation characteristics magnetic flux density B - 2nd point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;1</code>.</small></td></tr>
+<tr><td><code>H3_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>57.692</td><td>Point 3 (H3)<small>Saturation characteristics magnetic field intensity H - 3rd point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;2</code>.</small></td></tr>
+<tr><td><code>B3_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.7393</td><td>Point 3 (B3)<small>Saturation characteristics magnetic flux density B - 3rd point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;2</code>.</small></td></tr>
+<tr><td><code>H4_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>110.55</td><td>Point 4 (H4)<small>Saturation characteristics magnetic field intensity H - 4th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;3</code>.</small></td></tr>
+<tr><td><code>B4_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.7995</td><td>Point 4 (B4)<small>Saturation characteristics magnetic flux density B - 4th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;3</code>.</small></td></tr>
+<tr><td><code>H5_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>211.84</td><td>Point 5 (H5)<small>Saturation characteristics magnetic field intensity H - 5th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;4</code>.</small></td></tr>
+<tr><td><code>B5_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.8398</td><td>Point 5 (B5)<small>Saturation characteristics magnetic flux density B - 5th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;4</code>.</small></td></tr>
+<tr><td><code>H6_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>405.96</td><td>Point 6 (H6)<small>Saturation characteristics magnetic field intensity H - 6th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;5</code>.</small></td></tr>
+<tr><td><code>B6_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.8715</td><td>Point 6 (B6)<small>Saturation characteristics magnetic flux density B - 6th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;5</code>.</small></td></tr>
+<tr><td><code>H7_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>777.96</td><td>Point 7 (H7)<small>Saturation characteristics magnetic field intensity H - 7th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;6</code>.</small></td></tr>
+<tr><td><code>B7_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.8988</td><td>Point 7 (B7)<small>Saturation characteristics magnetic flux density B - 7th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;6</code>.</small></td></tr>
+<tr><td><code>H8_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1490.9</td><td>Point 8 (H8)<small>Saturation characteristics magnetic field intensity H - 8th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;7</code>.</small></td></tr>
+<tr><td><code>B8_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.9193</td><td>Point 8 (B8)<small>Saturation characteristics magnetic flux density B - 8th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;7</code>.</small></td></tr>
+<tr><td><code>H9_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>9899.9</td><td>Point 9 (H9)<small>Saturation characteristics magnetic field intensity H - 9th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;8</code>.</small></td></tr>
+<tr><td><code>U1E_</code></td><td>pu</td><td>Real</td><td>0.0001 to 50</td><td>0.883683326000335</td><td>Voltage<small>Typically the smallest voltage in the RMS V - I saturation curve. Used only when <code>MagModel==5</code>.</small></td></tr>
+<tr><td><code>J1E_</code></td><td>%</td><td>Real</td><td>0.0001 to 50</td><td>0.0331929</td><td>Excitation Current<small>Typically the current corresponding to the smallest voltage in the RMS V - I saturation curve. Used only when <code>MagModel==5</code>.</small></td></tr>
+<tr><td><code>B9_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.9434</td><td>Point 9 (B9)<small>Saturation characteristics magnetic flux density B - 9th point. Used only when <code>MagModel&gt;4 &amp;&amp; N_Sat&gt;8</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-core-geometry">
+  <h2 id="g3-core-geometry">Core Geometry</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>rl_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>2.5</td><td>Ratio Yoke/Winding limb Length (ly/lw)<small>Enter the ratio of the effective length of the yoke over the effective length of the winding limb. Used only when <code>(MagModel!=6)&amp;&amp;(CoreType&gt;1)</code>.</small></td></tr>
+<tr><td><code>lLimb_</code></td><td>m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>3</td><td>Length of Winding Limb<small>Enter the effective length of the winding limb. Used only when <code>MagModel==6</code>.</small></td></tr>
+<tr><td><code>lYoke_</code></td><td>m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>2</td><td>Length of Yoke<small>Enter the effective length of the yoke. Used only when <code>(MagModel==6)&amp;&amp;(CoreType&gt;1)</code>.</small></td></tr>
+<tr><td><code>lOuterLimb_</code></td><td>m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Length of Outer Limb<small>Enter the effective length of the outer limb. Used only when <code>(MagModel==6)&amp;&amp;(CoreType==2)</code>.</small></td></tr>
+<tr><td><code>ALimb_</code></td><td>m^2</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.125</td><td>Area of Winding Limb<small>Enter the cross sectional area of the winding limb. Used only when <code>MagModel==6</code>.</small></td></tr>
+<tr><td><code>AYoke_</code></td><td>m^2</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.125</td><td>Area of Yoke<small>Enter the cross sectional area of the yoke. Used only when <code>(MagModel==6)&amp;&amp;(CoreType&gt;1)</code>.</small></td></tr>
+<tr><td><code>AOuterLimb_</code></td><td>m^2</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.125</td><td>Area of Outer Limb<small>Enter the cross sectional area of the outer limb. Used only when <code>(MagModel==6)&amp;&amp;(CoreType==2)</code>.</small></td></tr>
+<tr><td><code>rs_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Ratio Yoke/Winding limb Area (sy/sw)<small>Enter the ratio of the cross sectional area of the yoke over the cross sectional area of the winding limb. Used only when <code>(MagModel!=6)&amp;&amp;(CoreType&gt;1)</code>.</small></td></tr>
+<tr><td><code>rpl_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>1</td><td>Ratio Yoke/Outer limb Length (ly/lo)<small>Enter the ratio of the effective length of the yoke over the effective length of the outer limb. Used only when <code>(MagModel!=6)&amp;&amp;(CoreType==2)</code>.</small></td></tr>
+<tr><td><code>rps_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.18</td><td>Ratio Yoke/Outer limb Area (sy/so)<small>Enter the ratio of the cross sectional area of the yoke over the cross sectional area of the outer limb. Used only when <code>(MagModel!=6)&amp;&amp;(CoreType==2)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-tap-settings">
+  <h2 id="g4-tap-settings">Tap Settings</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>LowTapV_</code></td><td>pu</td><td>Real</td><td>0.01 to 100</td><td>0.5</td><td>Value<small>Enter the minimum tap in per unit. Used only when <code>TapNo_ != 0 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+<tr><td><code>UpTapV_</code></td><td>pu</td><td>Real</td><td>0.01 to 100</td><td>1.5</td><td>Value<small>Enter the maximum tap in per unit. Used only when <code>TapNo_ != 0 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+<tr><td><code>TapNo_</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NONE (None)</td><td>Tap Changer on Winding<small>Select the winding number on which to place the on-line tap changer. Takes <code>NONE</code> None, <code>WINDING_1</code> Winding 1, <code>WINDING_2</code> Winding 2.</small></td></tr>
+<tr><td><code>TapEntry</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>INTERNAL (Internal)</td><td>Tap Value Entry<small>Select the method of entering the tap value as internal or external (classical). Takes <code>INTERNAL</code> Internal, <code>EXTERNAL</code> External. Used only when <code>TapNo_!=0</code>.</small></td></tr>
+<tr><td><code>Tap_</code></td><td>pu</td><td>Real</td><td>0.01 to 100</td><td>1</td><td>Tap Value<small>Enter the tap value as a real number or variable name. Used only when <code>TapNo_!=0 &amp;&amp; TapEntry==0</code>.</small></td></tr>
+<tr><td><code>TapXL_Enab</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DISABLED (Disabled)</td><td>Leakage Reactance Correction<small>Enable if per-unit value of leakage reactance depends on the tap value and correction is required. Disable if leakage reactance remains constant as a per-unit value (classical). Takes <code>DISABLED</code> Disabled, <code>ENABLED</code> Enabled. Used only when <code>TapNo_!=0</code>.</small></td></tr>
+<tr><td><code>LowTapXL_</code></td><td>pu</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.05</td><td>Total Positive Sequence Leakage Reactance<small>Enter the leakage reactance at minimum tap based on transformer base impedance. Used only when <code>TapNo_ != 0 &amp;&amp; LowTapV_ != 1.0 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+<tr><td><code>UpTapXL_</code></td><td>pu</td><td>Real</td><td>1E-307 to 1E+308</td><td>0.15</td><td>Total Positive Sequence Leakage Reactance<small>Enter the leakage reactance at maximum tap based on transformer base impedance. Used only when <code>TapNo_ != 0 &amp;&amp; UpTapV_ != 1.0 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+<tr><td><code>LowTapRz0_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1E-307 to 1E+307</td><td>0.9</td><td>Reactance Ratio (Zero/Positive Sequence)<small>Enter the ratio of zero sequence leakage reactance over positive sequence leakage reactance at minimum tap. Used only when <code>TapNo_ != 0 &amp;&amp; LowTapV_ != 1.0 &amp;&amp; CoreType==4 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+<tr><td><code>UpTapRz0_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1E-307 to 1E+307</td><td>0.9</td><td>Leakage Reactance Ratio (Zero/Positive Sequence)<small>Enter the ratio of zero sequence leakage reactance over positive sequence leakage reactance at maximum tap. Used only when <code>TapNo_ != 0 &amp;&amp; UpTapV_ != 1.0 &amp;&amp; CoreType==4 &amp;&amp; TapXL_Enab==1</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-stray-capacitances">
+  <h2 id="g5-stray-capacitances">Stray Capacitances</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>SCW1_Enab</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Shunt Capacitance at Winding 1?<small>Select Yes to place a shunt capacitance from winding 1 terminal to ground. Takes <code>NO</code> No, <code>YES</code> Yes. Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>SCW2_Enab</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Shunt Capacitance at Winding 2?<small>Select Yes to place a shunt capacitance from winding 2 terminal to ground. Takes <code>NO</code> No, <code>YES</code> Yes. Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>SCW12_Enab</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Capacitance Between Winding 1 &amp; 2?<small>Select Yes to place a capacitance between winding 1 and 2 terminals. Takes <code>NO</code> No, <code>YES</code> Yes. Used only when <code>OT==0</code>.</small></td></tr>
+<tr><td><code>SCW1</code></td><td>uF</td><td>Real</td><td>1E-308 to 1E+308</td><td>0.002</td><td>Shunt Capacitance at Winding 1<small>Enter the corresponding capacitance value. Used only when <code>SCW1_Enab==1 &amp;&amp; OT==0</code>.</small></td></tr>
+<tr><td><code>SCW2</code></td><td>uF</td><td>Real</td><td>1E-308 to 1E+308</td><td>0.002</td><td>Shunt Capacitance at Winding 2<small>Enter the corresponding capacitance value. Used only when <code>SCW2_Enab==1 &amp;&amp; OT==0</code>.</small></td></tr>
+<tr><td><code>SCW12</code></td><td>uF</td><td>Real</td><td>1E-308 to 1E+308</td><td>0.001</td><td>Capacitance Between Winding 1 &amp; 2<small>Enter the corresponding capacitance value. Used only when <code>SCW12_Enab==1 &amp;&amp; OT==0</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-internal-outputs">
+  <h2 id="g6-internal-outputs">Internal Outputs</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Imag_L1_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Winding Limb 1<small>Enter name for magnetizing current of winding limb 1.</small></td></tr>
+<tr><td><code>Imag_L2_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Winding Limb 2<small>Enter name for magnetizing current of winding limb 2.</small></td></tr>
+<tr><td><code>Imag_L3_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Winding Limb 3<small>Enter name for magnetizing current of winding limb 3.</small></td></tr>
+<tr><td><code>Imag_Y12_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Yoke 12<small>Enter name for magnetizing current of yoke 12. Used only when <code>CoreType&gt;1</code>.</small></td></tr>
+<tr><td><code>Imag_Y23_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Yoke 23<small>Enter name for magnetizing current of yoke 23. Used only when <code>CoreType&gt;1</code>.</small></td></tr>
+<tr><td><code>Imag_OL1_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Outer Limb 1<small>Enter name for magnetizing current of outer limb 1. Used only when <code>CoreType==2</code>.</small></td></tr>
+<tr><td><code>Imag_OL3_</code></td><td>%</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetizing Current of Outer Limb 3<small>Enter name for magnetizing current of outer limb 3. Used only when <code>CoreType==2</code>.</small></td></tr>
+<tr><td><code>Flux_L1_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Winding Limb 1<small>Enter name for flux linkage of winding limb 1.</small></td></tr>
+<tr><td><code>Flux_L2_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Winding Limb 2<small>Enter name for flux linkage of winding limb 2.</small></td></tr>
+<tr><td><code>Flux_L3_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Winding Limb 3<small>Enter name for flux linkage of winding limb 3.</small></td></tr>
+<tr><td><code>Flux_Y12_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Yoke 12<small>Enter name for flux linkage of yoke 12. Used only when <code>CoreType&gt;1</code>.</small></td></tr>
+<tr><td><code>Flux_Y23_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Yoke 23<small>Enter name for flux linkage of yoke 23. Used only when <code>CoreType&gt;1</code>.</small></td></tr>
+<tr><td><code>Flux_OL1_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Outer Limb 1<small>Enter name for flux linkage of outer limb 1. Used only when <code>CoreType==2</code>.</small></td></tr>
+<tr><td><code>Flux_OL3_</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Linkage of Outer Limb 3<small>Enter name for flux linkage of outer limb 3. Used only when <code>CoreType==2</code>.</small></td></tr>
+<tr><td><code>H_L1_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Winding Limb 1<small>Enter name for magnetic field intensity of winding limb 1. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>H_L2_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Winding Limb 2<small>Enter name for magnetic field intensity of winding limb 2. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>H_L3_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Winding Limb 3<small>Enter name for magnetic field intensity of winding limb 3. Used only when <code>MagModel==3</code>.</small></td></tr>
+<tr><td><code>H_Y12_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Yoke 12<small>Enter name for magnetic field intensity of yoke 12. Used only when <code>(CoreType&gt;1)&amp;&amp;(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>H_Y23_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Yoke 23<small>Enter name for magnetic field intensity of yoke 23. Used only when <code>(CoreType&gt;1)&amp;&amp;(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>H_OL1_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Outer Limb 1<small>Enter name for magnetic field intensity of outer limb 1. Used only when <code>(CoreType==2)&amp;&amp;(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>H_OL3_</code></td><td>A/m</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Magnetic Field Intensity of Outer Limb 3<small>Enter name for magnetic field intensity of outer limb 3. Used only when <code>(CoreType==2)&amp;&amp;(MagModel==3)</code>.</small></td></tr>
+<tr><td><code>B_L1_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Winding Limb 1<small>Enter name for flux density of winding limb 1. Used only when <code>(MagModel==3)||(MagModel==6)</code>.</small></td></tr>
+<tr><td><code>I1_L1</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 1 Current of Winding Limb 1<small>Enter name for winding 1 current of winding limb 1.</small></td></tr>
+<tr><td><code>I1_L2</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 1 Current of Winding Limb 2<small>Enter name for winding 1 current of winding limb 2.</small></td></tr>
+<tr><td><code>I1_L3</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 1 Current of Winding Limb 3<small>Enter name for winding 1 current of winding limb 3.</small></td></tr>
+<tr><td><code>I2_L1</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 2 Current of Winding Limb 1<small>Enter name for winding 2 current of winding limb 1.</small></td></tr>
+<tr><td><code>I2_L2</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 2 Current of Winding Limb 2<small>Enter name for winding 2 current of winding limb 2.</small></td></tr>
+<tr><td><code>I2_L3</code></td><td>kA</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Winding 2 Current of Winding Limb 3<small>Enter name for winding 2 current of winding limb 3.</small></td></tr>
+<tr><td><code>B_L2_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Winding Limb 2<small>Enter name for flux density of winding limb 2. Used only when <code>(MagModel==3)||(MagModel==6)</code>.</small></td></tr>
+<tr><td><code>B_L3_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Winding Limb 3<small>Enter name for flux density of winding limb 3. Used only when <code>(MagModel==3)||(MagModel==6)</code>.</small></td></tr>
+<tr><td><code>B_Y12_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Yoke 12<small>Enter name for flux density of yoke 12. Used only when <code>(CoreType&gt;1)&amp;&amp;((MagModel==3)||(MagModel==6))</code>.</small></td></tr>
+<tr><td><code>B_Y23_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Yoke 23<small>Enter name for flux density of yoke 23. Used only when <code>(CoreType&gt;1)&amp;&amp;((MagModel==3)||(MagModel==6))</code>.</small></td></tr>
+<tr><td><code>B_OL1_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Outer Limb 1<small>Enter name for flux density of outer limb 1. Used only when <code>(CoreType==2)&amp;&amp;((MagModel==3)||(MagModel==6))</code>.</small></td></tr>
+<tr><td><code>B_OL3_</code></td><td>T</td><td>Real</td><td>-1E+308 to 1E+308</td><td>·</td><td>Name for Flux Density of Outer Limb 3<small>Enter name for flux density of outer limb 3. Used only when <code>(CoreType==2)&amp;&amp;((MagModel==3)||(MagModel==6))</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../currenttf/">Current Transformer (Lucas Model)</a> · <a href="../sat-reac/">Saturable Reactor</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

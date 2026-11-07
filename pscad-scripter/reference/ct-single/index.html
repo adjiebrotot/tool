@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Current Transformer (JA Model) parameters (master:ct_single)</title>
+<meta name="description" content="All master:ct_single parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Current Transformer (JA Model) (master:ct_single) parameters">
+<meta property="og:description" content="All master:ct_single parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Current Transformer (JA Model) (master:ct_single) parameters">
+<meta name="twitter:description" content="All master:ct_single parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Current Transformer (JA Model) (master:ct_single) parameters",
+  "description": "All master:ct_single parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:ct_single (Current Transformer (JA Model))",
+    "description": "The PSCAD Master Library definition master:ct_single."
+  },
+  "keywords": "master:ct_single parameters, PSCAD Current Transformer (JA Model) parameters, Current Transformer (JA Model) PSCAD, master:ct_single Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Current Transformer (JA Model)",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Current Transformer (JA Model)</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Current Transformer (JA Model)<span class="dx-h1-sub">master:ct_single</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Current Transformer (JA Model) (<code>master:ct_single</code>): 22 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Current Transformer (JA Model) is</h2>
+  <p>Current Transformer (JA Model) is a Master Library definition in the Transformers group of PSCAD 5.0.0. Current Transformer - JA model. Its 22 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:ct_single</code></dd><dt>PSCAD name</dt><dd>Current Transformer (JA Model)</dd><dt>Library group</dt><dd>Transformers</dd><dt>Parameters</dt><dd>22 parameters, in 4 sections of the dialog</dd><dt>Description</dt><dd>Current Transformer - JA model</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Current Transformer (JA Model) in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ct_single&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ct_single&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(Npri=<span class="py-n">20</span>, Nsec=<span class="py-n">200</span>, SecR=<span class="py-s">&quot;0.5 [ohm]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;Npri&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Current Transformer (JA Model) parameters"><li><a href="#g0-main-data">Main Data<span class="dx-n">9</span></a></li><li><a href="#g1-magneitc-characteristics-of-the-material">Magneitc Characteristics of the Material<span class="dx-n">9</span></a></li><li><a href="#g2-burden">Burden<span class="dx-n">2</span></a></li><li><a href="#g3-internal-outputs">Internal Outputs<span class="dx-n">2</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-main-data">
+  <h2 id="g0-main-data">Main Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for Identification<small>Enter a name for identification.</small></td></tr>
+<tr><td><code>Npri</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 2147483647</td><td>20</td><td>Primary Turns<small>Number of primary turns.</small></td></tr>
+<tr><td><code>Nsec</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 2147483647</td><td>200</td><td>Secondary Turns<small>Number of secondary turns.</small></td></tr>
+<tr><td><code>SecR</code></td><td>ohm</td><td>Real</td><td>0 to 1E+308</td><td>0.5</td><td>Secondary Resistance</td></tr>
+<tr><td><code>SecL</code></td><td>H</td><td>Real</td><td>0 to 1E+308</td><td>0.8e-3</td><td>Secondary Inductance</td></tr>
+<tr><td><code>Area</code></td><td>m*m</td><td>Real</td><td>0.0001 to 1E+308</td><td>2.601e-3</td><td>Area<small>Cross sectional area of the magnetic material.</small></td></tr>
+<tr><td><code>PathL</code></td><td>m</td><td>Real</td><td>0.01 to 1E+308</td><td>0.6377</td><td>Path Length<small>Path length of the magentic material.</small></td></tr>
+<tr><td><code>Bremn</code></td><td>T</td><td>Real</td><td>-2 to 2</td><td>0.0</td><td>Remanent Flux Density</td></tr>
+<tr><td><code>material</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>MATERIAL_1 (material 1)</td><td>Magnetic Material<small>Takes <code>CUSTOM_MATERIAL</code> custom material, <code>MATERIAL_1</code> material 1.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-magneitc-characteristics-of-the-material">
+  <h2 id="g1-magneitc-characteristics-of-the-material">Magneitc Characteristics of the Material</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>C</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0.001 to 0.5</td><td>0.1</td><td>Domain Flexing Parameter</td></tr>
+<tr><td><code>K</code></td><td>T</td><td>Real</td><td>1E-07 to 1E+308</td><td>5.0e-5</td><td>Domain Pinning Parameter</td></tr>
+<tr><td><code>BETA</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 0.98</td><td>0.96</td><td>Parameter to Adjust K with M</td></tr>
+<tr><td><code>alpha</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1E-08 to 1E+308</td><td>1.325e-5</td><td>Interdomain Coupling</td></tr>
+<tr><td><code>Msat</code></td><td>A/m</td><td>Real</td><td>100000 to 1E+308</td><td>1.72e6</td><td>Saturation Anhysteretic Magnetization</td></tr>
+<tr><td><code>F1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>2730</td><td>Coefficient 1 of Anhysteretic Curve</td></tr>
+<tr><td><code>F2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>3209</td><td>Coefficient 2 of Anhysteretic Curve</td></tr>
+<tr><td><code>F3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>20294</td><td>Coefficient 3 of Anhysteretic Curve</td></tr>
+<tr><td><code>Fb</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1 to 1E+308</td><td>2</td><td>Coefficient 4 of Anhysteretic Curve</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-burden">
+  <h2 id="g2-burden">Burden</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>BurR</code></td><td>ohm</td><td>Real</td><td>0 to 1E+308</td><td>0.5</td><td>Burden Resistance</td></tr>
+<tr><td><code>BurL</code></td><td>H</td><td>Real</td><td>0 to 1E+308</td><td>0.8e-3</td><td>Burden Inductance</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-internal-outputs">
+  <h2 id="g3-internal-outputs">Internal Outputs</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>H</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>H</td><td>Magnetomotive Force</td></tr>
+<tr><td><code>B</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>B</td><td>Flux Density</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../umec-xfmr-6w5l/">3/5 Limb UMEC Transformer</a> · <a href="../currenttf/">Current Transformer (Lucas Model)</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

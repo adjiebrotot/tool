@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD component reference: every Master Library parameter</title>
+<meta name="description" content="Every PSCAD Master Library parameter, read out of PSCAD 5.0.0: 345 components, 8,919 parameters with units, ranges, defaults and Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="PSCAD component reference">
+<meta property="og:description" content="Every PSCAD Master Library parameter, read out of PSCAD 5.0.0: 345 components, 8,919 parameters with units, ranges, defaults and Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PSCAD component reference">
+<meta name="twitter:description" content="Every PSCAD Master Library parameter, read out of PSCAD 5.0.0: 345 components, 8,919 parameters with units, ranges, defaults and Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "PSCAD component reference",
+  "description": "Every PSCAD Master Library parameter, read out of PSCAD 5.0.0: 345 components, 8,919 parameters with units, ranges, defaults and Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PSCAD Scripter",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/"
+  },
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "name": "Battery parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/battery/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Dependent Current Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/src-current-dependent-current/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/src-ccin-1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Maximum power point tracker parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mppt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Photovoltaic source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/photovoltaic-source/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Voltage Source Model 1 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Voltage Source Model 2 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase Current Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/src-ccin-3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase Voltage Source Model 1 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase Voltage Source Model 2 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source-3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase Voltage Source Model 3 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source3r/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltage Dependent Current Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/src-voltage-dependent-current/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltage Dependent Voltage Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source-vltg-dependent-voltage/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Wind Source parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/wind-source/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "exci35defn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/exci35defn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "hgov90defn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hgov90defn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hydro Governor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hy-gov/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hydro Governor/Turbine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hydro-gov/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hydro Turbine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hy-tur/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "macdefn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Permanent Magnet Machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pm-machine/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Induction Machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/spim-uw/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Solid State Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/exc-scrx/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Squirrel Cage Induction Machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sqc100/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Synchronous Machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sync-machine/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Thermal Governor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Thermal Turbine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/th-tur/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Two winding DC machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dc-mac-2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type AC Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excac/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type AC Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excac-2016/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type DC Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excdc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type DC Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excdc-2016/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type ST Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excst/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type ST Exciter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Wind Turbine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/wind-turbine/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Wind Turbine Governor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/wind-governor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Wound Rotor Induction Machine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/wound-rotor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase 2 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase 3 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase 3 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase 4 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p4w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase 4 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p4w2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase Star-Star Auto Transfomer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p2w-auto/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase Star-Star Auto Transfomer with a tertiary parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w-auto/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3/5 Limb UMEC Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-6w5l/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Transformer (JA Model) parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Transformer (Lucas Model) parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/currenttf/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Duality based 3 phase 2 winding transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Saturable Reactor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sat-reac/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 2 Winding Transfomer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 2 Winding UMEC Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 3 Winding Auto Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w-auto/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 3 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 3 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 3 Winding UMEC Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-3w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 3 Winding UMEC Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-3w2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 4 Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-4w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase 4 Winding UMEC Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-4w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Auto Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-2w-auto/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase N Winding Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-nw/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Static Var Compensator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/svc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Zero Impedance Ideal Transformer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ratio-changer-2w/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "1 Conductor Bus Bar parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "1 Conductor Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "12 Conductor Vertical Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-12-vert/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "2 Conductor Flat Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-2-flat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Concentric Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-concent/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Delta Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-delta/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Flat Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-flat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Horizontal Bus Bar parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-3h/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Offset Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Vertical Bus Bar parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-3v/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Conductor Vertical Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-vert/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor (3x2) Vertical Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-vert/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor (6x1) Vertical Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-vert1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor Concentric Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-concent/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor Delta Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-delta/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor Flat Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-flat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Conductor Offset Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-offset/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Bergeron Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-berg-options/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Cable Interface parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cable-interface/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Coax Cable Cross-Section parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cable-coax/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Coupled PI Section parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/newpi/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Double Circuit Pi section parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pi-double-cct/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Frequency Dependent (Mode) Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-fredep-options/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Frequency Dependent (Phase) Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-frephase-options/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "LCP Additional Options parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-out-disp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Line to Line Impedance parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/l2l-imp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Line_Constants_Debug parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-constants-debug/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Manual Data Entry parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-manualyz/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Mutually Coupled 2 Wires parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/coupled-2lines/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Mutually Coupled 3 Wires parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/coupled-3lines/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Non-Linear Gain parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/nl-gain/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Non-Linear Transfer Characteristic parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/nl-tfun/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "On-Line Frequency Scanner parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fft/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "PI Controller parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pi-ctlr/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "PI Controller parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zpi-ctlr/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "pi_section2 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pi-section2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Pipe-Type Cable parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cable-pipetype/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "tline_interface_v2 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tline-interface-v2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Transmission Line Interface parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tline-interface/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TSC/TCR Non-Linear Susceptance Characteristics parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/svcalloc1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Universal Tower parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-universal/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "vector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vector/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltmeter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/voltmeter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Arrester parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/arrester/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Band Pass Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/filter-band/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "C-Type Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cfilter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Capacitive Load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/capacitive-load/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Capacitor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/capacitor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Delta connected configurable load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dload/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Fixed Load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fixed-load/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Fixed Load L-L parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fixed-load1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "fload parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fload/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "High Pass Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/filter-hp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Inductor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/inductor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Line to Ground Impedance parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/l2g-imp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Line|Cable Ground Properties parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-ground/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Nth Order Butterworth/Chebyshev Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trans-filt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "PU Impedance Branch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/puimpedancebranch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Resistor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/resistor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "rrl parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/rrl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequence Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/seq-filter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Simplified Cable Cross-Section parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cable-coaxsimpl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Surge Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/surge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Surge Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/surge1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three phase inductive load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/reactive-load/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three phase resistive load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/resistive-load/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TSC Allocator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tsc-control/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Tuned Filter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/filter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Variable R, L or C parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/varrlc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltmeter to Ground parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/voltmetergnd/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Y connected configurable 3 branch load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dload-3branch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Y connected configurable 3 branch load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/yload-3branch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Y connected configurable load parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/yload/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 Phase Breaker parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/breaker3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Isolation Switch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/switch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Power Electronic Switch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/peswitch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Rotary Switch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/var-pot/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequencer: Apply/Clear Fault parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-fault/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequencer: Close/Open Breaker parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-breaker/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Breaker parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/breaker1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase Fault parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fault-sw/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Statistical breaker parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/statistical-breaker/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "tbreak parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tbreak/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "tfault parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tfault/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase Fault parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tpflt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Timed Breaker Logic parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tbreakn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Timed Fault Logic parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tfaultn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Two State Switch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/var-switch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "2 CT model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ct-double/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "CCVT parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Dual Slope Current Differential Relay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dscd87/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Inverse Time Over Current Relay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/itoc51/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Negative Sequence Directional Element parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dir-neg32/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "3 phase to Single line Converter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/breakout/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "AM/FM/PM Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/modulator/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Block Average Phase Comparator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/block-avg/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Meter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ammeter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Data signal label parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/datalabel/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "datatap2 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/datatap2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Dynamic datatap parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dynamic-datatap/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Electrical tap parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/electrical-tap/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Frequency Dependent Network Equivalent parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fdne/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Frequency Dependent Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fdtf/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Frequency/Phase/RMS Meter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/freq-meas/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Harmonic Current Injection parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cinj/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Harmonic Distortion Calculator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/thd/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Harmonic Impedance parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/phasorimp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Harmonics Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/harmdiffmag/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Multimeter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimeter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Node Loop parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/nodeloop/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Output Channel parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pgb/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Phase Difference parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/phasediff/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Phase Locked Loop parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tvekta/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Power System Stabilizer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pss/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Real/Reactive Power Meter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/power/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sawtooth Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sig-gen/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Scalar/Array Tap parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/datatap/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Phase RMS Meter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/rms-inst/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Three Phase RMS Meter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/rms3ph/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "X to the power of Y parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/x-power-y/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "12 Channel Multiplexer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mux-array/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "4,8 Channel Multiplexer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mux1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Channel Multiplexer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mux/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Pulse Bridge parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/g6p200/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "6 Pulse Bridge parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/g6p200-2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ABC - DQ0 Transformation parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/abcdq0/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Absolute Value parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/abs/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Backlash parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/backlash/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Binary Delay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/bin-delay/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Binary ON Delay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/delay/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Carrier Waveform Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-multidimcarriergen/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Change Detector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/detect-change/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Clarke Transformation parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/clarke/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Co-Simulation parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cosimulation/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Common Constants parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/emtconst/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Complex Conjugate parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/conjugate/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Complex Constant parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/constc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Counter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/counter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Current Scaling parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/current-scaler/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Data Merge parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/datamerge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Deadband Controller parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/deadband/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Delay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tdelay/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Delay parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zdelay/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Derivative parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/derivative/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Derivative parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zderivative/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Differential Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/diffpole/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Differential Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zdiffpole/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Discrete Wavelet Transformation parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dwt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Discretizer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/discretizer/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Distance Relay - Lens parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/lens21/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Divider parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/div/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "DOT product parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dot-product/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Down Ramp Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/downramp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "dq0 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/dq0/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Edge Detector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/edge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Exponential Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/exp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Export Symbol parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/export/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Feedback Loop Selector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zminusone/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ff_d parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ff-d/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ff_jk parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ff-jk/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ff_rs parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ff-rs/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ff_t parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ff-t/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Flip-Flop parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/flip-flop/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "flipflop parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/flipflop/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "fplogic parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fplogic/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Gain parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/gain/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Generic Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/txferfnc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hard Limiter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hardlimit/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hysteresis Buffer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/buffer/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hysteresis Current Control PWM parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pwm-hcc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Hysteresis Reactor parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/hysteresis-reactor/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Impulse Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/impulse/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Integer Constant parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/consti/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Integrator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/integral/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Integrator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zintegral/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Interpolated Firing Pulses parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fp-int/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Lead-Lag Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/leadlag/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Lead-Lag Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zleadlag/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Lens 68 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/oos-lens68/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Logarithm Fuction parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/log/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "logic parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/logic/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Logic Gate parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/logic-mult/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Logic Inverter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/inv/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Logical Constant parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/constl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Maximum/Minimum Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/maxmin/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Mho 68 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/oos-mho68/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Minimum/Maximum Value/Location parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/maxmin-array/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "MOD Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mod/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "MODULO Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/modulo/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Monostable MultiVibrator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/monostable/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Multi Dimensional Comparator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-multidimcomparator/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "multimassdefn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Multiple Run parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mrun/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Multiple Run Additional Recording parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mrun-extra/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Multiplier parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mult/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Nth Order Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trans-fcn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Nth Order Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ztrans-fcnz/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Over Current Detection parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/over-current/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "overcurrent parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/overcurrent/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Pick Up Drop Out Timer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pudot/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Polar Rectangular Coordinate Converter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/polar-rec/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Polygon 68 parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/oos-poly68/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Product of all elements parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/prod-array/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Push Button parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/var-button/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Random Number Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/random/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Range Comparator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/range/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Rate Limiter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ratelimit/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Real Constant parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/const/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Real Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/realpole/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Real Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zrealpole/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "RTP and COMTRADE Recorder parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/recorder2-0/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sample and Hold parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sandhdefn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sampler parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sampler/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Second Order Complex Pole parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/complex/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Second Order Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/cmplx/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequencer: Set Variable parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-setvar/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequencer: Start parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-start/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequencer: Wait for an event parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-wait/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Serial-In/Serial-Out Shift Register parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/shiftreg/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sign Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sign/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Signal Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/signalgen/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Single Input Level Comparator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/compare/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Slider parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/var/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Space Vector Modulator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/svm/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Spark Gap parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/spark-gap/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Square Root parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sqrt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sum of all elements parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sum-array/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Summing/Differencing Junctions parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sumjct/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Timer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/timer/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "timerdefn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/timerdefn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Torsional Shaft Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimass/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Torsional Shaft Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Trignometric Functions parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trig/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Trip Polygon parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trip-polygon/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TRV Envelope Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trv/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Two Input Comparator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/compar/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Two Input Selector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/select/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Up Ramp Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/upramp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Variable Series Impedance parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/var-impedance/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Vector Interlace parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vector-interlace/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Vector Merger parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vector-merge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltage Controlled Oscillator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vco/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Voltage Dependent Current Limits parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vdcl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "X-Y Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xy-transfer-function/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "XYZ Transfer Function parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xyz-tf/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Zero Detector parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/zerodetect/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "doblestate parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/doblestate/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "File Read parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/fileread/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Optimum Run parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/optimum-run/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Angle Resolver parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/angle-resolver/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "CCCM controler for inverter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vdvoci/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "CCCM controller for rectifier parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vdvocr/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Effective Gamma parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mesgam/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Electrical Node Label parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/nodelabel/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "External Electrical Node parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xnode/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Firing Pulse Generator for MMC Full Cell parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-firingfullbridge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Firing Pulse Generator for MMC Half Cell parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-firinghalfbridge/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Force to DSDyn parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/force-dsdyn/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Force to DSOut parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/force-dsout/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Generic Current Controller parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/polpi5/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Generic Gamma Controller parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/vg6p18/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Import Symbol parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/import/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Internal Combustion Engine parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/ic-engine/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Mho Circle parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mho-circle/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Minimum Gamma parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mingam/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "MMC Full Cell parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-fullcell/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "MMC Half Cell parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-halfcell/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "pi-section parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pi-section/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Programmable stop parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/stop/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "PT - Lucas Model parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/pt1/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "rsff parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/rsff/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Runtime Configurable Passive Branch parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/rtcbranch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Scale changer parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/scale-changer/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sequential Number Generator parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sequential/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Sorter parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sorter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Square parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/square/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "sregis parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/sregis/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "time-enab parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/time-enab/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "tvekt parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/tvekt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Type Conversion parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/unity/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "voltlvl parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/voltlvl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Wireless Radio Link parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/radiolink/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "X-Y Table parameters",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/xy-table/"
+    }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../">PSCAD Scripter</a><span aria-hidden="true">›</span><span aria-current="page">Component reference</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PSCAD component reference</h1>
+    <p class="dx-lead">Every parameter of every PSCAD Master Library definition, read out of PSCAD 5.0.0 itself rather than typed in by hand: 345 components, 8,919 parameters, each with its unit, range, default and the Python that writes it.</p>
+    <section class="dx-sec dx-answer" aria-labelledby="quick">
+  <h2 id="quick">The parameters people look up most</h2>
+  <div class="dx-tw"><table><thead><tr><th>You want</th><th>Component</th><th>Parameter</th><th>Unit</th><th>Note</th></tr></thead><tbody>
+<tr><td>Fault timing, for a ride through sweep</td><td><a href="tfaultn/">Timed Fault Logic</a></td><td><code>TF</code>, <code>DF</code></td><td>s</td><td>Time to apply, duration</td></tr>
+<tr><td>Which phases a fault takes down</td><td><a href="tpflt/">Three Phase Fault</a></td><td><code>Ctype</code>, <code>A</code>, <code>B</code>, <code>C</code>, <code>G</code></td><td>·</td><td>Fault type and the phases in it</td></tr>
+<tr><td>Fault resistance</td><td><a href="tpflt/">Three Phase Fault</a></td><td><code>RON</code>, <code>ROFF</code></td><td>ohm</td><td>On and off resistance</td></tr>
+<tr><td>Breaker operating times</td><td><a href="tbreakn/">Timed Breaker Logic</a></td><td><code>TO1</code>, <code>TO2</code></td><td>s</td><td>First and second operation</td></tr>
+<tr><td>Breaker pole state</td><td><a href="breaker3/">3 Phase Breaker</a></td><td><code>BOpen1</code>, <code>BOpen2</code>, <code>BOpen3</code></td><td>·</td><td>Per pole, open or closed</td></tr>
+<tr><td>Source voltage and frequency</td><td><a href="source3/">Three Phase Voltage Source Model 1</a></td><td><code>Es</code>, <code>F0</code></td><td>kV, Hz</td><td>Line to line RMS</td></tr>
+<tr><td>Source short-circuit level</td><td><a href="source3/">Three Phase Voltage Source Model 1</a></td><td><code>MVA</code></td><td>MVA</td><td>Three phase base MVA</td></tr>
+<tr><td>Transformer rating</td><td><a href="xfmr-3p2w/">3 Phase 2 Winding Transformer</a></td><td><code>Tmva</code></td><td>MVA</td><td>Three phase</td></tr>
+<tr><td>Transformer winding voltages</td><td><a href="xfmr-3p2w/">3 Phase 2 Winding Transformer</a></td><td><code>V1</code>, <code>V2</code></td><td>kV</td><td>Line to line RMS</td></tr>
+<tr><td>Transformer leakage reactance</td><td><a href="xfmr-3p2w/">3 Phase 2 Winding Transformer</a></td><td><code>Xl</code></td><td>pu</td><td>Positive sequence</td></tr>
+<tr><td>Transformer winding connection</td><td><a href="xfmr-3p2w/">3 Phase 2 Winding Transformer</a></td><td><code>YD1</code>, <code>YD2</code></td><td>·</td><td>Star or delta, per winding</td></tr>
+<tr><td>Machine inertia</td><td><a href="sync-machine/">Synchronous Machine</a></td><td><code>H</code></td><td>s</td><td>Inertia constant</td></tr>
+<tr><td>Resistance, inductance, capacitance</td><td><a href="resistor/">Resistor</a></td><td><code>R</code>, <code>L</code>, <code>C</code></td><td>ohm, H, uF</td><td>One per branch component</td></tr>
+<tr><td>A recorded signal a script reads back</td><td><a href="pgb/">Output Channel</a></td><td><code>Scale</code>, <code>Max</code>, <code>Min</code></td><td>·</td><td>Output Channel</td></tr>
+<tr><td>RMS voltage of a three phase point</td><td><a href="rms3ph/">Three Phase RMS Meter</a></td><td><code>freq</code>, <code>NSAM</code>, <code>Scale</code></td><td>Hz, , kV</td><td>Sliding window</td></tr>
+<tr><td>Harmonic distortion of a waveform</td><td><a href="thd/">Harmonic Distortion Calculator</a></td><td><code>Mode</code>, <code>Size</code></td><td>·</td><td>From the time domain</td></tr>
+<tr><td>Wind speed, with gusts</td><td><a href="wind-source/">Wind Source</a></td><td><code>BWV</code>, <code>MAXG</code>, <code>T1G</code></td><td>m/s, m/s, s</td><td>Mean, gust peak, gust start</td></tr>
+</tbody></table></div>
+  <p class="dx-note">A resistor, an inductor and a capacitor each hold one parameter, named <code>R</code>, <code>L</code> and <code>C</code>.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="how">
+  <h2 id="how">How a PSCAD parameter is named, written and read</h2>
+  <dl class="dx-facts"><dt>A definition name</dt><dd>Always namespaced: <code>master:tpflt</code>, never <code>tpflt</code>. <code>Project.find_all()</code> matches it exactly, with no wildcards, so a bare name or a pattern comes back empty.</dd><dt>A value and its unit</dt><dd>Written together as text: <code>"250 [MVA]"</code>, <code>"2.5 [ohm]"</code>. PSCAD stores the unit you wrote rather than normalising it.</dd><dt>Reading a value back</dt><dd>A unit-carrying value is a subclass of <code>float</code> and its unit lives only in its text, so read it as text before you read it as a number.</dd><dt>Type</dt><dd>Real, Integer, Text, Choice, Boolean or Table, as PSCAD reports it. A Choice is written with its symbolic value, which this reference lists beside the label.</dd><dt>Range and default</dt><dd>As the component dialog gives them. A range of <code>0 to 0</code> means the dialog sets none, not that the value must be zero.</dd><dt>A condition</dt><dd>Some parameters only matter while another is set a certain way. The reference shows the condition PSCAD itself carries.</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write any component</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:tpflt&quot;</span>):        <span class="py-c"># the definition, exactly</span>
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+fault = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:tfaultn&quot;</span>)[<span class="py-n">0</span>]
+fault.<span class="py-f">parameters</span>(TF=<span class="py-s">&quot;1.0 [s]&quot;</span>, DF=<span class="py-s">&quot;0.12 [s]&quot;</span>)        <span class="py-c"># apply at 1 s, clear 120 ms later</span>
+
+project.<span class="py-f">build</span>()                                       <span class="py-c"># Fortran again, before the next run</span>
+project.<span class="py-f">run</span>()</code></pre>
+  <p>New to this? <a href="../python/getting-started/">Start with the PSCAD Python guide</a>, or <a href="../python/">see every study you can automate</a>. The <a href="../builder/">Workflow Builder</a> writes all of it for you.</p>
+</section>
+<section class="dx-sec" aria-labelledby="cat-sources">
+  <h2 id="cat-sources">Sources<span class="dx-n">14</span></h2>
+  <p class="dx-note">Voltage and current sources, and the wind, PV and battery sources a converter study starts from.</p>
+  <ul class="dx-classes">
+    <li><a href="battery/"><code>master:battery</code><span>Battery · 52 parameters</span></a></li>
+    <li><a href="src-current-dependent-current/"><code>master:src_current_dependent_current</code><span>Current Dependent Current Source · 3 parameters</span></a></li>
+    <li><a href="src-ccin-1/"><code>master:src_ccin_1</code><span>Current Source · 6 parameters</span></a></li>
+    <li><a href="mppt/"><code>master:mppt</code><span>Maximum power point tracker · 7 parameters</span></a></li>
+    <li><a href="photovoltaic-source/"><code>master:photovoltaic_source</code><span>Photovoltaic source · 23 parameters</span></a></li>
+    <li><a href="source1/"><code>master:source1</code><span>Single Phase Voltage Source Model 1 · 24 parameters</span></a></li>
+    <li><a href="source-1/"><code>master:source_1</code><span>Single Phase Voltage Source Model 2 · 22 parameters</span></a></li>
+    <li><a href="src-ccin-3/"><code>master:src_ccin_3</code><span>Three Phase Current Source · 6 parameters</span></a></li>
+    <li><a href="source3/"><code>master:source3</code><span>Three Phase Voltage Source Model 1 · 50 parameters</span></a></li>
+    <li><a href="source-3/"><code>master:source_3</code><span>Three Phase Voltage Source Model 2 · 33 parameters</span></a></li>
+    <li><a href="source3r/"><code>master:source3R</code><span>Three Phase Voltage Source Model 3 · 23 parameters</span></a></li>
+    <li><a href="src-voltage-dependent-current/"><code>master:src_voltage_dependent_current</code><span>Voltage Dependent Current Source · 3 parameters</span></a></li>
+    <li><a href="source-vltg-dependent-voltage/"><code>master:source_vltg_dependent_voltage</code><span>Voltage Dependent Voltage Source · 3 parameters</span></a></li>
+    <li><a href="wind-source/"><code>master:wind_source</code><span>Wind Source · 22 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-machines">
+  <h2 id="cat-machines">Machines, exciters and governors<span class="dx-n">23</span></h2>
+  <p class="dx-note">Synchronous and induction machines, and the exciters, governors and turbines that drive them.</p>
+  <ul class="dx-classes">
+    <li><a href="exci35defn/"><code>master:exci35defn</code><span>exci35defn · 19 parameters</span></a></li>
+    <li><a href="hgov90defn/"><code>master:hgov90defn</code><span>hgov90defn · 25 parameters</span></a></li>
+    <li><a href="hy-gov/"><code>master:hy_gov</code><span>Hydro Governor · 33 parameters</span></a></li>
+    <li><a href="hydro-gov/"><code>master:hydro_gov</code><span>Hydro Governor/Turbine · 18 parameters</span></a></li>
+    <li><a href="hy-tur/"><code>master:hy_tur</code><span>Hydro Turbine · 47 parameters</span></a></li>
+    <li><a href="macdefn/"><code>master:macdefn</code><span>macdefn · 98 parameters</span></a></li>
+    <li><a href="pm-machine/"><code>master:pm_machine</code><span>Permanent Magnet Machine · 20 parameters</span></a></li>
+    <li><a href="spim-uw/"><code>master:spim_uw</code><span>Single Phase Induction Machine · 39 parameters</span></a></li>
+    <li><a href="exc-scrx/"><code>master:exc_scrx</code><span>Solid State Exciter · 16 parameters</span></a></li>
+    <li><a href="sqc100/"><code>master:sqc100</code><span>Squirrel Cage Induction Machine · 82 parameters</span></a></li>
+    <li><a href="sync-machine/"><code>master:sync_machine</code><span>Synchronous Machine · 129 parameters</span></a></li>
+    <li><a href="th-gov/"><code>master:th_gov</code><span>Thermal Governor · 82 parameters</span></a></li>
+    <li><a href="th-tur/"><code>master:th_tur</code><span>Thermal Turbine · 19 parameters</span></a></li>
+    <li><a href="dc-mac-2w/"><code>master:dc_mac_2w</code><span>Two winding DC machine · 46 parameters</span></a></li>
+    <li><a href="excac/"><code>master:excac</code><span>Type AC Exciter · 176 parameters</span></a></li>
+    <li><a href="excac-2016/"><code>master:excac_2016</code><span>Type AC Exciter · 253 parameters</span></a></li>
+    <li><a href="excdc/"><code>master:excdc</code><span>Type DC Exciter · 73 parameters</span></a></li>
+    <li><a href="excdc-2016/"><code>master:excdc_2016</code><span>Type DC Exciter · 99 parameters</span></a></li>
+    <li><a href="excst/"><code>master:excst</code><span>Type ST Exciter · 153 parameters</span></a></li>
+    <li><a href="excst-2016/"><code>master:excst_2016</code><span>Type ST Exciter · 294 parameters</span></a></li>
+    <li><a href="wind-turbine/"><code>master:wind_turbine</code><span>Wind Turbine · 9 parameters</span></a></li>
+    <li><a href="wind-governor/"><code>master:wind_governor</code><span>Wind Turbine Governor · 28 parameters</span></a></li>
+    <li><a href="wound-rotor/"><code>master:wound_rotor</code><span>Wound Rotor Induction Machine · 81 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-transformers">
+  <h2 id="cat-transformers">Transformers<span class="dx-n">25</span></h2>
+  <p class="dx-note">Single and three phase transformers, classical and UMEC, autotransformers, instrument transformers and the SVC.</p>
+  <ul class="dx-classes">
+    <li><a href="xfmr-3p2w/"><code>master:xfmr-3p2w</code><span>3 Phase 2 Winding Transformer · 74 parameters</span></a></li>
+    <li><a href="xfmr-3p3w/"><code>master:xfmr-3p3w</code><span>3 Phase 3 Winding Transformer · 84 parameters</span></a></li>
+    <li><a href="xfmr-3p3w2/"><code>master:xfmr-3p3w2</code><span>3 Phase 3 Winding Transformer · 86 parameters</span></a></li>
+    <li><a href="xfmr-3p4w/"><code>master:xfmr-3p4w</code><span>3 Phase 4 Winding Transformer · 94 parameters</span></a></li>
+    <li><a href="xfmr-3p4w2/"><code>master:xfmr-3p4w2</code><span>3 Phase 4 Winding Transformer · 97 parameters</span></a></li>
+    <li><a href="xfmr-3p2w-auto/"><code>master:xfmr_3p2w_auto</code><span>3 Phase Star-Star Auto Transfomer · 22 parameters</span></a></li>
+    <li><a href="xfmr-3p3w-auto/"><code>master:xfmr_3p3w_auto</code><span>3 Phase Star-Star Auto Transfomer with a tertiary · 26 parameters</span></a></li>
+    <li><a href="umec-xfmr-6w5l/"><code>master:umec-xfmr-6w5L</code><span>3/5 Limb UMEC Transformer · 106 parameters</span></a></li>
+    <li><a href="ct-single/"><code>master:ct_single</code><span>Current Transformer (JA Model) · 22 parameters</span></a></li>
+    <li><a href="currenttf/"><code>master:currenttf</code><span>Current Transformer (Lucas Model) · 27 parameters</span></a></li>
+    <li><a href="db-xfmr-3p2w/"><code>master:db_xfmr_3p2w</code><span>Duality based 3 phase 2 winding transformer · 142 parameters</span></a></li>
+    <li><a href="sat-reac/"><code>master:sat_reac</code><span>Saturable Reactor · 74 parameters</span></a></li>
+    <li><a href="xfmr-2w/"><code>master:xfmr-2w</code><span>Single Phase 2 Winding Transfomer · 38 parameters</span></a></li>
+    <li><a href="umec-xfmr-2w/"><code>master:umec-xfmr-2w</code><span>Single Phase 2 Winding UMEC Transformer · 43 parameters</span></a></li>
+    <li><a href="xfmr-3w-auto/"><code>master:xfmr_3w_auto</code><span>Single Phase 3 Winding Auto Transformer · 24 parameters</span></a></li>
+    <li><a href="xfmr-3w/"><code>master:xfmr-3w</code><span>Single Phase 3 Winding Transformer · 41 parameters</span></a></li>
+    <li><a href="xfmr-3w2/"><code>master:xfmr-3w2</code><span>Single Phase 3 Winding Transformer · 44 parameters</span></a></li>
+    <li><a href="umec-xfmr-3w/"><code>master:umec-xfmr-3w</code><span>Single Phase 3 Winding UMEC Transformer · 47 parameters</span></a></li>
+    <li><a href="umec-xfmr-3w2/"><code>master:umec-xfmr-3w2</code><span>Single Phase 3 Winding UMEC Transformer · 51 parameters</span></a></li>
+    <li><a href="xfmr-4w/"><code>master:xfmr-4w</code><span>Single Phase 4 Winding Transformer · 50 parameters</span></a></li>
+    <li><a href="umec-xfmr-4w/"><code>master:umec-xfmr-4w</code><span>Single Phase 4 Winding UMEC Transformer · 51 parameters</span></a></li>
+    <li><a href="xfmr-2w-auto/"><code>master:xfmr_2w_auto</code><span>Single Phase Auto Transformer · 21 parameters</span></a></li>
+    <li><a href="xfmr-nw/"><code>master:xfmr_Nw</code><span>Single Phase N Winding Transformer · 116 parameters</span></a></li>
+    <li><a href="svc/"><code>master:svc</code><span>Static Var Compensator · 32 parameters</span></a></li>
+    <li><a href="ratio-changer-2w/"><code>master:ratio_changer_2w</code><span>Zero Impedance Ideal Transformer · 3 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-lines-and-cables">
+  <h2 id="cat-lines-and-cables">Lines and cables<span class="dx-n">43</span></h2>
+  <p class="dx-note">Overhead line and cable cross-sections, conductors, ground properties and the PI sections.</p>
+  <ul class="dx-classes">
+    <li><a href="line-buswork-1/"><code>master:Line_BusWork_1</code><span>1 Conductor Bus Bar · 9 parameters</span></a></li>
+    <li><a href="line-tower-1/"><code>master:Line_Tower_1</code><span>1 Conductor Tower · 70 parameters</span></a></li>
+    <li><a href="line-tower-12-vert/"><code>master:Line_Tower_12_Vert</code><span>12 Conductor Vertical Tower · 85 parameters</span></a></li>
+    <li><a href="line-tower-2-flat/"><code>master:Line_Tower_2_Flat</code><span>2 Conductor Flat Tower · 73 parameters</span></a></li>
+    <li><a href="line-tower-3-concent/"><code>master:Line_Tower_3_Concent</code><span>3 Conductor Concentric Tower · 77 parameters</span></a></li>
+    <li><a href="line-tower-3-delta/"><code>master:Line_Tower_3_Delta</code><span>3 Conductor Delta Tower · 76 parameters</span></a></li>
+    <li><a href="line-tower-3-flat/"><code>master:Line_Tower_3-Flat</code><span>3 Conductor Flat Tower · 74 parameters</span></a></li>
+    <li><a href="line-buswork-3h/"><code>master:Line_BusWork_3H</code><span>3 Conductor Horizontal Bus Bar · 12 parameters</span></a></li>
+    <li><a href="line-tower-3-offset/"><code>master:Line_Tower_3_Offset</code><span>3 Conductor Offset Tower · 77 parameters</span></a></li>
+    <li><a href="line-buswork-3v/"><code>master:Line_BusWork_3V</code><span>3 Conductor Vertical Bus Bar · 12 parameters</span></a></li>
+    <li><a href="line-tower-3-vert/"><code>master:Line_Tower_3_Vert</code><span>3 Conductor Vertical Tower · 75 parameters</span></a></li>
+    <li><a href="line-tower-6-vert/"><code>master:LIne_Tower_6_Vert</code><span>6 Conductor (3x2) Vertical Tower · 78 parameters</span></a></li>
+    <li><a href="line-tower-6-vert1/"><code>master:Line_Tower_6_Vert1</code><span>6 Conductor (6x1) Vertical Tower · 79 parameters</span></a></li>
+    <li><a href="line-tower-6-concent/"><code>master:Line_Tower_6_Concent</code><span>6 Conductor Concentric Tower · 79 parameters</span></a></li>
+    <li><a href="line-tower-6-delta/"><code>master:Line_Tower_6_Delta</code><span>6 Conductor Delta Tower · 79 parameters</span></a></li>
+    <li><a href="line-tower-6-flat/"><code>master:Line_Tower_6_Flat</code><span>6 Conductor Flat Tower · 78 parameters</span></a></li>
+    <li><a href="line-tower-6-offset/"><code>master:Line_Tower_6_Offset</code><span>6 Conductor Offset Tower · 79 parameters</span></a></li>
+    <li><a href="line-berg-options/"><code>master:Line_Berg_Options</code><span>Bergeron Model · 6 parameters</span></a></li>
+    <li><a href="cable-interface/"><code>master:cable_interface</code><span>Cable Interface · 24 parameters</span></a></li>
+    <li><a href="cable-coax/"><code>master:Cable_Coax</code><span>Coax Cable Cross-Section · 64 parameters</span></a></li>
+    <li><a href="newpi/"><code>master:newpi</code><span>Coupled PI Section · 44 parameters</span></a></li>
+    <li><a href="pi-double-cct/"><code>master:pi_double_cct</code><span>Double Circuit Pi section · 66 parameters</span></a></li>
+    <li><a href="line-fredep-options/"><code>master:Line_FreDep_Options</code><span>Frequency Dependent (Mode) Model · 13 parameters</span></a></li>
+    <li><a href="line-frephase-options/"><code>master:Line_FrePhase_Options</code><span>Frequency Dependent (Phase) Model · 26 parameters</span></a></li>
+    <li><a href="line-out-disp/"><code>master:Line_Out_Disp</code><span>LCP Additional Options · 6 parameters</span></a></li>
+    <li><a href="l2l-imp/"><code>master:l2l_imp</code><span>Line to Line Impedance · 5 parameters</span></a></li>
+    <li><a href="line-constants-debug/"><code>master:Line_Constants_Debug</code><span>Line_Constants_Debug · 1 parameter</span></a></li>
+    <li><a href="line-manualyz/"><code>master:Line_ManualYZ</code><span>Manual Data Entry · 52 parameters</span></a></li>
+    <li><a href="coupled-2lines/"><code>master:coupled_2lines</code><span>Mutually Coupled 2 Wires · 7 parameters</span></a></li>
+    <li><a href="coupled-3lines/"><code>master:coupled_3lines</code><span>Mutually Coupled 3 Wires · 33 parameters</span></a></li>
+    <li><a href="nl-gain/"><code>master:nl-gain</code><span>Non-Linear Gain · 6 parameters</span></a></li>
+    <li><a href="nl-tfun/"><code>master:nl_tfun</code><span>Non-Linear Transfer Characteristic · 23 parameters</span></a></li>
+    <li><a href="fft/"><code>master:fft</code><span>On-Line Frequency Scanner · 11 parameters</span></a></li>
+    <li><a href="pi-ctlr/"><code>master:pi_ctlr</code><span>PI Controller · 8 parameters</span></a></li>
+    <li><a href="zpi-ctlr/"><code>master:Zpi_ctlr</code><span>PI Controller · 11 parameters</span></a></li>
+    <li><a href="pi-section2/"><code>master:pi_section2</code><span>pi_section2 · 25 parameters</span></a></li>
+    <li><a href="cable-pipetype/"><code>master:Cable_PipeType</code><span>Pipe-Type Cable · 454 parameters</span></a></li>
+    <li><a href="tline-interface-v2/"><code>master:tline_interface_v2</code><span>tline_interface_v2 · 2 parameters</span></a></li>
+    <li><a href="tline-interface/"><code>master:tline_interface</code><span>Transmission Line Interface · 13 parameters</span></a></li>
+    <li><a href="svcalloc1/"><code>master:svcalloc1</code><span>TSC/TCR Non-Linear Susceptance Characteristics · 8 parameters</span></a></li>
+    <li><a href="line-tower-universal/"><code>master:Line_Tower_Universal</code><span>Universal Tower · 109 parameters</span></a></li>
+    <li><a href="vector/"><code>master:vector</code><span>vector · 3 parameters</span></a></li>
+    <li><a href="voltmeter/"><code>master:voltmeter</code><span>Voltmeter · 1 parameter</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-passive">
+  <h2 id="cat-passive">Passive components and loads<span class="dx-n">30</span></h2>
+  <p class="dx-note">Resistors, inductors and capacitors, fixed and configurable loads, filters, arresters and surge generators.</p>
+  <ul class="dx-classes">
+    <li><a href="arrester/"><code>master:arrester</code><span>Arrester · 32 parameters</span></a></li>
+    <li><a href="filter-band/"><code>master:filter-band</code><span>Band Pass Filter · 10 parameters</span></a></li>
+    <li><a href="cfilter/"><code>master:cfilter</code><span>C-Type Filter · 11 parameters</span></a></li>
+    <li><a href="capacitive-load/"><code>master:capacitive_load</code><span>Capacitive Load · 5 parameters</span></a></li>
+    <li><a href="capacitor/"><code>master:capacitor</code><span>Capacitor · 2 parameters</span></a></li>
+    <li><a href="dload/"><code>master:Dload</code><span>Delta connected configurable load · 13 parameters</span></a></li>
+    <li><a href="fixed-load/"><code>master:fixed_load</code><span>Fixed Load · 26 parameters</span></a></li>
+    <li><a href="fixed-load1/"><code>master:fixed_load1</code><span>Fixed Load L-L · 12 parameters</span></a></li>
+    <li><a href="fload/"><code>master:fload</code><span>fload · 8 parameters</span></a></li>
+    <li><a href="filter-hp/"><code>master:filter-hp</code><span>High Pass Filter · 11 parameters</span></a></li>
+    <li><a href="inductor/"><code>master:inductor</code><span>Inductor · 2 parameters</span></a></li>
+    <li><a href="l2g-imp/"><code>master:l2g_imp</code><span>Line to Ground Impedance · 7 parameters</span></a></li>
+    <li><a href="line-ground/"><code>master:Line_Ground</code><span>Line|Cable Ground Properties · 10 parameters</span></a></li>
+    <li><a href="trans-filt/"><code>master:trans_filt</code><span>Nth Order Butterworth/Chebyshev Filter · 11 parameters</span></a></li>
+    <li><a href="puimpedancebranch/"><code>master:PUImpedanceBranch</code><span>PU Impedance Branch · 6 parameters</span></a></li>
+    <li><a href="resistor/"><code>master:resistor</code><span>Resistor · 2 parameters</span></a></li>
+    <li><a href="rrl/"><code>master:rrl</code><span>rrl · 3 parameters</span></a></li>
+    <li><a href="seq-filter/"><code>master:seq_filter</code><span>Sequence Filter · 3 parameters</span></a></li>
+    <li><a href="cable-coaxsimpl/"><code>master:Cable_CoaxSimpl</code><span>Simplified Cable Cross-Section · 61 parameters</span></a></li>
+    <li><a href="surge/"><code>master:surge</code><span>Surge Generator · 8 parameters</span></a></li>
+    <li><a href="surge1/"><code>master:surge1</code><span>Surge Generator · 13 parameters</span></a></li>
+    <li><a href="reactive-load/"><code>master:reactive_load</code><span>Three phase inductive load · 5 parameters</span></a></li>
+    <li><a href="resistive-load/"><code>master:resistive_load</code><span>Three phase resistive load · 4 parameters</span></a></li>
+    <li><a href="tsc-control/"><code>master:tsc_control</code><span>TSC Allocator · 2 parameters</span></a></li>
+    <li><a href="filter/"><code>master:filter</code><span>Tuned Filter · 10 parameters</span></a></li>
+    <li><a href="varrlc/"><code>master:varrlc</code><span>Variable R, L or C · 8 parameters</span></a></li>
+    <li><a href="voltmetergnd/"><code>master:voltmetergnd</code><span>Voltmeter to Ground · 1 parameter</span></a></li>
+    <li><a href="dload-3branch/"><code>master:Dload_3branch</code><span>Y connected configurable 3 branch load · 37 parameters</span></a></li>
+    <li><a href="yload-3branch/"><code>master:Yload_3branch</code><span>Y connected configurable 3 branch load · 50 parameters</span></a></li>
+    <li><a href="yload/"><code>master:Yload</code><span>Y connected configurable load · 18 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-switching">
+  <h2 id="cat-switching">Breakers and faults<span class="dx-n">15</span></h2>
+  <p class="dx-note">Breakers, faults, isolation switches, and the timed logic that operates them during a run.</p>
+  <ul class="dx-classes">
+    <li><a href="breaker3/"><code>master:breaker3</code><span>3 Phase Breaker · 37 parameters</span></a></li>
+    <li><a href="switch/"><code>master:switch</code><span>Isolation Switch · 2 parameters</span></a></li>
+    <li><a href="peswitch/"><code>master:peswitch</code><span>Power Electronic Switch · 21 parameters</span></a></li>
+    <li><a href="var-pot/"><code>master:var_pot</code><span>Rotary Switch · 17 parameters</span></a></li>
+    <li><a href="sequencer-fault/"><code>master:Sequencer_Fault</code><span>Sequencer: Apply/Clear Fault · 4 parameters</span></a></li>
+    <li><a href="sequencer-breaker/"><code>master:Sequencer_Breaker</code><span>Sequencer: Close/Open Breaker · 4 parameters</span></a></li>
+    <li><a href="breaker1/"><code>master:breaker1</code><span>Single Phase Breaker · 16 parameters</span></a></li>
+    <li><a href="fault-sw/"><code>master:fault_sw</code><span>Single Phase Fault · 7 parameters</span></a></li>
+    <li><a href="statistical-breaker/"><code>master:statistical_breaker</code><span>Statistical breaker · 6 parameters</span></a></li>
+    <li><a href="tbreak/"><code>master:tbreak</code><span>tbreak · 3 parameters</span></a></li>
+    <li><a href="tfault/"><code>master:tfault</code><span>tfault · 3 parameters</span></a></li>
+    <li><a href="tpflt/"><code>master:tpflt</code><span>Three Phase Fault · 16 parameters</span></a></li>
+    <li><a href="tbreakn/"><code>master:tbreakn</code><span>Timed Breaker Logic · 5 parameters</span></a></li>
+    <li><a href="tfaultn/"><code>master:tfaultn</code><span>Timed Fault Logic · 3 parameters</span></a></li>
+    <li><a href="var-switch/"><code>master:var_switch</code><span>Two State Switch · 9 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-protection">
+  <h2 id="cat-protection">Protection<span class="dx-n">5</span></h2>
+  <p class="dx-note">Relays, current transformers and CCVTs.</p>
+  <ul class="dx-classes">
+    <li><a href="ct-double/"><code>master:ct_double</code><span>2 CT model · 43 parameters</span></a></li>
+    <li><a href="ccvt1/"><code>master:ccvt1</code><span>CCVT · 32 parameters</span></a></li>
+    <li><a href="dscd87/"><code>master:dscd87</code><span>Dual Slope Current Differential Relay · 9 parameters</span></a></li>
+    <li><a href="itoc51/"><code>master:itoc51</code><span>Inverse Time Over Current Relay · 17 parameters</span></a></li>
+    <li><a href="dir-neg32/"><code>master:dir_neg32</code><span>Negative Sequence Directional Element · 9 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-meters">
+  <h2 id="cat-meters">Meters and output<span class="dx-n">27</span></h2>
+  <p class="dx-note">Output channels, multimeters, RMS and THD meters, the phase locked loop and the signal taps.</p>
+  <ul class="dx-classes">
+    <li><a href="breakout/"><code>master:breakout</code><span>3 phase to Single line Converter · 2 parameters</span></a></li>
+    <li><a href="modulator/"><code>master:modulator</code><span>AM/FM/PM Function · 4 parameters</span></a></li>
+    <li><a href="block-avg/"><code>master:block_avg</code><span>Block Average Phase Comparator · 7 parameters</span></a></li>
+    <li><a href="ammeter/"><code>master:ammeter</code><span>Current Meter · 1 parameter</span></a></li>
+    <li><a href="datalabel/"><code>master:datalabel</code><span>Data signal label · 1 parameter</span></a></li>
+    <li><a href="datatap2/"><code>master:datatap2</code><span>datatap2 · 5 parameters</span></a></li>
+    <li><a href="dynamic-datatap/"><code>master:dynamic_datatap</code><span>Dynamic datatap · 3 parameters</span></a></li>
+    <li><a href="electrical-tap/"><code>master:electrical_tap</code><span>Electrical tap · 2 parameters</span></a></li>
+    <li><a href="fdne/"><code>master:fdne</code><span>Frequency Dependent Network Equivalent · 27 parameters</span></a></li>
+    <li><a href="fdtf/"><code>master:fdtf</code><span>Frequency Dependent Transfer Function · 8 parameters</span></a></li>
+    <li><a href="freq-meas/"><code>master:freq-meas</code><span>Frequency/Phase/RMS Meter · 7 parameters</span></a></li>
+    <li><a href="cinj/"><code>master:cinj</code><span>Harmonic Current Injection · 9 parameters</span></a></li>
+    <li><a href="thd/"><code>master:thd</code><span>Harmonic Distortion Calculator · 3 parameters</span></a></li>
+    <li><a href="phasorimp/"><code>master:phasorimp</code><span>Harmonic Impedance · 11 parameters</span></a></li>
+    <li><a href="harmdiffmag/"><code>master:harmdiffmag</code><span>Harmonics Generator · 6 parameters</span></a></li>
+    <li><a href="multimeter/"><code>master:multimeter</code><span>Multimeter · 27 parameters</span></a></li>
+    <li><a href="nodeloop/"><code>master:nodeloop</code><span>Node Loop · 2 parameters</span></a></li>
+    <li><a href="pgb/"><code>master:pgb</code><span>Output Channel · 11 parameters</span></a></li>
+    <li><a href="phasediff/"><code>master:phasediff</code><span>Phase Difference · 5 parameters</span></a></li>
+    <li><a href="tvekta/"><code>master:tvekta</code><span>Phase Locked Loop · 14 parameters</span></a></li>
+    <li><a href="pss/"><code>master:pss</code><span>Power System Stabilizer · 165 parameters</span></a></li>
+    <li><a href="power/"><code>master:power</code><span>Real/Reactive Power Meter · 6 parameters</span></a></li>
+    <li><a href="sig-gen/"><code>master:sig_gen</code><span>Sawtooth Generator · 3 parameters</span></a></li>
+    <li><a href="datatap/"><code>master:datatap</code><span>Scalar/Array Tap · 6 parameters</span></a></li>
+    <li><a href="rms-inst/"><code>master:rms-inst</code><span>Single Phase RMS Meter · 7 parameters</span></a></li>
+    <li><a href="rms3ph/"><code>master:rms3ph</code><span>Three Phase RMS Meter · 8 parameters</span></a></li>
+    <li><a href="x-power-y/"><code>master:x_power_y</code><span>X to the power of Y · 5 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-control">
+  <h2 id="cat-control">Control blocks<span class="dx-n">126</span></h2>
+  <p class="dx-note">The Continuous System Model Functions: gains, integrators, limiters, comparators, logic and transfer functions.</p>
+  <ul class="dx-classes">
+    <li><a href="mux-array/"><code>master:mux_array</code><span>12 Channel Multiplexer · 3 parameters</span></a></li>
+    <li><a href="mux1/"><code>master:mux1</code><span>4,8 Channel Multiplexer · 2 parameters</span></a></li>
+    <li><a href="mux/"><code>master:mux</code><span>6 Channel Multiplexer · 8 parameters</span></a></li>
+    <li><a href="g6p200/"><code>master:g6p200</code><span>6 Pulse Bridge · 25 parameters</span></a></li>
+    <li><a href="g6p200-2/"><code>master:g6p200_2</code><span>6 Pulse Bridge · 25 parameters</span></a></li>
+    <li><a href="abcdq0/"><code>master:abcdq0</code><span>ABC - DQ0 Transformation · 4 parameters</span></a></li>
+    <li><a href="abs/"><code>master:abs</code><span>Absolute Value · 3 parameters</span></a></li>
+    <li><a href="backlash/"><code>master:backlash</code><span>Backlash · 4 parameters</span></a></li>
+    <li><a href="bin-delay/"><code>master:bin_delay</code><span>Binary Delay · 5 parameters</span></a></li>
+    <li><a href="delay/"><code>master:delay</code><span>Binary ON Delay · 3 parameters</span></a></li>
+    <li><a href="mmc-multidimcarriergen/"><code>master:mmc_MultiDimCarrierGen</code><span>Carrier Waveform Generator · 10 parameters</span></a></li>
+    <li><a href="detect-change/"><code>master:detect_change</code><span>Change Detector · 4 parameters</span></a></li>
+    <li><a href="clarke/"><code>master:clarke</code><span>Clarke Transformation · 3 parameters</span></a></li>
+    <li><a href="cosimulation/"><code>master:Cosimulation</code><span>Co-Simulation · 9 parameters</span></a></li>
+    <li><a href="emtconst/"><code>master:emtconst</code><span>Common Constants · 3 parameters</span></a></li>
+    <li><a href="conjugate/"><code>master:conjugate</code><span>Complex Conjugate · 3 parameters</span></a></li>
+    <li><a href="constc/"><code>master:constc</code><span>Complex Constant · 3 parameters</span></a></li>
+    <li><a href="counter/"><code>master:counter</code><span>Counter · 8 parameters</span></a></li>
+    <li><a href="current-scaler/"><code>master:current_scaler</code><span>Current Scaling · 3 parameters</span></a></li>
+    <li><a href="datamerge/"><code>master:datamerge</code><span>Data Merge · 17 parameters</span></a></li>
+    <li><a href="deadband/"><code>master:deadband</code><span>Deadband Controller · 5 parameters</span></a></li>
+    <li><a href="tdelay/"><code>master:tdelay</code><span>Delay · 8 parameters</span></a></li>
+    <li><a href="zdelay/"><code>master:Zdelay</code><span>Delay · 7 parameters</span></a></li>
+    <li><a href="derivative/"><code>master:derivative</code><span>Derivative · 4 parameters</span></a></li>
+    <li><a href="zderivative/"><code>master:Zderivative</code><span>Derivative · 5 parameters</span></a></li>
+    <li><a href="diffpole/"><code>master:diffpole</code><span>Differential Pole · 10 parameters</span></a></li>
+    <li><a href="zdiffpole/"><code>master:Zdiffpole</code><span>Differential Pole · 11 parameters</span></a></li>
+    <li><a href="dwt/"><code>master:dwt</code><span>Discrete Wavelet Transformation · 8 parameters</span></a></li>
+    <li><a href="discretizer/"><code>master:discretizer</code><span>Discretizer · 6 parameters</span></a></li>
+    <li><a href="lens21/"><code>master:lens21</code><span>Distance Relay - Lens · 11 parameters</span></a></li>
+    <li><a href="div/"><code>master:div</code><span>Divider · 3 parameters</span></a></li>
+    <li><a href="dot-product/"><code>master:dot_product</code><span>DOT product · 2 parameters</span></a></li>
+    <li><a href="downramp/"><code>master:downramp</code><span>Down Ramp Transfer Function · 6 parameters</span></a></li>
+    <li><a href="dq0/"><code>master:dq0</code><span>dq0 · 1 parameter</span></a></li>
+    <li><a href="edge/"><code>master:edge</code><span>Edge Detector · 6 parameters</span></a></li>
+    <li><a href="exp/"><code>master:exp</code><span>Exponential Function · 7 parameters</span></a></li>
+    <li><a href="export/"><code>master:export</code><span>Export Symbol · 1 parameter</span></a></li>
+    <li><a href="zminusone/"><code>master:zminusone</code><span>Feedback Loop Selector · 8 parameters</span></a></li>
+    <li><a href="ff-d/"><code>master:ff_d</code><span>ff_d · 2 parameters</span></a></li>
+    <li><a href="ff-jk/"><code>master:ff_jk</code><span>ff_jk · 2 parameters</span></a></li>
+    <li><a href="ff-rs/"><code>master:ff_rs</code><span>ff_rs · 2 parameters</span></a></li>
+    <li><a href="ff-t/"><code>master:ff_t</code><span>ff_t · 2 parameters</span></a></li>
+    <li><a href="flip-flop/"><code>master:flip_flop</code><span>Flip-Flop · 6 parameters</span></a></li>
+    <li><a href="flipflop/"><code>master:flipflop</code><span>flipflop · 5 parameters</span></a></li>
+    <li><a href="fplogic/"><code>master:fplogic</code><span>fplogic · 1 parameter</span></a></li>
+    <li><a href="gain/"><code>master:gain</code><span>Gain · 5 parameters</span></a></li>
+    <li><a href="txferfnc/"><code>master:txferfnc</code><span>Generic Transfer Function · 9 parameters</span></a></li>
+    <li><a href="hardlimit/"><code>master:hardlimit</code><span>Hard Limiter · 6 parameters</span></a></li>
+    <li><a href="buffer/"><code>master:buffer</code><span>Hysteresis Buffer · 6 parameters</span></a></li>
+    <li><a href="pwm-hcc/"><code>master:pwm_hcc</code><span>Hysteresis Current Control PWM · 5 parameters</span></a></li>
+    <li><a href="hysteresis-reactor/"><code>master:hysteresis_reactor</code><span>Hysteresis Reactor · 25 parameters</span></a></li>
+    <li><a href="impulse/"><code>master:impulse</code><span>Impulse Generator · 6 parameters</span></a></li>
+    <li><a href="consti/"><code>master:consti</code><span>Integer Constant · 3 parameters</span></a></li>
+    <li><a href="integral/"><code>master:integral</code><span>Integrator · 11 parameters</span></a></li>
+    <li><a href="zintegral/"><code>master:Zintegral</code><span>Integrator · 10 parameters</span></a></li>
+    <li><a href="fp-int/"><code>master:fp_int</code><span>Interpolated Firing Pulses · 10 parameters</span></a></li>
+    <li><a href="leadlag/"><code>master:leadlag</code><span>Lead-Lag Pole · 11 parameters</span></a></li>
+    <li><a href="zleadlag/"><code>master:Zleadlag</code><span>Lead-Lag Pole · 12 parameters</span></a></li>
+    <li><a href="oos-lens68/"><code>master:oos_lens68</code><span>Lens 68 · 19 parameters</span></a></li>
+    <li><a href="log/"><code>master:log</code><span>Logarithm Fuction · 5 parameters</span></a></li>
+    <li><a href="logic/"><code>master:logic</code><span>logic · 2 parameters</span></a></li>
+    <li><a href="logic-mult/"><code>master:logic_mult</code><span>Logic Gate · 15 parameters</span></a></li>
+    <li><a href="inv/"><code>master:inv</code><span>Logic Inverter · 2 parameters</span></a></li>
+    <li><a href="constl/"><code>master:constl</code><span>Logical Constant · 3 parameters</span></a></li>
+    <li><a href="maxmin/"><code>master:maxmin</code><span>Maximum/Minimum Function · 10 parameters</span></a></li>
+    <li><a href="oos-mho68/"><code>master:oos_mho68</code><span>Mho 68 · 14 parameters</span></a></li>
+    <li><a href="maxmin-array/"><code>master:maxmin_array</code><span>Minimum/Maximum Value/Location · 4 parameters</span></a></li>
+    <li><a href="mod/"><code>master:mod</code><span>MOD Function · 5 parameters</span></a></li>
+    <li><a href="modulo/"><code>master:modulo</code><span>MODULO Function · 5 parameters</span></a></li>
+    <li><a href="monostable/"><code>master:monostable</code><span>Monostable MultiVibrator · 3 parameters</span></a></li>
+    <li><a href="mmc-multidimcomparator/"><code>master:mmc_MultiDimComparator</code><span>Multi Dimensional Comparator · 4 parameters</span></a></li>
+    <li><a href="multimassdefn/"><code>master:multimassdefn</code><span>multimassdefn · 57 parameters</span></a></li>
+    <li><a href="mrun/"><code>master:mrun</code><span>Multiple Run · 228 parameters</span></a></li>
+    <li><a href="mrun-extra/"><code>master:mrun_extra</code><span>Multiple Run Additional Recording · 26 parameters</span></a></li>
+    <li><a href="mult/"><code>master:mult</code><span>Multiplier · 3 parameters</span></a></li>
+    <li><a href="trans-fcn/"><code>master:trans_fcn</code><span>Nth Order Transfer Function · 37 parameters</span></a></li>
+    <li><a href="ztrans-fcnz/"><code>master:Ztrans_fcnZ</code><span>Nth Order Transfer Function · 47 parameters</span></a></li>
+    <li><a href="over-current/"><code>master:over_current</code><span>Over Current Detection · 6 parameters</span></a></li>
+    <li><a href="overcurrent/"><code>master:overcurrent</code><span>overcurrent · 3 parameters</span></a></li>
+    <li><a href="pudot/"><code>master:pudot</code><span>Pick Up Drop Out Timer · 4 parameters</span></a></li>
+    <li><a href="polar-rec/"><code>master:polar_rec</code><span>Polar Rectangular Coordinate Converter · 3 parameters</span></a></li>
+    <li><a href="oos-poly68/"><code>master:oos_poly68</code><span>Polygon 68 · 15 parameters</span></a></li>
+    <li><a href="prod-array/"><code>master:prod_array</code><span>Product of all elements · 2 parameters</span></a></li>
+    <li><a href="var-button/"><code>master:var_button</code><span>Push Button · 5 parameters</span></a></li>
+    <li><a href="random/"><code>master:random</code><span>Random Number Generator · 8 parameters</span></a></li>
+    <li><a href="range/"><code>master:range</code><span>Range Comparator · 9 parameters</span></a></li>
+    <li><a href="ratelimit/"><code>master:ratelimit</code><span>Rate Limiter · 5 parameters</span></a></li>
+    <li><a href="const/"><code>master:const</code><span>Real Constant · 3 parameters</span></a></li>
+    <li><a href="realpole/"><code>master:realpole</code><span>Real Pole · 10 parameters</span></a></li>
+    <li><a href="zrealpole/"><code>master:Zrealpole</code><span>Real Pole · 11 parameters</span></a></li>
+    <li><a href="recorder2-0/"><code>master:recorder2_0</code><span>RTP and COMTRADE Recorder · 164 parameters</span></a></li>
+    <li><a href="sandhdefn/"><code>master:sandhdefn</code><span>Sample and Hold · 2 parameters</span></a></li>
+    <li><a href="sampler/"><code>master:sampler</code><span>Sampler · 5 parameters</span></a></li>
+    <li><a href="complex/"><code>master:complex</code><span>Second Order Complex Pole · 6 parameters</span></a></li>
+    <li><a href="cmplx/"><code>master:cmplx</code><span>Second Order Transfer Function · 8 parameters</span></a></li>
+    <li><a href="sequencer-setvar/"><code>master:Sequencer_SetVar</code><span>Sequencer: Set Variable · 6 parameters</span></a></li>
+    <li><a href="sequencer-start/"><code>master:Sequencer_Start</code><span>Sequencer: Start · 3 parameters</span></a></li>
+    <li><a href="sequencer-wait/"><code>master:Sequencer_Wait</code><span>Sequencer: Wait for an event · 11 parameters</span></a></li>
+    <li><a href="shiftreg/"><code>master:shiftreg</code><span>Serial-In/Serial-Out Shift Register · 12 parameters</span></a></li>
+    <li><a href="sign/"><code>master:sign</code><span>Sign Function · 3 parameters</span></a></li>
+    <li><a href="signalgen/"><code>master:signalgen</code><span>Signal Generator · 8 parameters</span></a></li>
+    <li><a href="compare/"><code>master:compare</code><span>Single Input Level Comparator · 7 parameters</span></a></li>
+    <li><a href="var/"><code>master:var</code><span>Slider · 8 parameters</span></a></li>
+    <li><a href="svm/"><code>master:svm</code><span>Space Vector Modulator · 3 parameters</span></a></li>
+    <li><a href="spark-gap/"><code>master:spark_gap</code><span>Spark Gap · 5 parameters</span></a></li>
+    <li><a href="sqrt/"><code>master:sqrt</code><span>Square Root · 3 parameters</span></a></li>
+    <li><a href="sum-array/"><code>master:sum_array</code><span>Sum of all elements · 2 parameters</span></a></li>
+    <li><a href="sumjct/"><code>master:sumjct</code><span>Summing/Differencing Junctions · 10 parameters</span></a></li>
+    <li><a href="timer/"><code>master:timer</code><span>Timer · 5 parameters</span></a></li>
+    <li><a href="timerdefn/"><code>master:timerdefn</code><span>timerdefn · 1 parameter</span></a></li>
+    <li><a href="multimass/"><code>master:multimass</code><span>Torsional Shaft Model · 221 parameters</span></a></li>
+    <li><a href="multimass2/"><code>master:multimass2</code><span>Torsional Shaft Model · 211 parameters</span></a></li>
+    <li><a href="trig/"><code>master:trig</code><span>Trignometric Functions · 5 parameters</span></a></li>
+    <li><a href="trip-polygon/"><code>master:trip_polygon</code><span>Trip Polygon · 18 parameters</span></a></li>
+    <li><a href="trv/"><code>master:trv</code><span>TRV Envelope Generator · 48 parameters</span></a></li>
+    <li><a href="compar/"><code>master:compar</code><span>Two Input Comparator · 9 parameters</span></a></li>
+    <li><a href="select/"><code>master:select</code><span>Two Input Selector · 5 parameters</span></a></li>
+    <li><a href="upramp/"><code>master:upramp</code><span>Up Ramp Transfer Function · 6 parameters</span></a></li>
+    <li><a href="var-impedance/"><code>master:var_impedance</code><span>Variable Series Impedance · 7 parameters</span></a></li>
+    <li><a href="vector-interlace/"><code>master:vector_interlace</code><span>Vector Interlace · 2 parameters</span></a></li>
+    <li><a href="vector-merge/"><code>master:vector_merge</code><span>Vector Merger · 3 parameters</span></a></li>
+    <li><a href="vco/"><code>master:vco</code><span>Voltage Controlled Oscillator · 2 parameters</span></a></li>
+    <li><a href="vdcl/"><code>master:vdcl</code><span>Voltage Dependent Current Limits · 11 parameters</span></a></li>
+    <li><a href="xy-transfer-function/"><code>master:xy_transfer_function</code><span>X-Y Transfer Function · 37 parameters</span></a></li>
+    <li><a href="xyz-tf/"><code>master:xyz_tf</code><span>XYZ Transfer Function · 17 parameters</span></a></li>
+    <li><a href="zerodetect/"><code>master:zerodetect</code><span>Zero Detector · 3 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-runtime">
+  <h2 id="cat-runtime">Runtime<span class="dx-n">3</span></h2>
+  <p class="dx-note">File Read, Optimum Run and the other components that read or write while the case is running.</p>
+  <ul class="dx-classes">
+    <li><a href="doblestate/"><code>master:doblestate</code><span>doblestate · 15 parameters</span></a></li>
+    <li><a href="fileread/"><code>master:fileread</code><span>File Read · 9 parameters</span></a></li>
+    <li><a href="optimum-run/"><code>master:optimum_run</code><span>Optimum Run · 78 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-other">
+  <h2 id="cat-other">Everything else<span class="dx-n">34</span></h2>
+  <p class="dx-note">The rest of the Master Library, including the HVDC and power electronics building blocks and the page furniture.</p>
+  <ul class="dx-classes">
+    <li><a href="angle-resolver/"><code>master:angle_resolver</code><span>Angle Resolver · 5 parameters</span></a></li>
+    <li><a href="vdvoci/"><code>master:vdvoci</code><span>CCCM controler for inverter · 5 parameters</span></a></li>
+    <li><a href="vdvocr/"><code>master:vdvocr</code><span>CCCM controller for rectifier · 5 parameters</span></a></li>
+    <li><a href="mesgam/"><code>master:mesgam</code><span>Effective Gamma · 3 parameters</span></a></li>
+    <li><a href="nodelabel/"><code>master:nodelabel</code><span>Electrical Node Label · 5 parameters</span></a></li>
+    <li><a href="xnode/"><code>master:xnode</code><span>External Electrical Node · 1 parameter</span></a></li>
+    <li><a href="mmc-firingfullbridge/"><code>master:mmc_FiringFullBridge</code><span>Firing Pulse Generator for MMC Full Cell · 4 parameters</span></a></li>
+    <li><a href="mmc-firinghalfbridge/"><code>master:mmc_FiringHalfBridge</code><span>Firing Pulse Generator for MMC Half Cell · 3 parameters</span></a></li>
+    <li><a href="force-dsdyn/"><code>master:force_dsdyn</code><span>Force to DSDyn · 3 parameters</span></a></li>
+    <li><a href="force-dsout/"><code>master:force_dsout</code><span>Force to DSOut · 3 parameters</span></a></li>
+    <li><a href="polpi5/"><code>master:polpi5</code><span>Generic Current Controller · 7 parameters</span></a></li>
+    <li><a href="vg6p18/"><code>master:vg6p18</code><span>Generic Gamma Controller · 9 parameters</span></a></li>
+    <li><a href="import/"><code>master:import</code><span>Import Symbol · 1 parameter</span></a></li>
+    <li><a href="ic-engine/"><code>master:ic_engine</code><span>Internal Combustion Engine · 107 parameters</span></a></li>
+    <li><a href="mho-circle/"><code>master:mho_circle</code><span>Mho Circle · 7 parameters</span></a></li>
+    <li><a href="mingam/"><code>master:mingam</code><span>Minimum Gamma · 2 parameters</span></a></li>
+    <li><a href="mmc-fullcell/"><code>master:mmc_FullCell</code><span>MMC Full Cell · 10 parameters</span></a></li>
+    <li><a href="mmc-halfcell/"><code>master:mmc_HalfCell</code><span>MMC Half Cell · 13 parameters</span></a></li>
+    <li><a href="pi-section/"><code>master:pi-section</code><span>pi-section · 8 parameters</span></a></li>
+    <li><a href="stop/"><code>master:stop</code><span>Programmable stop · 2 parameters</span></a></li>
+    <li><a href="pt1/"><code>master:pt1</code><span>PT - Lucas Model · 23 parameters</span></a></li>
+    <li><a href="rsff/"><code>master:rsff</code><span>rsff · 1 parameter</span></a></li>
+    <li><a href="rtcbranch/"><code>master:rtcbranch</code><span>Runtime Configurable Passive Branch · 7 parameters</span></a></li>
+    <li><a href="scale-changer/"><code>master:scale_changer</code><span>Scale changer · 9 parameters</span></a></li>
+    <li><a href="sequential/"><code>master:sequential</code><span>Sequential Number Generator · 4 parameters</span></a></li>
+    <li><a href="sorter/"><code>master:sorter</code><span>Sorter · 4 parameters</span></a></li>
+    <li><a href="square/"><code>master:square</code><span>Square · 3 parameters</span></a></li>
+    <li><a href="sregis/"><code>master:sregis</code><span>sregis · 10 parameters</span></a></li>
+    <li><a href="time-enab/"><code>master:time-enab</code><span>time-enab · 3 parameters</span></a></li>
+    <li><a href="tvekt/"><code>master:tvekt</code><span>tvekt · 8 parameters</span></a></li>
+    <li><a href="unity/"><code>master:unity</code><span>Type Conversion · 5 parameters</span></a></li>
+    <li><a href="voltlvl/"><code>master:voltlvl</code><span>voltlvl · 3 parameters</span></a></li>
+    <li><a href="radiolink/"><code>master:radiolink</code><span>Wireless Radio Link · 10 parameters</span></a></li>
+    <li><a href="xy-table/"><code>master:xy_table</code><span>X-Y Table · 8 parameters</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="bare">
+  <h2 id="bare">Definitions with nothing to set<span class="dx-n">38</span></h2>
+  <p class="dx-note">These have no parameters of their own, so they have no page. Some are the library's own pages rather than components; the rest are wires and markers, such as a ground or a jumper, that a script places and never writes to.</p>
+  <p class="dx-prose"><code>master:short</code>, <code>master:breakout2</code>, <code>master:Breakers_Faults</code>, <code>master:Cable1</code>, <code>master:Cables</code>, <code>master:CSMF</code>, <code>master:run_num</code>, <code>master:Data_recorders_Readers</code>, <code>master:ground</code>, <code>master:HVDC_FACTS_PE</code>, <code>master:I/O_Devices</code>, <code>master:Imports_Exports_Labels</code>, <code>master:jumper</code>, <code>master:jumper2</code>, <code>master:jumper3</code>, <code>master:latch</code>, <code>master:Logical</code>, <code>master:Machines</code>, <code>master:Main</code>, <code>master:Meters</code>, <code>master:Miscellaneous</code>, <code>master:Passive</code>, <code>master:PI_sections</code>, <code>master:pause</code>, <code>master:Protection</code>, <code>master:rank_number</code>, <code>master:Sequencer</code>, <code>master:pin</code>, <code>master:time-sig</code>, <code>master:delta-t</code>, <code>master:Sources</code>, <code>master:TLine</code>, <code>master:Tlines</code>, <code>master:num_run</code>, <code>master:Transformers</code>, <code>master:twist</code>, <code>master:var_plotstep</code>, <code>master:phdx</code></p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

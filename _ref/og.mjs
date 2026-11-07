@@ -8,11 +8,13 @@
 import { createRequire } from 'module';
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL, fileURLToPath } from 'url';
 const require = createRequire(import.meta.url);
 let pw;
 try { pw = require('playwright'); } catch { pw = createRequire('/opt/node22/lib/node_modules/')('playwright'); }
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+// fileURLToPath, not URL.pathname: on Windows the pathname is /D:/... and resolves to D:\D:\...
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://tool.adjiebrotots.com/';
 const BASE = process.env.BASE || 'http://localhost:8412';
 
@@ -41,6 +43,8 @@ export const CARDS = [
   ['pisahvsgabung-id', 'pisahvsgabung/id/'],
   ['powerfactory-scripter', 'powerfactory-scripter/'],
   ['powerfactory-scripter-builder', 'powerfactory-scripter/builder/'],
+  ['pscad-scripter', 'pscad-scripter/'],
+  ['pscad-scripter-builder', 'pscad-scripter/builder/'],
   ['randompicker', 'randompicker/'],
   ['rentvsownhouse', 'rentvsownhouse/'],
   ['rentvsownhouse-id', 'rentvsownhouse/id/'],
@@ -160,6 +164,7 @@ function tags() {
 }
 
 const arg = process.argv[2];
-if (import.meta.url === `file://${process.argv[1]}`) {
+// pathToFileURL, not `file://` + the path: on Windows the raw path is D:\... and never matches.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (arg === '--tags') tags(); else await draw(arg);
 }

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD fault ride through and critical clearing time with Python</title>
+<meta name="description" content="Sweep a fault duration in PSCAD from Python: apply the fault, run the EMT simulation, read the voltage dip and the speed nadir, then bisect the duration for a critical clearing time.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/fault-studies/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fault ride through and critical clearing time in PSCAD">
+<meta property="og:description" content="Sweep a fault duration in PSCAD from Python: apply the fault, run the EMT simulation, read the voltage dip and the speed nadir, then bisect the duration for a critical clearing time.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/fault-studies/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fault ride through and critical clearing time in PSCAD">
+<meta name="twitter:description" content="Sweep a fault duration in PSCAD from Python: apply the fault, run the EMT simulation, read the voltage dip and the speed nadir, then bisect the duration for a critical clearing time.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Fault ride through and critical clearing time in PSCAD",
+  "description": "Sweep a fault duration in PSCAD from Python: apply the fault, run the EMT simulation, read the voltage dip and the speed nadir, then bisect the duration for a critical clearing time.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/fault-studies/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad fault ride through, pscad critical clearing time, pscad fault python, tfaultn, tpflt, LVRT PSCAD, pscad fault duration sweep, EMT fault study",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Fault ride through"
+    },
+    {
+      "@type": "Thing",
+      "name": "Critical clearing time"
+    },
+    {
+      "@type": "Thing",
+      "name": "Electromagnetic transient simulation"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I apply a fault in PSCAD from Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Write the timing on the Timed Fault Logic component beside the fault: TF is the time the fault is applied and DF is how long it lasts, both in seconds. PSCAD has no event list, so the fault is a component already drawn in the case and the script changes its parameters before each run."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find a critical clearing time in PSCAD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bisect the fault duration. Run with a duration, decide pass or fail from the result, and halve the bracket each time. A boundary to within 10 ms inside a 50 to 500 ms range takes about six runs, where a fine grid would take dozens."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I measure for fault ride through?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The RMS voltage at the connection point, for the depth of the dip and how long recovery takes, and the machine speed or the converter’s own flags for whether the plant stayed in step and stayed connected. Read the dip from an RMS meter channel, not from the instantaneous waveform."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long should the run be after the fault clears?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Long enough to see whether it recovers. A fault cleared at 1.2 s in a 5 s run leaves nearly four seconds of recovery, which is usually enough to tell a settled machine from one that is slowly losing step."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Fault studies",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/fault-studies/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Fault studies</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Fault ride through and critical clearing time in PSCAD</h1>
+    <p class="dx-lead">A fault study in PSCAD is a loop of runs. There is <strong>no event list to fill</strong>: the fault is a component already drawn in the case, and the study writes its start time and its duration before each run. Ride through asks what happens over a range of durations; a critical clearing time asks for the longest one the machine survives, which is a search rather than a sweep. Both are the same three blocks with a different thing wrapped around them.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">How a fault is applied in PSCAD</a></li><li><a href="#method">The method, both ways round</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">How a fault is applied in PSCAD</h2>
+  <p>A fault in PSCAD is two components. The <a href="../../reference/tpflt/">Three Phase Fault</a> (<code>master:tpflt</code>) is the fault itself: which phases it takes down, whether it goes to ground, and its on and off resistance. Beside it sits the <a href="../../reference/tfaultn/">Timed Fault Logic</a> (<code>master:tfaultn</code>), which holds <strong>when the fault is applied (<code>TF</code>) and how long it lasts (<code>DF</code>)</strong>, both in seconds.</p>
+  <p>So the study writes two numbers on one component and runs. Nothing else about the fault changes between passes, which is what makes the sweep cheap to write and easy to trust: the only difference between one row and the next is a duration.</p>
+  <p>The same shape covers a breaker: the <a href="../../reference/breaker3/">3 Phase Breaker</a> is driven by the Timed Breaker Logic beside it, whose <code>TO1</code> and <code>TO2</code> are the times it operates.</p>
+  <p>What you read back depends on what the study is for.</p>
+  <ul class="dx-prose">
+    <li><strong>Ride through</strong> asks whether the plant stayed connected and whether the voltage recovered: the lowest point of the voltage at the connection point, and how long it took to come back.</li>
+    <li><strong>Stability</strong> asks whether the machine stayed in step: the nadir of its speed, and whether it came back to the nominal rather than running away.</li>
+    <li><strong>A critical clearing time</strong> asks for the longest fault the machine survives, which is the boundary between a pass and a fail.</li>
+  </ul>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method, both ways round</h2>
+  <h3>Ride through: a sweep</h3>
+  <p>Every duration in the range is run, and each pass writes a row. The sweep is worth running first even when you only want the critical clearing time, because it shows the shape of the answer and tells you the range to search in.</p>
+  <ol class="dx-steps">
+    <li><strong>Loop over the durations</strong> you care about. Grid codes usually set the ones that matter, so the range is a list rather than a guess.</li>
+    <li><strong>Write the fault timing</strong> on the Timed Fault Logic before each run. Apply the fault well after the case has settled, not at <code>t = 0</code>.</li>
+    <li><strong>Run</strong> long enough to see the recovery, not just the fault. A fault cleared at 1.2 s in a 5 s run leaves nearly four seconds of recovery to look at.</li>
+    <li><strong>Read the channels</strong>: the voltage at the connection point, and the machine speed.</li>
+    <li><strong>Take a number off each</strong>: the lowest voltage, and the speed nadir.</li>
+    <li><strong>Add a row</strong>, and put the fault timing back before the next pass.</li>
+  </ol>
+  <pre><code class="language-python"><span class="py-k">for</span> duration <span class="py-k">in</span> (<span class="py-n">0.08</span>, <span class="py-n">0.12</span>, <span class="py-n">0.16</span>, <span class="py-n">0.20</span>, <span class="py-n">0.24</span>):
+    mark = <span class="py-f">px_mark</span>()                                   <span class="py-c"># so this pass can be undone</span>
+    start, clear = <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, at=<span class="py-n">1.0</span>, duration=duration)
+
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">5.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    v = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vpcc&quot;</span>)
+    w = run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>)
+
+    dip = <span class="py-f">peak</span>(v, kind=<span class="py-s">&quot;min&quot;</span>)                          <span class="py-c"># .value and .time</span>
+    nadir = <span class="py-f">nadir_of</span>(w)
+
+    <span class="py-f">table</span>(<span class="py-s">&quot;FRT&quot;</span>).<span class="py-f">add</span>({
+        <span class="py-s">&quot;Fault duration (s)&quot;</span>: duration,
+        <span class="py-s">&quot;Cleared at (s)&quot;</span>: clear,
+        <span class="py-s">&quot;Lowest voltage&quot;</span>: dip.value,
+        <span class="py-s">&quot;Speed nadir&quot;</span>: nadir.value,
+        <span class="py-s">&quot;Reached (s)&quot;</span>: run.t_end,
+    })
+    <span class="py-f">px_undo</span>(mark)</code></pre>
+  <h3>Critical clearing time: a search</h3>
+  <p>A critical clearing time is the <strong>largest fault duration that still passes</strong>. Running a fine grid to find it wastes runs: most of them are a long way from the boundary. Bisection halves the gap each time, so a boundary to 10 ms inside a 50 ms to 500 ms range takes about six runs instead of forty-five.</p>
+  <p>The search needs one thing the sweep does not: <strong>a verdict per run</strong>. Something has to say pass or fail, and it has to say it the same way every time. For a synchronous machine the usual test is whether the speed comes back; for a converter it is whether the plant stayed connected.</p>
+  <pre><code class="language-python"><span class="py-c"># Find limit: the largest duration where the verdict is still a pass.</span>
+<span class="py-c">#   try a duration -&gt; apply, run, read, decide -&gt; report pass or fail</span>
+<span class="py-c">#   the search narrows the bracket until it is inside the tolerance</span>
+
+<span class="py-k">def</span> <span class="py-f">attempt</span>(duration):
+    mark = <span class="py-f">px_mark</span>()
+    <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, at=<span class="py-n">1.0</span>, duration=duration)
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">5.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    speed = run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>)
+    <span class="py-f">px_undo</span>(mark)
+    <span class="py-k">return</span> <span class="py-f">final_value</span>(speed) &lt; <span class="py-n">1.02</span> <span class="py-k">and</span> run.status == <span class="py-s">&quot;finished&quot;</span>   <span class="py-c"># stayed in step</span></code></pre>
+  <p class="dx-note">The verdict has to be honest about a run that did not finish. A case that goes unstable often stops early, and treating "did not finish" as a pass puts the critical clearing time above the real one, which is the dangerous direction to be wrong in.</p>
+  <h3>What to look at in the results</h3>
+  <p>The table is the point of the sweep, but two things in it are worth reading before anything else. The <strong>first duration that fails</strong> brackets the critical clearing time without a search. And a <strong>speed nadir that keeps falling while the voltage dip stays the same</strong> says the machine is losing synchronism rather than the network getting weaker, which is a different problem.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Fault ride through over fault durations Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=frt">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The ride through Quick Start is the sweep, wired: a loop over the durations, the fault, the run, two channels, two checks and a results table. This is the file the Builder writes, with the case set to your own path:</p>
+  <p class="dx-file"><span><code>fault_ride_through.py</code> as the Builder writes it: the settings and the workflow</span><a href="fault_ride_through.py" download>⬇ Download the full file (.py, 3,563 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Fault ride through</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 fault_ride_through.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Fault ride through&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: Set the Fault component to the three phase fault in your own case (its definition is usually master:tpflt, and a Name narrows it when the case has several), and the channel names to the output chan...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Fault duration (s) (0.08 to 0.24, step 0.04) --</span>
+        fault_duration_s_values = <span class="py-f">num_range</span>(<span class="py-n">0.08</span>, <span class="py-n">0.24</span>, <span class="py-n">0.04</span>)
+        <span class="py-k">for</span> fault_duration_s_pass_no, fault_duration_s <span class="py-k">in</span> <span class="py-f">enumerate</span>(fault_duration_s_values, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Fault duration (s)&quot;</span>, fault_duration_s, fault_duration_s_pass_no, <span class="py-f">len</span>(fault_duration_s_values))
+            mark = <span class="py-f">px_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Fault (master:tpflt: 1 to 1.12 s) --</span>
+                fault = <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-n">1</span>, fault_duration_s, <span class="py-k">True</span>, <span class="py-s">&quot;one&quot;</span>, <span class="py-k">None</span>, <span class="py-k">None</span>)
+                <span class="py-c"># -- Step 4: Run simulation (5 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">5</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=[(<span class="py-n">1</span>, <span class="py-s">&quot;Fault&quot;</span>)], build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: skips to the next pass of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># Stopped early: skips to the next pass of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 5: Add row to results table (Into &quot;FRT&quot;, saved at the end automatically) --</span>
+                voltage = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vpcc&quot;</span>, <span class="py-s">&quot;Voltage&quot;</span>)  <span class="py-c"># Read a channel</span>
+                voltage_dip = <span class="py-f">peak</span>(voltage, kind=<span class="py-s">&quot;min&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Voltage dip</span>
+                speed = run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>, <span class="py-s">&quot;Speed&quot;</span>)  <span class="py-c"># Read a channel</span>
+                speed_nadir = <span class="py-f">nadir</span>(speed, t_event=<span class="py-k">None</span>, nominal=<span class="py-k">None</span>, delay=<span class="py-n">0</span>, window=<span class="py-n">10</span>, min_recovery=<span class="py-n">0.05</span>, tail_guard=<span class="py-n">1</span>, floor_below=<span class="py-n">5</span>, ufls_below=<span class="py-n">1</span>, requires_ufls=<span class="py-k">True</span>, extend_to=<span class="py-k">None</span>)  <span class="py-c"># Speed nadir</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;FRT&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Lowest voltage&quot;</span>: voltage_dip.value,
+                    <span class="py-s">&quot;Speed nadir&quot;</span>: speed_nadir.value,
+                    <span class="py-s">&quot;Reached (s)&quot;</span>: run.t_end,
+                }, status=<span class="py-k">True</span>)
+                <span class="py-c"># -- Step 6: Draw time series graph (Every pass on one graph) --</span>
+                <span class="py-f">collect_series</span>(<span class="py-s">&quot;n10&quot;</span>, [speed])
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">px_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;FRT&quot;</span>])
+        <span class="py-f">draw_collected</span>(<span class="py-s">&quot;n10&quot;</span>, title=<span class="py-s">&quot;&quot;</span>, ylabel=<span class="py-s">&quot;Machine speed&quot;</span>, unit=<span class="py-k">None</span>, limits=[], events=<span class="py-k">True</span>, stem=<span class="py-s">&quot;speed&quot;</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 3,407 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li>The <strong>For a range of numbers</strong> block is the sweep. Its <em>Each pass</em> output runs the body once per value and its value output feeds the fault duration, so there is one place to change the range.</li>
+    <li><code>set_fault(...)</code> writes <code>TF</code> and <code>DF</code> on the Timed Fault Logic and hands back the start and the clear time, so the row records when the fault actually cleared rather than what was asked for.</li>
+    <li>Both run outputs are wired. A run that stops early still reaches the table, with <code>run.t_end</code> saying how far it got.</li>
+    <li>The two <strong>Read a channel</strong> blocks name the channels by their titles as the case records them, so these are the two lines to change for your own model.</li>
+    <li>Each pass sits between <code>px_mark()</code> and <code>px_undo(mark)</code>, so the fault timing goes back to what it was before the next duration is written. The case is left as it was found.</li>
+    <li>The graph block draws the voltage against time for every pass on one figure, which is the picture a ride through report wants.</li>
+  </ul>
+  <h3>The same study as a search</h3>
+  <p>The critical clearing time Quick Start is the same three blocks with <strong>Find limit</strong> in place of the loop, and a <strong>Pass / fail</strong> block giving the verdict each try reports back. Find limit halves the bracket on every try, so the boundary costs a handful of runs:</p>
+  <p class="dx-file"><span>The Critical clearing time Quick Start, as the Builder writes it</span><a href="critical_clearing_time.py" download>⬇ Download the full file (.py, 2,688 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Critical clearing time</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 critical_clearing_time.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Critical clearing time&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: Find limit halves the gap between a duration that passes and one that fails, so it finds the critical clearing time in about eight runs instead of a sweep of thirty. Set the pass test to what your...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Fault duration (s) (0 to 100, within 0.005) --</span>
+        <span class="py-k">def</span> <span class="py-f">try_n2</span>(fault_duration_s):
+            trial = <span class="py-f">Trial</span>({<span class="py-s">&quot;Fault duration (s)&quot;</span>: fault_duration_s}, <span class="py-s">&quot;min&quot;</span>)
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Fault duration (s)&quot;</span>, fault_duration_s)
+            mark = <span class="py-f">px_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Fault (master:tpflt: 1 to 1.12 s) --</span>
+                fault = <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-n">1</span>, fault_duration_s, <span class="py-k">True</span>, <span class="py-s">&quot;one&quot;</span>, <span class="py-k">None</span>, <span class="py-k">None</span>)
+                <span class="py-c"># -- Step 4: Run simulation (5 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">5</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=[(<span class="py-n">1</span>, <span class="py-s">&quot;Fault&quot;</span>)], build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: ends this try of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">return</span> trial
+                <span class="py-c"># Stopped early: ends this try of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">return</span> trial
+                <span class="py-c"># -- Step 5: Stays in step (Value ≥ 1.05) --</span>
+                machine_speed = run.<span class="py-f">series</span>(<span class="py-s">&quot;Machine Speed&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+                peak_result = <span class="py-f">peak</span>(machine_speed, kind=<span class="py-s">&quot;max&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Peak</span>
+                stays_in_step_result = <span class="py-f">verdict</span>(peak_result.value, <span class="py-s">&quot;ge&quot;</span>, <span class="py-n">1.05</span>, <span class="py-n">0</span>)
+                <span class="py-k">if</span> stays_in_step_result.ok <span class="py-k">is</span> <span class="py-k">None</span>:
+                    <span class="py-f">log</span>(<span class="py-s">&quot;Stays in step: NO DATA (&quot;</span> + <span class="py-f">str</span>(stays_in_step_result.<span class="py-f">get</span>(<span class="py-s">&quot;reason&quot;</span>) <span class="py-k">or</span> <span class="py-s">&quot;nothing to check&quot;</span>) + <span class="py-s">&quot;), so it takes Fail.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+                <span class="py-c"># Fail: ends this try of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (stays_in_step_result.ok <span class="py-k">is</span> <span class="py-k">True</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Stays in step did not pass&quot;</span>)
+                    <span class="py-k">return</span> trial
+                <span class="py-c"># -- Step 6: Add row to results table (Into &quot;CCT&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;CCT&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Highest speed&quot;</span>: peak_result.value}, status=<span class="py-k">True</span>)
+                trial.<span class="py-f">report</span>(ok=stays_in_step_result.ok)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err, trial)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">px_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;CCT&quot;</span>])
+            <span class="py-k">return</span> trial
+        fault_duration_s_result = <span class="py-f">find_limit</span>(try_n2, <span class="py-n">0</span>, <span class="py-n">100</span>, <span class="py-n">0.005</span>, max_steps=<span class="py-n">20</span>, passes=<span class="py-s">&quot;low&quot;</span>, bracket=<span class="py-s">&quot;given&quot;</span>, on_unknown=<span class="py-s">&quot;stop&quot;</span>, label=<span class="py-s">&quot;Fault duration (s)&quot;</span>, integer=<span class="py-k">False</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Applying the fault before the case has settled.</strong> An EMT case starts from zero and takes time to reach steady state. A fault at 0.1 s measures the initialisation, not the fault. Let the case settle first, or <a href="../snapshots-and-batch/">start every run from a snapshot</a>.</li>
+    <li><strong>Ending the run at the clearing time.</strong> The interesting part of a ride through is the recovery. A 5 s run with the fault at 1 s gives it room; a 1.5 s run does not.</li>
+    <li><strong>Reading the lowest voltage off the instantaneous waveform.</strong> An instantaneous phase voltage passes through zero every half cycle, so its minimum is meaningless. Read the dip off an <a href="../../reference/rms3ph/">RMS meter</a> channel, or take the RMS of the waveform in the script.</li>
+    <li><strong>Leaving the fault timing written.</strong> Every parameter a script writes is written in the case. Undo each pass, or the last duration in the sweep becomes the case's new setting.</li>
+    <li><strong>A critical clearing time with no tolerance.</strong> Bisection converges on a boundary; it needs to be told how close is close enough. Ten milliseconds is usually finer than the model justifies.</li>
+    <li><strong>A verdict that reads a channel the run did not record.</strong> That gives an empty series, and an empty series must not read as a pass. Check the run recorded the channel before trusting the search.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I apply a fault in PSCAD from Python?</h3>
+  <p>Write the timing on the Timed Fault Logic component beside the fault: TF is the time the fault is applied and DF is how long it lasts, both in seconds. PSCAD has no event list, so the fault is a component already drawn in the case and the script changes its parameters before each run.</p>
+  <h3>How do I find a critical clearing time in PSCAD?</h3>
+  <p>Bisect the fault duration. Run with a duration, decide pass or fail from the result, and halve the bracket each time. A boundary to within 10 ms inside a 50 to 500 ms range takes about six runs, where a fine grid would take dozens.</p>
+  <h3>What do I measure for fault ride through?</h3>
+  <p>The RMS voltage at the connection point, for the depth of the dip and how long recovery takes, and the machine speed or the converter’s own flags for whether the plant stayed in step and stayed connected. Read the dip from an RMS meter channel, not from the instantaneous waveform.</p>
+  <h3>How long should the run be after the fault clears?</h3>
+  <p>Long enough to see whether it recovers. A fault cleared at 1.2 s in a 5 s run leaves nearly four seconds of recovery, which is usually enough to tell a settled machine from one that is slowly losing step.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build a PSCAD case and run it from Python</a></li>
+    <li><a href="../parameter-sweep/">Sweep a parameter in PSCAD and collect the results</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD EMT run</a></li>
+    <li><a href="../snapshots-and-batch/">PSCAD snapshots and running cases in a batch</a></li>
+    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

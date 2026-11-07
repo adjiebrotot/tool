@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD snapshots and batch runs with Python (simulation sets, volley)</title>
+<meta name="description" content="Cut the initialisation out of every PSCAD run with a snapshot, then run several cases at once in a simulation set with a volley, from one Python script.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/snapshots-and-batch/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="PSCAD snapshots and running cases in a batch">
+<meta property="og:description" content="Cut the initialisation out of every PSCAD run with a snapshot, then run several cases at once in a simulation set with a volley, from one Python script.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/snapshots-and-batch/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PSCAD snapshots and running cases in a batch">
+<meta name="twitter:description" content="Cut the initialisation out of every PSCAD run with a snapshot, then run several cases at once in a simulation set with a volley, from one Python script.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "PSCAD snapshots and running cases in a batch",
+  "description": "Cut the initialisation out of every PSCAD run with a snapshot, then run several cases at once in a simulation set with a volley, from one Python script.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/python/snapshots-and-batch/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
+  "keywords": "pscad snapshot, pscad simulation set, pscad volley, pscad batch run python, pscad parallel runs, pscad initialisation, snapshot file psmx",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "PSCAD"
+    },
+    {
+      "@type": "Thing",
+      "name": "Snapshot"
+    },
+    {
+      "@type": "Thing",
+      "name": "Batch simulation"
+    },
+    {
+      "@type": "Thing",
+      "name": "Electromagnetic transient simulation"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PSCAD studies with Python",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a PSCAD snapshot?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A file holding the entire state of the simulation at one instant: every capacitor voltage, inductor current and controller state. A run told to start from it begins in that state instead of from zero, which removes the initialisation from every run of a study after the first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is a snapshot not safe to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When the thing being varied changes the steady state the snapshot captured. Sweeping a fault duration is fine, because the case is identical until the fault. Sweeping a transformer rating or a source impedance is not: the snapshot holds the state of a different network."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I run several PSCAD cases at once?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Put them in a simulation set and give the set a volley. The volley is how many tasks run at the same time; each task is a full EMTDC process, so a volley of about the number of cores on the machine is the practical limit."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a snapshot make the simulation faster?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It removes simulated time, not solver work per step. A case that takes 2 s to settle and 2 s to show the event runs half as long per pass once the settling is snapshotted, and the saving multiplies by the number of passes."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Snapshots and batch runs",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/python/snapshots-and-batch/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Snapshots and batch runs</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PSCAD snapshots and running cases in a batch</h1>
+    <p class="dx-lead">An EMT case starts from zero every time and spends the first second or two getting to a steady state that is the same on every run of a study. Two things get that time back. A <strong>snapshot</strong> runs the initialisation once and starts every later run from the state it saved. A <strong>simulation set</strong> runs several cases at the same time instead of one after another. Together they turn an overnight sweep into a lunch break.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a snapshot is</a></li><li><a href="#method">Snapshots, then simulation sets</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a snapshot is</h2>
+  <p>A snapshot is the <strong>whole state of the simulation at one instant</strong>, written to a file beside the case. Every capacitor voltage, every inductor current, every controller state. A later run told to start from it begins in that state instead of from zero, so the initialisation does not happen again.</p>
+  <p>For a study that varies something <em>after</em> the case has settled, which is most of them, that is the whole initialisation removed from every pass but the first. A case that takes 2 s to settle and 2 s to show the event goes from 4 s of simulation per pass to 2 s: half the work, over twenty passes or two hundred.</p>
+  <p>It only works when the thing being varied happens after the snapshot. A sweep over fault durations qualifies, because the case is the same until the fault. A sweep over a transformer rating does not: that changes the steady state the snapshot captured, so the snapshot is wrong for every value but the one it was taken with.</p>
+  <h3>And a simulation set</h3>
+  <p>A <strong>simulation set</strong> is a list of cases PSCAD runs as a group, and a <strong>volley</strong> is how many of them run at the same time. Each task in the set can override the duration and the time steps, so one set can hold the same case under several conditions. This is the parallelism PSCAD has: not one case split across cores, but several cases running side by side.</p>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">Snapshots, then simulation sets</h2>
+  <h3>Taking a snapshot</h3>
+  <p>The snapshot is taken at a time, during a run. Tell the case when to take it, run past that time, and the file is written.</p>
+  <pre><code class="language-python"><span class="py-f">snapshot_at</span>(app, <span class="py-n">2.0</span>, name=<span class="py-s">&quot;settled&quot;</span>)          <span class="py-c"># take it at t = 2 s</span>
+<span class="py-f">px_run</span>(app, duration=<span class="py-n">2.2</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)   <span class="py-c"># run past it, once</span></code></pre>
+  <h3>Starting from it</h3>
+  <p>A run told to start from a snapshot begins at the time the snapshot was taken, not at zero. Times inside the run are still absolute, so a fault at 0.1 s after a snapshot taken at 2 s is written as 2.1 s unless the case is set to restart the clock.</p>
+  <pre><code class="language-python"><span class="py-f">snapshot_use</span>(app, <span class="py-s">&quot;settled&quot;</span>)
+
+<span class="py-k">for</span> duration <span class="py-k">in</span> (<span class="py-n">0.08</span>, <span class="py-n">0.12</span>, <span class="py-n">0.16</span>, <span class="py-n">0.20</span>):
+    mark = <span class="py-f">px_mark</span>()
+    <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, at=<span class="py-n">2.1</span>, duration=duration)
+    run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">2.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+    <span class="py-f">table</span>(<span class="py-s">&quot;Snapshot&quot;</span>).<span class="py-f">add</span>({
+        <span class="py-s">&quot;Fault (s)&quot;</span>: duration,
+        <span class="py-s">&quot;Lowest voltage&quot;</span>: <span class="py-f">peak</span>(run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>), kind=<span class="py-s">&quot;min&quot;</span>).value,
+    })
+    <span class="py-f">px_undo</span>(mark)
+
+<span class="py-f">snapshot_off</span>(app)      <span class="py-c"># later runs start from zero again</span></code></pre>
+  <p class="dx-note">Put the case back to starting from zero when the script ends. A case left set to start from a snapshot will quietly use it the next time anyone opens it, including for a study the snapshot does not suit.</p>
+  <h3>Running several cases at once</h3>
+  <p>A simulation set holds tasks, each one a case, and the volley says how many run together. Four at a time on a four core machine is the usual starting point; more than the machine has cores makes everything slower.</p>
+  <pre><code class="language-python">sim = <span class="py-f">simset_create</span>(app, <span class="py-s">&quot;PXB_batch&quot;</span>, volley=<span class="py-n">4</span>)
+<span class="py-f">simset_add</span>(sim, [<span class="py-s">&quot;caseA&quot;</span>, <span class="py-s">&quot;caseB&quot;</span>, <span class="py-s">&quot;caseC&quot;</span>, <span class="py-s">&quot;caseD&quot;</span>])
+<span class="py-f">simset_override</span>(sim, duration=<span class="py-n">5.0</span>, step=<span class="py-n">50</span>)       <span class="py-c"># the same settings for every task</span>
+
+result = <span class="py-f">simset_run</span>(sim)
+<span class="py-k">for</span> task <span class="py-k">in</span> result.tasks:
+    <span class="py-f">table</span>(<span class="py-s">&quot;Batch&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Case&quot;</span>: task.name, <span class="py-s">&quot;Status&quot;</span>: task.status, <span class="py-s">&quot;Seconds&quot;</span>: task.seconds})</code></pre>
+  <p class="dx-note">On PSCAD 5.0.0 the Automation Library has <code>add_tasks</code> but not <code>add_task</code>: add them as a list. The generated scripts do this for you.</p>
+  <h3>Which one to reach for</h3>
+  <ul class="dx-prose">
+    <li><strong>Same case, something varied after it settles</strong>: a snapshot. The saving is the initialisation, every pass.</li>
+    <li><strong>Different cases, or variations that change the steady state</strong>: a simulation set. The saving is wall clock time, not simulated time.</li>
+    <li><strong>Both</strong>: take a snapshot per case, then run the cases as a set. The two do not get in each other's way.</li>
+  </ul>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Initialise once, then branch Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=snapshot">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The snapshot Quick Start is the pattern: one run to settle and save, then a loop that branches from the saved state. This is the file the Builder writes:</p>
+  <p class="dx-file"><span><code>snapshot_then_branch.py</code> as the Builder writes it: the settings and the workflow</span><a href="snapshot_then_branch.py" download>⬇ Download the full file (.py, 2,429 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Snapshot then branch</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 snapshot_then_branch.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Snapshot then branch&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: A snapshot is the whole state of the case at one instant. A long start-up is simulated once, and each case after it begins there, which is often most of the run time of a study saved. Set the snaps...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Save a snapshot (at 2 s) --</span>
+        snapshot = <span class="py-f">snapshot_save</span>(app, <span class="py-n">2</span>, <span class="py-k">None</span>, <span class="py-s">&quot;&quot;</span>)
+        <span class="py-c"># -- Step 3: Initialise (2.2 s, 50 us step) --</span>
+        initialise = <span class="py-f">px_run</span>(app, <span class="py-n">2.2</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=(), build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+        <span class="py-c"># Did not build: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> initialise.ok <span class="py-k">and</span> (initialise.status == <span class="py-s">&quot;failed&quot;</span>):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The case did not build. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># Stopped early: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> (initialise.ok <span class="py-k">or</span> (initialise.status == <span class="py-s">&quot;failed&quot;</span>)):
+            <span class="py-f">log</span>(<span class="py-s">&quot;The simulation stopped before the end. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 4: Start from a snapshot (no snapshot chosen) --</span>
+        snapshot_n4 = <span class="py-f">snapshot_use</span>(app, snapshot)
+        <span class="py-c"># -- Step 5: Fault duration (s) (0.08 to 0.2, step 0.04) --</span>
+        fault_duration_s_values = <span class="py-f">num_range</span>(<span class="py-n">0.08</span>, <span class="py-n">0.2</span>, <span class="py-n">0.04</span>)
+        <span class="py-k">for</span> fault_duration_s_pass_no, fault_duration_s <span class="py-k">in</span> <span class="py-f">enumerate</span>(fault_duration_s_values, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Fault duration (s)&quot;</span>, fault_duration_s, fault_duration_s_pass_no, <span class="py-f">len</span>(fault_duration_s_values))
+            mark = <span class="py-f">px_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 6: Fault (master:tpflt: 0.1 to 0.22 s) --</span>
+                fault = <span class="py-f">set_fault</span>(app, <span class="py-s">&quot;master:tpflt&quot;</span>, <span class="py-s">&quot;&quot;</span>, <span class="py-n">0.1</span>, fault_duration_s, <span class="py-k">True</span>, <span class="py-s">&quot;one&quot;</span>, <span class="py-k">None</span>, <span class="py-k">None</span>)
+                <span class="py-c"># -- Step 7: Run simulation (2 s, 50 us step) --</span>
+                run = <span class="py-f">px_run</span>(app, <span class="py-n">2</span>, <span class="py-n">50</span>, <span class="py-n">250</span>, <span class="py-k">None</span>, events=[(<span class="py-n">0.1</span>, <span class="py-s">&quot;Fault&quot;</span>)], build=<span class="py-s">&quot;auto&quot;</span>, read=<span class="py-s">&quot;out&quot;</span>, keep_files=<span class="py-k">False</span>)
+                <span class="py-c"># Did not build: skips to the next pass of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> run.ok <span class="py-k">and</span> (run.status == <span class="py-s">&quot;failed&quot;</span>):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The case did not build&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># Stopped early: skips to the next pass of Fault duration (s)</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> (run.ok <span class="py-k">or</span> (run.status == <span class="py-s">&quot;failed&quot;</span>)):
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;The simulation stopped before the end&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 8: Add row to results table (Into &quot;Snapshot&quot;, saved at the end automatically) --</span>
+                vbus = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus&quot;</span>, <span class="py-s">&quot;&quot;</span>)  <span class="py-c"># Read a channel</span>
+                peak_result = <span class="py-f">peak</span>(vbus, kind=<span class="py-s">&quot;min&quot;</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)  <span class="py-c"># Peak</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Snapshot&quot;</span>).<span class="py-f">add</span>({<span class="py-s">&quot;Lowest voltage&quot;</span>: peak_result.value}, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">px_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Snapshot&quot;</span>])
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 2,303 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>Save a snapshot</strong> sets the time the snapshot is taken; the <strong>Initialise</strong> run that follows is the one run that pays for the initialisation.</li>
+    <li><strong>Start from a snapshot</strong> comes before the loop, so every pass of the loop begins at the settled state rather than at zero.</li>
+    <li>The fault time inside the loop is absolute: it is after the snapshot time, not relative to it.</li>
+    <li>The loop body is the same three blocks as any other sweep, which is the point: the snapshot changes what a run starts from and nothing else.</li>
+    <li><strong>Start from zero again</strong> is wired at the end, so the case is not left set to a snapshot that the next study would not want.</li>
+    <li>The Builder warns when a block changes the model between the snapshot and the run that uses it, because that change is not in the saved state.</li>
+  </ul>
+  <h3>Running several cases at once</h3>
+  <p>The batch Quick Start is the other half: a simulation set with a volley, the settings overridden for every task, and a row per case when the set finishes.</p>
+  <p class="dx-file"><span>The Run several cases at once Quick Start, as the Builder writes it</span><a href="batch_simulation_set.py" download>⬇ Download the full file (.py, 1,690 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Several cases at once</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Have PSCAD installed and licensed; the script opens one, or uses the one already open (see RUN_MODE).
+  3. Run it with Python 3.7 or newer and mhi-pscad installed, e.g.  py -3.12 several_cases_at_once.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> importlib
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Several cases at once&quot;</span>
+<span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
+<span class="py-c"># workspace.</span>
+PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+<span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
+WORKSPACE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
+LIBRARIES = []
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every parameter, layer state and substitution the workflow changed back</span>
+<span class="py-c"># when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read the case's</span>
+<span class="py-c"># own global substitution).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;launch&quot; (start a new PSCAD), &quot;connect&quot; (use the one that is open) or</span>
+<span class="py-c"># &quot;inside&quot; (run from inside PSCAD).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PSCAD window while running.</span>
+SHOW_PSCAD = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. The Fortran compiler that builds the case, as PSCAD names it (&quot;&quot; = the one PSCAD has</span>
+<span class="py-c"># selected).</span>
+FORTRAN_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Which installed PSCAD to start (&quot;&quot; = the newest).</span>
+PSCAD_VERSION = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. The port PSCAD listens on for automation (0 = let PSCAD choose).</span>
+PSCAD_PORT = <span class="py-n">0</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PSCAD to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: List the cases to run in the simulation set and load each of them in Start under Libraries, so they are in the workspace. Keep the volley at or below the number of processor cores: more than that a...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">px_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 2: Make a simulation set (PXB_batch: the case in use, 4 at a time) --</span>
+        sim_set = <span class="py-f">simset_create</span>(app, <span class="py-s">&quot;PXB_batch&quot;</span>, (), <span class="py-n">4</span>, <span class="py-k">False</span>)
+        <span class="py-c"># -- Step 3: Override a set’s settings (5 s) --</span>
+        <span class="py-f">simset_override</span>(app, sim_set, <span class="py-k">None</span>, <span class="py-n">5</span>, <span class="py-k">None</span>, <span class="py-k">None</span>)
+        <span class="py-c"># -- Step 4: Run a simulation set (every case in the set) --</span>
+        set_run = <span class="py-f">simset_run</span>(app, sim_set)
+        <span class="py-c"># Had errors: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> set_run.ok:
+            <span class="py-f">log</span>(<span class="py-s">&quot;The simulation set had errors. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Batch&quot;, saved at the end automatically) --</span>
+        <span class="py-f">table</span>(<span class="py-s">&quot;Batch&quot;</span>).<span class="py-f">add</span>({
+            <span class="py-s">&quot;Finished&quot;</span>: set_run.ok,
+            <span class="py-s">&quot;Seconds&quot;</span>: set_run.seconds,
+        })
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>A snapshot taken before the case has settled.</strong> Every later run then starts from a transient, and the results are repeatable and wrong. Check the snapshot time against the waveform before trusting it.</li>
+    <li><strong>Changing the model after the snapshot and expecting the change to be in it.</strong> The snapshot holds the state as it was. A parameter written afterwards applies from the restart, which is usually what you want for a fault and never what you want for an impedance.</li>
+    <li><strong>Times measured from the restart.</strong> The clock does not reset by default: a fault 100 ms after a snapshot taken at 2 s is at 2.1 s.</li>
+    <li><strong>Leaving the case set to start from a snapshot.</strong> It is a case setting, not a session one, so it survives the script and the next person to open the case.</li>
+    <li><strong>A volley larger than the machine.</strong> Every task is a full EMTDC process. More tasks than cores means they take turns, and the whole set finishes later than a smaller volley would.</li>
+    <li><strong>Several tasks building in the same folder.</strong> Each build writes beside the <code>.pscx</code>. Give each task its own copy of the case, or let the set build them in turn before the volley starts.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>What is a PSCAD snapshot?</h3>
+  <p>A file holding the entire state of the simulation at one instant: every capacitor voltage, inductor current and controller state. A run told to start from it begins in that state instead of from zero, which removes the initialisation from every run of a study after the first.</p>
+  <h3>When is a snapshot not safe to use?</h3>
+  <p>When the thing being varied changes the steady state the snapshot captured. Sweeping a fault duration is fine, because the case is identical until the fault. Sweeping a transformer rating or a source impedance is not: the snapshot holds the state of a different network.</p>
+  <h3>How do I run several PSCAD cases at once?</h3>
+  <p>Put them in a simulation set and give the set a volley. The volley is how many tasks run at the same time; each task is a full EMTDC process, so a volley of about the number of cores on the machine is the practical limit.</p>
+  <h3>Does a snapshot make the simulation faster?</h3>
+  <p>It removes simulated time, not solver work per step. A case that takes 2 s to settle and 2 s to show the event runs half as long per pass once the settling is snapshotted, and the saving multiplies by the number of passes.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
+    <li><a href="../build-and-run/">Build a PSCAD case and run it from Python</a></li>
+    <li><a href="../fault-studies/">Fault ride through and critical clearing time in PSCAD</a></li>
+    <li><a href="../parameter-sweep/">Sweep a parameter in PSCAD and collect the results</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD EMT run</a></li>
+    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+  </ul>
+  <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

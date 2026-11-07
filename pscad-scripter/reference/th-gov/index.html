@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thermal Governor parameters (master:th_gov) | Adjie Brotools</title>
+<meta name="description" content="Every parameter of the PSCAD Thermal Governor (master:th_gov): 82 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thermal Governor (master:th_gov) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD Thermal Governor (master:th_gov): 82 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Thermal Governor (master:th_gov) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD Thermal Governor (master:th_gov): 82 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Thermal Governor (master:th_gov) parameters",
+  "description": "Every parameter of the PSCAD Thermal Governor (master:th_gov): 82 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:th_gov (Thermal Governor)",
+    "description": "The PSCAD Master Library definition master:th_gov."
+  },
+  "keywords": "master:th_gov parameters, PSCAD Thermal Governor parameters, Thermal Governor PSCAD, master:th_gov Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Thermal Governor",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Thermal Governor</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Thermal Governor<span class="dx-h1-sub">master:th_gov</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Thermal Governor (<code>master:th_gov</code>): 82 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Thermal Governor is</h2>
+  <p>Thermal Governor is a Master Library definition in the Machines group of PSCAD 5.0.0. Its 82 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:th_gov</code></dd><dt>PSCAD name</dt><dd>Thermal Governor</dd><dt>Library group</dt><dd>Machines</dd><dt>Parameters</dt><dd>82 parameters, in 9 sections of the dialog</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Thermal Governor in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:th_gov&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:th_gov&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(INIT=<span class="py-n">1</span>, CV_I=<span class="py-n">1</span>, DB_1=<span class="py-s">&quot;0 [pu]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;INIT&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Thermal Governor parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">4</span></a></li><li><a href="#g1-gov1-mechanical-hydraulic-governor">Gov1:  Mechanical-Hydraulic Governor<span class="dx-n">8</span></a></li><li><a href="#g2-gov2-mechanical-hydraulic-ge-governor-section-1">Gov2:  Mechanical-Hydraulic (Ge) Governor : Section 1<span class="dx-n">10</span></a></li><li><a href="#g3-gov2-mechanical-hydraulic-ge-governor-section-2">Gov2:  Mechanical-Hydraulic (Ge) Governor : Section 2<span class="dx-n">10</span></a></li><li><a href="#g4-gov3-electro-hydraulic-ge-governor-section-1">Gov3:  Electro-Hydraulic (Ge)  Governor : Section 1<span class="dx-n">8</span></a></li><li><a href="#g5-gov3-electro-hydraulic-ge-governor-section-2">Gov3:  Electro-Hydraulic (Ge)  Governor : Section 2<span class="dx-n">9</span></a></li><li><a href="#g6-gov4-deh-controls-westinghouse">Gov4:  Deh Controls (Westinghouse)<span class="dx-n">9</span></a></li><li><a href="#g7-gov5-electro-hydraulic-parson-s-controls">Gov5:  Electro-Hydraulic (Parson s) Controls<span class="dx-n">15</span></a></li><li><a href="#g8-gov5-iv-controls-parson-s">Gov5:   IV Controls (Parson s)<span class="dx-n">9</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for Identification<small>Enter a name for identification.</small></td></tr>
+<tr><td><code>T_GOV</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>GOV2</td><td>Thermal Governor Model<small>Takes <code>GOV1</code>, <code>GOV2</code>, <code>GOV3</code>, <code>GOV4</code>, <code>GOV5</code>.</small></td></tr>
+<tr><td><code>INIT</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>-2147483648 to 2147483647</td><td>1</td><td>Gov/Turb Status: 0-Initialize;1-Normal</td></tr>
+<tr><td><code>CV_I</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>CV_INP</td><td>CV Initial Value  (Same as Turbine)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-gov1-mechanical-hydraulic-governor">
+  <h2 id="g1-gov1-mechanical-hydraulic-governor">Gov1:  Mechanical-Hydraulic Governor</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>DB_1</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Dead Band Value</td></tr>
+<tr><td><code>KG_1</code></td><td>1/pu</td><td>Real</td><td>0 to 1E+308</td><td>20.0</td><td>Inverse of Droop (Kg)</td></tr>
+<tr><td><code>TSR_1</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Speed Relay Time Constant (TSR)</td></tr>
+<tr><td><code>TSM_1</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>Gate Servo Time Constant (TSM)</td></tr>
+<tr><td><code>PUP_1</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.40</td><td>Maximum Opening Rate (P_up)</td></tr>
+<tr><td><code>PDN_1</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum Closing Rate (P_down)</td></tr>
+<tr><td><code>CMX_1</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum Servo Position (Cmax)</td></tr>
+<tr><td><code>CMN_1</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum Servo Position (Cmin)</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-gov2-mechanical-hydraulic-ge-governor-section-1">
+  <h2 id="g2-gov2-mechanical-hydraulic-ge-governor-section-1">Gov2:  Mechanical-Hydraulic (Ge) Governor : Section 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>DB_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Dead Band Value</td></tr>
+<tr><td><code>R_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.05</td><td>Permanent Droop (R)</td></tr>
+<tr><td><code>TSR_2</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.1</td><td>Speed Relay Time Constant (TSR)</td></tr>
+<tr><td><code>TSM_2</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>Gate Servo Time Constant (TSM)</td></tr>
+<tr><td><code>PUP_2</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.20</td><td>Maximum CV Opening Rate (P_up)</td></tr>
+<tr><td><code>PDN_2</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum CV Closing Rate (P_down)</td></tr>
+<tr><td><code>CMX_2</code></td><td>pu</td><td>Real</td><td>0.9 to 1</td><td>1.0</td><td>Maximum CV Servo Position (Cmax)</td></tr>
+<tr><td><code>CMN_2</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum CV Servo Position (Cmin)</td></tr>
+<tr><td><code>K1_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>2.0</td><td>IV Path Accelerator Gain(K1)</td></tr>
+<tr><td><code>K2_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>2.5</td><td>IV Path Position Gain(K2)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-gov2-mechanical-hydraulic-ge-governor-section-2">
+  <h2 id="g3-gov2-mechanical-hydraulic-ge-governor-section-2">Gov2:  Mechanical-Hydraulic (Ge) Governor : Section 2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>BIS1_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.15</td><td>IV Path Accelerator Bias (BIAS1)</td></tr>
+<tr><td><code>BIS2_2</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>IV Path Position Bias (BIAS2)</td></tr>
+<tr><td><code>AMX_2</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.02</td><td>Maximum IV  Accelerator Value (Amax)</td></tr>
+<tr><td><code>AMN_2</code></td><td>pu</td><td>Real</td><td>-1000000 to 0</td><td>-1.65</td><td>Minimum IV  Accelerator Value (Amin)</td></tr>
+<tr><td><code>TSJ_2</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>IV Servo Time Constant (TSJ)</td></tr>
+<tr><td><code>IUP_2</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.20</td><td>Maximum IV Opening Rate (I_up)</td></tr>
+<tr><td><code>IDN_2</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum IV Closing Rate (I_down)</td></tr>
+<tr><td><code>IMX_2</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum IV Servo Position (Imax)</td></tr>
+<tr><td><code>IMN_2</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum IV Servo Position (Imin)</td></tr>
+<tr><td><code>IV_I2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>IVINP</td><td>IV Initial Value: Variable(Same as Turbine)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-gov3-electro-hydraulic-ge-governor-section-1">
+  <h2 id="g4-gov3-electro-hydraulic-ge-governor-section-1">Gov3:  Electro-Hydraulic (Ge)  Governor : Section 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>DB_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Dead Band Value</td></tr>
+<tr><td><code>R_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>0.05</td><td>Permanent Droop (R)</td></tr>
+<tr><td><code>LMX_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Maximum value of Load</td></tr>
+<tr><td><code>TSM_3</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>Gate Servo Time Constant (TSM)</td></tr>
+<tr><td><code>PUP_3</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.10</td><td>Maximum CV Opening Rate (P_up)</td></tr>
+<tr><td><code>PDN_3</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.20</td><td>Maximum CV Closing Rate (P_down)</td></tr>
+<tr><td><code>CMX_3</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum CV Servo Position (Cmax)</td></tr>
+<tr><td><code>CMN_3</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum CV Servo Position (Cmin)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-gov3-electro-hydraulic-ge-governor-section-2">
+  <h2 id="g5-gov3-electro-hydraulic-ge-governor-section-2">Gov3:  Electro-Hydraulic (Ge)  Governor : Section 2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>K2_3</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>2.5</td><td>IV Path Position Gain(K2)</td></tr>
+<tr><td><code>BIS2_3</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>IV Path Position Bias (BIAS2)</td></tr>
+<tr><td><code>TSJ_3</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>IV Servo Time Constant (TSJ)</td></tr>
+<tr><td><code>IUP_3</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.10</td><td>Maximum IV Opening Rate (I_up)</td></tr>
+<tr><td><code>IDN_3</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.20</td><td>Maximum IV Closing Rate (I_down)</td></tr>
+<tr><td><code>IMX_3</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum IV Servo Position (Imax)</td></tr>
+<tr><td><code>IMN_3</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum IV Servo Position (Imin)</td></tr>
+<tr><td><code>PLU_3</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>-2147483648 to 2147483647</td><td>0</td><td>PLU Status: 0 = Off ; 1 = On</td></tr>
+<tr><td><code>IV_I3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>IVINP</td><td>IV Initial Value: Variable (Same as Turbine)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-gov4-deh-controls-westinghouse">
+  <h2 id="g6-gov4-deh-controls-westinghouse">Gov4:  Deh Controls (Westinghouse)</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>DB_4</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Dead Band Value</td></tr>
+<tr><td><code>R_4</code></td><td>pu</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.05</td><td>Permanent Droop (R)</td></tr>
+<tr><td><code>T1_4</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>7.5</td><td>Speed Relay Lag Time Constant (T1)</td></tr>
+<tr><td><code>T2_4</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>2.8</td><td>Speed Relay Lead Time Constant (T2)</td></tr>
+<tr><td><code>T3_4</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.1</td><td>Gate Servo Time Constant (T3)</td></tr>
+<tr><td><code>PUP_4</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.40</td><td>Maximum Opening Rate (P_up)</td></tr>
+<tr><td><code>PDN_4</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum Closing Rate (P_down)</td></tr>
+<tr><td><code>CMX_4</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum Servo Position (Cmax)</td></tr>
+<tr><td><code>CMN_4</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum Servo Position (Cmin)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7-gov5-electro-hydraulic-parson-s-controls">
+  <h2 id="g7-gov5-electro-hydraulic-parson-s-controls">Gov5:  Electro-Hydraulic (Parson s) Controls</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TR_5</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.1</td><td>Transducer Time Constant (TR)</td></tr>
+<tr><td><code>DB_5</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Dead Band Value</td></tr>
+<tr><td><code>R_5</code></td><td>pu</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.05</td><td>Permanent Droop (R)</td></tr>
+<tr><td><code>S_TH</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.02</td><td>Threshold Speed Deviation for Overspeed</td></tr>
+<tr><td><code>RL_5</code></td><td>pu</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.006</td><td>Overspeed Droop</td></tr>
+<tr><td><code>O_MAX</code></td><td>pu</td><td>Real</td><td>-0.1 to 0</td><td>0.0</td><td>Maximum value of Overspeed Limit</td></tr>
+<tr><td><code>O_MIN</code></td><td>pu</td><td>Real</td><td>-1 to -0.9</td><td>-1.0</td><td>Minimum value of Overspeed Limit</td></tr>
+<tr><td><code>L_MAX</code></td><td>pu</td><td>Real</td><td>0 to 1E+308</td><td>1.2</td><td>Maximum Load Limit</td></tr>
+<tr><td><code>T1_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>CV Phase Compensation Lead Time T1</td></tr>
+<tr><td><code>T2_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>CV Phase Compensation Lag Time T2</td></tr>
+<tr><td><code>TSM_5</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>Gate Servo Time Constant (TSM)</td></tr>
+<tr><td><code>PUP_5</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.20</td><td>Maximum CV Opening Rate (P_up)</td></tr>
+<tr><td><code>PDN_5</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum CV Closing Rate (P_down)</td></tr>
+<tr><td><code>CMX_5</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum CV Servo Position (Cmax)</td></tr>
+<tr><td><code>CMN_5</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum CV Servo Position (Cmin)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8-gov5-iv-controls-parson-s">
+  <h2 id="g8-gov5-iv-controls-parson-s">Gov5:   IV Controls (Parson s)</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>IVOB</code></td><td>pu</td><td>Real</td><td>-1E+308 to 1E+308</td><td>1.0</td><td>IV Path Position Bias (IVOB)</td></tr>
+<tr><td><code>T3_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>IV Phase Compensation Lead Time T3</td></tr>
+<tr><td><code>T4_5</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>IV Phase Compensation Lag Time T4</td></tr>
+<tr><td><code>TSJ_5</code></td><td>s</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.2</td><td>IV Servo Time Constant (TSJ)</td></tr>
+<tr><td><code>IUP_5</code></td><td>pu/s</td><td>Real</td><td>0 to 1E+308</td><td>0.20</td><td>Maximum IV Opening Rate (I_up)</td></tr>
+<tr><td><code>IDN_5</code></td><td>pu/s</td><td>Real</td><td>-1000000 to 0</td><td>-0.50</td><td>Maximum IV Closing Rate (I_down)</td></tr>
+<tr><td><code>IMX_5</code></td><td>pu</td><td>Real</td><td>0.8 to 1</td><td>1.0</td><td>Maximum IV Servo Position (Imax)</td></tr>
+<tr><td><code>IMN_5</code></td><td>pu</td><td>Real</td><td>0 to 0.1</td><td>0.0</td><td>Minimum IV Servo Position (Imin)</td></tr>
+<tr><td><code>IV_I5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>-1E+308 to 1E+308</td><td>IVINP</td><td>IV Initial Value: Variable (Same as Turbine)</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../sync-machine/">Synchronous Machine</a> · <a href="../th-tur/">Thermal Turbine</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

@@ -1,43 +1,54 @@
 // An icon for every block (palette, canvas header, inspector, quick-add), drawn like the site's
-// .tico icons: 24 x 24, stroke currentColor, round ends. The pictures follow PSCAD's own
-// where it has one, so a reader who knows the Data Manager recognises them: a study case is the
-// four-panel sheet, an operation scenario the four dots, a variation the sheet with a branch, a
-// load flow the busbar with arrows, a short circuit the lightning bolt.
+// .tico icons: 24 x 24, stroke currentColor, round ends. The pictures follow PSCAD's own where it
+// has one, so a reader who knows the workspace recognises them: a component is the box with its
+// pins, a layer the stack of sheets, a global substitution the $ name, an input control the
+// slider, a snapshot the camera, a graph the frame around a curve, a fault the strike to ground.
 //
 // A family shares one base picture and a corner badge says what the block does with it:
-//   loop  "For each ..."      plus   "Create ..."      check  "Activate ..."
-//   minus "Deactivate ..."    save   "Save ..."         clock  an event at a time
-//   cross a trip or outage    play   runs something
+//   loop  "For each ..."      plus   "Add / create ..."   check  "Use / activate ..."
+//   save  "Save ..."          clock  something timed      read   reads a value back
+//   cross a delete or a stop  play   runs something       pencil writes a value
+//   power turns something on or off                       layer  onto a layer
 // With a badge the base is drawn smaller in the top-left and the badge sits on a small
 // knockout disc (--pxb-icon-cut, set per place in style.css) so it reads at 16 px.
 
 // ---- Base pictures --------------------------------------------------------------------------
 const B = {
-  // PSCAD objects
-  case: '<rect x="4" y="4" width="7" height="7" rx="1.2"/><rect x="13" y="4" width="7" height="7" rx="1.2"/><rect x="4" y="13" width="7" height="7" rx="1.2"/><rect x="13" y="13" width="7" height="7" rx="1.2"/>',
+  // PSCAD objects: what the workspace and the canvas hold
+  comp: '<rect x="6.5" y="6.5" width="11" height="11" rx="1.6"/><path d="M2.5 9.5h4M2.5 14.5h4M17.5 12h4"/>',
+  copy: '<rect x="9" y="3.5" width="11.5" height="9" rx="1.5"/><rect x="3.5" y="11.5" width="11.5" height="9" rx="1.5" fill="var(--pxb-icon-cut, var(--panel))"/>',
+  wire: '<path d="M4.5 6.5h6.5v11h8"/><circle cx="4" cy="6.5" r="1.5" fill="currentColor"/><circle cx="20" cy="17.5" r="1.5" fill="currentColor"/>',
+  bus: '<path d="M3 12h18" stroke-width="3.4"/><path d="M7 12V6.4M12 12V6.4M17 12V6.4M9.5 12v5.6M14.5 12v5.6"/>',
+  channel: '<path d="M2.5 12h4"/><rect x="6.5" y="6" width="15" height="12" rx="1.6"/><path d="M9.3 14.5c1.2-5 2.4-5 3.6 0s2.4 5 3.6 0 1.4-1.9 2.1-1"/>',
+  graphframe: '<rect x="2.5" y="4" width="19" height="16" rx="1.8"/><path d="M2.5 8.2h19"/><path d="M5.8 16.6c2.4 0 2.9-5.8 5.3-5.8s2.9 3.9 5.8 3.9h1.3"/>',
+  layers: '<path d="M12 2.8 21.5 7 12 11.2 2.5 7z"/><path d="M2.5 12 12 16.2 21.5 12"/><path d="M2.5 17 12 21.2 21.5 17"/>',
+  subst: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M14.8 8.6h-4.4a2.1 2.1 0 0 0 0 4.2h2.5a2.1 2.1 0 0 1 0 4.2H8.2M11.6 6.7v10.6"/>',
+  project: '<path d="M5 3.5h9l5 5v12H5z"/><path d="M14 3.5v5h5"/><path d="M7.5 15.5h2.6M13.9 15.5h2.6"/><rect x="10.1" y="13.5" width="3.8" height="4" rx=".9"/>',
+  projectcopy: '<path d="M9 2.5h6.5L19 6v9H9z"/><path d="M15.5 2.5V6H19"/><path d="M15 15v6.5H5V8h4"/>',
   scen: '<circle cx="7.5" cy="7.5" r="3" fill="currentColor"/><circle cx="16.5" cy="7.5" r="3"/><circle cx="7.5" cy="16.5" r="3"/><circle cx="16.5" cy="16.5" r="3"/>',
-  vari: '<rect x="3" y="6" width="10" height="12" rx="1.5"/><path d="M13 12h3M16 7.5v9M16 7.5h4.5M16 16.5h4.5"/><circle cx="20.5" cy="7.5" r=".9" fill="currentColor"/><circle cx="20.5" cy="16.5" r=".9" fill="currentColor"/>',
-  element: '<circle cx="12" cy="12" r="6"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>',
-  gen: '<circle cx="12" cy="12" r="7.5"/><path d="M7.6 12c1.5-2.8 2.9-2.8 4.4 0s2.9 2.8 4.4 0"/>',
+  // Input controls: the slider, and the limits its handle runs between
+  slider: '<rect x="2.5" y="6.5" width="19" height="11" rx="2.2"/><path d="M5.5 12h13"/><rect x="13.1" y="8.5" width="3.6" height="7" rx="1.1" fill="var(--pxb-icon-cut, var(--panel))"/>',
+  sliderlim: '<path d="M6 12h12"/><circle cx="12" cy="12" r="2.7"/><path d="M4.2 6.5v11M19.8 6.5v11" stroke-width="2.8"/>',
+  // Set and read a parameter
   setattr: '<rect x="3" y="13.5" width="18" height="7" rx="1.6"/><path d="M14.5 3.5l3.5 3.5-6.5 6.5H8V10z"/>',
   getattr: '<path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/>',
-  dispatch: '<circle cx="9.5" cy="12" r="6.5"/><path d="M5.7 12c1.3-2.4 2.5-2.4 3.8 0s2.5 2.4 3.8 0"/><path d="M20 4.5v15M17.6 7l2.4-2.5L22.4 7M17.6 17l2.4 2.5 2.4-2.5"/>',
-  scale: '<path d="M10 14l-6 6M4 15.5V20h4.5M14 10l6-6M20 8.5V4h-4.5"/><rect x="8" y="8" width="8" height="8" rx="1.5"/>',
-  switch: '<path d="M2.5 14h4.4M17.1 14h4.4"/><path d="M8.4 13.2l8-7.2"/><circle cx="7.9" cy="14" r="1.9"/><circle cx="16.1" cy="14" r="1.9"/>',
   undo: '<path d="M8.5 8H4V3.5"/><path d="M4.5 8a8 8 0 1 1-.6 7.5"/>',
-  line: '<path d="M4 4.5v15M20 4.5v15"/><path d="M4 12h6M14 12h6"/><path d="M10.2 9.2l3.6 5.6M13.8 9.2l-3.6 5.6"/>',
-  load: '<path d="M4 4.5h16"/><path d="M12 4.5v6"/><path d="M7 10.5h10L12 19.5z"/>',
-  dsl: '<rect x="5.5" y="6" width="13" height="12" rx="1.8"/><path d="M2.5 10h3M2.5 14h3M18.5 12h3"/><path d="M9 14.5c1.5 0 1.3-5 3.2-5M9.2 12h3.3"/>',
-  // studies
-  ldf: '<path d="M12 3v18" stroke-width="2.8"/><path d="M3 8h6M7 6l2 2-2 2"/><path d="M15 16h6M19 14l2 2-2 2"/><path d="M15 8h6M17 6l-2 2 2 2"/>',
-  rms: '<path d="M3 20.5h18" opacity=".45"/><path d="M3 7.5h4.2c2.2 0 2.7 9.5 5.6 9.5 2.6 0 3.4-5 8.2-5"/>',
+  // Build and run
+  build: '<circle cx="12" cy="12" r="4.2"/><path d="M12 7.8V4.7M12 16.2v3.1M16.2 12h3.1M7.8 12H4.7M15 9l2.2-2.2M6.8 17.2 9 15M15 15l2.2 2.2M6.8 6.8 9 9" stroke-width="2.8"/>',
   emt: '<path d="M2.5 12c1.2-6.5 2.4-6.5 3.6 0s2.4 6.5 3.6 0 2.4-6.5 3.6 0 2.4 6.5 3.6 0 2.4-6.5 3.6 0"/>',
-  hldf: '<path d="M2.5 12c1.5-7 3.2-7 4.7 0 .5 2.2 1 2.2 1.5 0s1-2.2 1.5 0c1.5 7 3.2 7 4.7 0 .5-2.2 1-2.2 1.5 0s1 2.2 1.5 0"/>',
-  shc: '<path d="M13.5 2.5 5.5 13.5h6l-1.2 8 8.2-11h-6z"/>',
-  // A value held, then stepped again: the staircase a parameter event draws over time.
-  steps: '<path d="M2.5 19.5h4.2V14h4.6V8.2h4.6V3.5h5.6"/><circle cx="6.7" cy="14" r="1.3" fill="currentColor"/><circle cx="11.3" cy="8.2" r="1.3" fill="currentColor"/>',
-  series: '<path d="M3.5 3.5v17h17"/><path d="M6.5 9c2.5 0 3 7 6 7s3.5-4 7-4"/>',
-  // checks on a curve
+  switch: '<path d="M2.5 14h4.4M17.1 14h4.4"/><path d="M8.4 13.2l8-7.2"/><circle cx="7.9" cy="14" r="1.9"/><circle cx="16.1" cy="14" r="1.9"/>',
+  fault: '<path d="M12 2.5v4"/><path d="M14 6 9.6 12.4h3.2L11.2 17"/><path d="M6.5 17.5h11M9 20h6"/>',
+  snapshot: '<rect x="2.8" y="7" width="18.4" height="12.5" rx="2"/><path d="M8.4 7l1.4-2.5h4.4L15.6 7"/><circle cx="12" cy="13.2" r="3.6"/>',
+  simset: '<rect x="2.8" y="4.5" width="18.4" height="15" rx="2"/><path d="M6 8.3l2.6 1.7L6 11.7z" fill="currentColor"/><path d="M6 13.3l2.6 1.7L6 16.7z" fill="currentColor"/><path d="M10.8 10h7.2M10.8 15h7.2"/>',
+  mrun: '<rect x="2.8" y="5" width="18.4" height="14" rx="1.8"/><path d="M5.8 16.2h3.1V13h3.1V9.8h3.1V6.9h3.1"/>',
+  mruncount: '<rect x="2.8" y="5" width="18.4" height="14" rx="1.8"/><path d="M6 8l2.6 1.7L6 11.4z" fill="currentColor"/><path d="M6 13.1l2.6 1.7L6 16.5z" fill="currentColor"/><path d="M11 9.7h6.5M11 14.8h6.5"/>',
+  // Checks on a waveform
+  rms: '<path d="M2.5 14c1.9-8.5 3.8-8.5 5.7 0s3.8 8.5 5.7 0 3.8-8.5 5.7 0"/><path d="M2.5 10h19" stroke-dasharray="3 2.4"/>',
+  thd: '<path d="M3 20.5h18" opacity=".45"/><path d="M5 20.5V4.5M9.3 20.5V15M13.6 20.5V12M17.9 20.5v-4.2"/>',
+  seq: '<path d="M12 13V4M10.3 5.7 12 4l1.7 1.7"/><path d="m12 13-7.8 4.5M6.6 17.7l-2.4-.2-.1-2.4"/><path d="m12 13 7.8 4.5M17.4 17.7l2.4-.2.1-2.4"/><circle cx="12" cy="13" r="1.2" fill="currentColor"/>',
+  unbal: '<circle cx="12" cy="12" r="9" stroke-dasharray="2.2 2.4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 12V3.3M12 12l-4.4 2M12 12l5 4.8"/>',
+  overshoot: '<path d="M2.5 19.5h4.2c2.2 0 2.8-12 5.1-12 2 0 2.2 8 4 8s2-4 5.7-4"/><path d="M2.5 11h19" stroke-dasharray="2.4 2"/><circle cx="11.6" cy="7.6" r="1.8" fill="currentColor"/>',
+  damping: '<path d="M2.5 12c1.5-9 3-9 4.5 0 1.5 6.3 3 6.3 4.5 0 1.5-4.4 3-4.4 4.5 0 1.5 3 3 3 4.5 0"/>',
   despike: '<path d="M2.5 16h5.5l1.5-11 1.5 11h10.5"/><path d="M14.5 4.5l5 5M19.5 4.5l-5 5"/>',
   nadir: '<path d="M2.5 6.5c4.5 0 5 10.5 9.5 10.5s5-8 9.5-8"/><circle cx="12" cy="17" r="2" fill="currentColor"/><path d="M12 21.5v-1.5" />',
   peak: '<path d="M2.5 17.5c4.5 0 5-10.5 9.5-10.5s5 8 9.5 8"/><circle cx="12" cy="7" r="2" fill="currentColor"/>',
@@ -105,33 +116,44 @@ const BADGE = {
   loop: '<path d="M22.3 18.8a3.9 3.9 0 1 1-1.2-3"/><path d="M22.4 14.3v2.4H20"/>',
   plus: '<path d="M18.5 14.8v7.4M14.8 18.5h7.4"/>',
   check: '<path d="M15 18.7l2.4 2.4 4.6-5"/>',
-  minus: '<path d="M14.8 18.5h7.4"/>',
   save: '<path d="M18.5 14.3v5.4M16 17.4l2.5 2.5 2.5-2.5M15 22.3h7"/>',
   clock: '<circle cx="18.5" cy="18.5" r="4"/><path d="M18.5 16.4v2.3l1.6 1"/>',
   cross: '<path d="M15.6 15.6l5.8 5.8M21.4 15.6l-5.8 5.8"/>',
   play: '<path d="M16.5 15l5.5 3.5-5.5 3.5z" fill="currentColor"/>',
   read: '<path d="M14.5 18.5h7.5M19 15.5l3 3-3 3"/>',
+  pencil: '<path d="M21.3 14.4l1.5 1.5-5.2 5.2-2 .5.5-2z"/>',
+  power: '<path d="M20.4 16.2a3.9 3.9 0 1 1-3.8 0"/><path d="M18.5 14.1v3.7"/>',
+  layer: '<path d="M18.5 14.1 22.8 16l-4.3 1.9-4.3-1.9z"/><path d="M14.2 19.3l4.3 1.9 4.3-1.9"/>',
 };
 
 // ---- Which picture each block takes: [base, badge?] ------------------------------------------
 const MAP = {
   start: ['start'],
-  // PSCAD: model and data
-  'px.element': ['element'], 'px.foreach_element': ['element', 'loop'],
-  'px.set': ['setattr'], 'px.get': ['getattr'], 'px.dispatch': ['dispatch'], 'px.scale': ['scale'],
-  'px.outserv': ['switch'], 'px.undo': ['undo'], 'px.testgen': ['gen', 'plus'],
-  'px.case.activate': ['case', 'check'], 'px.case.create': ['case', 'plus'], 'px.case.foreach': ['case', 'loop'],
-  'px.scen.activate': ['scen', 'check'], 'px.scen.create': ['scen', 'plus'], 'px.scen.save': ['scen', 'save'],
-  'px.scen.deactivate': ['scen', 'minus'], 'px.scen.foreach': ['scen', 'loop'],
-  'px.var.activate': ['vari', 'check'], 'px.var.deactivate': ['vari', 'minus'], 'px.var.create': ['vari', 'plus'],
-  'px.var.foreach': ['vari', 'loop'],
-  // PSCAD: build and run
-  'px.ldf': ['ldf'], 'px.rms': ['rms', 'play'], 'px.emt': ['emt', 'play'], 'px.hldf': ['hldf'], 'px.shc': ['shc'],
-  'sig.series': ['series', 'read'],
-  'px.evt.shc': ['shc', 'clock'], 'px.evt.switch': ['switch', 'clock'], 'px.evt.trip': ['gen', 'cross'],
-  'px.evt.load': ['load', 'clock'], 'px.evt.param': ['dsl', 'clock'], 'px.evt.steps': ['steps', 'clock'],
-  'px.cont.define': ['line'], 'px.cont.foreach': ['line', 'loop'],
+  // PSCAD: the model on the canvas
+  'px.component': ['comp'], 'px.foreach_component': ['comp', 'loop'],
+  'px.set': ['setattr'], 'px.get': ['getattr'], 'px.enable': ['comp', 'power'],
+  'px.undo': ['undo'], 'px.delete': ['comp', 'cross'], 'px.copy': ['copy'],
+  'px.add.component': ['comp', 'plus'], 'px.add.wire': ['wire', 'plus'], 'px.add.bus': ['bus', 'plus'],
+  'px.add.channel': ['channel', 'plus'], 'px.add.graph': ['graphframe', 'plus'],
+  // PSCAD: layers, scenarios, global substitutions
+  'px.layer.set': ['layers', 'power'], 'px.layer.create': ['layers', 'plus'],
+  'px.layer.add': ['comp', 'layer'], 'px.layer.foreach': ['layers', 'loop'],
+  'px.scen.activate': ['scen', 'check'], 'px.scen.save': ['scen', 'save'], 'px.scen.foreach': ['scen', 'loop'],
+  'px.gs.set': ['subst', 'pencil'], 'px.gs.get': ['subst', 'read'],
+  'px.gs.setactive': ['subst', 'check'], 'px.gs.foreach': ['subst', 'loop'],
+  // PSCAD: input controls and the case itself
+  'px.control': ['slider'], 'px.control.limits': ['sliderlim'],
+  'px.project.use': ['project', 'check'], 'px.project.save': ['project', 'save'],
+  'px.project.saveas': ['projectcopy', 'save'], 'px.project.new': ['project', 'plus'],
+  // PSCAD: build, run and the EMT run's own settings
+  'px.build': ['build'], 'px.run': ['emt', 'play'], 'px.series': ['channel', 'read'],
+  'px.fault': ['fault', 'clock'], 'px.switching': ['switch', 'clock'],
+  'px.snap.save': ['snapshot', 'save'], 'px.snap.use': ['snapshot', 'play'], 'px.snap.off': ['snapshot', 'cross'],
+  'px.simset.create': ['simset', 'plus'], 'px.simset.override': ['simset', 'pencil'], 'px.simset.run': ['simset', 'play'],
+  'px.mrun.sweep': ['mrun'], 'px.mrun.count': ['mruncount'],
   // Power system checks
+  'sig.rms': ['rms'], 'sig.thd': ['thd'], 'sig.sequence': ['seq'], 'sig.unbalance': ['unbal'],
+  'sig.overshoot': ['overshoot'], 'sig.damping': ['damping'],
   'sig.despike': ['despike'], 'sig.nadir': ['nadir'], 'sig.peak': ['peak'], 'sig.settle': ['settle'],
   'sig.rocof': ['rocof'], 'sig.at': ['at'], 'sig.final': ['final'], 'sig.cross': ['cross'],
   'chk.limit': ['limit'], 'chk.verdict': ['verdict'],

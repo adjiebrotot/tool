@@ -14,7 +14,7 @@
 //   S3  the canonical matches where the file actually sits
 //   U1  no em-dash or en-dash in page text (the house rule; inside <pre> it may be the script's)
 //   U2  no duplicate id, and every aria-labelledby points at an id the page has
-//   U3  no PowerFactory concept left in the copy, which would be a porting miss
+//   U3  no PowerFactory name or command left in the copy, which would be a porting miss
 //   X1  every page is in sitemap.xml, and every pscad-scripter URL in the sitemap is a page
 // It prints "pages: N checked, M problems" and exits 1 on any problem.
 
@@ -50,9 +50,14 @@ const urlOf = (file) => BASE + path.relative(PX, file).replace(/\\/g, '/').repla
 
 // The words a port can leave behind. A page that genuinely needs to name the other tool can say
 // so in a link, which is why the href is stripped before the text is searched.
+// "load flow" and "short circuit" are deliberately not here. They are ordinary English that
+// PSCAD's own parameter text uses ("PV Array Short Circuit Current", "Load Flow RXB format"),
+// and a guide has to be able to say that PSCAD has neither, which is what readers arrive
+// looking for. The PowerFactory commands that would be a real leftover are named below.
 const LEFTOVERS = [
-  /\bPowerFactory\b/, /\bDIgSILENT\b/, /\bElm[A-Z]\w*/, /\bCom(?:Ldf|Shc|Inc|Sim|Hldf)\b/,
-  /\bstudy case\b/i, /\boperation scenario\b/i, /\bload flow\b/i, /\bshort circuit\b/i,
+  /\bPowerFactory\b/, /\bDIgSILENT\b/, /\bElm[A-Z]\w*/, /\bTyp[A-Z]\w*/,
+  /\bCom(?:Ldf|Shc|Inc|Sim|Hldf)\b/, /\b[GS]etAttribute\b/,
+  /\bstudy case\b/i, /\boperation scenario\b/i,
 ];
 
 const seen = { titles: new Map(), descs: new Map() };

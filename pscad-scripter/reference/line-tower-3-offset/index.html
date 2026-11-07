@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3 Conductor Offset Tower parameters (master:Line_Tower_3_Offset)</title>
+<meta name="description" content="All master:Line_Tower_3_Offset parameters in PSCAD 5.0.0: 77 parameters, with units, ranges, defaults and Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="3 Conductor Offset Tower (master:Line_Tower_3_Offset) parameters">
+<meta property="og:description" content="All master:Line_Tower_3_Offset parameters in PSCAD 5.0.0: 77 parameters, with units, ranges, defaults and Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3 Conductor Offset Tower (master:Line_Tower_3_Offset) parameters">
+<meta name="twitter:description" content="All master:Line_Tower_3_Offset parameters in PSCAD 5.0.0: 77 parameters, with units, ranges, defaults and Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "3 Conductor Offset Tower (master:Line_Tower_3_Offset) parameters",
+  "description": "All master:Line_Tower_3_Offset parameters in PSCAD 5.0.0: 77 parameters, with units, ranges, defaults and Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:Line_Tower_3_Offset (3 Conductor Offset Tower)",
+    "description": "The PSCAD Master Library definition master:Line_Tower_3_Offset."
+  },
+  "keywords": "master:Line_Tower_3_Offset parameters, PSCAD 3 Conductor Offset Tower parameters, 3 Conductor Offset Tower PSCAD, master:Line_Tower_3_Offset Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "3 Conductor Offset Tower",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">3 Conductor Offset Tower</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>3 Conductor Offset Tower<span class="dx-h1-sub">master:Line_Tower_3_Offset</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD 3 Conductor Offset Tower (<code>master:Line_Tower_3_Offset</code>): 77 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What 3 Conductor Offset Tower is</h2>
+  <p>3 Conductor Offset Tower is a Master Library definition in the Lines and cables group of PSCAD 5.0.0. Line Constants 3 Cond Offset Tower. Its 77 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:Line_Tower_3_Offset</code></dd><dt>PSCAD name</dt><dd>3 Conductor Offset Tower</dd><dt>Library group</dt><dd>Lines and cables</dd><dt>Parameters</dt><dd>77 parameters, in 5 sections of the dialog</dd><dt>Description</dt><dd>Line Constants 3 Cond Offset Tower</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write 3 Conductor Offset Tower in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_Tower_3_Offset&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Line_Tower_3_Offset&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(X=<span class="py-s">&quot;0 [m]&quot;</span>, Y=<span class="py-s">&quot;30 [m]&quot;</span>, X2=<span class="py-s">&quot;2 [m]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;X&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All 3 Conductor Offset Tower parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">12</span></a></li><li><a href="#g1-conductor-data">Conductor Data<span class="dx-n">16</span></a></li><li><a href="#g2-ground-wire-data">Ground Wire Data<span class="dx-n">14</span></a></li><li><a href="#g3-asymmetrical-bundling-position-data">Asymmetrical Bundling Position Data<span class="dx-n">30</span></a></li><li><a href="#g4-phase-node-connection-information">Phase/Node Connection Information<span class="dx-n">5</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>X</code></td><td>m</td><td>Real</td><td>-1e+38 to 1e+38</td><td>0.0</td><td>Relative x-position of tower centre<small>Enter the local horizontal placement of the tower. This value is relational to other towers in this cross-section [m].</small></td></tr>
+<tr><td><code>side</code></td><td><span aria-label="no unit">·</span></td><td>Boolean</td><td>·</td><td>true</td><td>One conductor is offset to<small>Select which side the odd conductor is offset to, relative to the remaining two phases. Takes <code>True</code> the right, <code>False</code>.</small></td></tr>
+<tr><td><code>Y</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>30.0</td><td>Height of lowest conductors<small>Enter the lowest conductor height, measured from ground surface [m].</small></td></tr>
+<tr><td><code>X2</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>2.0</td><td>Horizontal spacing between conductors<small>Enter the distance between phase conductors [m].</small></td></tr>
+<tr><td><code>Y2</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>5.0</td><td>Vertical spacing between phase conductors<small>Enter the vertical spacing between the phase conductors [m].</small></td></tr>
+<tr><td><code>YG</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>15.0</td><td>Height of ground wires over lowest conductor<small>Enter the height at which the ground wires are situated over the lowest conductor height [m]. Used only when <code>(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>XG</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>10.0</td><td>Spacing between ground wires<small>Enter the distance between ground wires [m]. Used only when <code>(NG&gt;1)</code>.</small></td></tr>
+<tr><td><code>SHSag</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>HIDDEN (hidden)</td><td>Graphic of conductor sag is<small>Select whether or not to diplay conductor sag graphic. Takes <code>HIDDEN</code> hidden, <code>VISIBLE</code> visible.</small></td></tr>
+<tr><td><code>Transp</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DIABLED (diabled)</td><td>Ideal transposition of this circuit is<small>Select whether or not to ideally transpose this 3-phase circuit. Ideal transposition ensures a perfectly balanced impedance. Takes <code>DIABLED</code> diabled, <code>ENABLED</code> enabled.</small></td></tr>
+<tr><td><code>ShuntG</code></td><td>mho/m</td><td>Real</td><td>1e-38 to 1.0</td><td>1.0E-11</td><td>Shunt conductance<small>Enter a shunt conductance value for all conductors in this tower. Typically this value is around 1e-11 [mho/m].</small></td></tr>
+<tr><td><code>TName</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>3LOffset</td><td>Tower name<small>Enter a descriptive name for this tower.</small></td></tr>
+<tr><td><code>XG_2</code></td><td>m</td><td>Real</td><td>-1e+38 to 1e+38</td><td>0.0</td><td>Ground wire horizontal offset<small>Enter the distance between the single ground wire and the tower centre [m]. Used only when <code>(NG==1)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-conductor-data">
+  <h2 id="g1-conductor-data">Conductor Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>CName</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>chukar</td><td>Name<small>Enter a descriptive name for this conductor type.</small></td></tr>
+<tr><td><code>CDataType</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DIRECT (direct)</td><td>Data entry method<small>Select direct to enter data values within this dialog. Takes <code>FROM_LIBRARY_FILE</code> from library file, <code>DIRECT</code> direct.</small></td></tr>
+<tr><td><code>CLName</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>..\conductor.clb</td><td>Path to conductor library file<small>Enter the path to the library file, including the filename. Used only when <code>CDataType==0</code>.</small></td></tr>
+<tr><td><code>Hollow</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SOLID_CORE (solid core)</td><td>Conductor style is<small>Enter the style of conductor on this tower. This can be solid core, hollow or stranded. Takes <code>SOLID_CORE</code> solid core, <code>HOLLOW</code> hollow, <code>STRANDED</code> stranded. Used only when <code>CDataType == 1</code>.</small></td></tr>
+<tr><td><code>RadiusC</code></td><td>m</td><td>Real</td><td>1e-38 to 10.0</td><td>0.020345</td><td>Outer radius<small>Enter the outer radius of the conductor assembly. If stranded, then this value is the radius to the edge of the outer strands [m]. Used only when <code>CDataType==1</code>.</small></td></tr>
+<tr><td><code>RadiusCin</code></td><td>m</td><td>Real</td><td>0.0 to 10.0</td><td>0.0</td><td>Inner radius<small>Enter the inner radius of the conductor assembly if hollow style. Used only when <code>(CDataType==1) &amp;&amp; (Hollow==1)</code>.</small></td></tr>
+<tr><td><code>num_tot_strnd</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 1000</td><td>19</td><td>Total number of strands<small>Enter the total number of strands that make up the entire conductor. Used only when <code>Hollow == 2</code>.</small></td></tr>
+<tr><td><code>num_out_strnd</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 1000</td><td>12</td><td>Total number of outer strands<small>Enter the total number of strands that line the outer circumference of the conductor assembly. Used only when <code>Hollow == 2</code>.</small></td></tr>
+<tr><td><code>RadiusS</code></td><td>m</td><td>Real</td><td>1e-38 to 1e+38</td><td>0.003</td><td>Strand radius<small>Enter the radius of a single conductor strand [m]. Used only when <code>Hollow == 2</code>.</small></td></tr>
+<tr><td><code>DCResC</code></td><td>ohm/km</td><td>Real</td><td>1e-38 to 100.0</td><td>0.03206</td><td>DC resistance per unit length (entire conductor)<small>Enter the DC resistance of the entire conductor assembly per unit length (i.e. all strands included if stranded) [ohm/km]. Used only when <code>CDataType==1</code>.</small></td></tr>
+<tr><td><code>PERMC</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>1e-38 to 1.0</td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor. Used only when <code>CDataType==1</code>.</small></td></tr>
+<tr><td><code>SAGC</code></td><td>m</td><td>Real</td><td>0.0 to 1e+38</td><td>10.0</td><td>Sag (all conductors)<small>Enter the sag for all conductors. This is the difference between the height at the tower, to the height mid-span [m].</small></td></tr>
+<tr><td><code>NCondB</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>1</td><td>Total bundled sub-conductors<small>Enter the total number of sub-conductors per bundle (maximum 15). One of: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15.</small></td></tr>
+<tr><td><code>BundSym</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SYMMETRICAL (symmetrical)</td><td>Bundle configuration is<small>Select whether or not the bundle is symmetrical. If not, then the individual sub-conductor positions must be entered. Takes <code>SYMMETRICAL</code> symmetrical, <code>ASYMMETRICAL</code> asymmetrical. Used only when <code>NCondB&gt;=2</code>.</small></td></tr>
+<tr><td><code>BSP</code></td><td>m</td><td>Real</td><td>1e-38 to 100.0</td><td>0.4572</td><td>Sub-conductor spacing<small>Enter the distance between sub-conductors in the bundle. Used only when <code>(NCondB&gt;=2)&amp;&amp;(BundSym==0)</code>.</small></td></tr>
+<tr><td><code>SHBund</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>VISIBLE (visible)</td><td>Bundle graphic is<small>Select whether or not to display the bundle graphic on the tower. Takes <code>HIDDEN</code> hidden, <code>VISIBLE</code> visible. Used only when <code>NCondB&gt;=2</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-ground-wire-data">
+  <h2 id="g2-ground-wire-data">Ground Wire Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>NG</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>2</td><td>Total number of ground wires is<small>Select the number of ground wires (1 or 2). One of: 0, 1, 2.</small></td></tr>
+<tr><td><code>GDataType</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DIRECT (direct)</td><td>Data entry method<small>Select direct to enter data values within this dialog. Takes <code>FROM_LIBRARY_FILE</code> from library file, <code>DIRECT</code> direct. Used only when <code>(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>GWSame</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DIFFERENT (different)</td><td>Ground wires are<small>Select whether or not the ground wires are identical. Takes <code>IDENTICAL</code> identical, <code>DIFFERENT</code> different. Used only when <code>(NG&gt;1)</code>.</small></td></tr>
+<tr><td><code>GLName</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>..\conductor.clb</td><td>Path to ground wire library file<small>Enter the path to the library file, including the filename. Used only when <code>(GDataType==0)&amp;&amp;(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>ElimGW</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>ENABLED (enabled)</td><td>Ground wire elimination is<small>Select whether or not to mathematically eliminate the ground wires. Takes <code>DISABLED</code> disabled, <code>ENABLED</code> enabled. Used only when <code>NG&gt;0</code>.</small></td></tr>
+<tr><td><code>GName</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>1/2_HighStrengthSteel</td><td>Name<small>Enter a descriptive name for this ground wire type. Used only when <code>(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>G2Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>1/2_HighStrengthSteel</td><td>Name<small>Enter a descriptive name for this ground wire type. Used only when <code>(GWSame==0)&amp;&amp;(NG&gt;1)</code>.</small></td></tr>
+<tr><td><code>RadiusG</code></td><td>m</td><td>Real</td><td>0.0 to 10.0</td><td>0.0055245</td><td>Outer radius<small>Enter the outer radius of the ground wire [m]. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>DCResG</code></td><td>ohm/km</td><td>Real</td><td>0.0 to 100.0</td><td>2.8645</td><td>DC resistance per unit length<small>Enter the DC resistance of the conducting material per unit length [ohm/km]. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>PERMG</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0.0 to 1.0</td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;0)</code>.</small></td></tr>
+<tr><td><code>RadiusG2</code></td><td>m</td><td>Real</td><td>0.0 to 10.0</td><td>0.0055245</td><td>Outer radius<small>Enter the outer radius of the ground wire [m]. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</code>.</small></td></tr>
+<tr><td><code>DCResG2</code></td><td>ohm/km</td><td>Real</td><td>0.0 to 100.0</td><td>2.8645</td><td>DC resistance per unit length<small>Enter the DC resistance of the conducting material per unit length [ohm/km]. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</code>.</small></td></tr>
+<tr><td><code>PERMG2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0.0 to 1.0</td><td>1.0</td><td>Relative permeability<small>Enter the relative permeability of the conductor. Used only when <code>(GDataType==1)&amp;&amp;(NG&gt;1)&amp;&amp;(GWSame==0)</code>.</small></td></tr>
+<tr><td><code>SAGG</code></td><td>m</td><td>Real</td><td>0.0 to 10000.0</td><td>10.0</td><td>Sag (all ground wires)<small>Enter the sag for all ground wires. This is the difference between the height at the tower, to the height mid-span [m]. Used only when <code>(NG&gt;0)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-asymmetrical-bundling-position-data">
+  <h2 id="g3-asymmetrical-bundling-position-data">Asymmetrical Bundling Position Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>XB1</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  1 - X Position</td></tr>
+<tr><td><code>YB1</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  1 - Y Position</td></tr>
+<tr><td><code>XB2</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  2 - X Position</td></tr>
+<tr><td><code>YB2</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  2 - Y Position</td></tr>
+<tr><td><code>XB3</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  3 - X Position<small>Used only when <code>NCondB&gt;=3</code>.</small></td></tr>
+<tr><td><code>YB3</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  3 - Y Position<small>Used only when <code>NCondB&gt;=3</code>.</small></td></tr>
+<tr><td><code>XB4</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  4 - X Position<small>Used only when <code>NCondB&gt;=4</code>.</small></td></tr>
+<tr><td><code>YB4</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  4 - Y Position<small>Used only when <code>NCondB&gt;=4</code>.</small></td></tr>
+<tr><td><code>XB5</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  5 - X Position<small>Used only when <code>NCondB&gt;=5</code>.</small></td></tr>
+<tr><td><code>YB5</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  5 - Y Position<small>Used only when <code>NCondB&gt;=5</code>.</small></td></tr>
+<tr><td><code>XB6</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  6 - X Position<small>Used only when <code>NCondB&gt;=6</code>.</small></td></tr>
+<tr><td><code>YB6</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  6 - Y Position<small>Used only when <code>NCondB&gt;=6</code>.</small></td></tr>
+<tr><td><code>XB7</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  7 - X Position<small>Used only when <code>NCondB&gt;=7</code>.</small></td></tr>
+<tr><td><code>YB7</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  7 - Y Position<small>Used only when <code>NCondB&gt;=7</code>.</small></td></tr>
+<tr><td><code>XB8</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  8 - X Position<small>Used only when <code>NCondB&gt;=8</code>.</small></td></tr>
+<tr><td><code>YB8</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  8 - Y Position<small>Used only when <code>NCondB&gt;=8</code>.</small></td></tr>
+<tr><td><code>XB9</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor  9 - X Position<small>Used only when <code>NCondB&gt;=9</code>.</small></td></tr>
+<tr><td><code>YB9</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor  9 - Y Position<small>Used only when <code>NCondB&gt;=9</code>.</small></td></tr>
+<tr><td><code>XB10</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 10 - X Position<small>Used only when <code>NCondB==10</code>.</small></td></tr>
+<tr><td><code>YB10</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 10 - Y Position<small>Used only when <code>NCondB==10</code>.</small></td></tr>
+<tr><td><code>XB11</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 11 - X Position<small>Used only when <code>NCondB&gt;=11</code>.</small></td></tr>
+<tr><td><code>YB11</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 11 - Y Position<small>Used only when <code>NCondB&gt;=11</code>.</small></td></tr>
+<tr><td><code>XB12</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 12 - X Position<small>Used only when <code>NCondB&gt;=12</code>.</small></td></tr>
+<tr><td><code>YB12</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 12 - Y Position<small>Used only when <code>NCondB&gt;=12</code>.</small></td></tr>
+<tr><td><code>XB13</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 13 - X Position<small>Used only when <code>NCondB&gt;=13</code>.</small></td></tr>
+<tr><td><code>YB13</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 13 - Y Position<small>Used only when <code>NCondB&gt;=13</code>.</small></td></tr>
+<tr><td><code>XB14</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 14 - X Position<small>Used only when <code>NCondB&gt;=14</code>.</small></td></tr>
+<tr><td><code>YB14</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 14 - Y Position<small>Used only when <code>NCondB&gt;=14</code>.</small></td></tr>
+<tr><td><code>XB15</code></td><td>m</td><td>Real</td><td>·</td><td>-0.1</td><td>Sub-Conductor 15 - X Position<small>Used only when <code>NCondB&gt;=15</code>.</small></td></tr>
+<tr><td><code>YB15</code></td><td>m</td><td>Real</td><td>·</td><td>0.1</td><td>Sub-Conductor 15 - Y Position<small>Used only when <code>NCondB&gt;=15</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-phase-node-connection-information">
+  <h2 id="g4-phase-node-connection-information">Phase/Node Connection Information</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>NC1</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 30</td><td>1</td><td>Conductor 1 (C1)<small>Enter a number for this conductor to coincide with the external node connection.</small></td></tr>
+<tr><td><code>NC2</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 30</td><td>2</td><td>Conductor 2 (C2)<small>Enter a number for this conductor to coincide with the external node connection.</small></td></tr>
+<tr><td><code>NC3</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 30</td><td>3</td><td>Conductor 3 (C3)<small>Enter a number for this conductor to coincide with the external node connection.</small></td></tr>
+<tr><td><code>NG1</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 30</td><td>4</td><td>Ground Wire 1 (G1)<small>Enter a number for this conductor to coincide with the external node connection. Used only when <code>(NG&gt;0)&amp;&amp;(ElimGW==0)</code>.</small></td></tr>
+<tr><td><code>NG2</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 30</td><td>5</td><td>Ground Wire 2 (G2)<small>Enter a number for this conductor to coincide with the external node connection. Used only when <code>(NG&gt;1)&amp;&amp;(ElimGW==0)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../line-buswork-3h/">3 Conductor Horizontal Bus Bar</a> · <a href="../line-buswork-3v/">3 Conductor Vertical Bus Bar</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

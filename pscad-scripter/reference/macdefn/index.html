@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>macdefn parameters (master:macdefn) | Adjie Brotools</title>
+<meta name="description" content="Every parameter of the PSCAD macdefn (master:macdefn): 98 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="macdefn (master:macdefn) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD macdefn (master:macdefn): 98 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="macdefn (master:macdefn) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD macdefn (master:macdefn): 98 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "macdefn (master:macdefn) parameters",
+  "description": "Every parameter of the PSCAD macdefn (master:macdefn): 98 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:macdefn (macdefn)",
+    "description": "The PSCAD Master Library definition master:macdefn."
+  },
+  "keywords": "master:macdefn parameters, PSCAD macdefn parameters, macdefn PSCAD, master:macdefn Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "macdefn",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">macdefn</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>macdefn<span class="dx-h1-sub">master:macdefn</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD macdefn (<code>master:macdefn</code>): 98 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What macdefn is</h2>
+  <p>macdefn is a Master Library definition in the Machines group of PSCAD 5.0.0. V2 SNC375 Machine model (Obsolete). Its 98 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:macdefn</code></dd><dt>PSCAD name</dt><dd>macdefn</dd><dt>Library group</dt><dd>Machines</dd><dt>Parameters</dt><dd>98 parameters, in 10 sections of the dialog</dd><dt>Description</dt><dd>V2 SNC375 Machine model (Obsolete)</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write macdefn in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:macdefn&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:macdefn&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(Vbase=<span class="py-s">&quot;10 [kV]&quot;</span>, Ibase=<span class="py-s">&quot;10 [kA]&quot;</span>, Omegb=<span class="py-s">&quot;376.992 [rad/s]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;Vbase&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All macdefn parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">12</span></a></li><li><a href="#g1-basic-and-mechanical-data">Basic And Mechanical Data<span class="dx-n">8</span></a></li><li><a href="#g2-equiv-circuit-data-format">Equiv. Circuit Data Format<span class="dx-n">12</span></a></li><li><a href="#g3-generator-data-format">Generator Data Format<span class="dx-n">14</span></a></li><li><a href="#g4-saturation-curve">Saturation Curve<span class="dx-n">20</span></a></li><li><a href="#g5-initial-conditions-powers-opt-use">Initial Conditions: Powers ( Opt. Use )<span class="dx-n">4</span></a></li><li><a href="#g6-initial-conditions-currents-opt-use">Initial Conditions: Currents ( Opt. Use )<span class="dx-n">5</span></a></li><li><a href="#g7-initialization-constants-opt-use">Initialization Constants ( Opt. Use )<span class="dx-n">3</span></a></li><li><a href="#g8-output-variable-names">Output Variable Names<span class="dx-n">8</span></a></li><li><a href="#g9-monitoring-internal-variables">Monitoring Internal Variables<span class="dx-n">12</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Machine name</td></tr>
+<tr><td><code>Nqaxw</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>1</td><td>No. of Q-axis Dampers:<small>One of: 1, 2.</small></td></tr>
+<tr><td><code>daTyp</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>EQUIV_CIRCUIT (Equiv. Circuit)</td><td>Data Entry Format<small>Takes <code>EQUIV_CIRCUIT</code> Equiv. Circuit, <code>GENERATOR</code> Generator.</small></td></tr>
+<tr><td><code>itrfa</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>D-axis Transfer Admit data available?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>icTyp</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>POWER (Power)</td><td>Initial Conditions<small>Takes <code>NONE</code> None, <code>POWER</code> Power, <code>CURRENTS</code> Currents.</small></td></tr>
+<tr><td><code>izro</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Force currents = 0 at time = 0 ?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Icsp</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Icon input: control source P out ?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Icmp</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Icon input: control mach P out ?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Immd</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Icon inputs: modify mech. dyn. ?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Ifmlt</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Icon inputs: multiplier for Ef and Rrs<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Iscl</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Icon input: machine scaling factor<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Ishnm</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Show subroutine argument names<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-basic-and-mechanical-data">
+  <h2 id="g1-basic-and-mechanical-data">Basic And Mechanical Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Vbase</code></td><td>kV</td><td>Real</td><td>·</td><td>10.0</td><td>Rated RMS Line-to-Neutral Voltage</td></tr>
+<tr><td><code>Ibase</code></td><td>kA</td><td>Real</td><td>·</td><td>10.0</td><td>Rated RMS Line Current</td></tr>
+<tr><td><code>Omegb</code></td><td>rad/s</td><td>Real</td><td>·</td><td>376.992</td><td>Base Angular Frequency</td></tr>
+<tr><td><code>H</code></td><td>s</td><td>Real</td><td>·</td><td>2.0</td><td>Inertia Constant</td></tr>
+<tr><td><code>TLoss</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Mechanical Friction and Windage</td></tr>
+<tr><td><code>RNeut</code></td><td>pu</td><td>Real</td><td>·</td><td>1.0E4</td><td>Neutral Series Resistance</td></tr>
+<tr><td><code>XNeut</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Neutral Series Reactance</td></tr>
+<tr><td><code>Ri</code></td><td>pu</td><td>Real</td><td>66.7 to 300</td><td>300.0</td><td>Iron Loss Resistance</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-equiv-circuit-data-format">
+  <h2 id="g2-equiv-circuit-data-format">Equiv. Circuit Data Format</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Xmd0</code></td><td>pu</td><td>Real</td><td>·</td><td>1.66</td><td>D-Axis Unsaturated Magnet. React.<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Rfd</code></td><td>pu</td><td>Real</td><td>·</td><td>1.4068E-03</td><td>Field Resistance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xfd</code></td><td>pu</td><td>Real</td><td>·</td><td>6.1789E-02</td><td>Field Leakage Reactance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Rkd</code></td><td>pu</td><td>Real</td><td>·</td><td>4.0699E-03</td><td>D-Axis Damper Resistance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xkd</code></td><td>pu</td><td>Real</td><td>·</td><td>5.4581E-03</td><td>D-Axis Damper Leakage Reactance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xkfd</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>D: Field-Damp Mutual Leak. React.<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xmq</code></td><td>pu</td><td>Real</td><td>·</td><td>1.58</td><td>Q-Axis Magnetizing Reactance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Rfq</code></td><td>pu</td><td>Real</td><td>·</td><td>1.4145E-02</td><td>Q-Axis Damper No. 1 Resistance<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xfq</code></td><td>pu</td><td>Real</td><td>·</td><td>0.32928</td><td>Q-Axis Damper No. 1 Leakage React.<small>Used only when <code>(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Rkq</code></td><td>pu</td><td>Real</td><td>0.001 to 2</td><td>8.1942E-03</td><td>Q-Axis Damper No. 2 Resistance<small>Used only when <code>(Nqaxw==2)&amp;&amp;(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xkq</code></td><td>pu</td><td>Real</td><td>0.001 to 2</td><td>9.4199E-02</td><td>Q-Axis Damper No. 2 Leakage React.<small>Used only when <code>(Nqaxw==2)&amp;&amp;(daTyp==0)</code>.</small></td></tr>
+<tr><td><code>Xkfq</code></td><td>pu</td><td>Real</td><td>0 to 2</td><td>0.0</td><td>Q: Damp-Damp Mutual Leak. React.<small>Used only when <code>(Nqaxw==2)&amp;&amp;(daTyp==0)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-generator-data-format">
+  <h2 id="g3-generator-data-format">Generator Data Format</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Ra</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Stator Resistance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xa</code></td><td>pu</td><td>Real</td><td>·</td><td>0.13</td><td>Stator Leakage Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xd</code></td><td>pu</td><td>Real</td><td>·</td><td>1.79</td><td>D: Unsaturated Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xd_</code></td><td>pu</td><td>Real</td><td>·</td><td>0.169</td><td>D: Unsaturated Transient Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Tdo_</code></td><td>s</td><td>Real</td><td>·</td><td>4.3</td><td>D: Unsat. Transient Time  ( Open )<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xd__</code></td><td>pu</td><td>Real</td><td>·</td><td>0.135</td><td>D: Unsat. Sub-Trans. Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Tdo__</code></td><td>s</td><td>Real</td><td>·</td><td>0.032</td><td>D: Unsat. Sub-Trans. Time ( Open )<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Gfld</code></td><td>pu</td><td>Real</td><td>0 to 100</td><td>1.0E+2</td><td>D: Real Transfer Admit (Armat-Field)<small>Used only when <code>(itrfa==1)&amp;&amp;(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Bfld</code></td><td>pu</td><td>Real</td><td>0 to 100</td><td>1.0E+2</td><td>D: Imag Transfer Admit (Armat-Field)<small>Used only when <code>(itrfa==1)&amp;&amp;(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xq</code></td><td>pu</td><td>Real</td><td>·</td><td>1.71</td><td>Q: Unsaturated Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xq_</code></td><td>pu</td><td>Real</td><td>0.001 to 1</td><td>0.228</td><td>Q: Unsaturated Transient Reactance<small>Used only when <code>(Nqaxw==2)&amp;&amp;(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Tqo_</code></td><td>s</td><td>Real</td><td>0.001 to 2</td><td>0.85</td><td>Q: Unsat. Transient Time  ( Open )<small>Used only when <code>(Nqaxw==2)&amp;&amp;(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Xq__</code></td><td>pu</td><td>Real</td><td>·</td><td>0.2</td><td>Q: Unsat. Sub-Trans. Reactance<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+<tr><td><code>Tqo__</code></td><td>s</td><td>Real</td><td>·</td><td>0.05</td><td>Q: Unsat. Sub-Trans. Time ( Open )<small>Used only when <code>(daTyp==1)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-saturation-curve">
+  <h2 id="g4-saturation-curve">Saturation Curve</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>C1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.0</td><td>First Point on the Saturation</td></tr>
+<tr><td><code>V1</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Curve must be ( 0.0, 0.0 ).</td></tr>
+<tr><td><code>C2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.5</td><td>Second Point must be on the</td></tr>
+<tr><td><code>V2</code></td><td>pu</td><td>Real</td><td>0 to 1.01</td><td>0.5</td><td>Unsaturated Part of the Curve.</td></tr>
+<tr><td><code>C3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>0.8</td><td>Currents can be in any</td></tr>
+<tr><td><code>V3</code></td><td>pu</td><td>Real</td><td>·</td><td>0.8</td><td>consistent Units.</td></tr>
+<tr><td><code>C4</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>1.0</td><td>10 Points Maximum: If less points</td></tr>
+<tr><td><code>V4</code></td><td>pu</td><td>Real</td><td>·</td><td>1.0</td><td>are available, enter -1.0 for</td></tr>
+<tr><td><code>C5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>1.2</td><td>the current after the last</td></tr>
+<tr><td><code>V5</code></td><td>pu</td><td>Real</td><td>·</td><td>1.2</td><td>point.</td></tr>
+<tr><td><code>C6</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>1.5</td><td></td></tr>
+<tr><td><code>V6</code></td><td>pu</td><td>Real</td><td>·</td><td>1.5</td><td></td></tr>
+<tr><td><code>C7</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>1.8</td><td></td></tr>
+<tr><td><code>V7</code></td><td>pu</td><td>Real</td><td>·</td><td>1.8</td><td></td></tr>
+<tr><td><code>C8</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>2.2</td><td></td></tr>
+<tr><td><code>V8</code></td><td>pu</td><td>Real</td><td>·</td><td>2.2</td><td></td></tr>
+<tr><td><code>C9</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>3.2</td><td></td></tr>
+<tr><td><code>V9</code></td><td>pu</td><td>Real</td><td>·</td><td>3.2</td><td></td></tr>
+<tr><td><code>C10</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>·</td><td>4.2</td><td></td></tr>
+<tr><td><code>V10</code></td><td>pu</td><td>Real</td><td>·</td><td>4.2</td><td></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-initial-conditions-powers-opt-use">
+  <h2 id="g5-initial-conditions-powers-opt-use">Initial Conditions: Powers ( Opt. Use )</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Vmagn</code></td><td>pu</td><td>Real</td><td>·</td><td>1.0</td><td>Voltage Magn. at Time = 0-<small>Used only when <code>(icTyp==1)</code>.</small></td></tr>
+<tr><td><code>Vangl</code></td><td>rad</td><td>Real</td><td>·</td><td>0.0</td><td>Voltage Phase at Time = 0-<small>Used only when <code>(icTyp==1)</code>.</small></td></tr>
+<tr><td><code>P0</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Real  Power at Time = 0- ; Out +<small>Used only when <code>(icTyp==1)</code>.</small></td></tr>
+<tr><td><code>Q0</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>React Power at Time = 0- ; Out +<small>Used only when <code>(icTyp==1)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-initial-conditions-currents-opt-use">
+  <h2 id="g6-initial-conditions-currents-opt-use">Initial Conditions: Currents ( Opt. Use )</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Theti</code></td><td>rad</td><td>Real</td><td>·</td><td>3.141592</td><td>Initial Rotor Angle ref: Stator<small>Used only when <code>(icTyp==2)</code>.</small></td></tr>
+<tr><td><code>Idi</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>D-axis Armature Current; In +<small>Used only when <code>(icTyp==2)</code>.</small></td></tr>
+<tr><td><code>Iqi</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Q-axis Armature Current; In +<small>Used only when <code>(icTyp==2)</code>.</small></td></tr>
+<tr><td><code>Ifi</code></td><td>pu</td><td>Real</td><td>·</td><td>0.0</td><td>Initial Field Current<small>Used only when <code>(icTyp==2)</code>.</small></td></tr>
+<tr><td><code>Spdi</code></td><td>pu</td><td>Real</td><td>·</td><td>1.0</td><td>Initial Machine Speed<small>Used only when <code>(icTyp==2)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7-initialization-constants-opt-use">
+  <h2 id="g7-initialization-constants-opt-use">Initialization Constants ( Opt. Use )</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Trmpv</code></td><td>s</td><td>Real</td><td>0 to 5</td><td>0.1</td><td>Time to Ramp Source Limit to Rated</td></tr>
+<tr><td><code>Sysfl</code></td><td>pu</td><td>Real</td><td>0.1 to 1000</td><td>100.0</td><td>System Fault Level (excl. mach.)<small>Used only when <code>(Icsp==1)||(Icmp==1)</code>.</small></td></tr>
+<tr><td><code>Ptcon</code></td><td>s</td><td>Real</td><td>0.05 to 10</td><td>0.2</td><td>Time Const. for Power Correction<small>Used only when <code>(Icsp==1)||(Icmp==1)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8-output-variable-names">
+  <h2 id="g8-output-variable-names">Output Variable Names</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>POut</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Real Power;        Out +</td></tr>
+<tr><td><code>QOut</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Reactive Power;    Out +</td></tr>
+<tr><td><code>Vneut</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Neutral Voltage</td></tr>
+<tr><td><code>Cneut</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Neutral Current to Ground</td></tr>
+<tr><td><code>Ldagl</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Load Angle; Gen. +</td></tr>
+<tr><td><code>Theta</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Rotor Mechanical Angle</td></tr>
+<tr><td><code>Tesmt</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Steady Electrical Torque</td></tr>
+<tr><td><code>Tmsmt</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name: Steady Elect + Frict Torque</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9-monitoring-internal-variables">
+  <h2 id="g9-monitoring-internal-variables">Monitoring Internal Variables</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Mon1</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 1st monitored output</td></tr>
+<tr><td><code>Mon2</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 2nd monitored output</td></tr>
+<tr><td><code>Mon3</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 3rd monitored output</td></tr>
+<tr><td><code>Mon4</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 4th monitored output</td></tr>
+<tr><td><code>Mon5</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn5</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 5th monitored output</td></tr>
+<tr><td><code>Mon6</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 375</td><td>1</td><td>Monitor internal storage NEXC +</td></tr>
+<tr><td><code>Chn6</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for 6th monitored output</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../hy-tur/">Hydro Turbine</a> · <a href="../pm-machine/">Permanent Magnet Machine</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

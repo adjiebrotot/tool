@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TRV Envelope Generator parameters (master:trv)</title>
+<meta name="description" content="Every parameter of the PSCAD TRV Envelope Generator (master:trv): 48 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/trv/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="TRV Envelope Generator (master:trv) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD TRV Envelope Generator (master:trv): 48 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/trv/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TRV Envelope Generator (master:trv) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD TRV Envelope Generator (master:trv): 48 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "TRV Envelope Generator (master:trv) parameters",
+  "description": "Every parameter of the PSCAD TRV Envelope Generator (master:trv): 48 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/trv/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:trv (TRV Envelope Generator)",
+    "description": "The PSCAD Master Library definition master:trv."
+  },
+  "keywords": "master:trv parameters, PSCAD TRV Envelope Generator parameters, TRV Envelope Generator PSCAD, master:trv Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "TRV Envelope Generator",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/trv/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">TRV Envelope Generator</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>TRV Envelope Generator<span class="dx-h1-sub">master:trv</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD TRV Envelope Generator (<code>master:trv</code>): 48 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What TRV Envelope Generator is</h2>
+  <p>TRV Envelope Generator is a Master Library definition in the Control group of PSCAD 5.0.0. TRV envelope generator and failure detection. Its 48 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:trv</code></dd><dt>PSCAD name</dt><dd>TRV Envelope Generator</dd><dt>Library group</dt><dd>Control</dd><dt>Parameters</dt><dd>48 parameters, in 3 sections of the dialog</dd><dt>Description</dt><dd>TRV envelope generator and failure detection</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write TRV Envelope Generator in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:trv&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:trv&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(tol=<span class="py-s">&quot;0.5 [kV]&quot;</span>, pt5x=<span class="py-s">&quot;0 [us]&quot;</span>, pt5y=<span class="py-s">&quot;0 [kV]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;tol&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All TRV Envelope Generator parameters"><li><a href="#g0-standard-trv-points">Standard TRV Points<span class="dx-n">11</span></a></li><li><a href="#g1-user-defined-trv-points">User Defined TRV Points<span class="dx-n">34</span></a></li><li><a href="#g2-source-faults">Source Faults<span class="dx-n">3</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-standard-trv-points">
+  <h2 id="g0-standard-trv-points">Standard TRV Points</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>user_standard</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SOURCE_FAULT (Source Fault)</td><td>TRV Standard<small>Select from IEEE, IEC with/without additional user defined curves. Takes <code>USER_DEFINED</code> User Defined, <code>IEC</code>, <code>IEEE</code>, <code>IEC_USER_DEFINED</code> IEC + User Defined, <code>IEEE_USER_DEFINED</code> IEEE + User Defined, <code>SOURCE_FAULT</code> Source Fault.</small></td></tr>
+<tr><td><code>user_class</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>1_KV_KV (1 kv kv)</td><td>TRV Class<small>Takes <code>15_KV_KV</code> 15 kv kv, <code>1_KV_KV</code> 1 kv kv, <code>KV_170_KV</code> Kv 170 kv, <code>KV_800_KV</code> Kv 800 kv. Used only when <code>(user_standard &gt; 1) &amp;&amp; (user_standard &lt; 6)</code>.</small></td></tr>
+<tr><td><code>tol</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0.5</td><td>Tolerance for failure detection<small>Enter an additional tolerance for violation detection.</small></td></tr>
+<tr><td><code>iec1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>4.76_KV (4.76 [kV])</td><td>IEC S1 Rated Voltage<small>Takes <code>3.6_KV</code> 3.6 [kV], <code>4.76_KV</code> 4.76 [kV], <code>7.2_KV</code> 7.2 [kV], <code>8.25_KV</code> 8.25 [kV], <code>12_KV</code> 12 [kV], <code>15_KV</code> 15 [kV], <code>17.5_KV</code> 17.5 [kV], <code>24_KV</code> 24 [kV], <code>25.8_KV</code> 25.8 [kV], <code>36_KV</code> 36 [kV], <code>38_KV</code> 38 [kV], <code>48.3_KV</code> 48.3 [kV], <code>52_KV</code> 52 [kV], <code>72.5_KV</code> 72.5 [kV]. Used only when <code>((user_standard==2) || (user_standard==4)) &amp;&amp; (user_class==1)</code>.</small></td></tr>
+<tr><td><code>iec2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>175_KV (17.5 [kV])</td><td>IEC S2 Rated Voltage<small>Takes <code>15_KV</code> 15 [kV], <code>175_KV</code> 17.5 [kV], <code>24_KV</code> 24 [kV], <code>258_KV</code> 25.8 [kV], <code>36_KV</code> 36 [kV], <code>38_KV</code> 38 [kV], <code>483_KV</code> 48.3 [kV], <code>52_KV</code> 52 [kV], <code>725_KV</code> 72.5 [kV]. Used only when <code>((user_standard==2) || (user_standard==4)) &amp;&amp; (user_class==2)</code>.</small></td></tr>
+<tr><td><code>iec3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>123_KV (123 [kV])</td><td>IEC EENS Rated Voltage<small>Takes <code>100_KV</code> 100 [kV], <code>123_KV</code> 123 [kV], <code>145_KV</code> 145 [kV], <code>170_KV</code> 170 [kV], <code>245_KV</code> 245 [kV], <code>300_KV</code> 300 [kV], <code>362_KV</code> 362 [kV], <code>420_KV</code> 420 [kV], <code>550_KV</code> 550 [kV], <code>800_KV</code> 800 [kV]. Used only when <code>((user_standard==2) || (user_standard==4)) &amp;&amp; (user_class==3)</code>.</small></td></tr>
+<tr><td><code>iec4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>123_KV (123 [kV])</td><td>IEC NENS Rated Voltage<small>Takes <code>100_KV</code> 100 [kV], <code>123_KV</code> 123 [kV], <code>145_KV</code> 145 [kV], <code>170_KV</code> 170 [kV]. Used only when <code>((user_standard==2) || (user_standard==4)) &amp;&amp; (user_class==4)</code>.</small></td></tr>
+<tr><td><code>ieee1</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>825_KV (8.25 [kV])</td><td>IEEE S1 Rated Voltage<small>Takes <code>476_KV</code> 4.76 [kV], <code>825_KV</code> 8.25 [kV], <code>15_KV</code> 15 [kV], <code>27_KV</code> 27 [kV], <code>38_KV</code> 38 [kV], <code>725_KV</code> 72.5 [kV]. Used only when <code>((user_standard==3) || (user_standard==5)) &amp;&amp; (user_class==1)</code>.</small></td></tr>
+<tr><td><code>ieee2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>258_KV (25.8 [kV])</td><td>IEEE S2 Rated Voltage<small>Takes <code>155_KV</code> 15.5 [kV], <code>258_KV</code> 25.8 [kV], <code>38_KV</code> 38 [kV], <code>483_KV</code> 48.3 [kV], <code>725_KV</code> 72.5 [kV]. Used only when <code>((user_standard==3) || (user_standard==5)) &amp;&amp; (user_class==2)</code>.</small></td></tr>
+<tr><td><code>ieee3</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>145_KV (145 [kV])</td><td>IEEE EENS Rated Voltage<small>Takes <code>123_KV</code> 123 [kV], <code>145_KV</code> 145 [kV], <code>170_KV</code> 170 [kV], <code>245_KV</code> 245 [kV], <code>362_KV</code> 362 [kV], <code>550_KV</code> 550 [kV], <code>800_KV</code> 800 [kV]. Used only when <code>((user_standard==3) || (user_standard==5)) &amp;&amp; (user_class==3)</code>.</small></td></tr>
+<tr><td><code>ieee4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>145_KV (145 [kV])</td><td>IEEE NENS Rated Voltage<small>Takes <code>123_KV</code> 123 [kV], <code>145_KV</code> 145 [kV], <code>170_KV</code> 170 [kV], <code>245_KV</code> 245 [kV], <code>362_KV</code> 362 [kV], <code>550_KV</code> 550 [kV], <code>800_KV</code> 800 [kV]. Used only when <code>((user_standard==3) || (user_standard==5)) &amp;&amp; (user_class==4)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-user-defined-trv-points">
+  <h2 id="g1-user-defined-trv-points">User Defined TRV Points</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>text_4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 1 Name<small>Optional name for reference. Used only when <code>num4 &gt;0</code>.</small></td></tr>
+<tr><td><code>pt5x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 First Time<small>Used only when <code>num4 &gt; 0</code>.</small></td></tr>
+<tr><td><code>pt5y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 First Reference Voltage<small>Used only when <code>num4 &gt; 0</code>.</small></td></tr>
+<tr><td><code>pt6x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 TRV Peak Time<small>Used only when <code>num4 &gt; 0</code>.</small></td></tr>
+<tr><td><code>pt6y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 TRV Peak Value<small>Used only when <code>num4 &gt; 0</code>.</small></td></tr>
+<tr><td><code>text_4_1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 2 Name<small>Optional name for reference. Used only when <code>num4 &gt;1</code>.</small></td></tr>
+<tr><td><code>pt7x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 First Time<small>Used only when <code>num4 &gt; 1</code>.</small></td></tr>
+<tr><td><code>pt7y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 First Reference Voltage<small>Used only when <code>num4 &gt; 1</code>.</small></td></tr>
+<tr><td><code>pt8x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 TRV Peak Time<small>Used only when <code>num4 &gt; 1</code>.</small></td></tr>
+<tr><td><code>pt8y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 TRV Peak Value<small>Used only when <code>num4 &gt; 1</code>.</small></td></tr>
+<tr><td><code>text_4_2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 3 Name<small>Optional name for reference. Used only when <code>num4 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt9x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 First Time<small>Used only when <code>num4 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt9y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 First Reference Voltage<small>Used only when <code>num4 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt10x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 TRV Peak Time<small>Used only when <code>num4 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt10y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 TRV Peak Value<small>Used only when <code>num4 &gt; 2</code>.</small></td></tr>
+<tr><td><code>text_4_3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 4 Name<small>Optional name for reference. Used only when <code>num4 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt11x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 First Time<small>Used only when <code>num4 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt11y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 First Reference Voltage<small>Used only when <code>num4 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt12x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 TRV Peak Time<small>Used only when <code>num4 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt12y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 TRV Peak Value<small>Used only when <code>num4 &gt; 3</code>.</small></td></tr>
+<tr><td><code>text</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 1 Name<small>Optional name for reference. Used only when <code>num2 &gt;0</code>.</small></td></tr>
+<tr><td><code>pt1x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 TRV Peak Time<small>Used only when <code>num2 &gt; 0</code>.</small></td></tr>
+<tr><td><code>pt1y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 1 TRV Peak Value<small>Used only when <code>num2 &gt; 0</code>.</small></td></tr>
+<tr><td><code>text_1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 2 Name<small>Optional name for reference. Used only when <code>num2 &gt; 1</code>.</small></td></tr>
+<tr><td><code>pt2x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 TRV Peak Time<small>Used only when <code>num2 &gt; 1</code>.</small></td></tr>
+<tr><td><code>pt2y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 2 TRV Peak Value<small>Used only when <code>num2 &gt; 1</code>.</small></td></tr>
+<tr><td><code>text_2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 3 Name<small>Optional name for reference. Used only when <code>num2 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt3x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 TRV Peak Time<small>Used only when <code>num2 &gt; 2</code>.</small></td></tr>
+<tr><td><code>pt3y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 3 TRV Peak Value<small>Used only when <code>num2 &gt; 2</code>.</small></td></tr>
+<tr><td><code>text_3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Curve 4 Name<small>Optional name for reference. Used only when <code>num2 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt4x</code></td><td>us</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 TRV Peak Time<small>Used only when <code>num2 &gt; 3</code>.</small></td></tr>
+<tr><td><code>pt4y</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>0</td><td>Curve 4 TRV Peak Value<small>Used only when <code>num2 &gt; 3</code>.</small></td></tr>
+<tr><td><code>num2</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>0</td><td>Number of 2 Parameter Curves<small>Number of single point curves. One of: 0, 1, 2, 3, 4.</small></td></tr>
+<tr><td><code>num4</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>0</td><td>Number of 4 Parameter Curves<small>Number of 2 point curves. One of: 0, 1, 2, 3, 4.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2-source-faults">
+  <h2 id="g2-source-faults">Source Faults</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>flt_loc</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SYSTEMSOURCE (System-Source Fault)</td><td>Fault Location<small>Select from system-source fault or generator-source fault. Takes <code>SYSTEMSOURCE</code> System-Source Fault, <code>GENERATORSOURCE</code> Generator-Source Fault.</small></td></tr>
+<tr><td><code>vrm</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>33</td><td>Rated Maximum Voltage</td></tr>
+<tr><td><code>tmva</code></td><td>MVA</td><td>Real</td><td>0 to 1E+308</td><td>100</td><td>Transformer/Generator Three Phase MVA Rating<small>If the fault is system-source then enter the Transformer MVA, else, enter the Generator MVA.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/control-tuning/">Tune a control with a search</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../trip-polygon/">Trip Polygon</a> · <a href="../compar/">Two Input Comparator</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

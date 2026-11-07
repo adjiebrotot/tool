@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Single Phase Voltage Source Model 2 parameters (master:source_1)</title>
+<meta name="description" content="All master:source_1 parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Single Phase Voltage Source Model 2 (master:source_1) parameters">
+<meta property="og:description" content="All master:source_1 parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Single Phase Voltage Source Model 2 (master:source_1) parameters">
+<meta name="twitter:description" content="All master:source_1 parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Single Phase Voltage Source Model 2 (master:source_1) parameters",
+  "description": "All master:source_1 parameters in PSCAD 5.0.0: 22 parameters, with units, ranges, defaults and Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:source_1 (Single Phase Voltage Source Model 2)",
+    "description": "The PSCAD Master Library definition master:source_1."
+  },
+  "keywords": "master:source_1 parameters, PSCAD Single Phase Voltage Source Model 2 parameters, Single Phase Voltage Source Model 2 PSCAD, master:source_1 Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Single Phase Voltage Source Model 2",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Single Phase Voltage Source Model 2</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Single Phase Voltage Source Model 2<span class="dx-h1-sub">master:source_1</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Single Phase Voltage Source Model 2 (<code>master:source_1</code>): 22 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Single Phase Voltage Source Model 2 is</h2>
+  <p>Single Phase Voltage Source Model 2 is a Master Library definition in the Sources group of PSCAD 5.0.0. Its 22 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:source_1</code></dd><dt>PSCAD name</dt><dd>Single Phase Voltage Source Model 2</dd><dt>Library group</dt><dd>Sources</dd><dt>Parameters</dt><dd>22 parameters, in 4 sections of the dialog</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Single Phase Voltage Source Model 2 in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:source_1&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:source_1&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(Vm=<span class="py-s">&quot;132.79 [kV]&quot;</span>, Tc=<span class="py-s">&quot;0.05 [s]&quot;</span>, Ph=<span class="py-s">&quot;0 [deg]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;Vm&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Single Phase Voltage Source Model 2 parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">6</span></a></li><li><a href="#g1-signal-parameters">Signal Parameters<span class="dx-n">6</span></a></li><li><a href="#g2-impedance">Impedance<span class="dx-n">9</span></a></li><li><a href="#g3-monitoring">Monitoring<span class="dx-n">1</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>Source</td><td>Source Name</td></tr>
+<tr><td><code>Type</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>RR_L (R-R//L)</td><td>Source Impedance<small>Takes <code>RESISTIVE</code> Resistive, <code>RR_L</code> R-R//L, <code>SERIES_RLC</code> Series RLC, <code>INDUCTIVE</code> Inductive, <code>CAPACITIVE</code> Capacitive, <code>IDEAL</code> Ideal.</small></td></tr>
+<tr><td><code>Grnd</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>YES (Yes)</td><td>Is This Source Grounded?<small>Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>Spec</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>BEHIND_SOURCE_IMPEDANCE (Behind the Source Impedance)</td><td>Specified Parameters<small>Takes <code>BEHIND_SOURCE_IMPEDANCE</code> Behind the Source Impedance, <code>AT_TERMINAL</code> At the Terminal.</small></td></tr>
+<tr><td><code>Cntrl</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>INTERNAL (Internal)</td><td>Input Method<small>Takes <code>INTERNAL</code> Internal, <code>EXTERNAL</code> External. Used only when <code>Spec==0</code>.</small></td></tr>
+<tr><td><code>AC</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>DC</td><td>Source Type<small>Takes <code>AC</code>, <code>DC</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-signal-parameters">
+  <h2 id="g1-signal-parameters">Signal Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Vm</code></td><td>kV</td><td>Real</td><td>0 to 1E+308</td><td>132.79</td><td>Mag. (AC:L-G,RMS DC:Pk)<small>Used only when <code>((Cntrl==0)&amp;&amp;(Spec==0))||(Spec==1)</code>.</small></td></tr>
+<tr><td><code>Tc</code></td><td>s</td><td>Real</td><td>0 to 1E+308</td><td>0.05</td><td>Ramp up Time</td></tr>
+<tr><td><code>Ph</code></td><td>deg</td><td>Real</td><td>-360 to 360</td><td>0.0</td><td>Initial Phase<small>Used only when <code>(AC==1)</code>.</small></td></tr>
+<tr><td><code>f</code></td><td>Hz</td><td>Real</td><td>0 to 1E+308</td><td>60.0</td><td>Frequency<small>Used only when <code>(((Cntrl==0)&amp;&amp;(Spec==0))||(Spec==1))&amp;&amp;(AC==1)</code>.</small></td></tr>
+<tr><td><code>P</code></td><td>MW</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Terminal Real Power<small>Used only when <code>Spec==1</code>.</small></td></tr>
+<tr><td><code>Q</code></td><td>MVAR</td><td>Real</td><td>-1E+308 to 1E+308</td><td>0.0</td><td>Terminal Reactive Power<small>Used only when <code>(Spec==1)&amp;&amp;(AC==1)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-impedance">
+  <h2 id="g2-impedance">Impedance</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>R</code></td><td>ohm</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Resistance<small>Used only when <code>(Type==1)</code>.</small></td></tr>
+<tr><td><code>Rs</code></td><td>ohm</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Resistance (series)<small>Used only when <code>(Type==2)</code>.</small></td></tr>
+<tr><td><code>Rp</code></td><td>ohm</td><td>Real</td><td>0.001 to 1E+308</td><td>1.0</td><td>Resistance (parallel)<small>Used only when <code>(Type==2)</code>.</small></td></tr>
+<tr><td><code>Lp</code></td><td>H</td><td>Real</td><td>0.0001 to 1E+308</td><td>0.1</td><td>Inductance (parallel)<small>Used only when <code>(Type==2)</code>.</small></td></tr>
+<tr><td><code>R_</code></td><td>ohm</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Resistance<small>Used only when <code>(Type==3)</code>.</small></td></tr>
+<tr><td><code>L</code></td><td>H</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Inductance<small>Used only when <code>(Type==3)</code>.</small></td></tr>
+<tr><td><code>C</code></td><td>uF</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Capacitance<small>Used only when <code>(Type==3)</code>.</small></td></tr>
+<tr><td><code>L_</code></td><td>H</td><td>Real</td><td>0 to 1E+308</td><td>0.1</td><td>Inductance<small>Used only when <code>(Type==4)</code>.</small></td></tr>
+<tr><td><code>C_</code></td><td>uF</td><td>Real</td><td>0 to 1E+308</td><td>1.0</td><td>Capacitance<small>Used only when <code>(Type==5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-monitoring">
+  <h2 id="g3-monitoring">Monitoring</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>CUR</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for Source current [kA]</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/parameter-sweep/">Sweep a parameter and collect the results</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../source1/">Single Phase Voltage Source Model 1</a> · <a href="../src-ccin-3/">Three Phase Current Source</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

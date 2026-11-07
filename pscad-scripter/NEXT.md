@@ -9,6 +9,17 @@ end-to-end tests generate scripts and run them against the engine. What remains 
 authoring, documentation and the rest of the audit suites, all of which can be done on any
 machine.
 
+Re-run against the engine on 7 November 2026, all green: `live_tests.py` 170 ok, `blocks/run.mjs`
+74 passed, `build_reference.py` 383 definitions. That run found and fixed one real bug: the
+Choice symbolic values were paired with the wrong labels (see the last entry under "Known about
+this machine"), so `reference/` was rebuilt.
+
+The same rebuild added two fields the data had been throwing away. The files are written with
+sorted keys, so a parameter's place in the component's own dialog was lost; each parameter now
+carries `i`, its position in the form, and each definition carries `groups`, the order of the
+form's own sections. Both are additive, the Builder reads `params.json` unchanged, and the
+reference pages lay a component out the way PSCAD's dialog does because of them.
+
 ---
 
 ## Built and verified
@@ -60,65 +71,53 @@ matches on. `abbr.js` holds the EMT and PSCAD vocabulary.
 
 ## Left to do
 
-### 1. The landing page's hero animation (the one visible gap)
+### 1. The landing page's hero animation — done
 
-`index.html` is written: the head, the SEO and JSON-LD, the copy, the four "What it does" cards,
-the "Learn PSCAD scripting" card and the footer. **Its animated hero diagram is missing.** The
-section is marked `pfl-hero pfl-nofig`, which collapses it to one column so the page does not
-look broken, but the page is much weaker without the diagram.
+The sibling's `svg.pfl-anim` is in, as a `figure.pfl-stage`, and `pfl-nofig` is gone. Every
+viewBox, transform, path, rect and class name is the sibling's, so the timeline in `style.css`
+drives it unchanged; what was rewritten is the words, the block colour classes
+(`pfl-flow` for the loop, `pfl-check` for the three checks) and the block and palette icons,
+which now come from the Builder's own set in `builder/js/ui/icons.js`.
 
-What to do: copy the sibling's `svg.pfl-anim` wholesale (`powerfactory-scripter/index.html`
-lines 162 to 183, about 17.8 kB) into a `figure.pfl-stage` in the hero, remove the `pfl-nofig`
-class, and change **only the words and the block colour classes**. Keep every viewBox,
-transform, path, rect, x, y, width, height, class name and element count exactly as they are:
-`style.css` animates those classes on a timeline, so changed geometry breaks the animation.
-`.pfl-check` and `.pfl-flow` were added to `style.css` for this.
+It tells the `frt` Quick Start: a loop over the fault duration, Run simulation, Speed nadir and
+Voltage dip into Add row to results table, and a Harmonic distortion block dragged out of the
+Blocks panel, renamed Voltage THD, wired in, and the workflow downloaded. The `<title>` says the
+same thing for a screen reader. Rebuilt by hand, not by a script: changing it again means
+editing the SVG in `index.html` in place.
 
-The story to tell is the `frt` Quick Start:
+### 2. The reading pages: `reference/` and `python/` — done
 
-| Where | Class | Says |
-|---|---|---|
-| loop tab | | Each pass, Fault duration (s) |
-| (14 66) | `pfl-b pfl-flow` | Fault duration (s), step 1, "Each number from 0.08" / "to 0.24, step 0.04", ports Each pass and After all passes |
-| (276 66) | `pfl-b pfl-study` | Run simulation, step 2, "5 s, 50 us step", Reached the end / Stopped early |
-| (516 40) | `pfl-b pfl-check` | Speed nadir, step 3, "Frequency nadir of" / "(machine speed)", output Lowest |
-| (516 184) | `pfl-b pfl-check` | Voltage dip, step 4, "Lowest value of" / "(bus voltage)", output Lowest |
-| (770 40) | `pfl-b pfl-result pfl-addrow` | Add row to results table, Into "FRT", columns "Speed nadir (Hz)" and "Lowest voltage (kV)" |
-| (516 328) | `pfl-b pfl-check` | the dragged block: Harmonic distortion (THD), renamed Voltage THD |
-| palette | | header "Power system checks", items RMS of a waveform, Harmonic distortion (THD), Sequence component, Overshoot and rise time |
+`_pages/` is complete and `node pscad-scripter/_pages/build.mjs --sitemap` writes **354 pages**
+(about 7 MB), all of them in `sitemap.xml`:
 
-Keep the replacement strings about the length of the ones they replace, or they overflow their
-block. Rewrite the svg `<title>` to describe this story for a screen reader.
-
-### 2. The reading pages: `reference/` and `python/`
-
-The generator is half written under `_pages/`:
-
-| File | State |
+| File | What it writes |
 |---|---|
-| `_pages/lib.mjs` | done, ported, the shared page shell |
-| `_pages/build.mjs` | done, the entry point, with `--urls` and `--sitemap` |
-| `_pages/check.mjs` | done, checks links, JSON-LD, canonicals, duplicate titles, em-dashes, ids, and the sitemap |
-| `_pages/README.md` | done |
-| `_pages/tasks.mjs` | written, not yet exercised |
-| `_pages/tasks/getting-started.mjs` | written, one guide of seven |
-| `_pages/definitions.mjs` | **missing** |
-| `_pages/reference.mjs` | **missing** |
-| `_pages/tasks/*.mjs` for the other six guides | **missing** |
+| `_pages/reference.mjs` | `reference/` and one page per definition, from `reference/components.json` |
+| `_pages/definitions.mjs` | the curated layer: the group order, the notable definitions, the index's lookup table |
+| `_pages/tasks/hub.mjs` | `python/` |
+| `_pages/tasks/<slug>.mjs` | one per guide, all seven |
 
-`build.mjs` imports `loadAll`, `defnPages` and `indexPage` from `reference.mjs`, so it cannot
-run until that exists. The sibling's `reference.mjs` and `classes.mjs` are the shape to follow.
+The eleven links from the landing page resolve, and so do the two addresses `llms.txt` names.
+`node pscad-scripter/_pages/check.mjs` is green: **356 pages checked, 0 problems**.
 
-The seven guide slugs, chosen to be frozen addresses: `getting-started`, `build-and-run`,
-`fault-studies`, `parameter-sweep`, `harmonics`, `snapshots-and-batch`, `control-tuning`.
-`index.html` already links all seven plus `reference/`, so **those eleven links are 404 until
-this is done**. `node pscad-scripter/_pages/check.mjs` lists them.
+Three things worth knowing before changing any of it:
 
-Do not fabricate simulation results in the guides. The sibling's guides quote numbers recorded
-from real runs; there are no such recordings here, so the guides should show the method, the
-script and what to look at, and say the numbers come from the reader's own case.
+- **A definition's address is its name**, lower case, with anything that is not a letter or a
+  digit turned into a hyphen (`master:xfmr-3p2w` becomes `reference/xfmr-3p2w/`). Frozen now
+  that they are published: rename the words on a page, never the folder.
+- **345 definitions get a page; 38 do not.** Those 38 have no parameters at all - some are the
+  library's own pages rather than components, the rest are wires and markers like a ground or a
+  jumper. They are listed by name on the reference index instead, so nothing is unfindable.
+- **A guide shows no recorded numbers**, on purpose: every number out of PSCAD depends on the
+  reader's own case. Each guide gives the method, the script the Builder writes, and what to
+  look at. The nine `.py` files published beside the guides are generated by the Builder's own
+  code generator at build time, so they cannot drift from it, and all nine compile.
 
-When the pages are written: `node pscad-scripter/_pages/build.mjs --sitemap` adds their URLs.
+One check changed with them: `check.mjs`'s U3 rule no longer treats "load flow" and "short
+circuit" as porting leftovers. They are ordinary English that PSCAD's own parameter text uses,
+and the guides have to be able to say that PSCAD has neither, which is what readers arrive
+looking for. The PowerFactory names and commands that would be a real leftover are still caught.
+
 
 ### 3. The Builder walkthrough guide, `guides/`
 
@@ -143,14 +142,22 @@ entries in `_ref/agent-links.json`, the page in `_ref/agent-lib.mjs` `PAGES`, an
 `node _ref/agent-check.mjs pscad-scripter` green. Add `builder/agent.html` to `sitemap.xml`
 after it exists.
 
-### 6. The remaining site registration
+### 6. The remaining site registration — done
 
-- a `CARDS` line in `_ref/og.mjs`, then `node _ref/og.mjs pscad-scripter` to draw the social
-  card, and `node _ref/og.mjs --tags` to write the tags into every page
-- `node _ref/updated.mjs` to stamp `dateModified` and the footer date
-- the page in `_ref/share-check.mjs` and `_ref/scenario-check.mjs`
-- `node _ref/abbr-check.mjs`, `node _ref/button-check.mjs`, `node _ref/dropdown-check.mjs`,
-  `node _ref/tip-check.mjs pscad-scripter`
+- **done** the `CARDS` lines in `_ref/og.mjs`, and `og/pscad-scripter.jpg` and
+  `og/pscad-scripter-builder.jpg` drawn from the pages. `node _ref/og.mjs --tags` reports
+  nothing to change: the tags the pages already carry are the right ones.
+- **done** `node _ref/updated.mjs`: both pages carry `dateModified` 2026-11-07 and a footer to
+  match. Both scripts needed a Windows fix first (`fileURLToPath` for `ROOT`, `pathToFileURL`
+  for the main guard); on Windows they had been doing nothing at all.
+- **not applicable** `_ref/share-check.mjs` and `_ref/scenario-check.mjs` cover the form tools
+  that ship Share links and scenario files. Neither scripter is in them, and neither should be:
+  a Builder workflow travels as its own file and as a `#load` link, which `agent-check.mjs`
+  covers instead (item 5).
+- **done** `abbr-check` (pscad pages all pass; the one failure in the suite is `embed/`, which
+  came in before this tool), `button-check` (40 pass across the two pages; the one failure is
+  `rentvsownhouse/sensitivity/id/`), `dropdown-check` (0 failed),
+  `tip-check pscad-scripter` (85 tips, 6 passed, 0 failed).
 
 ### 7. The rest of the audit suites
 
@@ -197,6 +204,14 @@ Each of these cost real time to find and is worked around in the runtime. They b
   phase channel becomes three, named "Desc:1" to "Desc:3".
 - The run's plot step sets how far up a harmonic spectrum is real: 250 us resolves to about
   2 kHz.
+- `Component.range()` gives a Choice parameter's symbolic values as a **set**, with no order
+  and no tie to the form's own list of choices, so they have to be paired with the labels by
+  spelling. `build_reference.py`'s `pair_choices` does that, and two things matter: an exact
+  spelling has to beat a containing one (the label "R" takes the symbol `R`, not `RLC`, which
+  also contains it), and the set has to be sorted first or the pairing comes out differently on
+  every run. Until 7 November 2026 it did neither, and 24 definitions carried wrong values
+  (`master:Dload` wrote `RLC` for "R"). `match_score` ranks exact, then containing, then a
+  shared opening, and the suite in that file's docstring examples still pairs correctly.
 
 ---
 
@@ -222,5 +237,15 @@ node pscad-scripter/builder/_audit/blocks/run.mjs
 python pscad-scripter/builder/_audit/reference/build_reference.py
 ```
 
-`_pages/check.mjs` reports the eleven links from the landing page into `python/` and
-`reference/` as unresolved. That is item 2 above, and is expected until the pages are generated.
+Rebuild the reading pages after any change to the reference data or a guide, because the
+published pages are generated:
+
+```
+node pscad-scripter/_pages/build.mjs --sitemap
+node pscad-scripter/_pages/check.mjs
+```
+
+Last full run, 7 November 2026, all passing: smoke 151, templates 10, blocks (offline) 18,
+loader 87 sections, EMT analysis 42, live runtime 170, live blocks 74, reference 383
+definitions, pages 356 checked with 0 problems, and the nine `.py` files published beside the
+guides all compile.

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Torsional Shaft Model parameters (master:multimass2)</title>
+<meta name="description" content="Every parameter of the PSCAD Torsional Shaft Model (master:multimass2): 211 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Torsional Shaft Model (master:multimass2) parameters">
+<meta property="og:description" content="Every parameter of the PSCAD Torsional Shaft Model (master:multimass2): 211 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Torsional Shaft Model (master:multimass2) parameters">
+<meta name="twitter:description" content="Every parameter of the PSCAD Torsional Shaft Model (master:multimass2): 211 parameters, with units, ranges, defaults and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Torsional Shaft Model (master:multimass2) parameters",
+  "description": "Every parameter of the PSCAD Torsional Shaft Model (master:multimass2): 211 parameters, with units, ranges, defaults and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:multimass2 (Torsional Shaft Model)",
+    "description": "The PSCAD Master Library definition master:multimass2."
+  },
+  "keywords": "master:multimass2 parameters, PSCAD Torsional Shaft Model parameters, Torsional Shaft Model PSCAD, master:multimass2 Python",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Torsional Shaft Model",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">Torsional Shaft Model</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Torsional Shaft Model<span class="dx-h1-sub">master:multimass2</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Torsional Shaft Model (<code>master:multimass2</code>): 211 parameters, with the unit, range and default PSCAD 5.0.0 reports for each.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What Torsional Shaft Model is</h2>
+  <p>Torsional Shaft Model is a Master Library definition in the Control group of PSCAD 5.0.0. Its 211 parameters are listed below as PSCAD itself reports them, with the unit, range and default of each.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:multimass2</code></dd><dt>PSCAD name</dt><dd>Torsional Shaft Model</dd><dt>Library group</dt><dd>Control</dd><dt>Parameters</dt><dd>211 parameters, in 11 sections of the dialog</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write Torsional Shaft Model in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()                <span class="py-c"># launch() starts a new PSCAD instead</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;mycase&quot;</span>)
+
+<span class="py-c"># find_all takes the definition exactly: no wildcard, and the namespace is not optional.</span>
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimass2&quot;</span>):
+    <span class="py-f">print</span>(comp.name, comp.<span class="py-f">parameters</span>())
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:multimass2&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(N=<span class="py-n">4</span>, MVA=<span class="py-s">&quot;892.4 [MVA]&quot;</span>, F=<span class="py-s">&quot;60 [Hz]&quot;</span>)
+<span class="py-f">print</span>(comp.<span class="py-f">parameters</span>()[<span class="py-s">&quot;N&quot;</span>])</code></pre>
+  <ul class="dx-prose"><li>A value carries its unit in the text: <code>"250 [MVA]"</code>. PSCAD keeps the unit you write rather than converting it, so <code>"2500 [mohm]"</code> stays in milliohms and reads back that way.</li><li>A parameter read back is a subclass of <code>float</code> whose unit lives only in its text, so read it as text first if you need the unit.</li><li>A parameter with a condition in the last column is only used while that condition holds. Writing it otherwise is accepted and ignored by the solution.</li><li>The case has to be built again after a parameter changes, and <code>project.build()</code> reports the compiler's own lines.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. voltage or Tmva" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All Torsional Shaft Model parameters"><li><a href="#g0-configuration">Configuration<span class="dx-n">10</span></a></li><li><a href="#g1-initialization-data-interface">Initialization Data Interface<span class="dx-n">2</span></a></li><li><a href="#g2-inertia-constants">Inertia Constants<span class="dx-n">25</span></a></li><li><a href="#g3-shaft-spring-constants">Shaft Spring Constants<span class="dx-n">24</span></a></li><li><a href="#g4-torque-shares">Torque Shares<span class="dx-n">25</span></a></li><li><a href="#g5-uniform-modal-damping">Uniform Modal Damping<span class="dx-n">1</span></a></li><li><a href="#g6-self-damping">Self Damping<span class="dx-n">25</span></a></li><li><a href="#g7-mutual-damping">Mutual Damping<span class="dx-n">24</span></a></li><li><a href="#g8-internal-output-variable-names-1">Internal Output Variable Names - 1<span class="dx-n">24</span></a></li><li><a href="#g9-internal-output-variable-names-2">Internal Output Variable Names - 2<span class="dx-n">25</span></a></li><li><a href="#g10-internal-output-variable-names-3">Internal Output Variable Names - 3<span class="dx-n">26</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g0-configuration">
+  <h2 id="g0-configuration">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Name</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Name for Identification<small>Enter a name for identification.</small></td></tr>
+<tr><td><code>SQC</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>SYNCHRONOUS_MACHINE (Synchronous Machine)</td><td>For Use With ...<small>Select the type of machine this component is connected. Takes <code>SYNCHRONOUS_MACHINE</code> Synchronous Machine, <code>INDUCTION_MACHINE</code> Induction Machine, <code>DC_MACHINE</code> DC Machine, <code>PM_MACHINE</code> PM Machine.</small></td></tr>
+<tr><td><code>N</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 25</td><td>4</td><td>Number of Masses<small>Enter the number of masses (including the machine and exciter) in the multimass system.</small></td></tr>
+<tr><td><code>MVA</code></td><td>MVA</td><td>Real</td><td>1E-307 to 1E+308</td><td>892.4</td><td>Machine Total MVA<small>Enter the MVA rating of the machine.</small></td></tr>
+<tr><td><code>F</code></td><td>Hz</td><td>Real</td><td>1E-307 to 1E+308</td><td>60.0</td><td>Electrical Base Frequency<small>Enter the electrical base frequency.</small></td></tr>
+<tr><td><code>RPM</code></td><td>rev/min</td><td>Real</td><td>1E-307 to 1E+308</td><td>3600.0</td><td>Machine Mechanical Synchronous Speed<small>Enter the mechanical synchronous speed of masses.</small></td></tr>
+<tr><td><code>spdini</code></td><td>pu</td><td>Real</td><td>0 to 2</td><td>1</td><td>Machine Initial Electrical Speed<small>Enter the initial electrical speed.</small></td></tr>
+<tr><td><code>Units</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>KGM_2_KNM_RAD_DNMS_RAD (10 : H(kg.m^2) K(N.m/rad) D(N.m.s/rad))</td><td>Unit System Number (see help)<small>Choose the appropriate unit system used. Takes <code>LBFTFT_KLBFT_RAD</code> 1 : H(lb.ft.ft.) K(lb.ft/rad), <code>INLBFS_2_KLBFIN_RAD</code> 2 : H(in.lbf.s^2) K(lbf.in/rad), <code>LBININ_KLBFIN_RAD</code> 3 : H(lb.in.in.) K(lbf.in/rad), <code>S_KPU</code> 4 : H(s) K(pu), <code>KGM_2_KNM_RAD</code> 5 : H(kg.m^2) K(N.m/rad), <code>LBFT_2_KLBFT_RAD_DLBFFTS_RAD</code> 6 : H(lb.ft^2) K(lb.ft/rad) D(lbf.ft.s/rad), <code>INLBFS_2_KLBFIN_RAD_DLBFINS_RAD</code> 7 : H(in.lbf.s^2) K(lbf.in/rad) D(lbf.in.s/rad), <code>LBIN_2_KLBFIN_RAD_DLBFINS_RAD</code> 8 : H(lb.in^2) K(lbf.in/rad) D(lbf.in.s/rad), <code>S_KPU_DPU</code> 9 : H(s) K(pu) D(pu), <code>KGM_2_KNM_RAD_DNMS_RAD</code> 10 : H(kg.m^2) K(N.m/rad) D(N.m.s/rad).</small></td></tr>
+<tr><td><code>Enab</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>0 to 1</td><td>1</td><td>Initialization switch: 0-Init;1-Release</td></tr>
+<tr><td><code>GenID</code></td><td><span aria-label="no unit">·</span></td><td>Integer</td><td>1 to 25</td><td>5</td><td>Generator Mass Number</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g1-initialization-data-interface">
+  <h2 id="g1-initialization-data-interface">Initialization Data Interface</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>tmi</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Output Initialized Mechanical Torque<small>Select Yes or No. Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+<tr><td><code>tei</code></td><td><span aria-label="no unit">·</span></td><td>Choice</td><td>·</td><td>NO (No)</td><td>Input Initialized Steady Electrical Torque<small>Select Yes or No. Takes <code>NO</code> No, <code>YES</code> Yes.</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g2-inertia-constants">
+  <h2 id="g2-inertia-constants">Inertia Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>H1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0929</td><td>Mass #1 Inertia Constant</td></tr>
+<tr><td><code>H2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.1556</td><td>Mass #2 Inertia Constant<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>H3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.8587</td><td>Mass #3 Inertia Constant<small>Used only when <code>(N&gt;=3)</code>.</small></td></tr>
+<tr><td><code>H4</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.8842</td><td>Mass #4 Inertia Constant<small>Used only when <code>(N&gt;=4)</code>.</small></td></tr>
+<tr><td><code>H5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.8685</td><td>Mass #5 Inertia Constant<small>Used only when <code>(N&gt;=5)</code>.</small></td></tr>
+<tr><td><code>H6</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0342</td><td>Mass #6 Inertia Constant<small>Used only when <code>(N&gt;=6)</code>.</small></td></tr>
+<tr><td><code>H7</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #7 Inertia Constant<small>Used only when <code>(N&gt;=7)</code>.</small></td></tr>
+<tr><td><code>H8</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #8 Inertia Constant<small>Used only when <code>(N&gt;=8)</code>.</small></td></tr>
+<tr><td><code>H9</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #9 Inertia Constant</td></tr>
+<tr><td><code>H10</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #10 Inertia Constant</td></tr>
+<tr><td><code>H11</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #11 Inertia Constant</td></tr>
+<tr><td><code>H12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #12 Inertia Constant</td></tr>
+<tr><td><code>H13</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #13 Inertia Constant</td></tr>
+<tr><td><code>H14</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #14 Inertia Constant</td></tr>
+<tr><td><code>H15</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #15 Inertia Constant</td></tr>
+<tr><td><code>H16</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #16 Inertia Constant</td></tr>
+<tr><td><code>H17</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #17 Inertia Constant</td></tr>
+<tr><td><code>H18</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #18 Inertia Constant</td></tr>
+<tr><td><code>H19</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #19 Inertia Constant</td></tr>
+<tr><td><code>H20</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #20 Inertia Constant</td></tr>
+<tr><td><code>H21</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #21 Inertia Constant</td></tr>
+<tr><td><code>H22</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #22 Inertia Constant</td></tr>
+<tr><td><code>H23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #23 Inertia Constant</td></tr>
+<tr><td><code>H24</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #24 Inertia Constant</td></tr>
+<tr><td><code>H25</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #25 Inertia Constant</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g3-shaft-spring-constants">
+  <h2 id="g3-shaft-spring-constants">Shaft Spring Constants</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>K12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>7277</td><td>Spring Constant From Mass #1 to #2<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>K23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>13168</td><td>Spring Constant From Mass #2 to #3</td></tr>
+<tr><td><code>K34</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>19618</td><td>Spring Constant From Mass #3 to #4</td></tr>
+<tr><td><code>K45</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>26713</td><td>Spring Constant From Mass #4 to #5</td></tr>
+<tr><td><code>K5_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>1064</td><td>Spring Constant From Mass #5 to #6</td></tr>
+<tr><td><code>K6_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #6 to #7</td></tr>
+<tr><td><code>K7_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #7 to #8</td></tr>
+<tr><td><code>K8_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #8 to #9</td></tr>
+<tr><td><code>K9_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #9 to #10</td></tr>
+<tr><td><code>K10_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #10 to #11</td></tr>
+<tr><td><code>K11_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #11 to #12</td></tr>
+<tr><td><code>K12_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #12 to #13</td></tr>
+<tr><td><code>K13_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #13 to #14</td></tr>
+<tr><td><code>K14_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #14 to #15</td></tr>
+<tr><td><code>K15_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #15 to #16</td></tr>
+<tr><td><code>K16_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #16 to #17</td></tr>
+<tr><td><code>K17_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #17 to #18</td></tr>
+<tr><td><code>K18_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #18 to #19</td></tr>
+<tr><td><code>K19_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #19 to #20</td></tr>
+<tr><td><code>K20_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #20 to #21</td></tr>
+<tr><td><code>K21_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #21 to #22</td></tr>
+<tr><td><code>K22_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #22 to #23</td></tr>
+<tr><td><code>K23_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #23 to #24</td></tr>
+<tr><td><code>K24_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Spring Constant From Mass #24 to #25</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4-torque-shares">
+  <h2 id="g4-torque-shares">Torque Shares</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>TF1</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.30</td><td>Torque Share for Mass #1<small>Used only when <code>(N&gt;1)</code>.</small></td></tr>
+<tr><td><code>TF2</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.26</td><td>Torque Share for Mass #2</td></tr>
+<tr><td><code>TF3</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.22</td><td>Torque Share for Mass #3</td></tr>
+<tr><td><code>TF4</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.22</td><td>Torque Share for Mass #4</td></tr>
+<tr><td><code>TF5</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #5</td></tr>
+<tr><td><code>TF6</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #6</td></tr>
+<tr><td><code>TF7</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #7</td></tr>
+<tr><td><code>TF8</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #8</td></tr>
+<tr><td><code>TF9</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #9</td></tr>
+<tr><td><code>TF10</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #10</td></tr>
+<tr><td><code>TF11</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #11</td></tr>
+<tr><td><code>TF12</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #12</td></tr>
+<tr><td><code>TF13</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #13</td></tr>
+<tr><td><code>TF14</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #14</td></tr>
+<tr><td><code>TF15</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #15</td></tr>
+<tr><td><code>TF16</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #16</td></tr>
+<tr><td><code>TF17</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #17</td></tr>
+<tr><td><code>TF18</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #18</td></tr>
+<tr><td><code>TF19</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #19</td></tr>
+<tr><td><code>TF20</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #20</td></tr>
+<tr><td><code>TF21</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #21</td></tr>
+<tr><td><code>TF22</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #22</td></tr>
+<tr><td><code>TF23</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #23</td></tr>
+<tr><td><code>TF24</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #24</td></tr>
+<tr><td><code>TF25</code></td><td>pu</td><td>Real</td><td>0 to 1</td><td>0.0</td><td>Torque Share for Mass #25</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5-uniform-modal-damping">
+  <h2 id="g5-uniform-modal-damping">Uniform Modal Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>sigma</code></td><td>1/s</td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Modal Damping for All Modes<small>Used only when <code>(Units&lt;=5)</code>.</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6-self-damping">
+  <h2 id="g6-self-damping">Self Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>SD1</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #1 Self Damping</td></tr>
+<tr><td><code>SD2</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #2 Self Damping</td></tr>
+<tr><td><code>SD3</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #3 Self Damping</td></tr>
+<tr><td><code>SD4</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #4 Self Damping</td></tr>
+<tr><td><code>SD5</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #5 Self Damping</td></tr>
+<tr><td><code>SD6</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #6 Self Damping</td></tr>
+<tr><td><code>SD7</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #7 Self Damping</td></tr>
+<tr><td><code>SD8</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #8 Self Damping</td></tr>
+<tr><td><code>SD9</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #9 Self Damping</td></tr>
+<tr><td><code>SD10</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #10 Self Damping</td></tr>
+<tr><td><code>SD11</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #11 Self Damping</td></tr>
+<tr><td><code>SD12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #12 Self Damping</td></tr>
+<tr><td><code>SD13</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #13 Self Damping</td></tr>
+<tr><td><code>SD14</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #14 Self Damping</td></tr>
+<tr><td><code>SD15</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #15 Self Damping</td></tr>
+<tr><td><code>SD16</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #16 Self Damping</td></tr>
+<tr><td><code>SD17</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #17 Self Damping</td></tr>
+<tr><td><code>SD18</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #18 Self Damping</td></tr>
+<tr><td><code>SD19</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #19 Self Damping</td></tr>
+<tr><td><code>SD20</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #20 Self Damping</td></tr>
+<tr><td><code>SD21</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #21 Self Damping</td></tr>
+<tr><td><code>SD22</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #22 Self Damping</td></tr>
+<tr><td><code>SD23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #23 Self Damping</td></tr>
+<tr><td><code>SD24</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #24 Self Damping</td></tr>
+<tr><td><code>SD25</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Mass #25 Self Damping</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7-mutual-damping">
+  <h2 id="g7-mutual-damping">Mutual Damping</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>MD12</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #1 and #2<small>Used only when <code>(N&gt;=2)</code>.</small></td></tr>
+<tr><td><code>MD23</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #2 and #3</td></tr>
+<tr><td><code>MD34</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #3 and #4</td></tr>
+<tr><td><code>MD45</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #4 and #5</td></tr>
+<tr><td><code>MD5_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #5 and #6</td></tr>
+<tr><td><code>MD6_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #6 and #7</td></tr>
+<tr><td><code>MD7_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #7 and #8</td></tr>
+<tr><td><code>MD8_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #8 and #9</td></tr>
+<tr><td><code>MD9_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #9 and #10</td></tr>
+<tr><td><code>MD10_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #10 and #11</td></tr>
+<tr><td><code>MD11_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #11 and #12</td></tr>
+<tr><td><code>MD12_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #12 and #13</td></tr>
+<tr><td><code>MD13_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #13 and #14</td></tr>
+<tr><td><code>MD14_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #14 and #15</td></tr>
+<tr><td><code>MD15_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #15 and #16</td></tr>
+<tr><td><code>MD16_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #16 and #17</td></tr>
+<tr><td><code>MD17_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #17 and #18</td></tr>
+<tr><td><code>MD18_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #18 and #19</td></tr>
+<tr><td><code>MD19_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #19 and #20</td></tr>
+<tr><td><code>MD20_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #20 and #21</td></tr>
+<tr><td><code>MD21_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #21 and #22</td></tr>
+<tr><td><code>MD22_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #22 and #23</td></tr>
+<tr><td><code>MD23_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #23 and #24</td></tr>
+<tr><td><code>MD24_</code></td><td><span aria-label="no unit">·</span></td><td>Real</td><td>0 to 1E+308</td><td>0.0</td><td>Damping Between Mass #24 and #25</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8-internal-output-variable-names-1">
+  <h2 id="g8-internal-output-variable-names-1">Internal Output Variable Names - 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>T12</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 1 - 2<small>Used only when <code>N&gt;1</code>.</small></td></tr>
+<tr><td><code>T23</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 2 - 3</td></tr>
+<tr><td><code>T34</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 3 - 4</td></tr>
+<tr><td><code>T45</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 4 - 5</td></tr>
+<tr><td><code>T56</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 5 - 6</td></tr>
+<tr><td><code>T6_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 6 - 7</td></tr>
+<tr><td><code>T7_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 7 - 8</td></tr>
+<tr><td><code>T8_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 8 - 9</td></tr>
+<tr><td><code>T9_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 9 - 10</td></tr>
+<tr><td><code>T10_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 10 - 11</td></tr>
+<tr><td><code>T11_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 11 - 12</td></tr>
+<tr><td><code>T12_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 12 - 13</td></tr>
+<tr><td><code>T13_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 13 - 14</td></tr>
+<tr><td><code>T14_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 14 - 15</td></tr>
+<tr><td><code>T15_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 15 - 16</td></tr>
+<tr><td><code>T16_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 16 - 17</td></tr>
+<tr><td><code>T17_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 17 - 18</td></tr>
+<tr><td><code>T18_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 18 - 19</td></tr>
+<tr><td><code>T19_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 19 - 20</td></tr>
+<tr><td><code>T20_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 20 - 21</td></tr>
+<tr><td><code>T21_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 21 - 22</td></tr>
+<tr><td><code>T22_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 22 - 23</td></tr>
+<tr><td><code>T23_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 23 - 24</td></tr>
+<tr><td><code>T24_</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Torque on Shaft from Mass 24 - 25</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9-internal-output-variable-names-2">
+  <h2 id="g9-internal-output-variable-names-2">Internal Output Variable Names - 2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>P1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 1 relative to Generator</td></tr>
+<tr><td><code>P2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 2 relative to Generator</td></tr>
+<tr><td><code>P3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 3 relative to Generator</td></tr>
+<tr><td><code>P4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 4 relative to Generator</td></tr>
+<tr><td><code>P5</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 5 relative to Generator</td></tr>
+<tr><td><code>P6</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 6 relative to Generator</td></tr>
+<tr><td><code>P7</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 7 relative to Generator</td></tr>
+<tr><td><code>P8</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 8 relative to Generator</td></tr>
+<tr><td><code>P9</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 9 relative to Generator</td></tr>
+<tr><td><code>P10</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 10 relative to Generator</td></tr>
+<tr><td><code>P11</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 11 relative to Generator</td></tr>
+<tr><td><code>P12</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 12 relative to Generator</td></tr>
+<tr><td><code>P13</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 13 relative to Generator</td></tr>
+<tr><td><code>P14</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 14 relative to Generator</td></tr>
+<tr><td><code>P15</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 15 relative to Generator</td></tr>
+<tr><td><code>P16</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 16 relative to Generator</td></tr>
+<tr><td><code>P17</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 17 relative to Generator</td></tr>
+<tr><td><code>P18</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 18 relative to Generator</td></tr>
+<tr><td><code>P19</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 19 relative to Generator</td></tr>
+<tr><td><code>P20</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 20 relative to Generator</td></tr>
+<tr><td><code>P21</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 21 relative to Generator</td></tr>
+<tr><td><code>P22</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 22 relative to Generator</td></tr>
+<tr><td><code>P23</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 23 relative to Generator</td></tr>
+<tr><td><code>P24</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 24 relative to Generator</td></tr>
+<tr><td><code>P25</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Mechanical Position of Mass 25 relative to Generator</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10-internal-output-variable-names-3">
+  <h2 id="g10-internal-output-variable-names-3">Internal Output Variable Names - 3</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Type</th><th>Range</th><th>Default</th><th>What it is</th></tr></thead><tbody>
+<tr><td><code>Wbas</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Rated Mechanical Speed of the System</td></tr>
+<tr><td><code>W1</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 1</td></tr>
+<tr><td><code>W2</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 2</td></tr>
+<tr><td><code>W3</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 3</td></tr>
+<tr><td><code>W4</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 4</td></tr>
+<tr><td><code>W5</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 5</td></tr>
+<tr><td><code>W6</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 6</td></tr>
+<tr><td><code>W7</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 7</td></tr>
+<tr><td><code>W8</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 8</td></tr>
+<tr><td><code>W9</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 9</td></tr>
+<tr><td><code>W10</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 10</td></tr>
+<tr><td><code>W11</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 11</td></tr>
+<tr><td><code>W12</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 12</td></tr>
+<tr><td><code>W13</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 13</td></tr>
+<tr><td><code>W14</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 14</td></tr>
+<tr><td><code>W15</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 15</td></tr>
+<tr><td><code>W16</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 16</td></tr>
+<tr><td><code>W17</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 17</td></tr>
+<tr><td><code>W18</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 18</td></tr>
+<tr><td><code>W19</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 19</td></tr>
+<tr><td><code>W20</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 20</td></tr>
+<tr><td><code>W21</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 21</td></tr>
+<tr><td><code>W22</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 22</td></tr>
+<tr><td><code>W23</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 23</td></tr>
+<tr><td><code>W24</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 24</td></tr>
+<tr><td><code>W25</code></td><td><span aria-label="no unit">·</span></td><td>Text</td><td>·</td><td>·</td><td>Delta Mechanical Speed of Mass 25</td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD Python automation: getting started</a></li>
+    <li><a href="../../python/control-tuning/">Tune a control with a search</a></li>
+    <li><a href="../../builder/">Build the script in the Workflow Builder</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../multimass/">Torsional Shaft Model</a> · <a href="../trig/">Trignometric Functions</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>
