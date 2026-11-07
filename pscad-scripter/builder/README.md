@@ -208,7 +208,14 @@ the runtime. PSCAD 5.0.0 is the only version the live suite has run on.
   logic wired to it, Timed Fault Logic (`master:tfaultn`, parameters `TF` and `DF`), which is what
   `set_fault` writes.
 - **A run from a snapshot carries on from the snapshot's time**, so an event in a branch is timed
-  after it.
+  after it: a fault timed at 2.1 s fires 0.1 s into a branch that resumes from a snapshot at
+  2.0 s, and the branch simulates its own `duration` beyond the snapshot. EMTDC writes the
+  result files from zero again, though, so `px_run` adds the snapshot's time back to the time
+  column; without that the event times a workflow holds would miss the samples.
+- **Timed Breaker Logic (`master:tbreakn`) numbers its times by the order they happen**, `TO1`
+  then `TO2`, with `INIT` saying which way the first one goes, where every other breaker names
+  them by what they do (`TO`, `TC`). `set_switching` pairs them up, and says so when the
+  component is set to one operation and the second time would do nothing.
 
 ## 7. Tests
 

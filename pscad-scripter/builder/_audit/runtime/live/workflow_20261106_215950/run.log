@@ -1,8 +1,0 @@
-[21:59:50] Using the PSCAD that is already running.
-[21:59:51] PSCAD 5.0.0 connected in 2.0s (connect), Automation Library 3.1.3.
-[21:59:52] Loaded project simpleac.pscx.
-[21:59:52] Project simpleac is open.
-[21:59:57] Simulation settings: PlotType=OUT, StartType=STANDARD, sample_step=250.0, time_duration=0.2, time_step=50.0.
-[22:00:08] Built simpleac in 10.1s.
-[22:00:17] Ran simpleac in 7.8s (ok).
-[22:00:21] Put back 5 changed values.

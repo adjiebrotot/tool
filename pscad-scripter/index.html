@@ -86,6 +86,11 @@
       "url": "https://tool.adjiebrotots.com/pscad-scripter/builder/"
     },
     {
+      "@type": "WebPage",
+      "name": "How to use the PSCAD Workflow Builder",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/guides/"
+    },
+    {
       "@type": "TechArticle",
       "name": "How to automate PSCAD studies with Python",
       "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
@@ -175,22 +180,22 @@
       <h2 id="pflBuild">What it does</h2>
       <ul class="pfl-grid">
         <li>
-          <h3>Wire the study, get one Python file</h3>
-          <p>An EMT run takes as long as it takes, and a sweep of them means sitting at the machine starting the next one. Wire the study once instead: 106 blocks in nine categories, from the model and the run to the checks, the graphs and the loops. Press Download and you have one Python file that opens the case, builds it, runs every pass, reads the output channels, checks them, writes the tables, and puts back every parameter, layer state and substitution it changed.</p>
+          <h3>Automate many EMT runs at once</h3>
+          <p>Loop over fault durations, parameter values, snapshots or whole cases. One run of the script does them all, reads the output channels and collects the results in one table.</p>
         </li>
         <li>
-          <h3>Built for EMT, not bolted on</h3>
-          <p>A PSCAD case is Fortran that EMTDC compiles, so the build block hands back the compiler's own error and warning lines. A fault or a breaker has its timing written into the component already drawn in the case, because PSCAD has no event list to fill. Run once to a settled state, save a snapshot, and start every later run from it. Put cases into a simulation set and run them several at a time. The solution and plot steps are set in microseconds.</p>
-          <ul class="pfl-tags" data-no-abbr><li>Build the case</li><li>Set a fault</li><li>Save a snapshot</li><li>Run a simulation set</li><li>Multiple Run sweep</li></ul>
+          <h3>Simplify PSCAD studies</h3>
+          <p>Each step is one block that asks only for the settings it needs, with every Master Library component in the picker:</p>
+          <ul class="pfl-tags" data-no-abbr><li>Build the case</li><li>Run the simulation</li><li>Set a fault</li><li>Save a snapshot</li><li>Run a simulation set</li></ul>
         </li>
         <li>
-          <h3>Read the waveform, not a phasor</h3>
-          <p>An EMT run records waves, so the checks work on waves. THD comes from a DFT of the time domain result, because PSCAD has no frequency domain harmonic scan. RMS is a sliding window of one cycle or more. Sequence components and the unbalance factor are worked out from three separate phase channels, and a ringdown's damping ratio is fitted from its envelope peaks, where a negative ratio means the oscillation is growing. The numbers go into results tables, CSV or Excel, and graphs:</p>
-          <ul class="pfl-tags" data-no-abbr><li>RMS of a waveform</li><li>Harmonic distortion (THD)</li><li>Sequence component</li><li>Unbalance factor</li><li>Overshoot and rise time</li><li>Damping of a ringdown</li></ul>
+          <h3>EMT waveform calculations, ready made</h3>
+          <p>Wire an output channel into a check and get the number, per run:</p>
+          <ul class="pfl-tags" data-no-abbr><li>RMS</li><li>Harmonic distortion (THD)</li><li>Sequence component</li><li>Unbalance factor</li><li>Overshoot and rise time</li><li>Damping of a ringdown</li></ul>
         </li>
         <li>
-          <h3>The whole Master Library, in the picker</h3>
-          <p>Choose a component from 383 Master Library definitions read out of PSCAD 5.0.0 itself, each with every parameter, its unit, its range, its default and its help text. Values are written with PSCAD's own unit suffix (<code>2.5 [ohm]</code>) and converted on the way in and out, so a parameter goes back the way the case had it.</p>
+          <h3>Optimisation and limit finding, ready made</h3>
+          <p>Optimise searches the best value of one or more settings (differential evolution, Nelder-Mead, Bayesian or a grid). Find limit halves the gap to the largest value that still passes, such as a critical clearing time.</p>
         </li>
       </ul>
     </section>
@@ -206,19 +211,19 @@
       <ul class="pfl-grid">
         <li>
           <h3><a href="python/">Automate PSCAD studies with Python</a></h3>
-          <p>One guide per study, each showing the method and the script the Builder writes for it: <a href="python/getting-started/">getting started with the Automation Library</a>, <a href="python/build-and-run/">build a case and run it</a>, <a href="python/fault-studies/">fault ride through and critical clearing time</a>, <a href="python/parameter-sweep/">parameter sweeps</a>, <a href="python/harmonics/">harmonics and THD</a>, <a href="python/snapshots-and-batch/">snapshots and batch runs</a> and <a href="python/control-tuning/">control tuning</a>.</p>
+          <p>One guide per study, each with the method and the script the Builder writes for it: <a href="python/getting-started/">getting started with the Automation Library</a>, <a href="python/build-and-run/">build a case and run it</a>, <a href="python/fault-studies/">fault ride through and critical clearing time</a>, <a href="python/parameter-sweep/">parameter sweeps</a>, <a href="python/harmonics/">harmonics and THD</a>, <a href="python/snapshots-and-batch/">snapshots and batch runs</a> and <a href="python/control-tuning/">control tuning</a>.</p>
         </li>
         <li>
           <h3><a href="reference/">PSCAD component reference</a></h3>
-          <p>Every Master Library definition, one page each, with its parameters, their units, ranges and defaults, what each one means, and the Python that finds the component and writes to it. 383 definitions, read out of PSCAD 5.0.0 rather than typed in by hand.</p>
+          <p>Every Master Library component, one page each, with its parameters, their units, ranges and defaults, and the Python that writes to them: <a href="reference/master-source3/">Three Phase Voltage Source</a>, <a href="reference/master-tfaultn/">Timed Fault Logic</a>, <a href="reference/master-breaker3/">3 Phase Breaker</a> and 380 more.</p>
         </li>
         <li>
           <h3><a href="builder/">The Builder, and its tour</a></h3>
-          <p>The canvas, the Blocks panel and one settings form per block. On a first visit the Builder offers a guided tour over a worked fault ride through study, and the 🧭 Tour button opens it again whenever you want it.</p>
+          <p>The canvas, the Blocks panel and one settings form per block. A guided tour walks a worked fault ride through study, and the 🧭 Tour button opens it again any time.</p>
         </li>
         <li>
           <h3>Ten Quick Starts</h3>
-          <p>A finished workflow to start from, rather than an empty canvas: <a href="builder/#qs=frt">fault ride through over fault durations</a>, <a href="builder/#qs=harmonics">harmonics and THD from an EMT run</a>, <a href="builder/#qs=cct">critical clearing time</a>, <a href="builder/#qs=parallel">run several cases at once</a>, <a href="builder/#qs=damping">damping of a ringdown</a>, and five more.</p>
+          <p>A finished workflow to start from, not an empty canvas: <a href="builder/#qs=frt">fault ride through</a>, <a href="builder/#qs=harmonics">harmonics and THD</a>, <a href="builder/#qs=cct">critical clearing time</a>, <a href="builder/#qs=parallel">several cases at once</a>, <a href="builder/#qs=damping">damping of a ringdown</a>, and five more.</p>
         </li>
       </ul>
     </section>

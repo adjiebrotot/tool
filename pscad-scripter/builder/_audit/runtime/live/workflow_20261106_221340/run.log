@@ -1,8 +1,0 @@
-[22:13:40] Using the PSCAD that is already running.
-[22:13:41] PSCAD 5.0.0 connected in 1.0s (connect), Automation Library 3.1.3.
-[22:13:42] Loaded project vdiv.pscx.
-[22:13:42] Project vdiv is open.
-[22:13:45] This PSCAD does not report whether a component is enabled (it needs 5.0.2 or newer), so putting a change back assumes the component was the other way round.
-[22:13:45] Disabled 1 component.
-[22:13:45] Put back 1 changed value.
-[22:13:54] Built vdiv in 8.3s.
