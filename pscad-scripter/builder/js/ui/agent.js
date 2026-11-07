@@ -3,7 +3,7 @@
 // A reader asks a chatbot for a PSCAD script; the chatbot reads builder/agent.txt and
 // replies with a link that opens the Builder on a workflow:
 //
-//   builder/#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&blk.n5.trafos=false&why.blk.n5.trafos=...
+//   builder/#load&v=1&qs=frt&blk.n1.project=wind_farm.pscx&blk.n2.to=0.3&why.blk.n2.to=...
 //
 // The Builder has no form fields (the workflow is saved whole in the mini cache, Persist extra),
 // so every key here is one the adapter reads:
@@ -11,7 +11,7 @@
 //                   qs is the standard name, template is the name the router (../index.html)
 //                   looks for.
 //   blk.<id>.<setting>   one setting of one block, by the block's id and the setting's saved key
-//                   (blk.n5.trafos=false; blk.n7.el.name=L* for the name of an element setting;
+//                   (blk.n2.to=0.3; blk.n3.el.name=F1 for the Name of a component setting;
 //                   blk.start.project reaches the Start block whatever its id; blk.n5.label).
 //   graph.<key>     the graph style (core/graphstyle.js): graph.template, graph.dpi ...
 //   json            a whole workflow, in the form Save writes (ui/files.js, core/workflow.js).
@@ -386,7 +386,7 @@ function stage(key) {
   }
   return /^graph\./.test(key) ? { w, graphKey: key.slice(6) } : null;
 }
-window.__PFB_AGENT = {
+window.__PXB_AGENT = {
   ready: booted,
   get(key) {
     const at = stage(key);

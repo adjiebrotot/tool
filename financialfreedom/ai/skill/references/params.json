@@ -1,0 +1,531 @@
+{
+ "skill": "brotools-financialfreedom",
+ "tool": "Financial Freedom",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "financialfreedom",
+   "url": "/financialfreedom/",
+   "base": "https://tool.adjiebrotots.com/financialfreedom/",
+   "lang": "en",
+   "title": "Financial Freedom Calculator",
+   "reference": "references/financialfreedom.md",
+   "decides": "The earliest age the user can stop work and still have the money last to their life expectancy (or leave a set amount, or never touch the capital), given what they save, spend and hold, and how likely the plan is to hold when returns vary.",
+   "important": [
+    "ageNow",
+    "assets",
+    "savings",
+    "savingsPeriod",
+    "savingsMode",
+    "expense",
+    "expensePeriod",
+    "currency",
+    "assetPreset",
+    "ret",
+    "std",
+    "inflation",
+    "ageDie",
+    "retireExpense",
+    "retireExpensePeriod",
+    "ffmode"
+   ],
+   "fields": [
+    {
+     "key": "currency",
+     "label": "Currency Symbol",
+     "group": "You",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "ageNow",
+     "label": "Age now",
+     "group": "You: Ages",
+     "kind": "number",
+     "unit": "yrs",
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "default": "30",
+     "important": true
+    },
+    {
+     "key": "ageDie",
+     "label": "Life expectancy",
+     "group": "You: Ages",
+     "kind": "number",
+     "unit": "yrs",
+     "min": 2,
+     "max": 120,
+     "step": 1,
+     "default": "90",
+     "important": true
+    },
+    {
+     "key": "savings",
+     "label": "savings",
+     "group": "You: Money in",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": "30,000",
+     "unitSetBy": [
+      "savingsPeriod"
+     ],
+     "important": true
+    },
+    {
+     "key": "savingsPeriod",
+     "label": "savingsPeriod",
+     "group": "You: Money in",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "weekly",
+       "label": "a week"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "yearly",
+       "label": "a year"
+      }
+     ],
+     "default": "yearly",
+     "important": true
+    },
+    {
+     "key": "growth",
+     "label": "Growth of that amount",
+     "group": "You: Money in",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": -10,
+     "max": 30,
+     "default": "3"
+    },
+    {
+     "key": "pensionOn",
+     "label": "Government or age pension",
+     "group": "You: Money in",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "pensionStartAge",
+     "label": "Pension starts at age",
+     "group": "You: Money in",
+     "kind": "number",
+     "unit": "yrs",
+     "min": 40,
+     "max": 90,
+     "step": 1,
+     "default": "67"
+    },
+    {
+     "key": "pensionAmount",
+     "label": "Pension amount",
+     "group": "You: Money in",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": "29,000"
+    },
+    {
+     "key": "pensionPeriod",
+     "label": "Pension amount",
+     "group": "You: Money in",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "weekly",
+       "label": "a week"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "yearly",
+       "label": "a year"
+      }
+     ],
+     "default": "yearly"
+    },
+    {
+     "key": "pensionIndexed",
+     "label": "Rises with inflation",
+     "group": "You: Money in",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "expense",
+     "label": "Living expenses",
+     "group": "You: Money out",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 100000000000,
+     "default": "60,000",
+     "unitSetBy": [
+      "expensePeriod"
+     ],
+     "important": true
+    },
+    {
+     "key": "expensePeriod",
+     "label": "Living expenses",
+     "group": "You: Money out",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "weekly",
+       "label": "a week"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "yearly",
+       "label": "a year"
+      }
+     ],
+     "default": "yearly",
+     "important": true
+    },
+    {
+     "key": "retireExpense",
+     "label": "Retirement expenses",
+     "group": "You: Money out",
+     "kind": "number",
+     "unit": "$ %",
+     "min": 0,
+     "max": 1000,
+     "default": "100",
+     "unitSetBy": [
+      "retireExpensePeriod"
+     ],
+     "important": true
+    },
+    {
+     "key": "retireExpensePeriod",
+     "label": "Retirement expenses",
+     "group": "You: Money out",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pct",
+       "label": "% of living"
+      },
+      {
+       "value": "weekly",
+       "label": "a week"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      },
+      {
+       "value": "yearly",
+       "label": "a year"
+      }
+     ],
+     "default": "pct",
+     "important": true
+    },
+    {
+     "key": "assets",
+     "label": "Invested assets today",
+     "group": "Investment: What you hold",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "100,000",
+     "important": true
+    },
+    {
+     "key": "assetPreset",
+     "label": "Asset",
+     "group": "Investment: Return assumptions",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "custom",
+       "label": "Custom (enter your own)"
+      },
+      {
+       "value": "cash",
+       "label": "Cash / high-yield savings"
+      },
+      {
+       "value": "bonds",
+       "label": "Fixed income (government bonds)"
+      },
+      {
+       "value": "us",
+       "label": "Equity - United States"
+      },
+      {
+       "value": "asx",
+       "label": "Equity - Australia (ASX)"
+      },
+      {
+       "value": "world",
+       "label": "Equity - global diversified"
+      },
+      {
+       "value": "gold",
+       "label": "Gold"
+      }
+     ],
+     "default": "custom",
+     "important": true
+    },
+    {
+     "key": "ret",
+     "label": "Expected return (CAGR)",
+     "group": "Investment: Return assumptions",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": -5,
+     "max": 40,
+     "default": "8",
+     "important": true
+    },
+    {
+     "key": "std",
+     "label": "Volatility",
+     "group": "Investment: Return assumptions",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 80,
+     "default": "15",
+     "important": true
+    },
+    {
+     "key": "ffmode",
+     "label": "What should the money do?",
+     "group": "Goal: Retirement goal",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "die",
+       "label": "Just Die"
+      },
+      {
+       "value": "legacy",
+       "label": "Leave a Legacy"
+      },
+      {
+       "value": "rich",
+       "label": "Die Rich"
+      }
+     ],
+     "default": "die",
+     "important": true
+    },
+    {
+     "key": "legacy",
+     "label": "Amount to leave behind",
+     "group": "Goal: Retirement goal",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "500,000"
+    },
+    {
+     "key": "inflation",
+     "label": "Inflation",
+     "group": "Assumptions: Prices",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 30,
+     "default": "2.5",
+     "important": true
+    },
+    {
+     "key": "chance",
+     "label": "Investment outcome chance",
+     "group": "Assumptions: Risk",
+     "kind": "number",
+     "unit": "%",
+     "min": 50,
+     "max": 99,
+     "step": 1,
+     "default": "50"
+    },
+    {
+     "key": "confidence",
+     "label": "Confidence level",
+     "group": "Assumptions: Risk",
+     "kind": "number",
+     "unit": "%",
+     "min": 50,
+     "max": 99,
+     "step": 1,
+     "default": "90"
+    },
+    {
+     "key": "showReal",
+     "label": "Show in today's money",
+     "group": "Beside the results",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "ageRetire",
+     "label": "ageRetire",
+     "group": "Beside the results",
+     "kind": "slider",
+     "min": 30,
+     "max": 90,
+     "step": 1,
+     "default": "47"
+    }
+   ],
+   "lists": [
+    "savingsMode",
+    "incomeMode",
+    "expenseMode",
+    "stages",
+    "inStages"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "moderate",
+     "title": "Moderate FIRE"
+    },
+    {
+     "key": "frugal",
+     "title": "Frugal Living"
+    },
+    {
+     "key": "geoarbitrage",
+     "title": "Geoarbitrage, Bali"
+    },
+    {
+     "key": "fatfire",
+     "title": "Fat FIRE, forever"
+    },
+    {
+     "key": "legacy",
+     "title": "Family legacy"
+    },
+    {
+     "key": "latestart",
+     "title": "Late start, on a pension"
+    }
+   ]
+  }
+ ]
+}

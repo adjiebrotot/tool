@@ -1,95 +1,77 @@
-// Guide: change one parameter over a range, run each value, collect the results.
-export default async function ({ builderScript, builderBlock, pre }) {
-  const b = await builderScript('sweep', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+// Guide: sweeping a component parameter (sweep), and the two PSCAD ways to hold variants in one
+// case: layers (layers) and global substitution sets (substitutions).
+export default async function ({ builderScript, builderBlock, builderExtra, pre }) {
+  const sweep = await builderScript('sweep', ({ set }) => set('n1', {
+    project: 'C:/Studies/filter/filter.pscx',
+  }));
+  const layers = await builderScript('layers', ({ set }) => set('n1', {
+    project: 'C:/Studies/substation/substation.pscx',
   }));
 
   return {
     slug: 'parameter-sweep', crumb: 'Parameter sweep',
-    card: 'Sweep a parameter in PSCAD and collect the results',
-    title: 'PSCAD parameter sweep with Python: one value per run, one table',
-    h1: 'Sweep a parameter in PSCAD and collect the results',
-    desc: 'Change one PSCAD component parameter over a range from Python, run the EMT simulation for each value, read a channel back and collect every pass in one results table.',
-    lead: `A sweep is the first thing worth automating in PSCAD, because an EMT run takes as long as it takes and a sweep of them is an afternoon of starting the next one by hand. The script is short: <strong>write the parameter, build, run, read a channel, take a number off it, record the row, put the parameter back</strong>. What makes it worth getting right is the last step, and the units.`,
-    whatTitle: 'What a sweep changes',
-    methodTitle: 'The method',
+    card: 'Sweep a PSCAD parameter with Python',
+    title: 'Sweep a PSCAD parameter with Python: values, layers and substitution sets',
+    h1: 'Sweep a PSCAD parameter with Python',
+    desc: 'Run a PSCAD case once per value of a component parameter from Python, then once per layer and once per global substitution set, and table what a channel did.',
+    lead: 'A sweep is the simplest study there is: <strong>write a value, run, read, put it back</strong>, once for each value. PSCAD adds two ways of holding variants that a sweep can go over as well: <strong>layers</strong>, which switch whole groups of components in and out, and <strong>global substitution sets</strong>, which give every <code>$(name)</code> in the case a different value at once.',
+    whatTitle: 'What a parameter sweep in PSCAD is',
     qsTitle: 'Sweep one parameter',
     level: 'Beginner',
-    keywords: ['pscad parameter sweep', 'pscad python loop', 'pscad batch simulation', 'pscad multiple run', 'sweep pscad parameter python', 'pscad results table'],
-    about: ['PSCAD', 'Parameter sweep', 'Electromagnetic transient simulation'],
+    keywords: ['pscad parameter sweep python', 'pscad sweep script', 'pscad layers python', 'pscad global substitution', 'mhi.pscad parameters', 'pscad multiple run python'],
+    about: ['PSCAD', 'Parameter sweep', 'Sensitivity analysis', 'Python'],
     sections: {
-      what: `  <p>A PSCAD sweep writes one parameter on one component before each run. The parameter is named exactly as the component's dialog names it, and the <a href="../../reference/">component reference</a> lists every one with its unit, range and default: <code>R</code> on a <a href="../../reference/resistor/">resistor</a>, <code>Tmva</code> on a <a href="../../reference/xfmr-3p2w/">transformer</a>, <code>Es</code> on a <a href="../../reference/source3/">source</a>.</p>
-  <p>Two things about PSCAD values are worth knowing before the first sweep.</p>
-  <ul class="dx-prose">
-    <li><strong>A value carries its unit in its text.</strong> A resistance reads back as <code>2.5 [ohm]</code>, not as <code>2.5</code>. PSCAD keeps the unit that was written rather than normalising it, so a value written as <code>2500 [mohm]</code> stays in milliohms and reads back that way. Write the unit you mean.</li>
-    <li><strong>A written value is written in the case</strong>, not in a session. There is no read-only mode: the last value of a sweep becomes the case's new setting unless the script puts it back.</li>
-  </ul>
-  <p>PSCAD also has its own <a href="../../reference/mrun/">Multiple Run</a> component, which runs the case once per combination without the script restarting it. It is faster for a small self-contained sweep. A script loop is easier to read, easier to check, and the only option once the sweep has to change several things or decide what to try next, so these guides use the loop.</p>`,
+      what: `  <p>Every component in a PSCAD case has parameters, read and written from Python as a dictionary: <code>comp.parameters()</code> gives them, <code>comp.parameters(R="12.5 [ohm]")</code> writes one. A sweep writes one parameter over a range of values and runs the case for each, recording what an output channel did.</p>
+  <p>Two things make a sweep in PSCAD different from a hand edit. A value that carries a unit is written with it, and PSCAD keeps the unit it is given. And each write <strong>changes the case on disk</strong> when it is saved, so the script records each value it replaces and puts it back.</p>
+  <p>PSCAD's own <a href="../../reference/master-mrun/">Multiple Run</a> component sweeps up to six variables inside one run of the executable. A Python sweep is slower to start each run, but it can change anything in the case, including what Multiple Run cannot reach: a layer, a substitution set, a component's definition, the run settings.</p>`,
       method: `  <ol class="dx-steps">
-    <li><strong>Find the component once</strong>, before the loop. Finding it every pass is wasted time and hides a model that has two of them.</li>
-    <li><strong>Open a mark</strong> at the top of each pass so the pass can be undone at the bottom.</li>
-    <li><strong>Write the parameter</strong>, in the unit it already carries.</li>
-    <li><strong>Run.</strong> PSCAD builds the case again by itself when the change needs it.</li>
-    <li><strong>Read the channel</strong> the study cares about, and take one number off it.</li>
-    <li><strong>Add a row.</strong> The loop value is added for you, so the table always says which pass a row came from.</li>
-    <li><strong>Undo the mark</strong>, so the next pass starts from the case as it was.</li>
+    <li><strong>Find the component</strong> by definition and Name, and check the parameter's name and unit in the <a href="../../reference/">component reference</a>.</li>
+    <li><strong>Loop over the values.</strong> Each pass opens a mark, writes the value, runs, reads, records a row, and undoes the mark.</li>
+    <li><strong>Graph the result</strong> against the swept value from the table.</li>
   </ol>
-  ${pre(`load = px_find(app, "master:resistor", "Load")       # once, before the loop
-
-for value in num_range(1.0, 10.0, 1.0):
+  <h3>One parameter over a range</h3>
+  ${pre(`resistor = px_find(app, "master:resistor", "Rload")
+for r in num_range(1, 10, 1):
     mark = px_mark()
-    px_set(load, "R", value, unit="ohm")
-
-    run = px_run(app, duration=1.0, step=50, plot_step=250)
-    v = run.series("Vbus")
-    worst = peak(v, kind="abs")
-
-    table("Sweep").add({
-        "R (ohm)": value,
-        "Peak voltage": worst.value,
-        "At (s)": worst.time,
-    })
-    px_undo(mark)`)}
-  <h3>Sweeping two things at once</h3>
-  <p>Nest the loops. The results table records both loop values on every row, so a two dimensional sweep comes out as a long table that pivots into a surface rather than as a grid you have to reassemble.</p>
-  ${pre(`for r in num_range(1.0, 10.0, 1.0):
-    for mva in (100, 200, 400):
-        mark = px_mark()
-        px_set(load, "R", r, unit="ohm")
-        px_set(source, "MVA", mva, unit="MVA")
-        run = px_run(app)
-        table("Sweep").add({"Peak": peak(run.series("Vbus"), kind="abs").value})
-        px_undo(mark)`)}
-  <h3>Sweeping something that is not a number</h3>
-  <p>A Choice parameter takes a symbolic value, not the label the dialog shows. The <a href="../../reference/">component reference</a> lists both for every Choice, so a sweep over winding connections writes <code>YD1="Y"</code> and <code>YD1="D"</code> rather than the words beside them.</p>
-  ${pre(`for connection in ("Y", "D"):
-    px_set(xfmr, "YD1", connection)`)}
-  <h3>What the table is for</h3>
-  <p>One row per pass, every loop value on the row, and the numbers the checks produced. It is saved as CSV or Excel into the run folder when the script ends, so the sweep leaves something that can be plotted, diffed against the last model, and attached to a report without being retyped.</p>`,
-      builder: builderBlock(b,
-        'The sweep Quick Start is the loop, wired: a component, a range, a parameter write, a run, a channel and a table. Point the component at yours and change the range, and it is your sweep. This is the file the Builder writes:',
+    px_set(resistor, "R", r, unit="ohm")      # written in the unit R already carries
+    run = px_run(app, duration=1, step=50, plot_step=250)
+    table("Sweep").add({"R (ohm)": r, "Peak": peak(run.series("Vbus"), kind="abs").value})
+    px_undo(mark)
+plot_table("Sweep", "R (ohm)", ["Peak"])`)}
+  <h3>Every layer, one at a time</h3>
+  <p>A layer is a named group of components that is enabled or disabled together, so one case can hold several network arrangements: a line in or out, a second transformer, a different filter. Going over the layers puts each one in while the others are out.</p>
+  ${pre(`for name in each_layer(app, layer_list(app, "*"), "Enabled", "Disabled"):
+    run = px_run(app, duration=2, step=50, plot_step=250)
+    table("Arrangements").add({"Peak": peak(run.series("Vbus"), kind="abs").value})`)}
+  <h3>Every global substitution set</h3>
+  <p>A global substitution is a named value that any component parameter written as <code>$(name)</code> takes, and a set holds one value for each. Switching the active set changes every one of them at once, which is how one case covers several parameter sets: a weak and a strong grid, summer and winter.</p>
+  ${pre(`for name in each_gs_set(app, [n for n in gs_sets(app) if n]):
+    run = px_run(app, duration=2, step=50, plot_step=250)
+    table("Sets").add({"Final value": final_value(run.series("Vbus"))})`)}
+  <p>Make the sets once in PSCAD, or load them from a CSV with <code>gs_load</code>. A case with no named sets has one set whose name is empty, which is why the loop leaves it out.</p>`,
+      builder: builderBlock(sweep,
+        'The Sweep one parameter Quick Start steps a resistor\'s <code>R</code> from 1 to 10, runs the case for each value and tables the peak of a channel, with a graph of the peak against the value. Change the component, the parameter and the channel to your own. This is the file with the case set to <code>C:/Studies/filter/filter.pscx</code>:',
         [
-          'The <strong>Component</strong> block finds the component once and hands it to the <strong>Set parameter</strong> block, so it is found before the loop rather than inside it.',
-          'The <strong>For a range of numbers</strong> block is the sweep. Its value output goes into Set parameter, so the range is in one place.',
-          '<code>px_set</code> records the old value as it writes, which is what makes the undo at the end of the pass cheap and exact.',
-          'Every pass is wrapped in <code>px_mark()</code> and <code>px_undo(mark)</code>, so the parameter goes back before the next value is written and the case ends as it started.',
-          'The <strong>Add row</strong> block writes the loop value as well as the check, so the table says which pass each row came from without being told.',
-          '<strong>Draw graph from results table</strong> plots the collected column against the swept one after the loop, which is the picture a sweep is usually for.',
-        ], 'parameter_sweep.py'),
+          '<code>px_find(app, "master:resistor", "", "one")</code> wants exactly one resistor. Give a Name when the case has several; with none, the error lists the Names it found.',
+          '<code>px_set(resistor, "R", value, None)</code> writes the value in the unit <code>R</code> already carries and records the old one.',
+          'A pass that does not build or stops early is skipped with a note in the table, and the next value is tried.',
+          '<code>plot_table("Sweep", "Value", ["Peak"])</code> draws the table\'s Peak column against the swept value when the loop ends.',
+        ], 'sweep_one_parameter.py') + '\n' + builderExtra(layers,
+        'The Run every network arrangement Quick Start goes over the layers instead: each layer in turn is enabled and the others disabled, and each arrangement is run and tabled:',
+        'run_every_arrangement.py'),
       pitfalls: [
-        '<strong>Dropping the unit.</strong> <code>px_set(obj, "R", 2.5)</code> writes 2.5 in whatever unit the parameter already carries. If that is milliohms, the sweep is a thousand times off and nothing complains. Name the unit.',
-        '<strong>Not putting the value back.</strong> A PSCAD parameter a script writes is written in the case. Without the undo, the case on disk ends up holding the last value of the sweep.',
-        '<strong>Finding the component inside the loop.</strong> It costs a search per pass and, worse, it hides the case where two components match: the script quietly works on whichever came first.',
-        '<strong>A range that steps past its end.</strong> Floating point means a range from 0.1 to 0.5 in steps of 0.1 may give four values or five. Where the end point matters, list the values instead.',
-        '<strong>Sweeping something that needs a rebuild and not allowing for the time.</strong> Some parameters are used when the Fortran is generated, so writing them costs a build per pass. The first pass of a sweep will tell you which kind you have.',
-        '<strong>Reading a channel the case does not record.</strong> The sweep runs to the end and the column is empty. Run once with <code>run.names()</code> printed, and copy the titles from there.',
+        '<strong>A unit you did not mean.</strong> PSCAD stores a written unit as given: write <code>"2500 [mohm]"</code> and the parameter is in mohm from then on. <code>px_set</code> writes in the unit the parameter already carries, converting from the one you name.',
+        '<strong>A value read as a plain number loses its unit.</strong> A unit-carrying value comes back as a number whose unit is only in its text. Read it as text first, or use <code>px_get</code> with a unit.',
+        '<strong>A Choice written as its words.</strong> A Choice takes its symbol, the capitals in the reference, such as <code>"YES"</code> or <code>"RR_L"</code>, not the words in the dialog.',
+        '<strong>A component that is in the case twice.</strong> <code>find_all</code> gives every instance, on every page and inside every module. Name the one to change, or the sweep writes on all of them.',
+        '<strong>Enabling a component needs PSCAD 5.0.2.</strong> <code>Component.enabled</code> is not there on 5.0.0; <code>enable()</code> and <code>disable()</code> are, which is what the runtime uses.',
       ],
       faq: [
-        ['How do I sweep a parameter in PSCAD with Python?', 'Find the component once, then loop: write the parameter with its unit, run the case, read the channel you care about, take a number off it and add a row. Put the parameter back at the end of each pass, because a value a script writes is written in the case itself.'],
-        ['Should I use the Multiple Run component or a Python loop?', 'The Multiple Run component is faster for a small, self-contained sweep because PSCAD does not restart the case between runs. A Python loop is easier to read and check, and it is the only option once the sweep changes several things, reads results between passes, or decides what to try next.'],
-        ['How do I write a value with its unit in PSCAD?', 'Write it as text with the unit in brackets: "250 [MVA]", "2.5 [ohm]". PSCAD keeps the unit you wrote rather than converting it, so a value written in milliohms stays in milliohms and reads back that way.'],
-        ['How do I sweep a dropdown parameter?', 'A Choice parameter is written with its symbolic value rather than the label shown in the dialog. The component reference lists the symbolic value beside the label for every Choice in the Master Library.'],
+        ['How do I change a component parameter in PSCAD from Python?', 'Find the component with <code>project.find_all("master:resistor")</code> (or by its Name), then call <code>comp.parameters(R="12.5 [ohm]")</code>. <code>comp.parameters()</code> with no arguments gives every parameter and its current value.'],
+        ['What is the difference between a Python sweep and Multiple Run?', 'Multiple Run steps up to six variables inside the case, in one go of the executable. A Python sweep starts a run per value and can change anything in the case between runs, including layers, substitution sets and the run settings.'],
+        ['How do I switch layers in PSCAD from a script?', 'Set the layer\'s state on the project, enabled or disabled, then run. The Builder\'s runtime does it with <code>layer_set(app, name, "Enabled")</code> and puts every layer back the way it found it at the end.'],
       ],
     },
+    builderTitle: 'The full Python scripts from the Builder',
   };
 }

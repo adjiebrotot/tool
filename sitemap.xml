@@ -8,22 +8,28 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/borrowingcapacity/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/borrowingcapacity/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
@@ -38,16 +44,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
@@ -56,16 +62,16 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/costofliving-comparator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/costofliving-comparator/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/map/</loc>
@@ -74,22 +80,10 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/costofliving-comparator/map/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/dcasimulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/guides/</loc>
@@ -98,16 +92,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/dcasimulator/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/</loc>
     <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/ticker/</loc>
@@ -134,16 +128,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/ed-uc-simulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/ed-uc-simulator/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/ed-uc-simulator/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/eggprice/</loc>
@@ -158,16 +152,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/financialfreedom/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/financialfreedom/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financialfreedom/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/</loc>
@@ -176,16 +170,16 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/financingvscash/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financingvscash/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/loan-types/</loc>
@@ -212,16 +206,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/loadflow-simulator/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/loadflow-simulator/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/loadflow-simulator/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
@@ -239,16 +233,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pisahvsgabung/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
@@ -258,12 +252,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/</loc>
@@ -278,28 +266,22 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/guides/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/samples/</loc>
@@ -812,6 +794,18 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/guides/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/pscad-scripter/python/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -866,2071 +860,2071 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/abcdq0/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-abcdq0/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/abs/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-abs/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ammeter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ammeter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/angle-resolver/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-angle-resolver/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/arrester/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-arrester/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/backlash/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-backlash/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/battery/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-battery/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/bin-delay/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-bin-delay/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/block-avg/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-block-avg/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/breaker1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-breaker1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/breaker3/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-breaker3/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/breakout/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-breakout/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/buffer/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-buffer/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cable-coax/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coax/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cable-coaxsimpl/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coaxsimpl/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cable-interface/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-interface/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cable-pipetype/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-pipetype/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/capacitive-load/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-capacitive-load/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/capacitor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-capacitor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ccvt1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ccvt1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cfilter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cfilter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cinj/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cinj/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/clarke/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-clarke/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cmplx/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cmplx/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/compar/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-compar/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/compare/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-compare/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/complex/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-complex/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/conjugate/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-conjugate/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/const/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-const/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/constc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-constc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/consti/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-consti/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/constl/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-constl/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/cosimulation/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-cosimulation/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/counter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-counter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/coupled-2lines/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-coupled-2lines/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/coupled-3lines/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-coupled-3lines/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ct-double/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ct-double/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ct-single/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ct-single/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/current-scaler/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-current-scaler/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/currenttf/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-currenttf/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/datalabel/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-datalabel/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/datamerge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-datamerge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/datatap/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-datatap/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/datatap2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-datatap2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/db-xfmr-3p2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-db-xfmr-3p2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dc-mac-2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dc-mac-2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/deadband/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-deadband/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/delay/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-delay/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/derivative/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-derivative/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/detect-change/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-detect-change/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/diffpole/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-diffpole/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dir-neg32/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dir-neg32/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/discretizer/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-discretizer/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/div/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-div/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dload-3branch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dload-3branch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dload/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dload/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/doblestate/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-doblestate/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dot-product/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dot-product/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/downramp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-downramp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dq0/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dq0/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dscd87/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dscd87/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dwt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dwt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/dynamic-datatap/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-dynamic-datatap/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/edge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-edge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/electrical-tap/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-electrical-tap/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/emtconst/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-emtconst/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/exc-scrx/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-exc-scrx/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excac-2016/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excac-2016/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excac/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excac/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excdc-2016/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excdc-2016/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excdc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excdc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/exci35defn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-exci35defn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excst-2016/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excst-2016/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/excst/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-excst/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/exp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-exp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/export/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-export/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fault-sw/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fault-sw/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fdne/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdne/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fdtf/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdtf/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ff-d/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ff-d/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ff-jk/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ff-jk/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ff-rs/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ff-rs/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ff-t/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ff-t/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fft/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fft/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fileread/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fileread/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/filter-band/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-filter-band/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/filter-hp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-filter-hp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/filter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-filter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fixed-load/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fixed-load/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fixed-load1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fixed-load1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/flip-flop/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-flip-flop/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/flipflop/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-flipflop/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fload/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fload/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/force-dsdyn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-force-dsdyn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/force-dsout/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-force-dsout/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fp-int/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fp-int/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/fplogic/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-fplogic/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/freq-meas/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-freq-meas/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/g6p200-2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-g6p200-2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/g6p200/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-g6p200/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/gain/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-gain/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hardlimit/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hardlimit/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/harmdiffmag/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-harmdiffmag/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hgov90defn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hgov90defn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hy-gov/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-gov/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hy-tur/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hy-tur/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hydro-gov/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hydro-gov/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/hysteresis-reactor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-hysteresis-reactor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ic-engine/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ic-engine/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/import/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-import/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/impulse/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-impulse/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/inductor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-inductor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/integral/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-integral/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/inv/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-inv/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/itoc51/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-itoc51/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/l2g-imp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-l2g-imp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/l2l-imp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-l2l-imp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/leadlag/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-leadlag/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/lens21/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-lens21/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-berg-options/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-berg-options/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-buswork-1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-3h/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-buswork-3h/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-buswork-3v/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-buswork-3v/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-constants-debug/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-constants-debug/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-fredep-options/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-fredep-options/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-frephase-options/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-frephase-options/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-ground/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-ground/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-manualyz/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-manualyz/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-out-disp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-out-disp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-12-vert/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-12-vert/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-2-flat/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-2-flat/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-concent/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-3-concent/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-delta/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-3-delta/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-flat/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-3-flat/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-offset/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-3-offset/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-3-vert/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-3-vert/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-concent/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-concent/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-delta/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-delta/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-flat/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-flat/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-offset/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-offset/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-vert/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-vert/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-6-vert1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-6-vert1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/line-tower-universal/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-line-tower-universal/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/log/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-log/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/logic-mult/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-logic-mult/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/logic/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-logic/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/macdefn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-macdefn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/maxmin-array/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-maxmin-array/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/maxmin/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-maxmin/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mesgam/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mesgam/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mho-circle/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mho-circle/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mingam/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mingam/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-firingfullbridge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-firingfullbridge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-firinghalfbridge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-firinghalfbridge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-fullcell/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-fullcell/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-halfcell/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-halfcell/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-multidimcarriergen/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-multidimcarriergen/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mmc-multidimcomparator/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mmc-multidimcomparator/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mod/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mod/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/modulator/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-modulator/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/modulo/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-modulo/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/monostable/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-monostable/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mppt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mppt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mrun-extra/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mrun-extra/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mrun/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mrun/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mult/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mult/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/multimass/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/multimass2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimass2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/multimassdefn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimassdefn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/multimeter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-multimeter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mux-array/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mux-array/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mux/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mux/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/mux1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-mux1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/newpi/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-newpi/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/nl-gain/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-nl-gain/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/nl-tfun/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-nl-tfun/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/nodelabel/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-nodelabel/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/nodeloop/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-nodeloop/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/oos-lens68/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-oos-lens68/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/oos-mho68/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-oos-mho68/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/oos-poly68/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-oos-poly68/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/optimum-run/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-optimum-run/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/over-current/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-over-current/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/overcurrent/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-overcurrent/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/peswitch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-peswitch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pgb/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pgb/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/phasediff/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-phasediff/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/phasorimp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-phasorimp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/photovoltaic-source/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-photovoltaic-source/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pi-ctlr/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pi-ctlr/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pi-double-cct/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pi-double-cct/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pi-section/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pi-section/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pi-section2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pi-section2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pm-machine/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pm-machine/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/polar-rec/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-polar-rec/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/polpi5/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-polpi5/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/power/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-power/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/prod-array/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-prod-array/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pss/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pss/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pt1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pt1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pudot/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pudot/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/puimpedancebranch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-puimpedancebranch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/pwm-hcc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-pwm-hcc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/radiolink/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-radiolink/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/random/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-random/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/range/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-range/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ratelimit/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ratelimit/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ratio-changer-2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ratio-changer-2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/reactive-load/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-reactive-load/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/realpole/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-realpole/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/recorder2-0/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-recorder2-0/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/resistive-load/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-resistive-load/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/resistor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-resistor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/rms-inst/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-rms-inst/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/rms3ph/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-rms3ph/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/rrl/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-rrl/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/rsff/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-rsff/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/rtcbranch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-rtcbranch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sampler/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sampler/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sandhdefn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sandhdefn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sat-reac/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sat-reac/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/scale-changer/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-scale-changer/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/select/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-select/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/seq-filter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-seq-filter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-breaker/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequencer-breaker/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-fault/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequencer-fault/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-setvar/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequencer-setvar/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-start/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequencer-start/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequencer-wait/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequencer-wait/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sequential/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sequential/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/shiftreg/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-shiftreg/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sig-gen/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sig-gen/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sign/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sign/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/signalgen/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-signalgen/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sorter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sorter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source-1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source-1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source-3/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source-3/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source-vltg-dependent-voltage/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source-vltg-dependent-voltage/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source3/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source3/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/source3r/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-source3r/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/spark-gap/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-spark-gap/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/spim-uw/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-spim-uw/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sqc100/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sqc100/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sqrt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sqrt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/square/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-square/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/src-ccin-1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-src-ccin-1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/src-ccin-3/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-src-ccin-3/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/src-current-dependent-current/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-src-current-dependent-current/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/src-voltage-dependent-current/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-src-voltage-dependent-current/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sregis/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sregis/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/statistical-breaker/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-statistical-breaker/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/stop/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-stop/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sum-array/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sum-array/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sumjct/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sumjct/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/surge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-surge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/surge1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-surge1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/svc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-svc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/svcalloc1/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-svcalloc1/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/svm/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-svm/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/switch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-switch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/sync-machine/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-sync-machine/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tbreak/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tbreak/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tbreakn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tbreakn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tdelay/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tdelay/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tfault/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tfault/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tfaultn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tfaultn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/th-gov/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-th-gov/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/th-tur/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-th-tur/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/thd/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-thd/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/time-enab/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-time-enab/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/timer/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-timer/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/timerdefn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-timerdefn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tline-interface-v2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tline-interface-v2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tline-interface/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tline-interface/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tpflt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tpflt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/trans-fcn/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-trans-fcn/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/trans-filt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-trans-filt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/trig/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-trig/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/trip-polygon/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-trip-polygon/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/trv/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-trv/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tsc-control/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tsc-control/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tvekt/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tvekt/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/tvekta/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-tvekta/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/txferfnc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-txferfnc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-umec-xfmr-2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-3w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-umec-xfmr-3w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-3w2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-umec-xfmr-3w2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-4w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-umec-xfmr-4w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/umec-xfmr-6w5l/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-umec-xfmr-6w5l/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/unity/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-unity/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/upramp/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-upramp/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/var-button/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-var-button/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/var-impedance/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-var-impedance/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/var-pot/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-var-pot/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/var-switch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-var-switch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/var/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-var/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/varrlc/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-varrlc/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vco/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vco/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vdcl/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vdcl/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vdvoci/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vdvoci/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vdvocr/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vdvocr/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vector-interlace/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vector-interlace/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vector-merge/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vector-merge/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vector/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vector/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/vg6p18/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-vg6p18/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/voltlvl/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-voltlvl/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/voltmeter/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-voltmeter/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/voltmetergnd/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-voltmetergnd/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/wind-governor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-wind-governor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/wind-source/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-wind-source/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/wind-turbine/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-wind-turbine/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/wound-rotor/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-wound-rotor/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/x-power-y/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-x-power-y/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-2w-auto/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-2w-auto/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p2w-auto/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p2w-auto/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p2w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p2w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w-auto/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p3w-auto/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p3w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p3w2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p3w2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p4w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p4w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3p4w2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3p4w2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w-auto/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3w-auto/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-3w2/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-3w2/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-4w/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-4w/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xfmr-nw/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xfmr-nw/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xnode/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xnode/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xy-table/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xy-table/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xy-transfer-function/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xy-transfer-function/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/xyz-tf/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-xyz-tf/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/yload-3branch/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-yload-3branch/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/yload/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-yload/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zdelay/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zdelay/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zderivative/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zderivative/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zdiffpole/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zdiffpole/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zerodetect/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zerodetect/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zintegral/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zintegral/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zleadlag/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zleadlag/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zminusone/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zminusone/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zpi-ctlr/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zpi-ctlr/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/zrealpole/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-zrealpole/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/ztrans-fcnz/</loc>
+    <loc>https://tool.adjiebrotots.com/pscad-scripter/reference/master-ztrans-fcnz/</loc>
     <lastmod>2026-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -2963,16 +2957,16 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
@@ -2982,12 +2976,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/</loc>
@@ -3005,12 +2993,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -3018,12 +3000,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/sankeycreator/</loc>
@@ -3038,16 +3014,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/valuateeverything/agent.html</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/valuateeverything/guides/</loc>
     <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/valuateeverything/ai/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>

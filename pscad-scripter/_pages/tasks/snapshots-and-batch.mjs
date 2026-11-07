@@ -1,94 +1,75 @@
-// Guide: snapshots (run once to a settled state, start every later run from it) and simulation
-// sets (several cases at once). Two Quick Starts: snapshot on the page, parallel beside it.
+// Guide: snapshots (snapshot) and simulation sets (parallel): the two ways a PSCAD study saves
+// time.
 export default async function ({ builderScript, builderBlock, builderExtra, pre }) {
-  const b = await builderScript('snapshot', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+  const snap = await builderScript('snapshot', ({ set }) => set('n1', {
+    project: 'C:/Studies/hvdc/hvdc.pscx',
   }));
-  const p = await builderScript('parallel', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+  const par = await builderScript('parallel', ({ set }) => set('n1', {
+    project: 'C:/Studies/hvdc/hvdc.pscx',
   }));
 
   return {
     slug: 'snapshots-and-batch', crumb: 'Snapshots and batch runs',
-    card: 'PSCAD snapshots and running cases in a batch',
-    title: 'PSCAD snapshots and batch runs with Python (simulation sets, volley)',
-    h1: 'PSCAD snapshots and running cases in a batch',
-    desc: 'Cut the initialisation out of every PSCAD run with a snapshot, then run several cases at once in a simulation set with a volley, from one Python script.',
-    lead: `An EMT case starts from zero every time and spends the first second or two getting to a steady state that is the same on every run of a study. Two things get that time back. A <strong>snapshot</strong> runs the initialisation once and starts every later run from the state it saved. A <strong>simulation set</strong> runs several cases at the same time instead of one after another. Together they turn an overnight sweep into a lunch break.`,
-    whatTitle: 'What a snapshot is',
-    methodTitle: 'Snapshots, then simulation sets',
+    card: 'Snapshots, simulation sets and batch runs',
+    title: 'PSCAD snapshots and simulation sets with Python: faster batch runs',
+    h1: 'Snapshots, simulation sets and batch runs in PSCAD',
+    desc: 'Save a PSCAD snapshot once the case has settled and start each run from it, then run cases side by side in a simulation set: the two ways to cut a study\'s run time.',
+    lead: 'An EMT study spends much of its time on things it does not need: the same start-up simulated again for every case, and one case at a time on a machine with many cores. A <strong>snapshot</strong> fixes the first: initialise once, save the state, start every case from it. A <strong>simulation set</strong> fixes the second: PSCAD runs its cases several at a time.',
+    whatTitle: 'Where a PSCAD study\'s time goes',
     qsTitle: 'Initialise once, then branch',
     level: 'Intermediate',
-    keywords: ['pscad snapshot', 'pscad simulation set', 'pscad volley', 'pscad batch run python', 'pscad parallel runs', 'pscad initialisation', 'snapshot file psmx'],
-    about: ['PSCAD', 'Snapshot', 'Batch simulation', 'Electromagnetic transient simulation'],
+    keywords: ['pscad snapshot python', 'pscad simulation set', 'pscad parallel runs', 'pscad volley', 'pscad batch run python', 'pscad start from snapshot'],
+    about: ['PSCAD', 'Snapshot', 'Parallel computing', 'Batch processing'],
     sections: {
-      what: `  <p>A snapshot is the <strong>whole state of the simulation at one instant</strong>, written to a file beside the case. Every capacitor voltage, every inductor current, every controller state. A later run told to start from it begins in that state instead of from zero, so the initialisation does not happen again.</p>
-  <p>For a study that varies something <em>after</em> the case has settled, which is most of them, that is the whole initialisation removed from every pass but the first. A case that takes 2 s to settle and 2 s to show the event goes from 4 s of simulation per pass to 2 s: half the work, over twenty passes or two hundred.</p>
-  <p>It only works when the thing being varied happens after the snapshot. A sweep over fault durations qualifies, because the case is the same until the fault. A sweep over a transformer rating does not: that changes the steady state the snapshot captured, so the snapshot is wrong for every value but the one it was taken with.</p>
-  <h3>And a simulation set</h3>
-  <p>A <strong>simulation set</strong> is a list of cases PSCAD runs as a group, and a <strong>volley</strong> is how many of them run at the same time. Each task in the set can override the duration and the time steps, so one set can hold the same case under several conditions. This is the parallelism PSCAD has: not one case split across cores, but several cases running side by side.</p>`,
-      method: `  <h3>Taking a snapshot</h3>
-  <p>The snapshot is taken at a time, during a run. Tell the case when to take it, run past that time, and the file is written.</p>
-  ${pre(`snapshot_at(app, 2.0, name="settled")          # take it at t = 2 s
-px_run(app, duration=2.2, step=50, plot_step=250)   # run past it, once`)}
-  <h3>Starting from it</h3>
-  <p>A run told to start from a snapshot begins at the time the snapshot was taken, not at zero. Times inside the run are still absolute, so a fault at 0.1 s after a snapshot taken at 2 s is written as 2.1 s unless the case is set to restart the clock.</p>
-  ${pre(`snapshot_use(app, "settled")
+      what: `  <p>A PSCAD case starts from zero: sources ramp up, machines are released, controls find their operating point. For a large case with converters that can take seconds of simulated time, and minutes of real time, before anything the study cares about happens. A study of twenty fault cases pays that twenty times.</p>
+  <p>A <strong>snapshot</strong> is the whole state of the case at one instant, saved to a <code>.snp</code> file. A run started from it carries on from that instant, at that simulated time, so the start-up is paid once.</p>
+  <p>A <strong>simulation set</strong> is a list of cases, or of one case with different settings, that PSCAD runs as a batch. Its <strong>volley</strong> is how many run at the same time, each its own process. That is where a PSCAD study gets real parallelism: four cases in a volley of four finish in about the time of one, as long as the machine has the cores and the licence allows it.</p>`,
+      method: `  <h3>Initialise once, then branch</h3>
+  <ol class="dx-steps">
+    <li><strong>Run to a settled state</strong> with a snapshot time set, and the run saves the state there.</li>
+    <li><strong>Switch the start</strong> to that snapshot file. Every run from then on starts from it, until it is switched back.</li>
+    <li><strong>Time each event after the snapshot</strong>: a run from a snapshot taken at 2 s starts at 2 s, so a fault at 0.1 s is already in the past.</li>
+  </ol>
+  ${pre(`snapshot = snapshot_save(app, at=2.0)            # the next run saves the state at 2 s
+px_run(app, duration=2.2, step=50, plot_step=250)  # initialise, once
 
-for duration in (0.08, 0.12, 0.16, 0.20):
+snapshot_use(app, snapshot)                        # every run from here starts at 2 s
+for duration in num_range(0.08, 0.2, 0.04):
     mark = px_mark()
-    set_fault(app, "master:tpflt", at=2.1, duration=duration)
-    run = px_run(app, duration=2.0, step=50, plot_step=250)
-    table("Snapshot").add({
-        "Fault (s)": duration,
-        "Lowest voltage": peak(run.series("Vbus"), kind="min").value,
-    })
+    set_fault(app, "master:tfaultn", "", at=2.1, duration=duration)
+    run = px_run(app, duration=2, step=50, plot_step=250)
+    table("Snapshot").add({"Lowest voltage": peak(run.series("Vbus"), kind="min").value})
     px_undo(mark)
-
-snapshot_off(app)      # later runs start from zero again`)}
-  <p class="dx-note">Put the case back to starting from zero when the script ends. A case left set to start from a snapshot will quietly use it the next time anyone opens it, including for a study the snapshot does not suit.</p>
-  <h3>Running several cases at once</h3>
-  <p>A simulation set holds tasks, each one a case, and the volley says how many run together. Four at a time on a four core machine is the usual starting point; more than the machine has cores makes everything slower.</p>
-  ${pre(`sim = simset_create(app, "PXB_batch", volley=4)
-simset_add(sim, ["caseA", "caseB", "caseC", "caseD"])
-simset_override(sim, duration=5.0, step=50)       # the same settings for every task
-
-result = simset_run(sim)
-for task in result.tasks:
-    table("Batch").add({"Case": task.name, "Status": task.status, "Seconds": task.seconds})`)}
-  <p class="dx-note">On PSCAD 5.0.0 the Automation Library has <code>add_tasks</code> but not <code>add_task</code>: add them as a list. The generated scripts do this for you.</p>
-  <h3>Which one to reach for</h3>
-  <ul class="dx-prose">
-    <li><strong>Same case, something varied after it settles</strong>: a snapshot. The saving is the initialisation, every pass.</li>
-    <li><strong>Different cases, or variations that change the steady state</strong>: a simulation set. The saving is wall clock time, not simulated time.</li>
-    <li><strong>Both</strong>: take a snapshot per case, then run the cases as a set. The two do not get in each other's way.</li>
-  </ul>`,
-      builder: builderBlock(b,
-        'The snapshot Quick Start is the pattern: one run to settle and save, then a loop that branches from the saved state. This is the file the Builder writes:',
+snapshot_off(app)                                  # back to starting from zero`)}
+  <h3>Several cases at once</h3>
+  ${pre(`sim_set = simset_create(app, "batch", ["case_a", "case_b", "case_c", "case_d"], volley=4)
+simset_override(app, sim_set, None, duration=5)    # every task: 5 s, without touching the cases
+result = simset_run(app, sim_set)                  # builds and runs its own tasks
+print(result.ok, result.seconds)`)}
+  <p>The cases in a set must be loaded in the workspace. Load them with the case, or list them under Libraries in the Builder's Start block. The volley is best kept at or below the number of processor cores.</p>`,
+      builder: builderBlock(snap,
+        'The Initialise once, then branch Quick Start saves a snapshot at 2 s, initialises once, then runs three fault durations from the snapshot and tables the lowest voltage of each. This is the file with the case set to <code>C:/Studies/hvdc/hvdc.pscx</code>:',
         [
-          '<strong>Save a snapshot</strong> sets the time the snapshot is taken; the <strong>Initialise</strong> run that follows is the one run that pays for the initialisation.',
-          '<strong>Start from a snapshot</strong> comes before the loop, so every pass of the loop begins at the settled state rather than at zero.',
-          'The fault time inside the loop is absolute: it is after the snapshot time, not relative to it.',
-          'The loop body is the same three blocks as any other sweep, which is the point: the snapshot changes what a run starts from and nothing else.',
-          '<strong>Start from zero again</strong> is wired at the end, so the case is not left set to a snapshot that the next study would not want.',
-          'The Builder warns when a block changes the model between the snapshot and the run that uses it, because that change is not in the saved state.',
-        ], 'snapshot_then_branch.py')
-        + '\n  <h3>Running several cases at once</h3>\n'
-        + builderExtra(p, 'The batch Quick Start is the other half: a simulation set with a volley, the settings overridden for every task, and a row per case when the set finishes.', 'batch_simulation_set.py'),
+          '<code>snapshot_save(app, 2, None, "")</code> sets the case to save one snapshot at 2 s, named after the case, and the Initialise run of 2.2 s writes it.',
+          '<code>snapshot_use(app, snapshot)</code> switches the start to the file. The runs in the loop pass no snapshot of their own and keep starting from it.',
+          'The fault is at 2.1 s, 0.1 s after the snapshot. Each pass writes its duration on the Timed Fault Logic and puts it back after.',
+          'At the end, <code>finish(app)</code> puts the case\'s start and snapshot settings back as they were found, with every other setting the workflow changed.',
+        ], 'initialise_once_then_branch.py') + '\n' + builderExtra(par,
+        'The Run several cases at once Quick Start makes a simulation set of the case in use with a volley of 4, overrides its duration to 5 s, runs it and tables how it went. List your own cases in the set:',
+        'run_several_cases_at_once.py'),
       pitfalls: [
-        '<strong>A snapshot taken before the case has settled.</strong> Every later run then starts from a transient, and the results are repeatable and wrong. Check the snapshot time against the waveform before trusting it.',
-        '<strong>Changing the model after the snapshot and expecting the change to be in it.</strong> The snapshot holds the state as it was. A parameter written afterwards applies from the restart, which is usually what you want for a fault and never what you want for an impedance.',
-        '<strong>Times measured from the restart.</strong> The clock does not reset by default: a fault 100 ms after a snapshot taken at 2 s is at 2.1 s.',
-        '<strong>Leaving the case set to start from a snapshot.</strong> It is a case setting, not a session one, so it survives the script and the next person to open the case.',
-        '<strong>A volley larger than the machine.</strong> Every task is a full EMTDC process. More tasks than cores means they take turns, and the whole set finishes later than a smaller volley would.',
-        '<strong>Several tasks building in the same folder.</strong> Each build writes beside the <code>.pscx</code>. Give each task its own copy of the case, or let the set build them in turn before the volley starts.',
+        '<strong>An event timed before the snapshot.</strong> A run from a snapshot starts at the snapshot\'s time. Anything timed before it never happens. Add the snapshot time to every event time.',
+        '<strong>A snapshot from a different build.</strong> A snapshot holds the state of one build of the case. Change the case\'s structure (a component added, a definition changed) and take the snapshot again.',
+        '<strong>A snapshot before the case has settled.</strong> Every run then starts mid-transient. Look at a run with no event first and take the snapshot after it has reached steady state.',
+        '<strong>A volley larger than the machine.</strong> More processes than cores slow each other down, and each needs its own licence seat where the licence counts them.',
+        '<strong>A simulation set changes PSCAD, not only the case.</strong> The set is kept in the workspace. The Builder deletes the sets it made at the end unless told to keep them.',
       ],
       faq: [
-        ['What is a PSCAD snapshot?', 'A file holding the entire state of the simulation at one instant: every capacitor voltage, inductor current and controller state. A run told to start from it begins in that state instead of from zero, which removes the initialisation from every run of a study after the first.'],
-        ['When is a snapshot not safe to use?', 'When the thing being varied changes the steady state the snapshot captured. Sweeping a fault duration is fine, because the case is identical until the fault. Sweeping a transformer rating or a source impedance is not: the snapshot holds the state of a different network.'],
-        ['How do I run several PSCAD cases at once?', 'Put them in a simulation set and give the set a volley. The volley is how many tasks run at the same time; each task is a full EMTDC process, so a volley of about the number of cores on the machine is the practical limit.'],
-        ['Does a snapshot make the simulation faster?', 'It removes simulated time, not solver work per step. A case that takes 2 s to settle and 2 s to show the event runs half as long per pass once the settling is snapshotted, and the saving multiplies by the number of passes.'],
+        ['How do I start a PSCAD run from a snapshot in Python?', 'Run once with a snapshot time set so the run saves a .snp file, then set the case\'s start to that file (StartType FROM_SNAP_FILE and startup_filename in the project\'s settings) and run again. The run carries on from the snapshot\'s time.'],
+        ['Can PSCAD run simulations in parallel?', 'Yes, through a simulation set: its volley says how many tasks run at the same time, each as its own process. A Python loop on its own runs one case after another.'],
+        ['What is the difference between a simulation set and Multiple Run?', 'Multiple Run repeats one case inside one run of its executable, stepping variables. A simulation set runs several cases, or one case with different settings, as separate processes, several at a time.'],
       ],
     },
+    builderTitle: 'The full Python scripts from the Builder',
   };
 }

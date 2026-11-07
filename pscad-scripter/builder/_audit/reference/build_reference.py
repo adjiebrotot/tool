@@ -316,12 +316,11 @@ def write_all(full):
     for key, rec in full["defs"].items():
         params = {}
         for name, p in rec["params"].items():
-            keep = {k: p[k] for k in ("type", "unit", "group", "default", "options", "i")
+            keep = {k: p[k] for k in ("type", "unit", "group", "default", "options")
                     if k in p}
             keep["desc"] = p.get("desc", "")
             params[name] = keep
-        lean[key] = {"name": rec["name"], "group": rec["group"],
-                     "groups": rec.get("groups", []), "params": params}
+        lean[key] = {"name": rec["name"], "group": rec["group"], "params": params}
     write(os.path.join(OUT, "params.json"),
           {"generated": full["generated"], "pscad": full["pscad"], "defs": lean},
           indent=None)

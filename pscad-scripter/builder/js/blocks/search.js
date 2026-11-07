@@ -178,7 +178,7 @@ defineBlock({
       tip: 'Halve is for a far end that may not even run: it never tries the failing end itself.' },
     { key: 'onUnknown', label: 'A try that gives no answer', kind: 'select', default: 'stop', more: true,
       options: [['stop', 'Stops the search (status UNKNOWN)'], ['fail', 'Counts as a fail'], ['pass', 'Counts as a pass']],
-      tip: 'For example a load flow that does not converge, or UFLS UNDEFINED.' },
+      tip: 'For example a run that did not build or stopped early, or UFLS UNDEFINED.' },
     { key: 'integer', label: 'Whole numbers only', kind: 'bool', default: false, more: true },
     { key: 'passIs', label: 'Pass is', kind: 'select', default: 'yes', noPin: true, options: PASS_IS,
       showIf: (s, cx) => !(cx && cx.wired) || cx.wired.has('pass'),

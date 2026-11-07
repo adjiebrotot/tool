@@ -1,37 +1,28 @@
 // The hub: how to automate PSCAD studies with Python, linking every guide.
-export default async function ({ specs, ORDER, page, PERSON, BASE, UPDATED, pre, esc, adSlot, definitionCount, pscadVersion }) {
+import { adSlot } from '../lib.mjs';
+export default async function ({ specs, ORDER, page, PERSON, BASE, UPDATED, pre, esc, definitionCount, pscadVersion }) {
   const BLURB = {
-    'getting-started': 'The Automation Library, connecting, opening a case, the build, one run, reading a channel.',
-    'build-and-run': 'Build the case, read the compiler back, set the time step and run the EMT simulation.',
-    'fault-studies': 'Sweep a fault duration for ride through, then bisect it for a critical clearing time.',
-    'parameter-sweep': 'Change one parameter over a range, run each value, and collect the results in one table.',
-    'harmonics': 'THD and a harmonic spectrum from the recorded waveform, and the plot step that limits them.',
-    'snapshots-and-batch': 'Run once to a settled state, start every later run from it, and run cases several at a time.',
-    'control-tuning': 'Disturb a control, fit the damping of the ringdown, and search for the gain that settles it.',
+    'getting-started': 'Install mhi-pscad, connect, open a case, build it, run it and read a channel.',
+    'build-and-run': 'Compile the case and read the compiler\'s own errors, set the time step and plot step, read the output channels.',
+    'fault-studies': 'Fault ride through over fault durations, and the critical clearing time by bisection.',
+    'parameter-sweep': 'Step a component parameter through a range, then every layer and every substitution set.',
+    'harmonics': 'THD and the harmonic spectrum out of a time-domain run, and what the plot step allows.',
+    'snapshots-and-batch': 'Initialise once and branch from a snapshot, and run cases side by side in a simulation set.',
+    'control-tuning': 'Overshoot and rise time of a step, and the damping ratio of a ringdown.',
   };
-  const n = definitionCount();
-  const v = pscadVersion();
   const cards = ORDER.map(s => `    <li><a href="${s}/"><strong>${esc(specs[s].card)}</strong><span>${esc(BLURB[s])}</span></a></li>`).join('\n');
+  const n = definitionCount(), v = pscadVersion();
   const skeleton = `import mhi.pscad
 
-pscad = mhi.pscad.connect()                   # or launch()
-project = pscad.project("mycase")
+pscad = mhi.pscad.connect()                    # 1. connect (launch() starts a PSCAD)
+project = pscad.project("my_case")             # 2. the case, already in the workspace
+fault = project.find_all("master:tfaultn")[0]  # 3. the component the study changes
 
-fault = project.find_all("master:tfaultn")[0]
-before = fault.parameters()                   # so it can be put back
-
-rows = []
-try:
-    for duration in (0.08, 0.12, 0.16, 0.20):
-        fault.parameters(DF=duration)         # 1. change the model
-        project.build()                       # 2. Fortran, every time it changed
-        project.run()                         # 3. the time domain run
-        v = read_channel(project, "Vpcc")     # 4. read the recorded waveform
-        rows.append({"Fault (s)": duration,   # 5. take the number off it
-                     "Lowest voltage": min(v)})
-finally:
-    fault.parameters(**before)                # 6. leave the case as you found it`;
-  const body = `    <p class="dx-lead">PSCAD is automated through its <strong>Automation Library</strong>, the Python package <code>mhi.pscad</code>. A script opens a case, writes the parameters of the components already drawn in it, builds the case into Fortran, runs the EMT simulation, and reads the waveforms the run recorded. Every study on this page is that same loop with a different thing varied and a different number taken off the waveform. Each guide opens the same study in the <a href="../builder/">Workflow Builder</a>, which writes the Python for you from blocks.</p>
+for duration in (0.08, 0.12, 0.16, 0.20):      # 4. the loop
+    fault.parameters(DF="%g [s]" % duration)   # 5. change the model
+    project.run()                              # 6. build if needed, then run in the time domain
+    # 7. read the channels from the .out files, check them, record a row`;
+  const body = `    <p class="dx-lead">PSCAD studies are automated with its Python Automation Library, <code>mhi.pscad</code>: a script opens a case, changes components in it, builds and runs it in the time domain, reads the waveforms it recorded and works out what the study asks for. Each guide below covers one kind of study and opens the same study in the <a href="../builder/">Workflow Builder</a>, which writes the whole Python file for you from blocks.</p>
     <section class="dx-sec dx-answer" aria-labelledby="guides">
   <h2 id="guides">Guides, one study each</h2>
   <ul class="dx-cards">
@@ -39,61 +30,61 @@ ${cards}
   </ul>
 </section>
     <section class="dx-sec" aria-labelledby="pattern">
-  <h2 id="pattern">The pattern every PSCAD automation follows</h2>
-  <p>PSCAD has one calculation: build the case and run it in the time domain. There is no load flow to call, no short-circuit command and no frequency-domain harmonic scan, so every study is a loop of runs over something changed in the model, with the answer read out of the recorded waveform afterwards.</p>
+  <h2 id="pattern">The pattern every automation follows</h2>
+  <p>PSCAD has one calculation, the EMT run, so every study is the same loop around it. This one times a fault on a Timed Fault Logic block over four durations; the guides fill each step in.</p>
   ${pre(skeleton)}
   <ol class="dx-prose">
-    <li><strong>Connect</strong>: <code>mhi.pscad.connect()</code> for the PSCAD that is open, <code>launch()</code> to start one, <code>application()</code> from inside PSCAD.</li>
-    <li><strong>Change the model</strong>, because there is no event list: a fault, a trip or a set-point change is a component already in the case, and a study writes its parameters.</li>
-    <li><strong>Build</strong>: the case is Fortran, and it has to be compiled again after anything that changes the generated code.</li>
-    <li><strong>Run</strong>: duration in seconds, the solution step and the plot step in microseconds.</li>
-    <li><strong>Read the channels</strong>: the output channels in the case are written ten to a <code>.out</code> file with a <code>.inf</code> index naming them.</li>
-    <li><strong>Check and record</strong>: an RMS, a THD, a nadir or a damping ratio, worked out from the waveform and written into a table.</li>
-    <li><strong>Put everything back</strong>, because a parameter a script writes is written in the case, not in a session.</li>
+    <li><strong>Connect</strong>: <code>mhi.pscad.connect()</code> to the PSCAD that is open, <code>launch()</code> to start one.</li>
+    <li><strong>Open the case</strong>: a <code>.pscx</code> in the workspace, with the libraries its components come from.</li>
+    <li><strong>Find the components</strong> the study changes, by definition and by Name (<a href="../reference/">component reference</a>).</li>
+    <li><strong>Loop</strong> over what the study varies: a fault duration, a parameter, a layer, a substitution set.</li>
+    <li><strong>Change the model</strong> by writing parameters. A fault or a switching is a component already drawn in the case: there is no event list.</li>
+    <li><strong>Build and run</strong>: the case compiles into Fortran, then EMTDC runs it.</li>
+    <li><strong>Read, check, record</strong>: the output channels come back as waveforms; a peak, a nadir, a THD or a damping ratio is worked out from them and written into a table. Then put every parameter back.</li>
   </ol>
 </section>
 ${adSlot()}
     <section class="dx-sec" aria-labelledby="two-ways">
   <h2 id="two-ways">Write it, or have it written</h2>
   <ul class="dx-prose">
-    <li><strong>Write the Python yourself</strong>: the guides give the method and a working script per study, and the <a href="../reference/">component reference</a> gives every parameter of ${n ? n.toLocaleString('en-AU') : ''} Master Library definitions${v ? `, read out of PSCAD ${esc(v)} itself` : ''}, with units, ranges and defaults.</li>
-    <li><strong>Draw it in the <a href="../builder/">Workflow Builder</a></strong>: wire blocks for the model, the run, the checks and the loops, and download one Python file. It finds the Automation Library, connects or launches, reports the compiler's own errors, reads the channels, keeps a log, saves tables and graphs, and puts back every parameter, layer state and substitution it changed. Each guide has an "Open in the Builder" button that loads its study as a Quick Start.</li>
+    <li><strong>Write the Python yourself</strong> with the Automation Library: the guides show the calls per study, and the <a href="../reference/">component reference</a> lists every parameter of ${n} Master Library definitions${v ? `, read out of PSCAD ${esc(v)}` : ''}, with units and the symbols a Choice takes.</li>
+    <li><strong>Draw it in the <a href="../builder/">Workflow Builder</a></strong>: wire blocks for the study, the loops and the checks, and download one Python file. It connects or starts PSCAD, keeps a log, saves tables and graphs, and puts back every value it changed. Each guide has an "Open in the Builder" button that loads its study as a Quick Start.</li>
   </ul>
 </section>
     <section class="dx-sec" aria-labelledby="first">
   <h2 id="first">What is worth automating first</h2>
   <ul class="dx-prose">
-    <li><strong>Anything that is the same run many times over</strong>: <a href="fault-studies/">every fault duration</a>, <a href="parameter-sweep/">every value of a parameter</a>, every network arrangement.</li>
-    <li><strong>Runs that take long enough to be worth not watching</strong>: an EMT run takes as long as it takes, and a sweep of them is an afternoon of starting the next one by hand.</li>
-    <li><strong>Searches</strong>: a <a href="fault-studies/">critical clearing time</a> or the <a href="control-tuning/">gain that just settles</a>, found by bisection in a handful of runs rather than a grid of them.</li>
-    <li><strong>The reading of the waveform</strong>: an <a href="harmonics/">RMS, a THD or a damping ratio</a> worked out the same way every time, instead of by eye off a graph.</li>
+    <li><strong>Many runs of one case</strong>: every fault duration, every parameter value, every network arrangement held in a layer.</li>
+    <li><strong>Searches</strong>: a critical clearing time takes about eight runs by bisection instead of thirty by hand.</li>
+    <li><strong>Long start-ups</strong>: a snapshot taken once a case has settled saves simulating the same seconds again for every branch.</li>
+    <li><strong>Reading the waveforms</strong>: THD, RMS, sequence components and damping out of every run, written into one table in the same layout every time.</li>
   </ul>
 </section>
     <section class="dx-sec" aria-labelledby="faq">
   <h2 id="faq">Questions</h2>
   <h3>Can PSCAD be automated with Python?</h3>
-  <p>Yes. PSCAD has an automation server, and the Automation Library (<code>pip install mhi-pscad</code>) is the Python package that drives it: open a workspace and a project, read and write any component's parameters, build, run, and read the results the run recorded.</p>
-  <h3>Can I run a load flow or a short circuit in PSCAD from Python?</h3>
-  <p>No, and not from the interface either. PSCAD is an electromagnetic transient simulator: the only calculation is a time-domain run. A fault level comes out of applying a fault and reading the current; a steady state comes out of running until the case settles.</p>
-  <h3>Why does a PSCAD case have to be built before it runs?</h3>
-  <p>A PSCAD case is compiled into Fortran and linked into an executable that EMTDC runs. Anything that changes the generated code, including most parameter changes, needs the case built again, and a build error is a compiler error with a line in the generated source.</p>
+  <p>Yes. The PSCAD Automation Library, <code>pip install mhi-pscad</code>, drives PSCAD from any Python 3.7 or newer: open a workspace and a case, read and write component parameters, build, run and read the result files.</p>
+  <h3>Does scripting need a separate licence?</h3>
+  <p>No separate scripting licence: the automation server is part of PSCAD. PSCAD still needs a licence certificate before a run will start.</p>
+  <h3>Can a script run several cases at once?</h3>
+  <p>Yes, through a simulation set: PSCAD runs its cases in volleys, several at a time. A script that only loops runs one case after the other.</p>
   <h3>Do I need to know Python?</h3>
-  <p>Not for the studies the <a href="../builder/">Workflow Builder</a> covers: it writes the script from blocks. Reading the file it writes is a good way to learn the Automation Library.</p>
+  <p>Not for the studies the <a href="../builder/">Workflow Builder</a> covers: it writes the script from blocks. Reading the generated file is a good way to learn the library.</p>
 </section>`;
-  const desc = 'How to automate PSCAD studies with Python: build and run, fault ride through, critical clearing time, parameter sweeps, harmonics and THD, snapshots, batch runs and control tuning.';
+  const desc = 'How to automate PSCAD studies with Python: build and run, fault ride through and CCT, parameter sweeps, harmonics, snapshots and batch runs, control tuning.';
   const plain = (h) => String(h).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim();
   const FAQ = [
-    ['Can PSCAD be automated with Python?', 'Yes. PSCAD has an automation server, and the Automation Library (pip install mhi-pscad) is the Python package that drives it: open a workspace and a project, read and write any component’s parameters, build, run, and read the results the run recorded.'],
-    ['Can I run a load flow or a short circuit in PSCAD from Python?', 'No, and not from the interface either. PSCAD is an electromagnetic transient simulator: the only calculation is a time-domain run. A fault level comes out of applying a fault and reading the current; a steady state comes out of running until the case settles.'],
-    ['Why does a PSCAD case have to be built before it runs?', 'A PSCAD case is compiled into Fortran and linked into an executable that EMTDC runs. Anything that changes the generated code, including most parameter changes, needs the case built again, and a build error is a compiler error with a line in the generated source.'],
-    ['Do I need to know Python?', 'Not for the studies the Workflow Builder covers: it writes the script from blocks. Reading the file it writes is a good way to learn the Automation Library.'],
+    ['Can PSCAD be automated with Python?', 'Yes. The PSCAD Automation Library, pip install mhi-pscad, drives PSCAD from any Python 3.7 or newer: open a workspace and a case, read and write component parameters, build, run and read the result files.'],
+    ['Does scripting need a separate licence?', 'No separate scripting licence: the automation server is part of PSCAD. PSCAD still needs a licence certificate before a run will start.'],
+    ['Can a script run several cases at once?', 'Yes, through a simulation set: PSCAD runs its cases in volleys, several at a time. A script that only loops runs one case after the other.'],
+    ['Do I need to know Python?', 'Not for the studies the Workflow Builder covers: it writes the script from blocks. Reading the generated file is a good way to learn the library.'],
   ];
   const jsonld = [{
     '@context': 'https://schema.org', '@type': 'TechArticle',
     headline: 'How to automate PSCAD studies with Python', description: desc,
     url: BASE + 'python/', inLanguage: 'en', dateModified: UPDATED,
     dependencies: 'PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer',
-    keywords: 'how to automate pscad studies, PSCAD Python, PSCAD automation, mhi.pscad, PSCAD Automation Library, EMTDC scripting, PSCAD batch simulation',
+    keywords: 'how to automate pscad studies, PSCAD Python, mhi.pscad, PSCAD automation, PSCAD scripting, EMTDC Python',
     isPartOf: { '@type': 'WebApplication', name: 'PSCAD Scripter', url: BASE },
     hasPart: ORDER.map(s => ({ '@type': 'TechArticle', name: specs[s].h1Plain || plain(specs[s].h1), url: BASE + `python/${s}/` })),
     author: PERSON, publisher: { '@id': PERSON['@id'] },
@@ -103,6 +94,6 @@ ${adSlot()}
   }];
   return {
     file: 'python/index.html', url: 'python/',
-    html: page({ path: 'python/', title: 'How to automate PSCAD studies with Python | Adjie Brotools', h1: 'How to automate PSCAD studies with Python', desc, ogTitle: 'How to automate PSCAD studies with Python', ogType: 'website', crumbs: [['Python automation', 'python/']], jsonld, body }),
+    html: page({ path: 'python/', title: 'How to automate PSCAD studies with Python | Adjie Brotools', h1: 'How to automate PSCAD studies with Python', desc, ogTitle: 'How to automate PSCAD studies with Python', crumbs: [['Python automation', 'python/']], jsonld, body }),
   };
 }

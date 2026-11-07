@@ -1661,9 +1661,9 @@ function generateInner(workflow, opts) {
       if (st.kind === 'element') {
         const e = isObj(I.s[st.key]) ? I.s[st.key] : {};
         const cls = e.cls ? ' (' + e.cls + ')' : '';
-        if (e.match === 'all') words += ' A name' + cls + ', exactly as in the Data Manager, or a pattern with * and ?: every element that matches is used.';
-        else if (e.match === 'first') words += ' A name' + cls + ', exactly as in the Data Manager, or a pattern with * and ?: the first match by name is used.';
-        else words += ' The name of the element' + cls + ', exactly as in the Data Manager.';
+        if (e.match === 'all') words += ' A Name' + cls + ', exactly as in PSCAD, or a pattern with * and ?: every component that matches is used.';
+        else if (e.match === 'first') words += ' A Name' + cls + ', exactly as in PSCAD, or a pattern with * and ?: the first match by name is used.';
+        else words += ' The Name of the component' + cls + ', exactly as in PSCAD.';
       }
       if (st.kind === 'select') {
         const opt = (st.options || []).map(x => Array.isArray(x) ? '"' + x[0] + '" ' + (x[1] || '') : isObj(x) ? '"' + x.value + '" ' + (x.label || '') : '"' + x + '"');

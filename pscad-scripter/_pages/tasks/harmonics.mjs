@@ -1,97 +1,67 @@
-// Guide: THD and a harmonic spectrum out of a time domain run, and the plot step that limits them.
+// Guide: harmonics and THD out of a time-domain run (harmonics).
 export default async function ({ builderScript, builderBlock, pre, table }) {
   const b = await builderScript('harmonics', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+    project: 'C:/Studies/inverter/inverter.pscx',
   }));
 
-  const STEPS = [
-    ['1000 us', '500 Hz', 'Too coarse for harmonics. Enough for an envelope, nothing more.'],
-    ['250 us', '2 kHz', 'About the 40th harmonic of 50 Hz. The usual choice for a harmonic study.'],
-    ['50 us', '10 kHz', 'Comfortably past any harmonic order a grid code asks for.'],
-    ['20 us', '25 kHz', 'For switching ripple and anything above the audible range.'],
+  const STEP = [
+    ['500 us', '1 kHz', '20th at 50 Hz, 16th at 60 Hz'],
+    ['250 us', '2 kHz', '40th at 50 Hz, 33rd at 60 Hz'],
+    ['100 us', '5 kHz', '100th at 50 Hz, 83rd at 60 Hz'],
+    ['50 us', '10 kHz', '200th at 50 Hz, 166th at 60 Hz'],
   ];
 
   return {
-    slug: 'harmonics', crumb: 'Harmonics and THD',
-    card: 'Harmonics and THD from a PSCAD EMT run',
-    title: 'PSCAD harmonics and THD with Python: a spectrum from the time domain',
-    h1: 'Harmonics and THD from a PSCAD EMT run',
-    desc: 'Get total harmonic distortion and a harmonic spectrum out of PSCAD with Python: run in the time domain, window the waveform, take a DFT and read the orders back.',
-    lead: `PSCAD has <strong>no frequency domain harmonic scan</strong>. There is no command that returns a spectrum, because PSCAD solves in the time domain and nothing else. A harmonic study is therefore a normal EMT run, with the spectrum worked out from the waveform the run recorded. That makes two things matter more than they would elsewhere: <strong>the plot step</strong>, which sets how far up the spectrum is real, and <strong>the window</strong>, which sets whether the numbers mean anything at all.`,
-    whatTitle: 'Why there is no harmonic scan',
-    methodTitle: 'The method',
+    slug: 'harmonics', crumb: 'Harmonics',
+    card: 'Harmonics and THD from a PSCAD run',
+    title: 'Harmonics and THD from a PSCAD run with Python',
+    h1: 'Harmonics and THD from a PSCAD run',
+    desc: 'Work out THD and the harmonic spectrum of a PSCAD waveform in Python: the window, the fundamental, how far the plot step lets the spectrum reach, and a script.',
+    lead: 'PSCAD has no frequency-domain harmonic scan to call. <strong>Harmonics come out of the time-domain waveform</strong>: run the case until it has settled, take a whole number of cycles of a voltage or current, and the Fourier transform of that window is the spectrum. THD is the root of the sum of the squares of the harmonics above the fundamental, as a percentage of it.',
+    whatTitle: 'Where the harmonics in an EMT run come from',
     qsTitle: 'Harmonics and THD from an EMT run',
     level: 'Intermediate',
-    keywords: ['pscad thd', 'pscad harmonics python', 'pscad harmonic spectrum', 'pscad fft', 'total harmonic distortion pscad', 'EMT harmonics', 'pscad plot step harmonics'],
-    about: ['PSCAD', 'Total harmonic distortion', 'Harmonic analysis', 'Electromagnetic transient simulation'],
+    keywords: ['pscad thd python', 'pscad harmonics', 'pscad fft script', 'harmonic spectrum from emt', 'total harmonic distortion pscad', 'pscad power quality'],
+    about: ['Harmonics', 'Total harmonic distortion', 'PSCAD', 'Power quality'],
     sections: {
-      what: `  <p>A load flow tool can answer a harmonic question directly, by injecting a current at each order and solving the network at that frequency. PSCAD cannot, and does not try: it integrates the network in the time domain, one step at a time. What comes out is a waveform, and a waveform holds its harmonics implicitly.</p>
-  <p>Getting them out is a <strong>discrete Fourier transform over a whole number of cycles</strong> of the settled waveform. That is a small amount of arithmetic, and it is the only honest route. The things that go wrong are not in the transform; they are in what it is given.</p>
-  <ul class="dx-prose">
-    <li><strong>The plot step caps the spectrum.</strong> A channel recorded every 250 us has a sampling rate of 4 kHz, so nothing above 2 kHz exists in it. Orders above that are not small, they are absent, and anything that appears up there is an artefact.</li>
-    <li><strong>The window has to be a whole number of cycles</strong> of the fundamental, and it has to sit in the settled part of the run. A window that starts during the initialisation transient measures the transient.</li>
-    <li><strong>The fundamental has to be the right one.</strong> A case running at 60 Hz windowed as 50 Hz spreads every order across its neighbours and the THD comes out high and meaningless.</li>
-  </ul>
-  <p>PSCAD also has an <a href="../../reference/thd/">on-line THD component</a> that does this inside the run. It is useful when you want THD plotted against time; a script that takes the transform afterwards can choose its own window and keep the whole spectrum.</p>`,
-      method: `  <h3>What the plot step lets you see</h3>
-  ${table([{ h: 'Plot step' }, { h: 'Highest real frequency' }, { h: 'What it is good for' }].map((c, i) => ({ ...c, fn: r => r[i] })), STEPS)}
-  <p class="dx-note">The solution step matters too, but differently: it has to be small enough to solve the switching that creates the harmonics in the first place. A converter solved at 50 us and recorded at 250 us gives a spectrum that is real up to 2 kHz and a solution that is honest about where the harmonics came from.</p>
-  <h3>Running, windowing, transforming</h3>
-  <ol class="dx-steps">
-    <li><strong>Run long enough to settle, plus whole cycles to measure.</strong> One second at 50 Hz is fifty cycles; the last ten of them are usually a good window.</li>
-    <li><strong>Record at a plot step that covers the orders you need</strong>, from the table above.</li>
-    <li><strong>Read the channel</strong> back as a series of time and value.</li>
-    <li><strong>Take the window</strong>: a whole number of cycles, ending at the end of the run.</li>
-    <li><strong>Transform</strong>, and read the orders off as a fraction of the fundamental.</li>
-    <li><strong>Record THD and the orders that matter</strong>, usually 2nd to 50th, each as its own column.</li>
+      what: `  <p>An EMT run records the instantaneous waveform, harmonics included: the switching of a converter, the saturation of a transformer and the resonance of a filter are all in it. Reading them out is a discrete Fourier transform of a window of that waveform. Two things decide whether the answer is right.</p>
+  <p><strong>The window</strong> has to be a whole number of cycles of the fundamental, or the energy of each harmonic leaks into its neighbours, and it has to be taken once the case is in steady state, not during the start-up or a transient. <strong>The plot step</strong> sets the highest frequency there is to find: a waveform written every 250 us holds nothing above about 2 kHz, however fine the solution time step was.</p>
+  <p>PSCAD also has on-line components that do this during the run (the <a href="../../reference/master-fft/">On-Line Frequency Scanner</a> and the <a href="../../reference/master-thd/">Harmonic Distortion Calculator</a>). Doing it in Python afterwards needs nothing added to the case, and any recorded channel can be analysed at any instant.</p>`,
+      method: `  <ol class="dx-steps">
+    <li><strong>Choose the plot step</strong> for the highest harmonic you need (below).</li>
+    <li><strong>Run long enough to settle</strong>, and take the window at the end of the run.</li>
+    <li><strong>Take whole cycles</strong>: one or two cycles of the fundamental is the usual window.</li>
+    <li><strong>Transform and sum</strong>: each harmonic as a percentage of the fundamental, THD from harmonic 2 upwards.</li>
   </ol>
-  ${pre(`run = px_run(app, duration=1.0, step=20, plot_step=250)
-v = run.series("Vbus")
-
-h = spectrum(v, f0=50.0, cycles=10)      # the last 10 cycles of the settled waveform
-print(h.thd)                              # as a fraction: 0.031 is 3.1 %
-print(h.order(5), h.order(7))             # the orders people ask about first
-
-table("Harmonics").add({
-    "THD (%)": h.thd * 100,
-    "5th (%)": h.order(5) * 100,
-    "7th (%)": h.order(7) * 100,
-    "11th (%)": h.order(11) * 100,
-    "13th (%)": h.order(13) * 100,
-})`)}
-  <h3>THD over a sweep</h3>
-  <p>The useful harmonic study is rarely one number. It is THD against something: the number of converters on, the short circuit level at the connection point, the filter that is in service. That is <a href="../parameter-sweep/">a sweep</a> with a spectrum at the end of each pass, and a table with one row per pass.</p>
-  ${pre(`for mva in (500, 1000, 2000, 5000):
-    mark = px_mark()
-    px_set(source, "MVA", mva, unit="MVA")
-    run = px_run(app, duration=1.0, step=20, plot_step=250)
-    h = spectrum(run.series("Vbus"), f0=50.0, cycles=10)
-    table("Harmonics").add({"Short circuit (MVA)": mva, "THD (%)": h.thd * 100})
-    px_undo(mark)`)}
-  <h3>What to look at</h3>
-  <p>The THD number is the headline, but the <strong>shape of the spectrum says what is happening</strong>. A six pulse converter puts its energy at the 5th, 7th, 11th and 13th; energy at even orders or at the 3rd says something is unbalanced or has a DC offset; a broad floor with no clear orders usually means the window was wrong or the waveform had not settled.</p>`,
+  <h3>How far the plot step lets the spectrum reach</h3>
+  ${table([{ h: 'Plot step', key: 0 }, { h: 'Highest frequency', key: 1 }, { h: 'Highest harmonic', key: 2 }], STEP.map(r => ({ 0: r[0], 1: r[1], 2: r[2] })))}
+  <p class="dx-note">The highest frequency is half the rate the channel is written at. Keep a margin below it: the harmonics close to that limit are the least accurate.</p>
+  <h3>The calculation</h3>
+  ${pre(`v = run.series("Vbus")
+h = thd(v, frequency=50, at=None, cycles=2, harmonics=50)   # at=None: the window ends at the end of the run
+print(h.value)            # THD, % of the fundamental
+print(h.worst, h.worst_order)   # the largest harmonic, %, and its order
+print(h.fundamental)      # the magnitude of harmonic 1, in the channel's unit
+spectrum = list(zip(h.orders, h.pct))   # every order, for a table or a bar chart`)}
+  <p><code>thd</code> takes the <code>cycles</code> whole cycles that end at <code>at</code>, transforms them, and counts THD the way a grid code states it: the square root of the sum of the squares of harmonics 2 upwards, over harmonic 1. The DC component is left out unless <code>include_dc=True</code>.</p>`,
       builder: builderBlock(b,
-        'The harmonics Quick Start is a run, a channel and a THD block, with the spectrum drawn as a bar chart and the orders written into a table. This is the file the Builder writes:',
+        'The Harmonics and THD Quick Start runs the case for 1 s with a 20 us step and a 50 us plot step, takes two cycles of a voltage at the end of the run, tables the THD, the worst harmonic and its order, and draws the spectrum as a bar chart. This is the file with the case set to <code>C:/Studies/inverter/inverter.pscx</code>:',
         [
-          'The run is set up with a <strong>20 us solution step</strong> and a <strong>250 us plot step</strong>: fine enough to solve the switching, recorded finely enough to resolve up to about 2 kHz.',
-          'The <strong>Harmonic distortion (THD)</strong> block takes the DFT over a whole number of cycles of the settled part of the waveform, so there is nothing to line up by hand.',
-          'Its outputs are the THD and the individual orders, so one block feeds both the headline number and the per-order columns of the table.',
-          'The <strong>Draw 2D graph</strong> block plots order against magnitude, which is the spectrum as a report wants it.',
-          'The fundamental is read from the case rather than assumed, so a 60 Hz model does not need the script edited.',
+          'The 50 us plot step holds frequencies up to 10 kHz, so the 50 harmonics asked for are well inside what the file has.',
+          '<code>thd(vbus, frequency=f_nominal(app), ...)</code> reads the nominal frequency from the case\'s own global substitution when <code>F_NOMINAL</code> is <code>"auto"</code>.',
+          'The window ends at the end of the run. Make the run long enough that the case has settled well before that.',
+          '<code>plot_xy(thd_result.orders, [thd_result.pct], kind="bar")</code> is the spectrum as a bar chart, each harmonic as a percentage of the fundamental.',
         ], 'harmonics_and_thd.py'),
       pitfalls: [
-        '<strong>Expecting a harmonic load flow.</strong> There is not one. Every harmonic number in PSCAD comes out of a time domain waveform, so the run has to be long enough, settled, and recorded finely enough before any of it means anything.',
-        '<strong>A plot step that hides the orders you are reporting.</strong> At 1000 us nothing above 500 Hz exists. Reporting a 25th harmonic from that recording is reporting noise.',
-        '<strong>Windowing the initialisation.</strong> An EMT case starts from zero. A window that includes the first cycles measures the start-up, not the steady state. Window the end of the run, or <a href="../snapshots-and-batch/">start from a snapshot</a>.',
-        '<strong>A window that is not a whole number of cycles.</strong> The energy of each order leaks into its neighbours and every number comes out wrong in a way that looks plausible.',
-        '<strong>The wrong fundamental.</strong> 50 Hz assumed on a 60 Hz case, or a case running slightly off nominal, smears the spectrum. Read the frequency from the case.',
-        '<strong>Comparing THD measured different ways.</strong> THD as a fraction of the fundamental and THD as a fraction of the RMS are different numbers. Say which one the column is.',
+        '<strong>Harmonics above the plot step\'s limit.</strong> They are not in the file, and the transform folds anything near the limit back down as a false lower harmonic. Lower the plot step, or ask for fewer harmonics.',
+        '<strong>A window during a transient.</strong> The start-up of a case, a fault and a step all spread energy across the spectrum. Take the window once the waveform repeats cycle after cycle.',
+        '<strong>A fundamental that is not what you said.</strong> The window is cycles of the frequency you give. A case running at 60 Hz analysed at 50 Hz gives a meaningless spectrum. <code>F_NOMINAL = "auto"</code> reads it from the case.',
+        '<strong>A three phase channel is three channels.</strong> A channel titled <code>Vbus</code> on a three phase signal is recorded as <code>Vbus:1</code>, <code>Vbus:2</code> and <code>Vbus:3</code>. Analyse each phase, or the one the requirement names.',
       ],
       faq: [
-        ['How do I get THD out of PSCAD?', 'Run the case in the time domain, record the voltage or current on an output channel, and take a discrete Fourier transform over a whole number of cycles of the settled waveform. PSCAD has no frequency domain harmonic scan, so this is the only route; PSCAD also has an on-line THD component if you want it plotted against time.'],
-        ['Can PSCAD do a harmonic load flow or frequency scan?', 'No. PSCAD solves in the time domain and has no harmonic load flow command. A harmonic impedance scan is done by injecting a current at a swept frequency and running the case at each one, which is a parameter sweep rather than a single calculation.'],
-        ['What plot step do I need for harmonics in PSCAD?', 'The plot step sets the sampling rate of the recorded channel, so the highest real frequency is half of one over the plot step. 250 us resolves to about 2 kHz, which is roughly the 40th harmonic of 50 Hz; 50 us resolves to about 10 kHz.'],
-        ['Why is my PSCAD THD much higher than expected?', 'Usually the window. A window that is not a whole number of cycles, or one that includes the start-up transient before the case has settled, spreads energy across every order and inflates the THD. Check the fundamental you windowed with matches the case as well.'],
+        ['How do I calculate THD from a PSCAD simulation?', 'Record the voltage or current with an output channel, run until the case has settled, then take a whole number of cycles at the end and work out the Fourier transform. THD is the root of the sum of the squares of harmonics 2 upwards, over the fundamental. The Builder\'s Harmonic distortion block does this from any recorded channel.'],
+        ['Does PSCAD have a harmonic load flow?', 'No. PSCAD is a time-domain simulator, so harmonics are read from the simulated waveform rather than calculated in the frequency domain. Its on-line frequency scanner does the same during the run.'],
+        ['What plot step do I need for harmonics in PSCAD?', 'At least twice the highest frequency you need, with a margin: a 250 us plot step reaches about 2 kHz, a 50 us plot step about 10 kHz.'],
       ],
     },
   };

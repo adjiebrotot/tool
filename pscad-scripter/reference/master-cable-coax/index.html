@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:Cable_Coax parameters: PSCAD Coax Cable Cross-Section</title>
+<meta name="description" content="Every parameter of master:Cable_Coax (Coax Cable Cross-Section) in PSCAD: 64 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coax/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:Cable_Coax parameters (PSCAD Coax Cable Cross-Section)">
+<meta property="og:description" content="Every parameter of master:Cable_Coax (Coax Cable Cross-Section) in PSCAD: 64 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coax/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:Cable_Coax parameters (PSCAD Coax Cable Cross-Section)">
+<meta name="twitter:description" content="Every parameter of master:Cable_Coax (Coax Cable Cross-Section) in PSCAD: 64 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:Cable_Coax parameters (PSCAD Coax Cable Cross-Section)",
+  "description": "Every parameter of master:Cable_Coax (Coax Cable Cross-Section) in PSCAD: 64 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coax/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:Cable_Coax (Coax Cable Cross-Section)",
+    "description": "Coax Cable Cross-Section (Cable Constants Coax Cable Data), a component of PSCAD's Master Library, filed under lines, cables and towers."
+  },
+  "keywords": "master:Cable_Coax parameters, PSCAD Coax Cable Cross-Section parameters, Coax Cable Cross-Section PSCAD, master:Cable_Coax mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:Cable_Coax",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-cable-coax/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:Cable_Coax</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:Cable_Coax parameters<span class="dx-h1-sub">PSCAD Coax Cable Cross-Section</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Coax Cable Cross-Section (<code>master:Cable_Coax</code>): 64 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:Cable_Coax is</h2>
+  <p>Coax Cable Cross-Section (Cable Constants Coax Cable Data), a component of PSCAD's Master Library, filed under lines, cables and towers.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:Cable_Coax</code></dd><dt>PSCAD name</dt><dd>Coax Cable Cross-Section</dd><dt>Category</dt><dd>Lines, cables and towers</dd><dt>Parameters</dt><dd>64, in 9 groups; 27 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:Cable_Coax in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Cable_Coax&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;FLT&quot;</span>]))            <span class="py-c"># Loss Tangent is Defined at, in Hz</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:Cable_Coax&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(FLT=<span class="py-s">&quot;120 [Hz]&quot;</span>)          <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "FLT")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:Cable_Coax parameters"><li><a href="#g1">Configuration<span class="dx-n">25</span></a></li><li><a href="#g2">1st Insulating and Semi-Conductor Layer Data<span class="dx-n">8</span></a></li><li><a href="#g3">2nd Insulating Layer Data<span class="dx-n">5</span></a></li><li><a href="#g4">3rd Insulating Layer Data<span class="dx-n">5</span></a></li><li><a href="#g5">4th Insulating Layer Data<span class="dx-n">5</span></a></li><li><a href="#g6">2nd Conducting Layer Data<span class="dx-n">4</span></a></li><li><a href="#g7">Core Conductor Data<span class="dx-n">4</span></a></li><li><a href="#g8">3rd Conducting Layer Data<span class="dx-n">4</span></a></li><li><a href="#g9">1st Conducting Layer Data<span class="dx-n">4</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CABNUM</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cable Number<small>Enter a number for this cable. This number must be between 1 and 12, and is used by the program to determine overall conductor numbering.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10, 11 = 11, 12 = 12</small></td></tr>
+<tr><td><code>CBC1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>EXCLUDED</td><td>Conducting Core is<small>Written as EXCLUDED (Excluded), INCLUDED (Included)</small></td></tr>
+<tr><td><code>CBC2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>INCLUDED</td><td>1st Conducting Layer is<small>Written as INCLUDED (Included), EXCLUDED (Excluded)</small></td></tr>
+<tr><td><code>CBC3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>EXCLUDED</td><td>2nd Conducting Layer is<small>Written as EXCLUDED (Excluded), INCLUDED (Included)</small></td></tr>
+<tr><td><code>CBC4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>EXCLUDED</td><td>3rd conducting Layer is<small>Written as EXCLUDED (Excluded), INCLUDED (Included)</small></td></tr>
+<tr><td><code>CONNAM1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Conductor</td><td>Core Conductor<small>Label for conducting core</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>CONNAM2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Sheath</td><td>1st Conducting Layer<small>Label for 1st conducting layer (normally sheath)</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>CONNAM3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Armour</td><td>2nd Conducting Layer<small>Label for 1st conducting layer (normally armour)</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>CONNAM4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Outer Conductor</td><td>3rd Conducting Layer<small>Label for 1st conducting layer (normally outer conductor)</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>CROSSBOND</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>DISABLED</td><td>Ideal Cross-bonding is<small>Select Enabled or Disabled</small><small>Written as DISABLED (Disabled), ENABLED (Enabled)</small></td></tr>
+<tr><td><code>FLT</code><small>Real</small></td><td>Hz</td><td>60.0</td><td>Loss Tangent is Defined at<small>Enter the frequency at which loss tangents are defined [Hz].</small><small>Range 1e-6 to 1000</small></td></tr>
+<tr><td><code>GROUPNO</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Cross-bonding Group<small>Enter the group number to which this cable belongs.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4</small></td></tr>
+<tr><td><code>LC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Conductors to Eliminate<small>Choose which conducting layers to eliminate (if any).</small><small>Written as NONE (None), OUTERMOST_ONLY (Outermost only), ALL_CONCENTRIC (All concentric), SPECIFY (Specify)</small></td></tr>
+<tr><td><code>LL</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>C1_I1_C2_I2_C3_I3</td><td>Layer Configuration<small>Select the configuration of the cable layers. C and I represent conducting and insulating layer respectively.</small><small>Written as C1, C1_I1 (C1 | I1), C1_I1_C2 (C1 | I1 | C2), C1_I1_C2_I2 (C1 | I1 | C2 | I2), C1_I1_C2_I2_C3 (C1 | I1 | C2 | I2 | C3), C1_I1_C2_I2_C3_I3 (C1 | I1 | C2 | I2 | C3 | I3), C1_I1_C2_I2_C3_I3_C4 (C1 | I1 | C2 | I2 | C3 | I3 | C4), C1_I1_C2_I2_C3_I3_C4_I4 (C1 | I1 | C2 | I2 | C3 | I3 | C4 | I4)</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>OHC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>UNDERGROUND</td><td>Placement in Relation to Ground Plane<small>Choose whether this cable is placed above or below the ground plane.</small><small>Written as UNDERGROUND (Underground), AERIAL (Aerial)</small></td></tr>
+<tr><td><code>RorT</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RADIAL_FROM_CENTRE</td><td>Layer Thickness is Specified as<small>Select the manner in which the layer thicknesses are specified. If radial from centre is selected, enter the distance from the centre-point to the outer radius of the layer.</small><small>Written as RADIAL_FROM_CENTRE (Radial from centre), ACTUAL_THICKNESS (Actual thickness)</small></td></tr>
+<tr><td><code>SHRad</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SHOW</td><td>Detailed Graphic Labels<small>Select whether or not to show detailed graphic labels</small><small>Written as HIDE (Hide), SHOW (Show)</small></td></tr>
+<tr><td><code>ShuntA</code><small>Real</small></td><td>mho/m</td><td>1.0e-11</td><td>Aerial Shunt Conductance<small>Enter a shunt conductance value to ground</small><small>Range 1E-38 to 1</small></td></tr>
+<tr><td><code>X</code><small>Real</small></td><td>m</td><td>0.0</td><td>Horizontal Translation from Centre<small>Enter the translation of the cable centre-point along the horizontal (x) axis [m]. This value is relative to a local x=0 point, which is derived given the position of all cables in this segment.</small><small>Range -1E+38 to 1E+38</small></td></tr>
+<tr><td><code>Y</code><small>Real</small></td><td>m</td><td>1.0</td><td>Depth Below Ground Surface<small>Enter the depth of the cable centre-point below the earth surface [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>Y2</code><small>Real</small></td><td>m</td><td>2.0</td><td>Height Above Ground Surface<small>Enter the height of the cable centre-point above the earth surface [m].</small><small>Range 0 to 1000</small></td></tr>
+<tr><td><code>elim1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>1st Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small></td></tr>
+<tr><td><code>elim2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>2nd  Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small></td></tr>
+<tr><td><code>elim3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RETAIN</td><td>3rd Concentric Conductor<small>Specify whether or not to eliminate this layer.</small><small>Written as RETAIN (Retain), ELIMINATE (Eliminate)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">1st Insulating and Semi-Conductor Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>4.1</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LT1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 10</small></td></tr>
+<tr><td><code>PERM1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R3</code><small>Real</small></td><td>m</td><td>0.0395</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL1</code><small>Real</small></td><td>m</td><td>0.001</td><td>Inner Semi-conductor Layer Thickness<small>Enter the thickness of the inner semi-conducting layer (between insulator and core conductor) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SL2</code><small>Real</small></td><td>m</td><td>0.001</td><td>Outer Semi-conductor Layer Thickness<small>Enter the thickness of the outer semi-conducting layer (between insulator and 1st conducting layer) [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>SemiCL</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>ABSENT</td><td>Semi-conducting Layers<small>Written as ABSENT (Absent), PRESENT (Present)</small></td></tr>
+<tr><td><code>T3</code><small>Real</small></td><td>m</td><td>0.0175</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">2nd Insulating Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>2.3</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LT2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 10</small></td></tr>
+<tr><td><code>PERM2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R5</code><small>Real</small></td><td>m</td><td>0.0475</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T5</code><small>Real</small></td><td>m</td><td>0.0035</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">3rd Insulating Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LT3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 10</small></td></tr>
+<tr><td><code>PERM3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R7</code><small>Real</small></td><td>m</td><td>0.0635</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T7</code><small>Real</small></td><td>m</td><td>0.0052</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">4th Insulating Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPS4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permittivity<small>Enter the relative permittivity of this insulator.</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>LT4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0001</td><td>Loss Tangent<small>Enter the loss tangent of this insulator.</small><small>Range 0.0 to 10</small></td></tr>
+<tr><td><code>PERM4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this insulator.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R9</code><small>Real</small></td><td>m</td><td>0.08</td><td>Outer Radius<small>Enter the outer radius of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>T9</code><small>Real</small></td><td>m</td><td>0.01</td><td>Thickness<small>Enter the thickness of this insulator [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">2nd Conducting Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>PERMA</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R6</code><small>Real</small></td><td>m</td><td>0.0583</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>RHOA</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>T6</code><small>Real</small></td><td>m</td><td>0.0108</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Core Conductor Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>PERMC</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R1</code><small>Real</small></td><td>m</td><td>0.0</td><td>Inner Radius (Enter 0.0 for a Solid Core):<small>Enter the inner radius of the centre or core conductor [m]. If this conductor is solid (i.e. not hollow), then enter 0.0.</small><small>Range 0 to 1E+38</small></td></tr>
+<tr><td><code>R2</code><small>Real</small></td><td>m</td><td>0.022</td><td>Outer Radius<small>Enter the outer radius of the centre or core conductor [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOC</code><small>Real</small></td><td>ohm*m</td><td>1.68e-8</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">3rd Conducting Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>PERMO</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>400.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R8</code><small>Real</small></td><td>m</td><td>0.07</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+<tr><td><code>RHOO</code><small>Real</small></td><td>ohm*m</td><td>1.8e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>T8</code><small>Real</small></td><td>m</td><td>0.0065</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 10</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">1st Conducting Layer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>PERMS</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Relative Permeability<small>Enter the relative permeability of this conductor.</small><small>Range 1E-38 to 500</small></td></tr>
+<tr><td><code>R4</code><small>Real</small></td><td>m</td><td>0.044</td><td>Outer Radius<small>Enter the outer radius of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+<tr><td><code>RHOS</code><small>Real</small></td><td>ohm*m</td><td>2.2e-7</td><td>Resistivity<small>Enter the resistivity of this conductor [ohm*m].</small><small>Range 1E-38 to 100</small></td></tr>
+<tr><td><code>T4</code><small>Real</small></td><td>m</td><td>0.0045</td><td>Thickness<small>Enter the thickness of this conducting layer [m].</small><small>Range 1E-38 to 1E+38</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-cable-interface/"><code>master:cable_interface</code> Cable Interface</a> · <a href="../master-newpi/"><code>master:newpi</code> Coupled PI Section</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

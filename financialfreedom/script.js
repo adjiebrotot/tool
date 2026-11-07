@@ -4282,7 +4282,9 @@ function agentPreset(key){
   var hit = Object.keys(QUICK_START_SCENARIOS).filter(function(x){ return x.toLowerCase() === k; })[0];
   if(!hit) return false;
   applyQuickStart(hit);
-  widenRetireSlider();
+  // The Quick Start puts the spending field back on its share-of-living bound: open it to the
+  // money ceiling again, so a link's amount (3,500 a month) is not cut to 1,000.
+  agentReady();
   var btn = document.querySelector('.quick-start-btn[data-preset="' + hit + '"]');
   return btn ? btn.textContent.replace(/\s+/g, ' ').trim() : hit;
 }

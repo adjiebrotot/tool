@@ -21,15 +21,15 @@
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Build and run a PSCAD case from Python (EMTDC, Fortran, time step)</title>
-<meta name="description" content="Compile a PSCAD case with its Fortran compiler, read the build errors back, set the duration and the two time steps, run the EMT simulation and read the output channels.">
+<title>Build and run a PSCAD case from Python, and read its channels</title>
+<meta name="description" content="Compile a PSCAD case from Python and read the compiler errors, set the time step and plot step, run EMTDC and read the output channels from the .out files.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/python/build-and-run/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="article">
-<meta property="og:title" content="Build a PSCAD case and run it from Python">
-<meta property="og:description" content="Compile a PSCAD case with its Fortran compiler, read the build errors back, set the duration and the two time steps, run the EMT simulation and read the output channels.">
+<meta property="og:title" content="Build and run a PSCAD case from Python">
+<meta property="og:description" content="Compile a PSCAD case from Python and read the compiler errors, set the time step and plot step, run EMTDC and read the output channels from the .out files.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/python/build-and-run/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 <meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
@@ -39,22 +39,22 @@
 <meta property="og:locale" content="en_AU">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Build a PSCAD case and run it from Python">
-<meta name="twitter:description" content="Compile a PSCAD case with its Fortran compiler, read the build errors back, set the duration and the two time steps, run the EMT simulation and read the output channels.">
+<meta name="twitter:title" content="Build and run a PSCAD case from Python">
+<meta name="twitter:description" content="Compile a PSCAD case from Python and read the compiler errors, set the time step and plot step, run EMTDC and read the output channels from the .out files.">
 <meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Build a PSCAD case and run it from Python",
-  "description": "Compile a PSCAD case with its Fortran compiler, read the build errors back, set the duration and the two time steps, run the EMT simulation and read the output channels.",
+  "headline": "Build and run a PSCAD case from Python",
+  "description": "Compile a PSCAD case from Python and read the compiler errors, set the time step and plot step, run EMTDC and read the output channels from the .out files.",
   "url": "https://tool.adjiebrotots.com/pscad-scripter/python/build-and-run/",
   "inLanguage": "en",
   "dateModified": "2026-11-07",
   "proficiencyLevel": "Beginner",
   "dependencies": "PSCAD 5 with the EMTDC solver, and the PSCAD Automation Library (mhi-pscad) on Python 3.7 or newer",
-  "keywords": "pscad build case python, pscad build error, EMTDC fortran compile, pscad time step, pscad plot step, pscad run from python, mhi.pscad build",
+  "keywords": "pscad build from python, pscad compile errors, emtdc run python, pscad output channel, pscad .out file, pscad plot step, mhi.pscad run",
   "about": [
     {
       "@type": "Thing",
@@ -66,11 +66,11 @@
     },
     {
       "@type": "Thing",
-      "name": "Fortran"
+      "name": "Python"
     },
     {
       "@type": "Thing",
-      "name": "Electromagnetic transient simulation"
+      "name": "Fortran"
     }
   ],
   "isPartOf": {
@@ -96,34 +96,26 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Why does PSCAD have to build a case before running it?",
+      "name": "How do I build a PSCAD project from Python?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A PSCAD case is translated into Fortran, compiled and linked into an executable that EMTDC runs. The build is that translation and compilation. Anything that changes the generated code needs it done again, and PSCAD works out for itself whether a given change does."
+        "text": "Call build() on the project, after clean() when you want a full rebuild, then read messages() for the errors and warnings. run() builds first when the case needs it, so a script that only runs does not have to build separately."
       }
     },
     {
       "@type": "Question",
-      "name": "What does a PSCAD build error mean?",
+      "name": "Where does PSCAD write the simulation results?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It is a Fortran compiler error against the generated source, so it names a generated file and a line, not a part of your schematic. The usual causes are a component given a parameter it cannot use, a signal wired to nothing, or two signals sharing a name on one page."
+        "text": "To .out files in the case's build folder, ten channels to a file, with a .inf file that names each channel in order. The folder is the case's build folder beside the .pscx, whose name ends in the compiler's (.gf46 for GFortran 4.6); the project's temp_folder gives its path."
       }
     },
     {
       "@type": "Question",
-      "name": "What time step should I use in PSCAD?",
+      "name": "Why is my channel missing from the results?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "50 us for the solution step suits most power system studies. Power electronics with fast switching, travelling waves and surge studies want smaller. The plot step, which only sets how often a channel is recorded, is usually 250 us and does not change the solution."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I read a PSCAD output channel in Python?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Run the case, then read the channel by the title shown on its Output Channel component. The values are written ten channels to a .out file with a .inf index naming them in order, and a three phase channel appears as three columns named Desc:1 to Desc:3."
+        "text": "It has no output channel component on it, it is disabled, or its title is not the name the script asks for. run.names() lists every channel the run recorded."
       }
     }
   ]
@@ -186,62 +178,49 @@
 
   <main>
     <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Build and run</span></nav>
-    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Build a PSCAD case and run it from Python</h1>
-    <p class="dx-lead">A PSCAD case is not interpreted: it is <strong>translated into Fortran, compiled and linked into an executable</strong> that EMTDC runs. That is why a script has to build before it runs, why a build error is a compiler error, and why changing a parameter can cost a rebuild. This page is what the build and the run actually do, what the two time steps mean, and how to get the compiler's own words back into your script rather than a traceback.</p>
-    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What building a PSCAD case means</a></li><li><a href="#method">Building, then running</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Build and run a PSCAD case from Python</h1>
+    <p class="dx-lead">A PSCAD case is not a data file a solver reads: it is <strong>Fortran that EMTDC compiles</strong> and then runs. So a script has two steps where other simulators have one, a build with errors of its own and a run, and then a third: reading back the channels the run wrote. This page covers all three, and what goes wrong in each.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What building and running a case means</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
     <section class="dx-sec dx-answer" aria-labelledby="what">
-  <h2 id="what">What building a PSCAD case means</h2>
-  <p>When PSCAD builds a case it writes a Fortran source file for every page of the schematic, calls the Fortran compiler on them, and links the result with the EMTDC libraries into one executable beside the case. The run is that executable; PSCAD only starts it and reads what it writes.</p>
-  <p>Two things follow, and both show up in a script.</p>
-  <ul class="dx-prose">
-    <li><strong>A build error is a compiler error.</strong> It names a generated Fortran file and a line in it, not your schematic. The usual causes are a component with a parameter it cannot use, a signal wired to nothing, or two signals with the same name on a page. The message is worth putting in your results rather than throwing away.</li>
-    <li><strong>A build is not free.</strong> A clean build of a large case is minutes. Most parameter changes do not need one, but anything that changes the generated code does, and PSCAD decides that for itself. A script that runs in a loop should let PSCAD decide rather than forcing a clean build every pass.</li>
-  </ul>
-  <p>There is a third thing worth knowing before the first script: <strong>the build leaves a folder beside the case</strong>, named after the compiler (<code>mycase.gf46</code> for GFortran 4.6). It holds the generated Fortran, the object files and the executable, and it is large. Keep scripted cases out of a repository, or ignore that folder.</p>
+  <h2 id="what">What building and running a case means</h2>
+  <p>When PSCAD builds a case it writes each page of the model out as Fortran, compiles it with the Fortran compiler PSCAD is set to (GFortran or Intel), and links an executable. The run is that executable: EMTDC steps the network in the time domain and writes the signals that have an <strong>output channel</strong> on them to result files.</p>
+  <p>Three things follow for a script. A build can fail where nothing has run yet, with errors that name a component and a page. A run can stop before its end time, which is a result of the study, not a crash of the script. And the only results there are come from output channels: <strong>a signal with no output channel on it is not recorded</strong>, whatever the graphs show while PSCAD is open.</p>
 </section>
     <div class="ad-slot">
       <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
     <section class="dx-sec" aria-labelledby="method">
-  <h2 id="method">Building, then running</h2>
-  <h3>Build, and read what the compiler said</h3>
-  <p><code>px_build</code> compiles the case and hands back a result rather than raising: <code>.ok</code>, <code>.errors</code>, <code>.warnings</code>, <code>.messages</code> and <code>.seconds</code>. A case that does not build is a result to record, not a crash.</p>
-  <pre><code class="language-python">build = <span class="py-f">px_build</span>(app, clean=<span class="py-k">False</span>)
-
-<span class="py-f">print</span>(build.ok, build.seconds)
-<span class="py-k">for</span> line <span class="py-k">in</span> build.errors:
-    <span class="py-f">log</span>(line, <span class="py-s">&quot;warn&quot;</span>)
-<span class="py-k">for</span> line <span class="py-k">in</span> build.warnings:
-    <span class="py-f">log</span>(line)</code></pre>
-  <p class="dx-note">PSCAD replaces a project's message list at the start of every clean, build and run rather than appending to it, so there is no delta to track: whatever <code>messages()</code> holds after a build belongs to that build.</p>
-  <h3>A clean build, and when it is worth it</h3>
-  <p><code>clean=True</code> throws the previous build away first. It is the honest thing to do after a component definition has changed, after a library has been swapped, or when a build failure makes no sense; it is wasted time inside a loop.</p>
-  <pre><code class="language-python"><span class="py-f">px_build</span>(app, clean=<span class="py-k">True</span>)     <span class="py-c"># first pass: start from nothing</span>
-<span class="py-k">for</span> value <span class="py-k">in</span> values:
-    <span class="py-f">px_set</span>(load, <span class="py-s">&quot;P&quot;</span>, value, unit=<span class="py-s">&quot;MW&quot;</span>)
-    <span class="py-f">px_run</span>(app, duration=<span class="py-n">2</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)   <span class="py-c"># builds again only if it has to</span></code></pre>
-  <h3>The run, and its three numbers</h3>
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Build</strong> with <code>project.build()</code>, or <code>clean()</code> first to throw the old build away. Then read <code>project.messages()</code>: PSCAD replaces the list at the start of every build and run, so what is there is this build's.</li>
+    <li><strong>Set the run</strong>: duration, time step and plot step in the project's settings.</li>
+    <li><strong>Run</strong> with <code>project.run()</code>, which builds first if the case needs it.</li>
+    <li><strong>Read the channels</strong> from the <code>.out</code> files in the build folder, by the names the <code>.inf</code> index gives them.</li>
+  </ol>
+  <h3>Building, and reading the errors</h3>
+  <pre><code class="language-python">project.<span class="py-f">clean</span>()                         <span class="py-c"># optional: start the build from nothing</span>
+project.<span class="py-f">build</span>()
+<span class="py-k">for</span> m <span class="py-k">in</span> project.<span class="py-f">messages</span>():            <span class="py-c"># this build's messages only</span>
+    <span class="py-f">print</span>(m.status, m.text)             <span class="py-c"># its status (error, warning, normal) and text</span></code></pre>
+  <p>The Builder's runtime wraps this as <code>px_build(app, clean=False)</code>, which gives back <code>.ok</code>, <code>.errors</code>, <code>.warnings</code> and <code>.seconds</code>, and remembers that the case is built so a loop does not compile it again on every pass.</p>
+  <h3>The run settings</h3>
   <div class="dx-tw"><table><thead><tr><th>Setting</th><th>Unit</th><th>What it does</th></tr></thead><tbody>
-<tr><td>Duration</td><td>seconds</td><td>How long the simulation runs in simulated time. An EMT run of 5 s is a long run; most studies are under 10 s.</td></tr>
-<tr><td>Solution time step</td><td>microseconds</td><td>The EMTDC step. 50 us is the usual choice. Switching devices and travelling waves want it smaller; it sets how long the run takes more than anything else does.</td></tr>
-<tr><td>Channel plot step</td><td>microseconds</td><td>How often an output channel is written. 250 us is the usual choice. It does not change the solution, only what is recorded, and it is what limits how far up a harmonic spectrum is real.</td></tr>
+<tr><td><code>duration</code></td><td>s</td><td>How long the run simulates. With a snapshot start it carries on from the snapshot time.</td></tr>
+<tr><td><code>step</code></td><td>us</td><td>The EMTDC solution time step. 50 us is usual for a network; power electronics wants 1 to 10 us.</td></tr>
+<tr><td><code>plot_step</code></td><td>us</td><td>How often a channel is written. It sets the highest frequency the recorded waveform holds, and the size of the files.</td></tr>
+<tr><td><code>build</code></td><td>·</td><td>&quot;auto&quot; builds once per script run, &quot;always&quot; before every run, &quot;never&quot; not at all.</td></tr>
+<tr><td><code>read</code></td><td>·</td><td>&quot;out&quot; reads the .out files, &quot;curves&quot; the samples off the case's graphs, &quot;none&quot; nothing.</td></tr>
 </tbody></table></div>
-  <p>They are written together, and a script usually writes them once before the loop rather than per run:</p>
-  <pre><code class="language-python"><span class="py-f">sim_settings</span>(app, duration=<span class="py-n">5.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)   <span class="py-c"># s, us, us</span>
-
-run = <span class="py-f">px_run</span>(app)                 <span class="py-c"># or px_run(app, duration=2, step=20, plot_step=100)</span>
-<span class="py-f">print</span>(run.status, run.t_end)
-<span class="py-f">print</span>(run.<span class="py-f">names</span>())                <span class="py-c"># every channel the run recorded</span></code></pre>
-  <p>A run that stops early is still a result. <code>run.status</code> says why and <code>run.t_end</code> is how far it got, so an unstable case leaves a row saying it went unstable at 1.8 s instead of an exception.</p>
-  <h3>What a run leaves behind, and how it is read</h3>
-  <p>Output channels are written to plain text files beside the case, <strong>ten channels to a <code>.out</code> file</strong>, with a <code>.inf</code> index naming them in order. A three phase channel becomes three columns, named <code>Desc:1</code> to <code>Desc:3</code>.</p>
-  <pre><code class="language-python">v = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vpcc&quot;</span>)        <span class="py-c"># by the channel's title, as the .inf index names it</span>
-<span class="py-f">print</span>(v.unit, <span class="py-f">len</span>(v.t))       <span class="py-c"># the unit comes from the index, not from a guess</span>
-
-a = run.<span class="py-f">series</span>(<span class="py-s">&quot;Iline:1&quot;</span>)     <span class="py-c"># one phase of a three phase channel</span>
-missing = run.<span class="py-f">series</span>(<span class="py-s">&quot;Typo&quot;</span>)  <span class="py-c"># an empty Series and one warning, never an error</span></code></pre>
-  <p class="dx-note">A channel name the run did not record gives back an empty Series rather than raising, so one wrong name in a long sweep does not lose the rest of the results. The warning says which name, and <code>run.names()</code> lists what was actually there.</p>
+  <pre><code class="language-python">run = <span class="py-f">px_run</span>(app, duration=<span class="py-n">2.0</span>, step=<span class="py-n">50</span>, plot_step=<span class="py-n">250</span>)
+<span class="py-f">print</span>(run.status)        <span class="py-c"># &quot;ok&quot;, &quot;early&quot; (stopped before the end) or &quot;failed&quot; (did not build or start)</span>
+<span class="py-f">print</span>(run.t_end)         <span class="py-c"># the last time written, s</span>
+<span class="py-f">print</span>(run.<span class="py-f">names</span>())       <span class="py-c"># every channel the run recorded</span></code></pre>
+  <h3>Reading a channel</h3>
+  <p>EMTDC writes ten channels to each <code>.out</code> file, with a <code>.inf</code> index that names them in order. A three phase channel becomes three, named after its title with <code>:1</code>, <code>:2</code> and <code>:3</code>. <code>run.series(name)</code> finds the right column in the right file and gives back the waveform in the channel's own unit; a name the run did not record gives an empty series and a warning that lists the closest names it did record.</p>
+  <pre><code class="language-python">va = run.<span class="py-f">series</span>(<span class="py-s">&quot;Vbus:1&quot;</span>)           <span class="py-c"># phase A of a three phase channel titled Vbus</span>
+<span class="py-f">print</span>(<span class="py-f">len</span>(va), va.unit, va.y[-<span class="py-n">1</span>])   <span class="py-c"># samples, unit, the last value</span>
+worst = <span class="py-f">peak</span>(va, kind=<span class="py-s">&quot;abs&quot;</span>)        <span class="py-c"># .value, .time</span></code></pre>
 </section>
 <div class="dx-cta">
   <p><strong>Open this in the Builder.</strong> The Build the case and report its errors Quick Start loads in the PSCAD Workflow Builder, ready for your own case. Change any block and download the Python file.</p>
@@ -249,8 +228,8 @@ missing = run.<span class="py-f">series</span>(<span class="py-s">&quot;Typo&quo
 </div>
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
-  <p>The smallest useful workflow is a build on its own: open the case, compile it, and write what the compiler said into a table. It is worth running first on any case you have not scripted before, because it separates "the model does not build" from "the script is wrong". This is the file the Builder writes:</p>
-  <p class="dx-file"><span><code>build_and_run.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_and_run.py" download>⬇ Download the full file (.py, 1,497 lines)</a></p>
+  <p>The Build the case Quick Start compiles the case and writes one table row either way: built, with the time and the warnings, or not built, with the compiler's errors. It is the first file to run on a case you have not scripted before. This is the file with the case set to <code>C:/Studies/feeder/feeder.pscx</code>:</p>
+  <p class="dx-file"><span><code>build_the_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_the_case.py" download>⬇ Download the full file (.py, 1,498 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Build the case</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -276,7 +255,7 @@ Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
 WORKFLOW_NAME = <span class="py-s">&quot;Build the case&quot;</span>
 <span class="py-c"># REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the</span>
 <span class="py-c"># workspace.</span>
-PROJECT = <span class="py-s">&quot;C:/work/mycase.pscx&quot;</span>
+PROJECT = <span class="py-s">&quot;C:/Studies/feeder/feeder.pscx&quot;</span>
 <span class="py-c"># OPTIONAL. A .pswx workspace to load before the case (&quot;&quot; = keep the one that is open).</span>
 WORKSPACE = <span class="py-s">&quot;&quot;</span>
 <span class="py-c"># OPTIONAL. Extra .pslx / .pscx libraries to load before the case.</span>
@@ -322,7 +301,7 @@ CHECK_ONLY = <span class="py-k">False</span>
         <span class="py-k">if</span> CHECK_ONLY:
             <span class="py-f">check_elements</span>(app, [])
             <span class="py-k">return</span>
-        <span class="py-c"># -- Step 1: Start (Case: mycase.pscx) --</span>
+        <span class="py-c"># -- Step 1: Start (Case: feeder.pscx) --</span>
         <span class="py-c"># -- Step 2: Build the case (clean, then build) --</span>
         build = <span class="py-f">px_build</span>(app, <span class="py-k">None</span>, <span class="py-k">True</span>, <span class="py-k">False</span>)
         <span class="py-c"># Build the case: Did not build</span>
@@ -344,14 +323,13 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 1,403 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 1,404 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
-    <li><code>CHECK_ONLY = True</code> at the top connects, finds every component the workflow names, reports what it found and stops before building. Run it that way once on a new case.</li>
-    <li><code>px_build(app, None, True, False)</code> is the clean build: throw the previous one away, then compile.</li>
-    <li>The build block has two outputs, <strong>Built</strong> and <strong>Did not build</strong>, and both are wired. A case that fails to compile leaves a row with the compiler errors in it rather than ending the script.</li>
-    <li>The errors and warnings go into the table as text, so a run over several cases ends with one file saying which built and what the others said.</li>
-    <li><code>finish(app)</code> in the <code>finally</code> saves the table into a new run folder and writes <code>run.log</code> beside it, whatever happened on the way.</li>
+    <li><code>px_build(app, None, True, False)</code> is a clean build: the previous one is thrown away first.</li>
+    <li>The block's <strong>Built</strong> and <strong>Did not build</strong> branches each write their own row into the same table, so the table says what happened even when the case does not compile.</li>
+    <li>The errors column holds PSCAD's own messages, which name the component and the page. A floating input, a signal used before it is defined and a missing library are the usual ones.</li>
+    <li>Nothing is run: this is the quick check. The other Quick Starts call <code>px_run</code>, which builds once and then runs.</li>
   </ul>
 </section>
     <div class="ad-slot">
@@ -361,35 +339,32 @@ CHECK_ONLY = <span class="py-k">False</span>
     <section class="dx-sec" aria-labelledby="pitfalls">
   <h2 id="pitfalls">Pitfalls</h2>
   <ul class="dx-prose">
-    <li><strong>The case builds and the run dies with "is not recognized".</strong> Some hardened environments set <code>NoDefaultCurrentDirectoryInExePath</code>, PSCAD inherits it, and so do the batch files EMTDC generates, which call <code>&lt;case&gt;.exe</code> with no path in front of it. Clear that variable for the run; the generated scripts do it for you.</li>
-    <li><strong>A rebuild you did not expect.</strong> PSCAD decides for itself whether a change needs the Fortran written again. Writing a parameter that is used at build time triggers one; writing a value that is only read at run time does not. In a sweep this shows up as a few slow passes among fast ones, which is normal.</li>
-    <li><strong>The plot step is not the solution step.</strong> Making the plot step smaller records more points and changes nothing about the answer; making the solution step smaller changes the answer and the run time. If a waveform looks coarse, the plot step is the one to change first.</li>
-    <li><strong>A long run with a small plot step writes a lot.</strong> Ten seconds at 50 us is 200,000 points per channel. Record what you need and leave the rest of the channels disabled.</li>
-    <li><strong>Build errors scroll past.</strong> They are in the project's message list, and PSCAD replaces that list on the next build, so read them into your results on the spot rather than afterwards.</li>
-    <li><strong>Two cases built at once in the same folder collide.</strong> Each build writes into the same folder beside the <code>.pscx</code>. Run cases in parallel as a simulation set, or give each its own copy.</li>
+    <li><strong>A signal shown on a graph is not necessarily recorded.</strong> Only signals with an output channel are written to the result files. Add the channel in the case, or the script reads nothing for it.</li>
+    <li><strong>The plot step limits the waveform.</strong> A 250 us plot step holds frequencies up to about 2 kHz; anything faster in the run is not in the file. Lower it for harmonics and switching, at the cost of larger files.</li>
+    <li><strong>A run that stops early is a result.</strong> EMTDC stops when the network has no solution or a component asks it to, and the script gets <code>status "early"</code> with the time it reached. Record it rather than treating it as an error.</li>
+    <li><strong>Old result files are read as new ones</strong> if a run fails before it writes. The runtime clears the case's <code>.out</code> files before each run so a failed run reads as empty, not as the previous run.</li>
+    <li><strong>A build and a run that works, then "is not recognized".</strong> When <code>NoDefaultCurrentDirectoryInExePath</code> is set in the environment, the batch files EMTDC generates cannot start the case's own executable. The generated scripts clear it.</li>
   </ul>
 </section>
     <section class="dx-sec" aria-labelledby="faq">
   <h2 id="faq">Questions</h2>
-  <h3>Why does PSCAD have to build a case before running it?</h3>
-  <p>A PSCAD case is translated into Fortran, compiled and linked into an executable that EMTDC runs. The build is that translation and compilation. Anything that changes the generated code needs it done again, and PSCAD works out for itself whether a given change does.</p>
-  <h3>What does a PSCAD build error mean?</h3>
-  <p>It is a Fortran compiler error against the generated source, so it names a generated file and a line, not a part of your schematic. The usual causes are a component given a parameter it cannot use, a signal wired to nothing, or two signals sharing a name on one page.</p>
-  <h3>What time step should I use in PSCAD?</h3>
-  <p>50 us for the solution step suits most power system studies. Power electronics with fast switching, travelling waves and surge studies want smaller. The plot step, which only sets how often a channel is recorded, is usually 250 us and does not change the solution.</p>
-  <h3>How do I read a PSCAD output channel in Python?</h3>
-  <p>Run the case, then read the channel by the title shown on its Output Channel component. The values are written ten channels to a .out file with a .inf index naming them in order, and a three phase channel appears as three columns named Desc:1 to Desc:3.</p>
+  <h3>How do I build a PSCAD project from Python?</h3>
+  <p>Call <code>build()</code> on the project, after <code>clean()</code> when you want a full rebuild, then read <code>messages()</code> for the errors and warnings. <code>run()</code> builds first when the case needs it, so a script that only runs does not have to build separately.</p>
+  <h3>Where does PSCAD write the simulation results?</h3>
+  <p>To <code>.out</code> files in the case's build folder, ten channels to a file, with a <code>.inf</code> file that names each channel in order. The folder is the case's build folder beside the <code>.pscx</code>, whose name ends in the compiler's (<code>.gf46</code> for GFortran 4.6); the project's <code>temp_folder</code> gives its path.</p>
+  <h3>Why is my channel missing from the results?</h3>
+  <p>It has no output channel component on it, it is disabled, or its title is not the name the script asks for. <code>run.names()</code> lists every channel the run recorded.</p>
 </section>
     <section class="dx-sec" aria-labelledby="more">
   <h2 id="more">Related</h2>
   <ul class="dx-prose">
     <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
     <li><a href="../getting-started/">PSCAD automation with Python: getting started</a></li>
-    <li><a href="../fault-studies/">Fault ride through and critical clearing time in PSCAD</a></li>
-    <li><a href="../parameter-sweep/">Sweep a parameter in PSCAD and collect the results</a></li>
-    <li><a href="../harmonics/">Harmonics and THD from a PSCAD EMT run</a></li>
-    <li><a href="../snapshots-and-batch/">PSCAD snapshots and running cases in a batch</a></li>
-    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+    <li><a href="../fault-studies/">Fault studies in PSCAD with Python: ride through and critical clearing time</a></li>
+    <li><a href="../parameter-sweep/">Sweep a PSCAD parameter with Python</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD run</a></li>
+    <li><a href="../snapshots-and-batch/">Snapshots, simulation sets and batch runs</a></li>
+    <li><a href="../control-tuning/">Control tuning: overshoot, rise time and damping</a></li>
   </ul>
   <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
 </section>

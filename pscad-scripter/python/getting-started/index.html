@@ -279,7 +279,7 @@ worst = <span class="py-f">peak</span>(voltage, kind=<span class="py-s">&quot;ab
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Builder draws a workflow as blocks and writes one Python file from it. The simplest useful one is a build: compile the case and table what the compiler said. This is the file it writes, with the case set to <code>vdiv.pscx</code>, one of the tutorial examples that come with PSCAD:</p>
-  <p class="dx-file"><span><code>build_the_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_the_case.py" download>⬇ Download the full file (.py, 1,497 lines)</a></p>
+  <p class="dx-file"><span><code>build_the_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_the_case.py" download>⬇ Download the full file (.py, 1,498 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Build the case</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -373,7 +373,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 1,403 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 1,404 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><strong>SETTINGS</strong> at the top are the only lines to edit. <code>PROJECT</code> is the case; <code>RUN_MODE</code>, <code>PSCAD_VERSION</code> and <code>FORTRAN_VERSION</code> say which PSCAD and which compiler to use; <code>OUTPUT_DIR</code> is where the run folder goes; <code>TABLE_FORMAT</code> is <code>"csv"</code>, <code>"xlsx"</code> or <code>"both"</code>.</li>
@@ -414,12 +414,12 @@ CHECK_ONLY = <span class="py-k">False</span>
   <h2 id="more">Related</h2>
   <ul class="dx-prose">
     <li><a href="../">Automate PSCAD studies with Python: every guide</a></li>
-    <li><a href="../build-and-run/">Build a PSCAD case and run it from Python</a></li>
-    <li><a href="../fault-studies/">Fault ride through and critical clearing time in PSCAD</a></li>
-    <li><a href="../parameter-sweep/">Sweep a parameter in PSCAD and collect the results</a></li>
-    <li><a href="../harmonics/">Harmonics and THD from a PSCAD EMT run</a></li>
-    <li><a href="../snapshots-and-batch/">PSCAD snapshots and running cases in a batch</a></li>
-    <li><a href="../control-tuning/">Tune a control in PSCAD by searching the gain</a></li>
+    <li><a href="../build-and-run/">Build and run a PSCAD case from Python</a></li>
+    <li><a href="../fault-studies/">Fault studies in PSCAD with Python: ride through and critical clearing time</a></li>
+    <li><a href="../parameter-sweep/">Sweep a PSCAD parameter with Python</a></li>
+    <li><a href="../harmonics/">Harmonics and THD from a PSCAD run</a></li>
+    <li><a href="../snapshots-and-batch/">Snapshots, simulation sets and batch runs</a></li>
+    <li><a href="../control-tuning/">Control tuning: overshoot, rise time and damping</a></li>
   </ul>
   <p>Every parameter name a script writes is in the <a href="../../reference/">component reference</a>, read out of PSCAD itself. The <a href="../../builder/">Workflow Builder</a> writes the Python from blocks.</p>
 </section>

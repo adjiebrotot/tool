@@ -1,0 +1,231 @@
+{
+ "skill": "brotools-valuateeverything",
+ "tool": "Valuate Everything",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "valuateeverything",
+   "url": "/valuateeverything/",
+   "base": "https://tool.adjiebrotots.com/valuateeverything/",
+   "lang": "en",
+   "title": "Valuate Everything",
+   "reference": "references/valuateeverything.md",
+   "decides": "What a secondhand item, a house or a hotel night should cost, fitted to the listings the user has seen (the price against features such as year, kilometres or size), and how far the asking price of each item the user is weighing up sits from that fair price.",
+   "important": [
+    "itemWhat",
+    "currency",
+    "columns",
+    "listings",
+    "items",
+    "model",
+    "inflation"
+   ],
+   "fields": [
+    {
+     "key": "itemWhat",
+     "label": "Item",
+     "group": "Market data: What you are valuing",
+     "kind": "text",
+     "default": "Toyota Camry Hybrid",
+     "important": true
+    },
+    {
+     "key": "currency",
+     "label": "Currency Symbol",
+     "group": "Assumptions: Prices",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "inflation",
+     "label": "Inflation",
+     "group": "Assumptions: Prices",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 10,
+     "step": 0.1,
+     "default": "3",
+     "important": true
+    },
+    {
+     "key": "model",
+     "label": "Modelling approach",
+     "group": "Assumptions: Model",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "linear",
+       "label": "Linear regression"
+      },
+      {
+       "value": "log",
+       "label": "Log-linear"
+      },
+      {
+       "value": "ridge",
+       "label": "Ridge regression"
+      },
+      {
+       "value": "quadratic",
+       "label": "Quadratic terms"
+      }
+     ],
+     "default": "linear",
+     "important": true
+    },
+    {
+     "key": "lambda",
+     "label": "Ridge penalty (λ)",
+     "group": "Assumptions: Model",
+     "kind": "slider",
+     "unit": "×",
+     "min": 0,
+     "max": 2,
+     "step": 0.01,
+     "default": "0.1"
+    },
+    {
+     "key": "viewDim",
+     "label": "viewDim",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "2d",
+       "label": "2D"
+      },
+      {
+       "value": "3d",
+       "label": "3D"
+      }
+     ],
+     "default": "2d"
+    }
+   ],
+   "lists": [
+    "columns",
+    "listings",
+    "items"
+   ],
+   "families": [],
+   "json": true,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "camry",
+     "title": "Camry Hybrid"
+    },
+    {
+     "key": "house",
+     "title": "Perth house"
+    },
+    {
+     "key": "camera",
+     "title": "Camera"
+    },
+    {
+     "key": "hotel",
+     "title": "Hotel night"
+    }
+   ]
+  }
+ ]
+}

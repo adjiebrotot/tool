@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:pss parameters: PSCAD Power System Stabilizer</title>
+<meta name="description" content="Every parameter of master:pss (Power System Stabilizer) in PSCAD: 165 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-pss/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:pss parameters (PSCAD Power System Stabilizer)">
+<meta property="og:description" content="Every parameter of master:pss (Power System Stabilizer) in PSCAD: 165 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-pss/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:pss parameters (PSCAD Power System Stabilizer)">
+<meta name="twitter:description" content="Every parameter of master:pss (Power System Stabilizer) in PSCAD: 165 names with units, defaults, ranges and meaning, and the Python that reads and writes them.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:pss parameters (PSCAD Power System Stabilizer)",
+  "description": "Every parameter of master:pss (Power System Stabilizer) in PSCAD: 165 names with units, defaults, ranges and meaning, and the Python that reads and writes them.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-pss/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:pss (Power System Stabilizer)",
+    "description": "Power System Stabilizer, a component of PSCAD's Master Library, filed under meters and output."
+  },
+  "keywords": "master:pss parameters, PSCAD Power System Stabilizer parameters, Power System Stabilizer PSCAD, master:pss mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:pss",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-pss/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:pss</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:pss parameters<span class="dx-h1-sub">PSCAD Power System Stabilizer</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Power System Stabilizer (<code>master:pss</code>): 165 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:pss is</h2>
+  <p>Power System Stabilizer, a component of PSCAD's Master Library, filed under meters and output.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:pss</code></dd><dt>PSCAD name</dt><dd>Power System Stabilizer</dd><dt>Category</dt><dd>Meters and output</dd><dt>Parameters</dt><dd>165, in 15 groups; 147 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:pss in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:pss&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;A1_3&quot;</span>]))           <span class="py-c"># Filter Coefficient [A1], in s</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:pss&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(A1_3=<span class="py-s">&quot;1 [s]&quot;</span>)            <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "A1_3")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:pss parameters"><li><a href="#g1">Pss1A: Power System Stabilizer Data<span class="dx-n">12</span></a></li><li><a href="#g2">Pss3B: Power System Stabilizer Data: Common Path<span class="dx-n">11</span></a></li><li><a href="#g3">Pss4B [2005]: Power System Stabilizer Data: Common Data<span class="dx-n">6</span></a></li><li><a href="#g4">Configuration<span class="dx-n">6</span></a></li><li><a href="#g5">Dec1A: Discontinuous Excitation Controller Data: Section 1<span class="dx-n">10</span></a></li><li><a href="#g6">Dec1A: Discontinuous Excitation Controller Data<span class="dx-n">8</span></a></li><li><a href="#g7">Pss4B [2005]: Power System Stabilizer Data: High Frequency Band<span class="dx-n">19</span></a></li><li><a href="#g8">Pss4B [2005]: Power System Stabilizer Data: Intermediate Frequency Band<span class="dx-n">19</span></a></li><li><a href="#g9">Pss4B [2005]: Power System Stabilizer Data: Low Frequency Band<span class="dx-n">19</span></a></li><li><a href="#g10">Pss2B: Pss Lead-Lag Data<span class="dx-n">13</span></a></li><li><a href="#g11">Pss3B: Power System Stabilizer Data<span class="dx-n">8</span></a></li><li><a href="#g12">Pss4B [1992]: Power System Stabilizer Data<span class="dx-n">12</span></a></li><li><a href="#g13">Pss2B: Pss Signal Data<span class="dx-n">14</span></a></li><li><a href="#g14">Dec2A: Discontinuous Excitation Controller Data<span class="dx-n">6</span></a></li><li><a href="#g15">Dec3A: Discontinuous Excitation Controller Data<span class="dx-n">2</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Pss1A: Power System Stabilizer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>A1_1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Filter Constant [A1]<small>At least 0</small></td></tr>
+<tr><td><code>A2_1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>0.0</td><td>Filter Constant [A2]<small>At least 0</small></td></tr>
+<tr><td><code>KS_1</code><small>Real</small></td><td>pu</td><td>5.0</td><td>PSS Gain [Ks]<small>At least 0</small></td></tr>
+<tr><td><code>T1_1</code><small>Real</small></td><td>s</td><td>0.0</td><td>1st Lead Time Constant [T1]<small>At least 0</small></td></tr>
+<tr><td><code>T2_1</code><small>Real</small></td><td>s</td><td>6.0</td><td>1st Lag Time Constant [T2]<small>At least 0</small></td></tr>
+<tr><td><code>T3_1</code><small>Real</small></td><td>s</td><td>0.08</td><td>2nd Lead Time Constant [T3]<small>At least 0</small></td></tr>
+<tr><td><code>T4_1</code><small>Real</small></td><td>s</td><td>0.01</td><td>2nd Lag Time Constant [T4]<small>At least 0</small></td></tr>
+<tr><td><code>T5_1</code><small>Real</small></td><td>s</td><td>10.0</td><td>Washout Time Constant [T5]<small>At least 0</small></td></tr>
+<tr><td><code>T6_1</code><small>Real</small></td><td>s</td><td>0.0</td><td>Transducer Time Constant [T6]<small>At least 0</small></td></tr>
+<tr><td><code>VS1_1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+<tr><td><code>VSTN_1</code><small>Real</small></td><td>pu</td><td>-0.1</td><td>PSS Output Minimum Limit [VSTMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSTX_1</code><small>Real</small></td><td>pu</td><td>0.1</td><td>PSS Output Maximum Limit [VSTMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Pss3B: Power System Stabilizer Data: Common Path</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>A1_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A1]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A2_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A2]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A3_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A3]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A4_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A4]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A5_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A5]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A6_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A6]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A7_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A7]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>A8_3</code><small>Real</small></td><td>s</td><td>0.0</td><td>Filter Coefficient [A8]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>Tw3_3</code><small>Real</small></td><td>s</td><td>1.5</td><td>Washout Time Constant [Tw3]<small>At least 0</small><small>Used when (IEEE_Std == 2005)</small></td></tr>
+<tr><td><code>VSTN_3</code><small>Real</small></td><td>pu</td><td>-0.1</td><td>PSS Output Minimum Limit [VSTMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSTX_3</code><small>Real</small></td><td>pu</td><td>0.1</td><td>PSS Output Maximum Limit [VSTMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Pss4B [2005]: Power System Stabilizer Data: Common Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>BWI_44</code><small>Real</small></td><td>Hz</td><td>1.0</td><td>3dB Bandwidth of the Notch Filter [BWI]<small>Range 0 to 0</small><small>Used when (IncNF_44==1)</small></td></tr>
+<tr><td><code>H_44</code><small>Real</small></td><td>s</td><td>1.0</td><td>Inertia Constant [H]<small>At least 0</small></td></tr>
+<tr><td><code>IncNF_44</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Include Notch Filters?<small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>VSTN_44</code><small>Real</small></td><td>pu</td><td>-0.15</td><td>PSS Output Minimum Limit [VSTMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSTX_44</code><small>Real</small></td><td>pu</td><td>0.15</td><td>PSS Output Maximum Limit [VSTMAX]<small>At least 0</small></td></tr>
+<tr><td><code>WNI_44</code><small>Real</small></td><td>Hz</td><td>1.0</td><td>Tuned Frequency of the Notch Filter [WNI]<small>Range 0 to 0</small><small>Used when (IncNF_44==1)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DEC</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Discontinuous Excitation Controller ?<small>Written as NONE (None), DEC1A, DEC2A, DEC3A</small></td></tr>
+<tr><td><code>IEEE_Std</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>1992_ADDENDUM</td><td>Select the appropriate IEEE Std 421.5<small>Written as 1992_ADDENDUM (1992 addendum), 2005</small><small>Used when (PSS&gt;2)</small></td></tr>
+<tr><td><code>INIT_D</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>DEC Status: 0-Initialize;1-Release<small>Range -2147483648 to 2147483647</small></td></tr>
+<tr><td><code>INIT_P</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>PSS Status: 0-Initialize;1-Release<small>Range -2147483648 to 2147483647</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for identification<small>Enter a name for identification</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>PSS</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PSS1A</td><td>Stabilizer ?<small>Written as NONE (None), PSS1A, PSS2B, PSS3B, PSS4B</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Dec1A: Discontinuous Excitation Controller Data: Section 1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>ESC_1</code><small>Real</small></td><td>pu</td><td>0.0015</td><td>Speed Change Reference [Esc]<small>At least 0</small></td></tr>
+<tr><td><code>KETL_1</code><small>Real</small></td><td>pu</td><td>47.0</td><td>Terminal Voltage Limiter gain [KETL]<small>At least 0</small></td></tr>
+<tr><td><code>TL1_1</code><small>Real</small></td><td>s</td><td>0.025</td><td>Voltage Limiter Lead Time  [TL1]<small>At least 0</small></td></tr>
+<tr><td><code>TL2_1</code><small>Real</small></td><td>s</td><td>1.25</td><td>Voltage Limiter Lag Time  [TL2]<small>At least 0</small></td></tr>
+<tr><td><code>TW5_1</code><small>Real</small></td><td>s</td><td>5.0</td><td>DEC Washout Time Constant [Tw5]<small>At least 0</small></td></tr>
+<tr><td><code>VAL_1</code><small>Real</small></td><td>pu</td><td>5.5</td><td>Regulator Voltage Reference [VAL]<small>At least 0</small></td></tr>
+<tr><td><code>VOMN_1</code><small>Real</small></td><td>pu</td><td>0.1</td><td>Terminal Voltage Minimum Deviation Over Reference<small>At least 0</small></td></tr>
+<tr><td><code>VOMX_1</code><small>Real</small></td><td>pu</td><td>0.3</td><td>Terminal Voltage Maximum Deviation Over Reference<small>At least 0</small></td></tr>
+<tr><td><code>VTC_1</code><small>Real</small></td><td>pu</td><td>0.95</td><td>Terminal Voltage Level Reference [VTC]<small>At least 0</small></td></tr>
+<tr><td><code>VTLMT</code><small>Real</small></td><td>pu</td><td>1.1</td><td>Terminal Voltage Reference [VTLMT]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Dec1A: Discontinuous Excitation Controller Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KAN_1</code><small>Real</small></td><td>pu</td><td>400.0</td><td>Integrator Gain [KAN]<small>At least 0</small></td></tr>
+<tr><td><code>TAN_1</code><small>Real</small></td><td>s</td><td>0.08</td><td>Integrator Time Constant [TAN]<small>At least 0</small></td></tr>
+<tr><td><code>TD_1</code><small>Real</small></td><td>s</td><td>0.03</td><td>Reset Delay Time [TD]<small>At least 0</small></td></tr>
+<tr><td><code>VAMX_1</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Integrator Maximum Limit [VANMAX]<small>Range 0 to 999</small></td></tr>
+<tr><td><code>VSMN_1</code><small>Real</small></td><td>pu</td><td>-0.066</td><td>PSS plus DEC Minimum Limit [VSMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSMX_1</code><small>Real</small></td><td>pu</td><td>0.2</td><td>PSS plus DEC Maximum Limit [VSMAX]<small>At least 0</small></td></tr>
+<tr><td><code>VTM_1</code><small>Real</small></td><td>pu</td><td>1.13</td><td>Bang-Bang Controller Maximum Limit [VTM]<small>At least 0</small></td></tr>
+<tr><td><code>VTN_1</code><small>Real</small></td><td>pu</td><td>1.12</td><td>Bang-Bang Controller Minimum Limit [VTN]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Pss4B [2005]: Power System Stabilizer Data: High Frequency Band</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KH11_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KH11]</td></tr>
+<tr><td><code>KH17_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KH17]</td></tr>
+<tr><td><code>KH1_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Positive Branch [KH1]</td></tr>
+<tr><td><code>KH2_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Negative Branch [KH2]</td></tr>
+<tr><td><code>KH_44</code><small>Real</small></td><td>pu</td><td>120.0</td><td>Gain in Common Branch [KH]</td></tr>
+<tr><td><code>TH10_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TH10]<small>At least 0</small></td></tr>
+<tr><td><code>TH11_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TH11]<small>At least 0</small></td></tr>
+<tr><td><code>TH12_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TH12]<small>At least 0</small></td></tr>
+<tr><td><code>TH1_44</code><small>Real</small></td><td>s</td><td>0.01513</td><td>Derivative Time Constant in First Block [TH1]<small>At least 0</small></td></tr>
+<tr><td><code>TH2_44</code><small>Real</small></td><td>s</td><td>0.01816</td><td>Lag Time Constant in First Block [TH2]<small>At least 0</small></td></tr>
+<tr><td><code>TH3_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TH3]<small>At least 0</small></td></tr>
+<tr><td><code>TH4_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TH4]<small>At least 0</small></td></tr>
+<tr><td><code>TH5_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TH5]<small>At least 0</small></td></tr>
+<tr><td><code>TH6_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TH6]<small>At least 0</small></td></tr>
+<tr><td><code>TH7_44</code><small>Real</small></td><td>s</td><td>0.01816</td><td>Derivative Time Constant in First Block [TH7]<small>At least 0</small></td></tr>
+<tr><td><code>TH8_44</code><small>Real</small></td><td>s</td><td>0.02179</td><td>Lag Time Constant in First Block [TH8]<small>At least 0</small></td></tr>
+<tr><td><code>TH9_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TH9]<small>At least 0</small></td></tr>
+<tr><td><code>VHMN_44</code><small>Real</small></td><td>pu</td><td>-0.6</td><td>Minimum Limit [VHMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VHMX_44</code><small>Real</small></td><td>pu</td><td>0.6</td><td>Maximum Limit [VHMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Pss4B [2005]: Power System Stabilizer Data: Intermediate Frequency Band</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KI11_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KI11]</td></tr>
+<tr><td><code>KI17_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KI17]</td></tr>
+<tr><td><code>KI1_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Positive Branch [KI1]</td></tr>
+<tr><td><code>KI2_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Negative Branch [KI2]</td></tr>
+<tr><td><code>KI_44</code><small>Real</small></td><td>pu</td><td>30.0</td><td>Gain in Common Branch [KI]</td></tr>
+<tr><td><code>TI10_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TI10]<small>At least 0</small></td></tr>
+<tr><td><code>TI11_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TI11]<small>At least 0</small></td></tr>
+<tr><td><code>TI12_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TI12]<small>At least 0</small></td></tr>
+<tr><td><code>TI1_44</code><small>Real</small></td><td>s</td><td>0.173</td><td>Derivative Time Constant in First Block [TI1]<small>At least 0</small></td></tr>
+<tr><td><code>TI2_44</code><small>Real</small></td><td>s</td><td>0.2075</td><td>Lag Time Constant in First Block [TI2]<small>At least 0</small></td></tr>
+<tr><td><code>TI3_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TI3]<small>At least 0</small></td></tr>
+<tr><td><code>TI4_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TI4]<small>At least 0</small></td></tr>
+<tr><td><code>TI5_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TI5]<small>At least 0</small></td></tr>
+<tr><td><code>TI6_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TI6]<small>At least 0</small></td></tr>
+<tr><td><code>TI7_44</code><small>Real</small></td><td>s</td><td>0.2075</td><td>Derivative Time Constant in First Block [TI7]<small>At least 0</small></td></tr>
+<tr><td><code>TI8_44</code><small>Real</small></td><td>s</td><td>0.2491</td><td>Lag Time Constant in First Block [TI8]<small>At least 0</small></td></tr>
+<tr><td><code>TI9_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TI9]<small>At least 0</small></td></tr>
+<tr><td><code>VIMN_44</code><small>Real</small></td><td>pu</td><td>-0.6</td><td>Minimum Limit [VIMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VIMX_44</code><small>Real</small></td><td>pu</td><td>0.6</td><td>Maximum Limit [VIMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">Pss4B [2005]: Power System Stabilizer Data: Low Frequency Band</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KL11_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KL11]</td></tr>
+<tr><td><code>KL17_44</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Proptional Gain in First Block [KL17]</td></tr>
+<tr><td><code>KL1_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Positive Branch [KL1]</td></tr>
+<tr><td><code>KL2_44</code><small>Real</small></td><td>pu</td><td>66.0</td><td>Gain in Negative Branch [KL2]</td></tr>
+<tr><td><code>KL_44</code><small>Real</small></td><td>pu</td><td>7.5</td><td>Gain in Common Branch [KL]</td></tr>
+<tr><td><code>TL10_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TL10]<small>At least 0</small></td></tr>
+<tr><td><code>TL11_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TL11]<small>At least 0</small></td></tr>
+<tr><td><code>TL12_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TL12]<small>At least 0</small></td></tr>
+<tr><td><code>TL1_44</code><small>Real</small></td><td>s</td><td>1.73</td><td>Derivative Time Constant in First Block [TL1]<small>At least 0</small></td></tr>
+<tr><td><code>TL2_44</code><small>Real</small></td><td>s</td><td>2.075</td><td>Lag Time Constant in First Block [TL2]<small>At least 0</small></td></tr>
+<tr><td><code>TL3_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TL3]<small>At least 0</small></td></tr>
+<tr><td><code>TL4_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Second Block [TL4]<small>At least 0</small></td></tr>
+<tr><td><code>TL5_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Third Block [TL5]<small>At least 0</small></td></tr>
+<tr><td><code>TL6_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lag Time Constant in Third Block [TL6]<small>At least 0</small></td></tr>
+<tr><td><code>TL7_44</code><small>Real</small></td><td>s</td><td>2.075</td><td>Derivative Time Constant in First Block [TL7]<small>At least 0</small></td></tr>
+<tr><td><code>TL8_44</code><small>Real</small></td><td>s</td><td>2.491</td><td>Lag Time Constant in First Block [TL8]<small>At least 0</small></td></tr>
+<tr><td><code>TL9_44</code><small>Real</small></td><td>s</td><td>0.0</td><td>Lead Time Constant in Second Block [TL9]<small>At least 0</small></td></tr>
+<tr><td><code>VLMN_44</code><small>Real</small></td><td>pu</td><td>-0.075</td><td>Minimum Limit [VLMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VLMX_44</code><small>Real</small></td><td>pu</td><td>0.075</td><td>Maximum Limit [VLMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10">
+  <h2 id="g10">Pss2B: Pss Lead-Lag Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KS1_2</code><small>Real</small></td><td>pu</td><td>5.0</td><td>PSS Gain [Ks1]<small>At least 0</small></td></tr>
+<tr><td><code>M_2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Integer Filter Constant [M]<small>Range 1 to 5</small></td></tr>
+<tr><td><code>N_2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Integer Filter Constant [N]<small>Range 1 to 4</small></td></tr>
+<tr><td><code>T10_2</code><small>Real</small></td><td>s</td><td>0.08</td><td>3rd Lead Time Constant [T10]<small>At least 0</small></td></tr>
+<tr><td><code>T1_2</code><small>Real</small></td><td>s</td><td>0.0</td><td>1st Lead Time Constant [T1]<small>At least 0</small></td></tr>
+<tr><td><code>T2_2</code><small>Real</small></td><td>s</td><td>6.0</td><td>1st Lag Time Constant [T2]<small>At least 0</small></td></tr>
+<tr><td><code>T3_2</code><small>Real</small></td><td>s</td><td>0.08</td><td>2nd Lead Time Constant [T3]<small>At least 0</small></td></tr>
+<tr><td><code>T4_2</code><small>Real</small></td><td>s</td><td>0.01</td><td>2nd Lag Time Constant [T4]<small>At least 0</small></td></tr>
+<tr><td><code>T5_2</code><small>Real</small></td><td>s</td><td>0.01</td><td>3rd Lag Time Constant [T11]<small>At least 0</small></td></tr>
+<tr><td><code>T8_2</code><small>Real</small></td><td>s</td><td>0.5</td><td>Filter Lead Time constant [T8]<small>At least 0</small></td></tr>
+<tr><td><code>T9_2</code><small>Real</small></td><td>s</td><td>0.1</td><td>Filter Lag Time constant [T9]<small>At least 0</small></td></tr>
+<tr><td><code>VSTN_2</code><small>Real</small></td><td>pu</td><td>-0.1</td><td>PSS Output Minimum Limit [VSTMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSTX_2</code><small>Real</small></td><td>pu</td><td>0.1</td><td>PSS Output Maximum Limit [VSTMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g11">
+  <h2 id="g11">Pss3B: Power System Stabilizer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KS1_3</code><small>Real</small></td><td>pu</td><td>1.0</td><td>First Input Signal Gain [Ks1]<small>At least 0</small></td></tr>
+<tr><td><code>KS2_3</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Second Input Signal Gain [Ks2]<small>At least 0</small></td></tr>
+<tr><td><code>T1_3</code><small>Real</small></td><td>s</td><td>0.02</td><td>First Transducer Time Constant [T1]<small>At least 0</small></td></tr>
+<tr><td><code>T2_3</code><small>Real</small></td><td>s</td><td>1.5</td><td>First Signal Washout Time Constant [Tw1]<small>At least 0</small></td></tr>
+<tr><td><code>T3_3</code><small>Real</small></td><td>s</td><td>0.02</td><td>Second Transducer Time Constant [T2]<small>At least 0</small></td></tr>
+<tr><td><code>T4_3</code><small>Real</small></td><td>s</td><td>1.5</td><td>Second Signal Washout Time Constant [Tw2]<small>At least 0</small></td></tr>
+<tr><td><code>VS1_3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>First Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+<tr><td><code>VS2_3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Second Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g12">
+  <h2 id="g12">Pss4B [1992]: Power System Stabilizer Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KS1_4</code><small>Real</small></td><td>pu</td><td>1.0</td><td>First Signal gain [Ks1]<small>At least 0</small></td></tr>
+<tr><td><code>KS2_4</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Second Signal gain [Ks2]<small>At least 0</small></td></tr>
+<tr><td><code>M_4</code><small>Real</small></td><td>s</td><td>1.5</td><td>Synchronous Machine Inertia Constant [2H]<small>At least 0</small></td></tr>
+<tr><td><code>T0_4</code><small>Real</small></td><td>s</td><td>0.2</td><td>System Start-up Time Constant [T0]<small>At least 0</small></td></tr>
+<tr><td><code>T1_4</code><small>Real</small></td><td>s</td><td>0.02</td><td>First Transducer Time Constant [T1]<small>At least 0</small></td></tr>
+<tr><td><code>T2_4</code><small>Real</small></td><td>s</td><td>1.5</td><td>First Signal Washout Time Constant [T2]<small>At least 0</small></td></tr>
+<tr><td><code>T3_4</code><small>Real</small></td><td>s</td><td>0.03</td><td>Second Transducer Time Constant [T3]<small>At least 0</small></td></tr>
+<tr><td><code>T4_4</code><small>Real</small></td><td>s</td><td>1.5</td><td>Second Signal Washout Time Constant [T4]<small>At least 0</small></td></tr>
+<tr><td><code>VS1_4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>First Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+<tr><td><code>VS2_4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Second Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+<tr><td><code>VSTN_4</code><small>Real</small></td><td>pu</td><td>-0.1</td><td>PSS Output Minimum Limit [VSTMIN]<small>At most 0</small></td></tr>
+<tr><td><code>VSTX_4</code><small>Real</small></td><td>pu</td><td>0.1</td><td>PSS Output Maximum Limit [VSTMAX]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g13">
+  <h2 id="g13">Pss2B: Pss Signal Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>KS2_2</code><small>Real</small></td><td>pu</td><td>5.0</td><td>2nd Signal Gain [Ks2]<small>At least 0</small></td></tr>
+<tr><td><code>KS3_2</code><small>Real</small></td><td>pu</td><td>5.0</td><td>2nd Signal 2nd Gain [Ks3]<small>At least 0</small></td></tr>
+<tr><td><code>T6_2</code><small>Real</small></td><td>s</td><td>0.0</td><td>1st Signal Transducer Time Constant [T6]<small>At least 0</small></td></tr>
+<tr><td><code>T7_2</code><small>Real</small></td><td>s</td><td>0.0</td><td>2nd Signal Transducer Time Const. [T7]<small>At least 0</small></td></tr>
+<tr><td><code>TW1_2</code><small>Real</small></td><td>s</td><td>10.0</td><td>1st Signal 1st Washout Time [TW1]<small>At least 0</small></td></tr>
+<tr><td><code>TW2_2</code><small>Real</small></td><td>s</td><td>10.0</td><td>1st Signal 2nd Washout Time [TW2]<small>At least 0</small></td></tr>
+<tr><td><code>TW3_2</code><small>Real</small></td><td>s</td><td>10.0</td><td>2nd Signal 1st Washout Time [TW3]<small>At least 0</small></td></tr>
+<tr><td><code>TW4_2</code><small>Real</small></td><td>s</td><td>10.0</td><td>2nd Signal 2nd Washout Time [TW4]<small>At least 0</small></td></tr>
+<tr><td><code>VS1N_2</code><small>Real</small></td><td>pu</td><td>-0.08</td><td>First Signal Minimum Input [VSI1MIN]<small>At most 0</small></td></tr>
+<tr><td><code>VS1X_2</code><small>Real</small></td><td>pu</td><td>0.08</td><td>First Signal Maximum Input [VSI1MAX]<small>At least 0</small></td></tr>
+<tr><td><code>VS1_2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>First Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+<tr><td><code>VS2N_2</code><small>Real</small></td><td>pu</td><td>-1.25</td><td>Second Signal Minimum Input [VSI2MIN]<small>At most 0</small></td></tr>
+<tr><td><code>VS2X_2</code><small>Real</small></td><td>pu</td><td>1.25</td><td>Second Signal Maximum Input [VSI2MAX]<small>At least 0</small></td></tr>
+<tr><td><code>VS2_2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NONE</td><td>Second Input Signal<small>Written as NONE (None), FREQUENCY (Frequency), SPEED (Speed), POWER (Power)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g14">
+  <h2 id="g14">Dec2A: Discontinuous Excitation Controller Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>TD1_2</code><small>Real</small></td><td>s</td><td>0.10</td><td>Controller Time Constant [TD1]<small>At least 0</small></td></tr>
+<tr><td><code>TD2_2</code><small>Real</small></td><td>s</td><td>10.0</td><td>DEC Washout Time Constant [TD2]<small>At least 0</small></td></tr>
+<tr><td><code>VDMN_2</code><small>Real</small></td><td>pu</td><td>1.1</td><td>DEC Minimum limit</td></tr>
+<tr><td><code>VDMX_2</code><small>Real</small></td><td>pu</td><td>1.1</td><td>DEC Maximum limit<small>At least 0</small></td></tr>
+<tr><td><code>VK_2</code><small>Real</small></td><td>pu</td><td>0.08</td><td>Trigger Signal Amplitude [Vk]<small>At least 0</small></td></tr>
+<tr><td><code>VTMX_2</code><small>Real</small></td><td>pu</td><td>1.1</td><td>Terminal Voltage Maximum Limit [VTLIMIT]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g15">
+  <h2 id="g15">Dec3A: Discontinuous Excitation Controller Data</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>TDR_3</code><small>Real</small></td><td>s</td><td>1.0</td><td>Reset Time Delay [TDR]<small>At least 0</small></td></tr>
+<tr><td><code>VTMN_3</code><small>Real</small></td><td>pu</td><td>0.95</td><td>Controller Input Reference [VTMIN]<small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/control-tuning/">Control tuning: overshoot, rise time and damping</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-tvekta/"><code>master:tvekta</code> Phase Locked Loop</a> · <a href="../master-power/"><code>master:power</code> Real/Reactive Power Meter</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

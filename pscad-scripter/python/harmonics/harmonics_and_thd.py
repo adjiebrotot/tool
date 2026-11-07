@@ -25,7 +25,7 @@ import warnings
 WORKFLOW_NAME = "Harmonics"
 # REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the
 # workspace.
-PROJECT = "C:/work/mycase.pscx"
+PROJECT = "C:/Studies/inverter/inverter.pscx"
 # OPTIONAL. A .pswx workspace to load before the case ("" = keep the one that is open).
 WORKSPACE = ""
 # OPTIONAL. Extra .pslx / .pscx libraries to load before the case.
@@ -105,7 +105,7 @@ def main():
         if CHECK_ONLY:
             check_elements(app, [])
             return
-        # -- Step 1: Start (Case: mycase.pscx) --
+        # -- Step 1: Start (Case: inverter.pscx) --
         # -- Step 2: Run simulation (1 s, 20 us step) --
         run = px_run(app, 1, 20, 50, None, events=(), build="auto", read="out", keep_files=False)
         # Did not build: ends the workflow
@@ -124,8 +124,8 @@ def main():
             "Worst (%)": thd_result.worst,
             "Worst order": thd_result.worst_order,
         })
-        # -- Step 4: Draw 2D graph (Lines) --
-        plot_xy(thd_result.orders, [thd_result.pct], labels=["Harmonic"], kind="line", title="", xlabel="Harmonic order", xunit="", ylabel="Percent of the fundamental", yunit="", limits=[], stem="spectrum")
+        # -- Step 4: Draw 2D graph (Bars) --
+        plot_xy(thd_result.orders, [thd_result.pct], labels=["Harmonic"], kind="bar", title="", xlabel="Harmonic order", xunit="", ylabel="Percent of the fundamental", yunit="", limits=[], stem="spectrum")
     except StopWorkflow as stop:
         log(f"Stopped: {stop}")
     finally:
@@ -565,6 +565,7 @@ _PX = {
     "said": set(),      # messages logged once
     "fnom": {},         # project name -> nominal frequency (f_nominal)
     "built": set(),     # project names already built in this run
+    "snap_start": {},   # project name -> the snapshot its runs start from (snapshot_use)
 }
 PXB = "PXB_"
 
@@ -2112,9 +2113,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
-    if from_snapshot:
+    # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
+    # run given neither argument keeps that start rather than going back to zero.
+    sticky = (_PX.get("snap_start") or {}).get(name, "")
+    if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
-        want["startup_filename"] = str(from_snapshot)
+        want["startup_filename"] = str(from_snapshot or sticky)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -3704,4 +3708,4 @@ def _po_bar_width(pos):
 
 if __name__ == "__main__":
     main()
-# PXB1 {"app":"pscad-builder","v":1,"name":"Harmonics","nodes":[{"id":"n1","type":"start","x":0,"y":160,"label":"","s":{"project":"C:/work/mycase.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"PSCAD has no frequency-domain harmonic scan: harmonics come out of the time-domain result. Give the run long enough to settle and take the window at the end. The plot step sets how far up the spectrum is real: 100 us resolves to about 5 kHz, so lower it for high orders."},"pin":[],"sv":1},{"id":"n2","type":"px.run","x":320,"y":160,"label":"","s":{"duration":1,"step":20,"plotStep":50,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n3","type":"px.series","x":660,"y":400,"label":"","s":{"channel":"Vbus","combine":"one","label":""},"pin":[],"sv":1},{"id":"n4","type":"sig.thd","x":980,"y":400,"label":"","s":{"frequency":null,"at":null,"cycles":2,"harmonics":50,"includeDc":false},"pin":[],"sv":1},{"id":"n5","type":"out.table.add","x":1300,"y":160,"label":"","s":{"table":"Harmonics","cols":[{"id":"c1","name":"THD (%)"},{"id":"c2","name":"Worst (%)"},{"id":"c3","name":"Worst order"}],"ctx":true,"onSkip":true},"pin":[],"sv":1},{"id":"n6","type":"out.plot.xy","x":1620,"y":160,"label":"","s":{"lines":[{"id":"l1","name":"Harmonic"}],"kind":"line","title":"","xlabel":"Harmonic order","xunit":"","ylabel":"Percent of the fundamental","yunit":"","limits":[],"stem":"spectrum","shape":"bars"},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"ok","to":"n5","in":"in"},{"id":"e3","from":"n5","out":"next","to":"n6","in":"in"},{"id":"e4","from":"n2","out":"result","to":"n3","in":"run"},{"id":"e5","from":"n3","out":"series","to":"n4","in":"series"},{"id":"e6","from":"n4","out":"value","to":"n5","in":"c1"},{"id":"e7","from":"n4","out":"worst","to":"n5","in":"c2"},{"id":"e8","from":"n4","out":"order","to":"n5","in":"c3"},{"id":"e9","from":"n4","out":"orders","to":"n6","in":"x"},{"id":"e10","from":"n4","out":"pct","to":"n6","in":"l1"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:fd160da9"}
+# PXB1 {"app":"pscad-builder","v":1,"name":"Harmonics","nodes":[{"id":"n1","type":"start","x":0,"y":160,"label":"","s":{"project":"C:/Studies/inverter/inverter.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"PSCAD has no frequency-domain harmonic scan: harmonics come out of the time-domain result. Give the run long enough to settle and take the window at the end. The plot step sets how far up the spectrum is real: 100 us resolves to about 5 kHz, so lower it for high orders."},"pin":[],"sv":1},{"id":"n2","type":"px.run","x":320,"y":160,"label":"","s":{"duration":1,"step":20,"plotStep":50,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n3","type":"px.series","x":660,"y":400,"label":"","s":{"channel":"Vbus","combine":"one","label":""},"pin":[],"sv":1},{"id":"n4","type":"sig.thd","x":980,"y":400,"label":"","s":{"frequency":null,"at":null,"cycles":2,"harmonics":50,"includeDc":false},"pin":[],"sv":1},{"id":"n5","type":"out.table.add","x":1300,"y":160,"label":"","s":{"table":"Harmonics","cols":[{"id":"c1","name":"THD (%)"},{"id":"c2","name":"Worst (%)"},{"id":"c3","name":"Worst order"}],"ctx":true,"onSkip":true},"pin":[],"sv":1},{"id":"n6","type":"out.plot.xy","x":1620,"y":160,"label":"","s":{"lines":[{"id":"l1","name":"Harmonic"}],"kind":"bar","title":"","xlabel":"Harmonic order","xunit":"","ylabel":"Percent of the fundamental","yunit":"","limits":[],"stem":"spectrum"},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"ok","to":"n5","in":"in"},{"id":"e3","from":"n5","out":"next","to":"n6","in":"in"},{"id":"e4","from":"n2","out":"result","to":"n3","in":"run"},{"id":"e5","from":"n3","out":"series","to":"n4","in":"series"},{"id":"e6","from":"n4","out":"value","to":"n5","in":"c1"},{"id":"e7","from":"n4","out":"worst","to":"n5","in":"c2"},{"id":"e8","from":"n4","out":"order","to":"n5","in":"c3"},{"id":"e9","from":"n4","out":"orders","to":"n6","in":"x"},{"id":"e10","from":"n4","out":"pct","to":"n6","in":"l1"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:96f2f2ae"}

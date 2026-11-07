@@ -613,6 +613,13 @@ export function mountCanvas(app) {
     const pad = fitPad();
     const px = (v, d) => { const n = parseFloat(v); return Number.isFinite(n) ? n : d; };
     const P = typeof pad === 'object' ? { t: px(pad.top, 40), r: px(pad.right, 40), b: px(pad.bottom, 40), l: px(pad.left, 40) } : { t: 40, r: 40, b: 40, l: 40 };
+    // The starter card on an empty canvas floats over its lower part: keep the Start block above
+    // it, or on a short screen the card hides the one block there is.
+    const card = document.querySelector('#pxbStarter:not([hidden]) .pxb-starter-card');
+    if (card) {
+      const hr = host.getBoundingClientRect(), cr = card.getBoundingClientRect();
+      if (cr.height) P.b = Math.max(P.b, hr.bottom - cr.top + 16);
+    }
     const W = host.clientWidth, H = host.clientHeight;
     const aw = Math.max(120, W - P.l - P.r), ah = Math.max(120, H - P.t - P.b);
     const B = bounds(nodes);

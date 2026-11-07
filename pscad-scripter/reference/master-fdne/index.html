@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:fdne parameters: PSCAD Frequency Dependent Network Equivalent</title>
+<meta name="description" content="Every parameter of master:fdne (Frequency Dependent Network Equivalent) in PSCAD: 27 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdne/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:fdne parameters (PSCAD Frequency Dependent Network Equivalent)">
+<meta property="og:description" content="Every parameter of master:fdne (Frequency Dependent Network Equivalent) in PSCAD: 27 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdne/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:fdne parameters (PSCAD Frequency Dependent Network Equivalent)">
+<meta name="twitter:description" content="Every parameter of master:fdne (Frequency Dependent Network Equivalent) in PSCAD: 27 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:fdne parameters (PSCAD Frequency Dependent Network Equivalent)",
+  "description": "Every parameter of master:fdne (Frequency Dependent Network Equivalent) in PSCAD: 27 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdne/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:fdne (Frequency Dependent Network Equivalent)",
+    "description": "Frequency Dependent Network Equivalent, a component of PSCAD's Master Library, filed under meters and output."
+  },
+  "keywords": "master:fdne parameters, PSCAD Frequency Dependent Network Equivalent parameters, Frequency Dependent Network Equivalent PSCAD, master:fdne mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:fdne",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-fdne/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:fdne</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:fdne parameters<span class="dx-h1-sub">PSCAD Frequency Dependent Network Equivalent</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Frequency Dependent Network Equivalent (<code>master:fdne</code>): 27 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:fdne is</h2>
+  <p>Frequency Dependent Network Equivalent, a component of PSCAD's Master Library, filed under meters and output.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:fdne</code></dd><dt>PSCAD name</dt><dd>Frequency Dependent Network Equivalent</dd><dt>Category</dt><dd>Meters and output</dd><dt>Parameters</dt><dd>27, in 4 groups; 3 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:fdne in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:fdne&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;F0&quot;</span>]))             <span class="py-c"># Steady State Frequency, in Hz</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:fdne&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(F0=<span class="py-s">&quot;120 [Hz]&quot;</span>)           <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "F0")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:fdne parameters"><li><a href="#g1">Configuration<span class="dx-n">10</span></a></li><li><a href="#g2">Passivity Enforcement<span class="dx-n">7</span></a></li><li><a href="#g3">Power Injections<span class="dx-n">4</span></a></li><li><a href="#g4">Curve-fitting Options<span class="dx-n">6</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DT</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>FROM_HARMONIC_IMPEDANCE_COMPONENT</td><td>Data Format<small>Select the type of data file from the list of available choices</small><small>Written as FROM_HARMONIC_IMPEDANCE_COMPONENT (From Harmonic Impedance Component), IMPEDANCE_PARAMETERS (Impedance Parameters), SCATTERING_PARAMETERS (Scattering Parameters), ADMITTANCE_PARAMETERS (Admittance Parameters), ADMITTANCE_AS_ABCD_PARAMETERS (Admittance as ABCD Parameters), SCATTERING_AS_ABCD_PARAMETERS (Scattering as ABCD Parameters), SEQUENCE_PARAMETERS (Sequence Parameters)</small></td></tr>
+<tr><td><code>Fname</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Harm.out</td><td>Input Data File<small>Enter the name of the input data file</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>Gref</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>GROUND</td><td>Reference Port<small>Choose to ground the reference or make it available as an external port</small><small>Written as GROUND (Ground), EXTERNAL_CONNECTION (External Connection)</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>FDNE1</td><td>Name for Identification<small>Enter a name for identification purpose</small><small>Range 0 to 0</small></td></tr>
+<tr><td><code>Nstates</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>70</td><td>Number of States in ABCD Parameters Input File<small>Used for estimating storage requirements. Actual number of states is read from the input data file.</small><small>Range 1 to 2147483647</small></td></tr>
+<tr><td><code>Path</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RELATIVE</td><td>Path to Input File<small>Select absolute or relative to match the name of the input file entered</small><small>Written as RELATIVE (Relative), ABSOLUTE (Absolute)</small></td></tr>
+<tr><td><code>View</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>EXPANDED</td><td>Graphics Display<small>Select Expanded or Compact</small><small>Written as EXPANDED (Expanded), COMPACT (Compact)</small></td></tr>
+<tr><td><code>detailout</code><small>Boolean</small></td><td><span aria-label="no unit">·</span></td><td>False</td><td>Detailed log file<small>Select to create a detailed log file or not</small><small>Written as False, True</small></td></tr>
+<tr><td><code>nport</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>3</td><td>Total Number of Ports<small>Select total number of ports</small><small>Range 1 to 100</small></td></tr>
+<tr><td><code>nport2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>Number of Ports on one side<small>This parameter could be configured so that ports appear on two sides of the component making it easier for external connections.</small><small>Written as 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10, 0 = 0</small><small>Used when View==0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Passivity Enforcement</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EP</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Enforce Passivity?<small>Select Yes to enforce passivity, otherwise No</small><small>Written as NO (No), PERTUBATION_METHOD (Yes (Pertubation method)), FILTER_METHOD (Yes (Filter method))</small></td></tr>
+<tr><td><code>FQS</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>LOG</td><td>Frequency Scale<small>How the frequency samples are taken: Select Log, Log+Linear or Linear</small><small>Written as LOG (Log), LOG_AND_LINEAR (Log and Linear), LINEAR (Linear)</small><small>Used when EP!=0</small></td></tr>
+<tr><td><code>Fbegin</code><small>Real</small></td><td>Hz</td><td>0.1</td><td>Starting Frequency<small>Starting frequency for passivity checking</small><small>Range 1E-06 to 10000000000</small><small>Used when EP!=0</small></td></tr>
+<tr><td><code>Fend</code><small>Real</small></td><td>Hz</td><td>10000</td><td>End Frequency<small>End frequency for passivity checking</small><small>Range 1E-06 to 10000000000</small><small>Used when EP!=0</small></td></tr>
+<tr><td><code>Maxerr</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>10.0</td><td>Maximum Error (%)<small>Maximum error allowed after passivity enforcement</small><small>Range 0.01 to 100</small><small>Used when EP!=0</small></td></tr>
+<tr><td><code>Maxiter</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>6</td><td>Maximum Iterations<small>Maximum number of iterations</small><small>Range 1 to 100</small><small>Used when EP!=0</small></td></tr>
+<tr><td><code>N</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>2000</td><td>Number of Samples<small>Number of frequency samples</small><small>Range 100 to 10000</small><small>Used when EP!=0</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Power Injections</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EPI</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Enable Power Injections<small>Select Yes to inject power at the interface, otherwise No</small><small>Written as NO (No), BOUNDARY_CONDITIONS (Yes (Boundary Conditions)), CURRENT_INJECTIONS (Yes (Current Injections))</small></td></tr>
+<tr><td><code>Fname2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>PQ.out</td><td>Input Data File<small>Enter the name of the input data file</small><small>Range 0 to 0</small><small>Used when EPI != 0</small></td></tr>
+<tr><td><code>NumHarmonics</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1000</td><td>Number of Harmonic Power Injections<small>Used for estimating storage requirements. There is no harm in entering a higher value than the actual.</small><small>Range 1 to 2147483647</small><small>Used when EPI != 0</small></td></tr>
+<tr><td><code>Path2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RELATIVE</td><td>Path to Input File<small>Select absolute or relative to match the name of the input file entered</small><small>Written as RELATIVE (Relative), ABSOLUTE (Absolute)</small><small>Used when EPI != 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Curve-fitting Options</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>F0</code><small>Real</small></td><td>Hz</td><td>60</td><td>Steady State Frequency<small>F0 value</small><small>Range 0 to 10000000000</small></td></tr>
+<tr><td><code>Merr</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Maximum Fitting Error (%)<small>Maximum error allowed in curve fitting process</small><small>Range 0.01 to 10</small></td></tr>
+<tr><td><code>Order</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>20</td><td>Maximum Order of Fitting<small>maximum number of poles to be used for curve fitting</small><small>Range 1 to 100</small></td></tr>
+<tr><td><code>W1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Weighting Factor for Minimum to Steady Sate Frequency<small>Weighting factor frequencies below the steady state frequency</small><small>Range 1 to 100000000</small></td></tr>
+<tr><td><code>W2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Weighting Factor for Steady State Frequency<small>Weighting factor for steady state frequency</small><small>Range 1 to 100000000</small></td></tr>
+<tr><td><code>W3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>Weighting Factor for Steady State to Maximum Frequency<small>Weighting factor for frequencies above the steady state frequency</small><small>Range 1 to 100000000</small></td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-electrical-tap/"><code>master:electrical_tap</code> Electrical tap</a> · <a href="../master-fdtf/"><code>master:fdtf</code> Frequency Dependent Transfer Function</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

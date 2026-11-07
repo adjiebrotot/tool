@@ -1,133 +1,136 @@
-// What the reference pages say about the Master Library beyond the data in
-// ../reference/components.json (read out of a running PSCAD by
-// _audit/reference/build_reference.py): the order the groups are shown in, one plain sentence
-// on the definitions an engineer reaches for most, and the parameters worth naming first.
+// The curated layer over ../reference/components.json: the order and words of the categories,
+// the address of each definition's page, and a few lines on the definitions a script touches
+// most. Everything else on a page (every parameter, its unit, range, default and meaning) is
+// read out of PSCAD itself by ../builder/_audit/reference/build_reference.py.
 //
-// Every parameter named here is checked against the definition's own data when the pages are
-// built, so a name that PSCAD does not have stops the build rather than reaching a page.
-//
-// A page's URL is its definition name, lower case, with anything that is not a letter or a
-// digit turned into a hyphen (master:xfmr-3p2w -> reference/xfmr-3p2w/): a frozen handle once
-// published, so rename the words on the page and leave the address alone.
+// build.mjs stops when a curated definition, or a parameter named in `common`, is not in the data.
 
-export const UPDATED = '2026-11-07';
+// The page address of a definition key: "master:tpflt" -> "master-tpflt",
+// "master:xfmr-3p2w" -> "master-xfmr-3p2w". FROZEN: a page address is kept for good once
+// published, so this function never changes. Change the words on a page, not this.
+export function slugOf(key) {
+  return String(key).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
-// [the group as components.json gives it, the heading, one line under it]. A group that is in
-// the data and not here is shown last under its own name, so a new PSCAD never drops a page.
+// The categories, in the index's order. The key is the group PSCAD's own palette files under
+// (the "group" of each definition in the data); the words are for the page.
 export const CATEGORIES = [
-  ['Sources', 'Sources', 'Voltage and current sources, and the wind, PV and battery sources a converter study starts from.'],
-  ['Machines', 'Machines, exciters and governors', 'Synchronous and induction machines, and the exciters, governors and turbines that drive them.'],
-  ['Transformers', 'Transformers', 'Single and three phase transformers, classical and UMEC, autotransformers, instrument transformers and the SVC.'],
-  ['Lines and cables', 'Lines and cables', 'Overhead line and cable cross-sections, conductors, ground properties and the PI sections.'],
-  ['Passive', 'Passive components and loads', 'Resistors, inductors and capacitors, fixed and configurable loads, filters, arresters and surge generators.'],
-  ['Switching', 'Breakers and faults', 'Breakers, faults, isolation switches, and the timed logic that operates them during a run.'],
-  ['Protection', 'Protection', 'Relays, current transformers and CCVTs.'],
-  ['Meters', 'Meters and output', 'Output channels, multimeters, RMS and THD meters, the phase locked loop and the signal taps.'],
-  ['Control', 'Control blocks', 'The Continuous System Model Functions: gains, integrators, limiters, comparators, logic and transfer functions.'],
-  ['Runtime', 'Runtime', 'File Read, Optimum Run and the other components that read or write while the case is running.'],
-  ['Other', 'Everything else', 'The rest of the Master Library, including the HVDC and power electronics building blocks and the page furniture.'],
+  ['Sources', 'Sources', 'Voltage and current sources, a battery, a photovoltaic and a wind source.'],
+  ['Passive', 'Passive branches, loads and filters', 'Resistors, inductors and capacitors, the configurable loads, tuned and high-pass filters, arresters.'],
+  ['Transformers', 'Transformers and reactors', 'Classical and UMEC transformers of every winding count, saturable reactors, the SVC, instrument transformers.'],
+  ['Lines and cables', 'Lines, cables and towers', 'Tower and cable cross-sections for the line constants program, PI sections, the line and cable interfaces.'],
+  ['Machines', 'Machines, exciters and governors', 'Synchronous, induction, permanent magnet and DC machines, with the IEEE exciters, governors and turbines.'],
+  ['Switching', 'Faults and switching', 'Faults and the timed fault logic that drives them, breakers and the timed breaker logic, power electronic switches.'],
+  ['Protection', 'Protection', 'Relays and the CT and CCVT models they read through.'],
+  ['Meters', 'Meters and output', 'Output channels, multimeters, RMS, frequency and power meters, harmonic calculators.'],
+  ['Control', 'Control blocks', 'Constants, gains, transfer functions, limiters, logic, sequencers and signal transformations.'],
+  ['Runtime', 'Runtime', 'File read, the optimum run and the components that act on the run itself.'],
+  ['Other', 'Other components', 'Node labels, MMC cells, gamma controllers and the components PSCAD files under no other group.'],
 ];
 
-// key -> { what: one plain sentence, common: [parameter names, most useful first] }.
-// Only for the definitions a reader is likely to arrive on from a search; every other page is
-// written from PSCAD's own description and parameter list alone.
-export const NOTABLE = {
-  // ---- Breakers and faults
+// The definitions a script works with most, with a line on what each one is and the parameters
+// people look up first. `common` is [[parameter, note]]; a note may be empty.
+export const CURATED = {
   'master:tpflt': {
-    what: 'The three phase fault component. It is drawn into the case between the faulted point and ground, and the phases it applies, its on and off resistance and whether it is grounded are its own parameters. Its timing comes from the Timed Fault Logic beside it, or from a signal wired into it.',
-    common: ['Ctype', 'A', 'B', 'C', 'G', 'Grnd', 'RON', 'ROFF', 'CLVL'],
+    what: 'The three phase fault: a fault branch between the phases and to ground, drawn into the case. Which phases are faulted and to what is set here; when it is applied comes from the logic wired to it, usually a Timed Fault Logic, because this component has no time parameters of its own.',
+    common: [['A', 'phase A in the fault, YES or NO'], ['B', ''], ['C', ''], ['G', 'to ground'], ['RON', 'the fault resistance while it is on'], ['Ctype', 'INTERNAL uses A, B, C and G; EXTERNAL takes the phases from a signal']],
   },
   'master:tfaultn': {
-    what: 'The Timed Fault Logic that drives a fault component: when the fault is applied and how long it lasts. A fault ride through study sweeps its duration, and a critical clearing time search bisects it.',
-    common: ['TF', 'DF'],
+    what: 'Timed Fault Logic: the block that switches a fault on at a time and off after a duration. A script that times a fault writes these two parameters, which is what the Builder\'s Set a fault block does.',
+    common: [['TF', 'when the fault is applied'], ['DF', 'how long it stays on']],
   },
-  'master:fault_sw': {
-    what: 'A single phase fault between one conductor and ground, with its own on and off resistance.',
-    common: ['ROn', 'ROff', 'CLVL', 'Name'],
+  'master:tfault': {
+    what: 'The older timed fault logic, with a repeat option. Like Timed Fault Logic it holds the fault\'s start time and duration.',
+    common: [['TF', 'when the fault is applied'], ['DF', 'how long it stays on'], ['REP', 'repeat the fault']],
   },
   'master:breaker3': {
-    what: 'The three phase breaker. Each pole has its own state, and a pre-insertion resistor can be switched in ahead of the main contacts. Its timing comes from the Timed Breaker Logic beside it, or from a signal.',
-    common: ['BOpen1', 'BOpen2', 'BOpen3', 'Ctrl', 'ENAB', 'PRER', 'CLVL'],
-  },
-  'master:breaker1': {
-    what: 'A single phase breaker, with a closed and an open resistance and an optional pre-insertion resistor.',
-    common: ['RON', 'ROFF', 'ENAB', 'PRER', 'TD', 'CLVL'],
+    what: 'The three phase breaker. Its state at the start of the run is set here; when it opens or closes comes from the logic wired to it, usually a Timed Breaker Logic.',
+    common: [['RON', 'closed resistance'], ['ROFF', 'open resistance'], ['BOpen1', 'state of pole A at the start'], ['NAME', 'the name of its control signal']],
   },
   'master:tbreakn': {
-    what: 'The Timed Breaker Logic that drives a breaker: its starting state and the times it operates.',
-    common: ['INIT', 'NUMS', 'TO1', 'TO2'],
+    what: 'Timed Breaker Logic: switches a breaker at one or two set times. A script that times a switching writes these.',
+    common: [['INIT', 'the state at the start of the run'], ['NUMS', 'one or two operations'], ['TO1', 'the first operation'], ['TO2', 'the second']],
   },
-  'master:var_switch': {
-    what: 'The Two State Switch input control: a switch on the case that a reader, or a script, flips between two output values while the case runs.',
-    common: ['Value', 'Max', 'Min', 'conv'],
+  'master:resistor': {
+    what: 'A single resistance. With the inductor and the capacitor it is the simplest component to sweep from a script, which is why the Builder\'s Sweep one parameter Quick Start starts on it.',
+    common: [['R', '']],
   },
-  // ---- Sources and machines
+  'master:inductor': { what: 'A single inductance.', common: [['L', '']] },
+  'master:capacitor': { what: 'A single capacitance.', common: [['C', '']] },
+  'master:source_1': {
+    what: 'The single phase voltage source, model 2: an AC or DC source behind an impedance, set by magnitude, phase and frequency or by the power it delivers.',
+    common: [['Vm', 'magnitude'], ['f', 'frequency'], ['Ph', 'initial phase'], ['Type', 'what the source impedance is'], ['Tc', 'the ramp up time at the start of the run']],
+  },
   'master:source3': {
-    what: 'The three phase voltage source behind an impedance: the usual grid equivalent at the edge of a study. Its magnitude, frequency and impedance are set here, or taken from signals when it is put under external control.',
-    common: ['Es', 'F0', 'MVA', 'Ctrl', 'Imp', 'PS', 'F'],
+    what: 'The three phase voltage source, model 1, the usual Thevenin equivalent of a grid in a PSCAD case.',
+    common: [['Es', 'magnitude, line to line RMS'], ['F0', 'frequency'], ['Ph', 'phase'], ['MVA', 'base MVA'], ['Ctrl', 'fixed, or controlled from signals']],
   },
-  'master:wind_source': {
-    what: 'A wind speed source: a mean speed with optional gust, ramp and noise components, for driving a wind turbine model.',
-    common: ['BWV', 'Gust', 'Ramp', 'Noise', 'MAXG', 'T1G', 'TG'],
+  'master:source_3': {
+    what: 'The three phase voltage source, model 2: a source behind an R, RL or R//L impedance, set by its terminal values or behind its impedance.',
+    common: [['Vbase', 'base voltage, line to line RMS'], ['Sbase', 'base MVA'], ['Type', 'the impedance type'], ['Spec', 'what the given values are'], ['Tc', 'the ramp up time']],
   },
-  'master:sync_machine': {
-    what: 'The synchronous machine. Its rating, inertia and reactances are set here, and an exciter and a governor are wired to it as separate components. Its speed and rotor angle are the signals a transient stability check reads.',
-    common: ['H', 'Ibase', 'D', 'Cnfg', 'AGFC'],
-  },
-  // ---- Transformers
-  'master:xfmr-3p2w': {
-    what: 'The three phase two winding transformer, classical model. Rating, winding voltages, leakage reactance, losses, the winding connections and the saturation data are all on the one component.',
-    common: ['Tmva', 'f', 'V1', 'V2', 'Xl', 'YD1', 'YD2', 'Lead', 'CuL', 'NLL', 'Enab', 'Tap'],
-  },
-  // ---- Passive
-  'master:resistor': { what: 'A resistor branch. One parameter, and the unit travels with the value.', common: ['R'] },
-  'master:inductor': { what: 'An inductor branch, written in henries unless another unit is given with the value.', common: ['L'] },
-  'master:capacitor': { what: 'A capacitor branch, written in microfarads unless another unit is given with the value.', common: ['C'] },
-  // ---- Meters and output
   'master:pgb': {
-    what: 'The Output Channel: the component that records a signal so a run can be plotted and read back afterwards. A script reads a channel by the title shown here, and the recorded values land in the .out files beside the case.',
-    common: ['Scale', 'Max', 'Min', 'enab', 'mrun', 'UseSignalName'],
+    what: 'The output channel: what makes a signal recorded in the run\'s output files and plottable on a graph. Its title is the name a script reads the channel by.',
+    common: [['Name', 'the title, which is the channel name a script reads'], ['Units', ''], ['Scale', 'multiplies the signal before it is recorded'], ['enab', 'NO: not written to the output files'], ['mrun', 'what is kept across a multiple run']],
   },
   'master:multimeter': {
-    what: 'The multimeter: instantaneous and RMS voltage and current, active and reactive power and phase angle from one three phase measurement point, each on its own output.',
-    common: ['BaseV', 'BaseA', 'S', 'Freq', 'RMS', 'IRMS', 'MeasP', 'MeasQ', 'MeasPh'],
+    what: 'The multimeter: measures voltage, current, power, RMS and phase at a point of a circuit and gives each as a signal, to wire into an output channel.',
+    common: [['MeasV', 'instantaneous voltage'], ['MeasI', 'instantaneous current'], ['MeasP', 'active power'], ['MeasQ', 'reactive power'], ['RMS', 'RMS voltage'], ['Freq', 'fundamental frequency']],
   },
   'master:rms3ph': {
-    what: 'The three phase RMS meter: a sliding window RMS of a three phase voltage, which is what a fault ride through check compares against its limit.',
-    common: ['freq', 'NSAM', 'Scale', 'Ts', 'Type'],
+    what: 'The three phase RMS meter, analog or digital, per-unitised on a rated voltage.',
+    common: [['Scale', 'rated voltage for per-unitising'], ['freq', 'fundamental frequency'], ['Type', 'analog or digital'], ['Ts', 'smoothing time constant']],
+  },
+  'master:freq-meas': {
+    what: 'Measures the frequency, the phase and the RMS of a voltage, the way a PLL does.',
+    common: [['F', 'rated frequency'], ['Vbas', 'rated voltage for per-unitising'], ['Cnfg', 'frequency output in Hz or per unit']],
   },
   'master:thd': {
-    what: 'The harmonic distortion calculator: the total harmonic distortion of a signal, worked out from the time domain waveform while the run goes on.',
-    common: ['Mode', 'Size'],
+    what: 'The on-line harmonic distortion calculator. It works on the signals of an on-line frequency scanner during the run; a script can also take THD from a recorded waveform afterwards, which is what the Builder\'s Harmonic distortion block does.',
+    common: [['Size', 'number of harmonics'], ['Mode', 'per unit or percent']],
   },
-  'master:power': {
-    what: 'The real and reactive power meter, with a smoothing time constant on its outputs.',
-    common: ['P', 'Q', 'TS', 'DIR'],
+  'master:fft': {
+    what: 'The on-line frequency scanner: an FFT of a signal during the run, giving the magnitude and phase of each harmonic as signals.',
+    common: [],
   },
-  // ---- Runtime
+  'master:xfmr-3p2w': {
+    what: 'The classical three phase two winding transformer, with optional saturation.',
+    common: [['Enab', 'saturation on or off'], ['CuL', 'copper losses']],
+  },
+  'master:sync_machine': {
+    what: 'The synchronous machine, with its d and q axis data, inertia and the initialisation that starts it as a source and moves it to a machine.',
+    common: [['H', 'inertia constant'], ['D', 'friction and windage'], ['Ibase', 'rated line current'], ['Cnfg', 'data entered as generator or equivalent circuit']],
+  },
+  'master:sqc100': {
+    what: 'The squirrel cage induction machine, from typical data or from its own equivalent circuit.',
+    common: [['Cnfg', 'how the data is entered'], ['HP', 'size of the machine the per-unit data comes from'], ['D', 'mechanical damping']],
+  },
+  'master:const': {
+    what: 'A real constant: a value a script can write to move a set-point or a gain without touching the model\'s structure.',
+    common: [['Value', 'the value it outputs'], ['Name', 'its label']],
+  },
+  'master:var_switch': {
+    what: 'The two state switch: an input control that gives one of two values, which a script can set before a run.',
+    common: [['Value', 'the state it starts in'], ['Max', 'the value in the on state'], ['Min', 'the value in the off state']],
+  },
+  'master:fixed_load': {
+    what: 'The fixed load: a load with set real and reactive power that depends on voltage and frequency through its indices.',
+    common: [['PO', 'rated real power per phase'], ['QO', 'rated reactive power per phase'], ['VBO', 'rated voltage, line to ground RMS'], ['NP', 'voltage index for P'], ['NQ', 'voltage index for Q']],
+  },
+  'master:newpi': {
+    what: 'The coupled PI section: a short line from its sequence data, entered per metre.',
+    common: [['Rp', 'positive sequence resistance'], ['Lp', 'positive sequence inductance'], ['Cp', 'positive sequence capacitance'], ['F', 'rated frequency']],
+  },
   'master:mrun': {
-    what: 'The Multiple Run component: PSCAD runs the case once per combination of the variables set here, without the script restarting it each time. Useful when the sweep is small and self contained; a script loop is easier to read when it is not.',
-    common: ['ENAB', 'IType1', 'IType2', 'IType3'],
+    what: 'The Multiple Run component: PSCAD\'s own way to run a case many times, stepping up to six variables and recording up to six channels from each run.',
+    common: [['ENAB', 'enabled or disabled'], ['Inc1R', 'the step of variable 1'], ['Max1R', 'the end of its range']],
+  },
+  'master:fileread': {
+    what: 'Reads columns of a data file into the run, replaying a recorded signal as an input.',
+    common: [['fname', 'the file'], ['nch', 'number of columns'], ['sfreq', 'sampling frequency']],
+  },
+  'master:wind_source': {
+    what: 'The wind source: a wind speed with gust, ramp and noise components, to drive a wind turbine model.',
+    common: [['BWV', 'mean wind speed'], ['T1G', 'gust start'], ['MAXG', 'gust peak'], ['T1R', 'ramp start']],
   },
 };
-
-// The index's lookup table: [what you want, definition key, parameter names, unit, note].
-export const QUICK = [
-  ['Fault timing, for a ride through sweep', 'master:tfaultn', 'TF, DF', 's', 'Time to apply, duration'],
-  ['Which phases a fault takes down', 'master:tpflt', 'Ctype, A, B, C, G', '', 'Fault type and the phases in it'],
-  ['Fault resistance', 'master:tpflt', 'RON, ROFF', 'ohm', 'On and off resistance'],
-  ['Breaker operating times', 'master:tbreakn', 'TO1, TO2', 's', 'First and second operation'],
-  ['Breaker pole state', 'master:breaker3', 'BOpen1, BOpen2, BOpen3', '', 'Per pole, open or closed'],
-  ['Source voltage and frequency', 'master:source3', 'Es, F0', 'kV, Hz', 'Line to line RMS'],
-  ['Source short-circuit level', 'master:source3', 'MVA', 'MVA', 'Three phase base MVA'],
-  ['Transformer rating', 'master:xfmr-3p2w', 'Tmva', 'MVA', 'Three phase'],
-  ['Transformer winding voltages', 'master:xfmr-3p2w', 'V1, V2', 'kV', 'Line to line RMS'],
-  ['Transformer leakage reactance', 'master:xfmr-3p2w', 'Xl', 'pu', 'Positive sequence'],
-  ['Transformer winding connection', 'master:xfmr-3p2w', 'YD1, YD2', '', 'Star or delta, per winding'],
-  ['Machine inertia', 'master:sync_machine', 'H', 's', 'Inertia constant'],
-  ['Resistance, inductance, capacitance', 'master:resistor', 'R, L, C', 'ohm, H, uF', 'One per branch component'],
-  ['A recorded signal a script reads back', 'master:pgb', 'Scale, Max, Min', '', 'Output Channel'],
-  ['RMS voltage of a three phase point', 'master:rms3ph', 'freq, NSAM, Scale', 'Hz, , kV', 'Sliding window'],
-  ['Harmonic distortion of a waveform', 'master:thd', 'Mode, Size', '', 'From the time domain'],
-  ['Wind speed, with gusts', 'master:wind_source', 'BWV, MAXG, T1G', 'm/s, m/s, s', 'Mean, gust peak, gust start'],
-];

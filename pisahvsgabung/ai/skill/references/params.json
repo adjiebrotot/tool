@@ -1,0 +1,397 @@
+{
+ "skill": "brotools-pisahvsgabung",
+ "tool": "Pisah vs Gabung Harta",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "pisahvsgabung",
+   "url": "/pisahvsgabung/",
+   "base": "https://tool.adjiebrotots.com/pisahvsgabung/",
+   "lang": "en",
+   "title": "PPh 21: Pisah Harta vs Gabung Harta",
+   "reference": "references/pisahvsgabung.md",
+   "decides": "Whether a married couple in Indonesia pays less PPh 21 income tax with Gabung Harta (the husband's tax return uses PTKP K, and the wife's employer withholds final tax on her salary with her own PTKP) or with Pisah Harta (PH or MT: the tax is worked out on their combined net income and shared by each spouse's net income), from each spouse's yearly gross salary, deductions and dependants, and the household salary at which the cheaper way changes. Requests often come in Indonesian: write the assumptions in the language the user wrote in.",
+   "important": [
+    "inputMode",
+    "husbandSalaryInput",
+    "wifeSalaryInput",
+    "totalSalaryInput",
+    "splitPct",
+    "dependents",
+    "husbandDeductionInput",
+    "wifeDeductionInput",
+    "deductionInput"
+   ],
+   "fields": [
+    {
+     "key": "dependents",
+     "label": "Dependants (tanggungan)",
+     "group": "Household: Family",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "No dependants"
+      },
+      {
+       "value": "1",
+       "label": "1 dependant"
+      },
+      {
+       "value": "2",
+       "label": "2 dependants"
+      },
+      {
+       "value": "3",
+       "label": "3 dependants"
+      }
+     ],
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "totalSalaryInput",
+     "label": "Household gross salary (both spouses)",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "500,000,000",
+     "important": true
+    },
+    {
+     "key": "splitPct",
+     "label": "Wife's share of that salary",
+     "group": "Household: Income",
+     "kind": "slider",
+     "unit": "%",
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "default": "50",
+     "important": true
+    },
+    {
+     "key": "deductionInput",
+     "label": "Deductions, both spouses (pengurang)",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "husbandSalaryInput",
+     "label": "Husband's gross salary",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "250,000,000",
+     "important": true
+    },
+    {
+     "key": "wifeSalaryInput",
+     "label": "Wife's gross salary",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "250,000,000",
+     "important": true
+    },
+    {
+     "key": "husbandDeductionInput",
+     "label": "Husband's deductions (pengurang)",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "wifeDeductionInput",
+     "label": "Wife's deductions (pengurang)",
+     "group": "Household: Income",
+     "kind": "number",
+     "unit": "Rp /yr",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "biayaJabatan",
+     "label": "Biaya jabatan, worked out for you",
+     "group": "Household: Income",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "ptkpBase",
+     "label": "ptkpBase",
+     "group": "PTKP & Brackets: Tax-free allowance a year (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "54,000,000"
+    },
+    {
+     "key": "ptkpMarried",
+     "label": "ptkpMarried",
+     "group": "PTKP & Brackets: Tax-free allowance a year (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "4,500,000"
+    },
+    {
+     "key": "ptkpSpouse",
+     "label": "ptkpSpouse",
+     "group": "PTKP & Brackets: Tax-free allowance a year (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "54,000,000"
+    },
+    {
+     "key": "ptkpDependent",
+     "label": "ptkpDependent",
+     "group": "PTKP & Brackets: Tax-free allowance a year (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "4,500,000"
+    }
+   ],
+   "lists": [
+    "inputMode",
+    "brackets"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "even",
+     "title": "Equal incomes, no children"
+    },
+    {
+     "key": "single",
+     "title": "Single income family"
+    },
+    {
+     "key": "double",
+     "title": "Double income family"
+    }
+   ]
+  },
+  {
+   "page": "pisahvsgabung/id",
+   "url": "/pisahvsgabung/id/",
+   "base": "https://tool.adjiebrotots.com/pisahvsgabung/id/",
+   "lang": "id",
+   "title": "PPh 21: Pisah Harta vs Gabung Harta",
+   "reference": "references/pisahvsgabung-id.md",
+   "decides": "Whether a married couple in Indonesia pays less PPh 21 income tax with Gabung Harta (the husband's tax return uses PTKP K, and the wife's employer withholds final tax on her salary with her own PTKP) or with Pisah Harta (PH or MT: the tax is worked out on their combined net income and shared by each spouse's net income), from each spouse's yearly gross salary, deductions and dependants, and the household salary at which the cheaper way changes. Requests often come in Indonesian: write the assumptions in the language the user wrote in.",
+   "important": [
+    "inputMode",
+    "husbandSalaryInput",
+    "wifeSalaryInput",
+    "totalSalaryInput",
+    "splitPct",
+    "dependents",
+    "husbandDeductionInput",
+    "wifeDeductionInput",
+    "deductionInput"
+   ],
+   "fields": [
+    {
+     "key": "dependents",
+     "label": "Tanggungan",
+     "group": "Rumah tangga: Keluarga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "Tanpa tanggungan"
+      },
+      {
+       "value": "1",
+       "label": "1 tanggungan"
+      },
+      {
+       "value": "2",
+       "label": "2 tanggungan"
+      },
+      {
+       "value": "3",
+       "label": "3 tanggungan"
+      }
+     ],
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "totalSalaryInput",
+     "label": "Gaji kotor rumah tangga (suami dan istri)",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "500,000,000",
+     "important": true
+    },
+    {
+     "key": "splitPct",
+     "label": "Porsi istri dari gaji tersebut",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "slider",
+     "unit": "%",
+     "min": 0,
+     "max": 100,
+     "step": 1,
+     "default": "50",
+     "important": true
+    },
+    {
+     "key": "deductionInput",
+     "label": "Pengurang, suami dan istri",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "husbandSalaryInput",
+     "label": "Gaji kotor suami",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "250,000,000",
+     "important": true
+    },
+    {
+     "key": "wifeSalaryInput",
+     "label": "Gaji kotor istri",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "250,000,000",
+     "important": true
+    },
+    {
+     "key": "husbandDeductionInput",
+     "label": "Pengurang suami",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "wifeDeductionInput",
+     "label": "Pengurang istri",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "number",
+     "unit": "Rp /thn",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "0",
+     "important": true
+    },
+    {
+     "key": "biayaJabatan",
+     "label": "Biaya jabatan, dihitung otomatis",
+     "group": "Rumah tangga: Penghasilan",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "ptkpBase",
+     "label": "ptkpBase",
+     "group": "PTKP & Lapisan Pajak: Penghasilan tidak kena pajak per tahun (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "54,000,000"
+    },
+    {
+     "key": "ptkpMarried",
+     "label": "ptkpMarried",
+     "group": "PTKP & Lapisan Pajak: Penghasilan tidak kena pajak per tahun (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "4,500,000"
+    },
+    {
+     "key": "ptkpSpouse",
+     "label": "ptkpSpouse",
+     "group": "PTKP & Lapisan Pajak: Penghasilan tidak kena pajak per tahun (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "54,000,000"
+    },
+    {
+     "key": "ptkpDependent",
+     "label": "ptkpDependent",
+     "group": "PTKP & Lapisan Pajak: Penghasilan tidak kena pajak per tahun (PTKP)",
+     "kind": "number",
+     "unit": "Rp",
+     "min": 0,
+     "max": 10000000000,
+     "default": "4,500,000"
+    }
+   ],
+   "lists": [
+    "inputMode",
+    "brackets"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "even",
+     "title": "Penghasilan setara, tanpa anak"
+    },
+    {
+     "key": "single",
+     "title": "Keluarga satu penghasilan"
+    },
+    {
+     "key": "double",
+     "title": "Keluarga dua penghasilan"
+    }
+   ]
+  }
+ ]
+}

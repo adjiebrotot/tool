@@ -25,7 +25,7 @@ import traceback
 WORKFLOW_NAME = "Critical clearing time"
 # REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the
 # workspace.
-PROJECT = "C:/work/mycase.pscx"
+PROJECT = "C:/Studies/plant/plant.pscx"
 # OPTIONAL. A .pswx workspace to load before the case ("" = keep the one that is open).
 WORKSPACE = ""
 # OPTIONAL. Extra .pslx / .pscx libraries to load before the case.
@@ -71,15 +71,15 @@ def main():
         if CHECK_ONLY:
             check_elements(app, [])
             return
-        # -- Step 1: Start (Case: mycase.pscx) --
-        # -- Step 2: Fault duration (s) (0 to 100, within 0.005) --
+        # -- Step 1: Start (Case: plant.pscx) --
+        # -- Step 2: Fault duration (s) (0.05 to 0.5, within 0.005) --
         def try_n2(fault_duration_s):
             trial = Trial({"Fault duration (s)": fault_duration_s}, "min")
             ctx_push("Fault duration (s)", fault_duration_s)
             mark = px_mark()
             try:
-                # -- Step 3: Fault (master:tpflt: 1 to 1.12 s) --
-                fault = set_fault(app, "master:tpflt", "", 1, fault_duration_s, True, "one", None, None)
+                # -- Step 3: Fault (master:tfaultn: 1 to 1.12 s) --
+                fault = set_fault(app, "master:tfaultn", "", 1, fault_duration_s, True, "one", None, None)
                 # -- Step 4: Run simulation (5 s, 50 us step) --
                 run = px_run(app, 5, 50, 250, None, events=[(1, "Fault")], build="auto", read="out", keep_files=False)
                 # Did not build: ends this try of Fault duration (s)
@@ -90,16 +90,12 @@ def main():
                 if not (run.ok or (run.status == "failed")):
                     case_skipped("The simulation stopped before the end")
                     return trial
-                # -- Step 5: Stays in step (Value ≥ 1.05) --
+                # -- Step 5: Stays in step (Value ≤ 1.05, goes on either way) --
                 machine_speed = run.series("Machine Speed", "")  # Read a channel
                 peak_result = peak(machine_speed, kind="max", after=None, before=None)  # Peak
-                stays_in_step_result = verdict(peak_result.value, "ge", 1.05, 0)
+                stays_in_step_result = verdict(peak_result.value, "le", 1.05, 0)
                 if stays_in_step_result.ok is None:
-                    log("Stays in step: NO DATA (" + str(stays_in_step_result.get("reason") or "nothing to check") + "), so it takes Fail.", "warn")
-                # Fail: ends this try of Fault duration (s)
-                if not (stays_in_step_result.ok is True):
-                    case_skipped("Stays in step did not pass")
-                    return trial
+                    log("Stays in step: NO DATA (" + str(stays_in_step_result.get("reason") or "nothing to check") + "), so it did not pass.", "warn")
                 # -- Step 6: Add row to results table (Into "CCT", saved at the end automatically) --
                 table("CCT").add({"Highest speed": peak_result.value}, status=True)
                 trial.report(ok=stays_in_step_result.ok)
@@ -114,7 +110,7 @@ def main():
                     log(f"Could not put things back after this pass: {fin}", "error")
                 ctx_pop(["CCT"])
             return trial
-        fault_duration_s_result = find_limit(try_n2, 0, 100, 0.005, max_steps=20, passes="low", bracket="given", on_unknown="stop", label="Fault duration (s)", integer=False)
+        fault_duration_s_result = find_limit(try_n2, 0.05, 0.5, 0.005, max_steps=20, passes="low", bracket="given", on_unknown="stop", label="Fault duration (s)", integer=False)
     except StopWorkflow as stop:
         log(f"Stopped: {stop}")
     finally:
@@ -638,6 +634,7 @@ _PX = {
     "said": set(),      # messages logged once
     "fnom": {},         # project name -> nominal frequency (f_nominal)
     "built": set(),     # project names already built in this run
+    "snap_start": {},   # project name -> the snapshot its runs start from (snapshot_use)
 }
 PXB = "PXB_"
 
@@ -1962,9 +1959,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
-    if from_snapshot:
+    # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
+    # run given neither argument keeps that start rather than going back to zero.
+    sticky = (_PX.get("snap_start") or {}).get(name, "")
+    if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
-        want["startup_filename"] = str(from_snapshot)
+        want["startup_filename"] = str(from_snapshot or sticky)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -2684,4 +2684,4 @@ def _op_bracket(st):
 
 if __name__ == "__main__":
     main()
-# PXB1 {"app":"pscad-builder","v":1,"name":"Critical clearing time","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/work/mycase.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"Find limit halves the gap between a duration that passes and one that fails, so it finds the critical clearing time in about eight runs instead of a sweep of thirty. Set the pass test to what your case calls staying in step: a speed band, an angle, a voltage that comes back."},"pin":[],"sv":1},{"id":"n2","type":"opt.limit","x":320,"y":200,"label":"Fault duration (s)","s":{"name":"","lower":0,"upper":100,"tol":0.005,"maxSteps":20,"passes":"low","bracket":"given","onUnknown":"stop","integer":false,"passIs":"yes","from":0.05,"to":0.5},"pin":[],"sv":1},{"id":"n3","type":"px.fault","x":660,"y":60,"label":"Fault","s":{"el":{"cls":"master:tpflt","name":"","match":"one"},"at":1,"duration":0.12,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n4","type":"px.run","x":980,"y":60,"label":"","s":{"duration":5,"step":50,"plotStep":250,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n5","type":"px.series","x":1300,"y":300,"label":"","s":{"channel":"Machine Speed","combine":"one","label":""},"pin":[],"sv":1},{"id":"n6","type":"sig.peak","x":1620,"y":300,"label":"","s":{"kind":"max","after":null,"before":null},"pin":[],"sv":1},{"id":"n7","type":"chk.verdict","x":1960,"y":60,"label":"Stays in step","s":{"op":"ge","limit":1.05,"tol":0,"goOn":false},"pin":[],"sv":1},{"id":"n8","type":"out.table.add","x":2280,"y":60,"label":"","s":{"table":"CCT","cols":[{"id":"c1","name":"Highest speed"}],"ctx":true,"onSkip":true},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"body","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"next","to":"n4","in":"in"},{"id":"e4","from":"n4","out":"ok","to":"n7","in":"in"},{"id":"e5","from":"n7","out":"pass","to":"n8","in":"in"},{"id":"e6","from":"n2","out":"value","to":"n3","in":"duration"},{"id":"e7","from":"n4","out":"result","to":"n5","in":"run"},{"id":"e8","from":"n5","out":"series","to":"n6","in":"series"},{"id":"e9","from":"n6","out":"value","to":"n7","in":"value"},{"id":"e10","from":"n7","out":"ok","to":"n2","in":"pass"},{"id":"e11","from":"n6","out":"value","to":"n8","in":"c1"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:a13396e3"}
+# PXB1 {"app":"pscad-builder","v":1,"name":"Critical clearing time","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/Studies/plant/plant.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"Find limit halves the gap between a duration that passes and one that fails, so it finds the critical clearing time in about eight runs instead of a sweep of thirty. Set the pass test to what your case calls staying in step: a speed band, an angle, a voltage that comes back."},"pin":[],"sv":1},{"id":"n2","type":"opt.limit","x":320,"y":200,"label":"Fault duration (s)","s":{"name":"","lower":0.05,"upper":0.5,"tol":0.005,"maxSteps":20,"passes":"low","bracket":"given","onUnknown":"stop","integer":false,"passIs":"yes"},"pin":[],"sv":1},{"id":"n3","type":"px.fault","x":660,"y":60,"label":"Fault","s":{"el":{"cls":"master:tfaultn","name":"","match":"one"},"at":1,"duration":0.12,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n4","type":"px.run","x":980,"y":60,"label":"","s":{"duration":5,"step":50,"plotStep":250,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n5","type":"px.series","x":1300,"y":300,"label":"","s":{"channel":"Machine Speed","combine":"one","label":""},"pin":[],"sv":1},{"id":"n6","type":"sig.peak","x":1620,"y":300,"label":"","s":{"kind":"max","after":null,"before":null},"pin":[],"sv":1},{"id":"n7","type":"chk.verdict","x":1960,"y":60,"label":"Stays in step","s":{"op":"le","limit":1.05,"tol":0,"goOn":true},"pin":[],"sv":1},{"id":"n8","type":"out.table.add","x":2280,"y":60,"label":"","s":{"table":"CCT","cols":[{"id":"c1","name":"Highest speed"}],"ctx":true,"onSkip":true},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"body","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"next","to":"n4","in":"in"},{"id":"e4","from":"n4","out":"ok","to":"n7","in":"in"},{"id":"e6","from":"n2","out":"value","to":"n3","in":"duration"},{"id":"e7","from":"n4","out":"result","to":"n5","in":"run"},{"id":"e8","from":"n5","out":"series","to":"n6","in":"series"},{"id":"e9","from":"n6","out":"value","to":"n7","in":"value"},{"id":"e10","from":"n7","out":"ok","to":"n2","in":"pass"},{"id":"e11","from":"n6","out":"value","to":"n8","in":"c1"},{"id":"e5","from":"n7","out":"pass","to":"n8","in":"in"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:2e87de3b"}

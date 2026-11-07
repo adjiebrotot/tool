@@ -26,7 +26,7 @@ import warnings
 WORKFLOW_NAME = "Fault ride through"
 # REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the
 # workspace.
-PROJECT = "C:/work/mycase.pscx"
+PROJECT = "C:/Studies/wind_farm/wind_farm.pscx"
 # OPTIONAL. A .pswx workspace to load before the case ("" = keep the one that is open).
 WORKSPACE = ""
 # OPTIONAL. Extra .pslx / .pscx libraries to load before the case.
@@ -98,7 +98,7 @@ CHECK_ONLY = False
 
 
 # ==== WORKFLOW ====
-# Note: Set the Fault component to the three phase fault in your own case (its definition is usually master:tpflt, and a Name narrows it when the case has several), and the channel names to the output chan...
+# Note: Set the Fault component to the timed fault logic that drives the fault in your own case (master:tfaultn, or the older master:tfault: they hold the start time TF and the duration DF, which the Three...
 def main():
     preflight(["matplotlib"])
     app = px_connect()
@@ -106,15 +106,15 @@ def main():
         if CHECK_ONLY:
             check_elements(app, [])
             return
-        # -- Step 1: Start (Case: mycase.pscx) --
+        # -- Step 1: Start (Case: wind_farm.pscx) --
         # -- Step 2: Fault duration (s) (0.08 to 0.24, step 0.04) --
         fault_duration_s_values = num_range(0.08, 0.24, 0.04)
         for fault_duration_s_pass_no, fault_duration_s in enumerate(fault_duration_s_values, 1):
             ctx_push("Fault duration (s)", fault_duration_s, fault_duration_s_pass_no, len(fault_duration_s_values))
             mark = px_mark()
             try:
-                # -- Step 3: Fault (master:tpflt: 1 to 1.12 s) --
-                fault = set_fault(app, "master:tpflt", "", 1, fault_duration_s, True, "one", None, None)
+                # -- Step 3: Fault (master:tfaultn: 1 to 1.12 s) --
+                fault = set_fault(app, "master:tfaultn", "", 1, fault_duration_s, True, "one", None, None)
                 # -- Step 4: Run simulation (5 s, 50 us step) --
                 run = px_run(app, 5, 50, 250, None, events=[(1, "Fault")], build="auto", read="out", keep_files=False)
                 # Did not build: skips to the next pass of Fault duration (s)
@@ -630,6 +630,7 @@ _PX = {
     "said": set(),      # messages logged once
     "fnom": {},         # project name -> nominal frequency (f_nominal)
     "built": set(),     # project names already built in this run
+    "snap_start": {},   # project name -> the snapshot its runs start from (snapshot_use)
 }
 PXB = "PXB_"
 
@@ -1954,9 +1955,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
-    if from_snapshot:
+    # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
+    # run given neither argument keeps that start rather than going back to zero.
+    sticky = (_PX.get("snap_start") or {}).get(name, "")
+    if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
-        want["startup_filename"] = str(from_snapshot)
+        want["startup_filename"] = str(from_snapshot or sticky)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -3559,4 +3563,4 @@ def draw_collected(key, title="", ylabel="", unit=None, limits=None, marks=None,
 
 if __name__ == "__main__":
     main()
-# PXB1 {"app":"pscad-builder","v":1,"name":"Fault ride through","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/work/mycase.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"Set the Fault component to the three phase fault in your own case (its definition is usually master:tpflt, and a Name narrows it when the case has several), and the channel names to the output channels your case records. The fault start is 1 s; give the case long enough before it to settle."},"pin":[],"sv":1},{"id":"n2","type":"flow.range","x":320,"y":200,"label":"Fault duration (s)","s":{"name":"","from":0.08,"to":0.24,"step":0.04,"restore":"pass","onError":"skip"},"pin":[],"sv":1},{"id":"n3","type":"px.fault","x":660,"y":60,"label":"Fault","s":{"el":{"cls":"master:tpflt","name":"","match":"one"},"at":1,"duration":0.12,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n4","type":"px.run","x":980,"y":60,"label":"","s":{"duration":5,"step":50,"plotStep":250,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n5","type":"px.series","x":1300,"y":300,"label":"","s":{"channel":"Vpcc","combine":"one","label":"Voltage"},"pin":[],"sv":1},{"id":"n6","type":"px.series","x":1300,"y":460,"label":"","s":{"channel":"Machine Speed","combine":"one","label":"Speed"},"pin":[],"sv":1},{"id":"n7","type":"sig.peak","x":1620,"y":300,"label":"Voltage dip","s":{"kind":"min","after":null,"before":null},"pin":[],"sv":1},{"id":"n8","type":"sig.nadir","x":1620,"y":460,"label":"Speed nadir","s":{"t_event":null,"floorBelow":5,"uflsBelow":1,"window":10,"minRecovery":0.05,"tailGuard":1,"delay":0,"requiresUfls":true,"nominal":null,"extendTo":null},"pin":[],"sv":1},{"id":"n9","type":"out.table.add","x":1960,"y":60,"label":"","s":{"table":"FRT","cols":[{"id":"c1","name":"Lowest voltage"},{"id":"c2","name":"Speed nadir"},{"id":"c3","name":"Reached (s)"}],"ctx":true,"onSkip":true},"pin":[],"sv":1},{"id":"n10","type":"out.plot.series","x":2280,"y":60,"label":"","s":{"lines":[{"id":"l1","name":"Speed"}],"collect":"loop","title":"","ylabel":"Machine speed","unit":"","limits":[],"events":true,"stem":"speed"},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"body","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"next","to":"n4","in":"in"},{"id":"e4","from":"n4","out":"ok","to":"n9","in":"in"},{"id":"e5","from":"n9","out":"next","to":"n10","in":"in"},{"id":"e6","from":"n2","out":"value","to":"n3","in":"duration"},{"id":"e7","from":"n4","out":"result","to":"n5","in":"run"},{"id":"e8","from":"n4","out":"result","to":"n6","in":"run"},{"id":"e9","from":"n5","out":"series","to":"n7","in":"series"},{"id":"e10","from":"n6","out":"series","to":"n8","in":"series"},{"id":"e11","from":"n7","out":"value","to":"n9","in":"c1"},{"id":"e12","from":"n8","out":"nadir","to":"n9","in":"c2"},{"id":"e13","from":"n4","out":"tend","to":"n9","in":"c3"},{"id":"e14","from":"n6","out":"series","to":"n10","in":"l1"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:12ccdfab"}
+# PXB1 {"app":"pscad-builder","v":1,"name":"Fault ride through","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/Studies/wind_farm/wind_farm.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"Set the Fault component to the timed fault logic that drives the fault in your own case (master:tfaultn, or the older master:tfault: they hold the start time TF and the duration DF, which the Three Phase Fault master:tpflt has no parameters for; a Name narrows it when the case has several), and the channel names to the output channels your case records. The fault start is 1 s; give the case long enough before it to settle."},"pin":[],"sv":1},{"id":"n2","type":"flow.range","x":320,"y":200,"label":"Fault duration (s)","s":{"name":"","from":0.08,"to":0.24,"step":0.04,"restore":"pass","onError":"skip"},"pin":[],"sv":1},{"id":"n3","type":"px.fault","x":660,"y":60,"label":"Fault","s":{"el":{"cls":"master:tfaultn","name":"","match":"one"},"at":1,"duration":0.12,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n4","type":"px.run","x":980,"y":60,"label":"","s":{"duration":5,"step":50,"plotStep":250,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n5","type":"px.series","x":1300,"y":300,"label":"","s":{"channel":"Vpcc","combine":"one","label":"Voltage"},"pin":[],"sv":1},{"id":"n6","type":"px.series","x":1300,"y":460,"label":"","s":{"channel":"Machine Speed","combine":"one","label":"Speed"},"pin":[],"sv":1},{"id":"n7","type":"sig.peak","x":1620,"y":300,"label":"Voltage dip","s":{"kind":"min","after":null,"before":null},"pin":[],"sv":1},{"id":"n8","type":"sig.nadir","x":1620,"y":460,"label":"Speed nadir","s":{"t_event":null,"floorBelow":5,"uflsBelow":1,"window":10,"minRecovery":0.05,"tailGuard":1,"delay":0,"requiresUfls":true,"nominal":null,"extendTo":null},"pin":[],"sv":1},{"id":"n9","type":"out.table.add","x":1960,"y":60,"label":"","s":{"table":"FRT","cols":[{"id":"c1","name":"Lowest voltage"},{"id":"c2","name":"Speed nadir"},{"id":"c3","name":"Reached (s)"}],"ctx":true,"onSkip":true},"pin":[],"sv":1},{"id":"n10","type":"out.plot.series","x":2280,"y":60,"label":"","s":{"lines":[{"id":"l1","name":"Speed"}],"collect":"loop","title":"","ylabel":"Machine speed","unit":"","limits":[],"events":true,"stem":"speed"},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"body","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"next","to":"n4","in":"in"},{"id":"e4","from":"n4","out":"ok","to":"n9","in":"in"},{"id":"e5","from":"n9","out":"next","to":"n10","in":"in"},{"id":"e6","from":"n2","out":"value","to":"n3","in":"duration"},{"id":"e7","from":"n4","out":"result","to":"n5","in":"run"},{"id":"e8","from":"n4","out":"result","to":"n6","in":"run"},{"id":"e9","from":"n5","out":"series","to":"n7","in":"series"},{"id":"e10","from":"n6","out":"series","to":"n8","in":"series"},{"id":"e11","from":"n7","out":"value","to":"n9","in":"c1"},{"id":"e12","from":"n8","out":"nadir","to":"n9","in":"c2"},{"id":"e13","from":"n4","out":"tend","to":"n9","in":"c3"},{"id":"e14","from":"n6","out":"series","to":"n10","in":"l1"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:c922a2ce"}

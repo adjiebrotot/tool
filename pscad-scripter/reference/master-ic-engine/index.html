@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:ic_engine parameters: PSCAD Internal Combustion Engine</title>
+<meta name="description" content="Every parameter of master:ic_engine (Internal Combustion Engine) in PSCAD: 107 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-ic-engine/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:ic_engine parameters (PSCAD Internal Combustion Engine)">
+<meta property="og:description" content="Every parameter of master:ic_engine (Internal Combustion Engine) in PSCAD: 107 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-ic-engine/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:ic_engine parameters (PSCAD Internal Combustion Engine)">
+<meta name="twitter:description" content="Every parameter of master:ic_engine (Internal Combustion Engine) in PSCAD: 107 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:ic_engine parameters (PSCAD Internal Combustion Engine)",
+  "description": "Every parameter of master:ic_engine (Internal Combustion Engine) in PSCAD: 107 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-ic-engine/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:ic_engine (Internal Combustion Engine)",
+    "description": "Internal Combustion Engine, a component of PSCAD's Master Library, filed under other components."
+  },
+  "keywords": "master:ic_engine parameters, PSCAD Internal Combustion Engine parameters, Internal Combustion Engine PSCAD, master:ic_engine mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:ic_engine",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-ic-engine/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:ic_engine</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:ic_engine parameters<span class="dx-h1-sub">PSCAD Internal Combustion Engine</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD Internal Combustion Engine (<code>master:ic_engine</code>): 107 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:ic_engine is</h2>
+  <p>Internal Combustion Engine, a component of PSCAD's Master Library, filed under other components.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:ic_engine</code></dd><dt>PSCAD name</dt><dd>Internal Combustion Engine</dd><dt>Category</dt><dd>Other components</dd><dt>Parameters</dt><dd>107, in 4 groups; 88 carry a unit</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:ic_engine in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ic_engine&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;A1&quot;</span>]))             <span class="py-c"># Point  1 - Angle, in deg</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:ic_engine&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(A1=<span class="py-s">&quot;1 [deg]&quot;</span>)            <span class="py-c"># a value that carries a unit is written with it</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "A1")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:ic_engine parameters"><li><a href="#g1">Cylinder Torque<span class="dx-n">72</span></a></li><li><a href="#g2">Misfired Cylinders<span class="dx-n">24</span></a></li><li><a href="#g3">Configuration<span class="dx-n">6</span></a></li><li><a href="#g4">Engine Parameters<span class="dx-n">5</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Cylinder Torque</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>A1</code><small>Real</small></td><td>deg</td><td>0</td><td>Point  1 - Angle<small>Used when NP&gt;=1</small></td></tr>
+<tr><td><code>A10</code><small>Real</small></td><td>deg</td><td>120</td><td>Point 10 - Angle<small>Used when NP&gt;=10</small></td></tr>
+<tr><td><code>A11</code><small>Real</small></td><td>deg</td><td>150</td><td>Point 11 - Angle<small>Used when NP&gt;=11</small></td></tr>
+<tr><td><code>A12</code><small>Real</small></td><td>deg</td><td>160</td><td>Point 12 - Angle<small>Used when NP&gt;=12</small></td></tr>
+<tr><td><code>A13</code><small>Real</small></td><td>deg</td><td>170</td><td>Point 13 - Angle<small>Used when NP&gt;=13</small></td></tr>
+<tr><td><code>A14</code><small>Real</small></td><td>deg</td><td>180</td><td>Point 14 - Angle<small>Used when NP&gt;=14</small></td></tr>
+<tr><td><code>A15</code><small>Real</small></td><td>deg</td><td>200</td><td>Point 15 - Angle<small>Used when NP&gt;=15</small></td></tr>
+<tr><td><code>A16</code><small>Real</small></td><td>deg</td><td>260</td><td>Point 16 - Angle<small>Used when NP&gt;=16</small></td></tr>
+<tr><td><code>A17</code><small>Real</small></td><td>deg</td><td>280</td><td>Point 17 - Angle<small>Used when NP&gt;=17</small></td></tr>
+<tr><td><code>A18</code><small>Real</small></td><td>deg</td><td>290</td><td>Point 18 - Angle<small>Used when NP&gt;=18</small></td></tr>
+<tr><td><code>A19</code><small>Real</small></td><td>deg</td><td>310</td><td>Point 19 - Angle<small>Used when NP&gt;=19</small></td></tr>
+<tr><td><code>A2</code><small>Real</small></td><td>deg</td><td>2</td><td>Point  2 - Angle<small>Used when NP&gt;=2</small></td></tr>
+<tr><td><code>A20</code><small>Real</small></td><td>deg</td><td>320</td><td>Point 20 - Angle<small>Used when NP&gt;=20</small></td></tr>
+<tr><td><code>A21</code><small>Real</small></td><td>deg</td><td>330</td><td>Point 21 - Angle<small>Used when NP&gt;=21</small></td></tr>
+<tr><td><code>A22</code><small>Real</small></td><td>deg</td><td>340</td><td>Point 22 - Angle<small>Used when NP&gt;=22</small></td></tr>
+<tr><td><code>A23</code><small>Real</small></td><td>deg</td><td>350</td><td>Point 23 - Angle<small>Used when NP&gt;=23</small></td></tr>
+<tr><td><code>A24</code><small>Real</small></td><td>deg</td><td>360</td><td>Point 24 - Angle<small>Used when NP&gt;=24</small></td></tr>
+<tr><td><code>A25</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 25 - Angle<small>Used when NP&gt;=25</small></td></tr>
+<tr><td><code>A26</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 26 - Angle<small>Used when NP&gt;=26</small></td></tr>
+<tr><td><code>A27</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 27 - Angle<small>Used when NP&gt;=27</small></td></tr>
+<tr><td><code>A28</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 28 - Angle<small>Used when NP&gt;=28</small></td></tr>
+<tr><td><code>A29</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 29 - Angle<small>Used when NP&gt;=29</small></td></tr>
+<tr><td><code>A3</code><small>Real</small></td><td>deg</td><td>10</td><td>Point  3 - Angle<small>Used when NP&gt;=3</small></td></tr>
+<tr><td><code>A30</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 30 - Angle<small>Used when NP&gt;=30</small></td></tr>
+<tr><td><code>A31</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 31 - Angle<small>Used when NP&gt;=31</small></td></tr>
+<tr><td><code>A32</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 32 - Angle<small>Used when NP&gt;=32</small></td></tr>
+<tr><td><code>A33</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 33 - Angle<small>Used when NP&gt;=33</small></td></tr>
+<tr><td><code>A34</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 34 - Angle<small>Used when NP&gt;=34</small></td></tr>
+<tr><td><code>A35</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 35 - Angle<small>Used when NP&gt;=35</small></td></tr>
+<tr><td><code>A36</code><small>Real</small></td><td>deg</td><td>0.0</td><td>Point 36 - Angle<small>Used when NP&gt;=36</small></td></tr>
+<tr><td><code>A4</code><small>Real</small></td><td>deg</td><td>20</td><td>Point  4 - Angle<small>Used when NP&gt;=4</small></td></tr>
+<tr><td><code>A5</code><small>Real</small></td><td>deg</td><td>30</td><td>Point  5 - Angle<small>Used when NP&gt;=5</small></td></tr>
+<tr><td><code>A6</code><small>Real</small></td><td>deg</td><td>40</td><td>Point  6 - Angle<small>Used when NP&gt;=6</small></td></tr>
+<tr><td><code>A7</code><small>Real</small></td><td>deg</td><td>50</td><td>Point  7 - Angle<small>Used when NP&gt;=7</small></td></tr>
+<tr><td><code>A8</code><small>Real</small></td><td>deg</td><td>80</td><td>Point  8 - Angle<small>Used when NP&gt;=8</small></td></tr>
+<tr><td><code>A9</code><small>Real</small></td><td>deg</td><td>100</td><td>Point  9 - Angle<small>Used when NP&gt;=9</small></td></tr>
+<tr><td><code>T1</code><small>Real</small></td><td>pu</td><td>0</td><td>Point  1 - Torque<small>Used when NP&gt;=1</small></td></tr>
+<tr><td><code>T10</code><small>Real</small></td><td>pu</td><td>0.23</td><td>Point 10 - Torque<small>Used when NP&gt;=10</small></td></tr>
+<tr><td><code>T11</code><small>Real</small></td><td>pu</td><td>0.05</td><td>Point 11 - Torque<small>Used when NP&gt;=11</small></td></tr>
+<tr><td><code>T12</code><small>Real</small></td><td>pu</td><td>0.03</td><td>Point 12 - Torque<small>Used when NP&gt;=12</small></td></tr>
+<tr><td><code>T13</code><small>Real</small></td><td>pu</td><td>0.03</td><td>Point 13 - Torque<small>Used when NP&gt;=13</small></td></tr>
+<tr><td><code>T14</code><small>Real</small></td><td>pu</td><td>0.02</td><td>Point 14 - Torque<small>Used when NP&gt;=14</small></td></tr>
+<tr><td><code>T15</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 15 - Torque<small>Used when NP&gt;=15</small></td></tr>
+<tr><td><code>T16</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 16 - Torque<small>Used when NP&gt;=16</small></td></tr>
+<tr><td><code>T17</code><small>Real</small></td><td>pu</td><td>-0.09</td><td>Point 17 - Torque<small>Used when NP&gt;=17</small></td></tr>
+<tr><td><code>T18</code><small>Real</small></td><td>pu</td><td>-0.15</td><td>Point 18 - Torque<small>Used when NP&gt;=18</small></td></tr>
+<tr><td><code>T19</code><small>Real</small></td><td>pu</td><td>-0.2</td><td>Point 19 - Torque<small>Used when NP&gt;=19</small></td></tr>
+<tr><td><code>T2</code><small>Real</small></td><td>pu</td><td>0.1</td><td>Point  2 - Torque<small>Used when NP&gt;=2</small></td></tr>
+<tr><td><code>T20</code><small>Real</small></td><td>pu</td><td>-0.24</td><td>Point 20 - Torque<small>Used when NP&gt;=20</small></td></tr>
+<tr><td><code>T21</code><small>Real</small></td><td>pu</td><td>-0.22</td><td>Point 21 - Torque<small>Used when NP&gt;=21</small></td></tr>
+<tr><td><code>T22</code><small>Real</small></td><td>pu</td><td>-0.18</td><td>Point 22 - Torque<small>Used when NP&gt;=22</small></td></tr>
+<tr><td><code>T23</code><small>Real</small></td><td>pu</td><td>-0.1</td><td>Point 23 - Torque<small>Used when NP&gt;=23</small></td></tr>
+<tr><td><code>T24</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 24 - Torque<small>Used when NP&gt;=24</small></td></tr>
+<tr><td><code>T25</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 25 - Torque<small>Used when NP&gt;=25</small></td></tr>
+<tr><td><code>T26</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 26 - Torque<small>Used when NP&gt;=26</small></td></tr>
+<tr><td><code>T27</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 27 - Torque<small>Used when NP&gt;=27</small></td></tr>
+<tr><td><code>T28</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 28 - Torque<small>Used when NP&gt;=28</small></td></tr>
+<tr><td><code>T29</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 29 - Torque<small>Used when NP&gt;=29</small></td></tr>
+<tr><td><code>T3</code><small>Real</small></td><td>pu</td><td>0.48</td><td>Point  3 - Torque<small>Used when NP&gt;=3</small></td></tr>
+<tr><td><code>T30</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 30 - Torque<small>Used when NP&gt;=30</small></td></tr>
+<tr><td><code>T31</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 31 - Torque<small>Used when NP&gt;=31</small></td></tr>
+<tr><td><code>T32</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 32 - Torque<small>Used when NP&gt;=32</small></td></tr>
+<tr><td><code>T33</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 33 - Torque<small>Used when NP&gt;=33</small></td></tr>
+<tr><td><code>T34</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 34 - Torque<small>Used when NP&gt;=34</small></td></tr>
+<tr><td><code>T35</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 35 - Torque<small>Used when NP&gt;=35</small></td></tr>
+<tr><td><code>T36</code><small>Real</small></td><td>pu</td><td>0.0</td><td>Point 36 - Torque<small>Used when NP&gt;=36</small></td></tr>
+<tr><td><code>T4</code><small>Real</small></td><td>pu</td><td>0.78</td><td>Point  4 - Torque<small>Used when NP&gt;=4</small></td></tr>
+<tr><td><code>T5</code><small>Real</small></td><td>pu</td><td>0.95</td><td>Point  5 - Torque<small>Used when NP&gt;=5</small></td></tr>
+<tr><td><code>T6</code><small>Real</small></td><td>pu</td><td>1.0</td><td>Point  6 - Torque<small>Used when NP&gt;=6</small></td></tr>
+<tr><td><code>T7</code><small>Real</small></td><td>pu</td><td>0.9</td><td>Point  7 - Torque<small>Used when NP&gt;=7</small></td></tr>
+<tr><td><code>T8</code><small>Real</small></td><td>pu</td><td>0.45</td><td>Point  8 - Torque<small>Used when NP&gt;=8</small></td></tr>
+<tr><td><code>T9</code><small>Real</small></td><td>pu</td><td>0.32</td><td>Point  9 - Torque<small>Used when NP&gt;=9</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Misfired Cylinders</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>C1</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>1 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=1</small></td></tr>
+<tr><td><code>C10</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>10 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=10</small></td></tr>
+<tr><td><code>C11</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>11 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=11</small></td></tr>
+<tr><td><code>C12</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>12 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=12</small></td></tr>
+<tr><td><code>C2</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>2 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=2</small></td></tr>
+<tr><td><code>C3</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>3 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=3</small></td></tr>
+<tr><td><code>C4</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>4 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=4</small></td></tr>
+<tr><td><code>C5</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>5 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=5</small></td></tr>
+<tr><td><code>C6</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>6 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=6</small></td></tr>
+<tr><td><code>C7</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>7 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=7</small></td></tr>
+<tr><td><code>C8</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>8 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=8</small></td></tr>
+<tr><td><code>C9</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>9 - Cylinder Number<small>Range 0 to 36</small><small>Used when Nmiss&gt;=9</small></td></tr>
+<tr><td><code>TP1</code><small>Real</small></td><td>%</td><td>0.0</td><td>1 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=1</small></td></tr>
+<tr><td><code>TP10</code><small>Real</small></td><td>%</td><td>0.0</td><td>10 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=10</small></td></tr>
+<tr><td><code>TP11</code><small>Real</small></td><td>%</td><td>0.0</td><td>11 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=11</small></td></tr>
+<tr><td><code>TP12</code><small>Real</small></td><td>%</td><td>0.0</td><td>12 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=12</small></td></tr>
+<tr><td><code>TP2</code><small>Real</small></td><td>%</td><td>0.0</td><td>2 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=2</small></td></tr>
+<tr><td><code>TP3</code><small>Real</small></td><td>%</td><td>0.0</td><td>3 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=3</small></td></tr>
+<tr><td><code>TP4</code><small>Real</small></td><td>%</td><td>0.0</td><td>4 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=4</small></td></tr>
+<tr><td><code>TP5</code><small>Real</small></td><td>%</td><td>0.0</td><td>5 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=5</small></td></tr>
+<tr><td><code>TP6</code><small>Real</small></td><td>%</td><td>0.0</td><td>6 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=6</small></td></tr>
+<tr><td><code>TP7</code><small>Real</small></td><td>%</td><td>0.0</td><td>7 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=7</small></td></tr>
+<tr><td><code>TP8</code><small>Real</small></td><td>%</td><td>0.0</td><td>8 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=8</small></td></tr>
+<tr><td><code>TP9</code><small>Real</small></td><td>%</td><td>0.0</td><td>9 - Torque Percentage<small>Range 0 to 100</small><small>Used when Nmiss&gt;=9</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>EFF</code><small>Real</small></td><td>pu</td><td>0.98</td><td>Gear Box Efficiency<small>Efficiency of the Gear Box</small><small>Range 0 to 1</small></td></tr>
+<tr><td><code>GR</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>10.0</td><td>Gear Ratio<small>Ratio of Machine speed over Engine speed</small><small>At least 0</small></td></tr>
+<tr><td><code>MVAG</code><small>Real</small></td><td>MVA</td><td>1.0</td><td>Machine Rating<small>Rating of the Machine</small><small>At least 1E-307</small></td></tr>
+<tr><td><code>MWE</code><small>Real</small></td><td>MW</td><td>1.0</td><td>Engine Rating<small>Rating of the Engine</small><small>At least 0</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small></td></tr>
+<tr><td><code>WE</code><small>Real</small></td><td>rev/min</td><td>1800.0</td><td>Engine Rated Speed<small>Rated speed of the Engine</small><small>At least 0</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Engine Parameters</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>MISS</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Misfired Cylinders<small>Select Yes to to model misfired cylinders</small><small>Written as NO (No), YES (Yes)</small></td></tr>
+<tr><td><code>NP</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>24</td><td>Number of Points in Torque Characteristics<small>Range 2 to 36</small></td></tr>
+<tr><td><code>Nc</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>12</td><td>Number of Engine Cylinders<small>Number of cylinders in the Engine</small><small>Range 0 to 2147483647</small></td></tr>
+<tr><td><code>Nmiss</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>Number of Misfired Cylinders<small>Written as 0 = 0, 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5, 6 = 6, 7 = 7, 8 = 8, 9 = 9, 10 = 10, 11 = 11, 12 = 12</small><small>Used when MISS==1</small></td></tr>
+<tr><td><code>kc</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>TWO_STROKE</td><td>Number of Engine Cycles<small>Select from 2-Stroke or 4-Stroke</small><small>Written as TWO_STROKE (Two Stroke), FOUR_STROKE (Four Stroke)</small></td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-import/"><code>master:import</code> Import Symbol</a> · <a href="../master-mho-circle/"><code>master:mho_circle</code> Mho Circle</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

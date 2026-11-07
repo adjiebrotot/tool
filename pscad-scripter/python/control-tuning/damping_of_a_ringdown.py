@@ -24,7 +24,7 @@ import time
 WORKFLOW_NAME = "Damping check"
 # REQUIRED. The PSCAD case to work on: a .pscx path, or the name of a case already in the
 # workspace.
-PROJECT = "C:/work/mycase.pscx"
+PROJECT = "C:/Studies/statcom/statcom.pscx"
 # OPTIONAL. A .pswx workspace to load before the case ("" = keep the one that is open).
 WORKSPACE = ""
 # OPTIONAL. Extra .pslx / .pscx libraries to load before the case.
@@ -70,9 +70,9 @@ def main():
         if CHECK_ONLY:
             check_elements(app, [])
             return
-        # -- Step 1: Start (Case: mycase.pscx) --
-        # -- Step 2: Disturbance (master:tpflt: 1 to 1.05 s) --
-        fault = set_fault(app, "master:tpflt", "", 1, 0.05, True, "one", None, None)
+        # -- Step 1: Start (Case: statcom.pscx) --
+        # -- Step 2: Disturbance (master:tfaultn: 1 to 1.05 s) --
+        fault = set_fault(app, "master:tfaultn", "", 1, 0.05, True, "one", None, None)
         # -- Step 3: Run simulation (10 s, 50 us step) --
         run = px_run(app, 10, 50, 500, None, events=[(1, "Disturbance")], build="auto", read="out", keep_files=False)
         # Did not build: ends the workflow
@@ -602,6 +602,7 @@ _PX = {
     "said": set(),      # messages logged once
     "fnom": {},         # project name -> nominal frequency (f_nominal)
     "built": set(),     # project names already built in this run
+    "snap_start": {},   # project name -> the snapshot its runs start from (snapshot_use)
 }
 PXB = "PXB_"
 
@@ -1920,9 +1921,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
-    if from_snapshot:
+    # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
+    # run given neither argument keeps that start rather than going back to zero.
+    sticky = (_PX.get("snap_start") or {}).get(name, "")
+    if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
-        want["startup_filename"] = str(from_snapshot)
+        want["startup_filename"] = str(from_snapshot or sticky)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -2465,4 +2469,4 @@ def damping(series, t_start=None, t_end=None, min_peaks=3):
 
 if __name__ == "__main__":
     main()
-# PXB1 {"app":"pscad-builder","v":1,"name":"Damping check","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/work/mycase.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"A control interaction, a subsynchronous oscillation or a badly tuned loop shows up as an oscillation that does not decay. Start the damping window after the disturbance itself, so its own step is not read as a peak. A negative damping ratio means the oscillation is growing."},"pin":[],"sv":1},{"id":"n2","type":"px.fault","x":320,"y":60,"label":"Disturbance","s":{"el":{"cls":"master:tpflt","name":"","match":"one"},"at":1,"duration":0.05,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n3","type":"px.run","x":660,"y":60,"label":"","s":{"duration":10,"step":50,"plotStep":500,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n4","type":"px.series","x":980,"y":300,"label":"","s":{"channel":"Machine Speed","combine":"one","label":""},"pin":[],"sv":1},{"id":"n5","type":"sig.damping","x":1300,"y":300,"label":"","s":{"t_start":1.2,"t_end":null,"minPeaks":3},"pin":[],"sv":1},{"id":"n6","type":"chk.verdict","x":1620,"y":60,"label":"Well damped","s":{"op":"ge","limit":0.03,"tol":0,"goOn":false},"pin":[],"sv":1},{"id":"n7","type":"out.table.add","x":1940,"y":60,"label":"","s":{"table":"Damping","cols":[{"id":"c1","name":"Damping ratio"},{"id":"c2","name":"Mode (Hz)"}],"ctx":true,"onSkip":true},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"next","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"ok","to":"n6","in":"in"},{"id":"e4","from":"n6","out":"pass","to":"n7","in":"in"},{"id":"e5","from":"n6","out":"fail","to":"n7","in":"in"},{"id":"e6","from":"n3","out":"result","to":"n4","in":"run"},{"id":"e7","from":"n4","out":"series","to":"n5","in":"series"},{"id":"e8","from":"n5","out":"value","to":"n6","in":"value"},{"id":"e9","from":"n5","out":"value","to":"n7","in":"c1"},{"id":"e10","from":"n5","out":"frequency","to":"n7","in":"c2"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:14079300"}
+# PXB1 {"app":"pscad-builder","v":1,"name":"Damping check","nodes":[{"id":"n1","type":"start","x":0,"y":200,"label":"","s":{"project":"C:/Studies/statcom/statcom.pscx","workspace":"","libraries":"","outputDir":"","undoChanges":true,"tableFmt":"csv","fNominal":"auto","runMode":"auto","showPscad":false,"fortran":"","pscadVersion":"","port":0,"connectTimeout":120},"pin":[],"sv":1},{"id":"n0","type":"note","x":0,"y":-260,"label":"About this template","s":{"text":"A control interaction, a subsynchronous oscillation or a badly tuned loop shows up as an oscillation that does not decay. Start the damping window after the disturbance itself, so its own step is not read as a peak. A negative damping ratio means the oscillation is growing."},"pin":[],"sv":1},{"id":"n2","type":"px.fault","x":320,"y":60,"label":"Disturbance","s":{"el":{"cls":"master:tfaultn","name":"","match":"one"},"at":1,"duration":0.05,"phases":"","resistance":null,"on":true},"pin":[],"sv":1},{"id":"n3","type":"px.run","x":660,"y":60,"label":"","s":{"duration":10,"step":50,"plotStep":500,"build":"auto","read":"out","keepFiles":false},"pin":[],"sv":1},{"id":"n4","type":"px.series","x":980,"y":300,"label":"","s":{"channel":"Machine Speed","combine":"one","label":""},"pin":[],"sv":1},{"id":"n5","type":"sig.damping","x":1300,"y":300,"label":"","s":{"t_start":1.2,"t_end":null,"minPeaks":3},"pin":[],"sv":1},{"id":"n6","type":"chk.verdict","x":1620,"y":60,"label":"Well damped","s":{"op":"ge","limit":0.03,"tol":0,"goOn":false},"pin":[],"sv":1},{"id":"n7","type":"out.table.add","x":1940,"y":60,"label":"","s":{"table":"Damping","cols":[{"id":"c1","name":"Damping ratio"},{"id":"c2","name":"Mode (Hz)"}],"ctx":true,"onSkip":true},"pin":[],"sv":1}],"edges":[{"id":"e1","from":"n1","out":"next","to":"n2","in":"in"},{"id":"e2","from":"n2","out":"next","to":"n3","in":"in"},{"id":"e3","from":"n3","out":"ok","to":"n6","in":"in"},{"id":"e4","from":"n6","out":"pass","to":"n7","in":"in"},{"id":"e5","from":"n6","out":"fail","to":"n7","in":"in"},{"id":"e6","from":"n3","out":"result","to":"n4","in":"run"},{"id":"e7","from":"n4","out":"series","to":"n5","in":"series"},{"id":"e8","from":"n5","out":"value","to":"n6","in":"value"},{"id":"e9","from":"n5","out":"value","to":"n7","in":"c1"},{"id":"e10","from":"n5","out":"frequency","to":"n7","in":"c2"}],"settings":{"WORKFLOW_NAME":["*","name"],"PROJECT":["n1","project"],"WORKSPACE":["n1","workspace"],"LIBRARIES":["n1","libraries"],"OUTPUT_DIR":["n1","outputDir"],"UNDO_CHANGES":["n1","undoChanges"],"TABLE_FORMAT":["n1","tableFmt"],"F_NOMINAL":["n1","fNominal"],"RUN_MODE":["n1","runMode"],"SHOW_PSCAD":["n1","showPscad"],"FORTRAN_VERSION":["n1","fortran"],"PSCAD_VERSION":["n1","pscadVersion"],"PSCAD_PORT":["n1","port"],"CONNECT_TIMEOUT":["n1","connectTimeout"]},"hash":"fnv1a:4d5a8a03"}

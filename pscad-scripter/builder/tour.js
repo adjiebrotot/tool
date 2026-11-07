@@ -1,7 +1,7 @@
 /* Guided tour of the PSCAD Workflow Builder (DESIGN 8). The shared engine
    (../../tour-shared.js) reads window.__TOUR.
 
-   The tour fills the canvas with a worked example: the Headroom study template when the
+   The tour fills the canvas with a worked example: the Fault ride through Quick Start when the
    templates are there, otherwise a small built-in demo made only of blocks this version has.
    The reader's own workflow is given back when the tour ends, however it ends (saveState /
    restoreState). The editor (js/ui/main.js, a module) may still be starting when the tour
@@ -23,11 +23,11 @@
     nodes: [
       { id: 'n1', type: 'start', x: 0, y: 160, label: '', s: {} },
       { id: 'n2', type: 'flow.range', x: 320, y: 160, label: 'Fault duration (s)', s: { from: 0.08, to: 0.2, step: 0.04 } },
-      { id: 'n3', type: 'px.fault', x: 640, y: 32, label: 'Fault', s: { el: { cls: 'master:tpflt', name: '', match: 'one' }, at: 1, duration: 0.12 } },
+      { id: 'n3', type: 'px.fault', x: 640, y: 32, label: 'Fault', s: { el: { cls: 'master:tfaultn', name: '', match: 'one' }, at: 1, duration: 0.12 } },
       { id: 'n4', type: 'px.run', x: 960, y: 32, label: '', s: { duration: 5, step: 50, plotStep: 250 } },
       { id: 'n5', type: 'px.series', x: 1280, y: 220, label: 'Machine speed', s: { channel: 'Machine Speed' } },
       { id: 'n6', type: 'sig.nadir', x: 1600, y: 32, label: '', s: {} },
-      { id: 'n7', type: 'flow.log', x: 1920, y: 32, label: '', s: { text: 'Fault of {dur} s: the run reached {t} s' } },
+      { id: 'n7', type: 'flow.log', x: 1920, y: 32, label: '', s: { text: 'Fault of {dur} s: speed nadir {nad}, the run reached {t} s' } },
       { id: 'n8', type: 'flow.log', x: 640, y: 400, label: 'All passes done', s: { text: 'Every fault duration has been run.' } }
     ],
     edges: [
@@ -39,12 +39,13 @@
       { id: 'e6', from: 'n4', out: 'result', to: 'n5', in: 'run' },
       { id: 'e7', from: 'n5', out: 'series', to: 'n6', in: 'series' },
       { id: 'e8', from: 'n2', out: 'value', to: 'n7', in: 'dur' },
-      { id: 'e9', from: 'n6', out: 't_end', to: 'n7', in: 't' },
-      { id: 'e10', from: 'n2', out: 'done', to: 'n8', in: 'in' }
+      { id: 'e9', from: 'n4', out: 'tend', to: 'n7', in: 't' },
+      { id: 'e10', from: 'n2', out: 'done', to: 'n8', in: 'in' },
+      { id: 'e11', from: 'n6', out: 'nadir', to: 'n7', in: 'nad' }
     ],
     view: { x: 0, y: 0, zoom: 1 }
   };
-  window.__PFB_DEMO = DEMO;   // for the tests
+  window.__PXB_DEMO = DEMO;   // for the tests
 
   var api = function () { return window.PXB && window.PXB.ready ? window.PXB : null; };
   // Run fn now when the editor is up, else as soon as it says it is.
@@ -92,9 +93,9 @@
         Promise.resolve(p.templatesReady).then(function () {
           // The tour ended while the templates were on their way: leave the reader's work be.
           if (marker !== mk) return false;
-          var hasTpl = (p.templates() || []).some(function (t) { return t.id === 'headroom'; });
+          var hasTpl = (p.templates() || []).some(function (t) { return t.id === 'frt'; });
           if (hasTpl) mk.loaded = true;
-          return hasTpl ? p.loadTemplate('headroom', { quiet: true, ask: false }) : false;
+          return hasTpl ? p.loadTemplate('frt', { quiet: true, ask: false }) : false;
         }).catch(function () { return false; }).then(function (ok) {
           if (marker !== mk) return resolve(false);
           mk.loaded = true;
@@ -221,7 +222,7 @@
         get target() { return phone() ? '#pxbSide' : inDemo('#pxbInspector .pxb-elpick'); },
         onEnter: function () { focus('px.fault', true); },
         title: 'The component picker',
-        body: 'Pick the <strong>definition</strong>, as PSCAD names it (<code>master:tpflt</code>), and a <strong>Name</strong> when the case has several. Its duration comes in on the wire from Fault duration (s).'
+        body: 'Pick the <strong>definition</strong>, as PSCAD names it (<code>master:tfaultn</code>, the Timed Fault Logic), and a <strong>Name</strong> when the case has several. Its duration comes in on the wire from Fault duration (s).'
       },
       {
         get target() { return inDemo(nodeSel('px.run', '.pxb-end') || nodeSel('px.run')); },
@@ -237,7 +238,7 @@
         onEnter: function () { focus(['sig.nadir', 'px.run'], false); },
         title: 'Curves and checks',
         get body() {
-          if (nodeOf('sig.nadir')) return '<strong>Frequency nadir</strong> reads the frequency the run recorded and gives the lowest value, its time and a verdict for the results table.';
+          if (nodeOf('sig.nadir')) return 'A <strong>Frequency nadir</strong> block reads a curve the run recorded (here the machine speed) and gives the lowest value, its time and a verdict for the results table.';
           return 'Read a channel takes one <strong>output channel</strong> of the run as a curve' +
                  (hasBlock('sig.nadir') ? ' for checks such as <strong>Frequency nadir</strong>.' : ' that other blocks can use.');
         }

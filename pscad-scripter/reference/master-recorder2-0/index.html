@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>master:recorder2_0 parameters: PSCAD RTP and COMTRADE Recorder</title>
+<meta name="description" content="Every parameter of master:recorder2_0 (RTP and COMTRADE Recorder) in PSCAD: 164 names with units, defaults and meaning, with Python.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/reference/master-recorder2-0/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="master:recorder2_0 parameters (PSCAD RTP and COMTRADE Recorder)">
+<meta property="og:description" content="Every parameter of master:recorder2_0 (RTP and COMTRADE Recorder) in PSCAD: 164 names with units, defaults and meaning, with Python.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/reference/master-recorder2-0/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="master:recorder2_0 parameters (PSCAD RTP and COMTRADE Recorder)">
+<meta name="twitter:description" content="Every parameter of master:recorder2_0 (RTP and COMTRADE Recorder) in PSCAD: 164 names with units, defaults and meaning, with Python.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "master:recorder2_0 parameters (PSCAD RTP and COMTRADE Recorder)",
+  "description": "Every parameter of master:recorder2_0 (RTP and COMTRADE Recorder) in PSCAD: 164 names with units, defaults and meaning, with Python.",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-recorder2-0/",
+  "inLanguage": "en",
+  "dateModified": "2026-11-07",
+  "about": {
+    "@type": "Thing",
+    "name": "master:recorder2_0 (RTP and COMTRADE Recorder)",
+    "description": "RTP and COMTRADE Recorder (RTP and COMTRADE recorder), a component of PSCAD's Master Library, filed under control blocks."
+  },
+  "keywords": "master:recorder2_0 parameters, PSCAD RTP and COMTRADE Recorder parameters, RTP and COMTRADE Recorder PSCAD, master:recorder2_0 mhi.pscad",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PSCAD component reference",
+    "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PSCAD Scripter",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Component reference",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "master:recorder2_0",
+      "item": "https://tool.adjiebrotots.com/pscad-scripter/reference/master-recorder2-0/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PSCAD Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PSCAD Scripter</a><span aria-hidden="true">›</span><a href="../">Component reference</a><span aria-hidden="true">›</span><span aria-current="page">master:recorder2_0</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>master:recorder2_0 parameters<span class="dx-h1-sub">PSCAD RTP and COMTRADE Recorder</span></h1>
+    <p class="dx-lead">Every parameter of the PSCAD RTP and COMTRADE Recorder (<code>master:recorder2_0</code>): 164 names, with the unit, the default and the meaning PSCAD gives each one. Copy a name into <code>parameters()</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What master:recorder2_0 is</h2>
+  <p>RTP and COMTRADE Recorder (RTP and COMTRADE recorder), a component of PSCAD's Master Library, filed under control blocks.</p>
+  <dl class="dx-facts"><dt>Definition</dt><dd><code>master:recorder2_0</code></dd><dt>PSCAD name</dt><dd>RTP and COMTRADE Recorder</dd><dt>Category</dt><dd>Control blocks</dd><dt>Parameters</dt><dd>164, in 18 groups</dd><dt>Read from</dt><dd>PSCAD 5.0.0, 2026-11-07</dd></dl>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write master:recorder2_0 in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> mhi.pscad
+
+pscad = mhi.pscad.<span class="py-f">connect</span>()              <span class="py-c"># the PSCAD that is open; launch() starts one</span>
+project = pscad.<span class="py-f">project</span>(<span class="py-s">&quot;my_case&quot;</span>)       <span class="py-c"># a case loaded in the workspace</span>
+
+<span class="py-k">for</span> comp <span class="py-k">in</span> project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:recorder2_0&quot;</span>):   <span class="py-c"># the exact definition, namespace first</span>
+    params = comp.<span class="py-f">parameters</span>()           <span class="py-c"># every parameter, as PSCAD holds it</span>
+    <span class="py-f">print</span>(<span class="py-f">str</span>(params[<span class="py-s">&quot;AMax&quot;</span>]))           <span class="py-c"># Analogue Output Maximum</span>
+
+comp = project.<span class="py-f">find_all</span>(<span class="py-s">&quot;master:recorder2_0&quot;</span>)[<span class="py-n">0</span>]
+comp.<span class="py-f">parameters</span>(AMax=<span class="py-s">&quot;8192&quot;</span>)             <span class="py-c"># written as text</span></code></pre>
+  <ul class="dx-prose"><li>A parameter is named exactly as in the table, letter case included: <code>parameters()</code> gives every one of them in a dictionary, and a name the component does not have is refused.</li><li>A value that carries a unit comes back as a number whose unit is only in its text, so read it as text first (<code>str(...)</code>) or the unit is lost. PSCAD keeps a written unit as it is given: <code>"2500 [mohm]"</code> stays in mohm.</li><li>A Choice is read and written as its symbol (the capitals in "Written as"), not as the words PSCAD shows in the dialog.</li><li><code>find_all()</code> takes the exact definition only. A wildcard or a bare name without <code>master:</code> comes back empty; the Builder's <code>px_find</code> walks the pages for those.</li></ul>
+  <p>The Builder's runtime does the same with the unit handled for you: <code>px_get(comp, "AMax")</code> and <code>px_set(...)</code>, which also records the old value so the case is put back at the end. <a href="../../python/getting-started/">Getting started</a> shows them.</p>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. resistance" aria-label="Filter the parameters"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All master:recorder2_0 parameters"><li><a href="#g1">Main Configuration<span class="dx-n">15</span></a></li><li><a href="#g2">Analog Channel A1<span class="dx-n">8</span></a></li><li><a href="#g3">Analog Channel A10<span class="dx-n">8</span></a></li><li><a href="#g4">Analog Channel A11<span class="dx-n">8</span></a></li><li><a href="#g5">Analog Channel A12<span class="dx-n">8</span></a></li><li><a href="#g6">Analog Channel A2<span class="dx-n">8</span></a></li><li><a href="#g7">Analog Channel A3<span class="dx-n">8</span></a></li><li><a href="#g8">Analog Channel A4<span class="dx-n">8</span></a></li><li><a href="#g9">Analog Channel A5<span class="dx-n">8</span></a></li><li><a href="#g10">Analog Channel A6<span class="dx-n">8</span></a></li><li><a href="#g11">Analog Channel A7<span class="dx-n">8</span></a></li><li><a href="#g12">Analog Channel A8<span class="dx-n">8</span></a></li><li><a href="#g13">Analog Channel A9<span class="dx-n">8</span></a></li><li><a href="#g14">Digital Channels D1 - D4<span class="dx-n">12</span></a></li><li><a href="#g15">Digital Channels D9 - D12<span class="dx-n">12</span></a></li><li><a href="#g16">Digital Channels D13 - D16<span class="dx-n">12</span></a></li><li><a href="#g17">Digital Channels D5 - D8<span class="dx-n">12</span></a></li><li><a href="#g18">Comtrade Header File<span class="dx-n">5</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="g1">
+  <h2 id="g1">Main Configuration</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>AMax</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>4096</td><td>Analogue Output Maximum<small>Used only in COMTRADE format output files, output will be scaled so that miaximum number corresponds to what is specified here</small><small>Range 0 to 32767</small><small>Used when ((FFMT&gt;0))</small></td></tr>
+<tr><td><code>AMin</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>Analogue Output Minimum<small>Used only in COMTRADE format output files, output will be scaled so that minimum number corresponds to what is specified here</small><small>Range -32768 to 0</small><small>Used when ((FFMT&gt;0))</small></td></tr>
+<tr><td><code>DevNo</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>1</td><td>Recorder Device Number<small>Enter a number for identificaton purpose</small><small>Range 1 to 99</small></td></tr>
+<tr><td><code>ENTCAP</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NO</td><td>Capture Trigger Time<small>Select Yes or No</small><small>Written as NO (No), YES (Yes)</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>FFMT</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>RTP</td><td>Output File Format<small>Select from RTP, COMTRADE 91 or COMTRADE 99 output formats</small><small>Written as RTP, COMTRADE_91 (Comtrade 91), COMTRADE_99 (Comtrade 99)</small></td></tr>
+<tr><td><code>FName</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>playback</td><td>Output File Name<small>Output filename with no extension, length is limited for 8 characters for COMTRADE standard compatibility</small></td></tr>
+<tr><td><code>FREQ</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>50_HZ</td><td>System Frequency<small>Select system frequency 50Hz or 60Hz</small><small>Written as 50_HZ (50 Hz), 60_HZ (60 Hz)</small></td></tr>
+<tr><td><code>MFILE</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>SINGLE</td><td>Output Files<small>Select single or multiple, used only for COMTRADE format output files</small><small>Written as SINGLE (single), MULTIPLE (multiple)</small><small>Used when ((FFMT&gt;0))</small></td></tr>
+<tr><td><code>Mfilter</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>NEVER</td><td>Low Pass Filtering Enable<small>Select Rstep&gt;Tstep to enable low pass filtering when recording timestep is larger than simulaton timestep</small><small>Written as NEVER (never), RSTEP_TSTEP (Rstep&gt;Tstep)</small></td></tr>
+<tr><td><code>NChA</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>2</td><td>Number of 16-bit Analog Channels<small>Enter the number of analog input channels to be recorded</small><small>Range 1 to 12</small></td></tr>
+<tr><td><code>NChD</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>Number of Digital Channels<small>Enter the number of digital input channels to be recorded</small><small>Range 0 to 16</small></td></tr>
+<tr><td><code>Name</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td><span aria-label="empty">·</span></td><td>Name for Identification<small>Enter a name for identification</small></td></tr>
+<tr><td><code>NxHdr</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>Number of Extra Header File Lines<small>Select the number of lines to be added to the COMTRADE header file</small><small>Written as 0 = 0, 1 = 1, 2 = 2, 3 = 3, 4 = 4, 5 = 5</small><small>Used when FFMT&gt;0</small></td></tr>
+<tr><td><code>Rstep</code><small>Integer</small></td><td><span aria-label="no unit">·</span></td><td>50</td><td>Recording Time Step (microseconds)<small>Enter recording timestep, if less than simulation timestep simulation timestep would be used</small><small>Range 1 to 1200</small></td></tr>
+<tr><td><code>StnN</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>EMTDC_Simulation</td><td>Station Name<small>Enter a descriptive station name, required for COMTRADE output files</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g2">
+  <h2 id="g2">Analog Channel A1</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A1</td><td>A1 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A1</td><td>A1 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A1</td><td>A1 Analog Variable Name</td></tr>
+<tr><td><code>PH1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A1 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR1</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A1 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small></td></tr>
+<tr><td><code>UN1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A1</td><td>A1 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT1==2))</small></td></tr>
+<tr><td><code>VS1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A1 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A1 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+<section class="dx-sec dx-group" aria-labelledby="g3">
+  <h2 id="g3">Analog Channel A10</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A10</td><td>A10 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A10</td><td>A10 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A10</td><td>A10 Analog Variable Name</td></tr>
+<tr><td><code>PH10</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A10 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR10</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A10 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;9)</small></td></tr>
+<tr><td><code>UN10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A10</td><td>A10 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT10==2)&amp;&amp;(NChA&gt;9))</small></td></tr>
+<tr><td><code>VS10</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A10 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT10</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A10 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g4">
+  <h2 id="g4">Analog Channel A11</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A11</td><td>A11 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A11</td><td>A11 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A11</td><td>A11 Analog Variable Name</td></tr>
+<tr><td><code>PH11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A11 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR11</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A11 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;10)</small></td></tr>
+<tr><td><code>UN11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A11</td><td>A11 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT11==2)&amp;&amp;(NChA&gt;10))</small></td></tr>
+<tr><td><code>VS11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A11 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A11 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g5">
+  <h2 id="g5">Analog Channel A12</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A12</td><td>A12 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A12</td><td>A12 Variable Description  (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A12</td><td>A12 Analog Variable Name</td></tr>
+<tr><td><code>PH12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A12 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR12</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A12 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;11)</small></td></tr>
+<tr><td><code>UN12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A12</td><td>A12 _Other_  Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT12==2)&amp;&amp;(NChA&gt;11))</small></td></tr>
+<tr><td><code>VS12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A12 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A12 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g6">
+  <h2 id="g6">Analog Channel A2</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A2</td><td>A2 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A2</td><td>A2 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A2</td><td>A2 Analog Variable Name</td></tr>
+<tr><td><code>PH2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A2 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR2</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A2 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;1)</small></td></tr>
+<tr><td><code>UN2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A2</td><td>A2 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT2==2)&amp;&amp;(NChA&gt;1))</small></td></tr>
+<tr><td><code>VS2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A2 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A2 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g7">
+  <h2 id="g7">Analog Channel A3</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A3</td><td>A3 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A3</td><td>A3 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A3</td><td>A3 Analog Variable Name</td></tr>
+<tr><td><code>PH3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A3 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR3</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A3 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;2)</small></td></tr>
+<tr><td><code>UN3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A3</td><td>A3 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT3==2)&amp;&amp;(NChA&gt;2))</small></td></tr>
+<tr><td><code>VS3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A3 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A3 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g8">
+  <h2 id="g8">Analog Channel A4</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A4</td><td>A4 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A4</td><td>A4 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A4</td><td>A4 Analog Variable Name</td></tr>
+<tr><td><code>PH4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A4 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR4</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A4 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;3)</small></td></tr>
+<tr><td><code>UN4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A4</td><td>A4 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT4==2)&amp;&amp;(NChA&gt;3))</small></td></tr>
+<tr><td><code>VS4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A4 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A4 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g9">
+  <h2 id="g9">Analog Channel A5</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A5</td><td>A5 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A5</td><td>A5 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A5</td><td>A5 Analog Variable Name</td></tr>
+<tr><td><code>PH5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A5 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR5</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A5 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;4)</small></td></tr>
+<tr><td><code>UN5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A5</td><td>A5 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT5==2)&amp;&amp;(NChA&gt;4))</small></td></tr>
+<tr><td><code>VS5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A5 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A5 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g10">
+  <h2 id="g10">Analog Channel A6</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A6</td><td>A6 Component Being  Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A6</td><td>A6 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A6</td><td>A6 Analog Variable Name</td></tr>
+<tr><td><code>PH6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A6 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR6</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A6 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;5)</small></td></tr>
+<tr><td><code>UN6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A6</td><td>A6 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT6==2)&amp;&amp;(NChA&gt;5))</small></td></tr>
+<tr><td><code>VS6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A6 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A6 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g11">
+  <h2 id="g11">Analog Channel A7</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A7</td><td>A7 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A7</td><td>A7 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A7</td><td>A7 Analog Variable Name</td></tr>
+<tr><td><code>PH7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A7 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR7</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A7 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;6)</small></td></tr>
+<tr><td><code>UN7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A7</td><td>A7 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT7==2)&amp;&amp;(NChA&gt;6))</small></td></tr>
+<tr><td><code>VS7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A7 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A7 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g12">
+  <h2 id="g12">Analog Channel A8</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A8</td><td>A8 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A8</td><td>A8 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A8</td><td>A8 Analog Variable Name</td></tr>
+<tr><td><code>PH8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A8 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR8</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A8 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;7)</small></td></tr>
+<tr><td><code>UN8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A8</td><td>A8 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT8==2)&amp;&amp;(NChA&gt;7))</small></td></tr>
+<tr><td><code>VS8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A8 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A8 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g13">
+  <h2 id="g13">Analog Channel A9</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>CT9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A9</td><td>A9 Component Being Monitored (Comtrade)<small>Enter the component being monitored, this will be written in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>DA9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A9</td><td>A9 Variable Description (Comtrade)<small>Enter the variable description to be used in the COMTRADE configuration file</small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>NA9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A9</td><td>A9 Analog Variable Name</td></tr>
+<tr><td><code>PH9</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>A9 Phase Identification<small>Select phases A,B,C or N, used in COMTRADE only</small><small>Written as B, C, N, </small><small>Used when (FFMT&gt;0)</small></td></tr>
+<tr><td><code>TR9</code><small>Real</small></td><td><span aria-label="no unit">·</span></td><td>1.0</td><td>A9 PT or CT Ratio<small>Enter CT/PT ratio, note primary signals are in kV and kA</small><small>Range 1E-20 to 1E+20</small><small>Used when (NChA&gt;8)</small></td></tr>
+<tr><td><code>UN9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>A9</td><td>A9 _Other_ Unit<small>Enter the unit if the variable is not current or voltage</small><small>Used when ((VT9==2)&amp;&amp;(NChA&gt;8))</small></td></tr>
+<tr><td><code>VS9</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>PRIMARY</td><td>A9 Variable Source<small>Select Primary or Secondary source, if Primary is selected the output will be scaled by the PT/CT ratio</small><small>Written as PRIMARY (Primary), SECONDARY (Secondary)</small></td></tr>
+<tr><td><code>VT9</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>VOLTAGE</td><td>A9 Variable Type<small>Select Voltage, Current or Other</small><small>Written as VOLTAGE (Voltage), CURRENT (Current), OTHER (Other)</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g14">
+  <h2 id="g14">Digital Channels D1 - D4</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DD1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D1</td><td>D1 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=1))</small></td></tr>
+<tr><td><code>DD2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D2</td><td>D2 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=2))</small></td></tr>
+<tr><td><code>DD3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D3</td><td>D3 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=3))</small></td></tr>
+<tr><td><code>DD4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D4</td><td>D4 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=4))</small></td></tr>
+<tr><td><code>ND1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D1</td><td>D1 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=1)</small></td></tr>
+<tr><td><code>ND2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D2</td><td>D2 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=2)</small></td></tr>
+<tr><td><code>ND3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D3</td><td>D3 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=3)</small></td></tr>
+<tr><td><code>ND4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D4</td><td>D4 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=4)</small></td></tr>
+<tr><td><code>NT1</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D1 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=1))</small></td></tr>
+<tr><td><code>NT2</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D2 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=2))</small></td></tr>
+<tr><td><code>NT3</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D3 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=3))</small></td></tr>
+<tr><td><code>NT4</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D4 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=4))</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g15">
+  <h2 id="g15">Digital Channels D9 - D12</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DD10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D10</td><td>D10 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=10))</small></td></tr>
+<tr><td><code>DD11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D11</td><td>D11 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=11))</small></td></tr>
+<tr><td><code>DD12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D12</td><td>D12 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=12))</small></td></tr>
+<tr><td><code>DD9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D9</td><td>D9 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=9))</small></td></tr>
+<tr><td><code>ND10</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D10</td><td>D10 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=10)</small></td></tr>
+<tr><td><code>ND11</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D11</td><td>D11 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=11)</small></td></tr>
+<tr><td><code>ND12</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D12</td><td>D12 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=12)</small></td></tr>
+<tr><td><code>ND9</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D9</td><td>D9 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=9)</small></td></tr>
+<tr><td><code>NT10</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D10 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=10))</small></td></tr>
+<tr><td><code>NT11</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D11 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=11))</small></td></tr>
+<tr><td><code>NT12</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D12 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=12))</small></td></tr>
+<tr><td><code>NT9</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D9 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=9))</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g16">
+  <h2 id="g16">Digital Channels D13 - D16</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DD13</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D13</td><td>D13 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=13))</small></td></tr>
+<tr><td><code>DD14</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D14</td><td>D14 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=14))</small></td></tr>
+<tr><td><code>DD15</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D15</td><td>D15 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=15))</small></td></tr>
+<tr><td><code>DD16</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D16</td><td>D16 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=16))</small></td></tr>
+<tr><td><code>ND13</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D13</td><td>D13 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=13)</small></td></tr>
+<tr><td><code>ND14</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D14</td><td>D14 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=14)</small></td></tr>
+<tr><td><code>ND15</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D15</td><td>D15 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=15)</small></td></tr>
+<tr><td><code>ND16</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D16</td><td>D16 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=16)</small></td></tr>
+<tr><td><code>NT13</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D13 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=13))</small></td></tr>
+<tr><td><code>NT14</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D14 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=14))</small></td></tr>
+<tr><td><code>NT15</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D15 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=15))</small></td></tr>
+<tr><td><code>NT16</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D16 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=16))</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g17">
+  <h2 id="g17">Digital Channels D5 - D8</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>DD5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D5</td><td>D5 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=5))</small></td></tr>
+<tr><td><code>DD6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D6</td><td>D6 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=6))</small></td></tr>
+<tr><td><code>DD7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D7</td><td>D7 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=7))</small></td></tr>
+<tr><td><code>DD8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D8</td><td>D8 Variable Description<small>Variable description to be used in the COMTRADE configuration file</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=8))</small></td></tr>
+<tr><td><code>ND5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D5</td><td>D5 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=5)</small></td></tr>
+<tr><td><code>ND6</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D6</td><td>D6 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=6)</small></td></tr>
+<tr><td><code>ND7</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D7</td><td>D7 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=7)</small></td></tr>
+<tr><td><code>ND8</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>D8</td><td>D8 Status Variable Name<small>Digital input variable name</small><small>Used when (NCHD&gt;=8)</small></td></tr>
+<tr><td><code>NT5</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D5 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=5))</small></td></tr>
+<tr><td><code>NT6</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D6 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=6))</small></td></tr>
+<tr><td><code>NT7</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D7 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=7))</small></td></tr>
+<tr><td><code>NT8</code><small>Choice</small></td><td><span aria-label="no unit">·</span></td><td>0</td><td>D8 Normal Operating State<small>Select 0 or 1, default initial value</small><small>Written as 0 = 0, 1 = 1</small><small>Used when ((FFMT&gt;0)&amp;&amp;(NCHD&gt;=8))</small></td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="g18">
+  <h2 id="g18">Comtrade Header File</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Parameter</th><th>Unit</th><th>Default</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>Hdr1</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Extra_Line_1</td><td>Extra Header File Line 1<small>Descriptive line to be added to the COMTRADE header file</small><small>Used when (Nxhdr&gt;0)</small></td></tr>
+<tr><td><code>Hdr2</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Extra_Line_2</td><td>Extra Header File Line 2<small>Descriptive line to be added to the COMTRADE header file</small><small>Used when (Nxhdr&gt;1)</small></td></tr>
+<tr><td><code>Hdr3</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Extra_Line_3</td><td>Extra Header File Line 3<small>Descriptive line to be added to the COMTRADE header file</small><small>Used when (Nxhdr&gt;2)</small></td></tr>
+<tr><td><code>Hdr4</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Extra_Line_4</td><td>Extra Header File Line 4<small>Descriptive line to be added to the COMTRADE header file</small><small>Used when (Nxhdr&gt;3)</small></td></tr>
+<tr><td><code>Hdr5</code><small>Text</small></td><td><span aria-label="no unit">·</span></td><td>Extra_Line_5</td><td>Extra Header File Line 5<small>Descriptive line to be added to the COMTRADE header file</small><small>Used when (Nxhdr&gt;4)</small></td></tr>
+</tbody></table></div>
+</section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 345 definitions in the component reference</a></li>
+    <li><a href="../../python/getting-started/">PSCAD automation with Python: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../master-zrealpole/"><code>master:Zrealpole</code> Real Pole</a> · <a href="../master-sandhdefn/"><code>master:sandhdefn</code> Sample and Hold</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PSCAD and EMTDC are trademarks of Manitoba Hydro International Ltd. This page is independent and not endorsed by MHI. Definition names, parameter names and their descriptions are as PSCAD itself reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

@@ -46,12 +46,10 @@
    "y": 200,
    "label": "Fault duration (s)",
    "s": {
-    "from": 0.05,
-    "to": 0.5,
     "tol": 0.005,
     "name": "",
-    "lower": 0,
-    "upper": 100,
+    "lower": 0.05,
+    "upper": 0.5,
     "maxSteps": 20,
     "passes": "low",
     "bracket": "given",
@@ -70,7 +68,7 @@
    "label": "Fault",
    "s": {
     "el": {
-     "cls": "master:tpflt",
+     "cls": "master:tfaultn",
      "name": "",
      "match": "one"
     },
@@ -135,10 +133,10 @@
    "y": 60,
    "label": "Stays in step",
    "s": {
-    "op": "ge",
+    "op": "le",
     "limit": 1.05,
     "tol": 0,
-    "goOn": false
+    "goOn": true
    },
    "pin": [],
    "sv": 1
@@ -194,13 +192,6 @@
    "in": "in"
   },
   {
-   "id": "e5",
-   "from": "n7",
-   "out": "pass",
-   "to": "n8",
-   "in": "in"
-  },
-  {
    "id": "e6",
    "from": "n2",
    "out": "value",
@@ -241,6 +232,13 @@
    "out": "value",
    "to": "n8",
    "in": "c1"
+  },
+  {
+   "id": "e5",
+   "from": "n7",
+   "out": "pass",
+   "to": "n8",
+   "in": "in"
   }
  ],
  "view": {

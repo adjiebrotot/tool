@@ -1,0 +1,296 @@
+{
+ "skill": "brotools-ed-uc-simulator",
+ "tool": "ED/UC Simulator",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "ed-uc-simulator",
+   "url": "/ed-uc-simulator/",
+   "base": "https://tool.adjiebrotots.com/ed-uc-simulator/",
+   "lang": "en",
+   "title": "ED/UC Simulator",
+   "reference": "references/ed-uc-simulator.md",
+   "decides": "How a power network is run over a stretch of hours at least cost: how much each generator, storage unit and HVDC link produces or moves in every hour, which units are switched on (unit commitment), what the operation costs, and the price of power at every bus (nodal prices), where a full line splits them. It solves on a single-line diagram, in economic dispatch or unit commitment mode.",
+   "important": [
+    "edMode",
+    "edSpan",
+    "edSpanUnit",
+    "edStart",
+    "edLimits",
+    "edShed",
+    "edVoll",
+    "edCur"
+   ],
+   "fields": [
+    {
+     "key": "edCur",
+     "label": "Currency symbol",
+     "group": "Dispatch",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "edMode",
+     "label": "Solve as",
+     "group": "Dispatch: Problem",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "uc",
+       "label": "Unit commitment, mixed-integer"
+      },
+      {
+       "value": "lin",
+       "label": "Unit commitment, linear relaxation"
+      },
+      {
+       "value": "edm",
+       "label": "Economic dispatch"
+      },
+      {
+       "value": "ed",
+       "label": "Economic dispatch, no minimum output"
+      }
+     ],
+     "default": "edm",
+     "important": true
+    },
+    {
+     "key": "edSpan",
+     "label": "Horizon",
+     "group": "Dispatch: Problem",
+     "kind": "number",
+     "min": 1,
+     "max": 30,
+     "step": 1,
+     "default": "1",
+     "unitSetBy": [
+      "edSpanUnit"
+     ],
+     "important": true
+    },
+    {
+     "key": "edSpanUnit",
+     "label": "Horizon",
+     "group": "Dispatch: Problem",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "h",
+       "label": "hours"
+      },
+      {
+       "value": "d",
+       "label": "days"
+      }
+     ],
+     "default": "d",
+     "important": true
+    },
+    {
+     "key": "edStart",
+     "label": "First hour",
+     "group": "Dispatch: Problem",
+     "kind": "datetime",
+     "default": "2026-01-01T00:00",
+     "important": true
+    },
+    {
+     "key": "edLimits",
+     "label": "Line limits",
+     "group": "Dispatch: Network",
+     "kind": "checkbox",
+     "default": true,
+     "important": true
+    },
+    {
+     "key": "edShed",
+     "label": "Allow load shedding",
+     "group": "Dispatch: Load shedding",
+     "kind": "checkbox",
+     "default": true,
+     "important": true
+    },
+    {
+     "key": "edVoll",
+     "label": "Value of lost load (VoLL)",
+     "group": "Dispatch: Load shedding",
+     "kind": "number",
+     "unit": "$ /MWh",
+     "min": 100,
+     "max": 100000,
+     "step": 100,
+     "default": "10000",
+     "important": true
+    },
+    {
+     "key": "edGap",
+     "label": "Optimality gap",
+     "group": "Dispatch: Solver",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0.0001",
+       "label": "0.01%"
+      },
+      {
+       "value": "0.001",
+       "label": "0.1%"
+      },
+      {
+       "value": "0.01",
+       "label": "1%"
+      }
+     ],
+     "default": "0.0001"
+    },
+    {
+     "key": "edTime",
+     "label": "Time limit",
+     "group": "Dispatch: Solver",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "10",
+       "label": "10 s"
+      },
+      {
+       "value": "30",
+       "label": "30 s"
+      },
+      {
+       "value": "60",
+       "label": "60 s"
+      },
+      {
+       "value": "300",
+       "label": "5 min"
+      }
+     ],
+     "default": "60"
+    }
+   ],
+   "lists": [],
+   "families": [
+    "el."
+   ],
+   "json": true,
+   "run": true,
+   "quickStarts": [
+    {
+     "key": "pjm5",
+     "title": "PJM 5-bus"
+    },
+    {
+     "key": "uc3",
+     "title": "Three units"
+    },
+    {
+     "key": "solar",
+     "title": "Solar and battery"
+    },
+    {
+     "key": "areas",
+     "title": "Two areas"
+    }
+   ]
+  }
+ ]
+}

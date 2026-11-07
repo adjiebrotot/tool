@@ -2,16 +2,16 @@
 // AI links — site-wide check.
 //
 // A reader asks their own chatbot about a tool; the chatbot reads the page's AI section
-// (<tool>/agent.txt, written by _ref/agent-doc.mjs) and replies with a #load link that
+// (its tool's skill, <tool>/ai/skill/references/<page>.md, written by _ref/agent-doc.mjs) and replies with a #load link that
 // opens the tool on that scenario (SharedAgent in shared.js). Such a link lives on in the
 // reader's chat history as long as a Share link does, and anyone can write one, so this
 // drives the real pages in headless Chromium to hold them to what they promise:
 //
-//   A1. THE DOCS NAME ONLY WHAT IS THERE. Every key the generated docs list (agent.txt and
-//       the folded card on the page) is a live control the mini cache saves, every choice
+//   A1. THE DOCS NAME ONLY WHAT IS THERE. Every key the generated docs list (the page's
+//       reference in its tool's skill) is a live control the mini cache saves, every choice
 //       they print is one of its options, every list key is one the tool's adapter reads,
 //       every Quick Start they name is one the page has, every figure they print is a value
-//       its field takes, and llms.txt lists each page's agent.txt and nothing else. A
+//       its field takes, and llms.txt lists each tool's skill and nothing else. A
 //       chatbot that follows the docs never writes a link the tool cannot read.
 //   A2. A KEPT LINK KEEPS OPENING. _ref/agent-links.json keeps links as a chatbot writes
 //       them (the docs' examples, each list syntax, a realistic one over a sample of the
@@ -37,15 +37,14 @@
 //   A6. AN ENGINEERING MODEL COMES WHOLE. Each Engineering page (a PAGES entry with a
 //       solved hook) keeps a link carrying a whole custom model in json, and it opens and
 //       solves.
-//   A7. THE RULES ARE THE RULES. Every generated text (each agent.txt, each agent.html's
-//       pre.agent-rules, the llms.txt section) carries AI_RULES verbatim, so no
+//   A7. THE RULES ARE THE RULES. Every generated text (each page reference in a skill, the
+//       llms.txt section) carries AI_RULES verbatim, so no
 //       chatbot is told it may answer the question itself; and no generated text and no
 //       kept link uses the keys s, open or embed.
-//   A8. A READER THAT ONLY OPENS WEB PAGES FINDS IT TOO. Each page has an agent.html, a
-//       web page with the agent.txt reference in its HTML (AI_RULES verbatim in its
-//       pre.agent-rules; its only script is the Copy system prompt button), and the tool
-//       page's own HTML links to it with a plain <a href> in a hidden pointer that people
-//       never see. Some chatbots' browsers open web pages but return nothing for a .txt.
+//   A8. PEOPLE AND ASSISTANTS FIND THE SKILL. Each page's tool has its AI page
+//       (<tool>/ai/index.html), its skill zip and the same skill unzipped (SKILL.md first),
+//       and the tool page's own HTML points to the AI page in a hidden pointer people never
+//       see, whose data-ai is where the header's "Use in AI" button goes.
 //       After a deploy, node _ref/agent-live-check.mjs checks the same on the live site.
 //   H.  THE LINK STEPS ASIDE. Once applied, the #load hash is gone from the address, and a
 //       reload keeps what the reader changed after it instead of applying the link again.
@@ -58,6 +57,7 @@
 // stubbed (agent-lib's openPage), so it runs offline.
 //
 // Run: node _ref/agent-check.mjs [page]     page: part of a PAGES page, e.g. rentvsownhouse
+import { TOOLS, toolOf, skillName, refName, aiUrl } from './ai-skill.mjs';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -65,6 +65,8 @@ import {
   AI_RULES, PAGES, ROOT, SITE, RESERVED, FORBIDDEN, WHY_MAX, SECTION_RE, LIST_KEY_RE,
   serve, launch, openPage, readFields, defaultQuickStarts, defaultProbe
 } from './agent-lib.mjs';
+// A page's reference: the skill of its tool carries it.
+const refPath = P => toolOf(P.page) + '/ai/skill/references/' + refName(P.page);
 
 const FILTER = process.argv.slice(2).find(a => !a.startsWith('-')) || '';
 const pages = PAGES.filter(P => !FILTER || P.page.includes(FILTER.replace(/^\/|\/$/g, '')));
@@ -337,7 +339,7 @@ async function liveOf(P) {
   await V.close();
   const qs = new Set();
   if (qsRead) for (const g of qsRead.groups) { if (g.key) qs.add(g.key); for (const it of g.items) qs.add(it.key); }
-  const txt = read(P.page + '/agent.txt');
+  const txt = read(refPath(P));
   const docs = txt ? parseDocs(txt) : null;
   return { fields: got.fields, byKey: Object.fromEntries(got.fields.map(f => [f.key, f])), qs, card, docs, txt,
     lists: docs ? docs.lists.filter(k => !real.has(k)) : [], families: P.families || [], errs };
@@ -358,8 +360,8 @@ const forbiddenIn = text => [...new Set([...String(text).matchAll(/(?:[#&?\s]|^)
 const llms = read('llms.txt') || '';
 const llmsSec = (llms.match(SECTION_RE) || [''])[0];
 for (const P of pages) {
-  const txt = read(P.page + '/agent.txt');
-  check('A7', `${P.page}/agent.txt carries AI_RULES verbatim`, !!txt && txt.includes(AI_RULES), !txt ? 'missing' : txt.includes(AI_RULES) ? '' : 'lacks or alters it');
+  const txt = read(refPath(P));
+  check('A7', `${refPath(P)} carries AI_RULES verbatim`, !!txt && txt.includes(AI_RULES), !txt ? 'missing' : txt.includes(AI_RULES) ? '' : 'lacks or alters it');
   const html = read(P.page + '/index.html') || '';
   const sec = (html.match(SECTION_RE) || [''])[0];
   const bad = [...forbiddenIn(txt || ''), ...forbiddenIn(unescape(sec))];
@@ -371,19 +373,24 @@ check('A7', 'llms.txt section carries AI_RULES verbatim', !!llmsSec && llmsSec.i
   !llmsSec ? 'no agent section' : llmsSec.includes(AI_RULES) ? '' : 'lacks or alters it');
 check('A7', 'llms.txt section uses no key s, open or embed', forbiddenIn(llmsSec).length === 0, forbiddenIn(llmsSec).join(', '));
 
-/* ── A8: the reference as a web page, linked from the tool (files only) ───── */
-console.log('\n── A8 the reference as a web page ──');
+/* ── A8: the skill and its page, pointed to from the tool (files only) ──────── */
+console.log('\n── A8 the skill and its AI page ──');
 for (const P of pages) {
-  const page = read(P.page + '/agent.html');
-  // Its one script is the Copy system prompt button, which copies text already in the HTML.
-  const scripts = [...(page || '').matchAll(/<script\b([^>]*)>/gi)];
-  const scriptOk = scripts.length <= 1 && scripts.every(m => !/\bsrc=/i.test(m[1])) && (!scripts.length || page.includes('id="copyPrompt"'));
-  const pres = [...(page || '').matchAll(/<pre class="agent-rules">([\s\S]*?)<\/pre>/g)].map(m => unescape(m[1]));
-  check('A8', `${P.page}/agent.html carries AI_RULES verbatim, with no script but the copy button's`, !!page && pres.length === 1 && pres[0] === AI_RULES && scriptOk,
-    !page ? 'missing' : !scriptOk ? 'has another script' : pres.length !== 1 ? `${pres.length} pre.agent-rules` : pres[0] === AI_RULES ? '' : 'altered');
+  const T = TOOLS.find(T => T.tool === toolOf(P.page));
+  if (!T) { check('A8', `${P.page} belongs to a tool in TOOLS`, false, 'add it to _ref/ai-skill.mjs'); continue; }
+  const dir = T.tool + '/ai/';
+  const have = ['index.html', skillName(T) + '.zip', 'skill/SKILL.md', 'skill/references/params.json', 'skill/scripts/build_link.py'].filter(f => !existsSync(join(ROOT, dir + f)));
+  check('A8', `${P.page}: ${dir} has its page, zip and skill`, have.length === 0, list(have));
+  const md = read(dir + 'skill/SKILL.md') || '';
+  check('A8', `${P.page}: SKILL.md opens with its name and description`, md.startsWith('---\nname: ' + skillName(T) + '\ndescription: '), 'no YAML front matter');
+  // Strict YAML (Copilot) rejects a bare description with a colon in it: it must be one quoted string.
+  const descLine = (md.split('\n')[2] || '').slice('description: '.length);
+  let quoted = false;
+  try { quoted = descLine.startsWith('"') && typeof JSON.parse(descLine) === 'string' && md.split('\n')[3] === '---'; } catch (e) {}
+  check('A8', `${P.page}: SKILL.md description is one double-quoted YAML string`, quoted, 'unquoted or multi-line description');
   const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
-  const href = SITE + P.url + 'agent.html';
-  check('A8', `${P.page}/index.html hidden pointer links to agent.html`, sec.includes(`<a href="${href}">`), sec ? 'no <a href> to ' + href : 'no agent section');
+  const href = aiUrl(T);
+  check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="/${dir}"`), sec ? 'no <a href> or data-ai for ' + href : 'no agent section');
   check('A8', `${P.page}/index.html shows people no AI text`, /<div id="agentHelp"[^>]*\shidden[\s>]/.test(sec) && !/<details|agent-rules/.test(sec), sec ? 'the agent section is visible' : 'no agent section');
 }
 
@@ -398,11 +405,11 @@ try {
     const kept = keptFor(P);
 
     /* ── A1: every key the docs list is live ── */
-    if (!D) check('A1', `${P.page} has agent.txt`, false, 'missing: run node _ref/agent-doc.mjs');
+    if (!D) check('A1', `${P.page} has its reference`, false, 'missing: run node _ref/agent-doc.mjs');
     else {
       check('A1', `${P.page} opens with no error`, live.errs.length === 0, list(live.errs, 2));
       const gone = D.fields.filter(f => !live.byKey[f.key]).map(f => f.key);
-      check('A1', `${P.page} agent.txt: each of its ${D.fields.length} fields is a live saved control`, D.fields.length + live.lists.length > 0 && gone.length === 0, gone.length ? list(gone) : '');
+      check('A1', `${P.page} reference: each of its ${D.fields.length} fields is a live saved control`, D.fields.length + live.lists.length > 0 && gone.length === 0, gone.length ? list(gone) : '');
       const badOpts = [];
       for (const f of D.fields.filter(f => f.options)) {
         const lf = live.byKey[f.key];
@@ -414,31 +421,31 @@ try {
         }
       }
       const nOpts = D.fields.reduce((n, f) => n + (f.options ? f.options.length : 0), 0);
-      check('A1', `${P.page} agent.txt: each of the ${nOpts} choices it prints is a live option`, badOpts.length === 0, list(badOpts));
+      check('A1', `${P.page} reference: each of the ${nOpts} choices it prints is a live option`, badOpts.length === 0, list(badOpts));
       const impGone = D.important.filter(k => !live.byKey[k] && !live.lists.includes(k));
-      check('A1', `${P.page} agent.txt: the most important keys are live`, impGone.length === 0, list(impGone));
+      check('A1', `${P.page} reference: the most important keys are live`, impGone.length === 0, list(impGone));
       // List keys: the tool's adapter reads each one (a link naming it is not "not recognised").
       if (live.lists.length) {
         const V = await visit(P, '#load&v=1&' + live.lists.map(k => k + '=%7E').join('&'));
         const s = await snapshot(V.page);
         const unread = live.lists.filter(k => !s.report || s.report.unknown.includes(k));
-        check('A1', `${P.page} agent.txt: its list keys (${live.lists.join(', ')}) are read by the tool`, !V.failed && unread.length === 0,
+        check('A1', `${P.page} reference: its list keys (${live.lists.join(', ')}) are read by the tool`, !V.failed && unread.length === 0,
           V.failed || list(unread));
         await V.close();
-      } else check('A1', `${P.page} agent.txt: list keys`, true, 'none');
+      } else check('A1', `${P.page} reference: list keys`, true, 'none');
       // A family of keys (el.<name>.<param>): the tool's adapter reads the prefix, so a key in it is never "not recognised".
       for (const pre of live.families) {
         const key = pre + 'zzNoSuch.zz';
         const V = await visit(P, '#load&v=1&' + encodeURIComponent(key).replace(/%2E/g, '.') + '=1');
         const s = await snapshot(V.page);
-        check('A1', `${P.page} agent.txt: the tool reads the ${pre}* keys`, !V.failed && !!s.report && !s.report.unknown.includes(key) && s.report.errors.length > 0,
+        check('A1', `${P.page} reference: the tool reads the ${pre}* keys`, !V.failed && !!s.report && !s.report.unknown.includes(key) && s.report.errors.length > 0,
           V.failed || (!s.report ? 'no report' : s.report.unknown.includes(key) ? 'not recognised' : 'no error for a part that is not there'));
         await V.close();
       }
       const strayNotes = D.listNotes.filter(k => !live.byKey[k] && !live.lists.includes(k));
-      check('A1', `${P.page} agent.txt: the keys its list notes explain are live`, strayNotes.length === 0, list(strayNotes));
+      check('A1', `${P.page} reference: the keys its list notes explain are live`, strayNotes.length === 0, list(strayNotes));
       const qsGone = D.qs.filter(k => !live.qs.has(k));
-      check('A1', `${P.page} agent.txt: each of its ${D.qs.length} Quick Starts is live`, qsGone.length === 0, list(qsGone));
+      check('A1', `${P.page} reference: each of its ${D.qs.length} Quick Starts is live`, qsGone.length === 0, list(qsGone));
       const figBad = D.figures.map(([k, v, where]) => {
         if (k === 'qs') return live.qs.has(v) ? '' : `qs=${v} (${where})`;
         const f = live.byKey[k];
@@ -447,15 +454,14 @@ try {
         const why = refuses(f, v);
         return why ? `${k}=${v}: ${why}` : '';
       }).filter(Boolean);
-      check('A1', `${P.page} agent.txt: each of its ${D.figures.length} Quick Start figures is a value its field takes`, figBad.length === 0, list(figBad));
+      check('A1', `${P.page} reference: each of its ${D.figures.length} Quick Start figures is a value its field takes`, figBad.length === 0, list(figBad));
       const linkBad = D.links.flatMap(l => linkProblems(pairsOf(l), live));
-      check('A1', `${P.page} agent.txt: its ${D.links.length} example link(s) use live keys and values`, D.links.length > 0 && linkBad.length === 0,
+      check('A1', `${P.page} reference: its ${D.links.length} example link(s) use live keys and values`, D.links.length > 0 && linkBad.length === 0,
         D.links.length ? list(linkBad) : 'no example link');
       check('A8', `${P.page} has the hidden pointer to its reference, unseen on the page`, !!live.card && live.card.hidden,
         !live.card ? 'no #agentHelp' : 'it is visible');
-      const re = s => s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-      const listed = new RegExp('^- .*: ' + re(`${SITE + P.url}agent.html (plain text: ${SITE + P.url}agent.txt)`) + '$', 'm');
-      check('A1', `llms.txt lists ${P.url}agent.html and agent.txt`, listed.test(llmsSec), '');
+      const T = TOOLS.find(T => T.tool === toolOf(P.page));
+      check('A1', `llms.txt lists ${T ? aiUrl(T) : P.page}`, !!T && llmsSec.includes(`- ${T.name}: ${aiUrl(T)} `), '');
     }
 
     /* ── A2 (and H, A6): every kept link ── */
@@ -654,9 +660,9 @@ try {
   /* ── A1/A2: the files themselves ── */
   const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === k.page)).map(k => `${k.page} "${k.name}"`);
   check('A2', 'every kept link names a page in PAGES', orphans.length === 0, list(orphans));
-  const listedUrls = [...llmsSec.matchAll(/^- .*: (\S+)agent\.html \(plain text: \1agent\.txt\)$/gm)].map(m => m[1]);
-  const strays = listedUrls.filter(u => !PAGES.some(P => SITE + P.url === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'agent.txt')) || !existsSync(join(ROOT, u.slice(SITE.length), 'agent.html')));
-  check('A1', `llms.txt lists only pages with an agent.txt (${listedUrls.length})`, strays.length === 0, list(strays));
+  const listedUrls = [...llmsSec.matchAll(/^- .*?: (\S+\/ai\/) \(skill:/gm)].map(m => m[1]);
+  const strays = listedUrls.filter(u => !TOOLS.some(T => aiUrl(T) === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'skill', 'SKILL.md')));
+  check('A1', `llms.txt lists only tools with a skill (${listedUrls.length})`, strays.length === 0, list(strays));
 } finally {
   await browser.close();
   await srv.close();

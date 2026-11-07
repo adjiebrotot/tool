@@ -371,9 +371,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
-    if from_snapshot:
+    # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
+    # run given neither argument keeps that start rather than going back to zero.
+    sticky = (_PX.get("snap_start") or {}).get(name, "")
+    if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
-        want["startup_filename"] = str(from_snapshot)
+        want["startup_filename"] = str(from_snapshot or sticky)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -528,6 +531,7 @@ def snapshot_use(app, filename, prj=None):
             "run will start from zero." % full, "warn")
     sim_settings(app, prj, StartType="FROM_SNAP_FILE", startup_filename=name,
                  SnapType="NONE")
+    _PX.setdefault("snap_start", {})[str(getattr(prj, "name", "") or "")] = name
     log("Runs now start from the snapshot %s." % name, "info")
     return full
 
@@ -536,6 +540,7 @@ def snapshot_off(app, prj=None):
     """Go back to starting runs from zero."""
     prj = prj if prj is not None else _PX["project"]
     sim_settings(app, prj, StartType="STANDARD", SnapType="NONE")
+    _PX.setdefault("snap_start", {}).pop(str(getattr(prj, "name", "") or ""), None)
     log("Runs start from zero again.", "info")
     return True
 # @end

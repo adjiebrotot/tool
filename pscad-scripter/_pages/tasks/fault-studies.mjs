@@ -1,106 +1,91 @@
-// Guide: fault ride through over a range of fault durations, then the critical clearing time
-// found by bisection. Two Quick Starts: frt on the page, cct beside it.
+// Guide: fault studies. Fault ride through over durations (frt) and the critical clearing time
+// by bisection (cct).
 export default async function ({ builderScript, builderBlock, builderExtra, pre }) {
-  const b = await builderScript('frt', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+  const frt = await builderScript('frt', ({ set }) => set('n1', {
+    project: 'C:/Studies/wind_farm/wind_farm.pscx',
   }));
-  const c = await builderScript('cct', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+  const cct = await builderScript('cct', ({ set }) => set('n1', {
+    project: 'C:/Studies/plant/plant.pscx',
   }));
 
   return {
     slug: 'fault-studies', crumb: 'Fault studies',
-    card: 'Fault ride through and critical clearing time in PSCAD',
-    title: 'PSCAD fault ride through and critical clearing time with Python',
-    h1: 'Fault ride through and critical clearing time in PSCAD',
-    desc: 'Sweep a fault duration in PSCAD from Python: apply the fault, run the EMT simulation, read the voltage dip and the speed nadir, then bisect the duration for a critical clearing time.',
-    lead: `A fault study in PSCAD is a loop of runs. There is <strong>no event list to fill</strong>: the fault is a component already drawn in the case, and the study writes its start time and its duration before each run. Ride through asks what happens over a range of durations; a critical clearing time asks for the longest one the machine survives, which is a search rather than a sweep. Both are the same three blocks with a different thing wrapped around them.`,
-    whatTitle: 'How a fault is applied in PSCAD',
-    methodTitle: 'The method, both ways round',
+    card: 'Fault studies in PSCAD with Python: ride through and critical clearing time',
+    title: 'PSCAD fault studies with Python: fault ride through and critical clearing time',
+    h1: 'Fault ride through and critical clearing time in PSCAD with Python',
+    desc: 'Script PSCAD fault studies in Python: time a fault from a script, run fault ride through over fault durations, and find the critical clearing time by bisection.',
+    lead: 'A fault study in PSCAD is a loop around a fault that is <strong>already drawn in the case</strong>: the script writes when it starts and how long it lasts, runs the case, and reads how the voltage dipped and the machines swung. Do that over a range of durations and it is a fault ride through study; halve the gap between a duration that passes and one that fails and it is a critical clearing time.',
+    whatTitle: 'How a fault is applied from a script',
     qsTitle: 'Fault ride through over fault durations',
     level: 'Intermediate',
-    keywords: ['pscad fault ride through', 'pscad critical clearing time', 'pscad fault python', 'tfaultn', 'tpflt', 'LVRT PSCAD', 'pscad fault duration sweep', 'EMT fault study'],
-    about: ['PSCAD', 'Fault ride through', 'Critical clearing time', 'Electromagnetic transient simulation'],
+    keywords: ['pscad fault ride through python', 'pscad critical clearing time', 'pscad fault timing script', 'timed fault logic', 'pscad frt study', 'pscad tpflt', 'mhi.pscad fault'],
+    about: ['Fault ride through', 'Critical clearing time', 'PSCAD', 'Transient stability'],
     sections: {
-      what: `  <p>A fault in PSCAD is two components. The <a href="../../reference/tpflt/">Three Phase Fault</a> (<code>master:tpflt</code>) is the fault itself: which phases it takes down, whether it goes to ground, and its on and off resistance. Beside it sits the <a href="../../reference/tfaultn/">Timed Fault Logic</a> (<code>master:tfaultn</code>), which holds <strong>when the fault is applied (<code>TF</code>) and how long it lasts (<code>DF</code>)</strong>, both in seconds.</p>
-  <p>So the study writes two numbers on one component and runs. Nothing else about the fault changes between passes, which is what makes the sweep cheap to write and easy to trust: the only difference between one row and the next is a duration.</p>
-  <p>The same shape covers a breaker: the <a href="../../reference/breaker3/">3 Phase Breaker</a> is driven by the Timed Breaker Logic beside it, whose <code>TO1</code> and <code>TO2</code> are the times it operates.</p>
-  <p>What you read back depends on what the study is for.</p>
-  <ul class="dx-prose">
-    <li><strong>Ride through</strong> asks whether the plant stayed connected and whether the voltage recovered: the lowest point of the voltage at the connection point, and how long it took to come back.</li>
-    <li><strong>Stability</strong> asks whether the machine stayed in step: the nadir of its speed, and whether it came back to the nominal rather than running away.</li>
-    <li><strong>A critical clearing time</strong> asks for the longest fault the machine survives, which is the boundary between a pass and a fail.</li>
-  </ul>`,
-      method: `  <h3>Ride through: a sweep</h3>
-  <p>Every duration in the range is run, and each pass writes a row. The sweep is worth running first even when you only want the critical clearing time, because it shows the shape of the answer and tells you the range to search in.</p>
-  <ol class="dx-steps">
-    <li><strong>Loop over the durations</strong> you care about. Grid codes usually set the ones that matter, so the range is a list rather than a guess.</li>
-    <li><strong>Write the fault timing</strong> on the Timed Fault Logic before each run. Apply the fault well after the case has settled, not at <code>t = 0</code>.</li>
-    <li><strong>Run</strong> long enough to see the recovery, not just the fault. A fault cleared at 1.2 s in a 5 s run leaves nearly four seconds of recovery to look at.</li>
-    <li><strong>Read the channels</strong>: the voltage at the connection point, and the machine speed.</li>
-    <li><strong>Take a number off each</strong>: the lowest voltage, and the speed nadir.</li>
-    <li><strong>Add a row</strong>, and put the fault timing back before the next pass.</li>
+      what: `  <p>PSCAD has no event list. A fault is the <a href="../../reference/master-tpflt/">Three Phase Fault</a> component (<code>master:tpflt</code>) drawn at the point to be faulted, and it decides which phases are faulted and through what resistance. <strong>When</strong> it is applied comes from the logic wired into it, usually a <a href="../../reference/master-tfaultn/">Timed Fault Logic</a> block (<code>master:tfaultn</code>), which holds the start time <code>TF</code> and the duration <code>DF</code>.</p>
+  <p>So a script times a fault by writing those two parameters, and the Three Phase Fault itself has nothing to time: in PSCAD 5.0.0 it has no time parameters at all. That is the one thing most first fault scripts get wrong.</p>
+  ${pre(`flt = project.find_all("master:tfaultn")[0]
+flt.parameters(TF="1.0 [s]", DF="0.12 [s]")      # on at 1 s, cleared at 1.12 s
+
+fault = project.find_all("master:tpflt")[0]
+fault.parameters(A="YES", B="YES", C="YES", G="YES", RON="0.01 [ohm]")   # what is faulted`)}`,
+      method: `  <ol class="dx-steps">
+    <li><strong>Let the case settle first.</strong> Put the fault well after the start-up transients have died away, and run long enough after it for the machines and controls to show whether they recover.</li>
+    <li><strong>Loop over the durations</strong> to test, or search for the longest one that passes.</li>
+    <li><strong>Each pass:</strong> write <code>TF</code> and <code>DF</code>, run, read the channels.</li>
+    <li><strong>Check and record:</strong> the lowest voltage, the speed nadir or the highest speed, whether the case rode through.</li>
+    <li><strong>Put the fault back</strong> after each pass, so the next one starts from the case as it was.</li>
   </ol>
-  ${pre(`for duration in (0.08, 0.12, 0.16, 0.20, 0.24):
-    mark = px_mark()                                   # so this pass can be undone
-    start, clear = set_fault(app, "master:tpflt", at=1.0, duration=duration)
-
-    run = px_run(app, duration=5.0, step=50, plot_step=250)
-    v = run.series("Vpcc")
-    w = run.series("Machine Speed")
-
-    dip = peak(v, kind="min")                          # .value and .time
-    nadir = nadir_of(w)
-
-    table("FRT").add({
-        "Fault duration (s)": duration,
-        "Cleared at (s)": clear,
-        "Lowest voltage": dip.value,
-        "Speed nadir": nadir.value,
-        "Reached (s)": run.t_end,
-    })
-    px_undo(mark)`)}
-  <h3>Critical clearing time: a search</h3>
-  <p>A critical clearing time is the <strong>largest fault duration that still passes</strong>. Running a fine grid to find it wastes runs: most of them are a long way from the boundary. Bisection halves the gap each time, so a boundary to 10 ms inside a 50 ms to 500 ms range takes about six runs instead of forty-five.</p>
-  <p>The search needs one thing the sweep does not: <strong>a verdict per run</strong>. Something has to say pass or fail, and it has to say it the same way every time. For a synchronous machine the usual test is whether the speed comes back; for a converter it is whether the plant stayed connected.</p>
-  ${pre(`# Find limit: the largest duration where the verdict is still a pass.
-#   try a duration -> apply, run, read, decide -> report pass or fail
-#   the search narrows the bracket until it is inside the tolerance
-
-def attempt(duration):
+  <h3>Fault ride through over durations</h3>
+  ${pre(`for duration in num_range(0.08, 0.24, 0.04):
     mark = px_mark()
-    set_fault(app, "master:tpflt", at=1.0, duration=duration)
-    run = px_run(app, duration=5.0, step=50, plot_step=250)
-    speed = run.series("Machine Speed")
-    px_undo(mark)
-    return final_value(speed) < 1.02 and run.status == "finished"   # stayed in step`)}
-  <p class="dx-note">The verdict has to be honest about a run that did not finish. A case that goes unstable often stops early, and treating "did not finish" as a pass puts the critical clearing time above the real one, which is the dangerous direction to be wrong in.</p>
-  <h3>What to look at in the results</h3>
-  <p>The table is the point of the sweep, but two things in it are worth reading before anything else. The <strong>first duration that fails</strong> brackets the critical clearing time without a search. And a <strong>speed nadir that keeps falling while the voltage dip stays the same</strong> says the machine is losing synchronism rather than the network getting weaker, which is a different problem.</p>`,
-      builder: builderBlock(b,
-        'The ride through Quick Start is the sweep, wired: a loop over the durations, the fault, the run, two channels, two checks and a results table. This is the file the Builder writes, with the case set to your own path:',
+    set_fault(app, "master:tfaultn", "", at=1.0, duration=duration)
+    run = px_run(app, duration=5, step=50, plot_step=250)
+    v = run.series("Vpcc")
+    table("FRT").add({"Fault duration (s)": duration,
+                      "Lowest voltage": peak(v, kind="min").value})
+    px_undo(mark)`)}
+  <p><code>set_fault</code> writes the start and duration on whatever fault component it is given, by the parameter names PSCAD uses for them, and gives back the start and clearing times so the checks and the graphs know where the event was. Given a component with no timing parameters, such as the Three Phase Fault, it stops and lists the parameters that component does have.</p>
+  <h3>The critical clearing time by bisection</h3>
+  <p>A critical clearing time is the longest fault the case survives. Rather than sweep thirty durations, try the two ends, then keep halving the gap between the longest that passed and the shortest that failed. From 0.05 s to 0.5 s that is about eight runs to 5 ms.</p>
+  ${pre(`def one_try(duration):
+    trial = Trial({"Fault duration (s)": duration}, "min")
+    mark = px_mark()
+    try:
+        set_fault(app, "master:tfaultn", "", at=1.0, duration=duration)
+        run = px_run(app, duration=5, step=50, plot_step=250)
+        highest = peak(run.series("Machine Speed"), kind="max").value
+        trial.report(ok=highest <= 1.05)          # stays in step
+    finally:
+        px_undo(mark)
+    return trial
+
+cct = find_limit(one_try, 0.05, 0.5, 0.005, passes="low")
+print(cct.limit, cct.status)                      # the last duration that passed`)}
+  <p>What counts as staying in step is the study's own decision: a speed band, a rotor angle, a voltage that comes back within a time. Make the test the one your connection requirement states.</p>`,
+      builder: builderBlock(frt,
+        'The Fault ride through Quick Start runs the case for each fault duration from 0.08 s to 0.24 s and tables the voltage dip and the machine speed nadir, with every run\'s speed on one graph. Set the channel names to the ones your case records. This is the file with the case set to <code>C:/Studies/wind_farm/wind_farm.pscx</code>:',
         [
-          'The <strong>For a range of numbers</strong> block is the sweep. Its <em>Each pass</em> output runs the body once per value and its value output feeds the fault duration, so there is one place to change the range.',
-          '<code>set_fault(...)</code> writes <code>TF</code> and <code>DF</code> on the Timed Fault Logic and hands back the start and the clear time, so the row records when the fault actually cleared rather than what was asked for.',
-          'Both run outputs are wired. A run that stops early still reaches the table, with <code>run.t_end</code> saying how far it got.',
-          'The two <strong>Read a channel</strong> blocks name the channels by their titles as the case records them, so these are the two lines to change for your own model.',
-          'Each pass sits between <code>px_mark()</code> and <code>px_undo(mark)</code>, so the fault timing goes back to what it was before the next duration is written. The case is left as it was found.',
-          'The graph block draws the voltage against time for every pass on one figure, which is the picture a ride through report wants.',
-        ], 'fault_ride_through.py') + '\n  <h3>The same study as a search</h3>\n' + builderExtra(c, 'The critical clearing time Quick Start is the same three blocks with <strong>Find limit</strong> in place of the loop, and a <strong>Pass / fail</strong> block giving the verdict each try reports back. Find limit halves the bracket on every try, so the boundary costs a handful of runs:', 'critical_clearing_time.py'),
+          'The loop is <code>num_range(0.08, 0.24, 0.04)</code>, both ends included. Each pass opens a mark and puts every parameter back in the <code>finally</code>, so a pass never inherits the previous one\'s fault.',
+          '<code>set_fault(app, "master:tfaultn", ...)</code> writes the duration of this pass on the Timed Fault Logic. The event it returns goes to <code>px_run</code> so the checks know the fault time and the graph marks it.',
+          'A pass that does not build or stops early is skipped with a note in the table, rather than ending the study.',
+          '<code>peak(voltage, kind="min")</code> is the voltage dip; <code>nadir(speed, ...)</code> the speed nadir, with whether it turned around.',
+          '<code>collect_series</code> keeps each pass\'s speed curve and <code>draw_collected</code> draws them on one graph at the end, one line per duration.',
+        ], 'fault_ride_through.py') + '\n' + builderExtra(cct,
+        'The Critical clearing time Quick Start does the search: Find limit tries 0.05 s and 0.5 s, then halves towards the boundary until it is within 5 ms, and Stays in step passes a try whose highest machine speed is at most 1.05 p.u.:',
+        'critical_clearing_time.py'),
       pitfalls: [
-        '<strong>Applying the fault before the case has settled.</strong> An EMT case starts from zero and takes time to reach steady state. A fault at 0.1 s measures the initialisation, not the fault. Let the case settle first, or <a href="../snapshots-and-batch/">start every run from a snapshot</a>.',
-        '<strong>Ending the run at the clearing time.</strong> The interesting part of a ride through is the recovery. A 5 s run with the fault at 1 s gives it room; a 1.5 s run does not.',
-        '<strong>Reading the lowest voltage off the instantaneous waveform.</strong> An instantaneous phase voltage passes through zero every half cycle, so its minimum is meaningless. Read the dip off an <a href="../../reference/rms3ph/">RMS meter</a> channel, or take the RMS of the waveform in the script.',
-        '<strong>Leaving the fault timing written.</strong> Every parameter a script writes is written in the case. Undo each pass, or the last duration in the sweep becomes the case\'s new setting.',
-        '<strong>A critical clearing time with no tolerance.</strong> Bisection converges on a boundary; it needs to be told how close is close enough. Ten milliseconds is usually finer than the model justifies.',
-        '<strong>A verdict that reads a channel the run did not record.</strong> That gives an empty series, and an empty series must not read as a pass. Check the run recorded the channel before trusting the search.',
+        '<strong>Writing the time on the Three Phase Fault.</strong> It has no time parameters; the time is on the Timed Fault Logic wired to it. The Builder\'s Set a fault block names <code>master:tfaultn</code> for that reason.',
+        '<strong>A fault during the start-up.</strong> A case starts from zero and needs time to reach its steady state. A fault at 0.1 s tests the initialisation, not the plant. Look at a run with no fault first and put the fault after it has settled, or start from a snapshot.',
+        '<strong>Speed in per unit, a limit in hertz.</strong> A machine speed channel is usually per unit, so a stay-in-step test of 1.05 is 5 % over speed, not 1.05 Hz. Check the unit the channel carries (<code>series.unit</code>).',
+        '<strong>A search that stops early.</strong> A try that gives no answer (a run that did not build, a check with no data) ends a bisection with status <code>UNKNOWN</code> by default. Read the status, not only the limit.',
+        '<strong>The case changed after the study.</strong> Every write is in the case. Keep the mark and undo around each pass, and <code>UNDO_CHANGES = True</code> for the run as a whole.',
       ],
       faq: [
-        ['How do I apply a fault in PSCAD from Python?', 'Write the timing on the Timed Fault Logic component beside the fault: TF is the time the fault is applied and DF is how long it lasts, both in seconds. PSCAD has no event list, so the fault is a component already drawn in the case and the script changes its parameters before each run.'],
-        ['How do I find a critical clearing time in PSCAD?', 'Bisect the fault duration. Run with a duration, decide pass or fail from the result, and halve the bracket each time. A boundary to within 10 ms inside a 50 to 500 ms range takes about six runs, where a fine grid would take dozens.'],
-        ['What do I measure for fault ride through?', 'The RMS voltage at the connection point, for the depth of the dip and how long recovery takes, and the machine speed or the converter\u2019s own flags for whether the plant stayed in step and stayed connected. Read the dip from an RMS meter channel, not from the instantaneous waveform.'],
-        ['How long should the run be after the fault clears?', 'Long enough to see whether it recovers. A fault cleared at 1.2 s in a 5 s run leaves nearly four seconds of recovery, which is usually enough to tell a settled machine from one that is slowly losing step.'],
+        ['How do I apply a fault in PSCAD from Python?', 'Write the start time and the duration on the timing logic that drives the fault, usually Timed Fault Logic (<code>master:tfaultn</code>, parameters <code>TF</code> and <code>DF</code>), then run the case. The Three Phase Fault component sets which phases are faulted and the fault resistance.'],
+        ['How do I find the critical clearing time in PSCAD?', 'Run the case with a fault of a given duration and test whether it stays stable, then halve the gap between the longest duration that passed and the shortest that failed until it is narrow enough. That takes about eight runs instead of a sweep of thirty.'],
+        ['Why does my fault not change between runs?', 'Most often the time is being written on a component that does not use it, or the parameter is written without its unit. Read the value back after writing it, and write the time on the Timed Fault Logic.'],
       ],
     },
+    builderTitle: 'The full Python scripts from the Builder',
   };
 }

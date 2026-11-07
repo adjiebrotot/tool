@@ -1,106 +1,61 @@
-// Guide: disturb a control, fit the damping of the ringdown, search for the gain that settles it.
-export default async function ({ builderScript, builderBlock, pre, table }) {
+// Guide: control tuning. Overshoot and rise time of a step response, and the damping of a
+// ringdown (damping).
+export default async function ({ builderScript, builderBlock, pre }) {
   const b = await builderScript('damping', ({ set }) => set('n1', {
-    project: 'C:/work/mycase.pscx',
+    project: 'C:/Studies/statcom/statcom.pscx',
   }));
-
-  const READS = [
-    ['Damping ratio', 'A ringdown fitted through its envelope peaks. Above about 0.05 is usually called well damped; a negative ratio means the oscillation is growing.'],
-    ['Overshoot', 'How far past the final value the first swing goes, as a fraction of the step. A control that is too fast overshoots.'],
-    ['Rise time', 'How long the response takes to cross from near the start to near the end. A control that is too slow has a long one.'],
-    ['Settling time', 'How long until the response stays inside a band around its final value. The number a specification usually quotes.'],
-    ['Final value', 'Where it ended up. A steady state error says the control is not holding its set point.'],
-  ];
 
   return {
     slug: 'control-tuning', crumb: 'Control tuning',
-    card: 'Tune a control in PSCAD by searching the gain',
-    title: 'PSCAD control tuning with Python: damping, overshoot and a gain search',
-    h1: 'Tune a control in PSCAD by searching the gain',
-    desc: 'Disturb a control in PSCAD from Python, fit the damping ratio of the ringdown, read overshoot and rise time, and search for the gain that settles it.',
-    lead: `Tuning a control against an EMT model is a loop: <strong>change a gain, disturb the system, run, and measure how the response came back</strong>. Doing it by eye off a graph is slow and inconsistent, and the thing being judged, how well damped a ringdown is, is exactly the kind of number a script measures better than a person. This page is how to get that number, and how to let a search use it.`,
-    whatTitle: 'What a tuning run measures',
-    methodTitle: 'The method',
+    card: 'Control tuning: overshoot, rise time and damping',
+    title: 'PSCAD control tuning with Python: overshoot, rise time and damping ratio',
+    h1: 'Control tuning in PSCAD with Python: overshoot, rise time and damping',
+    desc: 'Measure a PSCAD step response\'s overshoot and rise time and a ringdown\'s damping ratio and frequency in Python, and fail a run whose oscillation is growing.',
+    lead: 'A control review asks a few numbers of every response: <strong>how far a step overshoots, how fast it rises, and whether the oscillation after a disturbance dies away</strong>. In PSCAD all three come out of the recorded waveform. A script that reads them can retune a gain, run again, and keep going until the numbers pass.',
+    whatTitle: 'What a control check reads from a run',
     qsTitle: 'Damping of a ringdown',
     level: 'Advanced',
-    keywords: ['pscad control tuning', 'pscad damping ratio', 'pscad ringdown', 'pscad overshoot rise time', 'pscad optimise gain', 'controller tuning EMT', 'pscad pss tuning'],
-    about: ['PSCAD', 'Control tuning', 'Damping ratio', 'Electromagnetic transient simulation'],
+    keywords: ['pscad damping ratio', 'pscad control tuning python', 'pscad overshoot rise time', 'ringdown analysis', 'control interaction emt', 'subsynchronous oscillation pscad'],
+    about: ['Control engineering', 'Damping ratio', 'PSCAD', 'Control interaction'],
     sections: {
-      what: `  <p>A control is judged on how it answers a disturbance. In an EMT model the disturbance is a component you already have: a short fault, a step on a set point, a switched load. What comes back is a waveform, and the tuning question is what shape that waveform has.</p>
-  ${table([{ h: 'What is read' }, { h: 'What it says' }].map((c, i) => ({ ...c, fn: r => r[i] })), READS)}
-  <p>The one that decides most tuning arguments is the <strong>damping ratio</strong>. It is fitted from the envelope of the ringdown: take the successive peaks, fit the exponential they decay along, and the ratio falls out of the rate of that decay against the oscillation's own frequency. Two things about it are worth saying plainly.</p>
-  <ul class="dx-prose">
-    <li><strong>A negative ratio is a real answer, not an error.</strong> It means the peaks are growing: the oscillation is unstable. A tuning script that treats a negative ratio as a failed measurement will hide the one result that matters most.</li>
-    <li><strong>A flat signal has no ratio at all.</strong> If the disturbance did not excite anything, there are no peaks to fit, and the honest output is "no ringdown", not a damping ratio of zero. Zero means marginally stable, which is a very different statement.</li>
-  </ul>`,
-      method: `  <h3>One tuning run</h3>
-  <ol class="dx-steps">
-    <li><strong>Write the gain</strong> on the control component.</li>
-    <li><strong>Disturb the system</strong> at a time well after the case has settled. A short fault is the usual choice because it excites everything; a set point step is cleaner when you only want one loop's response.</li>
-    <li><strong>Run long enough for the ringdown to decay</strong>, or to clearly fail to. Ten seconds is a common choice for an electromechanical mode.</li>
-    <li><strong>Read the channel</strong> the mode shows up in: machine speed for an electromechanical oscillation, a terminal voltage for an exciter, a power flow for a damping controller.</li>
-    <li><strong>Fit the damping</strong>, and read overshoot and settling time from the same waveform.</li>
-    <li><strong>Record the row</strong>, and put the gain back.</li>
+      what: `  <p><strong>A step response</strong> is a set-point change or a disturbance that a controlled quantity follows to a new value. Its overshoot is how far it goes past the final value, as a percentage of the step, and its rise time how long it takes from 10 % to 90 % of the step.</p>
+  <p><strong>A ringdown</strong> is the oscillation after a disturbance. Its peaks fall away along an exponential when it is damped and grow when it is not. The damping ratio is read from that exponential and the frequency from the spacing of the peaks: a negative ratio is an oscillation that is growing, which is what a converter control interaction or a subsynchronous oscillation looks like in an EMT run.</p>`,
+      method: `  <ol class="dx-steps">
+    <li><strong>Disturb the case</strong> with what the requirement names: a set-point step on a constant, a short fault, a switching.</li>
+    <li><strong>Run long enough</strong> to see several periods of the slowest mode you care about.</li>
+    <li><strong>Start the analysis after the disturbance itself</strong>, so its own step is not read as the first peak.</li>
+    <li><strong>Check and record</strong>: overshoot and rise time against their limits, a damping ratio above the minimum.</li>
   </ol>
-  ${pre(`mark = px_mark()
-px_set(exciter, "KA", gain)
-
-set_fault(app, "master:tpflt", at=1.0, duration=0.05)     # a short kick
-run = px_run(app, duration=10.0, step=50, plot_step=250)
-
-speed = run.series("Machine Speed")
-d = damping(speed, after=1.1)        # .ratio, .frequency, .stable, .why
-o = overshoot(speed, after=1.1)      # .overshoot, .rise_time, .settling_time
-
-table("Damping").add({
-    "Gain": gain,
-    "Damping ratio": d.ratio,
-    "Mode (Hz)": d.frequency,
-    "Overshoot": o.overshoot,
-    "Settling (s)": o.settling_time,
-})
-px_undo(mark)`)}
-  <h3>Letting a search pick the gain</h3>
-  <p>Once a single run gives a number, a search can drive it. Two kinds are worth knowing apart.</p>
-  <ul class="dx-prose">
-    <li><strong>Optimise</strong> looks for the gain that gives the best number: the highest damping ratio, or the shortest settling time. It is the right tool when every candidate is acceptable and you want the best of them.</li>
-    <li><strong>Find limit</strong> looks for the boundary: the largest gain that is still stable, the smallest that still meets a settling time. It is the right tool when the answer is a limit rather than an optimum, and it is much cheaper, because bisection halves the bracket every try.</li>
-  </ul>
-  ${pre(`# Optimise: each try gets a gain, runs, and reports one number back.
-def attempt(gain):
-    mark = px_mark()
-    px_set(exciter, "KA", gain)
-    run = px_run(app, duration=10.0, step=50, plot_step=250)
-    d = damping(run.series("Machine Speed"), after=1.1)
-    px_undo(mark)
-    return d.ratio if d.ratio is not None else -1.0    # no ringdown is not a win`)}
-  <p class="dx-note">Give the search a bracket you believe in. An EMT run per try is expensive, so the range matters more here than it would on an algebraic model, and a search told to look between 1 and 10,000 will spend most of its tries in places no engineer would.</p>
-  <h3>Tuning more than one gain</h3>
-  <p>Two gains make a surface rather than a curve, and the number of runs goes up fast. A grid is honest and slow; a search that chooses where to look next is faster and needs a sensible starting point. Either way, the results table holds one row per try with both gains on it, so the surface can be drawn afterwards without re-running anything.</p>`,
+  <h3>Overshoot and rise time of a step</h3>
+  ${pre(`ref = px_find(app, "master:const", "Vref")
+px_set(ref, "Value", 1.02)                         # the step, on a constant read by the control
+run = px_run(app, duration=3, step=50, plot_step=100)
+r = overshoot(run.series("Vrms"), t_event=1.0)
+print(r.value, r.rise)                             # overshoot in %, rise time in s`)}
+  <p>A step needs a time: the constant here is written before the run, so the step is where the case's own logic switches to it. Wire the set-point through a timed component, or step it from a snapshot.</p>
+  <h3>Damping of a ringdown</h3>
+  ${pre(`set_fault(app, "master:tfaultn", "", at=1.0, duration=0.05)   # a short disturbance
+run = px_run(app, duration=10, step=50, plot_step=500)
+d = damping(run.series("Machine Speed"), t_start=1.2, t_end=None, min_peaks=3)
+print(d.value, d.frequency, d.stable)              # ratio, Hz, ratio above zero`)}`,
       builder: builderBlock(b,
-        'The damping Quick Start is one tuning run: a disturbance, a long run, a channel, the damping fit and a verdict. Wrapping it in Optimise or Find limit turns it into a search without the body changing. This is the file the Builder writes:',
+        'The Damping of a ringdown Quick Start applies a 50 ms disturbance at 1 s, runs for 10 s, reads the damping ratio and the frequency of the oscillation from 1.2 s on, and passes the run when the ratio is at least 0.03. This is the file with the case set to <code>C:/Studies/statcom/statcom.pscx</code>:',
         [
-          'The disturbance is a <strong>50 ms fault</strong> at 1 s: short enough to be a kick rather than a study in its own right, late enough that the case has settled.',
-          'The run is <strong>10 seconds</strong>, so an electromechanical mode has room to decay or clearly not to.',
-          'The <strong>Damping of a ringdown</strong> block fits the envelope peaks after the disturbance and gives back the ratio, the mode frequency and whether it calls it stable.',
-          'A negative ratio comes through as a negative number and reads as not stable, rather than being clamped or treated as an error.',
-          'A flat signal gives no ratio at all, with a reason, so a disturbance that did not excite the mode is visible instead of being recorded as perfect damping.',
-          'The <strong>Pass / fail</strong> block turns the ratio into a verdict, which is what a Find limit search needs each try to report.',
+          '<code>set_fault(app, "master:tfaultn", "", 1, 0.05, ...)</code> is the disturbance: a 50 ms fault on the Timed Fault Logic, put back at the end.',
+          'The 500 us plot step keeps a 10 s run small, and is fine for electromechanical modes of a few hertz. Lower it for a faster control mode.',
+          '<code>damping(machine_speed, t_start=1.2, ...)</code> starts 0.15 s after the fault clears and needs at least three peaks to fit; with fewer it says the signal may not be oscillating rather than giving a number.',
+          '<code>verdict(damping_result.value, "ge", 0.03, 0)</code> is the pass test: 3 % damping or more. A ratio of none (nothing to fit) is reported as no data and takes the fail side.',
         ], 'damping_of_a_ringdown.py'),
       pitfalls: [
-        '<strong>Measuring from before the disturbance.</strong> The fit has to start after the kick, or the settled part before it flattens the envelope and the ratio comes out too high.',
-        '<strong>A run that ends while it is still ringing.</strong> A fit over two peaks is not a fit. If the ratio moves a lot when the run gets longer, the run was too short.',
-        '<strong>Treating a negative damping ratio as an error.</strong> It is the answer: the oscillation is growing. Record it and let the verdict fail.',
-        '<strong>Treating "no ringdown" as perfect damping.</strong> A disturbance that excited nothing produces no peaks. That is a flaw in the test, not a well tuned control.',
-        '<strong>Reading the wrong channel.</strong> A mode that does not appear in the channel you recorded cannot be measured. Record the quantity the mode actually moves.',
-        '<strong>A search with no run budget.</strong> Every try is a full EMT run. Bound the number of tries, and prefer Find limit over Optimise when the answer is a boundary.',
-        '<strong>Leaving the last gain written.</strong> The gain a search tried last is not the gain it recommends, and it is written in the case. Undo each try, and write the chosen value deliberately at the end.',
+        '<strong>The disturbance read as the first peak.</strong> Start the window after the fault has cleared, or the ratio describes the fault, not the oscillation.',
+        '<strong>Two modes at once.</strong> The fit assumes one dominant oscillation. When two modes beat, the peaks do not lie on one exponential; filter the signal or read a quantity where one mode dominates.',
+        '<strong>A plot step too coarse for the mode.</strong> Each period needs many samples for its peaks to be found. A 500 us plot step suits a mode of a few hertz, not a control mode of a few hundred.',
+        '<strong>A run too short.</strong> Fewer than three peaks after the window starts gives no answer. Run until the slowest mode has shown several periods.',
       ],
       faq: [
-        ['How do I measure damping in PSCAD?', 'Disturb the system, run long enough for the oscillation to decay, and fit the envelope through the successive peaks of the recorded channel. The damping ratio comes from the rate of that decay against the oscillation\u2019s own frequency. A negative ratio means the peaks are growing.'],
-        ['What damping ratio is good enough?', 'It depends on the grid code or the study brief, but around 0.05 is a common threshold for calling an electromechanical mode well damped. What matters more for a script is being consistent: fit it the same way, from the same channel, over the same window, every run.'],
-        ['Should I use Optimise or Find limit to tune a gain?', 'Optimise when you want the best value of a number, such as the highest damping ratio. Find limit when the answer is a boundary, such as the largest gain that is still stable: bisection halves the bracket every try, which matters when each try is a full EMT run.'],
-        ['What disturbance should I use for a tuning run?', 'A short fault excites everything and is easy to repeat, which suits finding modes. A step on a set point is cleaner when you want one loop\u2019s response and nothing else. Either way, apply it well after the case has settled.'],
+        ['How do I measure damping in PSCAD?', 'Record the quantity that oscillates, run past the disturbance for several periods, find the peaks after the disturbance has cleared and fit them with an exponential. The decay rate and the period give the damping ratio; a negative ratio is a growing oscillation.'],
+        ['How do I measure overshoot and rise time from a PSCAD run?', 'Find the value before the step and the final value after it, then the highest point past the final value as a percentage of the step (the overshoot), and the time from 10 % to 90 % of the step (the rise time). The Builder\'s Overshoot and rise time block does it from any recorded channel.'],
+        ['Can a script retune a controller in PSCAD?', 'Yes. Write the gain on its component, run, read the response, and repeat. The Builder\'s Optimise block searches the gains for you against the checks you wire into it.'],
       ],
     },
   };

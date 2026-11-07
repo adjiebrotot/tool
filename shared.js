@@ -3271,9 +3271,55 @@
   }
   global.SharedShare = makeShare();
 
+  /* ── SharedAiLink: the header's "✨ Use in AI" button ─────────────────────
+     A tool with a skill (_ref/agent-doc.mjs writes data-ai on its hidden
+     #agentHelp pointer) gets a header button to its AI page, after Tour and
+     Guide, dressed like the header's own buttons. On a phone only the ✨ shows
+     (shared.css, .pf-tour-word). tour-shared.js calls add() again once it has
+     put Tour and Guide in, so the order holds whichever script runs first. */
+  global.SharedAiLink = (function () {
+    function add() {
+      var ref = document.getElementById('agentHelp');
+      var href = ref && ref.getAttribute('data-ai');
+      var nav = document.querySelector('.header-right') || document.querySelector('.header-nav');
+      if (!href || !nav || document.documentElement.classList.contains('abt-embed')) return null;
+      var a = nav.querySelector('[data-abt-ai-link]');
+      if (!a) {
+        var idLang = /^id\b/i.test(document.documentElement.lang || '');
+        var word = idLang ? 'Pakai di AI' : 'Use in AI';
+        var model = nav.querySelector('[data-pf-guide-link]') || nav.querySelector('#themeToggle') || nav.querySelector('.btn-theme');
+        a = document.createElement('a');
+        a.className = (model && model.className ? model.className.replace(/\b(?:btn-back|theme-ico)\b/g, '').trim() : '') || 'btn-theme';
+        a.href = href;
+        a.setAttribute('data-abt-ai-link', '');
+        a.setAttribute('aria-label', word);
+        a.title = idLang ? 'Pakai alat ini lewat asisten AI Anda (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
+        var emo = document.createElement('span');
+        emo.className = 'pf-tour-emo';
+        emo.setAttribute('aria-hidden', 'true');
+        emo.textContent = '\u2728';
+        var w = document.createElement('span');
+        w.className = 'pf-tour-word';
+        w.textContent = '\u00a0' + word;
+        a.appendChild(emo);
+        a.appendChild(w);
+      }
+      // After Guide (or Tour), else just before the theme toggle, else last.
+      var after = nav.querySelector('[data-pf-guide-link]') || nav.querySelector('[data-pf-tour-launch]');
+      var theme = nav.querySelector('#themeToggle');
+      if (after && after.parentNode) after.parentNode.insertBefore(a, after.nextSibling);
+      else if (theme && theme.parentNode) theme.parentNode.insertBefore(a, theme);
+      else nav.appendChild(a);
+      return a;
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add);
+    else add();
+    return { add: add };
+  })();
+
   /* ── SharedAgent — a link an AI assistant wrote opens the tool set up ─────
      A reader asks a chatbot about a tool; the chatbot reads the tool's AI
-     section (<tool>/agent.txt) and replies with a link that opens the tool on
+     skill (<tool>/ai/, written by _ref/agent-doc.mjs) and replies with a link that opens the tool on
      that scenario. The answer is the tool's, worked out on screen; a banner
      over the inputs lists what the assistant assumed, so the reader checks it.
 

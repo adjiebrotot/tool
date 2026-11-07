@@ -1,0 +1,286 @@
+{
+ "skill": "brotools-financingvscash",
+ "tool": "Finance vs Cash",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "financingvscash",
+   "url": "/financingvscash/",
+   "base": "https://tool.adjiebrotots.com/financingvscash/",
+   "lang": "en",
+   "title": "Finance vs Cash Purchase",
+   "reference": "references/financingvscash.md",
+   "decides": "Whether paying cash for a purchase, or financing it on each loan offer while investing the cash it frees up, leaves you with more money at the end of each loan, and which offer comes out best.",
+   "important": [
+    "purchaseCost",
+    "availableCash",
+    "offers",
+    "baseRf",
+    "currencySymbol",
+    "offerPricing",
+    "rateConvention"
+   ],
+   "fields": [
+    {
+     "key": "currencySymbol",
+     "label": "Currency Symbol",
+     "group": "Purchase",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "$",
+       "label": "$ Dollar"
+      },
+      {
+       "value": "€",
+       "label": "€ Euro"
+      },
+      {
+       "value": "£",
+       "label": "£ Pound"
+      },
+      {
+       "value": "¥",
+       "label": "¥ Yen / Yuan"
+      },
+      {
+       "value": "₹",
+       "label": "₹ Rupee (India)"
+      },
+      {
+       "value": "Rs",
+       "label": "Rs Rupee (Pakistan, Sri Lanka)"
+      },
+      {
+       "value": "Rp",
+       "label": "Rp Rupiah"
+      },
+      {
+       "value": "RM",
+       "label": "RM Ringgit"
+      },
+      {
+       "value": "₱",
+       "label": "₱ Peso (Philippines)"
+      },
+      {
+       "value": "฿",
+       "label": "฿ Baht"
+      },
+      {
+       "value": "₫",
+       "label": "₫ Dong"
+      },
+      {
+       "value": "₩",
+       "label": "₩ Won"
+      },
+      {
+       "value": "CHF",
+       "label": "CHF Swiss Franc"
+      },
+      {
+       "value": "Dh",
+       "label": "Dh Dirham (UAE)"
+      },
+      {
+       "value": "kr",
+       "label": "kr Krona / Krone"
+      },
+      {
+       "value": "zł",
+       "label": "zł Złoty"
+      },
+      {
+       "value": "₺",
+       "label": "₺ Lira"
+      },
+      {
+       "value": "₽",
+       "label": "₽ Ruble"
+      },
+      {
+       "value": "₪",
+       "label": "₪ Shekel"
+      },
+      {
+       "value": "R",
+       "label": "R Rand"
+      },
+      {
+       "value": "R$",
+       "label": "R$ Real"
+      },
+      {
+       "value": "₦",
+       "label": "₦ Naira"
+      },
+      {
+       "value": "₿",
+       "label": "₿ Bitcoin"
+      }
+     ],
+     "default": "$",
+     "important": true
+    },
+    {
+     "key": "purchaseCost",
+     "label": "Cash Purchase Cost",
+     "group": "Purchase: Purchase",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "50,000",
+     "important": true
+    },
+    {
+     "key": "offerPricing",
+     "label": "Price Each Loan Offer Separately",
+     "group": "Purchase: Purchase",
+     "kind": "checkbox",
+     "default": false,
+     "important": true
+    },
+    {
+     "key": "availableCash",
+     "label": "Available Cash",
+     "group": "Purchase: Purchase",
+     "kind": "number",
+     "unit": "$",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "50,000",
+     "important": true
+    },
+    {
+     "key": "baseRf",
+     "label": "Risk-Free Rate",
+     "group": "Assumptions: Cash and rates",
+     "kind": "slider",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 20,
+     "step": 0.1,
+     "default": "4.5",
+     "important": true
+    },
+    {
+     "key": "rateConvention",
+     "label": "Rate Convention",
+     "group": "Assumptions: Cash and rates",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ear",
+       "label": "Effective annual (EAR)"
+      },
+      {
+       "value": "nominal",
+       "label": "Nominal annual (APR)"
+      }
+     ],
+     "default": "ear",
+     "important": true
+    },
+    {
+     "key": "inflationRate",
+     "label": "Inflation",
+     "group": "Assumptions: Prices",
+     "kind": "number",
+     "unit": "%/yr",
+     "min": 0,
+     "max": 30,
+     "default": "2.5"
+    },
+    {
+     "key": "inflationToggle",
+     "label": "Show in today's money",
+     "group": "Beside the results",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "optTarget",
+     "label": "Optimization Target",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "netBenefit",
+       "label": "Highest Net Benefit"
+      },
+      {
+       "value": "lowestInterest",
+       "label": "Lowest Total Interest"
+      },
+      {
+       "value": "lowestCost",
+       "label": "Lowest Financing Cost"
+      }
+     ],
+     "default": "netBenefit"
+    },
+    {
+     "key": "chartMetric",
+     "label": "Chart Metric",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "wealth",
+       "label": "Ending Wealth Over Time"
+      },
+      {
+       "value": "netBenefit",
+       "label": "Net Benefit vs Cash"
+      },
+      {
+       "value": "investmentValue",
+       "label": "Investment Value Over Time"
+      },
+      {
+       "value": "loanBalance",
+       "label": "Loan Balance Over Time"
+      }
+     ],
+     "default": "wealth"
+    }
+   ],
+   "lists": [
+    "offers"
+   ],
+   "families": [],
+   "json": false,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "house",
+     "title": "House, fixed vs float"
+    },
+    {
+     "key": "car",
+     "title": "Car, 3yr or balloon"
+    },
+    {
+     "key": "phone",
+     "title": "Phone on a plan"
+    },
+    {
+     "key": "card",
+     "title": "Credit card 0%"
+    },
+    {
+     "key": "motorbike",
+     "title": "Motorbike, flat rate"
+    },
+    {
+     "key": "deferred",
+     "title": "Furniture, pay later"
+    }
+   ]
+  }
+ ]
+}
