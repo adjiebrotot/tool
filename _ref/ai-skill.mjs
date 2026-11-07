@@ -365,11 +365,11 @@ const AI_LOGOS = {
   copilot: '<path d="M16.295 5.29l-0.242 0.986h-2.32c-1.721 0-3.22 1.197-3.638 2.902l-2.101 8.593H3.798c-2.44 0-4.229-2.342-3.637-4.761l2.106-8.612c0.557-2.274 2.556-3.87 4.85-3.87h5.54c2.44 0 4.23 2.343 3.638 4.761" fill="url(#ai-lg-copilot-0)"/><path d="M16.295 5.29l-0.242 0.986h-2.32c-1.721 0-3.22 1.197-3.638 2.902l-2.101 8.593H3.798c-2.44 0-4.229-2.342-3.637-4.761l2.106-8.612c0.557-2.274 2.556-3.87 4.85-3.87h5.54c2.44 0 4.23 2.343 3.638 4.761" fill="url(#ai-lg-copilot-1)"/><path d="M7.752 18.758l0.242-0.986h2.321c1.72 0 3.22-1.197 3.637-2.903l2.102-8.593h4.196c2.439 0 4.228 2.343 3.637 4.762l-2.107 8.611c-0.556 2.274-2.555 3.87-4.85 3.87h-5.54c-2.44 0-4.229-2.342-3.638-4.761" fill="url(#ai-lg-copilot-2)"/><path d="M7.752 18.758l0.242-0.986h2.321c1.72 0 3.22-1.197 3.637-2.903l2.102-8.593h4.196c2.439 0 4.228 2.343 3.637 4.762l-2.107 8.611c-0.556 2.274-2.555 3.87-4.85 3.87h-5.54c-2.44 0-4.229-2.342-3.638-4.761" fill="url(#ai-lg-copilot-3)"/><defs><radialGradient cx="0" cy="0" gradientTransform="matrix(-9.77133 19.8405 38.9403 15.7727 12.674 0.587)" gradientUnits="userSpaceOnUse" id="ai-lg-copilot-0" r="1"><stop offset=".25" stop-color="#109df2"/><stop offset=".72" stop-color="#aad445"/><stop offset=".97" stop-color="#ffd400"/></radialGradient><radialGradient cx="0" cy="0" gradientTransform="matrix(-9.94414 20.7959 24.6537 12.5336 21.948 4.756)" gradientUnits="userSpaceOnUse" id="ai-lg-copilot-2" r="1"><stop offset=".07" stop-color="#8c48ff"/><stop offset=".5" stop-color="#f2598a"/><stop offset=".9" stop-color="#ffb152"/></radialGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-copilot-1" x1="8.275" x2="8.177" y1="0.534" y2="17.776"><stop stop-color="#3dcbff"/><stop offset=".25" stop-color="#0588f7" stop-opacity="0"/></linearGradient><linearGradient gradientUnits="userSpaceOnUse" id="ai-lg-copilot-3" x1="15.839" x2="15.829" y1="5.211" y2="9.907"><stop offset=".06" stop-color="#f8adfa"/><stop offset=".71" stop-color="#a86edd" stop-opacity="0"/></linearGradient></defs>',
 };
 const AI_APPS = [['claude', 'Claude'], ['chatgpt', 'ChatGPT'], ['grok', 'Grok'], ['gemini', 'Gemini'], ['copilot', 'Copilot']];
-export function installSection(zipName, name, hub) {
+export function installSection(zipName, name, hub, show = {}) {   // show: { name, ref, files } for the demo's skill page
   return `    <section class="gd-sec card" id="install" aria-labelledby="install-h">
       <h2 id="install-h">Install the skill</h2>
       <p class="gd-sub">Pick your assistant. The demo plays the steps; press a step to jump to it.</p>
-      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}" data-hub="${attr(hub)}">
+      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}" data-hub="${attr(hub)}"${show.name ? ` data-name="${attr(show.name)}" data-ref="${attr(show.ref)}" data-files="${show.files}"` : ''}>
         <div class="ai-tabs" role="tablist" aria-label="Assistant">
 ${AI_APPS.map(([k, v], i) => `          <button type="button" role="tab" class="ai-tab" data-app="${k}" aria-selected="${i === 0}"><svg class="ai-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${AI_LOGOS[k]}</svg><span>${v}</span></button>`).join('\n')}
         </div>
@@ -539,7 +539,7 @@ export function aiPage(T, models, demo) {
       <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link).</p>
     </header>
 
-${installSection(zipName, name, '../../ai/')}
+${installSection(zipName, name, '../../ai/', { name: T.name, ref: refName(M.P.page), files: models.length + 3 })}
 
     <!-- In-article ad: between cards (.ad-slot in shared.css) -->
     <div class="ad-slot">
