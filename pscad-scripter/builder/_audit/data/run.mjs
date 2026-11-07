@@ -138,7 +138,7 @@ await test('a cell is read as read_table reads it', () => {
     [null, 12, '007', 1500, 'x', 1.5, 1234], 'values');
 });
 
-await test('the page and the script's own Python read the same files the same way', () => {
+await test('the page and the script\'s own Python read the same files the same way', () => {
   const py = pythonRead([
     { name: 'A', path: path.join(HERE, 'cases.csv') },
     { name: 'B', path: path.join(HERE, 'cases_semicolon.csv'), decimal_comma: true },
