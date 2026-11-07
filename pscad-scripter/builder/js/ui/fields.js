@@ -299,7 +299,7 @@ export function elementField(spec) {
     parent.appendChild(el('option', { value: o.value, text: o.label }));
   }
   cls.value = cur.cls;
-  const name = el('input', { type: 'text', class: 'txt-input pxb-el-name', value: cur.name, placeholder: 'A Name, e.g. Src1 (or leave empty)', spellcheck: 'false', 'aria-label': (st.label || 'Component') + ': name' });
+  const name = el('input', { type: 'text', class: 'txt-input pxb-el-name', value: cur.name, placeholder: st.placeholder || 'A Name, e.g. Src1 (or leave empty)', spellcheck: 'false', 'aria-label': (st.label || 'Component') + ': name' });
   const match = el('select', { class: 'sel-input sel-sm pxb-el-match', 'aria-label': (st.label || 'Component') + ': when the name matches' });
   for (const [val, label] of MATCH_OPTIONS) match.appendChild(el('option', { value: val, text: label }));
   match.value = MATCH_OPTIONS.some(m => m[0] === cur.match) ? cur.match : 'one';

@@ -1,0 +1,5 @@
+Case,Generator,P (MW),Q (Mvar),Note
+Summer peak,G 01,120.5,30,"a, with comma"
+Winter min,G 02,40,-5,007
+
+Shoulder,G 03,80,0,

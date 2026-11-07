@@ -217,6 +217,12 @@ Run from the repository root. Offline, no PSCAD needed:
 | Command | Checks |
 |---|---|
 | `node pscad-scripter/builder/_audit/codegen/smoke.mjs` | the registry loads, every block generates, every template and a set of shapes compile |
+| `node pscad-scripter/builder/_audit/codegen/run.mjs` | the generator: names, literals, loading old state, every structural case, a 300-graph fuzzer, every script compiled, flow-only workflows run against a stub runtime (`codegen/stub/`) |
+| `node pscad-scripter/builder/_audit/choice/run.mjs` | "only what can be chosen": the showIf / optionsFor contract, each PSCAD rule by its case, and the unit families against the runtime's `unit_factor` |
+| `node pscad-scripter/builder/_audit/families/run.mjs` | the 17 families (106 blocks, 59 palette entries), the guard that a shared setting key means the same, the Kind switch, quick-add order, folded ports |
+| `node pscad-scripter/builder/_audit/data/run.mjs` | an attached CSV / Excel file read the same by the page and the script, and the .zip read back by Python's `zipfile` |
+| `node pscad-scripter/builder/_audit/graphstyle/run.mjs` | the graph style: saved styles, GRAPH_STYLE written and read back, every template drawn by matplotlib, the modal in Chromium |
+| `node pscad-scripter/builder/_audit/ui/run.mjs` | the editor in Chromium at desktop and phone width, with fixture blocks and then the real ones, the tour and its demo |
 | `node pscad-scripter/builder/_audit/templates/build.mjs --check` | every Quick Start generates and compiles, and has only the to-dos it should |
 | `node pscad-scripter/builder/_audit/blocks/run.mjs --no-live` | the PSCAD blocks: generation of every setting variant, and the scripts compile |
 | `python pscad-scripter/builder/_audit/runtime/live/loader.py` | every runtime section: needs, docstrings, ASCII, each one loads alone |
