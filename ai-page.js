@@ -295,49 +295,92 @@
     setPlaying(playing);
   }
 
-  /* ---- The example conversation --------------------------------------------------------- */
-  var chat = document.querySelector('.ai-chat');
-  if (!chat || reduce) return;
-  var parts = [chat.querySelector('.ai-user')]
-    .concat([].slice.call(chat.querySelectorAll('.ai-work .ai-chip')))
-    .concat([].slice.call(chat.querySelectorAll('.ai-bot > *')))
-    .concat([chat.querySelector('.ai-chat-bar')])
-    .filter(Boolean);
-  var bot = chat.querySelector('.ai-bot');
-  var typing = document.createElement('div');
-  typing.className = 'ai-typing';
-  typing.setAttribute('aria-hidden', 'true');
-  typing.innerHTML = '<i></i><i></i><i></i>';
-  var timers = [];
-  function play() {
-    timers.forEach(clearTimeout);
-    timers = [];
-    chat.classList.add('ai-anim');
-    parts.forEach(function (p) { p.classList.add('ai-step'); p.classList.remove('in'); });
-    bot.classList.add('ai-step');
-    bot.classList.remove('in');
-    var t = 200, botQueued = false;
-    var at = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
-    parts.forEach(function (p) {
-      if (p.parentNode === bot && !botQueued) {
-        botQueued = true;
-        at(t, function () { bot.parentNode.insertBefore(typing, bot); });
-        t += 1100;
-        at(t, function () { typing.remove(); bot.classList.add('in'); });
-      }
-      var d = p.classList.contains('ai-user') ? 0 : p.classList.contains('ai-chip') ? 800 : 450;
-      t += d;
-      at(t, function () { p.classList.add('in'); });
+  /* ---- The hub's skill list: keyword search over the cards, by category ---------------------- */
+  var search = document.getElementById('searchFilter');
+  if (search) {
+    var cards = [].slice.call(document.querySelectorAll('.ai-tool'));
+    var count = document.getElementById('resultsSummary');
+    var empty = document.querySelector('.ai-empty');
+    var filter = function () {
+      var q = search.value.trim().toLowerCase(), n = 0;
+      cards.forEach(function (c) {
+        var show = !q || c.textContent.toLowerCase().indexOf(q) >= 0 || (c.getAttribute('data-domain') || '').toLowerCase().indexOf(q) >= 0;
+        c.hidden = !show;
+        if (show) n++;
+      });
+      [].forEach.call(document.querySelectorAll('.ai-tools'), function (ul) {
+        var any = [].some.call(ul.children, function (li) { return !li.hidden; });
+        ul.hidden = !any;
+        var h = ul.previousElementSibling;
+        if (h && h.classList.contains('ai-group')) h.hidden = !any;
+      });
+      if (count) count.textContent = n === 1 ? 'Showing 1 skill.' : 'Showing ' + n + ' skills.';
+      if (empty) empty.hidden = n > 0;
+    };
+    search.addEventListener('input', filter);
+    filter();
+  }
+
+  /* ---- The example conversation(s): one per tool on the hub, picked from a dropdown -------- */
+  var chats = [].slice.call(document.querySelectorAll('.ai-chat'));
+  if (!chats.length) return;
+  var pick = document.getElementById('aiExample');
+  var players = chats.map(function (chat) {
+    if (reduce) return { play: function () {} };
+    var parts = [chat.querySelector('.ai-user')]
+      .concat([].slice.call(chat.querySelectorAll('.ai-work .ai-chip')))
+      .concat([].slice.call(chat.querySelectorAll('.ai-bot > *')))
+      .concat([chat.querySelector('.ai-chat-bar')])
+      .filter(Boolean);
+    var bot = chat.querySelector('.ai-bot');
+    var typing = document.createElement('div');
+    typing.className = 'ai-typing';
+    typing.setAttribute('aria-hidden', 'true');
+    typing.innerHTML = '<i></i><i></i><i></i>';
+    var timers = [];
+    function hide() {
+      chat.classList.add('ai-anim');
+      parts.concat([bot]).forEach(function (p) { p.classList.add('ai-step'); p.classList.remove('in'); });
+    }
+    function play() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      typing.remove();
+      hide();
+      var t = 200, botQueued = false;
+      var at = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
+      parts.forEach(function (p) {
+        if (p.parentNode === bot && !botQueued) {
+          botQueued = true;
+          at(t, function () { bot.parentNode.insertBefore(typing, bot); });
+          t += 1100;
+          at(t, function () { typing.remove(); bot.classList.add('in'); });
+        }
+        var d = p.classList.contains('ai-user') ? 0 : p.classList.contains('ai-chip') ? 800 : 450;
+        t += d;
+        at(t, function () { p.classList.add('in'); });
+      });
+    }
+    chat.querySelector('.ai-replay').addEventListener('click', play);
+    // Hidden until it plays, so the first view is not a flash of the finished chat.
+    if ('IntersectionObserver' in window) hide();
+    return { play: play };
+  });
+  var current = function () {
+    for (var i = 0; i < chats.length; i++) if (!chats[i].hidden) return i;
+    return 0;
+  };
+  if (pick) {
+    pick.addEventListener('change', function () {
+      chats.forEach(function (c) { c.hidden = c.getAttribute('data-tool') !== pick.value; });
+      players[current()].play();
     });
   }
-  chat.querySelector('.ai-replay').addEventListener('click', play);
-  if ('IntersectionObserver' in window) {
+  if (!reduce && 'IntersectionObserver' in window) {
+    var section = chats[0].parentNode;
     var io = new IntersectionObserver(function (es) {
-      if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); play(); }
+      if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); players[current()].play(); }
     }, { threshold: 0.25 });
-    // Hidden until it plays, so the first view is not a flash of the finished chat.
-    chat.classList.add('ai-anim');
-    parts.concat([bot]).forEach(function (p) { p.classList.add('ai-step'); });
-    io.observe(chat);
+    io.observe(section);
   }
 })();

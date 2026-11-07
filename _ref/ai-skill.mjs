@@ -50,7 +50,7 @@ export const TOOLS = [
   { tool: 'powerfactory-scripter', research: 'the PowerFactory object and variable names, the study standard (IEC 60909, the grid code\'s fault ride-through curve), and the user\'s project and study case names as they gave them', main: 'powerfactory-scripter/builder', name: 'PowerFactory Scripter',
     extra: 'Never write the PowerFactory Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.',
     use: 'writing DIgSILENT PowerFactory Python scripts: load flow, N-1 contingency, short circuit, RMS/EMT simulation, fault ride-through, critical clearing time, parameter sweeps and result export, built as a workflow the tool turns into one ready-to-run script.' },
-  { tool: 'pscad-scripter', research: 'the PSCAD component definitions and parameter names (the tool\'s component reference), the grid code\'s fault ride-through curve or harmonic limits, and the user\'s case, component Names and output channel names as they gave them', main: 'pscad-scripter/builder', name: 'PSCAD Scripter',
+  { tool: 'pscad-scripter', domain: 'Engineering', research: 'the PSCAD component definitions and parameter names (the tool\'s component reference), the grid code\'s fault ride-through curve or harmonic limits, and the user\'s case, component Names and output channel names as they gave them', main: 'pscad-scripter/builder', name: 'PSCAD Scripter',
     extra: 'Never write the PSCAD Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.',
     use: 'writing PSCAD Python automation scripts (mhi.pscad, EMTDC): build and run a case, fault ride-through, critical clearing time, parameter sweeps over values, layers and substitution sets, harmonics and THD, snapshots and simulation sets, damping and control tuning, built as a workflow the tool turns into one ready-to-run script.' },
 ];
@@ -459,6 +459,7 @@ function pageEnd(up) {
     </div>
   </footer>
 </div>
+<script src="${up}dropdown.js" defer></script>
 <script src="${up}shared.js" defer></script>
 <script src="${up}ai-page.js" defer></script>
 <!--/email_off-->
@@ -468,11 +469,9 @@ function pageEnd(up) {
 }
 
 /* The worked conversation (How to use it): a request, the AI's inputs, assumptions and link. */
-function useSection(T, demo, rows, name, sub) {
-  return `    <section class="gd-sec card" id="use" aria-labelledby="use-h">
-      <h2 id="use-h">How to use it</h2>
-      ${sub || ''}<p class="gd-sub">Ask as you would ask a friend. With the skill on, the AI keeps your figures, researches the rest, and hands you the link. It does not give the answer itself: the tool does, once you open the link.</p>
-      <div class="ai-chat" aria-label="An example conversation">
+// One example conversation. key and hidden: the hub holds one per tool, picked from a dropdown.
+function chatBlock(T, demo, rows, name, key, hidden) {
+  return `<div class="ai-chat" aria-label="An example conversation"${key ? ` data-tool="${attr(key)}"` : ''}${hidden ? ' hidden' : ''}>
         <div class="ai-msg ai-user"><p>${esc(demo.request)}</p></div>
         <div class="ai-work">
           <span class="ai-chip">Using skill <strong>${esc(name)}</strong></span>
@@ -490,7 +489,14 @@ function useSection(T, demo, rows, name, sub) {
           <p><strong>Open the link to see the result.</strong></p>
         </div>
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="${attr(demo.link)}" target="_blank" rel="noopener">Open this scenario</a></div>
-      </div>
+      </div>`;
+}
+// sub: what goes above the conversation(s); chats: the conversation(s), one per tool on the hub.
+function useSection(T, demo, rows, name, sub, chats) {
+  return `    <section class="gd-sec card" id="use" aria-labelledby="use-h">
+      <h2 id="use-h">How to use it</h2>
+      <p class="gd-sub">Ask as you would ask a friend. With the skill on, the AI keeps your figures, researches the rest, and hands you the link. It does not give the answer itself: the tool does, once you open the link.</p>
+      ${sub || ''}${chats || chatBlock(T, demo, rows, name)}
       <ul class="gd-facts">
         <li><strong>Your figures stay yours.</strong> Anything you state goes in as you said it; correct any assumption and the AI sends a new link.</li>
         <li><strong>Checked before you see it.</strong> The skill's script checks every input's name, range and choices before the AI sends the link, so it opens the scenario listed.</li>
@@ -587,17 +593,36 @@ function metaDesc(M) {
   const m = /<meta name="description" content="([^"]*)"/.exec(html);
   return m ? m[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"') : '';
 }
+// A tool's category on the home page (data-domain of its card), so the hub groups as the home page does;
+// a tool not on the home page names its own (domain in TOOLS).
+const DOMAIN_ORDER = ['Engineering', 'Finance', 'Visualisation'];
+function domainOf(T) {
+  if (T.domain) return T.domain;
+  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  for (const m of html.matchAll(/<article\s+class="tool-card"([\s\S]*?)<\/article>/g)) {
+    if (!m[1].includes(`/${T.tool}/"`)) continue;
+    const d = /data-domain="([^"]*)"/.exec(m[1]);
+    if (d) return d[1].trim();
+  }
+  return 'Others';
+}
+const domainRank = d => { const i = DOMAIN_ORDER.indexOf(d); return i < 0 ? 99 : i; };
 export function aiHub(list) {   // list: [{ T, models, demo }] in TOOLS order
   const title = 'Use Adjie Brotools in your AI';
   const desc = `Free skills for Claude, ChatGPT, Grok, Gemini and Copilot that open ${list.length} Adjie Brotools calculators on your own scenario with one link: property, tax, investing, retirement and power systems.`;
   const items = list.map(({ T, models }) => {
     const M = models.find(m => m.P.page === T.main) || models[0];
-    return { T, M, name: skillName(T), glyph: glyph(T, M), about: metaDesc(M) };
+    const demo = { ...list.find(x => x.T === T).demo, link: canonicalLink(M.base, list.find(x => x.T === T).demo.pairs) };
+    return { T, M, name: skillName(T), glyph: glyph(T, M), about: metaDesc(M), domain: domainOf(T), demo, rows: demoRows(M, demo) };
   });
-  const first = list[0];
-  const M0 = first.models.find(m => m.P.page === first.T.main) || first.models[0];
-  const demo = { ...first.demo, link: canonicalLink(M0.base, first.demo.pairs) };
-  const rows = demoRows(M0, demo);
+  // The cards (and the example dropdown) grouped by category, in the home page's order, then by name.
+  const groups = [...new Set(items.map(x => x.domain))].sort((a, b) => domainRank(a) - domainRank(b) || a.localeCompare(b));
+  const inGroup = g => items.filter(x => x.domain === g).sort((a, b) => a.T.name.localeCompare(b.T.name));
+  // Every tool's own example (the one its AI page shows), picked from a dropdown; the first tool's opens.
+  const exPick = `<div class="ai-ex-pick"><label for="aiExample">Example with</label>
+        <select id="aiExample">${groups.map(g => `<optgroup label="${attr(g)}">${inGroup(g).map(x => `<option value="${attr(x.T.tool)}"${x === items[0] ? ' selected' : ''}>${esc(x.T.name)}</option>`).join('')}</optgroup>`).join('')}</select></div>
+`;
+  const chats = items.map((x, i) => chatBlock(x.T, x.demo, x.rows, x.name, x.T.tool, i > 0)).join('\n      ');
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -617,7 +642,7 @@ export function aiHub(list) {   // list: [{ T, models, demo }] in TOOLS order
       ] },
     ],
   };
-  const cards = items.map(x => `        <li class="ai-tool card">
+  const card = x => `        <li class="ai-tool card" data-domain="${attr(x.domain)}">
           <h3>${x.glyph}${esc(x.T.name)}</h3>
           <p>${esc(x.about)}</p>
           <p class="ai-tool-skill"><code>${esc(x.name)}</code></p>
@@ -625,7 +650,11 @@ export function aiHub(list) {   // list: [{ T, models, demo }] in TOOLS order
             <a class="btn-sm btn-primary" href="../${attr(x.T.tool)}/ai/">Get the skill</a>
             <a class="btn-sm btn-theme" href="../${attr(x.T.tool)}/">Open the tool</a>
           </div>
-        </li>`).join('\n');
+        </li>`;
+  const cards = groups.map(g => `      <h3 class="ai-group" data-domain="${attr(g)}">${esc(g)}</h3>
+      <ul class="ai-tools">
+${inGroup(g).map(card).join('\n')}
+      </ul>`).join('\n');
   return pageTop({ up: '../', comment: 'from TOOLS and each tool\'s main page: edit those, then run it.', title, desc, url: HUB_URL,
     image: SITE + '/og/home.jpg', ld }) + `
   <nav class="gd-top" aria-label="Site">
@@ -655,14 +684,18 @@ ${installSection('brotools-<tool>.zip', 'brotools-<tool>', './')}
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
-${useSection(first.T, demo, rows, skillName(first.T), `<p class="gd-sub">An example with ${esc(first.T.name)}. Every tool works the same way, and its AI page shows one of its own.</p>\n      `)}
+${useSection(null, null, null, null, exPick + '      ', chats)}
 
     <section class="gd-sec card" id="tools" aria-labelledby="tools-h">
       <h2 id="tools-h">Tools with a skill</h2>
       <p class="gd-sub">Open a tool to use it yourself, or get its skill to use it through your AI. In Copilot, one agent can hold all of them.</p>
-      <ul class="ai-tools">
+      <div class="ai-filter">
+        <label for="searchFilter" class="visually-hidden">Keyword</label>
+        <input id="searchFilter" name="search" type="search" placeholder="Search skills" autocomplete="off">
+        <p class="ai-count" id="resultsSummary" aria-live="polite">Showing ${items.length} skills.</p>
+      </div>
 ${cards}
-      </ul>
+      <p class="ai-empty" hidden>No skill matches that search.</p>
     </section>
 
     <!-- Multiplex ad: before the closing buttons (.ad-slot in shared.css) -->
