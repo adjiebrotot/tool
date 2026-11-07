@@ -11,6 +11,9 @@
 /* ---- Tabs: one per assistant ---------------------------------------------------------------- */
 .ai-tabs { display: inline-flex; max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 4px; padding: 4px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--input-bg); }
 .ai-tab { flex: none; padding: 6px 16px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--muted); font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background var(--motion-fast), color var(--motion-fast); }
+.ai-tab { display: inline-flex; align-items: center; gap: 6px; }
+.ai-logo { flex: none; width: 1.1em; height: 1.1em; }
+.ai-tab[aria-selected="true"] .ai-logo { filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .9)); }
 .ai-tab[aria-selected="true"] { background: var(--accent-strong); color: var(--text-inv); }
 .ai-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -100,7 +103,9 @@
 
 @media (max-width: 700px) {
   .ai-tabs { display: flex; }
-  .ai-tab { flex: 1 1 0; padding: 6px 8px; font-size: .8rem; }
+  .ai-tab { flex: 1 1 0; flex-direction: column; gap: 3px; padding: 6px 4px; font-size: .74rem; border-radius: 14px; }
+  .ai-tabs { border-radius: 18px; }
+  .ai-logo { width: 1.35em; height: 1.35em; }
   .ai-stage { aspect-ratio: 4 / 3.4; font-size: 11px; }
   .ai-win { inset: 3% 2%; }
   .ai-win-body { grid-template-columns: 30% 1fr; }
