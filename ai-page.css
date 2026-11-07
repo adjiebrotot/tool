@@ -47,6 +47,16 @@
 .ai-ok { color: var(--text); font-weight: 700; }
 .ai-dialog { position: absolute; inset: 8% 10%; display: flex; flex-direction: column; gap: .7em; padding: 1em 1.2em; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); box-shadow: 0 14px 40px rgba(0, 0, 0, .2); animation: ai-pop .25s ease-out; }
 .ai-target { position: relative; }
+.ai-pills { display: flex; flex-wrap: wrap; gap: .3em; }
+.ai-pills b { padding: .35em .8em; border-radius: 999px; font-weight: 600; color: var(--muted); }
+.ai-pills b.on { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+.ai-head { display: flex; align-items: center; justify-content: space-between; gap: 1em; color: var(--text); font-weight: 600; }
+.ai-head .ai-btn { align-self: auto; }
+.ai-menu.ai-menu-top { left: auto; right: 1.3em; bottom: auto; top: 6.6em; width: 58%; }
+.ai-term { flex: 1; display: flex; flex-direction: column; gap: .5em; padding: 1em; border-radius: 10px; background: #111; color: #e8e8e8; font-family: 'DM Mono', monospace; font-size: .9em; overflow: hidden; }
+.ai-term span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ai-app-note { margin: 0 0 12px; padding: 10px 14px; border-left: 3px solid var(--accent); border-radius: var(--radius-md); background: var(--input-bg); font-size: .9rem; line-height: 1.55; color: var(--text); }
+.ai-asof { margin: 10px 0 0; font-size: .8rem; color: var(--muted); font-style: italic; }
 
 /* The pointer that moves to the next thing to press (ai-page.js places it) */
 .ai-cursor { position: absolute; left: 0; top: 0; width: 1.6em; height: 1.6em; pointer-events: none; transition: transform .7s cubic-bezier(.3, .7, .3, 1); z-index: 3; }

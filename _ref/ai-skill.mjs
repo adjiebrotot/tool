@@ -3,7 +3,7 @@
 //
 // Per tool (TOOLS below), under <tool>/ai/:
 //   index.html                 the page people see: download the skill, how to install it in
-//                              Claude, ChatGPT and Grok (animated), a worked conversation, ads
+//                              Claude, ChatGPT, Grok, Gemini and Copilot (animated), a worked conversation, ads
 //   <skill>.zip                the skill: one folder <skill>/ holding everything under skill/
 //   skill/SKILL.md             what the assistant reads first (YAML name + description)
 //   skill/references/<p>.md    one per page of the tool: every key, range, default, Quick
@@ -346,13 +346,40 @@ export function userInputs(M, ex) {
   return demoRows(M, { ...ex, state }).filter(r => r.user);
 }
 
+/* ── The install card, shared by every <tool>/ai/ page and the /ai/ hub ────────────────────────
+   zip and skill name the download (the hub uses a placeholder); hub is the path to /ai/ from
+   the page. The steps themselves are drawn by ai-page.js. */
+export const AI_ASOF = '7 November 2026';
+const AI_APPS = [['claude', 'Claude'], ['chatgpt', 'ChatGPT'], ['grok', 'Grok'], ['gemini', 'Gemini'], ['copilot', 'Copilot']];
+export function installSection(zipName, name, hub) {
+  return `    <section class="gd-sec card" id="install" aria-labelledby="install-h">
+      <h2 id="install-h">Install the skill</h2>
+      <p class="gd-sub">Pick your assistant. The demo plays the steps; press a step to jump to it.</p>
+      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}" data-hub="${attr(hub)}">
+        <div class="ai-tabs" role="tablist" aria-label="Assistant">
+${AI_APPS.map(([k, v], i) => `          <button type="button" role="tab" class="ai-tab" data-app="${k}" aria-selected="${i === 0}">${v}</button>`).join('\n')}
+        </div>
+        <p class="ai-app-note" hidden></p>
+        <div class="gd-demo">
+          <figure class="gd-screen">
+            <div class="ai-stage" aria-hidden="true"></div>
+            <div class="gd-bar"><span class="gd-cap ai-cap"></span><button type="button" class="btn-sm btn-theme ai-play">Pause</button></div>
+          </figure>
+          <ol class="gd-steps ai-steps"></ol>
+        </div>
+      </div>
+      <p class="gd-note">Menus move as these apps update: look for <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT and Grok: Plugins; Gemini: Customise; Copilot: inside an agent). Gemini takes the unzipped folder; the others take the zip as it is. No skill support on your plan? Attach <code>${esc(zipName)}</code> or its <code>SKILL.md</code> to the chat and say "use this skill".</p>
+      <p class="ai-asof">Effective ${AI_ASOF}. AI changes quickly: the UI, plans and features may be different by the time you see this.</p>
+    </section>`;
+}
+
 export function aiPage(T, models, demo) {
   const M = models.find(m => m.P.page === T.main) || models[0];
   const name = skillName(T);
   const zipName = name + '.zip';
   const url = aiUrl(T);
   const title = `Use ${T.name} in your AI`;
-  const desc = `Download the ${T.name} skill for Claude, ChatGPT or Grok. Your AI researches the assumptions and sends one link that opens ${T.name} on your scenario.`;
+  const desc = `Download the ${T.name} skill for Claude, ChatGPT, Grok, Gemini or Copilot. Your AI researches the assumptions and sends one link that opens ${T.name} on your scenario.`;
   demo = { ...demo, link: canonicalLink(M.base, demo.pairs) };
   const rows = demoRows(M, demo);
   const guide = existsSync(join(ROOT, T.tool, 'guides', 'index.html'));
@@ -400,7 +427,7 @@ ${JSON.stringify({
     isPartOf: { '@type': 'WebApplication', name: T.name, url: SITE + '/' + T.tool + '/' },
     step: [
       { '@type': 'HowToStep', name: 'Download the skill', text: `Download ${zipName} from this page.` },
-      { '@type': 'HowToStep', name: 'Install it in your AI', text: 'Upload the zip as a skill in Claude, ChatGPT or Grok and switch it on.' },
+      { '@type': 'HowToStep', name: 'Install it in your AI', text: 'Upload the zip as a skill in Claude, ChatGPT, Grok or Copilot (in Gemini, upload the unzipped folder) and switch it on.' },
       { '@type': 'HowToStep', name: 'Ask your question', text: `Ask your question. The AI lists your inputs and its assumptions and sends a link that opens ${T.name} on your scenario.` },
     ],
   }, null, 2)}
@@ -433,7 +460,7 @@ ${JSON.stringify({
   <main>
     <header class="gd-hero">
       <h1>${glyph(T, M)}Use ${esc(T.name)} in your AI</h1>
-      <p class="gd-lead">Install one skill in Claude, ChatGPT or Grok, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens ${esc(T.name)} on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
+      <p class="gd-lead">Install one skill in Claude, ChatGPT, Grok, Gemini or Copilot, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens ${esc(T.name)} on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open ai-dl" href="${attr(zipName)}" download><span aria-hidden="true">⬇</span>&nbsp;Download ${esc(zipName)}</a>
         <a class="gd-skip" href="../">Open the tool</a>
@@ -441,25 +468,7 @@ ${JSON.stringify({
       <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link). <a href="skill/SKILL.md">Read SKILL.md</a></p>
     </header>
 
-    <section class="gd-sec card" id="install" aria-labelledby="install-h">
-      <h2 id="install-h">Install the skill</h2>
-      <p class="gd-sub">Pick your assistant. The demo plays the steps; press a step to jump to it.</p>
-      <div class="ai-install" data-zip="${attr(zipName)}" data-skill="${attr(name)}">
-        <div class="ai-tabs" role="tablist" aria-label="Assistant">
-          <button type="button" role="tab" class="ai-tab" data-app="claude" aria-selected="true">Claude</button>
-          <button type="button" role="tab" class="ai-tab" data-app="chatgpt" aria-selected="false">ChatGPT</button>
-          <button type="button" role="tab" class="ai-tab" data-app="grok" aria-selected="false">Grok</button>
-        </div>
-        <div class="gd-demo">
-          <figure class="gd-screen">
-            <div class="ai-stage" aria-hidden="true"></div>
-            <div class="gd-bar"><span class="gd-cap ai-cap"></span><button type="button" class="btn-sm btn-theme ai-play">Pause</button></div>
-          </figure>
-          <ol class="gd-steps ai-steps"></ol>
-        </div>
-      </div>
-      <p class="gd-note">Menus move as these apps update; look for <strong>Skills</strong> in Settings. Skills need the app's code tool switched on (Claude: <strong>Code execution and file creation</strong>). No skill support on your plan? Attach <code>${esc(zipName)}</code> or <a href="skill/SKILL.md">SKILL.md</a> to the chat and say "use this skill".</p>
-    </section>
+${installSection(zipName, name, '../../ai/')}
 
     <!-- In-article ad: between cards (.ad-slot in shared.css) -->
     <div class="ad-slot">
