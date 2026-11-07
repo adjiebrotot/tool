@@ -26,8 +26,6 @@
 }
 /* The hero reads as one column until its animated diagram is drawn: a 4fr / 8fr grid with
    nothing in the wide half would squeeze the copy into a third of the page. */
-.pfl-hero.pfl-nofig { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-.pfl-hero.pfl-nofig .pfl-copy { max-width: 62ch; }
 .pfl-copy h1 {
   margin: 0 0 14px;
   font-size: clamp(2rem, 3.6vw, 2.75rem);
@@ -147,16 +145,16 @@ footer { padding: 6px 4px 24px; }
 .pfl-new   { stroke-dasharray: 100 100; stroke-dashoffset: 0; }
 
 /* The loop frame and its tab (.pxb-frame) */
-.pfl-frame { --cat: var(--cat-study); fill: color-mix(in srgb, var(--cat) 6%, transparent); stroke: color-mix(in srgb, var(--cat) 60%, transparent); stroke-width: 1.5; stroke-dasharray: 9 6; stroke-linecap: round; }
+.pfl-frame { --cat: var(--cat-flow); fill: color-mix(in srgb, var(--cat) 6%, transparent); stroke: color-mix(in srgb, var(--cat) 60%, transparent); stroke-width: 1.5; stroke-dasharray: 9 6; stroke-linecap: round; }
 .pfl-fshort { opacity: 0; }
-.pfl-tab { --cat: var(--cat-study); }
+.pfl-tab { --cat: var(--cat-flow); }
 .pfl-tab rect { fill: color-mix(in srgb, var(--cat) 15%, var(--bg)); stroke: color-mix(in srgb, var(--cat) 35%, var(--bg)); stroke-width: 1; }
 .pfl-tab text { fill: color-mix(in srgb, var(--cat) 55%, var(--text)); font-size: 11px; font-weight: 700; }
 .pfl-tab-sep { opacity: .55; }
 
 /* The Blocks panel (.pxb-card) */
 .pfl-pal { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
-.pfl-pal-g { --cat: var(--cat-model); }
+.pfl-pal-g { --cat: var(--cat-check); }
 .pfl-pal-grip, .pfl-pal-chev { fill: var(--muted); font-size: 12px; }
 .pfl-pal-h { fill: var(--text); font-size: 13px; font-weight: 700; }
 .pfl-pal-line { stroke: var(--border); stroke-width: 1; }
