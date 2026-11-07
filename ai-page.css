@@ -91,6 +91,8 @@
 .ai-code code { background: none; padding: 0; font-size: inherit; }
 .ai-chat-bar { display: flex; justify-content: flex-end; gap: 8px; }
 .ai-chat-bar .btn-sm { padding: 6px 14px; font-size: .82rem; text-decoration: none; }
+/* A primary link button sits in the same 36px box as .btn-theme (shared.css), text centred. */
+.ai-chat-bar .btn-sm.btn-primary, .ai-tool-btns .btn-sm.btn-primary { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 36px; padding: 0 14px; line-height: 1; }
 
 /* Played in order once the card is in view (ai-page.js); without the script all of it shows. */
 .ai-chat.ai-anim .ai-step { opacity: 0; transform: translateY(8px); transition: opacity .45s ease, transform .45s ease; }

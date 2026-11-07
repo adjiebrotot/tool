@@ -536,7 +536,7 @@ export function aiPage(T, models, demo) {
         <a class="btn-primary gd-open ai-dl" href="${attr(zipName)}" download><span aria-hidden="true">⬇</span>&nbsp;Download ${esc(zipName)}</a>
         <a class="gd-skip" href="../">Open the tool</a>
       </div>
-      <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link). <a href="skill/SKILL.md">Read SKILL.md</a></p>
+      <p class="ai-files">A .zip skill: <code>SKILL.md</code> (how to answer), <code>references/</code> (every input, its range and the Quick Starts) and <code>scripts/build_link.py</code> (builds and checks the link).</p>
     </header>
 
 ${installSection(zipName, name, '../../ai/')}
