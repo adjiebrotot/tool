@@ -1,0 +1,10 @@
+[22:22:13] Using the PSCAD that is already running.
+[22:22:13] PSCAD 5.0.0 connected in 1.3s (connect), Automation Library 3.1.3.
+[22:22:14] Loaded project vdiv.pscx.
+[22:22:15] Project vdiv is open.
+[22:22:20] Simulation settings: PlotType=OUT, StartType=STANDARD, sample_step=250.0, time_duration=0.2, time_step=50.0.
+[22:22:29] Built vdiv in 8.8s.
+[22:22:35] Ran vdiv in 6.0s (ok).
+[22:22:35] WARNING The run recorded no channel called "No Such Channel".
+  It recorded nothing. Add an output channel to the signal in PSCAD.
+[22:22:35] Put back 5 changed values.

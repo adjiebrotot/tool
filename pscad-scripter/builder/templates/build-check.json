@@ -1,0 +1,171 @@
+{
+ "app": "pscad-builder",
+ "v": 1,
+ "name": "Build the case",
+ "nodes": [
+  {
+   "id": "n1",
+   "type": "start",
+   "x": 0,
+   "y": 160,
+   "label": "",
+   "s": {
+    "project": "",
+    "workspace": "",
+    "libraries": "",
+    "outputDir": "",
+    "undoChanges": true,
+    "tableFmt": "csv",
+    "fNominal": "auto",
+    "runMode": "auto",
+    "showPscad": false,
+    "fortran": "",
+    "pscadVersion": "",
+    "port": 0,
+    "connectTimeout": 120
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n0",
+   "type": "note",
+   "x": 0,
+   "y": -180,
+   "label": "About this template",
+   "s": {
+    "text": "A PSCAD case is Fortran that EMTDC compiles before it can run, so a build has errors of its own: a floating input, a missing signal, a component that does not fit. This builds the case and writes what the compiler said into a table, which is the quickest check that a model someone sent you is sound."
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n2",
+   "type": "px.build",
+   "x": 320,
+   "y": 160,
+   "label": "",
+   "s": {
+    "clean": true,
+    "force": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n3",
+   "type": "out.table.add",
+   "x": 660,
+   "y": 60,
+   "label": "",
+   "s": {
+    "table": "Build",
+    "cols": [
+     {
+      "id": "c1",
+      "name": "Built"
+     },
+     {
+      "id": "c2",
+      "name": "Seconds"
+     },
+     {
+      "id": "c3",
+      "name": "Warnings"
+     }
+    ],
+    "ctx": true,
+    "onSkip": true
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n4",
+   "type": "out.table.add",
+   "x": 660,
+   "y": 320,
+   "label": "Did not build",
+   "s": {
+    "table": "Build",
+    "cols": [
+     {
+      "id": "c1",
+      "name": "Built"
+     },
+     {
+      "id": "c2",
+      "name": "Errors"
+     }
+    ],
+    "ctx": true,
+    "onSkip": true
+   },
+   "pin": [],
+   "sv": 1
+  }
+ ],
+ "edges": [
+  {
+   "id": "e1",
+   "from": "n1",
+   "out": "next",
+   "to": "n2",
+   "in": "in"
+  },
+  {
+   "id": "e2",
+   "from": "n2",
+   "out": "ok",
+   "to": "n3",
+   "in": "in"
+  },
+  {
+   "id": "e3",
+   "from": "n2",
+   "out": "fail",
+   "to": "n4",
+   "in": "in"
+  },
+  {
+   "id": "e4",
+   "from": "n2",
+   "out": "built",
+   "to": "n3",
+   "in": "c1"
+  },
+  {
+   "id": "e5",
+   "from": "n2",
+   "out": "seconds",
+   "to": "n3",
+   "in": "c2"
+  },
+  {
+   "id": "e6",
+   "from": "n2",
+   "out": "warnings",
+   "to": "n3",
+   "in": "c3"
+  },
+  {
+   "id": "e7",
+   "from": "n2",
+   "out": "built",
+   "to": "n4",
+   "in": "c1"
+  },
+  {
+   "id": "e8",
+   "from": "n2",
+   "out": "errors",
+   "to": "n4",
+   "in": "c2"
+  }
+ ],
+ "view": {
+  "x": 0,
+  "y": 0,
+  "zoom": 1
+ }
+}

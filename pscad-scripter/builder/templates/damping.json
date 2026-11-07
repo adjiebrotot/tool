@@ -1,0 +1,225 @@
+{
+ "app": "pscad-builder",
+ "v": 1,
+ "name": "Damping check",
+ "nodes": [
+  {
+   "id": "n1",
+   "type": "start",
+   "x": 0,
+   "y": 200,
+   "label": "",
+   "s": {
+    "project": "",
+    "workspace": "",
+    "libraries": "",
+    "outputDir": "",
+    "undoChanges": true,
+    "tableFmt": "csv",
+    "fNominal": "auto",
+    "runMode": "auto",
+    "showPscad": false,
+    "fortran": "",
+    "pscadVersion": "",
+    "port": 0,
+    "connectTimeout": 120
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n0",
+   "type": "note",
+   "x": 0,
+   "y": -260,
+   "label": "About this template",
+   "s": {
+    "text": "A control interaction, a subsynchronous oscillation or a badly tuned loop shows up as an oscillation that does not decay. Start the damping window after the disturbance itself, so its own step is not read as a peak. A negative damping ratio means the oscillation is growing."
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n2",
+   "type": "px.fault",
+   "x": 320,
+   "y": 60,
+   "label": "Disturbance",
+   "s": {
+    "el": {
+     "cls": "master:tpflt",
+     "name": "",
+     "match": "one"
+    },
+    "at": 1,
+    "duration": 0.05,
+    "phases": "",
+    "resistance": null,
+    "on": true
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n3",
+   "type": "px.run",
+   "x": 660,
+   "y": 60,
+   "label": "",
+   "s": {
+    "duration": 10,
+    "step": 50,
+    "plotStep": 500,
+    "build": "auto",
+    "read": "out",
+    "keepFiles": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n4",
+   "type": "px.series",
+   "x": 980,
+   "y": 300,
+   "label": "",
+   "s": {
+    "channel": "Machine Speed",
+    "combine": "one",
+    "label": ""
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n5",
+   "type": "sig.damping",
+   "x": 1300,
+   "y": 300,
+   "label": "",
+   "s": {
+    "t_start": 1.2,
+    "t_end": null,
+    "minPeaks": 3
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n6",
+   "type": "chk.verdict",
+   "x": 1620,
+   "y": 60,
+   "label": "Well damped",
+   "s": {
+    "op": "ge",
+    "limit": 0.03,
+    "tol": 0,
+    "goOn": false
+   },
+   "pin": [],
+   "sv": 1
+  },
+  {
+   "id": "n7",
+   "type": "out.table.add",
+   "x": 1940,
+   "y": 60,
+   "label": "",
+   "s": {
+    "table": "Damping",
+    "cols": [
+     {
+      "id": "c1",
+      "name": "Damping ratio"
+     },
+     {
+      "id": "c2",
+      "name": "Mode (Hz)"
+     }
+    ],
+    "ctx": true,
+    "onSkip": true
+   },
+   "pin": [],
+   "sv": 1
+  }
+ ],
+ "edges": [
+  {
+   "id": "e1",
+   "from": "n1",
+   "out": "next",
+   "to": "n2",
+   "in": "in"
+  },
+  {
+   "id": "e2",
+   "from": "n2",
+   "out": "next",
+   "to": "n3",
+   "in": "in"
+  },
+  {
+   "id": "e3",
+   "from": "n3",
+   "out": "ok",
+   "to": "n6",
+   "in": "in"
+  },
+  {
+   "id": "e4",
+   "from": "n6",
+   "out": "pass",
+   "to": "n7",
+   "in": "in"
+  },
+  {
+   "id": "e5",
+   "from": "n6",
+   "out": "fail",
+   "to": "n7",
+   "in": "in"
+  },
+  {
+   "id": "e6",
+   "from": "n3",
+   "out": "result",
+   "to": "n4",
+   "in": "run"
+  },
+  {
+   "id": "e7",
+   "from": "n4",
+   "out": "series",
+   "to": "n5",
+   "in": "series"
+  },
+  {
+   "id": "e8",
+   "from": "n5",
+   "out": "value",
+   "to": "n6",
+   "in": "value"
+  },
+  {
+   "id": "e9",
+   "from": "n5",
+   "out": "value",
+   "to": "n7",
+   "in": "c1"
+  },
+  {
+   "id": "e10",
+   "from": "n5",
+   "out": "frequency",
+   "to": "n7",
+   "in": "c2"
+  }
+ ],
+ "view": {
+  "x": 0,
+  "y": 0,
+  "zoom": 1
+ }
+}

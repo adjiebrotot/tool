@@ -1,0 +1,12 @@
+[22:08:21] Cleared NoDefaultCurrentDirectoryInExePath for this run so EMTDC can start the case it builds.
+[22:08:22] Using the PSCAD that is already running.
+[22:08:22] PSCAD 5.0.0 connected in 1.1s (connect), Automation Library 3.1.3.
+[22:08:23] Loaded project vdiv.pscx.
+[22:08:24] Project vdiv is open.
+[22:08:31] Created global substitution PXB_rtest.
+[22:08:31] Global substitution PXB_rtest = 3.5.
+[22:08:35] Global substitution PXB_rtest = 7.0.
+[22:08:38] Put back 1 changed value.
+[22:08:42] WARNING The project has no global substitution "PXB_nosuch".
+  It has: PXB_rtest
+[22:08:42] Removed 1 thing the workflow made.

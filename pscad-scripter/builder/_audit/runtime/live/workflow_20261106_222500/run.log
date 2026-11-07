@@ -1,0 +1,11 @@
+[22:25:00] Using the PSCAD that is already running.
+[22:25:00] PSCAD 5.0.0 connected in 1.3s (connect), Automation Library 3.1.3.
+[22:25:01] Loaded project vdiv.pscx.
+[22:25:02] Project vdiv is open.
+[22:25:08] Created global substitution PXB_rtest.
+[22:25:08] Global substitution PXB_rtest = 3.5.
+[22:25:12] Global substitution PXB_rtest = 7.0.
+[22:25:15] Put back 1 changed value.
+[22:25:18] WARNING The project has no global substitution "PXB_nosuch".
+  It has: PXB_rtest
+[22:25:19] Removed 1 thing the workflow made.

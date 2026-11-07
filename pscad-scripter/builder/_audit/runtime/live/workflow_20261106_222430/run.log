@@ -1,0 +1,11 @@
+[22:24:30] Using the PSCAD that is already running.
+[22:24:31] PSCAD 5.0.0 connected in 1.1s (connect), Automation Library 3.1.3.
+[22:24:31] Loaded project vdiv.pscx.
+[22:24:32] Project vdiv is open.
+[22:24:34] Created layer PXB_test (Enabled).
+[22:24:36] Put 1 component on layer PXB_test.
+[22:24:37] Layer PXB_test is Disabled.
+[22:24:38] Layer PXB_test is Enabled.
+[22:24:39] Layer PXB_test is Enabled.
+[22:24:41] Put back 2 changed values.
+[22:24:42] Removed 1 thing the workflow made.

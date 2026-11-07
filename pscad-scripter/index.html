@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../consent.js" defer></script>
+  <!-- A link an AI assistant wrote (#load, see agent.txt in builder/) names the Workflow Builder's
+       own keys, and the Builder is the only scripter here, so the link goes straight to it with its
+       hash kept. There is no form-based scripter at this address to send anything else to. -->
+  <script>(function(){var h=location.hash;if(/^#load(?:[&=?\/]|$)/.test(h))location.replace('builder/'+location.search+h);})();</script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PSCAD Scripter: Python Automation Script Builder</title>
+<meta name="description" content="Write PSCAD Python automation scripts in minutes. Wire build, run, channel and EMT check blocks into one ready-to-run .py file that drives PSCAD. Free.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/pscad-scripter/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="PSCAD Scripter">
+<meta property="og:description" content="Write PSCAD Python automation scripts in minutes, not days. Drag blocks into a workflow and get one ready-to-run Python file that drives PSCAD through its Automation Library. Runs in your browser with no upload.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/pscad-scripter/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PSCAD Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PSCAD Scripter">
+<meta name="twitter:description" content="Write PSCAD Python automation scripts in minutes, not days. Drag blocks into a workflow and get one ready-to-run Python file that drives PSCAD through its Automation Library. Runs in your browser with no upload.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pscad-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "PSCAD Scripter",
+  "url": "https://tool.adjiebrotots.com/pscad-scripter/",
+  "description": "Write PSCAD Python automation scripts in minutes, not days. The Workflow Builder wires blocks (model and data, build and run, power system checks, results and graphs, loops, values and optimisation) into one ready-to-run Python file that drives PSCAD through its Automation Library: it opens the case, builds it, runs the EMT simulation, reads the output channels, checks them and writes the tables and graphs. Runs locally in your browser with no upload; the generated script is yours to keep.",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "Power system study automation",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "dateModified": "2026-11-07",
+  "screenshot": "https://tool.adjiebrotots.com/og/pscad-scripter.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "inLanguage": "en",
+  "alternateName": [
+    "PSCAD Script Generator",
+    "PSCAD Python Script Generator",
+    "PSCAD Automation Library Scripter",
+    "PSCAD Workflow Builder"
+  ],
+  "keywords": "PSCAD scripting, PSCAD Python automation, automate PSCAD, PSCAD batch simulation, PSCAD Automation Library, mhi.pscad, EMTDC, EMT simulation automation, fault ride through, critical clearing time, harmonics and THD, no-code PSCAD",
+  "featureList": [
+    "Drag and drop blocks into a workflow: model and data, build and run, power system checks, results and graphs, loops and decisions, values and maths, optimisation",
+    "One ready-to-run Python file that drives PSCAD through its Automation Library",
+    "106 blocks in nine categories, and ten Quick Start workflows to start from",
+    "Builds the case with PSCAD's own Fortran compiler and hands back its error and warning lines",
+    "EMT studies the way PSCAD does them: faults and breakers as components already in the case, snapshots, simulation sets run in a volley, the solution step in microseconds",
+    "Six checks written for waveforms: RMS, harmonic distortion (THD), sequence component, unbalance factor, overshoot and rise time, damping of a ringdown",
+    "A component picker over 383 Master Library definitions, each with every parameter, its unit, range, default and help text",
+    "Runs locally in the browser with no upload, and the generated Python file is yours to keep"
+  ],
+  "hasPart": [
+    {
+      "@type": "WebApplication",
+      "name": "PSCAD Workflow Builder",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/builder/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "How to automate PSCAD studies with Python",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/python/"
+    },
+    {
+      "@type": "CollectionPage",
+      "name": "PSCAD component reference",
+      "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/"
+    }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "PSCAD Scripter", "item": "https://tool.adjiebrotots.com/pscad-scripter/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
+<link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts.css">
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../theme.js"></script>
+<div class="container pfl">
+
+  <nav class="pfl-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
+    <div class="pfl-top-r">
+      <a class="btn-theme btn-back" href="python/" title="The PSCAD Python study guides, one per study" aria-label="Guides"><span class="pf-tour-emo" aria-hidden="true">📖</span><span class="pf-tour-word">&nbsp;Guides</span></a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="pfl-hero pfl-nofig" aria-labelledby="pflTitle">
+      <div class="pfl-copy">
+        <h1 id="pflTitle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PSCAD Scripter</h1>
+        <p class="pfl-lead">Write PSCAD Python automation scripts in minutes, not days.</p>
+        <a class="btn-primary pfl-cta" href="builder/">Open Builder</a>
+        <p class="pfl-alt">or read the <a href="python/">PSCAD Python guides</a></p>
+      </div>
+    </section>
+
+    <section class="card pfl-sec" aria-labelledby="pflBuild">
+      <h2 id="pflBuild">What it does</h2>
+      <ul class="pfl-grid">
+        <li>
+          <h3>Wire the study, get one Python file</h3>
+          <p>An EMT run takes as long as it takes, and a sweep of them means sitting at the machine starting the next one. Wire the study once instead: 106 blocks in nine categories, from the model and the run to the checks, the graphs and the loops. Press Download and you have one Python file that opens the case, builds it, runs every pass, reads the output channels, checks them, writes the tables, and puts back every parameter, layer state and substitution it changed.</p>
+        </li>
+        <li>
+          <h3>Built for EMT, not bolted on</h3>
+          <p>A PSCAD case is Fortran that EMTDC compiles, so the build block hands back the compiler's own error and warning lines. A fault or a breaker has its timing written into the component already drawn in the case, because PSCAD has no event list to fill. Run once to a settled state, save a snapshot, and start every later run from it. Put cases into a simulation set and run them several at a time. The solution and plot steps are set in microseconds.</p>
+          <ul class="pfl-tags" data-no-abbr><li>Build the case</li><li>Set a fault</li><li>Save a snapshot</li><li>Run a simulation set</li><li>Multiple Run sweep</li></ul>
+        </li>
+        <li>
+          <h3>Read the waveform, not a phasor</h3>
+          <p>An EMT run records waves, so the checks work on waves. THD comes from a DFT of the time domain result, because PSCAD has no frequency domain harmonic scan. RMS is a sliding window of one cycle or more. Sequence components and the unbalance factor are worked out from three separate phase channels, and a ringdown's damping ratio is fitted from its envelope peaks, where a negative ratio means the oscillation is growing. The numbers go into results tables, CSV or Excel, and graphs:</p>
+          <ul class="pfl-tags" data-no-abbr><li>RMS of a waveform</li><li>Harmonic distortion (THD)</li><li>Sequence component</li><li>Unbalance factor</li><li>Overshoot and rise time</li><li>Damping of a ringdown</li></ul>
+        </li>
+        <li>
+          <h3>The whole Master Library, in the picker</h3>
+          <p>Choose a component from 383 Master Library definitions read out of PSCAD 5.0.0 itself, each with every parameter, its unit, its range, its default and its help text. Values are written with PSCAD's own unit suffix (<code>2.5 [ohm]</code>) and converted on the way in and out, so a parameter goes back the way the case had it.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Display ad (Display 3): between the two content cards, below the hero and its Open Builder button (.ad-slot in shared.css) -->
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8730116101825381" data-ad-slot="9911594045" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="card pfl-sec" aria-labelledby="pflLearn">
+      <h2 id="pflLearn">Learn PSCAD scripting</h2>
+      <ul class="pfl-grid">
+        <li>
+          <h3><a href="python/">Automate PSCAD studies with Python</a></h3>
+          <p>One guide per study, each showing the method and the script the Builder writes for it: <a href="python/getting-started/">getting started with the Automation Library</a>, <a href="python/build-and-run/">build a case and run it</a>, <a href="python/fault-studies/">fault ride through and critical clearing time</a>, <a href="python/parameter-sweep/">parameter sweeps</a>, <a href="python/harmonics/">harmonics and THD</a>, <a href="python/snapshots-and-batch/">snapshots and batch runs</a> and <a href="python/control-tuning/">control tuning</a>.</p>
+        </li>
+        <li>
+          <h3><a href="reference/">PSCAD component reference</a></h3>
+          <p>Every Master Library definition, one page each, with its parameters, their units, ranges and defaults, what each one means, and the Python that finds the component and writes to it. 383 definitions, read out of PSCAD 5.0.0 rather than typed in by hand.</p>
+        </li>
+        <li>
+          <h3><a href="builder/">The Builder, and its tour</a></h3>
+          <p>The canvas, the Blocks panel and one settings form per block. On a first visit the Builder offers a guided tour over a worked fault ride through study, and the 🧭 Tour button opens it again whenever you want it.</p>
+        </li>
+        <li>
+          <h3>Ten Quick Starts</h3>
+          <p>A finished workflow to start from, rather than an empty canvas: <a href="builder/#qs=frt">fault ride through over fault durations</a>, <a href="builder/#qs=harmonics">harmonics and THD from an EMT run</a>, <a href="builder/#qs=cct">critical clearing time</a>, <a href="builder/#qs=parallel">run several cases at once</a>, <a href="builder/#qs=damping">damping of a ringdown</a>, and five more.</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-07">7 November 2026</time></span></p>
+    <div class="pfl-made">
+      <img loading="lazy" src="../logos/australian.png" alt="Australian flag" class="pfl-flag">
+      <div><img loading="lazy" src="../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (EMT, THD, RMS...). -->
+<script src="../shared.js" defer></script>
+<script src="abbr.js" defer></script>
+<script>
+  /* The theme toggle (theme.js draws it and saves a reader's pick). */
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+<script src="../bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="Saved you a weekend of EMT runs? Buy me a coffee!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
+</body>
+</html>

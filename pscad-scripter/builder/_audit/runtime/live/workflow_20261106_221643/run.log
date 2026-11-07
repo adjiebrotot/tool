@@ -1,0 +1,15 @@
+[22:16:43] Using the PSCAD that is already running.
+[22:16:43] PSCAD 5.0.0 connected in 0.8s (connect), Automation Library 3.1.3.
+[22:16:44] Loaded project vdiv.pscx.
+[22:16:44] Project vdiv is open.
+[22:16:47] Created case C:\Users\adjie\pscad-sandbox\pxb_built.pscx.
+[22:16:47] Project pxb_built is the one in use.
+[22:16:48] Added master:source_1 at (10, 10).
+[22:16:49] Added master:resistor at (16, 10).
+[22:16:49] Added master:ground at (16, 16).
+[22:16:50] Drew a wire through 2 points.
+[22:16:51] Drew a bus TestBus through 2 points.
+[22:16:51] Added master:pgb at (28, 10).
+[22:16:54] Added output channel Vbuilt.
+[22:16:55] Added a graph for Vbuilt (master:pgb).
+[22:17:00] WARNING Could not remove the project pxb_built.pscx: 'Project' object has no attribute 'delete'

@@ -1,0 +1,16 @@
+[22:19:11] Using the PSCAD that is already running.
+[22:19:12] PSCAD 5.0.0 connected in 1.0s (connect), Automation Library 3.1.3.
+[22:19:13] Loaded project vdiv.pscx.
+[22:19:13] Project vdiv is open.
+[22:19:15] Created case C:\Users\adjie\pscad-sandbox\pxb_built.pscx.
+[22:19:16] Project pxb_built is the one in use.
+[22:19:16] Added master:source_1 at (10, 10).
+[22:19:17] Added master:resistor at (16, 10).
+[22:19:18] Added master:ground at (16, 16).
+[22:19:19] Drew a wire through 2 points.
+[22:19:20] Drew a bus TestBus through 2 points.
+[22:19:20] Added master:pgb at (28, 10).
+[22:19:22] Added output channel Vbuilt.
+[22:19:24] Added a graph for Vbuilt (master:pgb).
+[22:19:35] Unloaded the project pxb_built.pscx (its file is still there).
+[22:19:35] Removed 8 things the workflow made.
