@@ -1,6 +1,6 @@
 ---
 name: brotools-financingvscash
-description: Opens Adjie Brotools' Finance vs Cash (https://tool.adjiebrotots.com/financingvscash/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about whether to pay cash or take finance (car loan, 0% offers, dealer finance, personal loan, buy now pay later) for a purchase while investing the cash, and which loan offer is best. Also use when they mention tool.adjiebrotots.com/financingvscash.
+description: "Opens Adjie Brotools' Finance vs Cash (https://tool.adjiebrotots.com/financingvscash/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about whether to pay cash or take finance (car loan, 0% offers, dealer finance, personal loan, buy now pay later) for a purchase while investing the cash, and which loan offer is best. Also use when they mention tool.adjiebrotots.com/financingvscash."
 ---
 
 # Finance vs Cash on tool.adjiebrotots.com

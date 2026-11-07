@@ -1,6 +1,6 @@
 ---
 name: brotools-costofliving-comparator
-description: Opens Adjie Brotools' Cost of Living Comparator (https://tool.adjiebrotots.com/costofliving-comparator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about moving between cities: how far a salary goes elsewhere, the salary needed in another city to live and save the same, comparing cost of living across many cities or on a world map. Also use when they mention tool.adjiebrotots.com/costofliving-comparator.
+description: "Opens Adjie Brotools' Cost of Living Comparator (https://tool.adjiebrotots.com/costofliving-comparator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about moving between cities: how far a salary goes elsewhere, the salary needed in another city to live and save the same, comparing cost of living across many cities or on a world map. Also use when they mention tool.adjiebrotots.com/costofliving-comparator."
 ---
 
 # Cost of Living Comparator on tool.adjiebrotots.com

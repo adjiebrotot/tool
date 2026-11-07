@@ -1,6 +1,6 @@
 ---
 name: brotools-powerfactory-scripter
-description: Opens Adjie Brotools' PowerFactory Scripter (https://tool.adjiebrotots.com/powerfactory-scripter/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about writing DIgSILENT PowerFactory Python scripts: load flow, N-1 contingency, short circuit, RMS/EMT simulation, fault ride-through, critical clearing time, parameter sweeps and result export, built as a workflow the tool turns into one ready-to-run script. Also use when they mention tool.adjiebrotots.com/powerfactory-scripter.
+description: "Opens Adjie Brotools' PowerFactory Scripter (https://tool.adjiebrotots.com/powerfactory-scripter/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about writing DIgSILENT PowerFactory Python scripts: load flow, N-1 contingency, short circuit, RMS/EMT simulation, fault ride-through, critical clearing time, parameter sweeps and result export, built as a workflow the tool turns into one ready-to-run script. Also use when they mention tool.adjiebrotots.com/powerfactory-scripter."
 ---
 
 # PowerFactory Scripter on tool.adjiebrotots.com

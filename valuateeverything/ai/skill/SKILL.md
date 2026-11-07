@@ -1,6 +1,6 @@
 ---
 name: brotools-valuateeverything
-description: Opens Adjie Brotools' Valuate Everything (https://tool.adjiebrotots.com/valuateeverything/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about whether an asking price is fair: a used car, a house, a hotel night or any item, fitted against comparable listings (price against year, mileage, size and other features). Also use when they mention tool.adjiebrotots.com/valuateeverything.
+description: "Opens Adjie Brotools' Valuate Everything (https://tool.adjiebrotots.com/valuateeverything/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about whether an asking price is fair: a used car, a house, a hotel night or any item, fitted against comparable listings (price against year, mileage, size and other features). Also use when they mention tool.adjiebrotots.com/valuateeverything."
 ---
 
 # Valuate Everything on tool.adjiebrotots.com

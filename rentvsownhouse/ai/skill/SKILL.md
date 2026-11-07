@@ -1,6 +1,6 @@
 ---
 name: brotools-rentvsownhouse
-description: Opens Adjie Brotools' Rent vs Own (https://tool.adjiebrotots.com/rentvsownhouse/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about buying a home versus renting (and investing the difference), whether a house or apartment is worth buying at a price against a rent, mortgage vs rent comparisons, or how sensitive that answer is to rates, growth and costs. Covers 33 cities with local Quick Starts; has an Indonesian version. Also use when they mention tool.adjiebrotots.com/rentvsownhouse.
+description: "Opens Adjie Brotools' Rent vs Own (https://tool.adjiebrotots.com/rentvsownhouse/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about buying a home versus renting (and investing the difference), whether a house or apartment is worth buying at a price against a rent, mortgage vs rent comparisons, or how sensitive that answer is to rates, growth and costs. Covers 33 cities with local Quick Starts; has an Indonesian version. Also use when they mention tool.adjiebrotots.com/rentvsownhouse."
 ---
 
 # Rent vs Own on tool.adjiebrotots.com

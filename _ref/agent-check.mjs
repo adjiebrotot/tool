@@ -383,6 +383,11 @@ for (const P of pages) {
   check('A8', `${P.page}: ${dir} has its page, zip and skill`, have.length === 0, list(have));
   const md = read(dir + 'skill/SKILL.md') || '';
   check('A8', `${P.page}: SKILL.md opens with its name and description`, md.startsWith('---\nname: ' + skillName(T) + '\ndescription: '), 'no YAML front matter');
+  // Strict YAML (Copilot) rejects a bare description with a colon in it: it must be one quoted string.
+  const descLine = (md.split('\n')[2] || '').slice('description: '.length);
+  let quoted = false;
+  try { quoted = descLine.startsWith('"') && typeof JSON.parse(descLine) === 'string' && md.split('\n')[3] === '---'; } catch (e) {}
+  check('A8', `${P.page}: SKILL.md description is one double-quoted YAML string`, quoted, 'unquoted or multi-line description');
   const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
   const href = aiUrl(T);
   check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="/${dir}"`), sec ? 'no <a href> or data-ai for ' + href : 'no agent section');

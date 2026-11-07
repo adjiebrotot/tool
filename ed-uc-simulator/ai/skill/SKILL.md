@@ -1,6 +1,6 @@
 ---
 name: brotools-ed-uc-simulator
-description: Opens Adjie Brotools' ED/UC Simulator (https://tool.adjiebrotots.com/ed-uc-simulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about power system economic dispatch and unit commitment over hours: which generators run, storage and HVDC schedules, operating cost and nodal prices (LMP) with line congestion. Also use when they mention tool.adjiebrotots.com/ed-uc-simulator.
+description: "Opens Adjie Brotools' ED/UC Simulator (https://tool.adjiebrotots.com/ed-uc-simulator/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about power system economic dispatch and unit commitment over hours: which generators run, storage and HVDC schedules, operating cost and nodal prices (LMP) with line congestion. Also use when they mention tool.adjiebrotots.com/ed-uc-simulator."
 ---
 
 # ED/UC Simulator on tool.adjiebrotots.com

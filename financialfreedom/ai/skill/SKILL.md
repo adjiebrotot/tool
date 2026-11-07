@@ -1,6 +1,6 @@
 ---
 name: brotools-financialfreedom
-description: Opens Adjie Brotools' Financial Freedom (https://tool.adjiebrotots.com/financialfreedom/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about early retirement and financial independence (FIRE): the earliest age someone can stop working, how long savings last, safe withdrawal, retirement savings plans with Monte Carlo odds. Also use when they mention tool.adjiebrotots.com/financialfreedom.
+description: "Opens Adjie Brotools' Financial Freedom (https://tool.adjiebrotots.com/financialfreedom/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about early retirement and financial independence (FIRE): the earliest age someone can stop working, how long savings last, safe withdrawal, retirement savings plans with Monte Carlo odds. Also use when they mention tool.adjiebrotots.com/financialfreedom."
 ---
 
 # Financial Freedom on tool.adjiebrotots.com

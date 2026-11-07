@@ -1,6 +1,6 @@
 ---
 name: brotools-pisahvsgabung
-description: Opens Adjie Brotools' Pisah vs Gabung Harta (https://tool.adjiebrotots.com/pisahvsgabung/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about Indonesian married couples' PPh 21 income tax: whether Pisah Harta (PH/MT) or Gabung Harta (joint) pays less, for given salaries, deductions and dependants. Requests often come in Indonesian. Also use when they mention tool.adjiebrotots.com/pisahvsgabung.
+description: "Opens Adjie Brotools' Pisah vs Gabung Harta (https://tool.adjiebrotots.com/pisahvsgabung/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about Indonesian married couples' PPh 21 income tax: whether Pisah Harta (PH/MT) or Gabung Harta (joint) pays less, for given salaries, deductions and dependants. Requests often come in Indonesian. Also use when they mention tool.adjiebrotots.com/pisahvsgabung."
 ---
 
 # Pisah vs Gabung Harta on tool.adjiebrotots.com

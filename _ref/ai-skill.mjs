@@ -126,7 +126,9 @@ function skillMd(T, models) {
   const desc = `Opens Adjie Brotools' ${T.name} (${SITE}/${T.tool}/) on the user's own scenario with one link, and the tool computes the answer. Use when the user asks about ${T.use} Also use when they mention tool.adjiebrotots.com/${T.tool}.`;
   if (desc.length > 1024) throw new Error(name + ': description over 1024 characters');
   const L = [];
-  L.push('---', `name: ${name}`, `description: ${desc.replace(/\s+/g, ' ')}`, '---', '');
+  // The description is one double-quoted YAML string (a JSON string is one): left bare, its
+  // colons ("planning: which plants") make strict parsers such as Copilot's reject the skill.
+  L.push('---', `name: ${name}`, `description: ${JSON.stringify(desc.replace(/\s+/g, ' '))}`, '---', '');
   L.push(`# ${T.name} on tool.adjiebrotots.com`, '');
   L.push(`${T.name} is a free calculator that runs in the user's browser. This skill turns the user's question into **one link** that opens the tool on their scenario. The tool, not you, works out the result: its figures come from its own model and data, and anything you work out separately can differ from what the user then sees.`, '');
   L.push('## What it decides', '');
