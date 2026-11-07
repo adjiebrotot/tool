@@ -89,7 +89,7 @@ function readme(wf, pyName, jsonName, data, problems, fonts) {
   L.push('');
   L.push(`         py -3.12 "${pyName}"`);
   L.push('');
-  L.push('     (or any Python 3.12 that can import the powerfactory module).');
+  L.push('     (or any Python 3.7 or newer with the Automation Library: pip install mhi-pscad).');
   L.push('  4. The run writes its results, graphs and log into a folder it makes beside itself.');
   L.push('');
   L.push('Settings');

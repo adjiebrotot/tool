@@ -311,7 +311,7 @@ defineBlock({
   title: 'Skip to next pass',
   desc: 'Ends this pass of the loop now and goes on with the next pass. The reason goes into the log and the results table.',
   keywords: ['skip', 'continue', 'next pass', 'next', 'ignore'],
-  settings: [{ key: 'msg', label: 'Reason', kind: 'text', default: '', noPin: true, placeholder: 'e.g. Load flow did not converge', tip: 'Shown in the log and in the Status column of the results table.' }],
+  settings: [{ key: 'msg', label: 'Reason', kind: 'text', default: '', noPin: true, placeholder: 'e.g. The case did not settle', tip: 'Shown in the log and in the Status column of the results table.' }],
   summary(s) { return s.msg ? s.msg : ''; },
   emit(cx) { return { kind: 'continue', msg: String(cx.s.msg || '').trim() || 'Skipped' }; },
 });
