@@ -371,12 +371,15 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
+        _PX.setdefault("snap_at", {})[want["snapshot_filename"]] = want["SnapTime"]
     # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
     # run given neither argument keeps that start rather than going back to zero.
     sticky = (_PX.get("snap_start") or {}).get(name, "")
+    t_offset = 0.0
     if from_snapshot or (snapshot is None and sticky):
         want["StartType"] = "FROM_SNAP_FILE"
         want["startup_filename"] = str(from_snapshot or sticky)
+        t_offset = float((_PX.get("snap_at") or {}).get(want["startup_filename"], 0.0) or 0.0)
     elif snapshot is None:
         want["StartType"] = "STANDARD"
     sim_settings(app, prj, duration=duration, step=step, plot_step=plot_step, **want)
@@ -417,6 +420,12 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
             defer("remove the result files of %s" % name, lambda: _clear_out(folder, stem))
     elif read == "curves":
         chans, times, cols = read_curves(app, prj)
+    if t_offset and times:
+        # The components keep the model's own clock through a snapshot start (a fault timed
+        # at 2.1 s still fires at 2.1 s when the snapshot is at 2.0 s), but the result files
+        # count from zero again, so the event times a workflow holds would miss the samples.
+        times = [t + t_offset for t in times]
+        log("The run resumed at %gs; its time axis is the model's own." % t_offset, "info")
     return SimResult(status, lines, took, events, chans, times, cols, name, built)
 
 
@@ -509,6 +518,7 @@ def snapshot_save(app, at, prj=None, filename=""):
         name += ".snp"
     sim_settings(app, prj, SnapType="ONLY_ONCE", SnapTime=float(px_number(at, 0.0)),
                  snapshot_filename=name)
+    _PX.setdefault("snap_at", {})[name] = float(px_number(at, 0.0))
     log("The next run saves a snapshot at %gs as %s." % (px_number(at, 0.0), name), "info")
     return name
 
@@ -748,6 +758,24 @@ def set_switching(app, defn="", name="", at=None, action="open", match="one"):
     opening = str(action or "open").lower().startswith("o")
     order = (("TO", "Topen", "T1", "TB", "Tbrk") if opening
              else ("TC", "Tclose", "T2", "TB", "Tbrk"))
+    if "TO1" in params:
+        # Timed Breaker Logic (master:tbreakn) numbers its times by the order they happen,
+        # not by what they do: TO1 is the first operation, TO2 the second, and INIT says
+        # which way the first one goes. An initially closed breaker opens at TO1 and
+        # closes at TO2; an initially open one does the reverse.
+        init = str(params.get("INIT", "")).strip().upper()
+        first_opens = not (init.startswith("1") or init.startswith("OPEN"))
+        key = "TO1" if opening == first_opens else "TO2"
+        if key not in params:
+            key = "TO1"
+        if key == "TO2" and str(params.get("NUMS", "2")).strip().startswith("1"):
+            log("%s is set to one breaker operation, so its second time does nothing. "
+                "Set Number of Breaker Operations to 2, or change its Initial State."
+                % _label(comp), "warn")
+        px_set(comp, key, t0)
+        log("%s %ss at %gs (wrote %s)."
+            % (_label(comp), "open" if opening else "close", t0, key), "info")
+        return t0
     for key in order:
         if key in params:
             px_set(comp, key, t0)

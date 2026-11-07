@@ -1,6 +1,0 @@
-[22:26:42] Using the PSCAD that is already running.
-[22:26:43] PSCAD 5.0.0 connected in 1.0s (connect), Automation Library 3.1.3.
-[22:26:43] Loaded project multirun.pscx.
-[22:26:44] Project multirun is open.
-[22:26:50] Fault master:tfault: start 0.5 s, duration 0.1 s (wrote TF, DF).
-[22:26:51] Put back 2 changed values.
