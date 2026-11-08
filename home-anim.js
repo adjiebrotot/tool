@@ -158,8 +158,8 @@
         '<path class="fw" d="M108 82V99A3 3 0 0 1 105 102H88Z"/>' +
         '<path class="rc fr" d="M108 87V99A3 3 0 0 1 105 102H93Z"/></g></g>',
 
-    // The PowerFactory Scripter's code window, with the PSCAD speech bubble stamping on its corner
-    // and its spark of a tail zapping in. The bubble is a brand mark, so it keeps PSCAD's own yellow
+    // The PowerFactory Scripter's code window, with the PSCAD logo (yellow ellipse, white cursor) stamping on
+    // its corner and the cursor's lightning tail zapping in. The logo is a brand mark, so it keeps PSCAD's own yellow
     // and navy in both themes (the one place this file uses hex).
     'pscad-scripter':
       '<rect class="w" x="14" y="20" width="92" height="80" rx="6"/><path class="sb t" d="M15 33H105"/>' +
@@ -170,9 +170,12 @@
       '<path class="ln ol sb" d="M32 81H56" style="animation-delay:-4.1s"/>' +
       '<path class="ln ol sq" d="M24 91H46" style="animation-delay:-3.65s"/>' +
       '<g transform="rotate(-8 86 84)"><g class="bt oc">' +
-        '<path class="py sw" stroke-width="2" d="M86 70C100.4 70 112 76.3 112 84C112 91.7 100.4 98 86 98C84.6 98 83.2 97.9 81.9 97.8L79 100.5L78.6 97.4C68 95.6 60 90.3 60 84C60 76.3 71.6 70 86 70Z"/>' +
-        '<text class="pn" x="86" y="88.2" font-size="12" letter-spacing="-.5">PSCAD</text>' +
-        '<path class="rc ot py pk" stroke-width="1.5" stroke-linejoin="round" d="M79 99.5L82.5 101.5L78.5 104L83 108.5L76.5 105L80 102.8L76.8 100.8Z"/></g></g>',
+        '<ellipse class="py sw" stroke-width="2" cx="86" cy="84" rx="32" ry="9"/>' +
+        '<text class="pn" x="74.6" y="87.7" font-size="10.5" textLength="11.5" lengthAdjust="spacingAndGlyphs">PS</text>' +
+        '<text class="pn" x="93.3" y="87.7" font-size="10.5" textLength="19.8" lengthAdjust="spacingAndGlyphs">CAD</text>' +
+        '<path class="pc pk" stroke-width=".6" stroke-linejoin="round" d="M81.4 87.8V95L83.1 93.4L84.4 96.2L85.6 95.6L84.3 92.9H86.7Z"/>' +
+        '<g class="rc ot" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="pk" stroke-width="2.8" d="M85 96L86.6 98.8L84.8 99.6L87.2 103.8"/>' +
+          '<path class="pz" stroke-width="1.4" d="M85 96L86.6 98.8L84.8 99.6L87.2 103.8"/></g></g></g>',
 
     // A 3-bus system: the grid and a generator feed the load bus, the busier line flowing faster;
     // gold reactive dots run between the top buses and the load breathes as power arrives.
@@ -376,7 +379,7 @@
       '@keyframes taPf3{0%,40%{transform:scale(1.7);opacity:0}48%{transform:scale(.92);opacity:1}54%,82%{transform:none;opacity:1}92%,100%{transform:none;opacity:0}}' +
       '@keyframes taPf4{0%,52%{transform:translate(6px,6px);opacity:0}60%{transform:translate(-1px,-1px);opacity:1}64%,100%{transform:none;opacity:1}}',
 
-    'pscad-scripter': '&{--d:5s}&.py{fill:#FCD419}&.pn{fill:#0B1838}&.pk{stroke:#0B1838}&.ln{animation-name:taPf1}&.cu{animation-name:taPf2}&.bt{animation-name:taPf3}&.rc{animation-name:taPs4}' +
+    'pscad-scripter': '&{--d:5s}&.py{fill:#FCD419}&.pn{fill:#0B1838}&.pk{stroke:#0B1838}&.pc{fill:#FFFFFF}&.pz{stroke:#FCD419}&.ln{animation-name:taPf1}&.cu{animation-name:taPf2}&.bt{animation-name:taPf3}&.rc{animation-name:taPs4}' +
       '@keyframes taPs4{0%,52%{transform:translate(3px,-6px) scale(.4);opacity:0}60%{transform:translate(-.5px,1px) scale(1.15);opacity:1}64%,100%{transform:none;opacity:1}}',
 
     // Flows are linear and move whole dash periods per loop (12 for P, 10 for Q), so the loop is seamless.

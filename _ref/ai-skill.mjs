@@ -301,7 +301,8 @@ export function skillFiles(T, models, refTexts) {
 function glyph(T, M) {
   const html = readFileSync(join(ROOT, M.P.page, 'index.html'), 'utf8');
   const m = /<h1[^>]*>\s*(<svg[\s\S]*?<\/svg>)/.exec(html);
-  return m ? m[1].replace(/\s(width|height|style)="[^"]*"/g, '').replace('<svg', '<svg width="1em" height="1em"') : '';
+  // Only the <svg> tag's own size and style go: a <rect> inside needs its width and height.
+  return m ? m[1].replace(/^<svg[^>]*>/, t => t.replace(/\s(width|height|style)="[^"]*"/g, '').replace('<svg', '<svg width="1em" height="1em"')) : '';
 }
 
 // A value as people read it: 800000 as 800,000.
