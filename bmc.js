@@ -21,7 +21,8 @@
  *    end whenever the bar is open and wide enough, and floats as above otherwise;
  *  - leaves blank room under the footer of a page that scrolls, so the end of
  *    the page is never under it;
- *  - stays out of a tool embedded on another site;
+ *  - stays out of any page shown in a frame (a guide's live demo, a tool
+ *    embedded on another site): no button and no popup there;
  *  - for a reader in Indonesia (the browser's time zone is WIB, WITA or WIT),
  *    opens Trakteer instead of Buy Me a Coffee: the same circle, with
  *    Trakteer's coffee cup, opening Trakteer's tip modal in a full-screen
@@ -58,8 +59,14 @@
 
   var css = D.createElement('style');
   css.id = 'bmc-fit';
-  if (R.classList.contains('abt-embed') || /(?:^#|&)embed=/.test(location.hash) && window.self !== window.top) {
-    css.textContent = '#bmc-wbtn,#bmc-note,#bmc-iframe{display:none!important;}';
+  /* Inside any frame (a guide's live demo, an embed on another site, a preview)
+     there is no button, no popup note and no panel: only the top page shows them.
+     The widget's note has no id until start() names it, so it is caught as the
+     div the widget puts right after the button. */
+  var framed = true;
+  try { framed = window.self !== window.top; } catch (e) {}
+  if (framed || R.classList.contains('abt-embed')) {
+    css.textContent = '#bmc-wbtn,#bmc-wbtn+div,#bmc-note,#bmc-iframe,#bmc-close-btn,#bmc-tr{display:none!important;}';
     (D.head || R).appendChild(css);
     return;
   }
