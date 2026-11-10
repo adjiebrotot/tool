@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "How does it work out a fair price from the listings I enter?",
+      "a": [
+        "It fits a least-squares regression to your listings, so a price is explained as the sum of what each feature is worth, such as year, kilometres or land size. The fair price of an item is the model evaluated at that item's features. The gap is the asking price minus the fair price, shown as a share of the fair price. A negative gap means the asking price is below it."
+      ]
+    },
+    {
+      "q": "How are older listing prices adjusted for inflation?",
+      "a": [
+        "Each price is lifted to the current year with P × (1 + inflation) raised to the power of the current year minus the listing's data year. A 2023 sale of $515,000 at 3% a year counts as $515,000 × 1.03³ = $562,754 in 2026. This only applies when the table has a Data year column. Without one, every listing is taken as seen this year."
+      ]
+    },
+    {
+      "q": "Which model should I pick: Linear, Log-linear, Ridge or Quadratic?",
+      "a": [
+        "Use Linear unless you have a reason. Log-linear makes each feature change the price by a fixed percentage, which suits cars and cameras that lose a share of their value each year. Ridge pulls effects toward zero at the Ridge penalty you set, which steadies a fit with few listings. Quadratic lets one feature bend the line and needs many more listings than features."
+      ]
+    },
+    {
+      "q": "How many listings do I need before the answer is trustworthy?",
+      "a": [
+        "The tool refuses to fit with fewer than the number of terms plus two complete listings, and warns when a non-Ridge model has fewer than three listings per term plus three. Below that, the fit can chase noise. More listings, fewer features or Ridge steady it. Rows with a blank or unreadable cell are left out, and a feature identical in every listing is dropped."
+      ]
+    },
+    {
+      "q": "How should I read the range and the typical error?",
+      "a": [
+        "The range is the fair price plus or minus one typical error (RMSE), which is how far listings scatter around the fitted line. For Log-linear it is the fair price times e to the plus or minus the typical error on the log scale. It is not a confidence interval. A gap smaller than one typical error is inside the normal scatter and does not prove a bargain."
+      ]
+    },
+    {
+      "q": "What does the fair price leave out?",
+      "a": [
+        "It leaves out anything not in your columns, such as condition, history, colour or street. Effects add up with no interaction, so the same kilometres cost a 2019 car what they cost a 2024 one. No outlier is removed, and an item outside the listings' range is flagged as extrapolated. Asking-price listings give what similar items are listed at, not what they sell for."
+      ]
+    }
+  ]
+}

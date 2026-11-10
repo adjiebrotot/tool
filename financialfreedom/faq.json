@@ -10,7 +10,7 @@
     {
       "q": "How is the amount needed to stop work worked out, and why is it not simply 25 times spending?",
       "a": [
-        "The tool finds the smallest pot that never runs out before the life expectancy, month by month, with spending taken at the start of each month. For Just Die at a constant return this is the annuity-due formula, Xr x (1 - (1+rm)^-n) / rm x (1+rm).",
+        "The tool finds the smallest pot that never runs out before the life expectancy, month by month, with spending taken at the start of each month. For Just Die at a constant return this is the present value of an annuity due: monthly spending at retirement, over the months to life expectancy, discounted at the real monthly return.",
         "The 25 times rule is the same arithmetic at a 4% real return. Here the real return uses Fisher, not subtraction (8.5% with 2.5% inflation is 5.85%), and the FIRE number shows the withdrawal rate it implies."
       ]
     },
