@@ -4183,7 +4183,7 @@
      already has a tool's own typing box beside it keeps that box. */
   var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
                  'financialfreedom', 'dcasimulator', 'costofliving-comparator', 'valuateeverything',
-                 'capacity-expansion-planner', 'global-salary-calculator'];
+                 'capacity-expansion-planner', 'global-income-tax-calculator'];
   function inFinanceTool(){
     var path = String((global.location && global.location.pathname) || '');
     return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });

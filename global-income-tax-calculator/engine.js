@@ -1,4 +1,4 @@
-/* Global Salary Calculator: the calculation engine (window.GSCEngine).
+/* Global Income Tax Calculator: the calculation engine (window.GSCEngine).
 
    A line-by-line port of the spec's reference model (gsc_reference_model.py,
    spec v11, research date 10 Nov 2026). Every golden value the spec lists is
@@ -117,7 +117,7 @@ const SRC = {
   mpfa:     { name: 'MPFA', url: 'https://www.mpfa.org.hk/' },
   cn:       { name: 'IIT Law; MOF/STA Notice 2023 No. 29', url: 'https://www.chinatax.gov.cn/' },
   shhrss:   { name: 'Shanghai HRSS', url: 'https://rsj.sh.gov.cn/' },
-  mof:      { name: 'MOF Taiwan, NTB Taipei', url: 'https://www.ntbt.gov.tw/' },
+  mof:      { name: 'MOF, NTB Taipei, Taiwan (China)', url: 'https://www.ntbt.gov.tw/' },
   twins:    { name: 'BLI and NHIA', url: 'https://www.bli.gov.tw/' },
   gpssa:    { name: 'GPSSA (via countify.ae)', url: 'https://gpssa.gov.ae/' },
   grsia:    { name: 'Qatar Law 1/2022 (via Al Tamimi)', url: 'https://www.grsia.gov.qa/' },
@@ -307,6 +307,8 @@ const US_ST = {
   WV: [b([10000,25000,40000,60000],[.0211,.0281,.0316,.0422,.0458]), b([10000,25000,40000,60000],[.0211,.0281,.0316,.0422,.0458]), [0,0], [2000,4000], [0,0]],
   DC: [b([10000,40000,60000,250000,500000,1000000],[.04,.06,.065,.085,.0925,.0975,.1075]), b([10000,40000,60000,250000,500000,1000000],[.04,.06,.065,.085,.0925,.0975,.1075]), [16100,32200], [0,0], [0,0]]
 };
+// Left out of the state list: these phase their deductions out on schedules not loaded. A job saved
+// with one (before the list was trimmed) still reaches here and says so instead of a figure.
 const US_ST_GATED = {
   AL: 'standard deduction phase-down and the deduction for federal income tax', CT: 'personal exemption phase-out and CT benefit recapture',
   ME: 'standard deduction and exemption phase-out', MN: 'standard deduction phase-down', NM: 'low and middle income exemption phase-out',
@@ -370,7 +372,7 @@ function us(g, k){
   const F = '1 Jan 2026', lines = [], st = k.usState || 'TX';
   const nra = k.usRes === 'nra', fs = nra ? 'S' : (k.usFiling === 'MFJ' ? 'MFJ' : 'S');
   if(st !== 'CA' && st !== 'NY' && st !== 'IL' && US_ST_GATED[st])
-    return NS(US_STATES[st] + ' is not loaded yet. Missing: its ' + US_ST_GATED[st] + '. A flat deduction would misstate the tax.');
+    return NS(US_STATES[st] + ' is not covered: the rules for its ' + US_ST_GATED[st] + ' are not loaded, and a flat deduction would misstate the tax.');
   const stLines = [], stTax = usStateLines(g, st, fs, k, stLines);
   const notes = [];
   if(nra){
@@ -1165,8 +1167,8 @@ const C = {
   JP: { name: 'Japan', cur: 'JPY', sym: '¥', year: '2026', place: 'Tokyo', fn: jp },
   KR: { name: 'South Korea', cur: 'KRW', sym: '₩', year: '2026', place: '', fn: kr },
   CN: { name: 'China', cur: 'CNY', sym: 'CN¥', year: '2026', place: 'Shanghai', fn: cn },
-  TW: { name: 'Taiwan', cur: 'TWD', sym: 'NT$', year: 'Income 2026', place: '', fn: tw },
-  HK: { name: 'Hong Kong', cur: 'HKD', sym: 'HK$', year: '2026/27 (from 1 Apr 2026)', place: '', fn: hk },
+  TW: { name: 'Taiwan (China)', cur: 'TWD', sym: 'NT$', year: 'Income 2026', place: '', fn: tw },
+  HK: { name: 'Hong Kong (China)', cur: 'HKD', sym: 'HK$', year: '2026/27 (from 1 Apr 2026)', place: '', fn: hk },
   ID: { name: 'Indonesia', cur: 'IDR', sym: 'Rp', year: '2026', place: '', fn: idn },
   MY: { name: 'Malaysia', cur: 'MYR', sym: 'RM', year: 'YA2026', place: '', fn: my },
   TH: { name: 'Thailand', cur: 'THB', sym: '฿', year: '2026', place: '', fn: th },

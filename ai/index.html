@@ -99,8 +99,8 @@
           {
             "@type": "ListItem",
             "position": 8,
-            "name": "Global Salary Calculator skill",
-            "url": "https://tool.adjiebrotots.com/global-salary-calculator/ai/"
+            "name": "Global Income Tax Calculator skill",
+            "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"
           },
           {
             "@type": "ListItem",
@@ -253,7 +253,7 @@
       <h2 id="use-h">How to use it</h2>
       <p class="gd-sub">Ask as you would ask a friend. With the skill on, the AI keeps your figures, researches the rest, and hands you the link. It does not give the answer itself: the tool does, once you open the link.</p>
       <div class="ai-ex-pick"><label for="aiExample">Example with</label>
-        <select id="aiExample"><optgroup label="Engineering"><option value="capacity-expansion-planner">Capacity Expansion Planner</option><option value="ed-uc-simulator">ED/UC Simulator</option><option value="loadflow-simulator">Load Flow Simulator</option><option value="powerfactory-scripter">PowerFactory Scripter</option><option value="pscad-scripter">PSCAD Scripter</option></optgroup><optgroup label="Finance"><option value="borrowingcapacity">Borrowing Capacity</option><option value="costofliving-comparator">Cost of Living Comparator</option><option value="dcasimulator">DCA Scenario Explorer</option><option value="financingvscash">Finance vs Cash</option><option value="financialfreedom">Financial Freedom</option><option value="pisahvsgabung">Pisah vs Gabung Harta</option><option value="rentvsownhouse" selected>Rent vs Own</option><option value="valuateeverything">Valuate Everything</option></optgroup><optgroup label="Others"><option value="global-salary-calculator">Global Salary Calculator</option></optgroup></select></div>
+        <select id="aiExample"><optgroup label="Engineering"><option value="capacity-expansion-planner">Capacity Expansion Planner</option><option value="ed-uc-simulator">ED/UC Simulator</option><option value="loadflow-simulator">Load Flow Simulator</option><option value="powerfactory-scripter">PowerFactory Scripter</option><option value="pscad-scripter">PSCAD Scripter</option></optgroup><optgroup label="Finance"><option value="borrowingcapacity">Borrowing Capacity</option><option value="costofliving-comparator">Cost of Living Comparator</option><option value="dcasimulator">DCA Scenario Explorer</option><option value="financingvscash">Finance vs Cash</option><option value="financialfreedom">Financial Freedom</option><option value="global-income-tax-calculator">Global Income Tax Calculator</option><option value="pisahvsgabung">Pisah vs Gabung Harta</option><option value="rentvsownhouse" selected>Rent vs Own</option><option value="valuateeverything">Valuate Everything</option></optgroup></select></div>
       <div class="ai-chat" aria-label="An example conversation" data-tool="rentvsownhouse">
         <div class="ai-msg ai-user"><p>Should I buy an $800,000 house or keep renting for $700 per week?</p></div>
         <div class="ai-work">
@@ -386,10 +386,10 @@
         </div>
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/costofliving-comparator/#load&amp;v=1&amp;qs=sg-au&amp;cities=Melbourne,Singapore&amp;salary=7000&amp;why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&amp;rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&amp;why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&amp;note=Melbourne%20to%20Singapore,%20October%202026" target="_blank" rel="noopener">Open this scenario</a></div>
       </div>
-      <div class="ai-chat" aria-label="An example conversation" data-tool="global-salary-calculator" hidden>
+      <div class="ai-chat" aria-label="An example conversation" data-tool="global-income-tax-calculator" hidden>
         <div class="ai-msg ai-user"><p>I have offers of S$180,000 in Singapore and HK$1,300,000 in Hong Kong. Which leaves more after tax?</p></div>
         <div class="ai-work">
-          <span class="ai-chip">Using skill <strong>brotools-global-salary-calculator</strong></span>
+          <span class="ai-chip">Using skill <strong>brotools-global-income-tax-calculator</strong></span>
           <span class="ai-chip">Searched: Singapore income tax for an Employment Pass holder, YA2027</span>
           <span class="ai-chip">Searched: Hong Kong salaries tax and MPF, 2026/27</span>
           <span class="ai-chip">Ran <code>scripts/build_link.py</code>: link checked</span>
@@ -399,11 +399,11 @@
           <h3>Assumptions</h3>
           <ol><li>Singapore: an Employment Pass holder, so no CPF, taxed as a resident on S$180,000 a year.</li><li>Hong Kong: single, with MPF at 5% capped at HK$1,500 a month.</li><li>Currency: shown in US dollars at the rates the page dates, for reading only.</li></ol>
           <h3>Your scenario</h3>
-          <p><a class="ai-link" href="https://tool.adjiebrotots.com/global-salary-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026" target="_blank" rel="noopener">Open Global Salary Calculator on this scenario</a></p>
-          <pre class="ai-code"><code>https://tool.adjiebrotots.com/global-salary-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026</code></pre>
+          <p><a class="ai-link" href="https://tool.adjiebrotots.com/global-income-tax-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026" target="_blank" rel="noopener">Open Global Income Tax Calculator on this scenario</a></p>
+          <pre class="ai-code"><code>https://tool.adjiebrotots.com/global-income-tax-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026</code></pre>
           <p><strong>Open the link to see the result.</strong></p>
         </div>
-        <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/global-salary-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026" target="_blank" rel="noopener">Open this scenario</a></div>
+        <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/global-income-tax-calculator/#load&amp;v=1&amp;dispCur=USD&amp;why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&amp;note=Singapore%20against%20Hong%20Kong,%20November%202026" target="_blank" rel="noopener">Open this scenario</a></div>
       </div>
       <div class="ai-chat" aria-label="An example conversation" data-tool="dcasimulator" hidden>
         <div class="ai-msg ai-user"><p>I want to put $500 a month into VOO and QQQ from 2015 to now; how would it have gone?</p></div>
@@ -630,6 +630,15 @@
           </div>
         </li>
         <li class="ai-tool card" data-domain="Finance">
+          <h3><svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="10" cy="10" r="7"/> <path stroke="var(--accent)" d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/> <path stroke="var(--accent2)" d="M15.5 16.5h6M15.5 19.5h6M18.5 13.5v9"/> </svg>Global Income Tax Calculator</h3>
+          <p>Take-home pay after income tax and social contributions in 31 countries, 39 US states and DC, with each line sourced. Gross to net or net to gross, up to four jobs side by side.</p>
+          <p class="ai-tool-skill"><code>brotools-global-income-tax-calculator</code></p>
+          <div class="ai-tool-btns">
+            <a class="btn-sm btn-primary" href="../global-income-tax-calculator/ai/">Get the skill</a>
+            <a class="btn-sm btn-theme" href="../global-income-tax-calculator/">Open the tool</a>
+          </div>
+        </li>
+        <li class="ai-tool card" data-domain="Finance">
           <h3><svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>Pisah vs Gabung Harta</h3>
           <p>Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.</p>
           <p class="ai-tool-skill"><code>brotools-pisahvsgabung</code></p>
@@ -654,18 +663,6 @@
           <div class="ai-tool-btns">
             <a class="btn-sm btn-primary" href="../valuateeverything/ai/">Get the skill</a>
             <a class="btn-sm btn-theme" href="../valuateeverything/">Open the tool</a>
-          </div>
-        </li>
-      </ul>
-      <h3 class="ai-group" data-domain="Others">Others</h3>
-      <ul class="ai-tools">
-        <li class="ai-tool card" data-domain="Others">
-          <h3><svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="10" cy="10" r="7"/> <path stroke="var(--accent)" d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/> <path stroke="var(--accent2)" d="M15.5 16.5h6M15.5 19.5h6M18.5 13.5v9"/> </svg>Global Salary Calculator</h3>
-          <p>Take-home pay after income tax and social contributions in 31 countries and every US state, with each line sourced. Gross to net or net to gross, up to four jobs side by side.</p>
-          <p class="ai-tool-skill"><code>brotools-global-salary-calculator</code></p>
-          <div class="ai-tool-btns">
-            <a class="btn-sm btn-primary" href="../global-salary-calculator/ai/">Get the skill</a>
-            <a class="btn-sm btn-theme" href="../global-salary-calculator/">Open the tool</a>
           </div>
         </li>
       </ul>

@@ -33,7 +33,7 @@
     {
       "q": "Do exchange rates change the tax calculation?",
       "a": [
-        "No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The rates are dated 10 November 2026 and come from open.er-api.com. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then plots gross pay in US dollars."
+        "No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The tool fetches the day's rates from ExchangeRate-API when it can and falls back to a bundled set dated 10 November 2026. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then gives each currency its own gross pay axis, lined up at the rate."
       ]
     }
   ]
