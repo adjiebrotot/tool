@@ -6,7 +6,7 @@
   "description": "Pajak gaji (salaries tax) Hong Kong 2026/27: tarif progresif 2% sampai 17% atau tarif standar, iuran MPF dan tunjangan, plus contoh gaji bersih.",
   "lede": "<p>Hong Kong (Tiongkok) memajaki gaji lewat <em>salaries tax</em>, dan kamu membayar yang lebih rendah di antara dua cara hitung: tarif progresif 2% sampai 17% atas penghasilan setelah tunjangan, atau tarif standar 15% atas penghasilan sebelum tunjangan. Gaji HK$600.000 setahun untuk lajang menyisakan gaji bersih (<em>take-home pay</em>) sekitar HK$525.710 setelah pajak HK$56.290 dan iuran MPF HK$18.000. Pajak itu tidak dipotong dari gaji bulanan, melainkan ditagih setelah tahun pajak (1 April sampai 31 Maret) berakhir.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak 2026/27, yang berjalan dari 1 April 2026 sampai 31 Maret 2027. Hong Kong memajaki penghasilan dari pekerjaan yang dijalankan di Hong Kong, bukan berdasarkan kewarganegaraan. Dasar hitungannya sederhana: gaji dikurangi iuran MPF yang bisa dikurangkan, lalu pajak dihitung dengan dua cara dan yang lebih kecil yang kamu bayar.</p>",
+    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak 2026/27, yang berjalan dari 1 April 2026 sampai 31 Maret 2027. Hong Kong memajaki penghasilan dari pekerjaan yang dijalankan di Hong Kong, bukan berdasarkan kewarganegaraan. Dasar hitungannya sederhana: gaji dikurangi iuran MPF yang bisa dikurangkan, lalu pajak dihitung dengan dua cara, dan kamu membayar hasil yang lebih kecil.</p>",
     "blocks": [
       {
         "h3": "Tarif progresif setelah tunjangan",
@@ -116,13 +116,13 @@
     {
       "key": "single",
       "title": "Berapa gaji bersih di Hong Kong dengan gaji HK$600.000 setahun untuk lajang?",
-      "intro": "<p>Contoh ini untuk lajang dengan gaji HK$600.000 setahun (HK$50.000 sebulan). Iuran MPF 5% sudah melewati batas, sehingga yang disetor HK$18.000, dan penghasilan bersihnya HK$582.000. Setelah tunjangan dasar HK$145.000, penghasilan kena pajaknya HK$437.000. Tarif progresifnya menghasilkan pajak HK$56.290, jauh di bawah tarif standar 15% (HK$87.300), sehingga yang dipakai tarif progresif. Gaji bersihnya sekitar HK$525.710, atau 87,6% dari gaji kotor (sekitar HK$43.809 sebulan), dan tarif pajak pada gaji berikutnya 17%.</p>",
+      "intro": "<p>Contoh ini untuk lajang dengan gaji HK$600.000 setahun (HK$50.000 sebulan). Iuran MPF 5% sudah melewati batas, sehingga yang disetor HK$18.000, dan penghasilan bersihnya HK$582.000. Setelah tunjangan dasar HK$145.000, penghasilan kena pajaknya HK$437.000. Tarif progresifnya menghasilkan pajak HK$56.290, jauh di bawah tarif standar 15% (HK$87.300), sehingga yang dipakai tarif progresif. Gaji bersihnya sekitar HK$525.710, atau 87,6% dari gaji kotor (sekitar HK$43.809 sebulan), dengan tarif marjinal (pajak atas setiap tambahan gaji) 17%.</p>",
       "after": "<p>Pajak HK$56.290 itu tidak dipotong dari slip gajimu, jadi sisihkan sekitar HK$4.700 setiap bulan untuk tagihan IRD setelah tahun pajak berakhir.</p>"
     },
     {
       "key": "married-two-children",
       "title": "Cara menghitung pajak gaji di Hong Kong untuk pasangan menikah dengan dua anak dan gaji HK$900.000",
-      "intro": "<p>Contoh ini untuk pekerja menikah dengan dua anak dan gaji HK$900.000 setahun. Tunjangannya HK$570.000, yaitu HK$290.000 untuk status menikah ditambah HK$280.000 untuk dua anak. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000 dan penghasilan kena pajaknya HK$312.000. Pajaknya HK$35.040 (3,9% dari gaji kotor), sedangkan tarif standar akan menghasilkan sekitar HK$132.300, jadi tarif progresif dipakai. Gaji bersihnya sekitar HK$846.960 (94,1%), dan tarif pajak pada gaji berikutnya tetap 17% karena penghasilan kena pajaknya sudah di atas HK$200.000.</p>",
+      "intro": "<p>Contoh ini untuk pekerja menikah dengan dua anak dan gaji HK$900.000 setahun. Tunjangannya HK$570.000, yaitu HK$290.000 untuk status menikah ditambah HK$280.000 untuk dua anak. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000 dan penghasilan kena pajaknya HK$312.000. Pajaknya HK$35.040 (3,9% dari gaji kotor), sedangkan tarif standar akan menghasilkan sekitar HK$132.300, jadi tarif progresif dipakai. Gaji bersihnya sekitar HK$846.960 (94,1%), dengan tarif marjinal yang tetap 17% karena penghasilan kena pajaknya sudah di atas HK$200.000.</p>",
       "after": "<p>Kalkulator ini memakai tunjangan menikah penuh, jadi periksa di IRD bagaimana tunjangan itu berlaku kalau pasanganmu juga bekerja.</p>"
     },
     {
@@ -140,7 +140,7 @@
     },
     {
       "h3": "Klaim tunjangan dan pengurang lain yang berhak",
-      "html": "<p>Selain tunjangan dasar, menikah dan anak, Hong Kong punya tunjangan lain, seperti untuk orang tua yang ditanggung, serta pengurang untuk biaya pendidikan sendiri, bunga KPR untuk rumah yang ditinggali sendiri dan donasi ke lembaga yang diakui. Setiap pengurang punya syarat dan batas, dan kalkulator ini tidak menghitung yang di luar tiga tunjangan di atas. Simpan bukti dan baca syarat resminya di IRD sebelum mengklaim.</p>"
+      "html": "<p>Selain tunjangan dasar, menikah dan anak, Hong Kong punya tunjangan lain, seperti untuk orang tua yang ditanggung, serta pengurang untuk biaya pendidikan sendiri, bunga KPR untuk rumah yang ditinggali sendiri dan donasi ke lembaga yang diakui. Setiap pengurang punya syarat dan batas, dan kalkulator ini tidak menghitung yang di luar tunjangan dasar, menikah dan anak. Simpan bukti dan baca syarat resminya di IRD sebelum mengklaim.</p>"
     },
     {
       "h3": "Mengambil saldo MPF saat meninggalkan Hong Kong",

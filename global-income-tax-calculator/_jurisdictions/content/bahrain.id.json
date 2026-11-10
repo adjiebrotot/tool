@@ -2,7 +2,7 @@
   "title": "Pajak Gaji di Bahrain 2026: Gaji Bersih dan Iuran SIO",
   "h1": "Cara menghitung pajak penghasilan di Bahrain (2026)",
   "description": "Bahrain tidak memajaki gaji, tetapi pekerja asing membayar 1% asuransi pengangguran SIO. Lihat gaji bersih pekerja asing dan iuran 8% warga negara.",
-  "lede": "<p>Bahrain tidak memungut pajak penghasilan atas gaji, tetapi berbeda dari negara Teluk lain, pekerja asing tetap membayar asuransi pengangguran 1% dari upah ke Social Insurance Organization (SIO). Warga negara membayar 8% untuk pensiun dan asuransi pengangguran. Gaji BHD24.000 setahun menjadi BHD23.760 bagi pekerja asing setelah iuran 1%, dan BHD22.080 bagi warga negara setelah iuran 8%.</p>",
+  "lede": "<p>Bahrain tidak memungut pajak penghasilan atas gaji, tetapi, berbeda dari negara Teluk lain, pekerja asing tetap membayar asuransi pengangguran 1% dari upah ke Social Insurance Organization (SIO). Warga negara membayar 8% untuk pensiun dan asuransi pengangguran. Gaji BHD24.000 setahun menjadi BHD23.760 bagi pekerja asing setelah iuran 1%, dan BHD22.080 bagi warga negara setelah iuran 8%.</p>",
   "law": {
     "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Di Bahrain, potongan gaji ada untuk pekerja asing maupun warga negara, tetapi besarnya berbeda.</p>",
     "blocks": [
@@ -63,7 +63,7 @@
   "strategies": [
     {
       "h3": "Catat iuran 1% di slip gaji",
-      "html": "<p>Iuran asuransi pengangguran pekerja asing kecil tetapi nyata, sehingga gaji bersihmu 1% lebih rendah daripada angka di kontrak. Periksa slip gaji untuk memastikan potongan itu sesuai. Cocok untuk semua pekerja asing yang baru mulai bekerja di Bahrain.</p>"
+      "html": "<p>Iuran asuransi pengangguran pekerja asing kecil tetapi nyata, sehingga gaji bersihmu 1% lebih rendah daripada angka di kontrak. Periksa slip gaji untuk memastikan potongan itu sesuai. Cara ini cocok untuk semua pekerja asing yang baru mulai bekerja di Bahrain.</p>"
     },
     {
       "h3": "Pahami tunjangan akhir masa kerja",
@@ -85,7 +85,7 @@
   "faq": [
     {
       "q": "Apakah pekerja asing di Bahrain membayar iuran dari gaji?",
-      "a": "<p>Ya, tetapi kecil: asuransi pengangguran 1% dari upah ke SIO, dengan batas upah BHD4.000 sebulan. Pajak penghasilan atas gaji tidak ada. Bahrain termasuk yang berbeda dari negara Teluk lain, karena pekerja asing di sana tetap berkontribusi ke asuransi pengangguran.</p>"
+      "a": "<p>Ya, tetapi kecil: asuransi pengangguran 1% dari upah ke SIO, dengan batas upah BHD4.000 sebulan. Pajak penghasilan atas gaji tidak ada. Bahrain berbeda dari negara Teluk lain, karena pekerja asing di sana tetap berkontribusi ke asuransi pengangguran.</p>"
     },
     {
       "q": "Apa itu asuransi pengangguran SIO dan apa manfaatnya bagi pekerja asing?",

@@ -57,14 +57,14 @@
       "key": "national",
       "title": "Berapa iuran pensiun GRSIA warga Qatar bergaji QAR240.000?",
       "intro": "<p>Contoh ini sebagai pembanding untuk warga negara. Iuran GRSIA 7% menjadi QAR16.800, sehingga gaji bersihnya QAR223.200 (93,0%) dan 7,0% dari tambahan gaji berikutnya masuk ke iuran. Di luar gaji, pemberi kerja menyetor QAR33.600 (14% dari upah).</p>",
-      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi rekan kerja warga negara Qatar membawa pulang gaji yang lebih kecil daripada pekerja asing dengan gaji sama.</p>"
     }
   ],
   "strategyIntro": "<p>Karena tidak ada pajak penghasilan, fokusmu adalah kontrak dan tabungan.</p>",
   "strategies": [
     {
       "h3": "Baca isi kontrak sebelum berangkat",
-      "html": "<p>Tanpa pajak yang mengubah angka gaji, kontrak adalah satu-satunya sumber potongan dan tunjangan. Periksa gaji, tunjangan tempat tinggal dan tunjangan akhir masa kerja, lalu minta penjelasan tertulis untuk hal yang belum jelas. Cocok untuk semua calon pekerja.</p>"
+      "html": "<p>Tanpa pajak yang mengubah angka gaji, kontrak adalah satu-satunya sumber potongan dan tunjangan. Periksa gaji, tunjangan tempat tinggal dan tunjangan akhir masa kerja, lalu minta penjelasan tertulis untuk hal yang belum jelas. Cara ini cocok untuk semua calon pekerja.</p>"
     },
     {
       "h3": "Siapkan tabungan pensiun sendiri",

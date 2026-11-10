@@ -57,14 +57,14 @@
       "key": "national",
       "title": "Berapa iuran PIFSS untuk warga Kuwait bergaji KWD18.000?",
       "intro": "<p>Contoh ini sebagai pembanding untuk warga negara. Iuran PIFSS menjadi KWD1.890 setahun (8% ditambah 2,5% dari upah KWD1.500 sebulan), sehingga gaji bersihnya KWD16.110 (89,5%) dan 8,0% dari tambahan gaji berikutnya masuk ke iuran.</p>",
-      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+      "after": "<p>Pekerja asing tidak membayar iuran PIFSS, sehingga di Kuwait gaji bersih warga negara dan pekerja asing dengan gaji sama berbeda.</p>"
     }
   ],
   "strategyIntro": "<p>Karena tidak ada pajak penghasilan, fokusmu adalah kontrak dan tabungan.</p>",
   "strategies": [
     {
       "h3": "Periksa kontrak dan slip gaji",
-      "html": "<p>Karena tidak ada potongan resmi untuk pekerja asing, selisih antara kontrak dan slip gaji perlu dijelaskan pemberi kerja. Simpan salinan dokumen setiap bulan. Cocok untuk pekerja yang baru tiba.</p>"
+      "html": "<p>Karena tidak ada potongan resmi untuk pekerja asing, selisih antara kontrak dan slip gaji perlu dijelaskan pemberi kerja. Simpan salinan dokumen setiap bulan. Cara ini cocok untuk pekerja yang baru tiba.</p>"
     },
     {
       "h3": "Siapkan tabungan pensiun sendiri",

@@ -61,18 +61,18 @@
       "key": "national",
       "title": "Berapa potongan GOSI untuk warga Arab Saudi dengan gaji SAR240.000?",
       "intro": "<p>Contoh ini sebagai pembanding untuk warga negara peserta skema lama dengan gaji yang sama. Iuran GOSI 9,75% dari upah menjadi SAR23.400, sehingga gaji bersihnya SAR216.600 (90,3%) dan 9,8% dari tambahan gaji berikutnya masuk ke iuran. Peserta baru membayar tarif yang sedikit lebih tinggi.</p>",
-      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+      "after": "<p>Pekerja asing tidak membayar iuran ini, sehingga selisih gaji bersih dengan rekan kerja warga negara Saudi berasal dari iuran GOSI, bukan dari pajak.</p>"
     }
   ],
-  "strategyIntro": "<p>Tidak ada pajak penghasilan yang bisa dihemat, jadi strategi di sini soal kontrak dan tabungan.</p>",
+  "strategyIntro": "<p>Karena tidak ada pajak penghasilan yang bisa dihemat, langkah yang berguna di sini ada pada kontrak dan tabungan.</p>",
   "strategies": [
     {
       "h3": "Cek dasar hitungan <em>gratuity</em> di kontrak",
-      "html": "<p>Karena <em>gratuity</em> menjadi pengganti pensiun, tanyakan apakah dasar hitungannya gaji pokok atau seluruh upah, dan bagaimana lama kerja dihitung. Aturan hitungannya ada di undang-undang ketenagakerjaan Arab Saudi, jadi bandingkan kontrakmu dengan sumber resmi. Cocok untuk semua pekerja asing.</p>"
+      "html": "<p>Karena <em>gratuity</em> menjadi pengganti pensiun, tanyakan apakah dasar hitungannya gaji pokok atau seluruh upah, dan bagaimana lama kerja dihitung. Aturan hitungannya ada di undang-undang ketenagakerjaan Arab Saudi, jadi bandingkan kontrakmu dengan sumber resmi. Cara ini cocok untuk semua pekerja asing.</p>"
     },
     {
       "h3": "Pastikan upah di slip sesuai dengan kontrak",
-      "html": "<p>Karena tidak ada pajak yang mengubah angka gaji, selisih antara kontrak dan slip menunjukkan potongan atau tunjangan yang perlu dijelaskan pemberi kerja. Simpan salinan kontrak dan slip gaji setiap bulan. Cocok untuk pekerja yang baru tiba atau berganti pemberi kerja.</p>"
+      "html": "<p>Karena tidak ada pajak yang mengubah angka gaji, selisih antara kontrak dan slip menunjukkan potongan atau tunjangan yang perlu dijelaskan pemberi kerja. Simpan salinan kontrak dan slip gaji setiap bulan. Cara ini cocok untuk pekerja yang baru tiba atau berganti pemberi kerja.</p>"
     },
     {
       "h3": "Tabung untuk hari tua dan bandingkan biaya hidup",

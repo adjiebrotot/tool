@@ -147,20 +147,20 @@
     {
       "key": "citizen",
       "title": "Berapa gaji bersih warga negara atau penduduk tetap Malaysia dengan gaji RM96.000?",
-      "intro": "<p>Contoh ini untuk warga negara atau penduduk tetap dengan gaji RM96.000 setahun (RM8.000 sebulan). Iuran EPF 11% sebesar RM10.560, SOCSO dan EIS RM504, dan LINDUNG RM315. Pengurang pajaknya RM13.350 (RM9.000 untuk diri sendiri, RM4.000 untuk EPF dan RM350 untuk SOCSO), sehingga penghasilan kena pajaknya RM82.650 dan pajaknya sekitar RM6.104. Gaji bersihnya sekitar RM78.518, atau 81,8% dari gaji kotor, dan setiap tambahan gaji kehilangan 30,0%, yaitu 19% pajak ditambah 11% iuran EPF.</p>",
+      "intro": "<p>Contoh ini untuk warga negara atau penduduk tetap dengan gaji RM96.000 setahun (RM8.000 sebulan). Iuran EPF 11% sebesar RM10.560, SOCSO dan EIS RM504, dan LINDUNG RM315. Pengurang pajaknya RM13.350 (RM9.000 untuk diri sendiri, RM4.000 untuk EPF dan RM350 untuk SOCSO), sehingga penghasilan kena pajaknya RM82.650 dan pajaknya sekitar RM6.104. Gaji bersihnya sekitar RM78.518, atau 81,8% dari gaji kotor, dan dari setiap tambahan gaji, 30% hilang untuk pajak dan iuran EPF (19% pajak ditambah 11% iuran EPF).</p>",
       "after": "<p>Sebagian besar potongan di luar pajak adalah tabunganmu sendiri di EPF, bukan biaya yang hilang.</p>"
     },
     {
       "key": "expat-resident",
       "title": "Cara menghitung pajak ekspat di Malaysia yang tinggal 182 hari atau lebih dengan gaji RM180.000",
-      "intro": "<p>Contoh ini untuk ekspat yang menjadi penduduk pajak dengan gaji RM180.000 setahun (RM15.000 sebulan). Iuran EPF 2% sebesar RM3.600, dan LINDUNG RM315. Pengurang pajaknya RM12.600 (RM9.000 untuk diri sendiri dan RM3.600 untuk EPF), tanpa pengurang SOCSO karena pilihan mengklaim LINDUNG sebagai pengurang tidak aktif secara bawaan. Penghasilan kena pajaknya RM167.400 dan pajaknya RM26.250, dengan bagian di atas RM100.000 dipajaki 25%. Gaji bersihnya sekitar RM149.835 (83,2%), dan setiap tambahan gaji kehilangan 26,5%, termasuk iuran EPF 2%.</p>",
+      "intro": "<p>Contoh ini untuk ekspat yang menjadi penduduk pajak dengan gaji RM180.000 setahun (RM15.000 sebulan). Iuran EPF 2% sebesar RM3.600, dan LINDUNG RM315. Pengurang pajaknya RM12.600 (RM9.000 untuk diri sendiri dan RM3.600 untuk EPF), tanpa pengurang SOCSO karena pilihan mengklaim LINDUNG sebagai pengurang SOCSO di kalkulator ini dimatikan sejak awal. Penghasilan kena pajaknya RM167.400 dan pajaknya RM26.250, dengan bagian di atas RM100.000 dipajaki 25%. Gaji bersihnya sekitar RM149.835 (83,2%), dan dari setiap tambahan gaji, 26,5% hilang untuk pajak dan iuran EPF 2%.</p>",
       "after": "<p>Kalau kamu membuka pilihan mengklaim LINDUNG sebagai pengurang SOCSO, pajaknya bergeser sedikit saja, tetapi cek dulu apakah ekspat memang boleh mengklaimnya.</p>"
     },
     {
       "key": "non-resident",
       "title": "Berapa pajak ekspat non-resident di Malaysia dengan gaji RM60.000?",
-      "intro": "<p>Contoh ini untuk ekspat yang tinggal kurang dari 182 hari dengan gaji RM60.000. Pajaknya bertarif tunggal 30%, yaitu RM18.000, tanpa pengurang. Iuran EPF 2% sebesar RM1.200 dan LINDUNG sekitar RM263 juga dipotong. Gaji bersihnya sekitar RM40.538, atau 67,6% dari gaji kotor, dan setiap tambahan gaji kehilangan 32,4%.</p>",
-      "after": "<p>Bandingkan dengan ekspat bergaji sama yang tinggal 182 hari atau lebih: pajaknya sekitar RM1.488. Hari tinggal di Malaysia karena itu sangat menentukan.</p>"
+      "intro": "<p>Contoh ini untuk ekspat yang tinggal kurang dari 182 hari dengan gaji RM60.000. Pajaknya bertarif tunggal 30%, yaitu RM18.000, tanpa pengurang. Iuran EPF 2% sebesar RM1.200 dan LINDUNG sekitar RM263 juga dipotong. Gaji bersihnya sekitar RM40.538, atau 67,6% dari gaji kotor, dan dari setiap tambahan gaji, 32,4% hilang untuk pajak dan iuran.</p>",
+      "after": "<p>Bandingkan dengan ekspat bergaji sama yang tinggal 182 hari atau lebih: pajaknya sekitar RM1.488. Karena itu, jumlah hari tinggal di Malaysia sangat menentukan.</p>"
     }
   ],
   "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs LHDN. Cocok tidaknya bergantung pada statusmu.</p>",
@@ -195,7 +195,7 @@
   "faq": [
     {
       "q": "Berapa lama harus tinggal di Malaysia supaya dianggap penduduk pajak?",
-      "a": "<p>Umumnya 182 hari atau lebih dalam satu tahun kalender, dengan beberapa ketentuan lain untuk masa tinggal yang berlanjut antartahun. Penduduk pajak memakai tarif bertingkat dan mendapat pengurang, sedangkan yang kurang dari 182 hari dikenai tarif tunggal 30% tanpa pengurang. Pada gaji RM60.000, selisihnya sekitar RM18.000 dibandingkan RM1.488. Kalau statusmu baru jelas belakangan, selisihnya diselesaikan lewat laporan pajak tahunan. Konfirmasikan hitunganmu ke LHDN.</p>"
+      "a": "<p>Umumnya 182 hari atau lebih dalam satu tahun kalender, dengan beberapa ketentuan lain untuk masa tinggal yang berlanjut antartahun. Penduduk pajak memakai tarif bertingkat dan mendapat pengurang, sedangkan yang kurang dari 182 hari dikenai tarif tunggal 30% tanpa pengurang. Pada gaji RM60.000, pajak non-resident RM18.000, sedangkan penduduk pajak ekspat hanya sekitar RM1.488. Kalau statusmu baru jelas belakangan, selisihnya diselesaikan lewat laporan pajak tahunan. Konfirmasikan hitunganmu ke LHDN.</p>"
     },
     {
       "q": "Apa itu PCB dan kenapa potongan di slip gaji tidak sama dengan pajak setahun?",

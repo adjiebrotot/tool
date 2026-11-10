@@ -10,7 +10,7 @@
     "blocks": [
       {
         "h3": "Tarif pajak Box 1 dan keringanan pajak",
-        "html": "<p>Gaji masuk Box 1, yaitu pos penghasilan dari pekerjaan. Tarifnya adalah tarif gabungan pajak penghasilan dan iuran jaminan sosial nasional (pensiun dasar AOW, tunjangan ahli waris dan perawatan jangka panjang), untuk kamu yang belum mencapai usia pensiun AOW.</p><p>Dari pajak itu, dua keringanan dikurangkan langsung. Keringanan umum (<em>algemene heffingskorting</em>) bernilai €3.115 sampai penghasilan €29.736, lalu turun 6,398% dari selisihnya dan habis di €78.426. Keringanan kerja (<em>arbeidskorting</em>) naik sampai €5.685 di penghasilan €45.592, lalu turun 6,51% dari selisihnya dan habis di sekitar €132.920. Karena keringanan itu menyusut saat gaji naik, tarif potongan pada euro berikutnya bisa jauh di atas 37,56%.</p>",
+        "html": "<p>Gaji masuk Box 1, yaitu pos penghasilan dari pekerjaan. Tarifnya adalah tarif gabungan pajak penghasilan dan iuran jaminan sosial nasional (pensiun dasar AOW, tunjangan ahli waris dan perawatan jangka panjang), untuk kamu yang belum mencapai usia pensiun AOW.</p><p>Dari pajak itu, dua keringanan dikurangkan langsung. Keringanan umum (<em>algemene heffingskorting</em>) bernilai €3.115 sampai penghasilan €29.736, lalu turun 6,398% dari selisihnya dan habis di €78.426. Keringanan kerja (<em>arbeidskorting</em>) naik sampai €5.685 di penghasilan €45.592, lalu turun 6,51% dari selisihnya dan habis di sekitar €132.920. Karena keringanan itu menyusut saat gaji naik, tarif marginal efektifnya bisa jauh di atas 37,56%.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -59,19 +59,19 @@
     {
       "key": "resident",
       "title": "Berapa gaji bersih di Belanda dengan gaji kotor €60.000 setahun?",
-      "intro": "<p>Contoh ini untuk pekerja yang menjadi penduduk pajak Belanda tanpa aturan 30%, dengan gaji kotor €60.000 setahun, belum termasuk uang liburan 8% (€4.800) yang dibayar di atasnya. Kalkulator memajaki gaji ditambah uang liburan, total €64.800, dengan tarif Box 1: 35,75% untuk €38.883 pertama dan 37,56% untuk sisanya. Dari pajak itu dikurangkan keringanan umum €872 dan keringanan kerja €4.435, sehingga yang dibayar €18.329. Gaji bersihnya, sudah termasuk uang liburan, sekitar €46.471, atau 77,5% dari gaji €60.000 yang kamu masukkan. Persentase itu dihitung dari gaji tanpa uang liburan, jadi bukan berarti potongannya hanya 22,5%: dari total €64.800, pajaknya 28,3%.</p>",
-      "after": "<p>Tarif potongan pada euro berikutnya 46,5% dihitung per euro gaji yang kamu masukkan, dengan uang liburan ikut naik 8%. Angka itu jauh di atas 37,56% karena kedua keringanan pajak mulai menyusut pada penghasilan ini.</p>"
+      "intro": "<p>Contoh ini untuk pekerja yang menjadi penduduk pajak Belanda tanpa aturan 30%, dengan gaji kotor €60.000 setahun, belum termasuk uang liburan 8% (€4.800) yang dibayar di atasnya. Kalkulator memajaki gaji ditambah uang liburan, total €64.800, dengan tarif Box 1: 35,75% untuk €38.883 pertama dan 37,56% untuk sisanya. Dari pajak itu dikurangkan keringanan umum €872 dan keringanan kerja €4.435, sehingga pajak yang harus dibayar €18.329. Gaji bersihnya, sudah termasuk uang liburan, sekitar €46.471, atau 77,5% dari gaji €60.000 yang kamu masukkan. Persentase itu dihitung dari gaji tanpa uang liburan, jadi bukan berarti potongannya hanya 22,5%: dari total €64.800, pajaknya 28,3%.</p>",
+      "after": "<p>Tarif marginal 46,5% dihitung per euro gaji yang kamu masukkan, dengan uang liburan ikut naik 8%. Angka itu jauh di atas 37,56% karena kedua keringanan pajak mulai menyusut pada penghasilan ini.</p>"
     },
     {
       "key": "30-percent-ruling",
       "title": "Berapa gaji bersih dengan aturan 30% di Belanda untuk gaji €75.000?",
-      "intro": "<p>Contoh ini untuk pekerja yang direkrut dari luar negeri dan mendapat aturan 30% dengan norma standar €48.013. Gaji €75.000 ditambah uang liburan €6.000 menjadi €81.000, dan tunjangan bebas pajak 30% dari €81.000 adalah €24.300. Gaji kena pajak sesudah tunjangan, €56.700, masih di atas norma, jadi tunjangan penuh berlaku. Pajak Box 1 setelah keringanan umum €1.390 dan keringanan kerja €4.962 adalah €14.241, sehingga gaji bersihnya sekitar €66.759, atau 89,0% dari gaji €75.000 yang dimasukkan (sudah termasuk uang liburan), dengan tarif potongan pada euro berikutnya 30,2%.</p>",
+      "intro": "<p>Contoh ini untuk pekerja yang direkrut dari luar negeri dan mendapat aturan 30% dengan norma standar €48.013. Gaji €75.000 ditambah uang liburan €6.000 menjadi €81.000, dan tunjangan bebas pajak 30% dari €81.000 adalah €24.300. Gaji kena pajak sesudah tunjangan, €56.700, masih di atas norma, jadi tunjangan penuh berlaku. Pajak Box 1 setelah keringanan umum €1.390 dan keringanan kerja €4.962 adalah €14.241, sehingga gaji bersihnya sekitar €66.759, atau 89,0% dari gaji €75.000 yang dimasukkan (sudah termasuk uang liburan), dengan tarif marginal 30,2%.</p>",
       "after": "<p>Tanpa aturan 30%, gaji yang sama menyisakan sekitar €54.353, jadi aturan ini menambah sekitar €12.406 setahun. Selisihnya sebesar itu karena tunjangan menggeser €24.300 dari tarif Box 1 yang tinggi.</p>"
     },
     {
       "key": "30-percent-ruling-under-30",
       "title": "Berapa gaji bersih lulusan master di bawah 30 tahun dengan aturan 30% di Belanda (gaji €50.000)?",
-      "intro": "<p>Contoh ini untuk pekerja di bawah 30 tahun yang bergelar master, yang memakai norma lebih rendah €36.497. Gaji €50.000 ditambah uang liburan €4.000 menjadi €54.000, dan tunjangan penuh 30% (€16.200) masih menyisakan gaji kena pajak €37.800, di atas norma €36.497. Pajak Box 1 setelah keringanan umum €2.599 dan keringanan kerja €5.533 hanya €5.381. Gaji bersihnya sekitar €48.619, atau 97,2% dari gaji €50.000 yang dimasukkan, dan 90,0% dari total €54.000 dengan uang liburan. Tarif potongan pada euro berikutnya 22,4%.</p>",
+      "intro": "<p>Contoh ini untuk pekerja di bawah 30 tahun yang bergelar master, yang memakai norma lebih rendah €36.497. Gaji €50.000 ditambah uang liburan €4.000 menjadi €54.000, dan tunjangan penuh 30% (€16.200) masih menyisakan gaji kena pajak €37.800, di atas norma €36.497. Pajak Box 1 setelah keringanan umum €2.599 dan keringanan kerja €5.533 hanya €5.381. Gaji bersihnya sekitar €48.619, atau 97,2% dari gaji €50.000 yang dimasukkan, dan 90,0% dari total €54.000 dengan uang liburan. Tarif marginalnya 22,4%.</p>",
       "after": "<p>Dengan norma standar €48.013, gaji yang sama hanya memberi tunjangan €5.987 dan gaji bersih sekitar €44.143, jadi norma lebih rendah menambah sekitar €4.476 setahun. Itu sebabnya aturan ini penting bagi lulusan master muda, termasuk lulusan universitas Belanda. Syarat lain tetap berlaku, termasuk syarat direkrut dari luar negeri, dan lulusan Belanda perlu menanyakan penerapannya ke Belastingdienst.</p>"
     }
   ],
@@ -79,7 +79,7 @@
   "strategies": [
     {
       "h3": "Memakai aturan 30% kalau kamu memenuhi syaratnya",
-      "html": "<p>Aturan 30% mengurangi pajak secara besar-besaran dalam lima tahun pertama, seperti terlihat pada contoh di atas. Cocok untuk pekerja terampil yang direkrut dari luar negeri dengan gaji di atas norma. Pemberi kerja yang mengajukannya bersama kamu, jadi bicarakan hal ini sebelum menandatangani kontrak, dan jangan mengandalkannya kalau gajimu di bawah norma atau keahlianmu bukan yang langka di pasar kerja Belanda. Persentasenya dijadwalkan turun dari 30% menjadi 27% mulai 2027, jadi cek yang berlaku.</p>"
+      "html": "<p>Aturan 30% mengurangi pajak secara besar-besaran dalam lima tahun pertama: pada gaji €75.000 ditambah uang liburan, gaji bersihnya sekitar €66.759 dengan aturan itu dan €54.353 tanpa aturan itu. Cocok untuk pekerja terampil yang direkrut dari luar negeri dengan gaji di atas norma. Pemberi kerja yang mengajukannya bersama kamu, jadi bicarakan hal ini sebelum menandatangani kontrak, dan jangan mengandalkannya kalau gajimu di bawah norma atau keahlianmu bukan yang langka di pasar kerja Belanda. Persentasenya dijadwalkan turun dari 30% menjadi 27% mulai 2027, jadi cek yang berlaku.</p>"
     },
     {
       "h3": "Norma gaji lebih rendah untuk lulusan master di bawah 30 tahun",
@@ -117,8 +117,8 @@
       "a": "<p>Untuk pekerja di bawah 30 tahun yang bergelar master, norma gaji kena pajak sesudah tunjangan adalah €36.497, sedangkan norma standar €48.013. Dengan norma lebih rendah itu, tunjangan 30% penuh sudah berlaku mulai gaji (dengan uang liburan) sekitar €52.139, bukan €68.590. Ini relevan bagi lulusan universitas Belanda, tetapi syarat direkrut dari luar negeri tetap berlaku dan ada ketentuan tersendiri untuk lulusan Belanda, jadi tanyakan penerapannya ke pemberi kerja dan Belastingdienst.</p>"
     },
     {
-      "q": "Kenapa tarif pajak Belanda terlihat sekitar 37% tetapi potongan euro berikutnya bisa 46%?",
-      "a": "<p>Tarif Box 1 hanya salah satu bagian. Pajak itu dikurangi dua keringanan, yaitu keringanan umum dan keringanan kerja, dan keduanya menyusut saat penghasilanmu naik: keringanan umum turun 6,398% dari selisih penghasilan di atas €29.736, dan keringanan kerja turun 6,51% di atas €45.592. Pada gaji €60.000 ditambah uang liburan, tarif 37,56% ditambah dua penyusutan itu membuat euro tambahan terpotong sekitar 46,5% (dihitung per euro gaji yang dimasukkan, dengan uang liburan ikut naik). Dengan aturan 30%, bagian yang kena pajak lebih kecil, jadi tarif potongan marjinalnya jauh lebih rendah.</p>"
+      "q": "Kenapa tarif pajak Belanda terlihat sekitar 37% tetapi tarif marginalnya bisa 46%?",
+      "a": "<p>Tarif Box 1 hanya salah satu bagian. Pajak itu dikurangi dua keringanan, yaitu keringanan umum dan keringanan kerja, dan keduanya menyusut saat penghasilanmu naik: keringanan umum turun 6,398% dari selisih penghasilan di atas €29.736, dan keringanan kerja turun 6,51% di atas €45.592. Pada gaji €60.000 ditambah uang liburan, tarif 37,56% ditambah dua penyusutan itu membuat euro tambahan terpotong sekitar 46,5% (dihitung per euro gaji yang dimasukkan, dengan uang liburan ikut naik). Dengan aturan 30%, bagian yang kena pajak lebih kecil, jadi tarif marginalnya jauh lebih rendah.</p>"
     },
     {
       "q": "Apakah asuransi kesehatan dipotong dari gaji di Belanda?",

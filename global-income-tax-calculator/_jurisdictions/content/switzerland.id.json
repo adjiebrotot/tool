@@ -7,11 +7,11 @@
   "place": "Kota Zürich",
   "lede": "<p>Swiss memajaki gaji di tiga lapis: pajak federal, pajak kanton dan pajak kota. Untuk Kota Zürich, kalkulator memakai pajak kanton sebesar 95% dan pajak kota sebesar 119% dari pajak dasar kanton, ditambah pajak federal progresif dan iuran sosial sekitar 10% dari gaji kotor. Sebagai gambaran, lajang bergaji kotor CHF 110.000 di Kota Zürich menyisakan gaji bersih (<em>take-home pay</em>) sekitar CHF 85.029 setahun, atau 77,3%, belum termasuk premi asuransi kesehatan yang dibayar sendiri di luar slip gaji.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini berlaku untuk tahun pajak 2026 dan khusus Kota Zürich, karena tarif kanton dan tarif kota berbeda di tiap tempat. Penduduk Swiss membayar pajak atas penghasilan dari seluruh dunia, tetapi cara pajak itu ditagih berbeda bagi pemegang izin kerja B atau L: pajaknya dipotong langsung dari gaji lewat <em>Quellensteuer</em> (lihat blok terakhir di bawah ini). Sebagai warga negara di luar Uni Eropa dan EFTA, kamu umumnya mendapat izin kerja Swiss lewat kuota untuk tenaga terampil, jadi tawaran kerja dari pemberi kerja Swiss biasanya menjadi langkah pertama.</p>",
+    "intro": "<p>Aturan di bawah ini berlaku untuk tahun pajak 2026 dan khusus Kota Zürich, karena tarif kanton dan tarif kota berbeda di tiap tempat. Penduduk Swiss membayar pajak atas penghasilan dari seluruh dunia, tetapi cara pajak itu ditagih berbeda bagi pemegang izin kerja B atau L: pajaknya dipotong langsung dari gaji lewat <em>Quellensteuer</em> (lihat bagian <em>Quellensteuer</em> untuk pemegang izin B di bawah ini). Sebagai warga negara di luar Uni Eropa dan EFTA, kamu umumnya mendapat izin kerja Swiss lewat kuota untuk tenaga terampil, jadi tawaran kerja dari pemberi kerja Swiss biasanya menjadi langkah pertama.</p>",
     "blocks": [
       {
         "h3": "Tiga lapis pajak: federal, kanton dan kota",
-        "html": "<p>Pajak federal (<em>direkte Bundessteuer</em>) memakai tarif progresif nasional: nol untuk penghasilan kena pajak lajang sampai sekitar CHF 15.200, lalu tarif marjinal naik bertahap dari 0,77% sampai paling tinggi 13,2% per tingkat. Kanton dan kota menghitung pajaknya dari satu angka bersama, yaitu pajak dasar kanton (<em>einfache Staatssteuer</em>). Pajak kanton Zürich adalah 95% dari pajak dasar itu dan pajak Kota Zürich 119%, jadi total sekitar 214% dari pajak dasar. Ditambah pajak pribadi (<em>Personalsteuer</em>) tetap CHF 24 per orang, dan pajak gereja kalau kamu anggota gereja yang memungutnya.</p><p>Penghasilan kena pajak bukan gaji kotor. Kalkulator mengurangi gaji dengan iuran sosial, potongan standar biaya kerja (3% dari penghasilan bersih, minimal CHF 2.000 dan maksimal CHF 4.000) dan pengurang standar lain, yang sedikit berbeda untuk pajak federal dan pajak kanton.</p>",
+        "html": "<p>Pajak federal (<em>direkte Bundessteuer</em>) memakai tarif progresif nasional: nol untuk penghasilan kena pajak lajang sampai sekitar CHF 15.200, lalu tarif marginal naik bertahap dari 0,77% sampai paling tinggi 13,2% per tingkat. Kanton dan kota menghitung pajaknya dari satu angka bersama, yaitu pajak dasar kanton (<em>einfache Staatssteuer</em>). Pajak kanton Zürich adalah 95% dari pajak dasar itu dan pajak Kota Zürich 119%, jadi total sekitar 214% dari pajak dasar. Selain itu ada pajak pribadi (<em>Personalsteuer</em>) tetap sebesar CHF 24 per orang, dan pajak gereja kalau kamu anggota gereja yang memungutnya.</p><p>Penghasilan kena pajak bukan gaji kotor. Kalkulator mengurangi gaji dengan iuran sosial, potongan standar biaya kerja (3% dari penghasilan bersih, minimal CHF 2.000 dan maksimal CHF 4.000) dan pengurang standar lain, yang sedikit berbeda untuk pajak federal dan pajak kanton.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak lajang",
@@ -52,7 +52,7 @@
       },
       {
         "h3": "Asuransi kesehatan sebagai premi pribadi",
-        "html": "<p>Di Swiss, asuransi kesehatan dasar (<em>KVG</em>) wajib, tetapi tidak dipotong dari gaji: kamu membayar premi sendiri ke perusahaan asuransi swasta, umumnya dalam tiga bulan setelah mulai tinggal. Besar premi bergantung pada kanton, perusahaan asuransi, usia dan pilihan franchise (jumlah tahunan yang kamu tanggung sendiri, mulai CHF 300 sampai CHF 2.500). Kalkulator tidak menghitung premi itu, jadi sisihkan anggaran sendiri.</p>"
+        "html": "<p>Di Swiss, asuransi kesehatan dasar (<em>KVG</em>) wajib, tetapi tidak dipotong dari gaji: kamu membayar premi sendiri ke perusahaan asuransi swasta, umumnya dalam tiga bulan setelah mulai tinggal. Besar premi bergantung pada kanton, perusahaan asuransi, usia dan pilihan <em>franchise</em> (jumlah tahunan yang kamu tanggung sendiri, mulai CHF 300 sampai CHF 2.500). Kalkulator tidak menghitung premi itu, jadi sisihkan anggaran sendiri.</p>"
       },
       {
         "h3": "<em>Quellensteuer</em> untuk pemegang izin B",
@@ -86,19 +86,19 @@
     {
       "key": "single-zurich",
       "title": "Berapa gaji bersih lajang di Kota Zürich dengan gaji kotor CHF 110.000?",
-      "intro": "<p>Contoh ini untuk lajang berusia 35 sampai 44 tahun di Kota Zürich dengan satu pekerjaan sepanjang tahun, tanpa pajak gereja. Iuran sosial totalnya CHF 10.693: AHV CHF 5.830, ALV CHF 1.210, NBU CHF 440 dan BVG CHF 3.213. Dari gaji bersih setelah iuran, kalkulator mengurangi potongan biaya kerja dan pengurang standar, sehingga penghasilan kena pajak kanton sekitar CHF 93.428. Pajak kanton CHF 5.297, pajak kota CHF 6.635, pajak pribadi CHF 24 dan pajak federal CHF 2.321. Gaji bersihnya sekitar CHF 85.029, atau 77,3% dari gaji kotor, dan tarif potongan pada franc berikutnya 30,3%.</p>",
+      "intro": "<p>Contoh ini untuk lajang berusia 35 sampai 44 tahun di Kota Zürich dengan satu pekerjaan sepanjang tahun, tanpa pajak gereja. Iuran sosial totalnya CHF 10.693: AHV CHF 5.830, ALV CHF 1.210, NBU CHF 440 dan BVG CHF 3.213. Dari gaji bersih setelah iuran, kalkulator mengurangi potongan biaya kerja dan pengurang standar, sehingga penghasilan kena pajak kanton sekitar CHF 93.428. Pajak kanton CHF 5.297, pajak kota CHF 6.635, pajak pribadi CHF 24 dan pajak federal CHF 2.321. Gaji bersihnya sekitar CHF 85.029, atau 77,3% dari gaji kotor, dan tarif marginalnya 30,3%.</p>",
       "after": "<p>Pajak federal hanya sekitar 2% dari gaji kotor, sedangkan pajak kanton dan kota bersama-sama lebih dari lima kali lipatnya, jadi pilihan kota tempat tinggal sangat menentukan.</p>"
     },
     {
       "key": "married-two-children-zurich",
       "title": "Cara menghitung pajak keluarga dengan dua anak di Kota Zürich untuk gaji CHF 140.000",
-      "intro": "<p>Contoh ini untuk pasangan menikah dengan dua anak dan satu pencari nafkah bergaji kotor CHF 140.000 di Kota Zürich. Iuran sosial CHF 12.733: AHV CHF 7.420, ALV CHF 1.540, NBU CHF 560 dan BVG CHF 3.213. Kalkulator memakai tabel tarif untuk pasangan menikah, yang lebih lebar, dan pengurang tetap untuk status menikah dan tiap anak, sehingga penghasilan kena pajak kanton sekitar CHF 96.249. Pajak kanton CHF 4.218, pajak kota CHF 5.284, pajak pribadi CHF 48 dan pajak federal CHF 1.385 setelah pengurangan CHF 263 per anak. Gaji bersihnya sekitar CHF 116.332, atau 83,1% dari gaji kotor, dan tarif potongan pada franc berikutnya 27,2%.</p>",
+      "intro": "<p>Contoh ini untuk pasangan menikah dengan dua anak dan satu pencari nafkah bergaji kotor CHF 140.000 di Kota Zürich. Iuran sosial CHF 12.733: AHV CHF 7.420, ALV CHF 1.540, NBU CHF 560 dan BVG CHF 3.213. Kalkulator memakai tabel tarif untuk pasangan menikah, yang lebih lebar, dan pengurang tetap untuk status menikah dan tiap anak, sehingga penghasilan kena pajak kanton sekitar CHF 96.249. Pajak kanton CHF 4.218, pajak kota CHF 5.284, pajak pribadi CHF 48 dan pajak federal CHF 1.385 setelah pengurangan CHF 263 per anak. Gaji bersihnya sekitar CHF 116.332, atau 83,1% dari gaji kotor, dan tarif marginalnya 27,2%.</p>",
       "after": "<p>Kalkulator menghitung satu pencari nafkah. Kalau pasanganmu juga bekerja, pajak keluarga dihitung dari gabungan penghasilan dan hasilnya berbeda.</p>"
     },
     {
       "key": "church-member",
       "title": "Berapa pajak gereja di Kota Zürich untuk gaji CHF 110.000 dan apa dampaknya ke gaji bersih?",
-      "intro": "<p>Contoh ini sama dengan contoh lajang CHF 110.000 di Kota Zürich, tetapi kamu anggota gereja yang memungut pajak gereja, dengan tarif 10% dari pajak dasar kanton. Pajak gereja menambah CHF 558, dan pajak lainnya tidak berubah. Gaji bersihnya turun menjadi sekitar CHF 84.471, atau 76,8% dari gaji kotor, dan tarif potongan pada franc berikutnya naik ke 31,1%.</p>",
+      "intro": "<p>Contoh ini sama dengan contoh lajang CHF 110.000 di Kota Zürich, tetapi kamu anggota gereja yang memungut pajak gereja, dengan tarif 10% dari pajak dasar kanton. Pajak gereja menambah CHF 558, dan pajak lainnya tidak berubah. Gaji bersihnya turun menjadi sekitar CHF 84.471, atau 76,8% dari gaji kotor, dan tarif marginalnya naik ke 31,1%.</p>",
       "after": "<p>Pajak gereja berhenti kalau kamu resmi keluar dari gereja. Kamu tidak membayarnya kalau tidak tercatat sebagai anggota gereja yang memungutnya.</p>"
     }
   ],
@@ -106,15 +106,15 @@
   "strategies": [
     {
       "h3": "Pilar 3a (<em>dritte Säule</em>)",
-      "html": "<p>Setoran ke rekening pensiun swasta pilar 3a bisa dikurangkan dari penghasilan kena pajak sampai batas tahunan, sehingga pajak federal, kanton dan kota turun sekaligus. Cocok untuk karyawan yang punya sisa penghasilan untuk ditabung jangka panjang. Cek batas setoran tahun ini di ESTV, dan ingat dana ini terkunci sampai pensiun. Salah satu pengecualian yang umum adalah meninggalkan Swiss secara permanen ke negara di luar Uni Eropa dan EFTA, jadi tanyakan syaratnya ke penyedia 3a kamu.</p>"
+      "html": "<p>Setoran ke rekening pensiun swasta pilar 3a bisa dikurangkan dari penghasilan kena pajak sampai batas tahunan, sehingga pajak federal, kanton dan kota turun sekaligus. Cocok untuk karyawan yang punya sisa penghasilan untuk ditabung jangka panjang. Cek batas setoran tahun ini di ESTV, dan ingat dana ini terkunci sampai pensiun. Salah satu pengecualian yang umum adalah meninggalkan Swiss secara permanen ke negara di luar Uni Eropa dan EFTA, jadi tanyakan syaratnya ke penyedia rekening 3a-mu.</p>"
     },
     {
       "h3": "Pembelian tambahan ke dana pensiun kerja (<em>Einkauf in die Pensionskasse</em>)",
       "html": "<p>Kalau dana pensiun kerjamu mengizinkan, setoran tambahan sukarela ke BVG juga bisa dikurangkan dari penghasilan kena pajak. Cocok untuk penghasilan menengah ke atas yang berencana menetap lama, karena uang itu terkunci sampai pensiun dan ada batas serta aturan penarikan setelahnya. Tanyakan batasnya ke dana pensiunmu.</p>"
     },
     {
-      "h3": "Memilih franchise asuransi kesehatan",
-      "html": "<p>Franchise yang lebih tinggi menurunkan premi bulanan, tetapi kamu menanggung lebih banyak biaya berobat di awal tahun. Cocok untuk orang sehat yang jarang berobat, dan kurang cocok kalau kamu sering ke dokter atau sedang hamil. Hitung premi tahunan ditambah franchise terburuk untuk tiap pilihan sebelum memutuskan.</p>"
+      "h3": "Memilih <em>franchise</em> asuransi kesehatan",
+      "html": "<p><em>Franchise</em> yang lebih tinggi menurunkan premi bulanan, tetapi kamu menanggung lebih banyak biaya berobat di awal tahun. Cocok untuk orang sehat yang jarang berobat, dan kurang cocok kalau kamu sering ke dokter atau sedang hamil. Hitung premi tahunan ditambah <em>franchise</em> terburuk untuk tiap pilihan sebelum memutuskan.</p>"
     },
     {
       "h3": "Memeriksa apakah <em>Quellensteuer</em> sudah benar",
@@ -141,7 +141,7 @@
     },
     {
       "q": "Apakah premi asuransi kesehatan dipotong dari gaji di Swiss?",
-      "a": "<p>Premi tidak dipotong dari gaji. Asuransi kesehatan dasar (<em>KVG</em>) wajib, tetapi kamu membayar premi sendiri ke perusahaan asuransi swasta, dan besarnya bergantung pada kanton, usia, perusahaan asuransi dan franchise yang kamu pilih. Kalkulator menampilkannya sebagai baris tanpa jumlah dan tidak mengurangi gaji bersih dengan premi itu, jadi anggarkan sendiri setiap bulan.</p>"
+      "a": "<p>Premi tidak dipotong dari gaji. Asuransi kesehatan dasar (<em>KVG</em>) wajib, tetapi kamu membayar premi sendiri ke perusahaan asuransi swasta, dan besarnya bergantung pada kanton, usia, perusahaan asuransi dan <em>franchise</em> yang kamu pilih. Kalkulator menampilkannya sebagai baris tanpa jumlah dan tidak mengurangi gaji bersih dengan premi itu, jadi anggarkan sendiri setiap bulan.</p>"
     },
     {
       "q": "Apakah saya kena pajak gereja di Zürich?",
