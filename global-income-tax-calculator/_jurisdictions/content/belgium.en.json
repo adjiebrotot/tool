@@ -38,7 +38,7 @@
       },
       {
         "h3": "Social security (ONSS) and deductions",
-        "html": "<p>Employees pay 13.07% of gross salary to the social security office (ONSS), deducted by the employer. Health insurance is part of it, and you also join a mutual insurance fund to be reimbursed for care. Low earners get an employment bonus that reduces ONSS and tax, which fades out well below the salaries in the examples.</p><p>A lump-sum professional expenses deduction of 30% of your salary after ONSS is applied, up to €6,070 a year. The special social security contribution (CSSS) is an extra monthly deduction that rises with pay and reaches a cap of about €731 a year at higher incomes.</p>"
+        "html": "<p>Employees pay 13.07% of gross salary to the social security office (ONSS), deducted by the employer. It funds your health insurance cover, but you must also join a mutual fund (mutualité) to be reimbursed for care. Low earners get an employment bonus that reduces ONSS and tax, which fades out well below the salaries in the examples.</p><p>A lump-sum professional expenses deduction of 30% of your salary after ONSS is applied, up to €6,070 a year. The special social security contribution (CSSS) is an extra monthly deduction that rises with pay and reaches a cap of about €731 a year at higher incomes.</p>"
       },
       {
         "h3": "Municipal surcharge",
@@ -50,7 +50,7 @@
       },
       {
         "h3": "Expat regime",
-        "html": "<p>Belgium has a regime for qualifying employees who are recruited from abroad or seconded to Belgium. Part of your pay is treated as a reimbursement of the extra costs of living abroad, and that part is free of tax. The calculator models this as a tax and ONSS free reimbursement of 35% of gross pay, and only when gross pay is above €70,000. Eligibility depends on your role, salary and where you lived before, and a cap may apply. It is applied for with your employer, so check the conditions with the tax administration before relying on it.</p>"
+        "html": "<p>Belgium has a regime for qualifying employees who are recruited from abroad or seconded to Belgium. Part of your pay is treated as a reimbursement of the extra costs of living abroad, and that part is free of tax. The calculator models this as a tax and ONSS free reimbursement of 35% of gross pay, and only when gross pay is above €70,000. Eligibility depends on your role, salary and where you lived before. The ONSS exemption has its own ceiling, which the calculator does not apply. The regime is applied for with your employer, so check the conditions with the tax administration before relying on it.</p>"
       }
     ],
     "sources": [
@@ -95,7 +95,7 @@
   "strategies": [
     {
       "h3": "Check whether you qualify for the expat regime",
-      "html": "<p><strong>Suits:</strong> employees recruited from abroad or seconded to Belgium who meet the conditions on role, salary and prior residence. It can lower both tax and ONSS.</p><p><strong>Caveat:</strong> it is applied for with your employer, a cap may apply, and not everyone qualifies. Get the conditions confirmed before you rely on it.</p>"
+      "html": "<p><strong>Suits:</strong> employees recruited from abroad or seconded to Belgium who meet the conditions on role, salary and prior residence. It can lower both tax and ONSS.</p><p><strong>Caveat:</strong> it is applied for with your employer, the ONSS exemption has its own ceiling, and not everyone qualifies. Get the conditions confirmed before you rely on it.</p>"
     },
     {
       "h3": "Use the marital quotient",

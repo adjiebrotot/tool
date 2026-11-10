@@ -17,19 +17,58 @@
             "Tarif"
           ],
           "rows": [
-            ["S$0 sampai S$20.000", "0%"],
-            ["S$20.001 sampai S$30.000", "2%"],
-            ["S$30.001 sampai S$40.000", "3,5%"],
-            ["S$40.001 sampai S$80.000", "7%"],
-            ["S$80.001 sampai S$120.000", "11,5%"],
-            ["S$120.001 sampai S$160.000", "15%"],
-            ["S$160.001 sampai S$200.000", "18%"],
-            ["S$200.001 sampai S$240.000", "19%"],
-            ["S$240.001 sampai S$280.000", "19,5%"],
-            ["S$280.001 sampai S$320.000", "20%"],
-            ["S$320.001 sampai S$500.000", "22%"],
-            ["S$500.001 sampai S$1.000.000", "23%"],
-            ["Di atas S$1.000.000", "24%"]
+            [
+              "S$0 sampai S$20.000",
+              "0%"
+            ],
+            [
+              "S$20.001 sampai S$30.000",
+              "2%"
+            ],
+            [
+              "S$30.001 sampai S$40.000",
+              "3,5%"
+            ],
+            [
+              "S$40.001 sampai S$80.000",
+              "7%"
+            ],
+            [
+              "S$80.001 sampai S$120.000",
+              "11,5%"
+            ],
+            [
+              "S$120.001 sampai S$160.000",
+              "15%"
+            ],
+            [
+              "S$160.001 sampai S$200.000",
+              "18%"
+            ],
+            [
+              "S$200.001 sampai S$240.000",
+              "19%"
+            ],
+            [
+              "S$240.001 sampai S$280.000",
+              "19,5%"
+            ],
+            [
+              "S$280.001 sampai S$320.000",
+              "20%"
+            ],
+            [
+              "S$320.001 sampai S$500.000",
+              "22%"
+            ],
+            [
+              "S$500.001 sampai S$1.000.000",
+              "23%"
+            ],
+            [
+              "Di atas S$1.000.000",
+              "24%"
+            ]
           ]
         }
       },
@@ -46,14 +85,38 @@
             "Iuran CPF karyawan"
           ],
           "rows": [
-            ["Employment Pass atau S Pass", "Tidak ada"],
-            ["PR tahun pertama", "5%"],
-            ["PR tahun kedua", "15%"],
-            ["Warga negara atau PR mulai tahun ketiga, usia sampai 55 tahun", "20%"],
-            ["Usia di atas 55 sampai 60 tahun", "18%"],
-            ["Usia di atas 60 sampai 65 tahun", "12,5%"],
-            ["Usia di atas 65 sampai 70 tahun", "7,5%"],
-            ["Usia di atas 70 tahun", "5%"]
+            [
+              "Employment Pass atau S Pass",
+              "Tidak ada"
+            ],
+            [
+              "PR tahun pertama",
+              "5%"
+            ],
+            [
+              "PR tahun kedua",
+              "15%"
+            ],
+            [
+              "Warga negara atau PR mulai tahun ketiga, usia sampai 55 tahun",
+              "20%"
+            ],
+            [
+              "Usia di atas 55 sampai 60 tahun",
+              "18%"
+            ],
+            [
+              "Usia di atas 60 sampai 65 tahun",
+              "12,5%"
+            ],
+            [
+              "Usia di atas 65 sampai 70 tahun",
+              "7,5%"
+            ],
+            [
+              "Usia di atas 70 tahun",
+              "5%"
+            ]
           ]
         }
       },
@@ -92,7 +155,7 @@
       "key": "s-pass",
       "title": "Cara menghitung pajak pemegang S Pass di Singapura dengan gaji S$4.500 sebulan",
       "intro": "<p>Contoh ini untuk pemegang S Pass dengan gaji S$4.500 sebulan, atau S$54.000 setahun. Aturan pajaknya sama dengan EP: tidak ada CPF dan hanya ada <em>earned income relief</em> S$1.000, sehingga penghasilan kena pajaknya S$53.000. Pajaknya terdiri atas S$200 (2% dari S$10.000), S$350 (3,5% dari S$10.000) dan S$910 (7% dari S$13.000), totalnya S$1.460. Gaji bersihnya sekitar S$52.540 (97,3% dari gaji kotor), dan tarif pajak pada gaji berikutnya hanya 7%.</p>",
-      "after": "<p>Pada gaji sebesar ini, tagihan pajak jauh lebih ringan daripada selisih biaya hidup, jadi pertimbangan utamamu adalah pengeluaran, terutama sewa. Cek kembali lewat Cost of Living Comparator di bagian pertanyaan di bawah.</p>"
+      "after": "<p>Pada gaji sebesar ini pajak hanya sekitar 2,7% dari gaji kotor, sehingga yang lebih menentukan sisa uangmu adalah sewa dan biaya hidup. Hitung selisihnya dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
     },
     {
       "key": "citizen",
@@ -102,7 +165,7 @@
     },
     {
       "key": "pr-first-year",
-      "title": "Cara menghitung gaji bersih permanent resident (PR) Singapura di tahun pertama",
+      "title": "Cara menghitung gaji bersih <em>permanent resident</em> (PR) Singapura di tahun pertama",
       "intro": "<p>Contoh ini untuk PR di tahun pertama dengan gaji S$120.000. Iuran CPF karyawan baru 5%, yaitu S$400 sebulan atau S$4.800 setahun, sehingga pengurang pajaknya S$5.800 (S$1.000 ditambah iuran CPF). Penghasilan kena pajaknya S$114.200 dan pajaknya S$7.283, lebih rendah S$552 daripada pemegang EP. Gaji bersihnya sekitar S$107.917, atau 89,9% dari gaji kotor, dengan tarif pajak pada gaji berikutnya 11,5%.</p>",
       "after": "<p>Angka ini akan turun pada tahun kedua, ketika iuran naik ke 15%, dan lagi pada tahun ketiga, ketika iuran mencapai 20%. Kalkulator ini menghitung setiap tahap secara terpisah, jadi gunakan pilihan PR tahun kedua atau tahun ketiga untuk melihatnya.</p>"
     },
@@ -152,7 +215,7 @@
     },
     {
       "q": "Apakah pemegang Employment Pass atau S Pass wajib membayar CPF?",
-      "a": "<p>Tidak. CPF hanya untuk warga negara dan penduduk tetap (PR). Pemegang EP dan S Pass memakai aturan pajak yang sama dengan warga yang tinggal setahun penuh, tetapi tanpa iuran CPF, sehingga gaji bersihnya lebih besar. Kalau kamu kemudian menjadi PR, iuranmu mulai dari 5% di tahun pertama.</p>"
+      "a": "<p>Tidak wajib, karena CPF hanya untuk warga negara dan penduduk tetap (PR). Pemegang EP dan S Pass memakai aturan pajak yang sama dengan warga yang tinggal setahun penuh, tetapi tanpa iuran CPF, sehingga gaji bersihnya lebih besar. Kalau kamu kemudian menjadi PR, iuranmu mulai dari 5% di tahun pertama.</p>"
     },
     {
       "q": "Kenapa gaji bersih PR turun di tahun kedua dan ketiga?",
@@ -164,7 +227,7 @@
     },
     {
       "q": "Bagaimana pajaknya kalau saya pindah dari Singapura di tengah tahun?",
-      "a": "<p>Karena pajak ditagih sesudah tahun berakhir, IRAS tidak mau ada orang pergi sebelum tagihannya jelas. Untuk pekerja yang bukan warga Singapura, pemberi kerja wajib memberi tahu IRAS (lewat formulir IR21) paling lambat satu bulan sebelum kamu berhenti atau meninggalkan Singapura, dan IRAS dapat meminta gaji serta bonus terakhirmu ditahan sampai pajak selesai. Sisihkan pajakmu sejak awal supaya hal ini tidak mengganggu kepergianmu.</p>"
+      "a": "<p>Karena pajak ditagih sesudah tahun berakhir, ada aturan khusus untuk orang yang akan pergi. Untuk pekerja yang bukan warga Singapura, pemberi kerja wajib memberi tahu IRAS (lewat formulir IR21) paling lambat satu bulan sebelum kamu berhenti atau meninggalkan Singapura, dan IRAS dapat meminta gaji serta bonus terakhirmu ditahan sampai pajak selesai. Sisihkan pajakmu sejak awal supaya hal ini tidak mengganggu kepergianmu.</p>"
     },
     {
       "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Singapura dibandingkan dengan Indonesia?",
@@ -172,7 +235,7 @@
     }
   ],
   "lineLabels": {
-    "Earned income relief and CPF relief": "<em>Earned income relief</em> dan <em>CPF relief</em>",
+    "Earned income relief and CPF relief": "Pengurang pajak untuk penghasilan kerja dan iuran CPF",
     "Income tax": "Pajak penghasilan",
     "CPF, employee share (20%)": "CPF, bagian karyawan (20%)",
     "CPF, employee share (18%)": "CPF, bagian karyawan (18%)",
