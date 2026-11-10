@@ -395,6 +395,11 @@ const PAGES = [
     charts: ['chartCanvas'],
   },
   {
+    name: 'global-salary-calculator',
+    url: '/global-salary-calculator/',
+    charts: ['chartCanvas'],
+  },
+  {
     name: 'financingvscash',
     url: '/financingvscash/',
     charts: ['chartCanvas'],

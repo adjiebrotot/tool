@@ -319,6 +319,10 @@ const PAGES = [
     async prep(page) { await page.click('.quick-start-btn[data-preset="couple"]'); },
   },
   {
+    name: 'global-salary-calculator', url: '/global-salary-calculator/', charts: ['chartCanvas'],
+    async prep(page) { await page.click('.quick-start-btn[data-preset="asia"]'); },
+  },
+  {
     name: 'financialfreedom', url: '/financialfreedom/', charts: ['ffChart', 'ddChart'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="legacy"]');

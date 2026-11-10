@@ -3721,6 +3721,10 @@
      }
     }
    }
-  }
+  },
+  {"page": "/global-salary-calculator/", "name": "docs example: £85,000 in London", "link": "#load&v=1&country=GB&why.country=London%20is%20in%20England,%20so%20the%20rest%20of%20UK%20rates%20apply&ukRegion=ruk&dir=gross&amount=85000&why.amount=%C2%A385,000%20a%20year%20before%20tax,%20as%20the%20user%20said&period=yearly&note=London,%20November%202026", "expect": {"country": "GB", "ukRegion": "ruk", "dir": "gross", "amount": "85,000", "period": "yearly"}, "probe": {"count": 1, "countries": ["GB"], "active": 0}},
+  {"page": "/global-salary-calculator/", "name": "AI page example: two offers in json, read in US dollars", "link": "#load&v=1&json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:180000%7D,%7B%22country%22:%22HK%22,%22amount%22:1300000%7D%5D%7D&dispCur=USD&why.dispCur=Read%20both%20in%20US%20dollars%20to%20compare%20them&note=Singapore%20against%20Hong%20Kong,%20November%202026", "expect": {"country": "SG", "sgRes": "ep", "amount": "180,000", "dispCur": "USD"}, "probe": {"count": 2, "countries": ["SG", "HK"], "active": 0}},
+  {"page": "/global-salary-calculator/", "name": "net to gross for two US states, with a field laid over the json's job 1", "link": "#load&v=1&json=%7B%22jobs%22:%5B%7B%22country%22:%22US%22,%22usState%22:%22TX%22,%22dir%22:%22net%22,%22amount%22:8000,%22period%22:%22monthly%22%7D,%7B%22country%22:%22US%22,%22usState%22:%22NY%22,%22usNyc%22:true,%22dir%22:%22net%22,%22amount%22:8000,%22period%22:%22monthly%22%7D%5D%7D&usFiling=MFJ&why.usFiling=The%20user%20files%20jointly%20with%20a%20spouse&note=Texas%20against%20New%20York%20City,%20November%202026", "expect": {"country": "US", "usState": "TX", "dir": "net", "amount": "8,000", "period": "monthly", "usFiling": "MFJ"}, "probe": {"count": 2, "countries": ["US", "US"], "active": 0}},
+  {"page": "/global-salary-calculator/", "name": "Quick Start with job 1's pay replaced", "link": "#load&v=1&qs=us&amount=185000&why.amount=The%20user%27s%20offer%20is%20US$185,000%20a%20year&note=US%20states,%20November%202026", "expect": {"country": "US", "usState": "TX", "amount": "185,000"}, "probe": {"count": 4, "countries": ["US", "US", "US", "US"], "active": 0}}
  ]
 }
