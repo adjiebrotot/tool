@@ -54,7 +54,7 @@
       "key": "resident",
       "title": "How much tax and take-home pay on €30,000 in Portugal?",
       "intro": "<p>This is a resident employee on €30,000. Social security takes €3,300 (11%). The specific deduction is €4,587, so taxable income is about €25,413. The progressive scale on that amount gives about €4,700, and the standard €250 deduction from the tax brings it to €4,450. You keep about €22,250, or 74.2% of gross.</p>",
-      "after": "<p>Your marginal rate is 41.6%, because the next euros move into higher bands and social security takes 11% of them. The employer's 23.75% (€7,125) is paid on top of your gross.</p>"
+      "after": "<p>Your marginal rate is 41.6%: the next euro is taxed in the 30.6% IRS band, and social security takes another 11% of it. The employer's 23.75% (€7,125) is paid on top of your gross.</p>"
     },
     {
       "key": "irs-jovem",

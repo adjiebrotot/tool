@@ -113,7 +113,7 @@
       "key": "single-tk0",
       "title": "Berapa PPh 21 dan gaji bersih untuk gaji Rp120.000.000 setahun (TK/0)?",
       "intro": "<p>Contoh ini untuk pegawai lajang tanpa tanggungan (TK/0) dengan gaji Rp10.000.000 sebulan atau Rp120.000.000 setahun, dengan tarif JKK 0,24%. Premi pemberi kerja sebesar Rp5.448.000 ditambahkan dulu ke penghasilan, sehingga penghasilan bruto yang dihitung menjadi Rp125.448.000. Dari situ dikurangi biaya jabatan Rp6.000.000 (5% sudah melewati batasnya), JHT Rp2.400.000, JP Rp1.200.000 dan PTKP Rp54.000.000, sehingga penghasilan kena pajaknya Rp61.848.000. Pajaknya 5% dari Rp60.000.000 ditambah 15% dari sisa Rp1.848.000, dan totalnya Rp3.277.200. Setelah PPh 21 dan iuran BPJS (JHT, JP dan Kesehatan), gaji bersihnya sekitar Rp111.922.800 setahun, atau 93,3% dari gaji, dan 19,2% dari tambahan gaji berikutnya habis untuk pajak dan iuran.</p>",
-      "after": "<p>Angka PPh 21 ini tidak muncul sebesar Rp273.100 tiap bulan di slip gaji, karena pemotongan bulanan memakai TER dan baru dikoreksi di Desember.</p>"
+      "after": "<p>Pajak setahun itu setara Rp273.100 sebulan, tetapi potongan di slip gaji tidak persis sebesar itu, karena pemotongan bulanan memakai TER dan baru dikoreksi di Desember.</p>"
     },
     {
       "key": "married-two-children",
@@ -125,14 +125,14 @@
       "key": "non-resident",
       "title": "Berapa PPh 26 untuk WNA yang bekerja di Indonesia kurang dari 183 hari dengan gaji Rp600.000.000?",
       "intro": "<p>Contoh ini untuk orang asing dengan penghasilan Rp600.000.000 setahun yang belum berstatus penduduk pajak, misalnya karena berada di Indonesia kurang dari 183 hari. PPh 26 dihitung 20% dari penghasilan bruto, jadi Rp120.000.000, dan tidak ada PTKP, biaya jabatan maupun tarif bertingkat. Kalkulator juga memasukkan iuran BPJS seperti yang dibayar penduduk pajak (JHT Rp12.000.000, JP Rp1.319.578 dan Kesehatan Rp1.440.000), karena pilihan itu menyala secara bawaan. Gaji bersihnya sekitar Rp465.240.422 (77,5%), dan 22,0% dari tambahan gaji berikutnya habis untuk pajak dan iuran.</p>",
-      "after": "<p>Matikan pilihan BPJS di kalkulator kalau kontrak kerja dan visamu memang tidak mewajibkannya. Perjanjian pajak berganda tidak dihitung.</p>"
+      "after": "<p>Pilihan iuran BPJS bisa dimatikan di kalkulator kalau kamu memang tidak membayarnya. Perjanjian pajak berganda tidak dihitung.</p>"
     }
   ],
   "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di aturan pajak Indonesia. Kalkulator ini tidak memodelkannya, jadi hitung sendiri dampaknya di SPT Tahunan.</p>",
   "strategies": [
     {
       "h3": "Zakat lewat BAZNAS atau LAZ resmi",
-      "html": "<p>Zakat penghasilan yang dibayar ke badan amil zakat resmi, yaitu BAZNAS atau lembaga amil zakat (LAZ) yang disahkan pemerintah, boleh dikurangkan dari penghasilan bruto. Pengurang ini berlaku untuk wajib pajak beragama Islam, dan nilainya sebesar zakat yang sungguh-sungguh kamu bayar. Simpan bukti setor zakat dari lembaganya, lalu laporkan di SPT Tahunan atau serahkan ke bagian HRD agar ikut diperhitungkan. Zakat yang diberikan langsung ke perorangan tidak memenuhi syarat.</p>"
+      "html": "<p>Zakat penghasilan yang dibayar ke badan amil zakat resmi, yaitu BAZNAS atau lembaga amil zakat (LAZ) yang disahkan pemerintah, boleh dikurangkan dari penghasilan bruto. Pengurang ini berlaku untuk wajib pajak beragama Islam, dan nilainya sebesar zakat yang sungguh-sungguh kamu bayar. Simpan bukti setor zakat dari lembaganya, lalu laporkan di SPT Tahunan. Zakat yang diberikan langsung ke perorangan tidak memenuhi syarat.</p>"
     },
     {
       "h3": "Iuran dana pensiun (DPLK)",
@@ -163,7 +163,7 @@
   "faq": [
     {
       "q": "Bagaimana cara menghitung PPh 21 atas gaji?",
-      "a": "<p>Ada lima langkah. Pertama, jumlahkan gaji setahun dengan premi yang dibayar pemberi kerja (JKK, JKM dan BPJS Kesehatan). Kedua, kurangi biaya jabatan 5% (maksimum Rp6.000.000 setahun), iuran JHT dan JP yang kamu bayar sendiri, lalu PTKP sesuai statusmu. Ketiga, bulatkan hasilnya ke bawah ke ribuan penuh, yang menjadi penghasilan kena pajak. Keempat, terapkan tarif bertingkat Pasal 17 (5%, 15%, 25%, 30% dan 35%). Kelima, hasilnya adalah PPh 21 setahun. Contohnya ada di bagian contoh perhitungan, dan kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+      "a": "<p>Perhitungannya ada lima langkah. Pertama, jumlahkan gaji setahun dengan premi yang dibayar pemberi kerja (JKK, JKM dan BPJS Kesehatan). Kedua, kurangi biaya jabatan 5% (maksimum Rp6.000.000 setahun), iuran JHT dan JP yang kamu bayar sendiri, lalu PTKP sesuai statusmu. Ketiga, bulatkan hasilnya ke bawah ke ribuan penuh, yang menjadi penghasilan kena pajak. Keempat, terapkan tarif bertingkat Pasal 17 (5%, 15%, 25%, 30% dan 35%). Kelima, hasilnya adalah PPh 21 setahun. Contohnya ada di bagian contoh perhitungan, dan kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
     },
     {
       "q": "Kenapa potongan PPh 21 di bulan Desember lebih besar?",
@@ -179,7 +179,7 @@
     },
     {
       "q": "Apakah iuran BPJS mengurangi PPh 21?",
-      "a": "<p>Sebagian. Iuran JHT 2% dan JP 1% yang dibayar pegawai mengurangi penghasilan kena pajak, sedangkan iuran BPJS Kesehatan 1% tidak dikurangkan dalam hitungan kalkulator ini. Kebalikannya terjadi pada premi pemberi kerja: JKK, JKM dan bagian BPJS Kesehatan yang dibayar pemberi kerja justru ditambahkan ke penghasilan bruto. Karena itu BPJS memengaruhi gaji bersih dalam dua arah, lewat iuran yang dipotong dari gaji dan lewat pajak.</p>"
+      "a": "<p>Hanya sebagian yang mengurangi. Iuran JHT 2% dan JP 1% yang dibayar pegawai mengurangi penghasilan kena pajak, sedangkan iuran BPJS Kesehatan 1% tidak dikurangkan dalam hitungan kalkulator ini. Kebalikannya terjadi pada premi pemberi kerja: JKK, JKM dan bagian BPJS Kesehatan yang dibayar pemberi kerja justru ditambahkan ke penghasilan bruto. Karena itu BPJS memengaruhi gaji bersih dalam dua arah, lewat iuran yang dipotong dari gaji dan lewat pajak.</p>"
     },
     {
       "q": "Apakah orang asing yang bekerja di Indonesia membayar PPh 26?",
