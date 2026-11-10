@@ -1,0 +1,144 @@
+{
+  "slug": "united-kingdom",
+  "lang": "en",
+  "title": "UK Income Tax 2026/27: How to Calculate Take-Home Pay",
+  "h1": "How to calculate income tax in the UK (2026/27)",
+  "description": "UK income tax and National Insurance for 2026/27 in England and Scotland: the 60% band at £100,000, student loans, PAYE and four take-home examples.",
+  "lede": "<p>The UK taxes employment income through PAYE: a £12,570 personal allowance, then 20%, 40% and 45% bands in England, Wales and Northern Ireland (Scotland has six bands), plus National Insurance of 8% on pay up to £50,270 and 2% above it. On £60,000 in England you pay about £11,432 in income tax and £3,211 in National Insurance and keep about £45,357. Between £100,000 and £125,140 the personal allowance is withdrawn, which makes the effective marginal rate 60% for income tax alone.</p>",
+  "law": {
+    "intro": "<p>The UK tax year runs from 6 April to 5 April, and the figures below are the 2026/27 rates as the calculator models them. Most employees never file a tax return: your employer deducts income tax and National Insurance from every payslip through PAYE, using the tax code HMRC gives them. Which tax table applies depends on where you live (Scotland sets its own rates), and whether you are a UK tax resident depends on the Statutory Residence Test, not on your visa alone.</p>",
+    "blocks": [
+      {
+        "h3": "Income tax rates in England, Wales and Northern Ireland",
+        "html": "<p>The personal allowance is £12,570 and is tax-free. The bands below apply to income after the allowance, so the 40% rate starts at £50,270 of pay (£12,570 plus £37,700). The standard tax code for the allowance is 1257L.</p>",
+        "table": {
+          "head": ["Taxable income (after the personal allowance)", "Rate"],
+          "rows": [
+            ["£0 to £37,700", "20%"],
+            ["£37,701 to £125,140", "40%"],
+            ["Over £125,140", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "Income tax rates in Scotland",
+        "html": "<p>Scottish taxpayers pay income tax on pay at Scottish rates, set by the Scottish Parliament, with the same personal allowance. National Insurance is the same as in the rest of the UK. The calculator lets you choose Scottish rates; Wales and Northern Ireland use the England table.</p>",
+        "table": {
+          "head": ["Taxable income (after the personal allowance)", "Rate"],
+          "rows": [
+            ["£0 to £3,967", "19%"],
+            ["£3,968 to £16,956", "20%"],
+            ["£16,957 to £31,092", "21%"],
+            ["£31,093 to £62,430", "42%"],
+            ["£62,431 to £125,140", "45%"],
+            ["Over £125,140", "48%"]
+          ]
+        }
+      },
+      {
+        "h3": "The personal allowance taper and the 60% band",
+        "html": "<p>For every £2 of income above £100,000 the personal allowance falls by £1, until it reaches nil at £125,140. Inside that band each extra £1 of pay loses £1 of income at 40% from the band itself and another 20p from the allowance, so the effective rate on that slice is 60%. Add the 2% employee National Insurance and the marginal rate is 62%. The calculator applies the taper in every example.</p>"
+      },
+      {
+        "h3": "National Insurance (Class 1, employee)",
+        "html": "<p>Employees pay 8% on earnings between £12,570 and £50,270 and 2% on earnings above £50,270. National Insurance is separate from income tax, so it is charged from your first payslip whatever your nationality. It does not depend on region. Employer National Insurance is paid on top and is not part of your take-home figure.</p>"
+      },
+      {
+        "h3": "Student and postgraduate loans",
+        "html": "<p>A UK student loan is repaid through PAYE at 9% of earnings above a plan threshold. The calculator uses £26,900 for Plan 1, £29,385 for Plan 2, £33,795 for Plan 4 and £25,000 for Plan 5. A postgraduate loan is repaid at 6% of earnings above £21,000, and can run alongside a plan loan. These only matter if you studied in the UK and borrowed from the Student Loans Company.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "GOV.UK, Income Tax rates and Personal Allowances", "url": "https://www.gov.uk/income-tax-rates", "note": "bands, allowance and the £100,000 taper" },
+      { "name": "GOV.UK, repaying your student loan", "url": "https://www.gov.uk/repaying-your-student-loan", "note": "plan thresholds and repayment rates" },
+      { "name": "HM Revenue and Customs", "url": "https://www.gov.uk/government/organisations/hm-revenue-customs", "note": "PAYE, tax codes, Self Assessment" },
+      { "name": "Scottish Government", "url": "https://www.gov.scot/", "note": "Scottish income tax rates and bands" },
+      { "name": "GOV.UK, visas and immigration", "url": "https://www.gov.uk/browse/visas-immigration", "note": "Skilled Worker visa and other routes" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "england",
+      "title": "How much tax do you pay in England on a £60,000 salary?",
+      "intro": "<p>This is a Skilled Worker visa holder or any new employee on £60,000 in England, with no student loan. The £12,570 allowance leaves £47,430 taxable. The first £37,700 is taxed at 20% and the remaining £9,730 at 40%, so income tax is £11,432. National Insurance adds £3,211. You keep about £45,357, or 75.6% of gross.</p>",
+      "after": "<p>Your marginal rate is 42%: 40% income tax plus 2% National Insurance, because you are above £50,270. A pension contribution through your employer would be taken off at that rate.</p>"
+    },
+    {
+      "key": "scotland",
+      "title": "Scottish income tax on £60,000: how much more than England?",
+      "intro": "<p>The same £60,000 salary, but for someone living in Scotland. The allowance is unchanged, and the Scottish bands tax the £47,430 of taxable income at 19%, 20%, 21% and 42%, giving £13,182 of income tax against £11,432 in England. National Insurance is the same £3,211. You keep about £43,607, or 72.7% of gross, which is £1,750 less than in England.</p>",
+      "after": "<p>The marginal rate at this income is 44% in Scotland (42% plus National Insurance) against 42% in England. Scottish bands tax lower earners slightly less, so the gap grows as pay rises.</p>"
+    },
+    {
+      "key": "student-loan",
+      "title": "Take-home pay on £45,000 in the UK with a Plan 2 student loan",
+      "intro": "<p>This is someone on £45,000 in England who is also repaying a Plan 2 student loan. Income tax is £6,486 on £32,430 of taxable income at 20%, and National Insurance is £2,594. The loan takes 9% of the £15,615 above the £29,385 threshold, which is £1,405. You keep about £34,514, or 76.7% of gross.</p>",
+      "after": "<p>The loan adds 9 points to your marginal rate, which becomes 37% (20% tax, 8% National Insurance and 9% loan). The deduction stops when you earn below the threshold.</p>"
+    },
+    {
+      "key": "above-100k",
+      "title": "How to calculate UK tax on £120,000 with the 60% band",
+      "intro": "<p>At £120,000 the personal allowance has shrunk to £2,570, because it falls £1 for every £2 over £100,000. Taxable income is £117,430. The first £37,700 is taxed at 20% and the remaining £79,730 at 40%, so income tax is £39,432. National Insurance is £4,411. You keep about £76,157, or 63.5% of gross.</p>",
+      "after": "<p>The marginal rate is 62%. Income tax on this pay is £12,000 higher than at £100,000, for £20,000 more salary. Paying into a pension, if your employer allows salary sacrifice, can bring adjusted income back towards £100,000.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce UK tax. Which ones fit depends on your pay, your employer and how long you plan to stay.</p>",
+  "strategies": [
+    {
+      "h3": "Pension contributions through salary sacrifice",
+      "html": "<p><strong>Suits:</strong> employees whose employer offers salary sacrifice or a net-pay scheme, above all those between £100,000 and £125,140. In the £120,000 example, a £20,000 contribution would bring adjusted income to £100,000 and restore the full allowance, cutting income tax by about £12,000. Salary sacrifice can also save the 2% National Insurance.</p><p><strong>Caveat:</strong> the money stays in the pension until you reach the minimum access age, and an annual allowance caps what you can pay in with tax relief. Check the current limit on GOV.UK. If you leave the UK, the pension stays there.</p>"
+    },
+    {
+      "h3": "Check your tax code",
+      "html": "<p><strong>Suits:</strong> anyone starting a job or changing job. Employers use the code HMRC supplies, and 1257L gives the full allowance. A temporary emergency code, common in the first payslips, can over- or under-tax you until HMRC updates it.</p><p><strong>Caveat:</strong> a wrong code does not change what you owe for the year, only when you pay it. Check your payslip and your HMRC online account, and tell HMRC about changes.</p>"
+    },
+    {
+      "h3": "Use the Scottish bands in your decision",
+      "html": "<p><strong>Suits:</strong> people choosing where in the UK to live. Scottish bands tax pay above about £43,000 more heavily than England, as the £60,000 example shows (£1,750 a year). Lower pay can leave you better off in Scotland.</p><p><strong>Caveat:</strong> Scottish rates apply only if Scotland is your main place of residence, so you cannot pick them for tax reasons alone. Compare rent and living costs as well, in the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "h3": "Plan student loan repayments",
+      "html": "<p><strong>Suits:</strong> people with a UK student loan, for example those who studied in the UK before starting work.</p><p><strong>Caveat:</strong> repayments are automatic through PAYE and are not tax-deductible. Paying extra voluntarily is rarely better than keeping the cash unless the loan will clearly be repaid in full, so check your plan before overpaying.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full tax year. Self-employment, rental income, savings, dividends and capital gains are not included.",
+    "<strong>No bonuses or equity.</strong> Share options, bonuses and benefits in kind are not modelled separately, and no pension contribution is deducted.",
+    "<strong>England and Scotland.</strong> You choose either the England table or the Scottish one. Wales and Northern Ireland use the England table. The calculator does not test where you live for tax.",
+    "<strong>Residency is assumed.</strong> It treats you as a UK tax resident for the full year and does not apply the Statutory Residence Test or any special regime for new arrivals.",
+    "<strong>Single person, no allowances.</strong> The standard personal allowance and the taper are applied. Marriage Allowance, blind person's allowance and other reliefs are not.",
+    "<strong>Costs outside tax are left out.</strong> The Immigration Health Surcharge and visa fees are not included.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on £60,000 in the UK?",
+      "a": "<p>In England you pay about £11,432 in income tax and £3,211 in National Insurance and keep about £45,357. In Scotland the figure is about £43,607. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Why is the marginal tax rate 60% between £100,000 and £125,140?",
+      "a": "<p>Your personal allowance, normally £12,570 of tax-free pay, shrinks by £1 for every £2 you earn above £100,000, and is gone at £125,140. Each extra £1 in that band is taxed at 40%, and it also pulls 50p of the allowance into tax, which adds a further 20p. The result is 60p of income tax on each extra pound, or 62p with National Insurance.</p><p>At £120,000 the allowance has already fallen to £2,570, which is why income tax is £39,432. The calculator applies the taper for you.</p>"
+    },
+    {
+      "q": "Do I need to file a tax return in the UK?",
+      "a": "<p>Most employees do not. Your employer deducts income tax and National Insurance every month through PAYE, so the tax year ends with the right amount paid and no return needed. A return (Self Assessment) is required if you have other income, such as rental or investment income, if you are self-employed, or for other cases HMRC lists, including some high earners. If PAYE over-taxed you, HMRC may refund it without a return.</p>"
+    },
+    {
+      "q": "What is a PAYE tax code and why does it matter?",
+      "a": "<p>A tax code tells your employer how much of your pay is tax-free. The standard code is 1257L, which matches the £12,570 allowance. HMRC changes it when you have taxable benefits, a second job or unpaid tax. When you start a job without a code, an emergency code may be used for a few payslips, so tax can look high until HMRC sends the right one. The calculator assumes the standard allowance for the full year.</p>"
+    },
+    {
+      "q": "Is the Scottish income tax different from the rest of the UK?",
+      "a": "<p>Yes. Scotland sets its own bands and rates for pay, with six bands from 19% to 48% instead of three from 20% to 45%. If Scotland is your main home, Scottish rates apply to your pay. On £60,000 that costs about £1,750 more than England. National Insurance and student loan rules are UK-wide.</p>"
+    },
+    {
+      "q": "How is a student loan repaid in the UK?",
+      "a": "<p>Your employer deducts 9% of earnings above your plan threshold with each payslip, and a postgraduate loan adds 6% above £21,000. On £45,000 with a Plan 2 loan that is £1,405 a year. Repayments do not reduce your income tax. The calculator lets you pick a plan, and works out a full year, so a monthly payslip can differ from it.</p>"
+    },
+    {
+      "q": "Is National Insurance a tax I can avoid if I will leave the UK?",
+      "a": "<p>No. Employees on UK payroll pay Class 1 National Insurance from their first payslip at 8% and 2%, whatever their visa or stay length. Some people are exempt through a social security agreement with their home country, which is not modelled here. Check with HMRC before assuming an exemption.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a cup of tea."
+}

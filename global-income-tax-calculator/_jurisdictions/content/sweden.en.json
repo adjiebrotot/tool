@@ -1,0 +1,118 @@
+{
+  "slug": "sweden",
+  "lang": "en",
+  "title": "Sweden Income Tax 2026: How to Calculate It",
+  "h1": "How to calculate income tax in Sweden (2026), Stockholm",
+  "description": "Swedish income tax 2026 for Stockholm: municipal tax, state tax above the threshold, job tax credit, pension fee offset and SINK 22.5% for non-residents.",
+  "lede": "<p>Sweden taxes residents with a municipal tax of about 30.55% in Stockholm, plus 20% state tax only on taxable income above SEK 643,000. Several tax reductions, including the job tax credit and an offset for the 7% pension fee, cut the bill. On SEK 600,000 a Stockholm resident pays about SEK 129,900 and keeps about SEK 470,100 (78.3%). A non-resident on SINK pays a flat 22.5% and keeps SEK 465,000.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rates as the calculator models them, in Swedish kronor (SEK). The page models <strong>Stockholm</strong>, with a combined municipal and regional rate of 30.55%. Other municipalities charge different rates, and the calculator lets you change the rate between 28% and 36%.</p>",
+    "blocks": [
+      {
+        "h3": "Municipal tax and the basic allowance",
+        "html": "<p>Most of your tax is a flat municipal tax charged on taxable income. Taxable income is your pay minus the basic allowance (grundavdrag), which falls as income rises. At SEK 600,000 it is about SEK 17,400. In Stockholm the rate is 30.55%.</p>"
+      },
+      {
+        "h3": "State tax (20%)",
+        "html": "<p>State tax is 20% of taxable income above SEK 643,000. Below that threshold you pay none. Taxable income is pay after the basic allowance, so you need gross pay a little above SEK 643,000 before state tax starts.</p>"
+      },
+      {
+        "h3": "Fees, and the tax reductions that offset them",
+        "html": "<p>On top of the municipal tax you pay a pension fee of 7% of pay (capped at SEK 47,100), a small burial fee and a public service fee of 1% of taxable income (maximum SEK 1,184). The calculator then applies tax reductions: the pension fee offset, the job tax credit (jobbskatteavdrag) and an earned income reduction. These come off municipal tax first and then state tax, so for most salaries they roughly cancel the pension fee and then some.</p>"
+      },
+      {
+        "h3": "SINK for non-residents",
+        "html": "<p>Special income tax for non-residents (SINK) is a flat 22.5% of gross pay, with no allowances and no reductions. It is meant for people who work in Sweden without being tax resident there, for example on short stays. The calculator offers it as an alternative to resident tax.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Skatteverket (Swedish Tax Agency)",
+        "url": "https://www.skatteverket.se/",
+        "note": "tax rates, municipal tax, SINK"
+      },
+      {
+        "name": "Migrationsverket (Swedish Migration Agency)",
+        "url": "https://www.migrationsverket.se/",
+        "note": "work permits and residence"
+      },
+      {
+        "name": "Försäkringskassan",
+        "url": "https://www.forsakringskassan.se/",
+        "note": "social insurance"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident-stockholm",
+      "title": "Take-home pay on SEK 600,000 in Stockholm: how Swedish tax works",
+      "intro": "<p>This is a Stockholm resident on SEK 600,000. After the basic allowance of SEK 17,400, taxable income is SEK 582,600, which is below the SEK 643,000 threshold, so there is no state tax. Municipal tax at 30.55% is SEK 177,984 before reductions. The tax reductions (SEK 92,929) bring the municipal part down to SEK 85,055. Add the 7% pension fee of SEK 42,000, a burial fee of about SEK 1,701 and the public service fee of SEK 1,184. You keep about SEK 470,060, or 78.3% of gross.</p>",
+      "after": "<p>Your marginal rate is 30.8%: the municipal rate plus the burial fee. State tax would add 20% only once taxable income passes SEK 643,000.</p>"
+    },
+    {
+      "key": "sink-non-resident",
+      "title": "How to calculate Swedish SINK tax for a non-resident on SEK 600,000",
+      "intro": "<p>This is a non-resident taxed under SINK. The tax is a flat 22.5% of gross, so SEK 135,000 on SEK 600,000, and you keep SEK 465,000, or 77.5% of gross. There is no basic allowance, no municipal rate to choose and no pension fee in this case.</p>",
+      "after": "<p>The resident in Stockholm keeps about SEK 5,060 more on the same pay, so SINK is not always the lighter route. The right regime depends on your residency status, not on a choice of the lower number.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to manage Swedish tax. Which ones apply depends on your status.</p>",
+  "strategies": [
+    {
+      "h3": "Ask about the expert tax relief",
+      "html": "<p><strong>Suits:</strong> foreign experts, executives and key personnel recruited to Sweden. The relief exempts a quarter of your pay from tax for a limited period when you qualify, and your employer applies for it through the Expert Tax Board.</p><p><strong>Caveat:</strong> there are conditions, including a minimum salary and a time limit. The calculator does not model it, so your real tax can be lower.</p>"
+    },
+    {
+      "h3": "Claim work and commuting deductions",
+      "html": "<p><strong>Suits:</strong> residents who travel to work or pay work costs themselves. Deductions for travel between home and work and for other work expenses reduce taxable income, but they apply only above set thresholds.</p><p><strong>Caveat:</strong> you need records, and Skatteverket checks claims. The calculator includes none of them.</p>"
+    },
+    {
+      "h3": "Use an investment savings account (ISK) for savings",
+      "html": "<p><strong>Suits:</strong> residents who invest in shares or funds. An ISK is taxed on a standard yield rather than on gains and dividends, which keeps the paperwork simple.</p><p><strong>Caveat:</strong> it is a tax on the account, not a deduction from your salary, so it does not change the figures above. It can cost more than normal tax in a year of heavy gains and less in a bad year.</p>"
+    },
+    {
+      "h3": "Check your municipality",
+      "html": "<p><strong>Suits:</strong> anyone choosing where to live. Municipal rates differ by several percentage points across Sweden, which changes take-home pay on the same salary.</p><p><strong>Caveat:</strong> the lowest-tax area is not always the cheapest place to live, so weigh housing and commuting costs as well.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Stockholm only.</strong> The default is a 30.55% municipal and regional rate. Change the rate in the calculator for another municipality.",
+    "<strong>Employment income only.</strong> It models one salary for a full year. Capital income, a business and a part year are not included.",
+    "<strong>No church fee.</strong> Membership fees of the Church of Sweden are not modelled.",
+    "<strong>No expert tax relief.</strong> Foreign key personnel regimes are not applied.",
+    "<strong>You choose the regime.</strong> The calculator does not test whether you are tax resident in Sweden or fall under SINK.",
+    "<strong>No bonuses, equity or tax treaties.</strong> Share options, bonuses and foreign tax credits are not modelled."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on SEK 600,000 in Stockholm?",
+      "a": "<p>A resident pays about SEK 129,900 in municipal tax, the pension fee, the burial fee and the public service fee, after tax reductions, and keeps about SEK 470,060. A non-resident on SINK pays SEK 135,000 and keeps SEK 465,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "When do I pay Swedish state tax?",
+      "a": "<p>State tax of 20% applies only to taxable income above SEK 643,000. Taxable income is pay after the basic allowance, so most employees pay only municipal tax. At SEK 600,000 the calculator charges no state tax.</p>"
+    },
+    {
+      "q": "Why does the pension fee not seem to cost me anything?",
+      "a": "<p>Employees pay a pension fee of 7% of pay, but a tax reduction (the pension fee offset) gives it back against municipal tax. The calculator shows the fee as a line and the offset inside a single reductions line, together with the job tax credit. The net effect is that the pension fee is largely offset for most salaries.</p>"
+    },
+    {
+      "q": "What is the job tax credit (jobbskatteavdrag)?",
+      "a": "<p>It is a tax reduction for people who work, which lowers the tax you pay on earned income. The calculator combines it with the pension fee offset and an earned income reduction into one line, capped by your municipal and state tax so that it cannot create a negative tax.</p>"
+    },
+    {
+      "q": "What is SINK and who pays it?",
+      "a": "<p>SINK is a flat 22.5% tax on gross pay for people who work in Sweden without being tax resident, for example during a short stay. There are no allowances or reductions, and tax is final. Residents use ordinary tax instead. Check your status with Skatteverket.</p>"
+    },
+    {
+      "q": "Why does municipal tax differ so much between places?",
+      "a": "<p>Each municipality and region sets its own rate, so the total ranges by several percentage points. Stockholm is 30.55% in the calculator. Change the municipal rate to see how your pay moves. The burial fee also varies a little by parish.</p>"
+    },
+    {
+      "q": "How does Sweden compare with other Nordic countries?",
+      "a": "<p>See the pages for <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/norway/\">Norway</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/finland/\">Finland</a> and <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/\">Estonia</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a fika."
+}

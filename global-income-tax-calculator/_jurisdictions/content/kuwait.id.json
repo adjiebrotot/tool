@@ -1,0 +1,115 @@
+{
+  "title": "Pajak Gaji di Kuwait 2026: Gaji Bersih dan PIFSS",
+  "h1": "Cara menghitung pajak penghasilan di Kuwait (2026)",
+  "description": "Kuwait tidak memajaki gaji dan pekerja asing tidak membayar iuran jaminan sosial. Lihat gaji bersih pekerja asing dan iuran PIFSS untuk warga negara.",
+  "lede": "<p>Kuwait tidak memungut pajak penghasilan atas gaji, dan pekerja asing tidak ikut sistem jaminan sosial PIFSS. Warga negara Kuwait membayar iuran PIFSS dari gajinya: 8% dari upah sampai KWD2.750 sebulan, ditambah 2,5% dari upah sampai KWD1.500 sebulan. Gaji KWD18.000 setahun tetap KWD18.000 bagi pekerja asing, dan menjadi KWD16.110 bagi warga negara setelah iuran PIFSS.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Di Kuwait, kewarganegaraan menentukan apakah gajimu dipotong iuran.</p>",
+    "blocks": [
+      {
+        "h3": "Tidak ada pajak penghasilan atas gaji",
+        "html": "<p>Gaji dari pekerjaan di Kuwait tidak dikenai pajak penghasilan perorangan, baik untuk warga negara maupun pekerja asing.</p>"
+      },
+      {
+        "h3": "PIFSS: jaminan sosial untuk warga negara",
+        "html": "<p>Public Institution for Social Security (PIFSS) mengelola jaminan sosial warga negara Kuwait. Kalkulator menghitung iuran pegawai dari dua tingkat upah: 8% untuk upah sampai KWD2.750 sebulan, ditambah 2,5% untuk upah sampai KWD1.500 sebulan. Pada gaji KWD1.500 sebulan, iuran gabungannya 10,5% dari upah.</p>",
+        "table": {
+          "head": [
+            "Dasar upah sebulan",
+            "Iuran pegawai"
+          ],
+          "rows": [
+            [
+              "Sampai KWD2.750",
+              "8%"
+            ],
+            [
+              "Sampai KWD1.500 (tambahan)",
+              "2,5%"
+            ],
+            [
+              "Pekerja asing",
+              "0%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Pekerja asing: tanpa jaminan sosial dari gaji",
+        "html": "<p>Pekerja asing tidak ikut PIFSS, sehingga tidak ada iuran dari gajinya. Aturan ketenagakerjaan Kuwait mengatur tunjangan akhir masa kerja bagi pekerja, tetapi kalkulator tidak menghitungnya, jadi cek kontrak dan sumber resmi untuk besarnya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Public Institution for Social Security (PIFSS), Kuwait",
+        "url": "https://www.pifss.gov.kw/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Apakah gaji pekerja asing di Kuwait dipotong pajak atau iuran? Contoh gaji KWD18.000",
+      "intro": "<p>Contoh ini untuk pekerja asing, termasuk WNI, dengan gaji KWD18.000 setahun atau KWD1.500 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial, sehingga gaji bersihnya tetap KWD18.000 (100%).</p>",
+      "after": "<p>Tunjangan akhir masa kerja dan tunjangan lain di kontrak belum dihitung.</p>"
+    },
+    {
+      "key": "national",
+      "title": "Berapa iuran PIFSS untuk warga Kuwait bergaji KWD18.000?",
+      "intro": "<p>Contoh ini sebagai pembanding untuk warga negara. Iuran PIFSS menjadi KWD1.890 setahun (8% ditambah 2,5% dari upah KWD1.500 sebulan), sehingga gaji bersihnya KWD16.110 (89,5%) dan 8,0% dari tambahan gaji berikutnya masuk ke iuran.</p>",
+      "after": "<p>Pekerja asing tidak membayar iuran PIFSS, sehingga di Kuwait gaji bersih warga negara dan pekerja asing dengan gaji sama berbeda.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Karena tidak ada pajak penghasilan, fokusmu adalah kontrak dan tabungan.</p>",
+  "strategies": [
+    {
+      "h3": "Periksa kontrak dan slip gaji",
+      "html": "<p>Karena tidak ada potongan resmi untuk pekerja asing, selisih antara kontrak dan slip gaji perlu dijelaskan pemberi kerja. Simpan salinan dokumen setiap bulan. Cara ini cocok untuk pekerja yang baru tiba.</p>"
+    },
+    {
+      "h3": "Siapkan tabungan pensiun sendiri",
+      "html": "<p>Tanpa iuran PIFSS, tabungan hari tua jadi urusanmu. Hitung targetnya di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    },
+    {
+      "h3": "Bandingkan biaya hidup sebelum menerima tawaran",
+      "html": "<p>Bandingkan biaya hidup dengan kota asalmu di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung penghasilan usaha, sewa atau investasi.",
+    "<strong>Tanpa tunjangan akhir masa kerja, tunjangan dan bonus.</strong> Semua angka dihitung dari satu angka gaji setahun.",
+    "<strong>Iuran bergantung pada upah yang diperhitungkan.</strong> Kalkulator punya isian porsi gaji yang menjadi dasar iuran, untuk kasus ketika sebagian gaji tidak ikut dihitung.",
+    "<strong>Pajak lain tidak dihitung.</strong> Pajak atas konsumsi dan biaya lain tidak dimodelkan.",
+    "<strong>Kewajiban pajak di Indonesia tidak dihitung.</strong> Status pajakmu di Indonesia bergantung pada tempat tinggal dan lamanya kamu berada di Indonesia (patokannya 183 hari), bukan pada tempat gajimu dibayar. Tanyakan ke DJP atau konsultan pajak sebelum berangkat.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Aturan bisa berubah, jadi cek ke sumber resmi sebelum memutuskan."
+  ],
+  "faq": [
+    {
+      "q": "Apakah ada pajak penghasilan untuk gaji di Kuwait?",
+      "a": "<p>Gaji dari pekerjaan di Kuwait tidak dikenai pajak penghasilan perorangan, dan pekerja asing juga tidak membayar iuran jaminan sosial dari gajinya. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kenapa pekerja asing tidak ikut PIFSS?",
+      "a": "<p>PIFSS melayani warga negara Kuwait, sehingga pekerja asing tidak membayar iuran dan tidak mendapat pensiun darinya. Bekal hari tua pekerja asing datang dari tabungan sendiri dan tunjangan akhir masa kerja menurut aturan ketenagakerjaan.</p>"
+    },
+    {
+      "q": "Bagaimana iuran PIFSS warga negara dihitung?",
+      "a": "<p>Ada dua tingkat: 8% untuk upah sampai KWD2.750 sebulan, ditambah 2,5% untuk upah sampai KWD1.500 sebulan. Pada gaji KWD18.000 setahun, iurannya KWD1.890.</p>"
+    },
+    {
+      "q": "Apakah ada tunjangan akhir masa kerja untuk pekerja asing di Kuwait?",
+      "a": "<p>Aturan ketenagakerjaan Kuwait mengatur tunjangan akhir masa kerja bagi pekerja, tetapi kalkulator tidak menghitungnya. Besarnya mengikuti gaji dan lama bekerja, jadi baca kontrak dan sumber resmi.</p>"
+    },
+    {
+      "q": "Apakah gaji dari Kuwait masih harus dilaporkan di Indonesia?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang ditentukan oleh tempat tinggal dan lamanya kamu berada di Indonesia, dengan patokan 183 hari. Tanyakan kasusmu ke DJP di <a href=\"https://www.pajak.go.id/\">pajak.go.id</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
+    "PIFSS (8% to 2,750 a month, 2.5% to 1,500)": "PIFSS (8% sampai KWD2.750 sebulan, 2,5% sampai KWD1.500)",
+    "No social insurance for expatriates": "Tanpa jaminan sosial untuk pekerja asing"
+  },
+  "slug": "kuwait",
+  "lang": "id"
+}

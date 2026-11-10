@@ -1,0 +1,186 @@
+{
+  "slug": "italy",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Italia 2026",
+  "h1": "Cara menghitung pajak penghasilan di Italia (2026)",
+  "description": "Pajak gaji di Italia 2026: IRPEF, tambahan pajak Lombardia dan Milan, rezim impatriat 50% dan 60%, plus contoh gaji bersih untuk pekerja asing.",
+  "place": "Milan, Lombardia",
+  "lede": "<p>Italia memajaki gaji dengan IRPEF, pajak penghasilan bertingkat sebesar 23% sampai €28.000, 33% sampai €50.000, dan 43% di atasnya. Di atas itu masih ada tambahan pajak daerah (<em>addizionale</em>) untuk wilayah dan kota tempat kamu tinggal, dan kalkulator ini memakai angka Lombardia dan Milan. Sebagai gambaran, gaji bruto €45.000 di Milan menyisakan gaji bersih (<em>take-home pay</em>) sekitar €30.034 setelah iuran INPS, IRPEF dan kedua tambahan itu, atau 66,7% dari gaji.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini berlaku pada 2026 untuk karyawan yang tinggal di Milan, Lombardia. Italia memajaki penduduk pajaknya atas penghasilan dari seluruh dunia, dan statusnya bergantung pada tempat tinggalmu, bukan pada kewarganegaraan: kamu umumnya dianggap penduduk pajak kalau terdaftar sebagai penduduk atau punya tempat tinggal utama di Italia untuk sebagian besar tahun. Urutan hitungan gaji karyawan adalah iuran INPS lebih dulu, lalu IRPEF dan tambahan pajak daerah dari sisanya.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif IRPEF",
+        "html": "<p>IRPEF (<em>Imposta sul reddito delle persone fisiche</em>) dihitung bertingkat dari penghasilan setelah iuran INPS. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat. Dari pajak yang terhitung, kamu masih mendapat pengurang berupa kredit pekerja (<em>detrazione per lavoro dipendente</em>) yang nilainya turun seiring penghasilan naik, dan untuk penghasilan menengah ke bawah ada keringanan tambahan yang disebut <em>cuneo fiscale</em>.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "€0 sampai €28.000",
+              "23%"
+            ],
+            [
+              "€28.001 sampai €50.000",
+              "33%"
+            ],
+            [
+              "Di atas €50.000",
+              "43%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tambahan pajak daerah: Lombardia dan Milan",
+        "html": "<p>Selain IRPEF, wilayah dan kota memungut tambahan sendiri (<em>addizionale regionale</em> dan <em>addizionale comunale</em>). Lombardia memakai tarif bertingkat di bawah ini, sedangkan Milan memungut 0,8% dari penghasilan kena pajak, dan penghasilan sampai €23.000 dibebaskan. Tarif kota lain berbeda, jadi angka di halaman ini hanya berlaku untuk Milan. Kedua tambahan ini umumnya dipotong dari gaji dalam cicilan pada tahun berikutnya, bukan pada tahun penghasilan itu diterima.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tambahan Lombardia"
+          ],
+          "rows": [
+            [
+              "€0 sampai €15.000",
+              "1,23%"
+            ],
+            [
+              "€15.001 sampai €28.000",
+              "1,58%"
+            ],
+            [
+              "€28.001 sampai €50.000",
+              "1,72%"
+            ],
+            [
+              "Di atas €50.000",
+              "1,73%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Iuran INPS karyawan",
+        "html": "<p>INPS (<em>Istituto Nazionale della Previdenza Sociale</em>) adalah lembaga jaminan sosial dan pensiun Italia. Bagian karyawan sebesar 9,19% dari gaji bruto, ditambah 1% untuk bagian gaji di atas €56.224. Iuran dihitung sampai batas gaji €122.295. Iuran ini dikurangkan dari gaji bruto sebelum IRPEF dihitung, jadi penghasilan kena pajakmu lebih kecil daripada gaji brutomu.</p>"
+      },
+      {
+        "h3": "Rezim impatriat: 50% atau 60% penghasilan dibebaskan",
+        "html": "<p>Pekerja yang pindah ke Italia dari luar negeri dan belum menjadi penduduk pajak Italia selama beberapa tahun sebelumnya bisa mendapat rezim <em>impatriati</em>. Pada rezim ini, 50% penghasilan dari pekerjaan dikecualikan dari pajak, dan 60% kalau pekerja itu punya anak di bawah umur. Kalkulator membatasi bagian yang dikecualikan sampai €600.000. Pembebasan berlaku untuk jangka waktu terbatas dan punya syarat tentang kualifikasi dan lama tinggal, jadi cek syarat lengkapnya di Agenzia delle Entrate sebelum mengandalkannya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Agenzia delle Entrate, IRPEF, kredit pekerja dan rezim impatriat",
+        "url": "https://www.agenziaentrate.gov.it/"
+      },
+      {
+        "name": "INPS, iuran jaminan sosial dan pensiun",
+        "url": "https://www.inps.it/"
+      },
+      {
+        "name": "Ministero dell'Economia e delle Finanze",
+        "url": "https://www.mef.gov.it/"
+      },
+      {
+        "name": "Regione Lombardia, tambahan pajak daerah",
+        "url": "https://www.regione.lombardia.it/"
+      },
+      {
+        "name": "Comune di Milano, tambahan pajak kota",
+        "url": "https://www.comune.milano.it/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "employee-milan",
+      "title": "Berapa gaji bersih di Milan kalau gaji bruto €45.000?",
+      "intro": "<p>Contoh ini untuk karyawan lajang yang tinggal di Milan dengan satu pekerjaan sepanjang tahun. Iuran INPS €4.136 menurunkan penghasilan kena pajaknya menjadi €40.865. IRPEF sebelum pengurang sekitar €10.685, dan kredit pekerja €793 menurunkannya menjadi €9.892. Tambahan Lombardia €611 dan tambahan Milan €327 membuat total pajaknya sekitar €10.830. Gaji bersihnya sekitar €30.034 (66,7% dari gaji), dan tiap euro tambahan dikenai potongan gabungan sekitar 49,3%.</p>",
+      "after": "<p>Tarif marginal sebesar itu muncul karena beberapa hal berlaku sekaligus: iuran INPS 9,19%, tarif IRPEF 33%, tambahan Lombardia 1,72% dan Milan 0,8%, ditambah kredit pekerja yang menyusut seiring penghasilan naik.</p>"
+    },
+    {
+      "key": "impatriate",
+      "title": "Cara menghitung pajak rezim impatriat 50% di Italia dengan gaji bruto €80.000",
+      "intro": "<p>Contoh ini untuk pekerja yang pindah dari luar negeri dan memakai rezim impatriat 50% di Milan, dengan gaji bruto €80.000. Iuran INPS €7.590 menyisakan €72.410, dan separuhnya, €36.205, dikecualikan dari pajak. IRPEF dihitung dari sisa €36.205 saja, menjadi €7.476 setelah kredit pekerja dan keringanan <em>cuneo fiscale</em> senilai €1.672. Tambahan Lombardia €531 dan tambahan Milan €290 menyusul. Gaji bersihnya sekitar €64.114 (80,1% dari gaji), dengan tarif marginal gabungan sekitar 35,7%. Tanpa rezim ini, gaji bersih untuk gaji yang sama sekitar €47.339, jadi rezim ini menambah sekitar €16.775 setahun.</p>",
+      "after": "<p>Kalkulator menghitung kredit pajak dari penghasilan yang sudah dikurangi, dan itu sebuah asumsi, jadi konfirmasikan ke bagian penggajian pemberi kerjamu.</p>"
+    },
+    {
+      "key": "impatriate-with-child",
+      "title": "Berapa gaji bersih rezim impatriat 60% di Italia untuk pekerja dengan anak dan gaji bruto €80.000?",
+      "intro": "<p>Contoh ini sama dengan contoh rezim impatriat 50% dengan gaji bruto €80.000, tetapi pekerjanya punya anak di bawah umur, sehingga 60% penghasilan dikecualikan, yaitu €43.446. Penghasilan kena pajaknya tinggal sekitar €28.964, IRPEF setelah kredit pekerja dan <em>cuneo fiscale</em> (senilai €2.891) hanya €3.867, tambahan Lombardia €406, dan tambahan Milan €232. Gaji bersihnya sekitar €67.905 (84,9% dari gaji), dengan tarif marginal gabungan sekitar 26,1%. Itu sekitar €3.791 lebih banyak daripada contoh 50%.</p>",
+      "after": "<p>Kalkulator tidak menghitung pengurang khusus untuk anak, hanya perubahan persentase yang dikecualikan.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs Agenzia delle Entrate. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Tanyakan rezim impatriat sebelum pindah",
+      "html": "<p>Selisihnya bisa sangat besar: pada gaji bruto €80.000, rezim 50% menambah gaji bersih sekitar €16.775 setahun. Cocok untuk pekerja berkualifikasi yang direkrut dari luar Italia dengan gaji menengah ke atas. Peringatannya, rezim ini punya syarat tentang lama tidak berdomisili di Italia dan kualifikasi, dan berlaku untuk jangka waktu terbatas. Minta pemberi kerja dan konsultan pajak memastikannya sebelum kamu menandatangani kontrak.</p>"
+    },
+    {
+      "h3": "Dana pensiun tambahan (<em>previdenza complementare</em>)",
+      "html": "<p>Setoran ke dana pensiun tambahan bisa dikurangkan dari penghasilan kena pajak sampai batas tahunan €5.164,57. Cocok untuk penduduk pajak yang berencana tinggal lama di Italia dan sudah masuk tingkat IRPEF 33% atau lebih. Uangnya baru bisa diambil setelah syarat pensiun terpenuhi, kecuali dalam beberapa keadaan tertentu, dan saat dicairkan ada pajaknya.</p>"
+    },
+    {
+      "h3": "Pengurang 19% untuk biaya tertentu lewat laporan pajak",
+      "html": "<p>Sebagian pengeluaran, seperti biaya kesehatan, bunga KPR rumah tinggal utama dan biaya pendidikan, memberi pengurang pajak sebesar 19% dari nilainya, dengan batas dan syarat masing-masing. Kamu mengklaimnya lewat laporan pajak tahunan (<em>modello 730</em>). Cocok untuk penduduk pajak yang punya pengeluaran semacam itu dan menyimpan buktinya. Kalkulator tidak menghitung pengurang ini.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji bruto setahun, tanpa bonus atau tunjangan dari pemberi kerja.",
+    "<strong>Hanya tarif Milan dan Lombardia.</strong> Kota dan wilayah lain memungut tambahan pajak dengan tarif sendiri, sehingga hasilnya akan berbeda.",
+    "<strong>Tanpa pengurang keluarga.</strong> Kalkulator tidak menghitung pengurang untuk pasangan atau anak yang menjadi tanggungan, selain persentase rezim impatriat 60%.",
+    "<strong>Kredit pajak rezim impatriat adalah asumsi.</strong> Kredit pekerja dihitung dari penghasilan yang sudah dikurangi, jadi hasilnya perlu dikonfirmasi ke bagian penggajian.",
+    "<strong>Tanpa perjanjian pajak dan perkiraan saja.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Italia serta kewajiban lapor di Indonesia tidak dihitung. Hasilnya gambaran, bukan nasihat pajak."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji bruto €45.000 di Milan?",
+      "a": "<p>Untuk karyawan lajang, gaji bersihnya sekitar €30.034 setahun (66,7%), setelah iuran INPS €4.136 dan pajak sekitar €10.830 (IRPEF, tambahan Lombardia dan tambahan Milan). Kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kenapa ada pajak daerah selain IRPEF, dan kenapa dipotong tahun berikutnya?",
+      "a": "<p>Italia memungut IRPEF secara nasional, lalu wilayah dan kota menambahkan <em>addizionale</em> sendiri di atasnya, dengan tarif yang berbeda tiap tempat. Di Lombardia tarifnya bertingkat dari 1,23% sampai 1,73%, dan di Milan 0,8% untuk penghasilan di atas €23.000. Kedua tambahan ini dihitung dari penghasilan tahun berjalan tetapi umumnya dipotong dari gaji dalam cicilan pada tahun berikutnya, sehingga ada masa ketika potonganmu terlihat lebih besar dari biasanya. Kalkulator menghitung beban setahun penuh, jadi slip gaji bulananmu bisa berbeda.</p>"
+    },
+    {
+      "q": "Kenapa gaji bruto di Italia dibagi 13 atau 14 kali, bukan 12?",
+      "a": "<p>Gaji bruto tahunan di Italia (<em>RAL</em>) sering dibayarkan dalam 13 atau 14 kali gaji, tergantung perjanjian kerjanya: bulan ke-13 (<em>tredicesima</em>) dibayar pada Desember, dan sebagian kontrak punya bulan ke-14 pada musim panas. Angka tahunan inilah yang dihitung kalkulator, jadi untuk mendapat gaji bersih bulanan, bagi hasilnya dengan 13 atau 14 sesuai kontrakmu, bukan dengan 12. Pada gaji bruto €45.000 dengan 13 kali pembayaran, gaji bersihnya sekitar €2.310 per pembayaran.</p>"
+    },
+    {
+      "q": "Apa itu TFR dan apakah masuk gaji bersih?",
+      "a": "<p>TFR (<em>trattamento di fine rapporto</em>) adalah pesangon yang menumpuk selama kamu bekerja, kira-kira setara satu bulan gaji untuk tiap tahun kerja. Pemberi kerja menyimpannya, dan uangnya dibayarkan ketika kamu berhenti. Karena itu TFR tidak muncul di gaji bersih bulananmu dan tidak dihitung kalkulator, tetapi tetap hakmu, dan pajaknya dihitung terpisah saat dibayar.</p>"
+    },
+    {
+      "q": "Kenapa potongan pada euro tambahan di gaji €45.000 mencapai hampir 50%?",
+      "a": "<p>Pada gaji sekitar €45.000, beberapa hal terjadi sekaligus: IRPEF 33% sudah berlaku, tambahan Lombardia 1,72% dan Milan 0,8% ikut, iuran INPS 9,19% terus dipotong dari tiap euro, dan kredit pekerja menyusut seiring penghasilan naik, sehingga pajak yang sudah dikurangi justru bertambah lebih cepat daripada tarifnya. Kalkulator menghitung gabungan itu sebagai tarif marginal sekitar 49,3%.</p>"
+    },
+    {
+      "q": "Siapa yang bisa memakai rezim impatriat di Italia?",
+      "a": "<p>Rezim ini untuk pekerja yang pindah ke Italia dari luar negeri dan belum menjadi penduduk pajak Italia selama beberapa tahun sebelumnya. Sebagian penghasilan dikecualikan dari pajak: 50%, atau 60% kalau pekerja punya anak di bawah umur. Pada gaji bruto €80.000, kalkulator menghasilkan gaji bersih €64.114 untuk 50% dan €67.905 untuk 60%, dibandingkan sekitar €47.339 tanpa rezim. Syarat lengkap dan lama berlakunya ada di Agenzia delle Entrate.</p>"
+    },
+    {
+      "q": "Kapan seseorang dianggap penduduk pajak Italia?",
+      "a": "<p>Umumnya kalau kamu terdaftar sebagai penduduk, atau punya tempat tinggal utama atau domisili di Italia, untuk sebagian besar tahun pajak. Penduduk pajak dikenai pajak atas penghasilan dari seluruh dunia. Kalau statusmu tidak jelas, tanyakan ke Agenzia delle Entrate atau konsultan pajak.</p>"
+    },
+    {
+      "q": "Berapa uang yang bisa ditabung kalau bekerja di Italia dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "INPS (9.19%, +1% above 56,224)": "INPS (9,19%, ditambah 1% di atas €56.224)",
+    "IRPEF, after the employment credit": "IRPEF, setelah kredit pekerja",
+    "IRPEF, after the employment credit and cuneo credit": "IRPEF, setelah kredit pekerja dan kredit cuneo",
+    "Employment credit, inside IRPEF": "Kredit pekerja, sudah termasuk di IRPEF",
+    "Employment credit and cuneo credit, inside IRPEF": "Kredit pekerja dan kredit cuneo, sudah termasuk di IRPEF",
+    "Lombardy regional surtax": "Tambahan pajak wilayah Lombardia",
+    "Milan municipal surtax (0.8% above 23,000)": "Tambahan pajak kota Milan (0,8% di atas €23.000)",
+    "Cuneo fiscale bonus, tax-free cash": "Bonus cuneo fiscale, tunai bebas pajak",
+    "Impatriate regime, excluded share (50%)": "Rezim impatriat, bagian yang dikecualikan (50%)",
+    "Impatriate regime, excluded share (60%)": "Rezim impatriat, bagian yang dikecualikan (60%)"
+  }
+}

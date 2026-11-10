@@ -1,0 +1,51 @@
+/* Global Income Tax Calculator, jurisdiction pages (<slug>/ and <slug>/id/, written by
+   _ref/jurisdiction-pages.mjs). Built on guide-shared.css; only what a reading page adds. */
+.jx .gd-hero { max-width: 52rem; }
+.jx-lede { margin: 0 0 20px; font-size: 1.05rem; line-height: 1.65; color: var(--text); }
+.jx-lede p { margin: 0 0 10px; }
+.jx-toc { margin: 0 0 18px; padding-top: 0; border-top: 0; }
+
+.jx-prose, .jx-item, .jx .gd-sec > p:not(.gd-sub):not(.gd-note) { font-size: .95rem; line-height: 1.65; color: var(--text); max-width: 62rem; }
+.jx-prose p, .jx-item p { margin: 0 0 10px; }
+.jx-prose ul, .jx-item ul, .jx-prose ol, .jx-item ol { margin: 0 0 10px; padding-left: 1.3em; }
+.jx-prose li, .jx-item li { margin: 0 0 4px; }
+.jx .gd-sec h3 { margin: 20px 0 8px; font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+.jx .gd-sec h2 + h3, .jx .gd-sec h2 + .jx-prose + h3 { margin-top: 12px; }
+.jx .gd-sec a:not(.btn-primary) { color: var(--accent-strong, var(--accent)); }
+.jx-item + .jx-item { border-top: 1px dashed var(--border); padding-top: 4px; }
+
+.jx-sources { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); }
+.jx-sources h3 { margin-top: 0 !important; font-size: .9rem !important; color: var(--muted); }
+.jx-sources ul { margin: 0; padding-left: 1.2em; font-size: .86rem; line-height: 1.6; color: var(--muted); }
+
+.jx-exlist ul { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.jx-exlist a { display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .84rem; font-weight: 600; color: var(--text) !important; text-decoration: none; }
+.jx-exlist a:hover { border-color: var(--accent); }
+
+.jx-ex { scroll-margin-top: 16px; }
+.jx-ex h3 { margin: 0 0 8px !important; font-size: 1.08rem !important; }
+.jx-ex .jx-prose { font-size: .9rem; margin-bottom: 10px; }
+.jx-ex .jx-after { margin: 10px 0 0; }
+.jx-ex li.jx-k-deduction b, .jx-ex li.jx-k-credit b, .jx-ex li.jx-k-employer b, .jx-ex li.jx-k-info b { color: var(--muted); font-weight: 400; }
+.jx-open { margin: 10px 0 0; font-size: .88rem; color: var(--muted); }
+.jx-open a { font-weight: 700; text-decoration: none; }
+.jx-open a:hover { text-decoration: underline; }
+.jx-marg { margin-left: 6px; }
+
+.jx-table td, .jx-table th { font-variant-numeric: tabular-nums; }
+
+.jx-regions { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 24px; }
+.jx-region h3 { margin: 6px 0 6px !important; font-size: .82rem !important; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.jx-region ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: .92rem; }
+.jx-region a { text-decoration: none; }
+.jx-region a:hover { text-decoration: underline; }
+.jx-region .jx-id { margin-left: 6px; padding: 0 6px; border: 1px solid var(--border); border-radius: var(--radius-pill); font-size: .72rem; font-weight: 700; color: var(--muted) !important; }
+
+@media (max-width: 600px) {
+  .jx-lede { font-size: 1rem; }
+  .jx-toc { gap: 6px; }
+  .jx-marg { display: block; margin: 4px 0 0; }
+}
+.jx-table tbody th { width: 34%; }
+.jx-prose + .gd-table-wrap { margin-top: 6px; }
+.jx em { font-style: italic; font-weight: inherit; color: inherit; }

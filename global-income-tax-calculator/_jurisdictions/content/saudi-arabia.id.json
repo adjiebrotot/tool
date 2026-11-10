@@ -1,0 +1,120 @@
+{
+  "title": "Pajak Gaji di Arab Saudi 2026: Gaji Bersih dan GOSI",
+  "h1": "Cara menghitung pajak penghasilan di Arab Saudi (2026)",
+  "description": "Arab Saudi tidak memajaki gaji pekerja. Lihat gaji bersih pekerja asing, iuran GOSI warga negara, skema lama dan baru, serta gratuity akhir masa kerja.",
+  "lede": "<p>Arab Saudi tidak memungut pajak penghasilan atas gaji, dan pekerja asing tidak membayar iuran jaminan sosial dari gajinya. Pemberi kerja hanya menyetor 2% untuk risiko kecelakaan kerja di luar gaji. Warga negara membayar iuran GOSI (jaminan sosial) 9,75% dari upah untuk peserta lama, dan sedikit lebih tinggi untuk peserta baru. Gaji SAR240.000 setahun tetap SAR240.000 bagi pekerja asing, dan menjadi SAR216.600 bagi warga negara peserta lama.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Seperti di negara Teluk lain, besar potongan gaji di Arab Saudi bergantung pada kewarganegaraan, bukan pada besar gaji.</p>",
+    "blocks": [
+      {
+        "h3": "Tidak ada pajak penghasilan atas gaji",
+        "html": "<p>Gaji pekerja di Arab Saudi tidak dikenai pajak penghasilan perorangan. Baik warga negara maupun pekerja asing menerima gaji tanpa potongan pajak.</p>"
+      },
+      {
+        "h3": "GOSI: skema lama dan skema baru untuk warga negara",
+        "html": "<p>GOSI (General Organization for Social Insurance) mengelola jaminan sosial di Arab Saudi. Warga negara membayar iuran dari upah dengan batas SAR45.000 sebulan dalam kalkulator ini. Peserta yang bergabung sebelum 3 Juli 2024 memakai skema lama dengan iuran pegawai 9,75% (pensiun dan asuransi pengangguran SANED). Peserta baru sejak 3 Juli 2024 memakai skema baru yang iurannya naik tiap Juli, yaitu 10,25% sampai Juni 2026 dan 10,75% sesudahnya.</p>",
+        "table": {
+          "head": [
+            "Peserta",
+            "Iuran pegawai dari gaji"
+          ],
+          "rows": [
+            [
+              "Warga negara, bergabung sebelum 3 Juli 2024",
+              "9,75%"
+            ],
+            [
+              "Warga negara, peserta baru (sampai Juni 2026)",
+              "10,25%"
+            ],
+            [
+              "Warga negara, peserta baru (mulai Juli 2026)",
+              "10,75%"
+            ],
+            [
+              "Pekerja asing",
+              "0%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Pekerja asing: 2% dari pemberi kerja, <em>gratuity</em> sebagai pengganti pensiun",
+        "html": "<p>Untuk pekerja asing, GOSI hanya mengenakan premi risiko kecelakaan kerja sebesar 2% yang dibayar pemberi kerja di luar gaji, sehingga tidak mengurangi gajimu. Tidak ada pensiun, tetapi pekerja asing berhak atas <em>end-of-service gratuity</em> menurut aturan ketenagakerjaan, yaitu tunjangan sekali bayar saat kontrak berakhir. Kalkulator tidak menghitung <em>gratuity</em> itu.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "GOSI, iuran jaminan sosial di Arab Saudi",
+        "url": "https://www.gosi.gov.sa/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Apakah gaji SAR240.000 di Arab Saudi bebas pajak untuk pekerja asing?",
+      "intro": "<p>Contoh ini untuk pekerja asing, termasuk WNI, dengan gaji SAR240.000 setahun atau SAR20.000 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran dari gaji, sehingga gaji bersihnya tetap SAR240.000 (100%). Pemberi kerja menyetor tambahan SAR4.800 (2%) untuk risiko kecelakaan kerja, tetapi uang itu dibayar di luar gaji dan tidak menjadi potonganmu.</p>",
+      "after": "<p>Gaji bersih ini belum memuat <em>gratuity</em> akhir masa kerja dan tunjangan lain di kontrak.</p>"
+    },
+    {
+      "key": "national",
+      "title": "Berapa potongan GOSI untuk warga Arab Saudi dengan gaji SAR240.000?",
+      "intro": "<p>Contoh ini sebagai pembanding untuk warga negara peserta skema lama dengan gaji yang sama. Iuran GOSI 9,75% dari upah menjadi SAR23.400, sehingga gaji bersihnya SAR216.600 (90,3%) dan 9,8% dari tambahan gaji berikutnya masuk ke iuran. Peserta baru membayar tarif yang sedikit lebih tinggi.</p>",
+      "after": "<p>Pekerja asing tidak membayar iuran ini, sehingga selisih gaji bersih dengan rekan kerja warga negara Saudi berasal dari iuran GOSI, bukan dari pajak.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Karena tidak ada pajak penghasilan yang bisa dihemat, langkah yang berguna di sini ada pada kontrak dan tabungan.</p>",
+  "strategies": [
+    {
+      "h3": "Cek dasar hitungan <em>gratuity</em> di kontrak",
+      "html": "<p>Karena <em>gratuity</em> menjadi pengganti pensiun, tanyakan apakah dasar hitungannya gaji pokok atau seluruh upah, dan bagaimana lama kerja dihitung. Aturan hitungannya ada di undang-undang ketenagakerjaan Arab Saudi, jadi bandingkan kontrakmu dengan sumber resmi. Cara ini cocok untuk semua pekerja asing.</p>"
+    },
+    {
+      "h3": "Pastikan upah di slip sesuai dengan kontrak",
+      "html": "<p>Karena tidak ada pajak yang mengubah angka gaji, selisih antara kontrak dan slip menunjukkan potongan atau tunjangan yang perlu dijelaskan pemberi kerja. Simpan salinan kontrak dan slip gaji setiap bulan. Cara ini cocok untuk pekerja yang baru tiba atau berganti pemberi kerja.</p>"
+    },
+    {
+      "h3": "Tabung untuk hari tua dan bandingkan biaya hidup",
+      "html": "<p>Tanpa pensiun dari negara setempat, tabungan untuk hari tua jadi urusanmu. Hitung targetnya di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> dan bandingkan biaya hidup di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung penghasilan usaha, sewa atau investasi.",
+    "<strong>Tanpa <em>gratuity</em>, tunjangan dan bonus.</strong> Semua angka dihitung dari satu angka gaji setahun.",
+    "<strong>Iuran bergantung pada upah yang diperhitungkan.</strong> Kalkulator punya isian porsi gaji yang menjadi dasar iuran, karena sebagian tunjangan bisa tidak masuk upah iuran.",
+    "<strong>Pajak lain tidak dihitung.</strong> Pajak atas konsumsi dan biaya lain tidak dimodelkan.",
+    "<strong>Kewajiban pajak di Indonesia tidak dihitung.</strong> Status pajakmu di Indonesia bergantung pada tempat tinggal dan lamanya kamu berada di Indonesia (patokannya 183 hari), bukan pada tempat gajimu dibayar. Tanyakan ke DJP atau konsultan pajak sebelum berangkat.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Aturan bisa berubah, jadi cek ke sumber resmi sebelum memutuskan."
+  ],
+  "faq": [
+    {
+      "q": "Apakah pekerja asing di Arab Saudi membayar pajak penghasilan?",
+      "a": "<p>Pekerja asing tidak membayar pajak penghasilan di Arab Saudi, karena gaji dari pekerjaan tidak dikenai pajak penghasilan perorangan, dan iuran GOSI pun tidak dipotong dari gajinya. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Apa bedanya GOSI skema lama dan skema baru?",
+      "a": "<p>Skema lama berlaku untuk warga negara yang bergabung sebelum 3 Juli 2024, dengan iuran pegawai 9,75%. Skema baru berlaku untuk peserta baru sejak tanggal itu, dengan iuran yang naik tiap Juli: 10,25% sampai Juni 2026 dan 10,75% sesudahnya. Perbedaan ini hanya berlaku untuk warga negara, jadi pekerja asing tidak terkena.</p>"
+    },
+    {
+      "q": "Kenapa pekerja asing tidak mendapat pensiun tetapi mendapat <em>gratuity</em>?",
+      "a": "<p>Pensiun GOSI diperuntukkan bagi warga negara. Pekerja asing mendapat <em>end-of-service gratuity</em>, tunjangan sekali bayar saat kontrak berakhir yang dibayar pemberi kerja sesuai aturan ketenagakerjaan. Besarnya bergantung pada gaji dan lama bekerja, dan kalkulator tidak menghitungnya.</p>"
+    },
+    {
+      "q": "Apa itu premi risiko kerja 2% yang tampil di kalkulator?",
+      "a": "<p>Itu iuran pemberi kerja untuk risiko kecelakaan kerja pekerja asing, yaitu 2% dari upah. Premi ini dibayar di luar gaji, sehingga tidak mengurangi gaji bersihmu dan hanya tampil sebagai baris pembanding.</p>"
+    },
+    {
+      "q": "Apakah gaji dari Arab Saudi masih harus dilaporkan di Indonesia?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang ditentukan oleh tempat tinggal dan lamanya kamu berada di Indonesia, dengan patokan 183 hari. Tanyakan kasusmu ke DJP di <a href=\"https://www.pajak.go.id/\">pajak.go.id</a>, karena kalkulator ini hanya menghitung sisi Arab Saudi.</p>"
+    }
+  ],
+  "lineLabels": {
+    "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
+    "GOSI annuities and SANED (9.75%)": "GOSI pensiun dan SANED (9,75%)",
+    "GOSI, new entrant (10.25% to June, 10.75% from July)": "GOSI peserta baru (10,25% sampai Juni, 10,75% mulai Juli)",
+    "Employer occupational hazards (2%), on top": "Risiko kecelakaan kerja dari pemberi kerja (2%), dibayar di luar gaji"
+  },
+  "slug": "saudi-arabia",
+  "lang": "id"
+}

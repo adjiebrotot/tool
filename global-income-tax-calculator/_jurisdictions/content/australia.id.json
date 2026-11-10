@@ -1,0 +1,245 @@
+{
+  "slug": "australia",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Australia 2026-27",
+  "h1": "Cara menghitung pajak penghasilan di Australia (2026-27)",
+  "description": "Pajak gaji di Australia 2026-27: tarif penduduk pajak, working holiday maker, Medicare levy dan super, plus contoh gaji bersih untuk WNI.",
+  "lede": "<p>Australia memajaki penduduk pajaknya dengan tarif progresif: 0% untuk A$18.200 pertama, 15% sampai A$45.000, 30% sampai A$135.000, 37% sampai A$190.000, dan 45% di atasnya. Pemegang visa <em>working holiday</em> (subclass 462) memakai tarif sendiri, yaitu 15% dari dolar pertama sampai A$45.000. Sebagai gambaran, gaji A$100.000 bagi penduduk tetap menyisakan gaji bersih (<em>take-home pay</em>) sekitar A$77.800 setelah pajak penghasilan dan <em>Medicare levy</em>, belum termasuk dana pensiun wajib 12% yang dibayar pemberi kerja di atas gaji itu.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak Australia 2026-27, yang berjalan dari 1 Juli 2026 sampai 30 Juni 2027. Yang menentukan tarifmu bukan kewarganegaraan, melainkan status pajakmu: penduduk pajak (<em>tax resident</em>), penduduk asing (<em>foreign resident</em>), atau pemegang visa <em>working holiday</em>. Karena itu, pemegang visa kerja terampil sementara pun sering memakai tarif yang sama dengan warga Australia.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak untuk penduduk pajak (<em>resident</em>)",
+        "html": "<p>Penduduk pajak Australia dikenai pajak atas penghasilan dari seluruh dunia dengan tarif bertingkat di bawah ini. Batas A$18.200 pertama bebas pajak (<em>tax-free threshold</em>), dan tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat.</p><p>Penghasilan rendah mendapat keringanan lagi lewat <em>Low Income Tax Offset</em> (LITO), pengurang langsung pada pajak sebesar A$700 untuk penghasilan kena pajak sampai A$37.500. Nilainya turun bertahap sampai habis di kisaran A$66.667. Kalkulator ini sudah memasukkan LITO ke dalam angka pajak, sehingga pada penghasilan seperti A$100.000 keringanan itu sudah nol.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "A$0 sampai A$18.200",
+              "0%"
+            ],
+            [
+              "A$18.201 sampai A$45.000",
+              "15%"
+            ],
+            [
+              "A$45.001 sampai A$135.000",
+              "30%"
+            ],
+            [
+              "A$135.001 sampai A$190.000",
+              "37%"
+            ],
+            [
+              "Di atas A$190.000",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tarif untuk penduduk asing dan <em>working holiday maker</em>",
+        "html": "<p>Kalau kamu tidak dianggap penduduk pajak, tidak ada batas bebas pajak: tarif pertama langsung 30% dari dolar pertama. Pemegang visa <em>working holiday</em> (subclass 417 dan 462) yang disebut <em>working holiday maker</em> mendapat tarif tersendiri yang lebih ringan di tingkat bawah: 15% dari dolar pertama sampai A$45.000. Di atas A$45.000, tarifnya sama dengan tarif penduduk pajak.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Penduduk asing",
+            "<em>Working holiday maker</em>"
+          ],
+          "rows": [
+            [
+              "A$0 sampai A$45.000",
+              "30%",
+              "15%"
+            ],
+            [
+              "A$45.001 sampai A$135.000",
+              "30%",
+              "30%"
+            ],
+            [
+              "A$135.001 sampai A$190.000",
+              "37%",
+              "37%"
+            ],
+            [
+              "Di atas A$190.000",
+              "45%",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "<em>Medicare levy</em> dan <em>Medicare levy surcharge</em>",
+        "html": "<p><em>Medicare levy</em> adalah iuran 2% dari penghasilan kena pajak untuk sistem layanan kesehatan publik Australia. Penghasilan yang sangat rendah dibebaskan atau hanya dikenai sebagian, dan kalkulator ini memakai ambang tahun 2025-26 untuk itu. Pemegang visa sementara umumnya tidak ikut sistem ini, dan kalkulator ini hanya menghitung <em>Medicare levy</em> untuk penduduk tetap.</p><p><em>Medicare levy surcharge</em> adalah tambahan 1% sampai 1,5% dari penghasilan untuk penduduk berpenghasilan lebih tinggi yang tidak punya asuransi rumah sakit swasta. Ambang di bawah ini berlaku untuk lajang yang dipakai kalkulator, dan Australia menyesuaikannya tiap tahun, jadi cek ambang terbaru di situs ATO sebelum memutuskan.</p>",
+        "table": {
+          "head": [
+            "Penghasilan lajang",
+            "<em>Surcharge</em> tanpa asuransi rumah sakit swasta"
+          ],
+          "rows": [
+            [
+              "Sampai A$105.000",
+              "0%"
+            ],
+            [
+              "A$105.001 sampai A$123.000",
+              "1%"
+            ],
+            [
+              "A$123.001 sampai A$164.000",
+              "1,25%"
+            ],
+            [
+              "Di atas A$164.000",
+              "1,5%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "<em>Super guarantee</em>: dana pensiun yang dibayar pemberi kerja",
+        "html": "<p>Pemberi kerja di Australia wajib menyetor <em>superannuation guarantee</em> (<em>super</em>), yaitu dana pensiun wajib, sebesar 12% dari gaji ke dana pensiun atas namamu. Setoran ini dibayar di luar gaji, jadi tidak mengurangi angka gaji yang tertulis di kontrak. Karena itu kalkulator menampilkannya sebagai baris terpisah dan tidak memasukkannya ke gaji bersih: uang itu tidak masuk rekeningmu sebulan-sebulan, melainkan menumpuk di dana pensiun.</p><p>Kalau kamu pemegang visa sementara, <em>super</em> itu tidak bisa dipakai sebagai tabungan pensiun di Australia. Kamu hanya bisa mengambilnya setelah meninggalkan Australia, lewat <em>Departing Australia Superannuation Payment</em> (DASP), dan pajaknya jauh lebih berat (lihat bagian strategi di bawah).</p>"
+      },
+      {
+        "h3": "Tes residensi pajak singkat",
+        "html": "<p>Status penduduk pajak ditentukan oleh ATO lewat beberapa tes, bukan oleh jenis visa saja. Dua yang paling sering relevan bagi pekerja dari Indonesia adalah <em>resides test</em> (kamu tinggal di Australia dalam arti sehari-hari, dengan tempat tinggal dan pekerjaan di sana) dan tes 183 hari (kamu berada di Australia lebih dari separuh tahun pajak, kecuali tempat tinggal tetapmu jelas di luar negeri dan kamu tidak berencana menetap). Pemegang visa <em>working holiday</em> tetap memakai tarif <em>working holiday maker</em> selama memenuhi syaratnya, apa pun hasil tes itu.</p><p>Hasilnya menentukan tarif yang dipakai, jadi pilih status yang benar di kalkulator. Untuk kasus yang tidak jelas, ATO punya alat penentu residensi di situsnya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Australian Taxation Office (ATO), tarif pajak, status residensi, <em>Medicare levy</em> dan DASP",
+        "url": "https://www.ato.gov.au/"
+      },
+      {
+        "name": "Services Australia, Medicare",
+        "url": "https://www.servicesaustralia.gov.au/"
+      },
+      {
+        "name": "Department of Home Affairs, visa dan hak kerja",
+        "url": "https://immi.homeaffairs.gov.au/"
+      },
+      {
+        "name": "Fair Work Ombudsman, hak pekerja dan upah minimum",
+        "url": "https://www.fairwork.gov.au/"
+      },
+      {
+        "name": "Treasury Australia",
+        "url": "https://treasury.gov.au/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "Berapa gaji bersih penduduk tetap di Australia dengan gaji A$100.000?",
+      "intro": "<p>Contoh ini untuk warga atau penduduk tetap (<em>permanent resident</em>, PR) dengan satu pekerjaan sepanjang tahun. Kalkulator mengurangi dulu potongan standar A$1.000 untuk biaya kerja, sehingga penghasilan kena pajaknya A$99.000. Dari situ pajak penghasilan menjadi A$20.220, karena bagian di atas A$45.000 sudah masuk tarif 30% dan LITO sudah habis. <em>Medicare levy</em> 2% dari A$99.000 menambah A$1.980. Gaji bersihnya sekitar A$77.800, atau 77,8% dari gaji, dan tarif marginal (pajak atas setiap tambahan dolar penghasilan) sebesar 32%, yaitu 30% pajak ditambah 2% <em>Medicare levy</em>.</p>",
+      "after": "<p>Di luar angka itu, pemberi kerja menyetor <em>super</em> A$12.000 (12% dari gaji) ke dana pensiunmu.</p>"
+    },
+    {
+      "key": "temporary-resident",
+      "title": "Berapa pajak pemegang visa kerja sementara di Australia dengan gaji A$100.000?",
+      "intro": "<p>Contoh ini untuk pekerja terampil dengan visa sementara yang dianggap penduduk pajak. Tarif pajaknya sama dengan penduduk tetap, sehingga pajak penghasilannya juga A$20.220, tetapi kalkulator tidak menghitung <em>Medicare levy</em> untuk status ini. Karena itu, gaji bersihnya sekitar A$79.780 (79,8%), lebih tinggi A$1.980 daripada contoh penduduk tetap, dengan tarif marginal 30%.</p>",
+      "after": "<p>Selisih A$1.980 itu bisa hilang kalau ternyata kamu tetap harus membayar <em>Medicare levy</em>, jadi cek hakmu atas Medicare dan kemungkinan pembebasannya di situs Services Australia dan ATO.</p>"
+    },
+    {
+      "key": "working-holiday-maker",
+      "title": "Cara menghitung pajak *working holiday maker* di Australia",
+      "intro": "<p>Contoh ini untuk pemegang visa <em>working holiday</em> subclass 462 dengan penghasilan A$55.000 setahun. Tarif <em>working holiday maker</em> mengenakan 15% pada A$45.000 pertama, yaitu A$6.750, lalu 30% pada sisa A$10.000, yaitu A$3.000. Totalnya A$9.750, jadi gaji bersihnya sekitar A$45.250 (82,3% dari gaji), dengan tarif marginal 30%. Tidak ada <em>Medicare levy</em> pada contoh ini.</p>",
+      "after": "<p>Pemberi kerja tetap menyetor <em>super</em> sebesar A$6.600, tetapi pada <em>working holiday maker</em> uang itu hanya bisa diambil lewat DASP saat kamu pulang, dengan pajak yang sangat berat.</p>"
+    },
+    {
+      "key": "foreign-resident",
+      "title": "Berapa pajak penduduk asing (*foreign resident*) di Australia untuk gaji A$100.000?",
+      "intro": "<p>Contoh ini untuk orang yang bekerja di Australia tetapi belum dianggap penduduk pajak, misalnya karena masa tinggalnya singkat dan tempat tinggal tetapnya masih di luar negeri. Tidak ada batas bebas pajak, sehingga 30% berlaku sejak dolar pertama: A$100.000 dikalikan 30% menghasilkan pajak A$30.000. Gaji bersihnya sekitar A$70.000 (70%), atau A$9.780 lebih sedikit daripada pemegang visa sementara yang dianggap penduduk pajak pada gaji yang sama. Penduduk asing tidak dikenai <em>Medicare levy</em>.</p>",
+      "after": "<p>Status ini membuat pajakmu jauh lebih besar, jadi periksa dengan ATO apakah kamu memang penduduk asing atau sebenarnya penduduk pajak.</p>"
+    },
+    {
+      "key": "no-private-health-cover",
+      "title": "Berapa <em>Medicare levy surcharge</em> kalau gaji A$150.000 tanpa asuransi rumah sakit swasta?",
+      "intro": "<p>Contoh ini untuk penduduk tetap lajang dengan gaji A$150.000 yang tidak punya asuransi rumah sakit swasta. Setelah potongan standar A$1.000, penghasilan kena pajaknya A$149.000, dengan pajak penghasilan A$36.200 dan <em>Medicare levy</em> A$2.980. Karena penghasilan itu masuk tingkat 1,25% (di atas A$123.000), <em>Medicare levy surcharge</em> menambah sekitar A$1.863. Gaji bersihnya sekitar A$108.958 (72,6%), dengan tarif marginalnya 40,3% (37% ditambah 2% <em>Medicare levy</em> dan 1,25% <em>surcharge</em>).</p>",
+      "after": "<p>Kalau kamu punya asuransi rumah sakit swasta yang memenuhi syarat, baris <em>surcharge</em> ini hilang. Bandingkan dengan premi asuransinya sebelum memutuskan.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs ATO. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "<em>Salary sacrifice</em> ke <em>super</em> (untuk warga dan penduduk tetap)",
+      "html": "<p>Dengan <em>salary sacrifice</em>, sebagian gaji kamu minta disetor langsung ke dana pensiun sebelum dipajaki sebagai penghasilan. Setoran itu dikenai pajak 15% di dalam dana, jadi kalau tarif marginalmu 30% atau lebih, selisihnya menjadi penghematan sekaligus tabungan pensiun. Cocok untuk warga dan penduduk tetap yang memang berencana menetap. Ada batas tahunan untuk setoran dengan keringanan pajak, jadi cek batas yang berlaku di ATO sebelum menyetor banyak. Uangnya baru bisa diambil setelah mencapai usia pensiun dan syarat lain terpenuhi.</p>"
+    },
+    {
+      "h3": "Asuransi rumah sakit swasta untuk menghindari <em>Medicare levy surcharge</em>",
+      "html": "<p>Kalau penghasilanmu di atas ambang <em>surcharge</em> dan kamu memenuhi syarat memakainya, asuransi rumah sakit swasta menghapus tambahan 1% sampai 1,5% itu. Pada gaji A$150.000 tanpa asuransi, <em>surcharge</em>-nya sekitar A$1.863, jadi bandingkan angka itu dengan premi asuransi yang kamu butuhkan. Cocok untuk penduduk tetap berpenghasilan menengah ke atas. Asuransi yang dipilih harus asuransi rumah sakit yang memenuhi syarat, bukan asuransi tambahan yang hanya mencakup layanan umum.</p>"
+    },
+    {
+      "h3": "Potongan biaya kerja dengan bukti",
+      "html": "<p>Biaya yang langsung terkait pekerjaan dan tidak diganti pemberi kerja, seperti seragam khusus, alat kerja atau sebagian biaya kursus yang berkaitan dengan pekerjaanmu, bisa mengurangi penghasilan kena pajak. Kalkulator memakai potongan standar A$1.000 untuk penduduk pajak, jadi klaim sendiri baru berarti kalau biaya nyatamu lebih dari itu. Simpan struk dan catatan, karena ATO bisa memintanya.</p>"
+    },
+    {
+      "h3": "Peringatan: <em>super</em> pemegang visa sementara dipajaki berat saat ditarik",
+      "html": "<p>Kalau kamu pemegang visa sementara, termasuk <em>working holiday maker</em>, <em>super</em> yang menumpuk selama kamu bekerja hanya bisa diambil setelah visa berakhir dan kamu meninggalkan Australia, lewat DASP. Pajak DASP umumnya 35% untuk pemegang visa sementara dan 65% untuk <em>working holiday maker</em>. Itu sebabnya <em>salary sacrifice</em> ke <em>super</em> biasanya tidak menguntungkan untuk status ini: uang yang kamu masukkan justru kembali jauh lebih kecil. Pastikan kamu mengajukan DASP setelah pulang, karena dana yang tidak diklaim bisa dialihkan ke ATO.</p>"
+    },
+    {
+      "h3": "Lapor pajak tahunan untuk meminta kembali kelebihan potongan",
+      "html": "<p>Pemberi kerja memotong pajak setiap gajian berdasarkan perkiraan penghasilan setahun, dan selisihnya diselesaikan lewat laporan pajak tahunan (<em>tax return</em>). Kalau kamu bekerja hanya sebagian tahun atau punya potongan biaya kerja, pajak yang sudah dipotong bisa lebih besar daripada pajak sebenarnya, dan kelebihannya dikembalikan. Tahun pajak berakhir 30 Juni, dan batas lapor yang umum untuk perorangan adalah 31 Oktober. Cocok untuk semua status, terutama pekerja musiman dan <em>working holiday maker</em> yang pulang sebelum tahun pajak selesai.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun, beberapa pemberi kerja dan kerja musiman tidak dimodelkan, padahal itu yang sering terjadi pada pemegang visa sementara.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, opsi saham atau tunjangan dari pemberi kerja.",
+    "<strong><em>Medicare levy</em> untuk pemegang visa sementara tidak dihitung.</strong> Kalkulator hanya menghitung <em>Medicare levy</em> dan <em>surcharge</em> untuk penduduk tetap, padahal pemegang visa sementara pun bisa terkena <em>surcharge</em> atau memerlukan pembebasan yang harus diurus sendiri.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Australia, kewajiban lapor di Indonesia dan pajak yang sudah dibayar di sana tidak dihitung.",
+    "<strong>Tanpa pajak daerah dan utang pendidikan.</strong> Australia tidak punya pajak penghasilan tingkat negara bagian, tetapi iuran utang pendidikan atau bea lain tidak dimodelkan.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Status pajak dan hasil akhirnya ditentukan ATO, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Berapa tarif pajak <em>working holiday maker</em> di Australia?",
+      "a": "<p>Tarifnya 15% dari dolar pertama sampai A$45.000, lalu 30% sampai A$135.000, 37% sampai A$190.000, dan 45% di atasnya. <em>Working holiday maker</em> tidak mendapat batas bebas pajak A$18.200 seperti penduduk pajak biasa. Sebagai gantinya, ATO memberi tarif 15% sejak dolar pertama, sehingga pada penghasilan A$55.000 pajaknya A$9.750. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Berapa gaji bersih dari gaji A$100.000 di Australia?",
+      "a": "<p>Untuk penduduk tetap, gaji bersihnya sekitar A$77.800 setelah pajak penghasilan A$20.220 dan <em>Medicare levy</em> A$1.980. Pemegang visa sementara yang dianggap penduduk pajak menerima sekitar A$79.780, dan penduduk asing sekitar A$70.000.</p>"
+    },
+    {
+      "q": "Apakah <em>super</em> bisa diambil kalau saya pulang ke Indonesia?",
+      "a": "<p>Bisa, lewat <em>Departing Australia Superannuation Payment</em> (DASP), tetapi dengan pajak yang berat: umumnya 35%, dan 65% untuk <em>working holiday maker</em>. Pengajuannya dilakukan setelah visa berakhir dan kamu meninggalkan Australia. Rinciannya ada di situs ATO.</p>"
+    },
+    {
+      "q": "Apa itu <em>Medicare levy surcharge</em> dan siapa yang membayarnya?",
+      "a": "<p>Tambahan 1% sampai 1,5% dari penghasilan untuk penduduk yang penghasilannya melewati ambang tertentu dan tidak punya asuransi rumah sakit swasta. Pada gaji A$150.000 tanpa asuransi, besarnya sekitar A$1.863. Ambang resminya ada di situs ATO.</p>"
+    },
+    {
+      "q": "Kenapa banyak orang di Australia mendapat <em>refund</em> pajak setelah 30 Juni?",
+      "a": "<p>Selama tahun berjalan, pemberi kerja memotong pajak setiap gajian lewat sistem <em>PAYG withholding</em> (<em>Pay As You Go</em>, potongan pajak di muka), yang memperkirakan pajakmu seolah-olah gaji itu berlangsung sepanjang tahun. Setelah tahun pajak berakhir pada 30 Juni, kamu mengisi laporan pajak tahunan (<em>tax return</em>) pada musim lapor Juli sampai 31 Oktober, dan ATO menghitung pajak yang sebenarnya dari penghasilan setahun penuh plus potongan biaya kerja. Kalau potongan di muka lebih besar, selisihnya dikembalikan sebagai <em>refund</em>, dan kalau lebih kecil kamu kurang bayar. Pekerja yang hanya bekerja sebagian tahun sering mendapat <em>refund</em> karena pajak sebulan-sebulannya sudah dipotong seolah-olah gajinya berlangsung setahun penuh. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini. Pastikan kamu punya <em>tax file number</em> (TFN) sebelum mulai bekerja, karena tanpa TFN pemberi kerja memotong pada tarif tertinggi.</p>"
+    },
+    {
+      "q": "Kenapa <em>super</em> tidak masuk gaji bersih, tetapi tetap uangku?",
+      "a": "<p><em>Super guarantee</em> 12% dibayar pemberi kerja di atas gaji yang tertulis di kontrak, langsung ke dana pensiun atas namamu, bukan ke rekening bank. Karena itu uangnya tidak muncul di slip gaji bersih, tetapi tetap tercatat sebagai milikmu. Penduduk tetap dan warga bisa mengambilnya setelah usia pensiun, sedangkan pemegang visa sementara bisa menariknya lewat DASP setelah meninggalkan Australia, dengan pajak umumnya 35% (65% untuk <em>working holiday maker</em>). Kalkulator menampilkan <em>super</em> sebagai baris terpisah dan tidak memasukkannya ke gaji bersih.</p>"
+    },
+    {
+      "q": "Kalau punya dua pekerjaan, apakah batas bebas pajak A$18.200 dipakai dua kali?",
+      "a": "<p>Tidak, batas bebas pajak (<em>tax-free threshold</em>) hanya boleh kamu klaim di satu pemberi kerja. Di pemberi kerja kedua, pajak dipotong tanpa batas itu, sehingga potongan di muka sering terlalu besar dan selisihnya kembali lewat <em>tax return</em>, atau sebaliknya kamu kurang bayar kalau total penghasilanmu naik ke tingkat berikutnya. Kalkulator ini mengasumsikan satu pekerjaan sepanjang tahun, jadi kasus dua pekerjaan tidak dihitung.</p>"
+    },
+    {
+      "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Australia dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Standard deduction for work expenses": "Potongan standar biaya kerja",
+    "Income tax": "Pajak penghasilan",
+    "Low income tax offset (LITO), inside the tax above": "Low income tax offset (LITO), sudah termasuk di pajak di atas",
+    "Medicare levy (2%)": "Medicare levy (2%)",
+    "Medicare levy surcharge, no private hospital cover": "Medicare levy surcharge, tanpa asuransi rumah sakit swasta",
+    "Income tax, working holiday maker rates": "Pajak penghasilan, tarif working holiday maker",
+    "Income tax, foreign resident rates": "Pajak penghasilan, tarif penduduk asing",
+    "Employer super guarantee, paid on top (12%)": "Super guarantee dari pemberi kerja, dibayar di luar gaji (12%)",
+    "Super guarantee, paid into your fund (12%)": "Super guarantee, disetor ke dana pensiunmu (12%)"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "slug": "spain",
+  "lang": "en",
+  "title": "Spanish Income Tax 2026: How to Calculate It in Madrid",
+  "h1": "How to calculate income tax and take-home pay in Spain (2026, Madrid)",
+  "description": "Spanish IRPF for 2026 in Madrid: state and regional rates, social security, the Beckham law at 24%, and three worked take-home examples for employees.",
+  "lede": "<p>Spain taxes residents on worldwide income with an IRPF made of two halves, a state scale and a regional scale, plus about 6.5% employee social security. This page models an employee living in the Madrid region. On a €45,000 salary a resident pays about €11,806 in social security and IRPF and keeps about €33,194, or 73.8% of gross. Someone eligible for the Beckham law pays a flat 24% on employment income up to €600,000 instead, and keeps about €64,421 of €90,000.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rates as the calculator models them, for a full-year employee in the Madrid region. In Spain the IRPF has a state part and a regional part, and each region sets its own scale for the regional half, so the Madrid figures here do not apply to Catalonia, Andalusia or the Valencian Community. Residents are taxed on worldwide income. As a rule you count as resident if you spend more than 183 days in Spain in a calendar year or if your main base of activity or interests is there.</p>",
+    "blocks": [
+      {
+        "h3": "State and Madrid IRPF scales",
+        "html": "<p>Both scales are applied to the same taxable base. The base is your salary minus social security, a flat €2,000 of other expenses, and a reduction for work income that applies at low incomes. Each scale is then reduced by the tax on the personal and family minimum, which the calculator sets at €5,550 for the state and €5,956.65 for Madrid, and which rises with each child.</p>",
+        "table": {
+          "head": ["Taxable base up to", "State rate", "Madrid rate"],
+          "rows": [
+            ["€12,450", "9.5%", "8.5% (to €13,362.22)"],
+            ["€20,200", "12%", "10.7% (to €19,004.63)"],
+            ["€35,200", "15%", "12.8% (to €35,425.68)"],
+            ["€60,000", "18.5%", "17.4% (to €57,320.40)"],
+            ["€300,000", "22.5%", "20.5% above €57,320.40"],
+            ["Above €300,000", "24.5%", "20.5%"]
+          ]
+        }
+      },
+      {
+        "h3": "Social security",
+        "html": "<p>The calculator charges the employee share at 6.50% of pay, or 6.55% on a temporary contract. It applies up to a monthly contribution base cap of €5,101.20, so earnings above about €61,214 a year carry no extra social security. Employer contributions are paid on top and are not part of your take-home pay.</p>"
+      },
+      {
+        "h3": "The Beckham law",
+        "html": "<p>The special regime for workers who move to Spain (known as the Beckham law) lets an eligible newcomer be taxed on Spanish employment income at a flat 24% up to €600,000 and 47% above, instead of the progressive state and regional scales. The calculator applies this to gross salary and adds social security separately. The regime is generally for people who were not Spanish tax residents in the years before they arrived, and it runs for the year you arrive and the following years for a limited period. There is an application process with a deadline after you start work, so check the conditions with the tax agency or an adviser. The calculator does not test eligibility.</p>"
+      },
+      {
+        "h3": "Annual return and monthly withholding",
+        "html": "<p>Your employer withholds IRPF from every payslip. After the year ends you file an annual return (<em>declaración de la renta</em>), which usually runs from spring to the end of June, and any difference is refunded or paid. The calculator shows the tax for a full year at one salary.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "Agencia Tributaria (AEAT)", "url": "https://sede.agenciatributaria.gob.es/", "note": "IRPF, Ley 35/2006, special regime for movers" },
+      { "name": "Seguridad Social", "url": "https://www.seg-social.es/", "note": "contribution bases and rates" },
+      { "name": "Comunidad de Madrid", "url": "https://www.comunidad.madrid/", "note": "regional tax scale" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident-madrid",
+      "title": "How much tax and take-home pay on a €45,000 salary in Madrid?",
+      "intro": "<p>This is a single employee in Madrid on €45,000. Social security is €2,925 (6.5%). The taxable base is €40,075 after social security and the €2,000 of other expenses. The state share of IRPF is €4,737 and the Madrid share is €4,144, so IRPF is €8,881 in total. You keep about €33,194, or 73.8% of gross.</p>",
+      "after": "<p>The marginal rate is 40.1%: 18.5% state plus 17.4% Madrid on the next euro, with social security on top.</p>"
+    },
+    {
+      "key": "beckham-law",
+      "title": "Beckham law take-home pay: what does €90,000 pay in Spain?",
+      "intro": "<p>Under the Beckham regime an eligible employee on €90,000 pays a flat 24%, which is €21,600, and social security of €3,979. Social security stops at the cap, so it is under 6.5% of gross. You keep about €64,421, or 71.6% of gross. The marginal rate is 24.0%, which is lower than the top rates of the resident scales.</p>",
+      "after": "<p>The regime fixes the rate, not the base: the flat rate applies from the first euro, so it can cost more than the resident scale at low incomes. Compare both before applying, and remember that it has conditions and a time limit.</p>"
+    },
+    {
+      "key": "resident-two-children",
+      "title": "Spanish income tax in Madrid for a resident with two children on €45,000",
+      "intro": "<p>The salary and social security (€2,925) are as in the first example. The difference is the family minimum, which the calculator raises for two children. Because that minimum is taxed at the bottom rates and credited against the tax, IRPF falls to €7,932 (€4,253 state and €3,679 Madrid), about €950 less. You keep about €34,143, or 75.9% of gross.</p>",
+      "after": "<p>The marginal rate stays at 40.1%, since the children lower the tax by a fixed amount and do not change the bands you fall into.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Spanish tax. Which ones apply depends on your residence and contract.</p>",
+  "strategies": [
+    {
+      "h3": "Check eligibility for the Beckham law before or just after you move",
+      "html": "<p><strong>Suits:</strong> people moving to Spain for work who were not tax resident before, especially at higher salaries where the flat 24% beats the resident scale.</p><p><strong>Caveat:</strong> it has conditions and an application deadline, it is temporary, and it can cost more than the normal scale at low incomes. The calculator does not test eligibility.</p>"
+    },
+    {
+      "h3": "Contribute to a pension plan",
+      "html": "<p><strong>Suits:</strong> residents in the higher bands. Contributions to a pension plan (<em>plan de pensiones</em>) can reduce the taxable base up to an annual limit, so check the current limit on the AEAT site.</p><p><strong>Caveat:</strong> the money is generally tied up until retirement, with limited early-access cases, and withdrawals are taxed as income.</p>"
+    },
+    {
+      "h3": "Use flexible compensation through your employer",
+      "html": "<p><strong>Suits:</strong> employees whose company offers a flexible remuneration plan, for example for health insurance, meal vouchers or childcare. Some benefits paid this way are exempt up to limits.</p><p><strong>Caveat:</strong> exemptions and limits change, and some benefits reduce your cash pay. Ask your payroll team for the current rules.</p>"
+    },
+    {
+      "h3": "Declare your family situation correctly",
+      "html": "<p><strong>Suits:</strong> anyone with children or dependants. The personal and family minimum lowers IRPF, as the second example shows, and you can claim regional deductions when you file the annual return.</p><p><strong>Caveat:</strong> the rules for who claims a child when parents file separately depend on your circumstances, so check the details.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Madrid only.</strong> The regional half uses the Madrid scale. Every other region sets its own.",
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover savings income, property income, self-employment or a part year.",
+    "<strong>No bonuses or equity.</strong> They are not modelled separately.",
+    "<strong>No eligibility test for the Beckham law.</strong> You choose the regime. The calculator does not check your residence history or the conditions of your contract.",
+    "<strong>Simplified family situation.</strong> Only the number of children changes the minimum. Dependent parents, disability and joint filing are not modelled.",
+    "<strong>Annual figure.</strong> The result is the full-year tax, not each monthly payslip.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on €45,000 in Spain?",
+      "a": "<p>A resident employee in Madrid pays about €2,925 in social security and about €8,881 in IRPF, so about €11,806 in total, and keeps about €33,194. Other regions have different regional scales. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the Beckham law and who qualifies?",
+      "a": "<p>It is a special regime for people who move to Spain to work. Instead of the progressive state and regional scales, eligible employment income is taxed at a flat 24% up to €600,000 and 47% above. The calculator models that rate on gross salary. The conditions cover your earlier residence and the reason you moved, and you must apply within a deadline, so read the details on the <a href=\"https://sede.agenciatributaria.gob.es/\">AEAT site</a>.</p>"
+    },
+    {
+      "q": "Why are there two IRPF amounts, state and regional?",
+      "a": "<p>Spanish IRPF is split in two halves, a state share and a regional share. Both are calculated on the same base and each uses its own scale. Madrid's scale is lower than the state's in most bands, which is why Madrid is often cheaper than regions that set higher rates. The calculator shows both as separate lines.</p>"
+    },
+    {
+      "q": "Why is my salary paid in 14 payments?",
+      "a": "<p>Many Spanish contracts state the annual salary and split it into 14 payments: twelve monthly payments plus two extra ones (<em>pagas extras</em>), often in summer and December. Others spread the same annual figure over 12. The annual tax does not depend on which one you have, only the size of each month's payslip. The calculator works on the annual gross, so divide by 12 or 14 to match your contract.</p>"
+    },
+    {
+      "q": "Is there a cap on social security in Spain?",
+      "a": "<p>Yes. Contributions are calculated on a base that has a monthly cap, which the calculator sets at €5,101.20 a month. Earnings above that carry no extra employee social security, so the effective rate falls at high salaries. In the €90,000 Beckham example, social security is €3,979, which is below 6.5% of gross.</p>"
+    },
+    {
+      "q": "Do I still file a tax return if my employer withholds IRPF?",
+      "a": "<p>Often yes. Withholding is only an estimate, and the annual return reconciles it with the tax you really owe, applying your family situation and any deductions. Whether you are required to file depends on your income and sources, so check the current rules. The calculator shows the final annual bill.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a cortado."
+}

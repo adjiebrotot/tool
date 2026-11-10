@@ -1,0 +1,209 @@
+{
+  "slug": "united-states",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Gaji di Amerika Serikat 2026",
+  "h1": "Cara menghitung pajak gaji di Amerika Serikat (2026)",
+  "description": "Pajak gaji di Amerika Serikat 2026: tarif federal, FICA, pajak negara bagian, H-1B dan F-1 sebagai nonresident alien, plus contoh gaji bersih.",
+  "lede": "<p>Gaji di Amerika Serikat dipotong tiga lapis: pajak penghasilan federal dengan tarif bertingkat 10% sampai 37%, iuran FICA (<em>Social Security</em> 6,2% dan <em>Medicare</em> 1,45%), dan pajak negara bagian yang sangat berbeda-beda, bahkan nol di sembilan negara bagian seperti Texas dan Washington. Sebagai gambaran, gaji US$120.000 di Texas menyisakan gaji bersih (<em>take-home pay</em>) sekitar US$93.250, sedangkan di California sekitar US$84.919. Pemegang visa H-1B pada tahun pertama umumnya dihitung sebagai <em>nonresident alien</em> tanpa potongan standar, sementara mahasiswa F-1 dibebaskan dari FICA.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini untuk tahun pajak Amerika Serikat 2026, yang mengikuti tahun kalender 1 Januari sampai 31 Desember. Pemberi kerja memotong pajak setiap gajian berdasarkan formulir W-4 yang kamu isi, dan selisihnya diselesaikan lewat laporan pajak tahunan pada bulan April tahun berikutnya. Tarifmu ditentukan oleh status pajakmu, bukan oleh jenis visa: <em>resident alien</em> dipajaki seperti warga Amerika, sedangkan <em>nonresident alien</em> hanya dipajaki atas penghasilan dari Amerika dengan aturan yang sedikit berbeda (lihat bagian di bawah).</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan federal",
+        "html": "<p>Pajak federal dikenakan pada penghasilan kena pajak, yaitu gaji dikurangi potongan standar (<em>standard deduction</em>): US$16.100 untuk lajang dan US$32.200 untuk pasangan menikah yang mengisi laporan bersama (<em>married filing jointly</em>). Tarifnya bertingkat, dan tiap tarif hanya berlaku untuk bagian penghasilan di dalam tingkatnya.</p>",
+        "table": {
+          "head": [
+            "Tarif",
+            "Lajang (<em>single</em>)",
+            "Menikah, laporan bersama"
+          ],
+          "rows": [
+            ["10%", "US$0 sampai US$12.400", "US$0 sampai US$24.800"],
+            ["12%", "US$12.401 sampai US$50.400", "US$24.801 sampai US$100.800"],
+            ["22%", "US$50.401 sampai US$105.700", "US$100.801 sampai US$211.400"],
+            ["24%", "US$105.701 sampai US$201.775", "US$211.401 sampai US$403.550"],
+            ["32%", "US$201.776 sampai US$256.225", "US$403.551 sampai US$512.450"],
+            ["35%", "US$256.226 sampai US$640.600", "US$512.451 sampai US$768.700"],
+            ["37%", "Di atas US$640.600", "Di atas US$768.700"]
+          ]
+        }
+      },
+      {
+        "h3": "FICA: <em>Social Security</em> dan <em>Medicare</em>",
+        "html": "<p>FICA adalah pajak gaji federal yang membiayai pensiun dan jaminan sosial (<em>Social Security</em>) serta asuransi kesehatan lansia (<em>Medicare</em>). <em>Social Security</em> sebesar 6,2% dari gaji sampai batas US$184.500 setahun, dan <em>Medicare</em> sebesar 1,45% dari seluruh gaji tanpa batas. Penghasilan di atas US$200.000 untuk lajang (US$250.000 untuk pasangan yang mengisi bersama) kena tambahan <em>Medicare</em> 0,9%. Pemberi kerja membayar bagian yang sama besar di luar gajimu, dan bagian itu tidak muncul di kalkulator. FICA tidak peduli di negara bagian mana kamu bekerja, jadi tidak ada pembebasan untuk Texas atau Washington.</p>"
+      },
+      {
+        "h3": "Pajak negara bagian dan kota",
+        "html": "<p>Negara bagian memajaki gaji dengan aturannya sendiri. Sembilan negara bagian tidak memajaki gaji sama sekali: Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington, dan Wyoming. Sebagian besar negara bagian lain, termasuk California, New York, dan Illinois, memajaki gaji dengan tarif sendiri, dan kalkulator memuat 40 dari 51 yurisdiksi (50 negara bagian dan Washington DC). Sebelas negara bagian tidak dimuat karena aturan pembebasan dan potongan mereka menyusut menurut penghasilan dan belum dimodelkan: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah, dan Wisconsin.</p><p>Beberapa negara bagian dan kota juga memungut pajak daerah. Kota New York memajaki penduduknya di atas pajak negara bagian, dan di sejumlah negara bagian lain ada pajak daerah atau kabupaten yang bisa kamu masukkan sebagai persentase di bagian <strong>Details</strong> kalkulator.</p>",
+        "table": {
+          "head": [
+            "Negara bagian",
+            "Pajak penghasilan atas gaji",
+            "Potongan gaji lain"
+          ],
+          "rows": [
+            ["Texas, Florida, Washington, dan enam lainnya", "Tidak ada", "Hanya FICA"],
+            ["California", "1% sampai 12,3%, ditambah 1% atas penghasilan di atas US$1 juta", "<em>State Disability Insurance</em> (SDI) 1,3% tanpa batas gaji"],
+            ["New York", "3,9% sampai 10,9%, ditambah pajak kota New York 3,078% sampai 3,876% bagi penduduk kota", "<em>Paid Family Leave</em> dan asuransi disabilitas (DBL)"],
+            ["Illinois", "4,95% (tarif tunggal), dengan pembebasan US$2.925 per orang", "Tidak ada"],
+            ["Massachusetts", "5% (tarif tunggal), 9% di atas US$1.107.750, dengan pembebasan US$4.400 untuk lajang", "Tidak ada"]
+          ]
+        }
+      },
+      {
+        "h3": "<em>Nonresident alien</em> dan <em>resident alien</em>: H-1B dan F-1",
+        "html": "<p>Kamu menjadi <em>resident alien</em> untuk pajak kalau memegang <em>green card</em>, atau lolos tes kehadiran substansial (<em>substantial presence test</em>): jumlah hari di Amerika pada tahun berjalan, ditambah sepertiga hari tahun lalu, ditambah seperenam hari dua tahun lalu, mencapai 183 hari atau lebih, dengan minimal 31 hari di tahun berjalan. Selama tidak lolos tes ini, kamu <em>nonresident alien</em>. Pemegang H-1B yang baru datang biasanya belum lolos pada tahun pertama dan umumnya menjadi penduduk pajak pada tahun-tahun berikutnya.</p><p>Gaji <em>nonresident alien</em> dipajaki dengan tarif lajang yang sama, tetapi tanpa potongan standar. Pajak negara bagian yang sudah dibayar bisa dikurangkan sebagai potongan terperinci, dan kalkulator memperhitungkannya. Karena itu, pada gaji yang sama, pajak federal <em>nonresident alien</em> lebih besar daripada penduduk pajak. FICA tetap dipotong dari gaji H-1B. Mahasiswa dengan visa F, J, M, atau Q umumnya dibebaskan dari FICA selama masih berstatus <em>nonresident alien</em>, dan hari mereka di Amerika umumnya tidak dihitung untuk tes kehadiran substansial selama lima tahun kalender pertama (umumnya). Perjanjian pajak antarnegara tidak dimodelkan di kalkulator ini.</p>"
+      },
+      {
+        "h3": "Laporan pajak tahunan bulan April",
+        "html": "<p>Pemberi kerja mengirim formulir W-2 pada awal tahun yang merinci gaji dan pajak yang sudah dipotong. Dari situ, kamu menghitung pajak yang sebenarnya dan melapor ke IRS, kantor pajak federal, umumnya sebelum pertengahan April. Penduduk pajak memakai formulir 1040, sedangkan <em>nonresident alien</em> memakai formulir 1040-NR. Kalau pajak yang dipotong lebih besar daripada pajak sebenarnya, selisihnya dikembalikan sebagai <em>refund</em>, dan kalau kurang, kamu membayar selisihnya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Internal Revenue Service (IRS), tarif dan aturan pajak federal",
+        "url": "https://www.irs.gov/"
+      },
+      {
+        "name": "IRS, pajak untuk <em>nonresident alien</em>",
+        "url": "https://www.irs.gov/individuals/international-taxpayers/taxation-of-nonresident-aliens"
+      },
+      {
+        "name": "Social Security Administration, batas gaji <em>Social Security</em>",
+        "url": "https://www.ssa.gov/"
+      },
+      {
+        "name": "Tax Foundation, tarif pajak penghasilan negara bagian",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates/"
+      },
+      {
+        "name": "California Franchise Tax Board",
+        "url": "https://www.ftb.ca.gov/"
+      },
+      {
+        "name": "New York State Department of Taxation and Finance",
+        "url": "https://www.tax.ny.gov/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "texas",
+      "title": "Berapa gaji bersih di Texas dengan gaji US$120.000 setahun?",
+      "intro": "<p>Contoh ini untuk penduduk pajak lajang di negara bagian tanpa pajak penghasilan. Dari gaji US$120.000, potongan standar US$16.100 membuat penghasilan kena pajaknya US$103.900, dan pajak federalnya US$17.570. Texas tidak memajaki gaji, jadi pajak negara bagiannya nol, tetapi FICA tetap dipotong: US$7.440 untuk <em>Social Security</em> dan US$1.740 untuk <em>Medicare</em>. Gaji bersihnya sekitar US$93.250 (77,7%), dan tarif potongan pada dolar berikutnya 29,7% (22% pajak federal ditambah 7,65% FICA).</p>",
+      "after": "<p>Gaji US$120.000 yang sama menyisakan angka yang jauh lebih kecil di California dan New York, seperti contoh di bawah.</p>"
+    },
+    {
+      "key": "california",
+      "title": "Berapa pajak gaji US$120.000 di California dibandingkan dengan Texas?",
+      "intro": "<p>Contoh ini memakai gaji dan status yang sama dengan contoh Texas, hanya saja pekerjanya di California. Pajak federal tetap US$17.570 dan FICA US$9.180, tetapi California menambah pajak penghasilan negara bagian sekitar US$6.771 dan iuran asuransi disabilitas (SDI) 1,3% sebesar US$1.560. Gaji bersihnya sekitar US$84.919 (70,8%), atau sekitar US$8.331 lebih kecil daripada di Texas, dan tarif potongan pada dolar berikutnya 40,3%.</p>",
+      "after": "<p>Selisih ini baru separuh cerita, karena biaya hidup di California juga berbeda dari Texas. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "key": "new-york-city",
+      "title": "Cara menghitung pajak gaji US$120.000 di kota New York",
+      "intro": "<p>Contoh ini untuk penduduk lajang yang tinggal di kota New York, yang selain pajak federal US$17.570 dan FICA US$9.180 juga dikenai pajak negara bagian New York sekitar US$6.180, pajak penduduk kota New York sekitar US$4.216, dan iuran <em>Paid Family Leave</em> serta asuransi disabilitas sekitar US$412 dan US$31. Gaji bersihnya sekitar US$82.410 (68,7%), tarif potongan pada dolar berikutnya 40,6%, dan angka ini sekitar US$10.840 lebih kecil daripada di Texas.</p>",
+      "after": "<p>Pajak kota ini hanya dikenakan kepada penduduk kota New York, bukan seluruh negara bagian, jadi tinggal di luar kota dengan gaji yang sama menyisakan lebih banyak.</p>"
+    },
+    {
+      "key": "married-filing-jointly",
+      "title": "Berapa pajak pasangan menikah (<em>married filing jointly</em>) dengan gaji US$180.000 di Washington?",
+      "intro": "<p>Contoh ini untuk pasangan yang mengisi laporan bersama dan memiliki penghasilan gabungan US$180.000, di negara bagian tanpa pajak penghasilan. Potongan standar bersama US$32.200 membuat penghasilan kena pajaknya US$147.800, dan pajak federalnya US$21.940 karena tingkat-tingkatnya lebih lebar daripada tingkat lajang. FICA sebesar US$13.770 (US$11.160 <em>Social Security</em> dan US$2.610 <em>Medicare</em>) tetap dipotong. Gaji bersihnya sekitar US$144.290 (80,2%), dan tarif potongan pada dolar berikutnya 29,7%.</p>",
+      "after": "<p>Penghasilan dalam contoh ini dihitung sebagai satu gaji. Kalau pasangan itu berdua bekerja, FICA dihitung per orang, jadi hasil akhirnya bisa sedikit berbeda.</p>"
+    },
+    {
+      "key": "h1b-nonresident-alien",
+      "title": "Cara menghitung pajak tahun pertama pemegang visa H-1B (<em>nonresident alien</em>) dengan gaji US$120.000",
+      "intro": "<p>Contoh ini untuk pemegang visa H-1B pada tahun pertama di Texas, yang umumnya dihitung sebagai <em>nonresident alien</em>. Gajinya dipajaki dengan tarif lajang tanpa potongan standar, sehingga pajak federalnya US$21.398, atau US$3.828 lebih besar daripada penduduk pajak dengan gaji yang sama (US$17.570). FICA tetap dipotong US$9.180. Gaji bersihnya sekitar US$89.422 (74,5%), dan tarif potongan pada dolar berikutnya 31,7% (24% pajak federal ditambah 7,65% FICA).</p>",
+      "after": "<p>Selisih ini umumnya hanya terjadi pada tahun-tahun ketika kamu masih berstatus <em>nonresident alien</em>. Kalkulator menghitung setahun penuh, padahal tahun pertama sering hanya sebagian tahun, dan perjanjian pajak tidak dimodelkan.</p>"
+    },
+    {
+      "key": "f1-student",
+      "title": "Berapa pajak mahasiswa F-1 yang bekerja dengan penghasilan US$30.000 di Massachusetts?",
+      "intro": "<p>Contoh ini untuk mahasiswa F-1 berstatus <em>nonresident alien</em> yang bekerja sesuai izin visanya dan menerima US$30.000 di Massachusetts. Pajak negara bagian Massachusetts (satu tarif 5% untuk seluruh penghasilan setelah pembebasan US$4.400) sebesar US$1.280 dikurangkan sebagai potongan terperinci, sehingga penghasilan kena pajak federalnya US$28.720 dan pajak federalnya US$3.198. FICA dibebaskan untuk status F-1, jadi tidak ada potongan <em>Social Security</em> dan <em>Medicare</em>. Gaji bersihnya sekitar US$25.522 (85,1%), dan tarif potongan pada dolar berikutnya 16,4%.</p>",
+      "after": "<p>Pembebasan FICA hanya berlaku untuk pekerjaan yang diizinkan visa dan selama kamu masih <em>nonresident alien</em>. Kalau pemberi kerja memotong FICA dari gajimu padahal seharusnya tidak, mintalah mereka mengembalikannya.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs IRS atau pemberi kerja. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Setoran 401(k) sebelum pajak",
+      "html": "<p>401(k) adalah rekening pensiun lewat pemberi kerja. Setoran tradisionalnya dipotong dari gaji sebelum pajak penghasilan, sehingga mengurangi penghasilan kena pajak federal dan biasanya juga pajak negara bagian. Di tingkat 22%, tiap US$10.000 setoran menghemat sekitar US$2.200 pajak federal, dan di tingkat 24% sekitar US$2.400. Kalau pemberi kerja menambah setoran (<em>matching</em>), itu penghasilan tambahan yang tidak dikenai pajak sampai ditarik. Cara ini cocok kalau kamu berencana menetap beberapa tahun. Setoran ini tidak mengurangi FICA, dan penarikan sebelum usia 59,5 tahun umumnya dikenai pajak tambahan 10%.</p>"
+    },
+    {
+      "h3": "<em>Health Savings Account</em> (HSA)",
+      "html": "<p>HSA adalah rekening tabungan kesehatan yang hanya bisa dipakai kalau kamu ikut asuransi kesehatan dengan biaya tanggungan sendiri (<em>deductible</em>) yang tinggi. Setoran lewat gaji bebas pajak penghasilan, penarikan untuk biaya medis yang memenuhi syarat bebas pajak, dan saldonya bisa dipakai kapan pun. Cara ini cocok untuk yang sehat dan jarang berobat. Beberapa negara bagian, seperti California, tetap memajaki setoran HSA, dan kamu harus memenuhi syarat asuransinya.</p>"
+    },
+    {
+      "h3": "Isi W-4 dengan benar dan lapor untuk meminta <em>refund</em>",
+      "html": "<p>Pemberi kerja memotong pajak federal berdasarkan formulir W-4 yang kamu isi di awal kerja. Kalau isiannya membuat potongan terlalu besar, kelebihannya baru kembali setelah kamu mengisi laporan tahunan. Pekerja yang hanya bekerja sebagian tahun juga sering mendapat <em>refund</em>. Pastikan kamu melapor pada musim April, memakai formulir 1040 kalau kamu penduduk pajak dan 1040-NR kalau <em>nonresident alien</em>, karena pengembalian tidak datang sendiri.</p>"
+    },
+    {
+      "h3": "Mahasiswa F-1: pastikan FICA tidak terpotong",
+      "html": "<p>Mahasiswa F-1 yang masih <em>nonresident alien</em> umumnya tidak membayar FICA atas pekerjaan yang diizinkan visanya. Setelah mulai bekerja, periksa slip gaji pertama: kalau ada potongan <em>Social Security</em> atau <em>Medicare</em>, beri tahu bagian penggajian pemberi kerja dan mintalah dikoreksi. Cek juga apakah perjanjian pajak antara Amerika Serikat dan negara asalmu memberi keringanan tambahan di situs IRS.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Kerja yang dimulai di tengah tahun, pindah pemberi kerja, dan tahun pertama yang hanya sebagian tahun tidak dimodelkan, padahal itu yang sering terjadi pada pemegang visa baru.",
+    "<strong>Tanpa bonus, saham, dan setoran pensiun.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, saham perusahaan, setoran 401(k), maupun premi asuransi kesehatan yang dipotong sebelum pajak.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda, keringanan khusus mahasiswa, dan kewajiban lapor di Indonesia tidak dihitung.",
+    "<strong>Sebelas negara bagian tidak dimuat.</strong> Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah, dan Wisconsin belum bisa dihitung karena aturan potongannya yang berubah menurut penghasilan belum dimodelkan.",
+    "<strong>Pajak daerah hanya kalau kamu mengisinya.</strong> Di negara bagian yang punya pajak kota atau kabupaten, kalkulator tidak menambahkannya kecuali kamu memasukkan persentasenya, dan kredit pajak seperti kredit anak juga tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Status pajak dan hasil akhirnya ditentukan IRS dan kantor pajak negara bagian, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji US$120.000 di Amerika Serikat?",
+      "a": "<p>Bergantung pada negara bagian dan statusmu. Untuk penduduk pajak lajang, sekitar US$93.250 di Texas, sekitar US$84.919 di California, dan sekitar US$82.410 di kota New York. Pemegang H-1B di Texas pada tahun pertamanya, sebagai <em>nonresident alien</em>, menerima sekitar US$89.422.</p>"
+    },
+    {
+      "q": "Kenapa negara bagian tanpa pajak penghasilan tetap memotong FICA dari gaji saya?",
+      "a": "<p>FICA bukan pajak negara bagian, melainkan pajak gaji federal yang membiayai pensiun dan jaminan sosial (<em>Social Security</em>) serta asuransi kesehatan lansia (<em>Medicare</em>), dan berlaku sama di seluruh Amerika Serikat. Di Texas atau Washington, yang tidak memajaki gaji, kamu tetap membayar 7,65% FICA (6,2% <em>Social Security</em> ditambah 1,45% <em>Medicare</em>), dan pajak penghasilan federal tetap berlaku. Itu sebabnya gaji US$120.000 di Texas tetap menyisakan 77,7% dari gaji. Pengecualiannya hanya untuk status tertentu, misalnya mahasiswa F-1 yang masih <em>nonresident alien</em>.</p>"
+    },
+    {
+      "q": "Kenapa pemegang H-1B membayar lebih banyak pajak federal di tahun pertama?",
+      "a": "<p>Di tahun pertama, pemegang H-1B umumnya belum lolos tes kehadiran substansial, sehingga statusnya <em>nonresident alien</em> untuk pajak. <em>Nonresident alien</em> tidak mendapat potongan standar (US$16.100 untuk lajang) yang dipakai penduduk pajak, jadi seluruh gaji dipajaki sejak dolar pertama dengan tarif lajang. Pada gaji US$120.000, selisihnya sekitar US$3.828 pajak federal. Setelah lolos tes itu, biasanya mulai tahun berikutnya, kamu dihitung sebagai penduduk pajak. Kalkulator ini memakai aturan <em>nonresident alien</em> untuk setahun penuh dan tidak memodelkan perjanjian pajak, jadi angka tahun pertamamu yang sebenarnya bisa berbeda.</p>"
+    },
+    {
+      "q": "Apakah mahasiswa F-1 membayar Social Security dan Medicare?",
+      "a": "<p>Umumnya tidak, selama kamu masih <em>nonresident alien</em> dan bekerja sesuai izin visamu, misalnya di kampus. Mahasiswa dengan visa F, J, M, atau Q dibebaskan dari FICA, tetapi tetap membayar pajak penghasilan federal dan negara bagian. Pada contoh penghasilan US$30.000 di Massachusetts, tidak ada potongan FICA sama sekali. Kalau pemberi kerja salah memotongnya, mintalah koreksi lewat bagian penggajian.</p>"
+    },
+    {
+      "q": "Apakah pajak dikembalikan setelah April?",
+      "a": "<p>Bisa, tetapi tidak otomatis. Selama tahun berjalan, pemberi kerja memotong pajak federal setiap gajian berdasarkan formulir W-4. Setelah tahun berakhir, kamu mengisi laporan pajak tahunan (formulir 1040 untuk penduduk pajak, 1040-NR untuk <em>nonresident alien</em>) umumnya sebelum pertengahan April, dan IRS menghitung pajak yang sebenarnya. Kalau yang terpotong lebih besar, selisihnya dikembalikan sebagai <em>refund</em>, dan kalau lebih kecil kamu membayar selisihnya. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+    },
+    {
+      "q": "Negara bagian mana yang tidak dimuat kalkulator?",
+      "a": "<p>Sebelas negara bagian: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah, dan Wisconsin. Aturan potongan standar atau pembebasan di sana menyusut menurut penghasilan, dan memakai potongan tetap akan keliru, jadi kalkulator menolak menghitungnya dan tidak memberi angka perkiraan. Sembilan negara bagian tanpa pajak penghasilan, 30 negara bagian lain, dan Washington DC bisa dihitung.</p>"
+    },
+    {
+      "q": "Kenapa gaji bersih di California jauh lebih kecil daripada di Texas?",
+      "a": "<p>Karena Texas tidak memajaki gaji, sedangkan California memungut pajak penghasilan negara bagian (tarif 1% sampai 12,3%) ditambah iuran asuransi disabilitas SDI 1,3% tanpa batas gaji. Pada gaji US$120.000, kedua hal itu memangkas sekitar US$8.331. Selisih gaji bersih belum tentu berarti kamu lebih rugi, karena sewa dan biaya hidup juga berbeda. Gunakan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> untuk membandingkan, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    },
+    {
+      "q": "Apakah ada perjanjian pajak yang bisa meringankan pajak saya?",
+      "a": "<p>Amerika Serikat punya perjanjian pajak dengan banyak negara, dan sebagian memberi keringanan khusus bagi mahasiswa atau pekerja sementara. Isinya berbeda untuk tiap negara asal, jadi cek ketentuan yang berlaku untukmu di situs IRS. Kalkulator ini tidak memodelkan perjanjian pajak, termasuk pajak yang mungkin masih harus kamu laporkan di Indonesia. Cobalah angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Federal standard deduction": "Potongan standar federal",
+    "Federal income tax": "Pajak penghasilan federal",
+    "Texas has no state tax on wages": "Texas tidak memajaki gaji",
+    "Washington has no state tax on wages": "Washington tidak memajaki gaji",
+    "Social Security (6.2% up to 184,500)": "Social Security (6,2% sampai US$184.500)",
+    "Medicare (1.45%)": "Medicare (1,45%)",
+    "California income tax": "Pajak penghasilan California",
+    "California SDI (1.3%, no cap)": "SDI California (1,3%, tanpa batas)",
+    "New York State income tax": "Pajak penghasilan negara bagian New York",
+    "of which benefit recapture (supplemental tax)": "di antaranya pajak tambahan (benefit recapture)",
+    "New York City resident tax": "Pajak penduduk kota New York",
+    "NY Paid Family Leave (0.432%, max 411.91)": "Paid Family Leave New York (0,432%, maks. US$411,91)",
+    "NY disability (DBL, 0.5%, max 0.60 a week)": "Asuransi disabilitas New York (DBL, 0,5%, maks. US$0,60 seminggu)",
+    "Federal income tax, nonresident alien (no standard deduction)": "Pajak penghasilan federal, nonresident alien (tanpa potongan standar)",
+    "State income tax itemised as a deduction": "Pajak negara bagian sebagai potongan terperinci",
+    "Massachusetts income tax": "Pajak penghasilan Massachusetts",
+    "FICA exempt (F, J, M or Q status)": "Bebas FICA (status F, J, M, atau Q)"
+  },
+  "bmc": "Traktir kopi kalau hitungan gaji bersihmu terbantu."
+}

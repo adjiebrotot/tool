@@ -1,0 +1,129 @@
+{
+  "title": "Pajak Gaji di Uni Emirat Arab 2026: Gaji Bersih WNI",
+  "h1": "Cara menghitung pajak penghasilan di Uni Emirat Arab (2026)",
+  "description": "Uni Emirat Arab tidak memajaki gaji. Lihat gaji bersih pekerja asing dan warga, iuran pensiun GPSSA, serta gratuity akhir masa kerja pengganti pensiun.",
+  "lede": "<p>Uni Emirat Arab tidak memungut pajak penghasilan atas gaji, sehingga pekerja asing menerima gaji bersih (<em>take-home pay</em>) sebesar gaji yang tertulis di kontrak. Iuran pensiun GPSSA hanya dibayar warga negara Emirat, yaitu 11% dari gaji, ditambah 12,5% dari pemberi kerja dan 2,5% dari pemerintah di luar gaji. Pekerja asing tidak ikut iuran pensiun itu dan mendapat <em>end-of-service gratuity</em> saat kontrak berakhir. Gaji AED300.000 setahun tetap AED300.000 bagi pekerja asing, dan menjadi AED267.000 bagi warga negara setelah iuran GPSSA.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Di Uni Emirat Arab, yang menentukan potongan gajimu adalah status sebagai warga negara atau pekerja asing, bukan besar gaji.</p>",
+    "blocks": [
+      {
+        "h3": "Tidak ada pajak penghasilan atas gaji",
+        "html": "<p>Gaji dari pekerjaan di Uni Emirat Arab tidak dikenai pajak penghasilan perorangan, baik untuk warga negara maupun pekerja asing. Karena itu angka gaji bruto dan gaji bersih pekerja asing sama, selama kontrak tidak memotong iuran lain.</p>"
+      },
+      {
+        "h3": "Iuran pensiun GPSSA hanya untuk warga negara",
+        "html": "<p>General Pension and Social Security Authority (GPSSA) mengelola pensiun warga negara. Kalkulator menghitung iuran pegawai 11% dari upah, dengan batas upah AED70.000 sebulan. Pemberi kerja menambah 12,5% dan pemerintah 2,5% di luar gaji, jadi dana pensiun warga negara terisi 26% dari upah, dan hanya 11% yang berasal dari gaji si pegawai.</p>",
+        "table": {
+          "head": [
+            "Pihak",
+            "Besar iuran",
+            "Keterangan"
+          ],
+          "rows": [
+            [
+              "Pegawai warga negara",
+              "11%",
+              "Dipotong dari gaji"
+            ],
+            [
+              "Pemberi kerja",
+              "12,5%",
+              "Dibayar di luar gaji"
+            ],
+            [
+              "Pemerintah",
+              "2,5%",
+              "Dibayar di luar gaji"
+            ],
+            [
+              "Pekerja asing",
+              "0%",
+              "Tidak ikut GPSSA"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "<em>End-of-service gratuity</em> pengganti pensiun bagi pekerja asing",
+        "html": "<p>Pekerja asing tidak punya pensiun di Uni Emirat Arab. Sebagai gantinya, pemberi kerja membayar <em>end-of-service gratuity</em>, yaitu tunjangan sekali bayar saat kontrak berakhir yang besarnya mengikuti gaji dan lama kamu bekerja. Kalkulator tidak menghitung <em>gratuity</em> ini, jadi cek rumusnya di kontrak dan di aturan ketenagakerjaan resmi.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "General Pension and Social Security Authority (GPSSA)",
+        "url": "https://gpssa.gov.ae/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Berapa gaji bersih di Uni Emirat Arab untuk pekerja asing dengan gaji AED300.000 setahun?",
+      "intro": "<p>Contoh ini untuk pekerja asing, termasuk WNI, dengan gaji AED300.000 setahun atau AED25.000 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran pensiun, sehingga gaji bersihnya tetap AED300.000 (100%). Tidak ada potongan pada tambahan gaji berikutnya.</p>",
+      "after": "<p>Gaji bersih ini belum memuat <em>gratuity</em> akhir masa kerja, yang dibayar pemberi kerja terpisah saat kontrak selesai.</p>"
+    },
+    {
+      "key": "national",
+      "title": "Berapa iuran pensiun GPSSA untuk warga Uni Emirat Arab bergaji AED300.000?",
+      "intro": "<p>Contoh ini sebagai pembanding: warga negara dengan gaji yang sama membayar iuran GPSSA 11%, yaitu AED33.000, sehingga gaji bersihnya AED267.000 (89,0%) dan 11,0% dari tambahan gaji berikutnya masuk ke iuran. Di luar gaji, pemberi kerja dan pemerintah menyetor AED45.000 (15% dari upah) ke dana pensiun yang sama.</p>",
+      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Karena tidak ada pajak penghasilan, ruang untuk berhemat pajak hampir tidak ada. Yang bisa kamu atur adalah isi kontrak dan caramu menabung.</p>",
+  "strategies": [
+    {
+      "h3": "Pahami rumus <em>gratuity</em> sebelum menandatangani kontrak",
+      "html": "<p>Karena <em>gratuity</em> menggantikan pensiun, besarnya menentukan tabunganmu di hari tua. Tanyakan dari mana pemberi kerja menghitungnya, apakah dari gaji pokok atau dari seluruh upah, dan catat lama masa kerja yang dihitung. Cara ini cocok untuk semua pekerja asing yang berencana tinggal beberapa tahun.</p>"
+    },
+    {
+      "h3": "Tabung sendiri untuk pensiun",
+      "html": "<p>Dengan gaji bersih yang tidak dipotong dan tanpa iuran pensiun, tabungan pensiun jadi tanggunganmu sendiri. Hitung berapa yang perlu kamu sisihkan di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>. Cara ini cocok untuk pekerja asing yang tidak akan mendapat pensiun dari negara setempat.</p>"
+    },
+    {
+      "h3": "Bandingkan gaji bersih dengan biaya hidup",
+      "html": "<p>Gaji tanpa potongan pajak belum berarti tabungan lebih tebal, karena biaya hidup, tempat tinggal dan sekolah anak bisa menyerap banyak. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> sebelum menerima tawaran, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung penghasilan usaha, sewa atau investasi.",
+    "<strong>Tanpa <em>gratuity</em>, tunjangan dan bonus.</strong> Semua angka dihitung dari satu angka gaji setahun, dan <em>gratuity</em> akhir masa kerja tidak dimasukkan.",
+    "<strong>Bagian gaji yang dikenai iuran bisa kamu atur.</strong> Kalkulator punya isian porsi gaji yang menjadi dasar iuran, untuk kasus ketika tunjangan tidak masuk hitungan iuran.",
+    "<strong>Tanpa pajak lain.</strong> Pajak atas konsumsi dan biaya lain di sana tidak dihitung.",
+    "<strong>Kewajiban pajak di Indonesia tidak dihitung.</strong> Status pajakmu di Indonesia bergantung pada tempat tinggal dan lamanya kamu berada di Indonesia (patokannya 183 hari), bukan pada tempat gajimu dibayar. Tanyakan ke DJP atau konsultan pajak sebelum berangkat.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Aturan bisa berubah, jadi cek ke sumber resmi sebelum memutuskan."
+  ],
+  "faq": [
+    {
+      "q": "Apakah benar tidak ada pajak penghasilan untuk gaji di Uni Emirat Arab?",
+      "a": "<p>Ya, gaji dari pekerjaan tidak dikenai pajak penghasilan perorangan, untuk warga negara maupun pekerja asing. Itu sebabnya gaji bersih pekerja asing sama dengan gaji bruto di kalkulator. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Apa itu <em>end-of-service gratuity</em> dan kenapa menggantikan pensiun?",
+      "a": "<p>Pekerja asing tidak ikut sistem pensiun GPSSA, yang hanya untuk warga negara. Sebagai gantinya, pemberi kerja membayar tunjangan sekali bayar ketika masa kerja berakhir, dan besarnya bergantung pada gaji serta lama kamu bekerja. Karena ini bukan pensiun bulanan, kamu perlu menyiapkan sendiri uang untuk hari tua. Kalkulator menampilkannya sebagai baris tanpa iuran, bukan sebagai nominal uang.</p>"
+    },
+    {
+      "q": "Apa saja potongan gaji untuk pekerja asing?",
+      "a": "<p>Dalam kalkulator, tidak ada: tanpa pajak penghasilan dan tanpa iuran pensiun. Potongan lain, seperti biaya pemberi kerja yang dibebankan ke gaji, bergantung pada kontrakmu dan tidak dimodelkan.</p>"
+    },
+    {
+      "q": "Berapa iuran pensiun warga negara Uni Emirat Arab?",
+      "a": "<p>Pegawai warga negara membayar 11% dari upah sampai batas AED70.000 sebulan. Pemberi kerja menambah 12,5% dan pemerintah 2,5% di luar gaji. Pada gaji AED300.000, iuran pegawai AED33.000 dan tambahan dari luar AED45.000.</p>"
+    },
+    {
+      "q": "Apakah gaji dari Uni Emirat Arab masih harus dilaporkan di Indonesia?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang ditentukan oleh tempat tinggal dan lamanya kamu berada di Indonesia, dengan patokan 183 hari, bukan oleh tempat gajimu dibayar. Kalkulator ini hanya menghitung sisi Uni Emirat Arab, jadi tanyakan kasusmu ke DJP di <a href=\"https://www.pajak.go.id/\">pajak.go.id</a>.</p>"
+    },
+    {
+      "q": "Bagaimana gaji di Uni Emirat Arab dibandingkan dengan gaji di kota lain?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
+    "GPSSA pension (11%, cap 70,000 a month)": "Pensiun GPSSA (11%, batas upah AED70.000 sebulan)",
+    "Employer 12.5% and government 2.5%, on top": "Pemberi kerja 12,5% dan pemerintah 2,5%, dibayar di luar gaji",
+    "No pension contribution for expatriates (end-of-service gratuity instead)": "Tanpa iuran pensiun untuk pekerja asing (diganti gratuity akhir masa kerja)"
+  },
+  "slug": "united-arab-emirates",
+  "lang": "id"
+}

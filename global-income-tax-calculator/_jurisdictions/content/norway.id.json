@@ -1,0 +1,158 @@
+{
+  "slug": "norway",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Gaji di Norwegia 2026",
+  "h1": "Cara menghitung pajak penghasilan di Norwegia (2026)",
+  "description": "Pajak gaji di Norwegia 2026: pajak 22%, trinnskatt, iuran 7,6%, skema PAYE 25% dan contoh gaji bersih NOK 750.000 untuk WNI yang mau bekerja di sana.",
+  "lede": "<p>Norwegia memajaki gaji penduduk pajaknya dalam tiga lapis: pajak penghasilan biasa 22%, pajak bertingkat (<em>trinnskatt</em>) yang naik dari 1,7% sampai 17,8%, dan iuran asuransi nasional (<em>trygdeavgift</em>) 7,6% dari gaji. Pekerja asing yang tinggal singkat boleh memilih skema PAYE, yaitu pajak final 25% dari gaji kotor sampai NOK 725.050 setahun. Sebagai gambaran, gaji NOK 750.000 menyisakan gaji bersih (<em>take-home pay</em>) sekitar NOK 552.997 setelah ketiga lapis itu, atau 73,7% dari gaji.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak 2026, yang di Norwegia sama dengan tahun kalender. Penduduk pajak Norwegia dikenai pajak atas penghasilan dari seluruh dunia. Pemberi kerja memotong pajak setiap bulan berdasarkan kartu pajak (<em>skattekort</em>) milikmu, lalu selisihnya diselesaikan lewat laporan pajak tahunan di tahun berikutnya.</p>",
+    "blocks": [
+      {
+        "h3": "Pajak penghasilan biasa 22%",
+        "html": "<p>Pajak penghasilan biasa dikenakan 22% pada penghasilan setelah dua pengurang yang dihitung otomatis: potongan standar minimum (46% dari gaji, paling banyak NOK 95.700) dan tunjangan pribadi NOK 114.540. Pada gaji NOK 750.000, keduanya menjadi NOK 210.240, sehingga yang dipajaki 22% adalah NOK 539.760. Tarif ini sama untuk seluruh negeri di kalkulator ini, padahal Norwegia bagian utara memakai tarif yang lebih rendah, dan itu tidak dimodelkan.</p>"
+      },
+      {
+        "h3": "Pajak bertingkat (<em>trinnskatt</em>)",
+        "html": "<p><em>Trinnskatt</em> adalah pajak tambahan yang dihitung dari gaji kotor, tanpa dikurangi pengurang di atas. Tarif hanya berlaku untuk bagian gaji di dalam tiap tingkat, jadi kenaikan tarif tidak menarik seluruh gajimu ke tarif yang lebih tinggi.</p>",
+        "table": {
+          "head": [
+            "Gaji kotor",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "NOK 0 sampai NOK 226.100",
+              "0%"
+            ],
+            [
+              "NOK 226.101 sampai NOK 318.300",
+              "1,7%"
+            ],
+            [
+              "NOK 318.301 sampai NOK 725.050",
+              "4%"
+            ],
+            [
+              "NOK 725.051 sampai NOK 980.100",
+              "13,7%"
+            ],
+            [
+              "NOK 980.101 sampai NOK 1.467.200",
+              "16,8%"
+            ],
+            [
+              "Di atas NOK 1.467.200",
+              "17,8%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Iuran asuransi nasional (<em>trygdeavgift</em>) 7,6%",
+        "html": "<p>Setiap pekerja yang masuk sistem asuransi nasional Norwegia membayar 7,6% dari gaji, dan iuran ini menjadi dasar hak atas layanan kesehatan, tunjangan sakit dan pensiun negara. Gaji sampai NOK 99.650 tidak dikenai iuran ini. Di atas batas itu, iurannya dibatasi 25% dari kelebihan gaji, sehingga tarif penuh 7,6% baru tercapai di sekitar NOK 143.000. Pada gaji NOK 750.000, iurannya NOK 57.000.</p>"
+      },
+      {
+        "h3": "Skema PAYE: pajak final 25% untuk pekerja asing",
+        "html": "<p>Pekerja asing yang tinggal singkat di Norwegia dapat memilih skema PAYE. Pajaknya 25% dari gaji kotor, bersifat final, dan sudah mencakup iuran asuransi nasional. Tidak ada pengurang yang dihitung terpisah. Skema ini hanya terbuka untuk gaji sampai NOK 725.050 setahun. Kalau kamu tidak ikut asuransi nasional Norwegia, tarifnya 17,4%. Syarat lengkap siapa yang boleh memakai skema ini ada di Skatteetaten.</p>"
+      },
+      {
+        "h3": "Kartu pajak (<em>skattekort</em>) dan potongan bulanan",
+        "html": "<p>Pemberi kerja memotong pajak dari gajimu memakai kartu pajak dan tabel pemotongan yang berlaku untukmu. Untuk mendapat kartu pajak, kamu lebih dulu perlu nomor identitas Norwegia (<em>fødselsnummer</em> atau <em>D-nummer</em>). Pemotongan tidak dibagi rata ke 12 bulan, melainkan ke sekitar 10,5 bulan, sehingga bulan Desember hanya dipotong separuh dan uang cuti (<em>feriepenger</em>) di sekitar Juni umumnya tidak dipotong. Kalkulator ini menghitung pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Skatteetaten, kantor pajak Norwegia: tarif, potongan, kartu pajak dan skema PAYE",
+        "url": "https://www.skatteetaten.no/"
+      },
+      {
+        "name": "NAV, asuransi nasional dan tunjangan",
+        "url": "https://www.nav.no/"
+      },
+      {
+        "name": "UDI, Direktorat Imigrasi Norwegia, izin kerja dan izin tinggal",
+        "url": "https://www.udi.no/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "Berapa gaji bersih di Norwegia dengan gaji NOK 750.000 per tahun?",
+      "intro": "<p>Contoh ini untuk penduduk pajak dengan satu pekerjaan sepanjang tahun, memakai skema biasa. Potongan standar minimum dan tunjangan pribadi totalnya NOK 210.240, sehingga pajak penghasilan 22% jatuh pada NOK 118.747. <em>Trinnskatt</em> dihitung dari gaji kotor dan menambah NOK 21.256, karena sebagian gaji sudah melewati NOK 725.050 dan kena tarif 13,7%. Iuran asuransi nasional 7,6% menambah NOK 57.000. Gaji bersihnya sekitar NOK 552.997, atau 73,7% dari gaji, dan tarif marginalnya 43,3% (22% pajak biasa, 13,7% <em>trinnskatt</em> dan 7,6% iuran).</p>",
+      "after": "<p>Gaji NOK 750.000 sudah di atas batas NOK 725.050, sehingga skema PAYE tidak lagi terbuka untuk contoh ini.</p>"
+    },
+    {
+      "key": "paye-scheme",
+      "title": "Cara menghitung pajak skema PAYE 25% di Norwegia untuk gaji NOK 600.000",
+      "intro": "<p>Contoh ini untuk pekerja asing yang memilih skema PAYE dan ikut asuransi nasional. Hitungannya paling sederhana: 25% dari gaji NOK 600.000 adalah pajak final NOK 150.000, sehingga gaji bersihnya NOK 450.000 (75,0%), dan tarif marginalnya juga 25%. Tidak ada pengurang, tunjangan atau iuran terpisah yang perlu ditambahkan.</p>",
+      "after": "<p>Skema ini tidak otomatis lebih murah. Pada gaji yang sama, hitungan kalkulator untuk skema biasa menyisakan sekitar NOK 455.817, lebih besar sekitar NOK 5.800, dan pada gaji NOK 300.000 selisihnya jauh lebih lebar. Kalau kamu bukan anggota asuransi nasional, tarif PAYE turun menjadi 17,4% dan gaji bersih pada gaji NOK 600.000 naik menjadi NOK 495.600.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Cara-cara di bawah ini sah dan dijelaskan oleh otoritas Norwegia. Cocok tidaknya bergantung pada statusmu, jadi cek syaratnya di Skatteetaten sebelum memakainya.</p>",
+  "strategies": [
+    {
+      "h3": "Membandingkan skema PAYE dengan skema biasa",
+      "html": "<p>Skema PAYE memberi kepastian, karena pajaknya selalu 25% dari gaji kotor. Meski begitu, pada banyak tingkat gaji skema biasa menyisakan lebih banyak, sebab potongan standar dan tunjangan pribadi ikut dihitung. Cocok untuk pekerja yang tinggal singkat dan memenuhi syarat keduanya. Caranya: hitung kedua skema di kalkulator dengan gajimu, lalu putuskan. Ingat bahwa PAYE hanya terbuka sampai gaji NOK 725.050 setahun.</p>"
+    },
+    {
+      "h3": "Potongan yang sah di laporan pajak tahunan",
+      "html": "<p>Pada skema biasa, beberapa biaya bisa mengurangi pajak, misalnya iuran serikat pekerja, biaya perjalanan rumah ke kantor di atas batas tertentu dan bunga utang. Kalkulator ini hanya memakai potongan standar, jadi klaimmu baru berarti kalau biaya nyatamu lebih besar. Simpan buktinya, karena Skatteetaten bisa memintanya. Cocok untuk penduduk pajak yang memakai skema biasa, dan tidak berlaku untuk skema PAYE.</p>"
+    },
+    {
+      "h3": "Tabungan pensiun individu (<em>IPS</em>)",
+      "html": "<p>Setoran ke tabungan pensiun individu yang memenuhi syarat dapat mengurangi pajak penghasilan biasa, dengan batas setoran tahunan yang ditetapkan pemerintah dan berubah dari waktu ke waktu. Cocok untuk penduduk pajak yang berencana tinggal lama dan sudah punya kebutuhan dana pensiun di luar pensiun negara. Uang di dalamnya terikat sampai usia pensiun, dan hasil penarikannya nanti dikenai pajak, jadi lihat batas dan syarat terbarunya di Skatteetaten.</p>"
+    },
+    {
+      "h3": "Tabungan rumah untuk usia muda (<em>BSU</em>)",
+      "html": "<p><em>BSU</em> adalah rekening tabungan untuk membeli rumah pertama yang memberi pengurang pajak atas setoran, dengan batas tahunan dan batas total. Umumnya syaratnya berusia di bawah 34 tahun dan terdaftar sebagai penduduk dengan nomor identitas Norwegia. Cocok untuk pekerja muda yang memang berencana membeli rumah di Norwegia, dan kurang cocok untuk kamu yang berencana pulang. Uangnya sebaiknya dipakai untuk rumah, karena pengurang pajak bisa ditarik kembali kalau dana dipakai untuk hal lain.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa atau usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang mulai atau berhenti di tengah tahun, beberapa pemberi kerja dan pemotongan 10,5 bulan di slip gaji tidak dimodelkan.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, opsi saham, uang cuti atau tunjangan lain.",
+    "<strong>Hanya potongan standar.</strong> Potongan biaya perjalanan, iuran serikat, bunga utang dan tabungan seperti IPS atau BSU tidak dihitung. Pajak kekayaan (<em>formuesskatt</em>) dan tarif yang lebih rendah di Norwegia utara juga tidak dimodelkan.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Norwegia, kewajiban lapor di Indonesia dan pajak yang sudah dibayar di sana tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Skatteetaten yang menentukan status dan hasil akhirnya, jadi perlakukan hasil ini sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji NOK 750.000 di Norwegia?",
+      "a": "<p>Dengan skema biasa, gaji bersihnya sekitar NOK 552.997 (73,7%) setelah pajak penghasilan NOK 118.747, <em>trinnskatt</em> NOK 21.256 dan iuran asuransi nasional NOK 57.000. Pada gaji NOK 600.000 dengan skema PAYE, gaji bersihnya NOK 450.000 (75,0%).</p>"
+    },
+    {
+      "q": "Kenapa gaji Desember di Norwegia terasa lebih besar?",
+      "a": "<p>Pemotongan pajak di Norwegia tidak dibagi rata ke 12 bulan. Tabel pemotongan di kartu pajak dibuat untuk sekitar 10,5 bulan, sehingga di Desember pemberi kerja hanya memotong separuh, dan uang cuti yang dibayar sekitar Juni umumnya tidak dipotong. Pajak setahunnya tetap sama, hanya jadwal potongannya yang berbeda. Kalkulator ini menghitung pajak setahun penuh, jadi slip gaji sebulan bisa berbeda dari angka di sini. Jangan membelanjakan seluruh gaji Desember seolah-olah itu pendapatan bulanan biasa.</p>"
+    },
+    {
+      "q": "Apa itu kartu pajak (<em>skattekort</em>) dan bagaimana mendapatkannya?",
+      "a": "<p>Kartu pajak adalah data dari Skatteetaten yang memberi tahu pemberi kerja berapa pajak yang harus dipotong dari gajimu. Pemberi kerja mengambilnya secara digital, dan kamu bisa mengubah pengaturannya, misalnya kalau punya potongan tambahan. Syarat pertamanya nomor identitas Norwegia (<em>fødselsnummer</em> atau <em>D-nummer</em>), yang kamu urus setelah tiba, jadi tanyakan pemberi kerjamu bagaimana urutannya. Tanpa kartu pajak yang berlaku, potongannya jauh lebih besar dari semestinya.</p>"
+    },
+    {
+      "q": "Kenapa iuran asuransi nasional tidak langsung 7,6% di gaji rendah?",
+      "a": "<p>Iuran ini tidak dikenakan pada gaji sampai NOK 99.650. Di atas itu, iurannya hanya 25% dari kelebihan gaji sampai angkanya menyamai 7,6% dari seluruh gaji, yaitu di sekitar NOK 143.000. Karena itu pekerja bergaji rendah merasakan potongan yang naik lebih cepat di tingkat itu. Pada gaji NOK 750.000 yang berlaku sudah tarif penuh, yaitu NOK 57.000.</p>"
+    },
+    {
+      "q": "Siapa yang boleh memakai skema PAYE 25%?",
+      "a": "<p>Skema PAYE ditujukan untuk pekerja asing yang tinggal singkat di Norwegia, dengan gaji sampai NOK 725.050 setahun. Pajaknya 25% dari gaji kotor dan final, atau 17,4% kalau kamu tidak ikut asuransi nasional. Syarat tepatnya, termasuk lama tinggal dan jenis pekerjaan, ada di Skatteetaten, jadi pastikan sebelum menghitung dengan angka itu. Di kalkulator, pilih <strong>Skema</strong> lalu <strong>PAYE</strong> untuk membandingkannya dengan skema biasa.</p>"
+    },
+    {
+      "q": "Apakah pajak bisa dikembalikan setelah tahun pajak berakhir?",
+      "a": "<p>Bisa untuk skema biasa. Setelah tahun pajak berakhir, Skatteetaten mengirim laporan pajak yang sudah terisi sebagian, kamu memeriksanya dan menambahkan potongan yang sah, lalu hasilnya berupa pengembalian atau tambahan bayar. Pada skema PAYE pajaknya final, sehingga tidak ada pengembalian dari potongan tambahan.</p>"
+    },
+    {
+      "q": "Berapa uang yang bisa ditabung kalau bekerja di Norwegia dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Minimum standard deduction and personal allowance": "Potongan standar minimum dan tunjangan pribadi",
+    "Tax on ordinary income (22%)": "Pajak penghasilan biasa (22%)",
+    "Bracket tax (trinnskatt)": "Pajak bertingkat (trinnskatt)",
+    "National insurance (7.6%)": "Iuran asuransi nasional (trygdeavgift, 7,6%)",
+    "PAYE scheme (25% of gross, final)": "Skema PAYE (25% dari gaji kotor, final)",
+    "PAYE scheme (17.4% of gross, final)": "Skema PAYE (17,4% dari gaji kotor, final)"
+  }
+}

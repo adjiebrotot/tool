@@ -1,0 +1,162 @@
+{
+  "slug": "united-states",
+  "lang": "en",
+  "title": "US Income Tax 2026: How to Calculate Federal and State",
+  "h1": "How to calculate income tax in the United States (2026)",
+  "description": "US income tax for 2026: federal brackets, state tax in 39 states and DC, FICA and nonresident alien rules for H-1B and F-1, with six take-home examples.",
+  "lede": "<p>The US taxes employment income at three levels: federal income tax with brackets from 10% to 37%, state income tax in most states, and FICA payroll tax of 7.65% (Social Security 6.2% up to $184,500 plus Medicare 1.45%). On $120,000 a single resident in Texas, which has no state wage tax, pays about $26,750 in total and keeps about $93,250. The same salary in California leaves about $84,919, and in New York City about $82,410.</p>",
+  "law": {
+    "intro": "<p>The US tax year is the calendar year, and the figures below are the 2026 rates as the calculator models them. Your employer withholds federal tax, state tax and FICA from each payslip, and you file a return by 15 April the following year, when the withholding is compared with the tax you actually owe. Which rules apply depends on your tax status: US residents (including green card holders and people who pass the substantial presence test) are taxed on worldwide income, while nonresident aliens are taxed on US income under different rules.</p>",
+    "blocks": [
+      {
+        "h3": "Federal income tax brackets for single filers",
+        "html": "<p>A single resident takes a standard deduction of $16,100, and the brackets apply to the remainder. Married couples filing jointly get a $32,200 deduction and wider brackets. The calculator uses these for the resident cases.</p>",
+        "table": {
+          "head": ["Taxable income (single)", "Rate"],
+          "rows": [
+            ["$0 to $12,400", "10%"],
+            ["$12,401 to $50,400", "12%"],
+            ["$50,401 to $105,700", "22%"],
+            ["$105,701 to $201,775", "24%"],
+            ["$201,776 to $256,225", "32%"],
+            ["$256,226 to $640,600", "35%"],
+            ["Over $640,600", "37%"]
+          ]
+        }
+      },
+      {
+        "h3": "Federal brackets for married couples filing jointly",
+        "html": "<p>A joint return uses wider brackets and the larger standard deduction, taxed on combined income. The calculator treats it as one earner's pay with the joint table.</p>",
+        "table": {
+          "head": ["Taxable income (joint)", "Rate"],
+          "rows": [
+            ["$0 to $24,800", "10%"],
+            ["$24,801 to $100,800", "12%"],
+            ["$100,801 to $211,400", "22%"],
+            ["$211,401 to $403,550", "24%"],
+            ["$403,551 to $512,450", "32%"],
+            ["$512,451 to $768,700", "35%"],
+            ["Over $768,700", "37%"]
+          ]
+        }
+      },
+      {
+        "h3": "FICA: Social Security and Medicare",
+        "html": "<p>Employees pay Social Security of 6.2% on wages up to $184,500 and Medicare of 1.45% on all wages. An Additional Medicare tax of 0.9% applies to wages above $200,000 for a single filer ($250,000 jointly). FICA is charged in every state, including those with no income tax, and is not reduced by the standard deduction. Employer FICA is paid on top.</p>"
+      },
+      {
+        "h3": "State income tax: 39 states and DC loaded",
+        "html": "<p>Nine states have no tax on wages: Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator loads their zero. It also loads the rates of 30 other states and DC, including California, New York and Illinois, with New York City's resident tax as an option. California adds a state disability insurance contribution (SDI) of 1.3%, and New York adds Paid Family Leave and disability deductions.</p><p>Eleven states are not loaded, because their deductions phase out on schedules the calculator does not carry: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. Choosing one returns a message instead of a figure.</p>"
+      },
+      {
+        "h3": "Nonresident aliens",
+        "html": "<p>A nonresident alien is taxed on US wages at the single-filer rates with no standard deduction, and cannot file jointly. State income tax paid can be deducted as an itemised deduction, which the calculator applies. Whether you are a nonresident alien depends on the substantial presence test, which counts days in the US over three years, and on special rules for students and exchange visitors in their first calendar years. Students and scholars in F, J, M or Q status are exempt from FICA while they are nonresident aliens.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "IRS", "url": "https://www.irs.gov/", "note": "brackets, standard deduction, returns and deadlines" },
+      { "name": "IRS, Taxation of nonresident aliens", "url": "https://www.irs.gov/individuals/international-taxpayers/taxation-of-nonresident-aliens", "note": "nonresident alien rules" },
+      { "name": "Social Security Administration", "url": "https://www.ssa.gov/", "note": "wage base and FICA" },
+      { "name": "Tax Foundation, state income tax rates", "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates/", "note": "state rates" },
+      { "name": "California Franchise Tax Board", "url": "https://www.ftb.ca.gov/", "note": "California rates" },
+      { "name": "New York State Department of Taxation and Finance", "url": "https://www.tax.ny.gov/", "note": "New York State and City rates" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "texas",
+      "title": "How to calculate US income tax on a $120,000 salary in Texas",
+      "intro": "<p>This is a single resident on $120,000 in a state with no wage tax. After the $16,100 standard deduction, taxable income is $103,900, and the brackets give federal income tax of $17,570. FICA adds $7,440 of Social Security and $1,740 of Medicare. Texas charges no state tax on wages. You keep about $93,250, or 77.7% of gross.</p>",
+      "after": "<p>The marginal rate is 29.7%: 22% federal plus 7.65% FICA. A state with no income tax does not remove FICA.</p>"
+    },
+    {
+      "key": "california",
+      "title": "How much is take-home pay on $120,000 in California?",
+      "intro": "<p>The same single resident living in California pays the same $17,570 federal tax and $9,180 FICA, plus $6,771 of California income tax and $1,560 of state disability insurance (1.3% of all wages, no cap). You keep about $84,919, or 70.8% of gross, which is $8,331 less than in Texas.</p>",
+      "after": "<p>The marginal rate is 40.3% at this income: federal, state, SDI and FICA together.</p>"
+    },
+    {
+      "key": "new-york-city",
+      "title": "Take-home pay on $120,000 in New York City after tax",
+      "intro": "<p>A New York City resident pays federal tax of $17,570 and FICA of $9,180, plus $6,180 of New York State income tax, $4,216 of New York City resident tax, $412 for Paid Family Leave and $31 for disability insurance. You keep about $82,410, or 68.7% of gross, which is $10,840 less than in Texas.</p>",
+      "after": "<p>The state figure includes a small recapture of the benefit of the lower brackets ($140 here). It applies once income passes a threshold, so tax rises slightly faster than the rates alone suggest.</p>"
+    },
+    {
+      "key": "married-filing-jointly",
+      "title": "How to calculate US tax for a married couple filing jointly",
+      "intro": "<p>This is a married couple with $180,000 of pay in total, filing jointly in Washington, which has no wage tax. The $32,200 joint deduction leaves $147,800 taxable and federal income tax of $21,940. FICA is $13,770 (Social Security $11,160 and Medicare $2,610). You keep about $144,290, or 80.2% of gross.</p>",
+      "after": "<p>The calculator treats this as one earner on the joint tables. If both spouses work, each pays Social Security on their own wages, so FICA can differ.</p>"
+    },
+    {
+      "key": "h1b-nonresident-alien",
+      "title": "How does a nonresident alien on $120,000 pay US federal tax?",
+      "intro": "<p>This shows the nonresident alien rules on $120,000 in Texas: single rates with no standard deduction. Taxable income is the full $120,000, so federal income tax is $21,398 against $17,570 for a resident. FICA is $9,180 because the exemption does not apply. You keep about $89,422, or 74.5% of gross.</p>",
+      "after": "<p>Many H-1B workers who spend most of the year in the US pass the substantial presence test and are taxed as residents, as in the Texas example. Nonresident rules fit a short stay or part of the arrival year. Check your own status. Treaties are not modelled.</p>"
+    },
+    {
+      "key": "f1-student",
+      "title": "How much tax does an F-1 student pay on $30,000 in the US?",
+      "intro": "<p>An F-1 student on $30,000 of wages in Massachusetts is a nonresident alien who is exempt from FICA. State income tax is $1,280, which is deducted as an itemised deduction, so taxable income is $28,720. Federal income tax is $3,198 with no standard deduction. You keep about $25,522, or 85.1% of gross.</p>",
+      "after": "<p>The marginal rate is 16.4%. Some tax treaties exempt part of a student's pay or allow a standard deduction, which the calculator does not apply. Students file Form 1040-NR and Form 8843.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce US tax. Each one assumes you actually have US wages and a payroll that supports it.</p>",
+  "strategies": [
+    {
+      "h3": "Traditional 401(k) contributions",
+      "html": "<p><strong>Suits:</strong> employees whose employer offers a 401(k), especially in the 22% bracket and above or in a high-tax state. Pre-tax contributions lower federal and most state income tax, and many employers match part of them. Nonresident aliens can contribute too.</p><p><strong>Caveat:</strong> contributions do not reduce FICA, withdrawals before retirement age usually carry a penalty, and an annual limit applies (check the current figure with the IRS). Taking the money out when you leave the US has its own tax rules.</p>"
+    },
+    {
+      "h3": "Health Savings Account (HSA)",
+      "html": "<p><strong>Suits:</strong> people on a high-deductible health plan. Payroll contributions are tax-free for income tax, and when made through the employer's plan are usually exempt from FICA too, and spending on qualified medical costs is untaxed.</p><p><strong>Caveat:</strong> you must have an eligible plan, an annual limit applies, and spending on non-medical items is taxed and penalised. Some states tax the contributions.</p>"
+    },
+    {
+      "h3": "Set your W-4 to match your real tax",
+      "html": "<p><strong>Suits:</strong> anyone starting a job, changing job or moving state. Withholding follows the form you give your employer. If it is too low you owe at the April return, and if it is too high you get a refund later.</p><p><strong>Caveat:</strong> nonresident aliens fill the W-4 under special instructions. Check the IRS guidance for your status.</p>"
+    },
+    {
+      "h3": "Claim the right status and any treaty or FICA exemption",
+      "html": "<p><strong>Suits:</strong> F-1, J-1 and other visa holders, and people on short assignments. Nonresident status, a tax treaty with your home country and the F, J, M and Q exemption from FICA can lower tax. Some countries also have a social security agreement that stops double contributions.</p><p><strong>Caveat:</strong> each one has conditions and forms, such as Form 8233 for a treaty claim on wages. Getting residency wrong can mean back tax. The calculator models only the FICA exemption.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover self-employment, investment income, capital gains or a part year.",
+    "<strong>No bonuses or equity.</strong> Stock awards, bonuses and allowances are not modelled separately.",
+    "<strong>Standard deduction only.</strong> Residents take the standard deduction. Itemised deductions, the child tax credit and other credits are not included. Only a nonresident alien's state tax is itemised.",
+    "<strong>Treaties are not modelled.</strong> A tax treaty exemption between the US and your country is not applied, nor are social security agreements.",
+    "<strong>39 states and DC.</strong> Eleven states are not loaded and return a message. A few states use prior-year figures, which the result notes.",
+    "<strong>Local tax only if you add it.</strong> City and county income taxes in states such as Maryland, Ohio, Pennsylvania and Indiana are included only when you enter a rate. Payroll programmes in other states are not modelled.",
+    "<strong>You choose your status.</strong> The calculator does not test whether you are a resident or nonresident alien."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on $120,000 in the US?",
+      "a": "<p>It depends on the state. A single resident pays about $26,750 and keeps about $93,250 in Texas, about $84,919 in California and about $82,410 in New York City. A nonresident alien in Texas keeps about $89,422. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Which US states have no income tax on wages?",
+      "a": "<p>Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator shows zero state tax for these. Property, sales and other taxes still apply, and these states can cost more elsewhere, so compare total costs with the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "q": "Why do I still pay FICA in a state with no income tax?",
+      "a": "<p>FICA is a federal payroll tax, collected for Social Security and Medicare, and has nothing to do with state income tax. Every employee on US payroll pays 6.2% Social Security (up to a wage base of $184,500) and 1.45% Medicare, in all 50 states. A state without income tax removes only the state line. On $120,000 that is $9,180 of FICA in Texas too.</p>"
+    },
+    {
+      "q": "Do I pay FICA on an F-1 visa or as an H-1B worker?",
+      "a": "<p>F-1, J-1, M and Q students and exchange visitors are exempt from Social Security and Medicare tax while they are nonresident aliens, which is why the F-1 example has no FICA line. H-1B workers are not exempt: they pay FICA from their first paycheck, whether taxed as resident or nonresident aliens.</p>"
+    },
+    {
+      "q": "Why is there no standard deduction for a nonresident alien?",
+      "a": "<p>US tax law gives the standard deduction to residents, not to nonresident aliens, with limited exceptions through treaties. A nonresident alien is taxed on US wages from the first dollar at the single rates, and can itemise only certain items, such as state income tax. That is why the $120,000 H-1B example pays $21,398 of federal tax against $17,570 for a resident. The substantial presence test decides whether you are a resident or not, so it matters to check.</p>"
+    },
+    {
+      "q": "Why do I file a US return in April, and why do many people get a refund?",
+      "a": "<p>The tax year is the calendar year and the return is due on 15 April (it can be extended). Your employer withholds tax from each payslip using your W-4, which is only an estimate. At the return you add up your actual tax, and if the withholding was higher you get a refund, or you pay the difference if it was lower. Nonresident aliens usually file Form 1040-NR.</p><p>The calculator shows the tax for a full year, which matches the final bill, not a single paycheck. Your payslips and any refund can differ from it.</p>"
+    },
+    {
+      "q": "Why does the calculator say my state is not covered?",
+      "a": "<p>Eleven states (Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin) reduce deductions or credits as income rises on schedules that are not loaded here. A flat approximation would misstate the tax, so the calculator returns a message instead. The other 39 states and DC are covered.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a coffee, American size."
+}

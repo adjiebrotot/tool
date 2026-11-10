@@ -1,0 +1,125 @@
+{
+  "slug": "united-arab-emirates",
+  "lang": "en",
+  "title": "UAE Income Tax 2026: Take-Home Pay for Expats",
+  "h1": "Income tax in the UAE (2026): how much do you take home?",
+  "description": "The UAE has no personal income tax on salary. See what expats keep, what Emirati nationals pay into GPSSA pension, and gratuity, with two worked examples.",
+  "lede": "<p>The United Arab Emirates charges no personal income tax on employment income, so an expat on AED 300,000 a year keeps the full AED 300,000. Emirati nationals pay 11% of salary into the GPSSA pension fund, about AED 33,000 on the same pay, and keep AED 267,000. Expats pay no pension contribution and instead earn an end-of-service gratuity from their employer.</p>",
+  "law": {
+    "intro": "<p>The figures are the 2026 rules as the calculator models them. There is no UAE tax on wages, bonuses or allowances for an individual, and no annual tax return for employment income. What differs by person is social security: nationals are in the federal pension system, and expats are not.</p>",
+    "blocks": [
+      {
+        "h3": "No personal income tax on salary",
+        "html": "<p>The UAE does not tax salary, so there are no brackets, no personal allowance and no withholding on your payslip. This applies to nationals and expats alike. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+      },
+      {
+        "h3": "GPSSA pension for UAE nationals",
+        "html": "<p>Emirati nationals working in the private and federal sectors are covered by the General Pension and Social Security Authority (GPSSA). The calculator deducts 11% of salary from the national, on pay up to AED 70,000 a month. The employer adds 12.5% and the government a further 2.5%, a total of 15% on top, which is shown as an employer cost and does not reduce take-home pay.</p>",
+        "table": {
+          "head": [
+            "Who pays",
+            "Rate",
+            "Cap"
+          ],
+          "rows": [
+            [
+              "Employee (national)",
+              "11%",
+              "AED 70,000 a month"
+            ],
+            [
+              "Employer",
+              "12.5%",
+              "AED 70,000 a month"
+            ],
+            [
+              "Government",
+              "2.5%",
+              "AED 70,000 a month"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Expats: gratuity instead of a pension",
+        "html": "<p>Expatriates do not contribute to GPSSA. Instead the employer owes an end-of-service gratuity when the contract ends, calculated from basic pay and years of service under UAE labour law. Some free zones, such as DIFC, also let employers use a workplace savings scheme in place of the gratuity. Check your contract for which applies.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "General Pension and Social Security Authority (GPSSA)",
+        "url": "https://gpssa.gov.ae/",
+        "note": "national pension contributions"
+      },
+      {
+        "name": "Federal Tax Authority",
+        "url": "https://tax.gov.ae/",
+        "note": "federal taxes, including VAT"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "How much tax does an expat pay in the UAE on AED 300,000?",
+      "intro": "<p>An expat on a salary of AED 300,000 pays no income tax and no pension contribution, so the take-home pay is AED 300,000, or 100% of gross. The marginal rate is 0%, so a raise is kept in full.</p>",
+      "after": "<p>The cost is that you build no state pension. Your gratuity is paid by the employer at the end of the contract and is not in this figure.</p>"
+    },
+    {
+      "key": "national",
+      "title": "Take-home pay for an Emirati national on AED 300,000, after GPSSA",
+      "intro": "<p>A UAE national on the same AED 300,000 has no income tax either, but pays 11% into GPSSA: AED 33,000 a year. You keep AED 267,000, or 89.0% of gross. The employer also pays 12.5% and the government 2.5% on top, AED 45,000 in total, which goes into your pension and does not come from your pay.</p>",
+      "after": "<p>The 11% is a pension contribution that builds a benefit, not a tax. The marginal rate is 11% until pay passes the monthly cap.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
+  "strategies": [
+    {
+      "h3": "Check your home-country tax residency before you move",
+      "html": "<p><strong>Suits:</strong> every expat. Zero tax in the Gulf does not always mean zero tax overall: some countries tax citizens on worldwide income, and others treat you as resident until you meet their exit conditions.</p><p><strong>Caveat:</strong> the rules sit in your home country's law, not in the Gulf state's. Ask your home tax authority or an adviser, and keep records of your move.</p>"
+    },
+    {
+      "h3": "Save and invest the extra take-home yourself",
+      "html": "<p><strong>Suits:</strong> expats who keep the whole salary. Without a pension deduction, retirement saving is your own job. Regular contributions to a pension or investment plan in your home country or a low-cost portfolio are the usual route.</p><p><strong>Caveat:</strong> a gratuity at the end of the contract is not a retirement plan, and where you invest decides the tax on the returns. Use the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> to see how much you need.</p>"
+    },
+    {
+      "h3": "Read your contract: gratuity, free-zone scheme and allowances",
+      "html": "<p><strong>Suits:</strong> new arrivals comparing offers. The gratuity rules, any free-zone savings scheme and the split between basic pay and allowances all change what you receive when you leave.</p><p><strong>Caveat:</strong> gratuity is usually based on basic pay, so a package with a low basic salary and large allowances can pay less at the end. Ask for the figures in writing.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year, with no other income, bonuses or a part year.",
+    "<strong>Gratuity not modelled.</strong> End-of-service gratuity depends on your basic pay, length of service and contract, so it is not added to the figures.",
+    "<strong>Home-country tax.</strong> The calculator shows only what the Gulf state takes. Your home country may still tax you on worldwide income, depending on its rules and any treaty.",
+    "<strong>You choose the status.</strong> The calculator takes national or expat from you and does not test whether you qualify.",
+    "<strong>Package versus cash.</strong> The calculator takes the gross pay you enter. Housing, schooling or flight allowances in your contract are not split out.",
+    "<strong>Nationals' extras.</strong> Only the standard 11% employee and the 15% employer and government shares are modelled."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on AED 300,000 in the UAE?",
+      "a": "<p>An expat pays no income tax and keeps AED 300,000. A national pays 11% into GPSSA and keeps AED 267,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is end-of-service gratuity and why do expats get it instead of a pension?",
+      "a": "<p>Expatriates are not part of the GPSSA pension system. Instead, UAE labour law makes the employer pay a lump sum when your contract ends, based on your basic pay and how long you worked there. It works as a one-off payout rather than a monthly pension, so the money arrives only when you leave. Some free zones let employers offer a savings scheme in its place.</p><p>The calculator does not include the gratuity, because it depends on your contract. It shows only what leaves your pay.</p>"
+    },
+    {
+      "q": "Why do UAE nationals pay 11% when expats pay nothing?",
+      "a": "<p>Nationals are covered by the federal pension fund, GPSSA, and it is funded by contributions from the worker, the employer (12.5%) and the government (2.5%). Expats are outside that scheme, so there is nothing to deduct. The 11% is a pension saving that comes back as a benefit, but it does reduce your take-home pay.</p>"
+    },
+    {
+      "q": "Is there really no income tax in the UAE?",
+      "a": "<p>There is no personal income tax on salary and no tax return for employment income. The country has other taxes, such as VAT, which is paid when you buy goods and services, not taken from your pay. Your home country may still want tax from you.</p>"
+    },
+    {
+      "q": "Do I need to keep paying tax at home if I live in the UAE?",
+      "a": "<p>Maybe. Some countries tax citizens or residents on worldwide income, and a move abroad does not always end residency for tax. The rules are set by your home country and any tax treaty, and the calculator does not model them. Check with your home tax authority.</p>"
+    },
+    {
+      "q": "What is my salary worth in the UAE compared with my home city?",
+      "a": "<p>The <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> shows what a salary buys in another city. Rent is often the biggest difference for expats.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a karak chai."
+}

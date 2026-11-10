@@ -1,0 +1,120 @@
+{
+  "slug": "kuwait",
+  "lang": "en",
+  "title": "Kuwait Income Tax 2026: Take-Home Pay for Expats",
+  "h1": "Income tax in Kuwait (2026): what do you keep from your salary?",
+  "description": "Kuwait charges no income tax on salary. See what expats keep, what Kuwaiti nationals pay to PIFSS, and the end-of-service indemnity, with two worked examples.",
+  "lede": "<p>Kuwait charges no personal income tax on employment income, so an expat on KWD 18,000 a year keeps the full KWD 18,000. A Kuwaiti national pays into the PIFSS social security fund, KWD 1,890 on the same pay as the calculator models it, and keeps KWD 16,110. Expats are not covered by PIFSS and receive an end-of-service indemnity from the employer.</p>",
+  "law": {
+    "intro": "<p>The figures are the 2026 rules as the calculator models them. Salary is not taxed for individuals in Kuwait. Social security is handled by the Public Institution for Social Security (PIFSS), which covers Kuwaiti nationals only.</p>",
+    "blocks": [
+      {
+        "h3": "No personal income tax on salary",
+        "html": "<p>Kuwait does not tax wages, allowances or bonuses for an individual, so there is no withholding on your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+      },
+      {
+        "h3": "PIFSS contributions for Kuwaiti nationals",
+        "html": "<p>The calculator takes 8% of pay for Kuwaiti nationals on monthly pay up to KWD 2,750, plus a further 2.5% on the first KWD 1,500 of monthly pay. For KWD 18,000 a year, pay is KWD 1,500 a month, so the total is KWD 157.50 a month. The employer pays its own share on top, which is not shown.</p>",
+        "table": {
+          "head": [
+            "Part",
+            "Employee rate",
+            "Applies to monthly pay up to"
+          ],
+          "rows": [
+            [
+              "Main contribution",
+              "8%",
+              "KWD 2,750"
+            ],
+            [
+              "Additional contribution",
+              "2.5%",
+              "KWD 1,500"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Expats: no social insurance",
+        "html": "<p>Expatriates are not covered by PIFSS and pay nothing into it. When the contract ends, the employer owes an end-of-service indemnity under the labour law, calculated from pay and years of service.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Public Institution for Social Security (PIFSS)",
+        "url": "https://www.pifss.gov.kw/",
+        "note": "social security for nationals"
+      },
+      {
+        "name": "Ministry of Finance, Kuwait",
+        "url": "https://www.mof.gov.kw/",
+        "note": "taxes in Kuwait"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Take-home pay for an expat in Kuwait on KWD 18,000",
+      "intro": "<p>An expat on KWD 18,000 pays no income tax and no social insurance, so take-home pay is KWD 18,000, or 100% of gross. A raise is kept in full because the marginal rate is 0%.</p>",
+      "after": "<p>The end-of-service indemnity is paid separately by the employer and is not in the figure.</p>"
+    },
+    {
+      "key": "national",
+      "title": "How much do Kuwaiti nationals pay to PIFSS on KWD 18,000?",
+      "intro": "<p>A Kuwaiti national on KWD 18,000 pays no income tax but KWD 1,890 a year to PIFSS: 8% of KWD 1,500 a month plus 2.5% of the same KWD 1,500. You keep KWD 16,110, or 89.5% of gross, and the marginal rate is 8% on extra pay up to the KWD 2,750 monthly cap.</p>",
+      "after": "<p>The contribution builds social security rights and is not a tax. The employer's share is not shown.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
+  "strategies": [
+    {
+      "h3": "Check your home-country tax residency before you move",
+      "html": "<p><strong>Suits:</strong> every expat. Zero tax in the Gulf does not always mean zero tax overall: some countries tax citizens on worldwide income, and others treat you as resident until you meet their exit conditions.</p><p><strong>Caveat:</strong> the rules sit in your home country's law, not in the Gulf state's. Ask your home tax authority or an adviser, and keep records of your move.</p>"
+    },
+    {
+      "h3": "Save and invest the extra take-home yourself",
+      "html": "<p><strong>Suits:</strong> expats who keep the whole salary. Without a pension deduction, retirement saving is your own job. Regular contributions to a pension or investment plan in your home country or a low-cost portfolio are the usual route.</p><p><strong>Caveat:</strong> a gratuity at the end of the contract is not a retirement plan, and where you invest decides the tax on the returns. Use the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> to see how much you need.</p>"
+    },
+    {
+      "h3": "Understand your indemnity before you sign",
+      "html": "<p><strong>Suits:</strong> expats comparing offers. The end-of-service indemnity is your employer-funded exit benefit.</p><p><strong>Caveat:</strong> the amount depends on pay, years of service and the contract, so ask how it is worked out.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year, with no other income, bonuses or a part year.",
+    "<strong>Gratuity not modelled.</strong> End-of-service gratuity depends on your basic pay, length of service and contract, so it is not added to the figures.",
+    "<strong>Home-country tax.</strong> The calculator shows only what the Gulf state takes. Your home country may still tax you on worldwide income, depending on its rules and any treaty.",
+    "<strong>You choose the status.</strong> The calculator takes national or expat from you and does not test whether you qualify.",
+    "<strong>Package versus cash.</strong> The calculator takes the gross pay you enter. Housing, schooling or flight allowances in your contract are not split out.",
+    "<strong>Employer share.</strong> The employer's own PIFSS contribution is not shown."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on KWD 18,000 in Kuwait?",
+      "a": "<p>An expat pays no income tax and keeps KWD 18,000. A Kuwaiti national pays KWD 1,890 to PIFSS and keeps KWD 16,110. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the end-of-service indemnity in Kuwait, and is it a pension?",
+      "a": "<p>It is a lump sum the employer pays an expat at the end of the contract, based on pay and years of service under the labour law. Because expats are outside PIFSS, this is their replacement for a pension, but it is paid once, not monthly. The calculator leaves it out because it depends on your contract.</p>"
+    },
+    {
+      "q": "Why do Kuwaitis pay two PIFSS rates?",
+      "a": "<p>As the calculator models it, nationals pay 8% on monthly pay up to KWD 2,750 and an extra 2.5% on the first KWD 1,500 of monthly pay. The second rate means lower-paid nationals pay a higher share of pay overall than the 8% headline.</p>"
+    },
+    {
+      "q": "Is there really no income tax in Kuwait?",
+      "a": "<p>There is no personal income tax on salary. Your home country may still tax you under its own rules.</p>"
+    },
+    {
+      "q": "Do I need to pay tax at home if I work in Kuwait?",
+      "a": "<p>It depends on your home country, which the calculator does not model. Some countries tax citizens on worldwide income or keep you resident for tax for a time. Check with your home tax authority.</p>"
+    },
+    {
+      "q": "What does a Kuwait salary buy compared with home?",
+      "a": "<p>The <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> shows what a salary buys in another city.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a coffee."
+}

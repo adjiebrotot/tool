@@ -1,0 +1,154 @@
+{
+  "slug": "taiwan",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Taiwan (Tiongkok) 2026",
+  "h1": "Cara menghitung pajak penghasilan di Taiwan (Tiongkok, 2026)",
+  "description": "Pajak gaji di Taiwan (Tiongkok) 2026: aturan 183 hari, potongan non-resident, Gold Card, plus contoh gaji bersih untuk pekerja dari Indonesia.",
+  "lede": "<p>Taiwan (Tiongkok) memajaki penduduk pajak, yaitu orang yang tinggal 183 hari atau lebih dalam satu tahun kalender, dengan tarif bertingkat 5% sampai 40% setelah pengurang gaji, pembebasan pribadi dan potongan standar. Orang yang belum memenuhi 183 hari dipotong pajak final: 6% kalau gaji bulanannya tidak lebih dari NT$44.250, dan 18% kalau lebih. Sebagai gambaran, gaji NT$1.200.000 setahun bagi penduduk pajak lajang menyisakan gaji bersih (<em>take-home pay</em>) sekitar NT$1.122.028 (93,5%), sedangkan gaji NT$600.000 bagi <em>non-resident</em> menyisakan sekitar NT$468.954 (78,2%).</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini untuk tahun pajak 2026 (1 Januari sampai 31 Desember). Status pajakmu ditentukan oleh lama tinggalmu di dalam tahun kalender, bukan oleh kewarganegaraan atau jenis visa: 183 hari atau lebih berarti penduduk pajak (<em>resident</em>), dan kurang dari itu berarti <em>non-resident</em>. Pemberi kerja memotong pajak dari gajimu setiap bulan, dan laporan pajak tahunan diajukan pada Mei tahun berikutnya.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan untuk penduduk pajak",
+        "html": "<p>Pajak dihitung dari penghasilan neto kena pajak dengan tarif bertingkat di bawah ini. Penghasilan neto didapat dari gaji setelah dikurangi potongan khusus gaji (<em>salary special deduction</em>) sampai NT$227.000, pembebasan pribadi NT$101.000 untuk dirimu dan untuk pasangan, pembebasan untuk tanggungan, dan potongan standar NT$136.000 untuk lajang atau NT$272.000 untuk pasangan yang melapor bersama. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat.</p>",
+        "table": {
+          "head": [
+            "Penghasilan neto kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            ["Sampai NT$610.000", "5%"],
+            ["NT$610.001 sampai NT$1.380.000", "12%"],
+            ["NT$1.380.001 sampai NT$2.770.000", "20%"],
+            ["NT$2.770.001 sampai NT$5.190.000", "30%"],
+            ["Di atas NT$5.190.000", "40%"]
+          ]
+        }
+      },
+      {
+        "h3": "Aturan 183 hari dan potongan untuk <em>non-resident</em>",
+        "html": "<p>Orang yang belum tinggal 183 hari dalam tahun kalender dipotong pajak final atas gajinya: 18%, atau 6% kalau gaji bulanannya tidak lebih dari NT$44.250 (batas di kalkulator, yaitu 1,5 kali upah minimum bulanan). Tarif 6% itu penting bagi pekerja migran dengan gaji sekitar upah minimum. Kalau pada akhirnya kamu melewati 183 hari di tahun yang sama, kamu melapor sebagai penduduk pajak pada Mei tahun berikutnya, dan pajak yang sudah dipotong dikreditkan, sehingga kelebihannya umumnya dikembalikan.</p>"
+      },
+      {
+        "h3": "Asuransi tenaga kerja dan asuransi kesehatan nasional",
+        "html": "<p>Dua iuran wajib dipotong dari gajimu, dan kalkulator memakai bagian pekerja dari keduanya. Iuran dihitung dari gaji bulanan sampai batas atas. Pekerja asing yang bekerja secara sah di Taiwan umumnya terdaftar di keduanya, jadi iuran ini juga dipotong dari <em>non-resident</em>.</p>",
+        "table": {
+          "head": [
+            "Iuran (bagianmu)",
+            "Dasar hitung"
+          ],
+          "rows": [
+            ["Asuransi tenaga kerja (<em>labour insurance</em>)", "20% dari premi 12,5%, atau 2,5% dari gaji, sampai gaji bulanan NT$45.800"],
+            ["Asuransi kesehatan nasional (<em>National Health Insurance</em>, NHI)", "30% dari premi 5,17%, atau sekitar 1,55% dari gaji, sampai gaji bulanan NT$219.500"]
+          ]
+        }
+      },
+      {
+        "h3": "Gold Card",
+        "html": "<p>Pemegang <em>Employment Gold Card</em>, izin kerja dan izin tinggal untuk profesional asing, mendapat keringanan pajak: setengah dari gaji yang melebihi NT$3.000.000 tidak dikenai pajak selama lima tahun. Kalkulator menghitung keringanan itu atas gaji setelah potongan khusus gaji. Syarat memperoleh kartunya ditetapkan pemerintah Taiwan, jadi cek di situs resmi sebelum mengandalkannya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Kementerian Keuangan Taiwan (MOF), tarif pajak penghasilan perorangan",
+        "url": "https://www.mof.gov.tw/"
+      },
+      {
+        "name": "National Taxation Bureau of Taipei, laporan pajak dan status residensi",
+        "url": "https://www.ntbt.gov.tw/"
+      },
+      {
+        "name": "Bureau of Labor Insurance (BLI), asuransi tenaga kerja",
+        "url": "https://www.bli.gov.tw/"
+      },
+      {
+        "name": "National Health Insurance Administration (NHIA), asuransi kesehatan nasional",
+        "url": "https://www.nhi.gov.tw/"
+      },
+      {
+        "name": "National Immigration Agency, izin tinggal",
+        "url": "https://www.immigration.gov.tw/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "Berapa gaji bersih di Taiwan (Tiongkok) dengan gaji NT$1.200.000 setahun?",
+      "intro": "<p>Contoh ini untuk penduduk pajak lajang tanpa tanggungan dengan gaji NT$1.200.000 setahun (NT$100.000 per bulan). Potongan khusus gaji NT$227.000 dan pembebasan beserta potongan standar NT$237.000 membuat penghasilan neto kena pajaknya NT$736.000, yang jatuh di tingkat 12%, sehingga pajaknya NT$45.620. Asuransi tenaga kerja NT$13.740 dan asuransi kesehatan NT$18.612 menambah potongan. Gaji bersihnya sekitar NT$1.122.028, atau 93,5% dari gaji, dengan tarif marginal (pajak dan iuran atas setiap tambahan dolar penghasilan) sebesar 13,6%.</p>",
+      "after": "<p>Pada gaji ini, asuransi tenaga kerja sudah mencapai batas atas gaji NT$45.800 per bulan, jadi kenaikan gaji berikutnya hanya menambah pajak dan asuransi kesehatan.</p>"
+    },
+    {
+      "key": "non-resident",
+      "title": "Berapa pajak <em>non-resident</em> di Taiwan (Tiongkok) dengan gaji NT$600.000 setahun?",
+      "intro": "<p>Contoh ini untuk orang yang bekerja di Taiwan tetapi belum tinggal 183 hari dalam tahun kalender, misalnya pada bulan-bulan pertama. Gajinya NT$50.000 per bulan, di atas batas NT$44.250, sehingga tarif finalnya 18%, yaitu NT$108.000. Asuransi tenaga kerja NT$13.740 dan asuransi kesehatan NT$9.306 tetap dipotong. Gaji bersihnya sekitar NT$468.954 (78,2%), dengan tarif marginal 19,6%.</p>",
+      "after": "<p>Kalau kamu kemudian melewati 183 hari dan melapor sebagai penduduk pajak, pajak untuk gaji yang sama hanya sekitar NT$6.800, sehingga selisihnya dikembalikan. Pada gaji NT$360.000 setahun (NT$30.000 per bulan), tarif 6% menghasilkan pajak NT$21.600.</p>"
+    },
+    {
+      "key": "gold-card",
+      "title": "Berapa pajak pemegang <em>Gold Card</em> di Taiwan (Tiongkok) dengan gaji NT$5.000.000?",
+      "intro": "<p>Contoh ini untuk profesional asing pemegang <em>Employment Gold Card</em>, penduduk pajak lajang, dengan gaji NT$5.000.000 setahun. Setelah potongan khusus gaji NT$227.000, gaji kena pajak tinggal NT$4.773.000, dan separuh dari bagian di atas NT$3.000.000 (NT$886.500) dikecualikan. Setelah pembebasan dan potongan standar NT$237.000, penghasilan neto kena pajaknya NT$3.649.500, di tingkat 30%, dan pajaknya NT$664.750. Gaji bersihnya sekitar NT$4.280.657 (85,6%), dengan tarif marginal 15,0%.</p>",
+      "after": "<p>Tanpa keringanan Gold Card, pajaknya sekitar NT$930.700 dan gaji bersihnya sekitar NT$4.014.707 (80,3%), jadi keringanan itu menghemat sekitar NT$265.950 setahun.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs otoritas pajak Taiwan. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Hitung hari tinggalmu dan lapor pajak pada Mei",
+      "html": "<p>Status penduduk pajak ditentukan oleh jumlah hari tinggalmu di dalam tahun kalender, dan pada gaji rendah sampai menengah tarif penduduk jauh lebih ringan daripada tarif <em>non-resident</em> 18%. Kalau kamu melewati 183 hari, ajukan laporan pajak tahunan pada Mei supaya potongan awal tahun dikreditkan dan kelebihannya kembali. Cocok untuk pekerja yang datang di tengah tahun. Simpan bukti masuk dan keluar Taiwan, karena petugas pajak bisa memintanya.</p>"
+    },
+    {
+      "h3": "Pilih potongan rinci kalau lebih besar daripada potongan standar",
+      "html": "<p>Taiwan membolehkan potongan rinci, seperti donasi, premi asuransi, biaya pengobatan dan sewa, sebagai pengganti potongan standar NT$136.000 untuk lajang. Pilih yang lebih besar. Cocok untuk penduduk pajak bergaji tinggi dengan pengeluaran besar yang punya buktinya. Pada gaji menengah, potongan standar sering sudah lebih besar, dan kalkulator ini hanya memakai potongan standar.</p>"
+    },
+    {
+      "h3": "Gold Card untuk profesional bergaji tinggi",
+      "html": "<p>Keringanan Gold Card mengecualikan 50% gaji di atas NT$3.000.000 selama lima tahun, dan pada gaji NT$5.000.000 menghemat sekitar NT$265.950 setahun. Cocok untuk insinyur atau profesional senior yang memenuhi syarat kartunya. Keringanannya hanya terasa pada gaji tinggi, dan kartunya sendiri butuh persetujuan pemerintah Taiwan, jadi cek syarat dan masa berlakunya di situs resmi.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun serta beberapa pemberi kerja tidak dimodelkan, padahal itu sering terjadi pada pekerja baru.",
+    "<strong>Tanpa bonus dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, saham atau tunjangan lain.",
+    "<strong>Hanya potongan standar.</strong> Potongan rinci seperti donasi, premi asuransi, biaya pengobatan dan sewa tidak dihitung, jadi pajakmu bisa lebih rendah.",
+    "<strong>Iuran memakai gaji sebenarnya.</strong> Kalkulator menghitung iuran dari gaji bulanan sampai batas atas, sedangkan dalam praktiknya iuran memakai golongan gaji terasuransi.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian atau kesepakatan penghindaran pajak berganda dan kewajiban lapor di Indonesia tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Status pajak dan hasil akhirnya ditentukan otoritas pajak Taiwan, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Berapa potongan pajak <em>non-resident</em> di Taiwan (Tiongkok), 6% atau 18%?",
+      "a": "<p>Gaji <em>non-resident</em> dipotong pajak final 6% kalau gaji bulanannya tidak lebih dari NT$44.250 (1,5 kali upah minimum bulanan), dan 18% kalau lebih. Pada gaji NT$30.000 per bulan (NT$360.000 setahun), pajaknya NT$21.600, dan pada gaji NT$50.000 per bulan (NT$600.000 setahun), pajaknya NT$108.000. Hitung dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Apa itu aturan 183 hari di Taiwan dan apa dampaknya pada pajak saya?",
+      "a": "<p>Orang yang tinggal 183 hari atau lebih dalam satu tahun kalender dianggap penduduk pajak dan dikenai tarif bertingkat 5% sampai 40% setelah pengurang. Orang yang kurang dari itu dipotong pajak final. Karena status ini baru diketahui setelah tahun berakhir, pemberi kerja biasanya memotong dengan tarif <em>non-resident</em> di bulan-bulan pertama. Setelah kamu melewati 183 hari, kamu melapor pada Mei tahun berikutnya dan pajak yang sudah dipotong dikreditkan. Pada gaji NT$600.000, pajak penduduknya sekitar NT$6.800, dibandingkan NT$108.000 yang dipotong sebagai <em>non-resident</em>. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+    },
+    {
+      "q": "Apa itu Gold Card Taiwan dan berapa penghematan pajaknya?",
+      "a": "<p><em>Employment Gold Card</em> adalah izin kerja sekaligus izin tinggal untuk profesional asing. Pemegangnya mendapat keringanan pajak: 50% gaji di atas NT$3.000.000 dikecualikan selama lima tahun. Pada gaji NT$5.000.000, pajaknya sekitar NT$664.750 dibandingkan NT$930.700 tanpa kartu, jadi hemat sekitar NT$265.950 setahun. Syarat memperoleh kartunya ditetapkan pemerintah Taiwan.</p>"
+    },
+    {
+      "q": "Berapa potongan asuransi tenaga kerja dan asuransi kesehatan di Taiwan?",
+      "a": "<p>Menurut kalkulator ini, bagianmu untuk asuransi tenaga kerja 2,5% dari gaji bulanan sampai NT$45.800, jadi paling banyak NT$13.740 setahun, dan untuk asuransi kesehatan nasional sekitar 1,55% dari gaji bulanan sampai NT$219.500. Pada gaji NT$1.200.000, jumlahnya NT$13.740 dan NT$18.612. Pemberi kerja membayar bagian yang sepadan di luar gajimu.</p>"
+    },
+    {
+      "q": "Berapa gaji bersih dari gaji NT$1.200.000 setahun di Taiwan (Tiongkok)?",
+      "a": "<p>Untuk penduduk pajak lajang, gaji bersihnya sekitar NT$1.122.028 (93,5%) setelah pajak NT$45.620, asuransi tenaga kerja NT$13.740 dan asuransi kesehatan NT$18.612.</p>"
+    },
+    {
+      "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Taiwan dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena sewa, makan dan transportasi juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Labour insurance, employee share": "Asuransi tenaga kerja, bagian pekerja",
+    "National health insurance, employee share": "Asuransi kesehatan nasional, bagian pekerja",
+    "Salary special deduction": "Potongan khusus gaji",
+    "Gold Card exclusion (50% above 3M)": "Keringanan Gold Card (50% di atas NT$3 juta)",
+    "Exemptions and standard deduction": "Pembebasan dan potongan standar",
+    "Individual income tax": "Pajak penghasilan perorangan",
+    "Withholding, non-resident (18%, final)": "Potongan pajak non-resident (18%, final)",
+    "Withholding, non-resident (6%, final)": "Potongan pajak non-resident (6%, final)"
+  }
+}

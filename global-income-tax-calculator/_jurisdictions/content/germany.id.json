@@ -1,0 +1,174 @@
+{
+  "slug": "germany",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Gaji di Jerman 2026",
+  "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Jerman (2026)",
+  "description": "Pajak gaji di Jerman 2026: kelas pajak I dan III, iuran sosial, Soli dan pajak gereja, plus contoh gaji bersih perawat dengan gaji €42.000 setahun.",
+  "lede": "<p>Jerman memajaki penghasilan kerja dengan tarif progresif yang naik bertahap dari 14% sampai 42%, lalu 45% untuk bagian di atas €277.825, sedangkan €12.348 pertama bebas pajak. Di luar pajak itu, karyawan membayar sekitar 21,75% iuran asuransi sosial dari gaji kotornya. Sebagai gambaran, perawat lajang di kelas pajak I (<em>Steuerklasse</em> I) dengan gaji kotor €42.000 setahun mendapat gaji bersih (<em>take-home pay</em>) sekitar €27.999, atau 66,7% dari gaji kotornya, dan iuran sosialnya (€9.135) justru lebih besar daripada pajak penghasilannya (€4.866).</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini berlaku untuk tahun pajak 2026, yang berjalan dari 1 Januari sampai 31 Desember 2026. Apa pun kewarganegaraanmu, kamu dikenai pajak penghasilan Jerman atas penghasilan dari seluruh dunia kalau kamu punya tempat tinggal di sana atau biasanya tinggal di sana lebih dari enam bulan. Bagi pekerja dari Indonesia, mendaftarkan tempat tinggal (<em>Anmeldung</em>) di kantor kota biasanya menjadi langkah pertama, karena dari situ kamu mendapat nomor pajak pribadi (<em>Steuer-ID</em>) yang diminta pemberi kerja. Pajak penghasilan dan iuran asuransi sosial dipotong langsung oleh pemberi kerja sebelum gaji masuk ke rekeningmu.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan 2026 (<em>Einkommensteuer</em>)",
+        "html": "<p>Pajak penghasilan Jerman dihitung dengan rumus yang kenaikannya mulus, bukan dengan tingkat tarif yang tetap. Penghasilan kena pajak sampai €12.348 bebas pajak (<em>Grundfreibetrag</em>). Di atasnya tarif marginal naik dari 14% sampai sekitar 24%, lalu dari sekitar 24% sampai 42%, dan tarif tetap 42% berlaku sampai €277.825 sebelum menjadi 45%.</p><p>Penghasilan kena pajak bukan gaji kotor. Kalkulator mengurangi gaji kotor dengan potongan standar biaya kerja €1.230 (<em>Werbungskosten-Pauschbetrag</em>) dan potongan standar pengeluaran khusus €36, lalu dengan iuran pensiun, iuran perawatan jangka panjang dan bagian iuran kesehatan untuk perlindungan dasar yang kamu bayar. Itulah sebabnya pajak atas gaji kotor €65.000 dihitung dari penghasilan kena pajak sekitar €50.637, bukan dari €65.000.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif marginal"
+          ],
+          "rows": [
+            ["Sampai €12.348", "0%"],
+            ["€12.349 sampai €17.799", "naik dari 14% ke sekitar 24%"],
+            ["€17.800 sampai €69.878", "naik dari sekitar 24% ke 42%"],
+            ["€69.879 sampai €277.825", "42%"],
+            ["Di atas €277.825", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "Iuran asuransi sosial bagian karyawan",
+        "html": "<p>Iuran sosial dipotong dari gaji kotor, dan pada gaji menengah ke bawah jumlahnya bisa lebih besar daripada pajak penghasilan. Tabel di bawah hanya memuat bagianmu: pemberi kerja menanggung bagiannya sendiri di luar gaji yang tertulis di kontrak. Iuran tambahan kesehatan berbeda-beda antar dana asuransi (<em>Krankenkasse</em>), dan kalkulator memakai 2,9% sebagai angka rata-rata yang bisa kamu ubah.</p>",
+        "table": {
+          "head": [
+            "Iuran",
+            "Bagian karyawan",
+            "Batas gaji per tahun"
+          ],
+          "rows": [
+            ["Pensiun (<em>Rentenversicherung</em>)", "9,3%", "€101.400"],
+            ["Pengangguran (<em>Arbeitslosenversicherung</em>)", "1,3%", "€101.400"],
+            ["Kesehatan wajib (<em>gesetzliche Krankenversicherung</em>)", "7,3% ditambah setengah iuran tambahan (dengan 2,9%, totalnya 8,75%)", "€69.750"],
+            ["Perawatan jangka panjang (<em>Pflegeversicherung</em>)", "1,8%, atau 2,4% kalau tanpa anak", "€69.750"]
+          ]
+        }
+      },
+      {
+        "h3": "Kelas pajak (<em>Steuerklasse</em>)",
+        "html": "<p>Kelas pajak menentukan berapa pajak yang dipotong dari gajimu tiap bulan, bukan berapa pajak akhirmu. Lajang otomatis masuk kelas I. Pasangan menikah memilih kombinasi: kelas III untuk pasangan yang berpenghasilan lebih besar dan kelas V untuk pasangan lainnya, atau kelas IV untuk keduanya. Kelas III memakai pembagian penghasilan pasangan (<em>Ehegattensplitting</em>): penghasilan dibagi dua, dipajaki, lalu hasilnya dikali dua. Kelas V memotong lebih berat karena keringanan pasangan sudah terpakai di kelas III.</p><p>Kalkulator ini menghitung kelas I dan kelas III untuk pencari nafkah tunggal. Pajak akhir ditentukan lewat laporan pajak tahunan (<em>Einkommensteuererklärung</em>), yang wajib diisi pasangan dengan kombinasi kelas III dan V, dan selisih antara potongan bulanan dan pajak sebenarnya diperhitungkan di sana.</p>"
+      },
+      {
+        "h3": "<em>Solidaritätszuschlag</em> (Soli) dan pajak gereja (<em>Kirchensteuer</em>)",
+        "html": "<p><em>Soli</em> adalah tambahan 5,5% dari pajak penghasilan, tetapi hanya dikenakan kalau pajak penghasilanmu melewati ambang €20.350 untuk lajang atau €40.700 untuk kelas III. Di atas ambang itu tambahannya naik bertahap, yaitu 11,9% dari selisihnya sampai mencapai 5,5%, jadi tidak ada lonjakan mendadak. Pada pengaturan bawaan kalkulator, lajang di kelas I baru kena <em>Soli</em> mulai gaji kotor sekitar €92.500 setahun, sehingga untuk gaji perawat dan banyak lulusan <em>Ausbildung</em> (pendidikan kejuruan) <em>Soli</em> tidak muncul sama sekali.</p><p>Pajak gereja hanya dibayar anggota gereja yang diakui negara untuk memungutnya, seperti gereja Katolik dan Protestan. Besarnya 9% dari pajak penghasilan di sebagian besar negara bagian, dan 8% di Bayern dan Baden-Württemberg. Kalau kamu tidak tercatat sebagai anggota, tidak ada pajak gereja, dan kalkulator memakai 0% kecuali kamu mengisi tarifnya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Bundesfinanzministerium (BMF), tarif pajak penghasilan (§32a EStG) dan program potongan pajak gaji",
+        "url": "https://www.bundesfinanzministerium.de/"
+      },
+      {
+        "name": "Deutsche Rentenversicherung, iuran pensiun dan batas penghasilan 2026",
+        "url": "https://www.deutsche-rentenversicherung.de/"
+      },
+      {
+        "name": "Bundeszentralamt für Steuern, nomor pajak pribadi (<em>Steuer-ID</em>)",
+        "url": "https://www.bzst.de/"
+      },
+      {
+        "name": "GKV-Spitzenverband, asuransi kesehatan wajib",
+        "url": "https://www.gkv-spitzenverband.de/"
+      },
+      {
+        "name": "Make it in Germany, portal pemerintah untuk tenaga kerja asing",
+        "url": "https://www.make-it-in-germany.com/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single",
+      "title": "Berapa gaji bersih lajang di Jerman dengan gaji kotor €65.000 setahun?",
+      "intro": "<p>Contoh ini untuk lajang tanpa anak di kelas pajak I dengan satu pekerjaan sepanjang tahun, tanpa pajak gereja. Dari gaji kotor €65.000, kalkulator mengurangi potongan standar dan iuran sosial yang boleh dikurangkan, sehingga penghasilan kena pajaknya sekitar €50.637 dan pajak penghasilannya €10.772. Iuran sosial totalnya €14.138, yaitu pensiun €6.045, pengangguran €845, kesehatan €5.688 dan perawatan jangka panjang €1.560. Gaji bersihnya sekitar €40.091, atau 61,7% dari gaji kotor, dan tarif marginalnya 50,1%, gabungan tarif marginal pajak dan iuran sosial 21,75%.</p>",
+      "after": "<p><em>Soli</em> tidak muncul di contoh ini karena pajak penghasilan €10.772 masih di bawah ambang €20.350, dan pajak gereja juga nol karena kalkulator memakai tarif 0%.</p>"
+    },
+    {
+      "key": "nurse",
+      "title": "Berapa gaji bersih perawat di Jerman dengan gaji €42.000?",
+      "intro": "<p>Contoh ini untuk perawat (<em>Pflegefachkraft</em>) lajang tanpa anak di kelas pajak I, misalnya lulusan <em>Ausbildung</em> atau perawat yang kualifikasinya sudah diakui dan kini bekerja penuh waktu. Angka €42.000 setahun hanya ilustrasi, bukan tarif gaji resmi, jadi ganti dengan gajimu sendiri. Penghasilan kena pajaknya sekitar €32.271, dengan pajak penghasilan €4.866 (11,6% dari gaji kotor). Iuran sosial sebesar €9.135 (21,75% dari gaji kotor) justru lebih besar daripada pajaknya: pensiun €3.906, pengangguran €546, kesehatan €3.675 dan perawatan jangka panjang tanpa anak €1.008. Gaji bersihnya sekitar €27.999, atau 66,7% dari gaji kotor, dan tarif marginalnya 44,8%.</p>",
+      "after": "<p>Dua hal yang menggeser angka ini adalah iuran tambahan dana kesehatanmu, yang berbeda-beda antar dana, dan ada tidaknya anak, karena orang tua membayar iuran perawatan jangka panjang 1,8%, bukan 2,4%.</p>"
+    },
+    {
+      "key": "married-sole-earner",
+      "title": "Cara menghitung pajak kelas III di Jerman untuk pasangan dengan satu pencari nafkah",
+      "intro": "<p>Contoh ini untuk pasangan menikah dengan satu anak dan satu pencari nafkah, di kelas pajak III, dengan gaji kotor €65.000 dan pasangan tanpa penghasilan. Kalkulator memakai pembagian penghasilan pasangan (<em>Ehegattensplitting</em>): penghasilan kena pajak sekitar €51.027 dibagi dua, dipajaki, lalu hasilnya dikali dua, sehingga pajak penghasilannya hanya €5.972, dibanding €10.772 untuk lajang dengan gaji yang sama. Iuran perawatan jangka panjang juga lebih rendah, €1.170 (1,8%) dibanding €1.560, karena ada anak. Gaji bersihnya sekitar €45.281, atau 69,7% dari gaji kotor, dan tarif marginalnya 42,7%.</p>",
+      "after": "<p>Tunjangan anak (<em>Kindergeld</em>) dan keringanan pajak untuk anak tidak dimodelkan: anak di contoh ini hanya mengubah iuran perawatan jangka panjang. Kalau pasanganmu juga bekerja, pilihan kelasnya berubah dan hasilnya tidak bisa dibaca dari contoh ini.</p>"
+    },
+    {
+      "key": "church-tax",
+      "title": "Berapa pajak gereja di Jerman untuk gaji €65.000 dan apa dampaknya ke gaji bersih?",
+      "intro": "<p>Contoh ini sama dengan contoh lajang €65.000 di kelas I, tetapi kamu tercatat sebagai anggota gereja yang memungut pajak gereja, dengan tarif 9% dari pajak penghasilan. Pajak penghasilannya tetap €10.772, dan pajak gereja menambah €969 (9% dari €10.772). Gaji bersihnya turun menjadi sekitar €39.121, atau 60,2% dari gaji kotor, dan tarif marginalnya naik ke 52,6%, karena pajak gereja ikut membesar setiap kali pajak penghasilan bertambah.</p>",
+      "after": "<p>Pajak gereja berhenti kalau kamu resmi keluar dari gereja, dan di Bayern dan Baden-Württemberg tarifnya 8%, bukan 9%.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs pemerintah maupun panduan pajak yang umum. Cocok tidaknya bergantung pada status dan rencana tinggalmu.</p>",
+  "strategies": [
+    {
+      "h3": "Dana pensiun lewat pemberi kerja (<em>betriebliche Altersvorsorge</em>)",
+      "html": "<p>Dengan konversi gaji (<em>Entgeltumwandlung</em>), sebagian gaji kotormu disetor ke dana pensiun perusahaan sebelum dipotong pajak dan, sampai batas tertentu, sebelum iuran sosial. Akibatnya gaji bersihmu turun lebih sedikit daripada jumlah yang kamu setor. Cocok untuk kamu yang berencana tinggal lama di Jerman dan punya pemberi kerja yang menawarkannya. Ada batas tahunan untuk setoran yang bebas pajak, jadi cek batas yang berlaku sebelum menyetor. Dana ini juga baru bisa diambil saat pensiun, sehingga kurang cocok kalau kamu berencana pulang dalam beberapa tahun. Skema Riester, dengan subsidi negara, juga ada, tetapi aturannya sering direvisi, jadi cek kondisi terbaru.</p>"
+    },
+    {
+      "h3": "Laporan pajak tahunan untuk meminta pengembalian pajak",
+      "html": "<p>Pajak yang dipotong tiap bulan hanyalah perkiraan. Lewat laporan pajak tahunan, kamu bisa mengklaim biaya kerja yang melebihi potongan standar €1.230, misalnya biaya perjalanan ke tempat kerja, perlengkapan kerja, pelatihan yang berkaitan dengan pekerjaan dan biaya pindah karena pekerjaan baru, lalu kelebihan pajak dikembalikan. Bagi lajang laporan ini biasanya sukarela, dan batas pengajuannya umumnya empat tahun ke belakang. Simpan semua bukti pengeluaran. Cocok untuk hampir semua karyawan, terutama yang baru pindah ke Jerman atau bekerja hanya sebagian tahun.</p>"
+    },
+    {
+      "h3": "Memilih kombinasi kelas pajak untuk pasangan menikah",
+      "html": "<p>Pasangan menikah yang sama-sama bekerja bisa memilih kelas IV untuk keduanya, kelas IV dengan faktor (<em>IV mit Faktor</em>) supaya potongan bulanan lebih adil, atau kombinasi III dan V supaya gaji bersih bulanan di salah satu pihak lebih besar. Pilihan kelas hanya mengubah arus kas bulanan, bukan pajak akhir yang ditentukan di laporan tahunan, dan kombinasi III dan V bisa berujung tagihan tambahan karena total potongannya sering terlalu kecil. Cocok untuk pasangan menikah dengan dua penghasilan yang berbeda jauh.</p>"
+    },
+    {
+      "h3": "Membandingkan dana asuransi kesehatan (<em>Krankenkasse</em>)",
+      "html": "<p>Iuran dasar 14,6% sama untuk semua dana asuransi wajib, tetapi iuran tambahannya berbeda-beda, dan kamu boleh pindah dana dengan memberi pemberitahuan. Selisihnya kecil, jadi bandingkan juga layanan dan kemudahan pengurusannya. Pasangan tanpa penghasilan atau berpenghasilan sangat rendah dan anak biasanya ikut tertanggung tanpa iuran tambahan (<em>Familienversicherung</em>), sehingga iuran satu orang bisa menutup satu keluarga. Cocok untuk semua karyawan di asuransi kesehatan wajib.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa atau penghasilan usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh, kelas I dan III saja.</strong> Pekerjaan yang dimulai di tengah tahun, beberapa pemberi kerja, kelas II, IV, V dan VI tidak dimodelkan, dan kelas III dihitung untuk pencari nafkah tunggal.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji kotor setahun.",
+    "<strong>Asuransi kesehatan wajib saja.</strong> Asuransi kesehatan swasta tidak dihitung, iuran tambahan dana kesehatan memakai rata-rata 2,9%, dan batas penghasilan iuran memakai angka 2026.",
+    "<strong>Anak hanya mengubah iuran perawatan jangka panjang.</strong> Tunjangan anak, keringanan pajak untuk anak dan pajak gereja yang sebenarnya boleh dikurangkan dari penghasilan kena pajak tidak dihitung.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Jerman, serta kewajiban lapor di Indonesia, tidak dihitung.",
+    "<strong>Angka perkiraan, bukan slip gaji dan bukan nasihat pajak.</strong> Kalkulator ini tidak mengurus visa atau pengakuan kualifikasi (<em>Anerkennung</em>), dan pajak akhirmu ditentukan lewat laporan pajak tahunan."
+  ],
+  "faq": [
+    {
+      "q": "Apa itu kelas pajak (<em>Steuerklasse</em>) di Jerman dan kenapa ada kelas III dan V?",
+      "a": "<p>Kelas pajak adalah kode yang dipakai pemberi kerja untuk menentukan berapa pajak yang dipotong dari gajimu tiap bulan. Lajang masuk kelas I. Pasangan menikah bisa memilih kelas III untuk yang berpenghasilan lebih besar dan kelas V untuk pasangannya. Di kelas III potongannya ringan karena memakai pembagian penghasilan pasangan (<em>Ehegattensplitting</em>), sedangkan di kelas V potongannya berat karena keringanan itu sudah terpakai di kelas III. Selisih antara potongan bulanan dan pajak yang sebenarnya diratakan lewat laporan pajak tahunan, yang wajib diisi untuk kombinasi III dan V. Kalau penghasilan kedua pasangan hampir sama, kombinasi itu sering membuat total potongan terlalu kecil sehingga ada tagihan tambahan. Kalkulator ini menghitung pajak setahun penuh untuk kelas I dan kelas III dengan satu pencari nafkah, jadi slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+    },
+    {
+      "q": "Kenapa pekerja di Jerman sering mendapat pengembalian pajak setelah laporan tahunan?",
+      "a": "<p>Pemberi kerja memotong pajak tiap bulan dengan potongan standar saja, seolah-olah gaji bulan itu berlangsung sepanjang tahun. Di laporan pajak tahunan, kantor pajak menghitung pajak yang sebenarnya dari penghasilan setahun penuh plus biaya kerja yang kamu klaim di atas €1.230. Kalau potongan bulananmu lebih besar, selisihnya dikembalikan. Pekerja yang baru pindah ke Jerman di tengah tahun sering mendapat pengembalian karena batas bebas pajak setahun penuh dipakai untuk penghasilan setengah tahun. Kalkulator ini menghitung pajak setahun penuh tanpa klaim biaya tambahan, jadi pengembalian itu tidak muncul di angkanya.</p>"
+    },
+    {
+      "q": "Kapan Soli (<em>Solidaritätszuschlag</em>) dikenakan dan berapa besarnya?",
+      "a": "<p><em>Soli</em> adalah tambahan 5,5% dari pajak penghasilan, tetapi hanya berlaku kalau pajak penghasilanmu melewati €20.350 (lajang) atau €40.700 (kelas III). Di atas ambang itu tambahannya naik bertahap. Pada pengaturan bawaan kalkulator, lajang di kelas I mulai kena <em>Soli</em> pada gaji kotor sekitar €92.500 setahun, dan kelas III dengan satu anak pada sekitar €168.000, jadi gaji perawat dan kebanyakan lulusan <em>Ausbildung</em> tidak terkena.</p>"
+    },
+    {
+      "q": "Apakah saya kena pajak gereja kalau bukan Kristen, dan bagaimana cara keluar?",
+      "a": "<p>Pajak gereja hanya dikenakan kepada anggota gereja yang diakui negara untuk memungutnya, seperti gereja Katolik dan Protestan. Saat mendaftarkan tempat tinggal (<em>Anmeldung</em>), formulir menanyakan keanggotaan gerejamu, jadi isi sesuai keadaan sebenarnya. Kalau kamu tercatat sebagai anggota, pemberi kerja memotong 8% atau 9% dari pajak penghasilanmu. Keluar dilakukan lewat pernyataan resmi di kantor yang berwenang, yang berbeda antar negara bagian (kantor catatan sipil atau pengadilan setempat), dan biasanya ada biaya administrasi. Setelah pernyataan itu berlaku, kewajiban pajak gereja berhenti, tetapi kamu juga tidak lagi mendapat layanan gereja tertentu. Kalkulator menampilkan pajak gereja kalau kamu mengisi tarif 8% atau 9%.</p>"
+    },
+    {
+      "q": "Berapa gaji bersih perawat di Jerman dengan gaji €42.000?",
+      "a": "<p>Untuk perawat lajang tanpa anak di kelas pajak I, gaji bersihnya sekitar €27.999 setahun setelah pajak penghasilan €4.866 dan iuran sosial €9.135. Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Apakah iuran pensiun di Jerman bisa diambil kalau saya pulang ke Indonesia?",
+      "a": "<p>Dalam kondisi tertentu, pekerja dari luar Uni Eropa yang meninggalkan Jerman bisa meminta pengembalian bagian iuran pensiun yang dibayarnya sendiri, dan ada masa tunggu setelah kepergian. Syarat dan masa tunggunya diatur oleh dana pensiun nasional (<em>Deutsche Rentenversicherung</em>), jadi tanyakan langsung ke sana sebelum pulang. Kalau kamu sudah membayar iuran cukup lama, ada juga hak pensiun yang tetap bisa diklaim nanti. Kalkulator ini menampilkan iuran pensiun sebagai potongan, bukan sebagai uang yang pasti kembali.</p>"
+    },
+    {
+      "q": "Apa bedanya asuransi kesehatan wajib dan swasta di Jerman, dan berapa iurannya?",
+      "a": "<p>Karyawan dengan gaji di bawah batas tertentu wajib ikut asuransi kesehatan negara (<em>gesetzliche Krankenversicherung</em>), dengan iuran 7,3% dari gaji ditambah setengah iuran tambahan yang ditetapkan tiap dana, dan batas gajinya €69.750 setahun. Karyawan dengan gaji di atas batas itu boleh memilih asuransi swasta, yang preminya tidak dihitung dari gaji dan tidak dimodelkan di kalkulator ini. Pasangan tanpa penghasilan dan anak di asuransi wajib biasanya ikut tanpa iuran tambahan. Kalkulator memakai iuran tambahan rata-rata 2,9%, yang bisa kamu ubah sesuai dana asuransimu.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Income tax": "Pajak penghasilan",
+    "Income tax, class III (splitting)": "Pajak penghasilan, kelas III (pembagian penghasilan pasangan)",
+    "Solidarity surcharge": "Solidaritätszuschlag (Soli)",
+    "Church tax (8%)": "Pajak gereja (8%)",
+    "Church tax (9%)": "Pajak gereja (9%)",
+    "Pension insurance (9.3%)": "Iuran pensiun (9,3%)",
+    "Unemployment insurance (1.3%)": "Iuran pengangguran (1,3%)",
+    "Health insurance (7.3% + half the add-on)": "Iuran kesehatan (7,3% + setengah iuran tambahan)",
+    "Long-term care, childless (2.4%)": "Iuran perawatan jangka panjang, tanpa anak (2,4%)",
+    "Long-term care (1.8%)": "Iuran perawatan jangka panjang (1,8%)"
+  },
+  "bmc": "Traktir kopi sebelum urusan Finanzamt dimulai"
+}

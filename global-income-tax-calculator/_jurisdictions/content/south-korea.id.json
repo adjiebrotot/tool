@@ -1,0 +1,180 @@
+{
+  "slug": "south-korea",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Korea Selatan 2026",
+  "h1": "Cara menghitung pajak penghasilan di Korea Selatan (2026)",
+  "description": "Pajak gaji di Korea Selatan 2026: tarif progresif, opsi tarif tunggal 19%, pajak daerah 10%, plus contoh gaji bersih pekerja EPS (E-9).",
+  "lede": "<p>Korea Selatan memajaki gaji dengan tarif progresif 6% sampai 45% atas penghasilan kena pajak, ditambah pajak penghasilan daerah sebesar 10% dari pajak nasional itu dan iuran jaminan sosial. Pekerja asing boleh memilih tarif tunggal (<em>flat rate</em>) 19% atas seluruh gaji sebagai pengganti tarif progresif. Sebagai gambaran, pekerja EPS (<em>Employment Permit System</em>, visa E-9) dengan gaji ₩30.000.000 setahun menerima gaji bersih (<em>take-home pay</em>) sekitar ₩26.532.752 (88,4%), dengan total pajak penghasilan hanya sekitar 1,8% dari gaji.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini untuk tahun pajak 2026 (1 Januari sampai 31 Desember) dan dipakai untuk penduduk pajak yang bekerja sebagai karyawan. Pemberi kerja memotong pajak dari gajimu setiap bulan, lalu menyelesaikan selisihnya lewat penyesuaian akhir tahun (<em>yeonmal jeongsan</em>) pada Januari sampai Februari. Pekerja asing bisa memilih antara dua cara hitung, yaitu tarif progresif biasa atau tarif tunggal 19%.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif progresif dan cara menghitung penghasilan kena pajak",
+        "html": "<p>Pajak nasional dihitung dari penghasilan kena pajak dengan tarif bertingkat di bawah ini. Penghasilan kena pajak didapat dari gaji setelah dikurangi potongan penghasilan kerja (<em>earned income deduction</em>), pengurang pribadi dasar ₩1.500.000 untuk dirimu dan tiap tanggungan, dan iuran jaminan sosial yang kamu bayar. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            ["Sampai ₩14.000.000", "6%"],
+            ["₩14.000.001 sampai ₩50.000.000", "15%"],
+            ["₩50.000.001 sampai ₩88.000.000", "24%"],
+            ["₩88.000.001 sampai ₩150.000.000", "35%"],
+            ["₩150.000.001 sampai ₩300.000.000", "38%"],
+            ["₩300.000.001 sampai ₩500.000.000", "40%"],
+            ["₩500.000.001 sampai ₩1.000.000.000", "42%"],
+            ["Di atas ₩1.000.000.000", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "Potongan penghasilan kerja dan kredit pajak",
+        "html": "<p>Karyawan mendapat potongan penghasilan kerja secara otomatis, tanpa perlu membuktikan biaya. Besarnya mengikuti gaji, dan batas atasnya ₩20.000.000. Setelah pajak dihitung, kredit pajak penghasilan kerja (<em>earned income tax credit</em>) memotong langsung pajaknya sebesar 55% dari pajak sampai ₩1.300.000, ditambah 30% dari kelebihannya, dengan batas atas yang mengecil seiring gaji naik: ₩740.000 untuk gaji sampai ₩33.000.000, lalu turun bertahap sampai ₩200.000 untuk gaji yang tinggi.</p>",
+        "table": {
+          "head": [
+            "Gaji setahun",
+            "Potongan penghasilan kerja"
+          ],
+          "rows": [
+            ["Sampai ₩5.000.000", "70% dari gaji"],
+            ["₩5.000.001 sampai ₩15.000.000", "₩3.500.000 ditambah 40% dari bagian di atas ₩5.000.000"],
+            ["₩15.000.001 sampai ₩45.000.000", "₩7.500.000 ditambah 15% dari bagian di atas ₩15.000.000"],
+            ["₩45.000.001 sampai ₩100.000.000", "₩12.000.000 ditambah 5% dari bagian di atas ₩45.000.000"],
+            ["Di atas ₩100.000.000", "₩14.750.000 ditambah 2% dari bagian di atas ₩100.000.000, maksimal ₩20.000.000"]
+          ]
+        }
+      },
+      {
+        "h3": "Pajak penghasilan daerah 10%",
+        "html": "<p>Selain pajak nasional, Korea Selatan memungut pajak penghasilan daerah (<em>local income tax</em>) sebesar 10% dari pajak nasional yang sudah dihitung, bukan 10% dari gaji. Pada pajak nasional ₩4.067.936, misalnya, pajak daerahnya ₩406.794. Pajak ini dipotong pemberi kerja bersama pajak nasional, sehingga pada tarif tunggal 19% beban totalnya menjadi 20,9% dari gaji.</p>"
+      },
+      {
+        "h3": "Iuran jaminan sosial yang dipotong dari gaji",
+        "html": "<p>Empat iuran wajib dipotong dari gajimu, dan semuanya mengurangi penghasilan kena pajak pada tarif progresif. Dana pensiun nasional dihitung dari gaji bulanan sampai batas atas yang naik setiap 1 Juli: kalkulator memakai ₩6.370.000 untuk Januari sampai Juni dan ₩6.590.000 untuk Juli sampai Desember.</p>",
+        "table": {
+          "head": [
+            "Iuran (bagianmu)",
+            "Tarif"
+          ],
+          "rows": [
+            ["Dana pensiun nasional (<em>National Pension Service</em>, NPS)", "4,75% dari gaji bulanan, dengan batas atas"],
+            ["Asuransi kesehatan", "3,595% dari gaji"],
+            ["Perawatan jangka panjang", "13,14% dari iuran asuransi kesehatan"],
+            ["Asuransi ketenagakerjaan", "0,9% dari gaji"]
+          ]
+        }
+      },
+      {
+        "h3": "Pilihan tarif tunggal 19% untuk pekerja asing",
+        "html": "<p>Pekerja asing yang bekerja di Korea Selatan boleh memilih tarif tunggal 19% atas seluruh gaji, sebagai pengganti tarif progresif. Dengan pilihan ini tidak ada potongan penghasilan kerja, pengurang pribadi, ataupun kredit pajak, dan iuran jaminan sosial tidak dikurangkan dari dasar pajak. Karena itu tarif ini baru menguntungkan pada gaji yang tinggi. Pengajuannya dilakukan lewat pemberi kerja, dan syarat serta jangka waktunya perlu kamu cek di situs National Tax Service.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "National Tax Service (NTS), tarif pajak, <em>yeonmal jeongsan</em> dan tarif tunggal 19%",
+        "url": "https://www.nts.go.kr/"
+      },
+      {
+        "name": "National Pension Service (NPS), dana pensiun nasional dan asuransi kesehatan",
+        "url": "https://www.nps.or.kr/"
+      },
+      {
+        "name": "Hometax, layanan pajak <em>online</em> National Tax Service",
+        "url": "https://www.hometax.go.kr/"
+      },
+      {
+        "name": "Employment Permit System (EPS), skema pekerja asing sektor industri",
+        "url": "https://www.eps.go.kr/"
+      },
+      {
+        "name": "Ministry of Employment and Labor, hak pekerja dan upah minimum",
+        "url": "https://www.moel.go.kr/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "progressive",
+      "title": "Berapa gaji bersih di Korea Selatan dengan gaji ₩60.000.000 setahun?",
+      "intro": "<p>Contoh ini untuk pekerja lajang dengan tarif progresif biasa dan satu pekerjaan sepanjang tahun. Iuran jaminan sosial berjumlah ₩5.830.430, dan potongan penghasilan kerja ₩12.750.000 (₩12.000.000 ditambah 5% dari bagian di atas ₩45.000.000). Setelah pengurang pribadi ₩1.500.000, penghasilan kena pajaknya sekitar ₩39.919.570, yang jatuh di tingkat 15%. Kredit pajak penghasilan kerja ₩660.000 menurunkan pajak nasional menjadi ₩4.067.936, dan pajak daerah menambah ₩406.794. Gaji bersihnya sekitar ₩49.694.841, atau 82,8% dari gaji, dengan tarif marginal (pajak dan iuran atas setiap tambahan won penghasilan) sebesar 23,8%.</p>",
+      "after": "<p>Tarif pajak penghasilan nasional 15% menjadi 16,5% setelah ditambah pajak daerah, dan tarif marginal 23,8% itu sudah memasukkan iuran jaminan sosial yang ikut bertambah.</p>"
+    },
+    {
+      "key": "flat-rate-foreign-worker",
+      "title": "Kapan tarif tunggal 19% untuk pekerja asing di Korea Selatan lebih hemat, contoh gaji ₩150.000.000?",
+      "intro": "<p>Contoh ini untuk pekerja asing bergaji ₩150.000.000 yang memilih tarif tunggal 19%. Pajak nasionalnya ₩28.500.000 (19% dari seluruh gaji) dan pajak daerahnya ₩2.850.000, sedangkan iuran jaminan sosial tetap berjalan. Gaji bersihnya sekitar ₩107.505.326 (71,7%), dengan tarif marginal 25,9%.</p>",
+      "after": "<p>Pada gaji yang sama, tarif progresif sebenarnya masih sedikit lebih hemat bagi pekerja lajang tanpa tanggungan: gaji bersihnya sekitar ₩109.241.275, atau ₩1.735.949 lebih tinggi. Menurut kalkulator ini, tarif tunggal baru unggul pada gaji di atas sekitar ₩162.000.000. Pada gaji ₩200.000.000, misalnya, gaji bersih dengan tarif tunggal lebih tinggi sekitar ₩6.320.843.</p>"
+    },
+    {
+      "key": "eps-worker",
+      "title": "Berapa gaji bersih pekerja EPS (E-9) di Korea Selatan dengan gaji ₩30.000.000 setahun?",
+      "intro": "<p>Contoh ini untuk pekerja EPS (visa E-9), lajang, dengan gaji ₩30.000.000 setahun (sekitar ₩2.500.000 per bulan) dan tarif progresif. Iuran jaminan sosial berjumlah ₩2.915.215, dan potongan penghasilan kerja ₩9.750.000, sehingga penghasilan kena pajaknya sekitar ₩15.834.785. Pajak sebelum kredit ₩1.115.218, lalu kredit pajak penghasilan kerja ₩613.370 memotongnya menjadi ₩501.848, dan pajak daerah menambah ₩50.185. Total pajak penghasilan hanya ₩552.033, sehingga gaji bersihnya sekitar ₩26.532.752 (88,4%), dengan tarif marginal 15,3%.</p>",
+      "after": "<p>Pada gaji ini, iuran jaminan sosial (₩2.915.215) lima kali lebih besar daripada pajak penghasilan. Kalau pemberi kerja memotong biaya asrama atau makan, hal itu tidak dihitung di sini.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs National Tax Service. Cocok tidaknya bergantung pada gaji dan statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Manfaatkan <em>yeonmal jeongsan</em> (penyesuaian pajak akhir tahun)",
+      "html": "<p>Pada Januari sampai Februari, pemberi kerja menghitung ulang pajakmu setahun penuh, dan kamu bisa menambahkan pengeluaran yang boleh dikurangkan, seperti biaya pengobatan, pendidikan, premi asuransi, sumbangan, dan pengeluaran dengan kartu yang melebihi 25% dari gaji. Dokumennya diunduh dari layanan Hometax, dan kelebihan potongan dikembalikan lewat gaji Februari atau Maret. Cocok untuk semua pekerja yang memakai tarif progresif. Pilihan tarif tunggal 19% tidak memakai pengurang ini, jadi manfaatnya hilang di sana.</p>"
+    },
+    {
+      "h3": "Catat tanggungan keluarga",
+      "html": "<p>Tiap tanggungan menambah pengurang pribadi dasar ₩1.500.000 pada tarif progresif. Kalau kamu menanggung pasangan, anak, atau orang tua, kalkulator ini memakai isian jumlah tanggungan untuk menghitungnya. Cocok untuk pekerja yang punya keluarga di Indonesia, dengan syarat dokumen hubungan keluarga dan batas penghasilan tanggungan yang ditetapkan National Tax Service. Cek persyaratannya sebelum mengklaim, karena klaim yang salah bisa dikoreksi di kemudian hari.</p>"
+    },
+    {
+      "h3": "Pilih tarif tunggal 19% hanya kalau gajimu tinggi",
+      "html": "<p>Pada gaji ₩30.000.000, tarif tunggal menghasilkan pajak sekitar ₩5.700.000 untuk pajak nasional, jauh lebih besar daripada ₩501.848 dengan tarif progresif. Tarif ini baru layak dipertimbangkan pada gaji tinggi (di atas sekitar ₩162.000.000 menurut kalkulator ini untuk pekerja lajang tanpa tanggungan), misalnya insinyur senior atau eksekutif. Bandingkan kedua cara sebelum memilih, dan tanyakan pemberi kerja apakah pilihan itu bisa diubah di kemudian hari.</p>"
+    },
+    {
+      "h3": "Tabungan pensiun pribadi dengan kredit pajak",
+      "html": "<p>Korea Selatan memberi kredit pajak untuk setoran ke rekening pensiun pribadi, seperti tabungan pensiun dan rekening pensiun individu (IRP), dan itu bisa menurunkan pajak yang kamu bayar. Cocok untuk pekerja yang berencana tinggal lama dan sudah punya pajak yang cukup besar untuk dikreditkan. Uangnya umumnya baru bisa diambil tanpa pajak tambahan setelah usia pensiun, jadi tidak cocok untuk pekerja kontrak pendek. Cek batas setoran dan syaratnya di situs National Tax Service.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun serta beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, lembur terpisah, atau tunjangan pemberi kerja.",
+    "<strong>Pengurang akhir tahun tidak dihitung.</strong> Biaya pengobatan, pendidikan, asuransi, sumbangan, dan pengeluaran kartu tidak dimodelkan, jadi pajakmu setelah <em>yeonmal jeongsan</em> bisa lebih rendah. Tanggungan hanya dihitung sebagai pengurang pribadi dasar.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Korea Selatan serta kewajiban lapor di Indonesia tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Status pajak dan hasil akhirnya ditentukan National Tax Service, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Apa itu tarif tunggal 19% untuk pekerja asing di Korea Selatan dan kapan lebih hemat?",
+      "a": "<p>Pekerja asing boleh memilih membayar 19% dari seluruh gaji sebagai pajak penghasilan nasional, sebagai ganti tarif progresif 6% sampai 45%, ditambah pajak daerah 10% dari pajaknya. Dengan pilihan ini tidak ada potongan penghasilan kerja ataupun kredit pajak. Karena itu tarif progresif hampir selalu lebih hemat pada gaji rendah dan menengah: pada gaji ₩60.000.000, gaji bersih progresif sekitar ₩49.694.841 dibandingkan sekitar ₩41.629.570 dengan tarif tunggal. Menurut kalkulator ini, tarif tunggal baru menang pada gaji di atas sekitar ₩162.000.000 untuk pekerja lajang tanpa tanggungan. Coba dengan angkamu di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Berapa pajak dan gaji bersih pekerja EPS (E-9) di Korea Selatan?",
+      "a": "<p>Pada gaji ₩30.000.000 setahun (sekitar ₩2.500.000 per bulan) dengan tarif progresif, total pajak penghasilan sekitar ₩552.033 (nasional ₩501.848 ditambah daerah ₩50.185), dan iuran jaminan sosial ₩2.915.215. Gaji bersihnya sekitar ₩26.532.752 atau 88,4% dari gaji.</p>"
+    },
+    {
+      "q": "Apa itu <em>yeonmal jeongsan</em> dan kenapa ada pengembalian pajak di awal tahun?",
+      "a": "<p><em>Yeonmal jeongsan</em> adalah penyesuaian pajak akhir tahun yang dilakukan pemberi kerja pada Januari sampai Februari. Selama tahun berjalan, pemberi kerja memotong pajak dari tiap gaji memakai tabel perkiraan, lalu pada penyesuaian ini pajak setahun penuh dihitung dari penghasilan dan pengurang yang kamu serahkan, dan selisihnya dikembalikan atau ditagih lewat gaji Februari atau Maret. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+    },
+    {
+      "q": "Kenapa pajak penghasilan daerah di Korea Selatan hanya 10% dari pajak nasional?",
+      "a": "<p>Pajak daerah (<em>local income tax</em>) dihitung sebagai 10% dari pajak penghasilan nasional yang sudah kamu bayar, bukan dari gaji. Jadi pada pajak nasional ₩501.848, pajak daerahnya ₩50.185, dan pada tarif tunggal 19% totalnya menjadi 20,9% dari gaji. Pajak ini dipotong pemberi kerja bersama pajak nasional, sehingga kamu tidak perlu membayarnya terpisah.</p>"
+    },
+    {
+      "q": "Berapa iuran jaminan sosial yang dipotong dari gaji di Korea Selatan?",
+      "a": "<p>Menurut kalkulator ini, bagianmu 4,75% untuk dana pensiun nasional (dengan batas atas gaji bulanan), 3,595% untuk asuransi kesehatan, 13,14% dari iuran kesehatan itu untuk perawatan jangka panjang, dan 0,9% untuk asuransi ketenagakerjaan. Pada gaji ₩60.000.000, jumlahnya ₩5.830.430. Pemberi kerja membayar bagian yang sepadan di luar gajimu, dan iuran ini mengurangi penghasilan kena pajak pada tarif progresif.</p>"
+    },
+    {
+      "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Korea Selatan dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena sewa, makan dan transportasi juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "National pension (4.75%, cap rises 1 Jul)": "Dana pensiun nasional (4,75%, batas naik 1 Juli)",
+    "Health insurance (3.595%)": "Asuransi kesehatan (3,595%)",
+    "Long-term care (13.14% of health)": "Perawatan jangka panjang (13,14% dari asuransi kesehatan)",
+    "Employment insurance (0.9%)": "Asuransi ketenagakerjaan (0,9%)",
+    "Earned income deduction": "Potongan penghasilan kerja",
+    "Earned income tax credit, inside the tax": "Kredit pajak penghasilan kerja, sudah termasuk di pajak",
+    "National income tax": "Pajak penghasilan nasional",
+    "National income tax, 19% flat election": "Pajak penghasilan nasional, pilihan tarif tunggal 19%",
+    "Local income tax (10% of national)": "Pajak penghasilan daerah (10% dari pajak nasional)"
+  }
+}

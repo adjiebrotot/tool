@@ -1,0 +1,222 @@
+{
+  "slug": "australia",
+  "lang": "en",
+  "title": "Australian Income Tax 2026-27: How to Calculate It",
+  "h1": "How to calculate income tax in Australia (2026-27)",
+  "description": "Australian income tax for residents, foreign residents and working holiday makers in 2026-27: rates, Medicare levy, super, and five worked take-home examples.",
+  "lede": "<p>Australia taxes residents on worldwide income with progressive rates from 0% to 45%, plus a 2% Medicare levy for most residents. Employers pay a 12% super guarantee on top of your salary, so it does not reduce your take-home pay. On A$100,000 a resident pays about A$22,200 in income tax and Medicare levy and keeps about A$77,800, while a foreign resident on the same salary pays A$30,000 and keeps A$70,000.</p>",
+  "law": {
+    "intro": "<p>The Australian tax year runs from 1 July to 30 June, and the figures below are the 2026-27 rates as the calculator models them. Which table applies depends on your tax residency, not on your visa or citizenship. Residency is decided by tests the ATO applies, such as whether you live in Australia, whether you have been here more than half the year, and whether your usual home is overseas. Many people on a temporary visa who live here for a full year are still tax residents.</p>",
+    "blocks": [
+      {
+        "h3": "Tax rates for residents",
+        "html": "<p>Australian residents get a tax-free threshold. Every dollar above A$18,200 is taxed at the rate for its band. Residents on low incomes also get the low income tax offset (LITO), which the calculator builds into the income tax figure.</p>",
+        "table": {
+          "head": [
+            "Taxable income",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "A$0 to A$18,200",
+              "0%"
+            ],
+            [
+              "A$18,201 to A$45,000",
+              "15%"
+            ],
+            [
+              "A$45,001 to A$135,000",
+              "30%"
+            ],
+            [
+              "A$135,001 to A$190,000",
+              "37%"
+            ],
+            [
+              "Over A$190,000",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tax rates for foreign residents",
+        "html": "<p>A foreign resident for tax purposes has no tax-free threshold. The first A$135,000 is taxed at a flat 30%. Foreign residents do not pay the Medicare levy.</p>",
+        "table": {
+          "head": [
+            "Taxable income",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "A$0 to A$135,000",
+              "30%"
+            ],
+            [
+              "A$135,001 to A$190,000",
+              "37%"
+            ],
+            [
+              "Over A$190,000",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tax rates for working holiday makers",
+        "html": "<p>Working holiday makers (visa subclass 417 or 462) are taxed from the first dollar at 15% up to A$45,000 when they work for an employer registered with the ATO as a working holiday maker employer. There is no tax-free threshold.</p>",
+        "table": {
+          "head": [
+            "Taxable income",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "A$0 to A$45,000",
+              "15%"
+            ],
+            [
+              "A$45,001 to A$135,000",
+              "30%"
+            ],
+            [
+              "A$135,001 to A$190,000",
+              "37%"
+            ],
+            [
+              "Over A$190,000",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Medicare levy and the surcharge",
+        "html": "<p>Residents who are Australian citizens or permanent residents pay a Medicare levy of 2% of taxable income. It phases in for incomes just above a low threshold (the calculator uses the 2025-26 thresholds, about A$28,000 to A$35,000). Many temporary visa holders do not pay it, and the calculator charges none for the temporary resident and working holiday cases.</p><p>If you do not hold private hospital cover, the Medicare levy surcharge adds 1%, 1.25% or 1.5% of your income once it passes about A$105,000, A$123,000 and A$164,000 for a single person. The calculator applies it to citizens and permanent residents without cover.</p>"
+      },
+      {
+        "h3": "Superannuation guarantee",
+        "html": "<p>Your employer must pay a super guarantee of 12% of your ordinary earnings into a super fund. It is paid on top of your salary, so a A$100,000 salary comes with A$12,000 of super, and the calculator shows it as an employer cost rather than a deduction from your pay. If your contract is a package that includes super, your cash salary is lower than the headline figure.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Australian Taxation Office",
+        "url": "https://www.ato.gov.au/",
+        "note": "resident and foreign resident rates, Medicare levy, residency tests"
+      },
+      {
+        "name": "ATO, working holiday makers",
+        "url": "https://www.ato.gov.au/",
+        "note": "working holiday maker rates and DASP"
+      },
+      {
+        "name": "Services Australia, Medicare",
+        "url": "https://www.servicesaustralia.gov.au/",
+        "note": "Medicare enrolment and eligibility"
+      },
+      {
+        "name": "Department of Home Affairs",
+        "url": "https://immi.homeaffairs.gov.au/",
+        "note": "visa types and conditions"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "How to calculate income tax as an Australian resident on A$100,000",
+      "intro": "<p>This is a citizen or permanent resident on a A$100,000 salary. The calculator allows a A$1,000 standard deduction for work expenses, so taxable income is A$99,000. That lands in the 30% band, giving A$20,220 of income tax. LITO is nil at this income. The 2% Medicare levy adds A$1,980, and you keep about A$77,800, or 77.8% of gross.</p>",
+      "after": "<p>The 12% employer super (A$12,000) is paid on top and is not part of the take-home figure. Your marginal rate is 32%: 30% income tax plus the Medicare levy.</p>"
+    },
+    {
+      "key": "temporary-resident",
+      "title": "How much tax does a temporary resident pay in Australia on A$100,000?",
+      "intro": "<p>This is a skilled worker on a temporary visa who counts as a tax resident. The same resident rates and A$1,000 deduction apply, so income tax is the same A$20,220. The difference is that the calculator charges no Medicare levy, so you keep about A$79,780, or 79.8% of gross.</p>",
+      "after": "<p>Check your own Medicare position. Some temporary visa holders do pay the levy, for example those covered by a reciprocal health care agreement, so confirm with the ATO before relying on the saving.</p>"
+    },
+    {
+      "key": "working-holiday-maker",
+      "title": "How to calculate Australian income tax as a working holiday maker",
+      "intro": "<p>A working holiday maker earning A$55,000 is taxed at 15% on the first A$45,000 (A$6,750) and 30% on the remaining A$10,000 (A$3,000). Income tax is A$9,750, and you keep about A$45,250, or 82.3% of gross. There is no tax-free threshold and no Medicare levy in this case, and the standard deduction is not applied.</p>",
+      "after": "<p>The 15% band means the first dollars are taxed more heavily than for a resident, but you stay in a lower rate overall than a foreign resident. Super is paid on top and is only recoverable through DASP when you leave.</p>"
+    },
+    {
+      "key": "foreign-resident",
+      "title": "Australian tax for a foreign resident: what A$100,000 pays",
+      "intro": "<p>A foreign resident for tax purposes, such as someone working in Australia for a short stint without making it their home, gets no tax-free threshold. The first A$135,000 is taxed at 30%, so A$100,000 produces A$30,000 of income tax and you keep A$70,000, or 70.0% of gross. That is about A$7,800 less than the resident on the same salary.</p>",
+      "after": "<p>Because the flat 30% starts from the first dollar, a foreign resident's marginal and average rates are the same at this income.</p>"
+    },
+    {
+      "key": "no-private-health-cover",
+      "title": "Take-home pay on A$150,000 in Australia without private health cover",
+      "intro": "<p>A permanent resident on A$150,000 has taxable income of A$149,000. Income tax is A$36,200, because the slice above A$135,000 is taxed at 37%. Medicare levy adds A$2,980. With no private hospital cover, the surcharge adds 1.25% of income, or A$1,862.50. You keep about A$108,958, or 72.6% of gross, and the marginal rate is 40.3%.</p>",
+      "after": "<p>Taking out appropriate private hospital cover would remove the surcharge line, though you would pay the premium. Compare the two before deciding.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Australian tax. Which ones apply depends on your residency and visa.</p>",
+  "strategies": [
+    {
+      "h3": "Salary sacrifice or concessional super contributions",
+      "html": "<p><strong>Suits:</strong> citizens and permanent residents on the 30% band or above. Extra pre-tax contributions to super are taxed inside the fund at a rate that is usually lower than your marginal rate. They count towards an annual concessional contributions cap, which includes the employer's 12%, so check the current cap with the ATO before topping up.</p><p><strong>Caveat:</strong> the money is locked until you reach preservation age and meet a condition of release.</p>"
+    },
+    {
+      "h3": "Private hospital cover to avoid the Medicare levy surcharge",
+      "html": "<p><strong>Suits:</strong> citizens and permanent residents above the surcharge thresholds, as in the A$150,000 example. A policy with appropriate hospital cover removes the 1% to 1.5% surcharge.</p><p><strong>Caveat:</strong> the premium may cost more than the surcharge at income just above the threshold, so compare the numbers. Family thresholds are higher than the single ones the calculator uses.</p>"
+    },
+    {
+      "h3": "Claim work-related deductions with records",
+      "html": "<p><strong>Suits:</strong> any resident who pays work costs personally, such as tools, required training, a home office or union fees. A deduction lowers taxable income and so saves tax at your marginal rate.</p><p><strong>Caveat:</strong> you need a record for each claim, the expense must relate to earning your income, and the ATO checks claims. The calculator only assumes a flat A$1,000.</p>"
+    },
+    {
+      "h3": "Plan for DASP before you leave, if you are a temporary resident",
+      "html": "<p><strong>Suits:</strong> temporary visa holders and working holiday makers whose super builds up while they work. When you leave Australia and your visa ends, you can claim it back as a departing Australia superannuation payment (DASP).</p><p><strong>Caveat:</strong> DASP is taxed at 35% for most temporary residents and at 65% for working holiday makers. Check how much sits in your fund and claim only through official channels, since the tax is withheld at source.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, capital gains, a business, or a part year.",
+    "<strong>No bonuses or equity.</strong> Share options, bonuses and allowances are not modelled separately.",
+    "<strong>Simplified residency.</strong> You choose the status. The calculator does not test whether you qualify as a resident, foreign resident or working holiday maker.",
+    "<strong>Single person.</strong> The Medicare levy surcharge uses single thresholds. Family and dependants, and the Medicare levy family reduction, are not included.",
+    "<strong>Flat work deduction.</strong> Residents get a A$1,000 standard deduction. Your real deductions will differ.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here.",
+    "<strong>Other levies and offsets.</strong> HELP debt repayments, state payroll items and other offsets are not included."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on A$100,000 in Australia?",
+      "a": "<p>A resident pays about A$22,200 in income tax and Medicare levy and keeps about A$77,800. A foreign resident pays A$30,000 and keeps A$70,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Do I pay tax on super if I leave Australia?",
+      "a": "<p>If you were on a temporary visa, you can claim your super back as a departing Australia superannuation payment (DASP) once you have left and your visa has ended. It is taxed at 35%, or 65% for working holiday makers. Details are on the <a href=\"https://www.ato.gov.au/\">ATO website</a>.</p>"
+    },
+    {
+      "q": "Is super paid on top of my salary?",
+      "a": "<p>Yes. The 12% super guarantee is paid by your employer in addition to your salary, unless your contract is a package that includes super. It does not reduce your take-home pay, but it is locked in your fund.</p>"
+    },
+    {
+      "q": "Do I have to pay the Medicare levy on a temporary visa?",
+      "a": "<p>Often no, but it depends on your visa and whether you are eligible for Medicare. The calculator charges no levy for the temporary resident and working holiday cases. Confirm with the ATO or Services Australia for your own situation.</p>"
+    },
+    {
+      "q": "Why do many people get a tax refund in Australia after 30 June?",
+      "a": "<p>Your employer withholds tax from each payslip under pay as you go (PAYG) withholding, using a standard formula that is only an estimate. After the tax year ends on 30 June you lodge an annual tax return (the main season runs from July to October), and the ATO compares what was withheld with the tax you actually owe. Deductions you claim, part-year work or a lower income than the formula assumed mean you often overpaid, so you get a refund. If you underpaid, you owe the difference.</p><p>The calculator shows the tax for a full year at one salary, so it matches the final bill, not each payslip. Your payslips, and any refund, can differ from it.</p>"
+    },
+    {
+      "q": "Why is super not in my take-home pay if it is still mine?",
+      "a": "<p>The 12% super guarantee is paid by your employer into a super fund in your name, not into your bank account. It is your money, but it is preserved until you reach preservation age and meet a condition of release, so it never appears in your pay. Temporary residents can claim it back only after leaving, through DASP, and it is taxed then.</p><p>The calculator lists super as an employer cost beside the take-home figure and leaves it out of the net amount.</p>"
+    },
+    {
+      "q": "Why do working holiday makers pay 15% from the first dollar?",
+      "a": "<p>Working holiday makers are not given the A$18,200 tax-free threshold. Instead a special rate table applies: 15% on income up to A$45,000, then the normal 30% band. So on A$55,000 the tax is A$9,750. Rates are applied through your employer's withholding and any difference is settled in your tax return.</p><p>The calculator applies this table to a full year, so a part-year stay or a switch of employer can give different payslip amounts.</p>"
+    },
+    {
+      "q": "What happens if I claim the tax-free threshold with two employers?",
+      "a": "<p>You can claim the A$18,200 tax-free threshold with only one employer at a time. Each employer withholds as if their pay is your only income, so a second job taxed with the threshold can leave you under-withheld and owing tax at lodgement. Claim it at your main job and have the second employer withhold without it.</p><p>The calculator assumes one job for the full year, so it does not model this overlap.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a flat white."
+}

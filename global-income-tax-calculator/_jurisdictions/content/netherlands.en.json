@@ -1,0 +1,146 @@
+{
+  "slug": "netherlands",
+  "lang": "en",
+  "title": "Dutch Income Tax 2026: How to Calculate It (30% Ruling)",
+  "h1": "How to calculate income tax in the Netherlands (2026)",
+  "description": "Dutch income tax for employees in 2026: box 1 rates with national insurance, tax credits, 8% holiday allowance and the 30% ruling, with three examples.",
+  "lede": "<p>The Netherlands taxes employment income in box 1, where income tax and national insurance are combined into one rate of 35.75%, 37.56% or 49.5%, reduced by two tax credits. Employees also get an 8% holiday allowance on top of salary. On a €60,000 salary a resident keeps about €46,471 including the holiday allowance, and with the 30% ruling a €75,000 salary keeps about €66,759.</p>",
+  "law": {
+    "intro": "<p>The Dutch tax year is the calendar year, and the figures below are the 2026 rules as the calculator models them. Residents are taxed on worldwide income, and the rules for people who move to the Netherlands are the same box 1 system, with the 30% ruling as an extra for some new arrivals. Your employer withholds tax from each payslip and you can file an annual return with the Belastingdienst, the Dutch tax authority.</p>",
+    "blocks": [
+      {
+        "h3": "Box 1 rates and national insurance",
+        "html": "<p>Wages fall under box 1. For people below the state pension age, the rates in the first two bands already include national insurance premiums (for the state pension, survivors' benefits and long-term care), so there is no separate social security deduction. The tax credits below are then subtracted from the result.</p>",
+        "table": {
+          "head": [
+            "Taxable income",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "€0 to €38,883",
+              "35.75%"
+            ],
+            [
+              "€38,883 to €78,426",
+              "37.56%"
+            ],
+            [
+              "Over €78,426",
+              "49.5%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tax credits",
+        "html": "<p>Two credits reduce the tax you owe, and both fade as income rises. The general tax credit (algemene heffingskorting) is up to €3,115 for income up to €29,736 and reduces gradually until it reaches zero at €78,426. The labour tax credit (arbeidskorting) builds up with earnings to a maximum of about €5,685 at €45,592, then falls to zero at €132,920. The calculator builds both into the tax figure, and its detail shows them as lines inside the tax.</p><p>Because the credits fade in the middle of the income range, your effective marginal rate there is higher than the headline 37.56%.</p>"
+      },
+      {
+        "h3": "Holiday allowance",
+        "html": "<p>Employees are entitled to a holiday allowance (vakantiegeld) of at least 8% of salary, usually paid out once a year in May or June. It is taxed like ordinary pay. The calculator adds it on top of the salary you enter and taxes it, so the take-home figure covers salary plus holiday allowance. If your contract says the salary already includes holiday allowance, switch the toggle off in the calculator.</p>"
+      },
+      {
+        "h3": "The 30% ruling",
+        "html": "<p>The 30% ruling lets your employer pay up to 30% of your pay as a tax-free allowance for the extra costs of working abroad. It is meant for people recruited from outside the Netherlands for specific expertise that is scarce in the Dutch labour market. The main conditions are:</p><ul><li>You were recruited from abroad, or sent over by a foreign employer, and you lived more than 150 km from the Dutch border for more than 16 of the 24 months before you started.</li><li>Your taxable salary, excluding the allowance, meets the salary norm. The calculator uses €48,013, or €36,497 for someone under 30 with a master's degree.</li><li>You and your employer apply together, and the ruling can last up to five years.</li></ul><p>As modelled, the tax-free allowance is the smallest of 30% of your total pay, your pay minus the salary norm, and €78,600. The 30% rate applies for 2026. It is due to fall to 27% from 1 January 2027, so confirm the current conditions and any transitional rules with the Belastingdienst.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Belastingdienst",
+        "url": "https://www.belastingdienst.nl/",
+        "note": "box 1 rates, tax credits and the 30% ruling"
+      },
+      {
+        "name": "Government of the Netherlands",
+        "url": "https://www.government.nl/",
+        "note": "holiday allowance, health insurance and living in the Netherlands"
+      },
+      {
+        "name": "Immigration and Naturalisation Service (IND)",
+        "url": "https://ind.nl/",
+        "note": "visas and the highly skilled migrant route"
+      },
+      {
+        "name": "Social Insurance Bank (SVB)",
+        "url": "https://www.svb.nl/",
+        "note": "state pension and national insurance"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "How much tax do you pay in the Netherlands on a €60,000 salary?",
+      "intro": "<p>This is a resident employee on a €60,000 salary with no 30% ruling. The 8% holiday allowance (€4,800) is added, so taxed pay is €64,800. Box 1 tax before credits is about €23,635. The general tax credit (€872) and the labour tax credit (€4,435) bring it down to €18,329. You keep about €46,471 including the holiday allowance, which is 77.5% of the €60,000 salary.</p>",
+      "after": "<p>Your marginal rate is 46.5% here. That is higher than 37.56% because both credits are fading at this income, so each extra euro loses some credit as well.</p>"
+    },
+    {
+      "key": "30-percent-ruling",
+      "title": "Take-home pay in the Netherlands on €75,000 with the 30% ruling",
+      "intro": "<p>This is a skilled migrant with the 30% ruling on a €75,000 salary. With the holiday allowance, pay is €81,000, and the tax-free allowance is 30% of it, or €24,300. Taxable pay falls to €56,700, which is above the €48,013 salary norm, so the full 30% applies. Box 1 tax is €14,241 after credits of €1,390 and €4,962. You keep about €66,759, or 89.0% of the salary.</p>",
+      "after": "<p>Without the ruling the same salary would leave about €54,353, so the ruling is worth about €12,400 a year here. It is not automatic: you need an eligible employer and a successful application.</p>"
+    },
+    {
+      "key": "30-percent-ruling-under-30",
+      "title": "How to calculate Dutch tax with the 30% ruling for a young master's graduate",
+      "intro": "<p>This is someone under 30 with a master's degree, on a €50,000 salary, who qualifies for the lower €36,497 salary norm. With the holiday allowance, pay is €54,000. The tax-free allowance is 30%, or €16,200, so taxable pay is €37,800, which sits inside the lowest 35.75% band. Box 1 tax is €5,381 after credits of €2,599 and €5,533. You keep about €48,619, or 97.2% of the salary.</p>",
+      "after": "<p>That share is above 95% because take-home includes the €4,000 holiday allowance and the allowance removes much of the tax. Without the ruling the same salary would leave about €41,122. The lower norm is what lets a salary this low qualify.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to keep more of your pay in the Netherlands. Which ones apply depends on how you were hired.</p>",
+  "strategies": [
+    {
+      "h3": "Apply for the 30% ruling with your employer",
+      "html": "<p><strong>Suits:</strong> people recruited from abroad who meet the 150 km, 16 of 24 months and salary norm conditions. The ruling is requested by you and your employer together. Applying within four months of your start date lets it run from the day you started.</p><p><strong>Caveat:</strong> it lasts up to five years, the rate is due to fall to 27% from 2027, and the conditions can change, so check the current rules with the Belastingdienst before counting on it in an offer.</p>"
+    },
+    {
+      "h3": "Check the young master's norm",
+      "html": "<p><strong>Suits:</strong> graduates under 30 with a master's degree whose salary is below the standard norm. They can qualify at the lower €36,497 norm, as in the last example.</p><p><strong>Caveat:</strong> the degree and its level must meet the legal requirements. Confirm that your qualification counts before you accept a salary based on it.</p>"
+    },
+    {
+      "h3": "Use an employer pension scheme",
+      "html": "<p><strong>Suits:</strong> employees whose employer runs a pension scheme. Your own contribution is deducted before tax, so you save tax at your top rate. The calculator has an input for your pension share.</p><p><strong>Caveat:</strong> pension contributions reduce take-home pay now and are a long-term saving. Schemes that start above a threshold take less than the percentage you enter.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income in box 3, a business or a part year.",
+    "<strong>No bonuses or equity.</strong> Bonuses, a 13th month, share options and benefits are not modelled separately.",
+    "<strong>Health insurance not included.</strong> Everyone in the Netherlands takes out basic health insurance with a private insurer and pays a monthly premium that this calculator does not include, nor the care allowance (zorgtoeslag).",
+    "<strong>Ruling conditions are not tested.</strong> You choose whether the 30% ruling applies. The calculator does not check the 150 km rule, the 16 of 24 months rule or whether your role qualifies.",
+    "<strong>Simplified credits.</strong> It does not model a partner, children or other credits, and it does not include the mortgage interest deduction.",
+    "<strong>Below state pension age.</strong> The rates assume you are below the state pension age.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on a €60,000 salary in the Netherlands?",
+      "a": "<p>A resident without the 30% ruling pays about €18,329 in box 1 tax and national insurance on €64,800 of pay, which is the €60,000 salary plus the 8% holiday allowance. You keep about €46,471. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the 30% ruling and who qualifies?",
+      "a": "<p>It is a tax-free allowance of up to 30% of your pay for the extra costs of working away from home. You qualify if a Dutch employer recruits you from abroad, you lived more than 150 km from the Dutch border for more than 16 of the 24 months before starting, and your salary meets the salary norm (€48,013, or €36,497 for under-30s with a master's). It lasts up to five years and you and your employer apply together.</p>"
+    },
+    {
+      "q": "Why is 8% holiday allowance paid on top of my salary?",
+      "a": "<p>Dutch law gives employees a holiday allowance of at least 8% of salary, usually paid out once a year in May or June. It is taxed as ordinary pay. The calculator adds it to the salary you enter. A monthly payslip does not show it every month, so over a year your pay is 8% higher than twelve payslips suggest. Check whether your contract quotes the salary with or without holiday allowance.</p>"
+    },
+    {
+      "q": "Why is my income tax and national insurance one number in the Netherlands?",
+      "a": "<p>Box 1 combines income tax and national insurance premiums into one rate for people below the state pension age. Other countries often show them as separate lines, so a Dutch payslip can look as if it has no social security. The calculator therefore shows a single line, with the two tax credits inside it.</p>"
+    },
+    {
+      "q": "Why does the Dutch marginal rate look higher than the tax bands?",
+      "a": "<p>The two tax credits fade as income rises. In the middle of the range both are shrinking, so each extra euro is taxed at 37.56% and also loses some credit. In the €60,000 example the marginal rate is 46.5%, compared with a headline rate of 37.56%.</p>"
+    },
+    {
+      "q": "Does the salary norm include the holiday allowance?",
+      "a": "<p>In the calculator, yes: total pay with the holiday allowance is tested against the norm, and the allowance can never take taxable pay below the norm. The legal test is on your taxable salary, so confirm with your employer and the Belastingdienst how your own pay is counted.</p>"
+    },
+    {
+      "q": "What does a salary buy in the Netherlands?",
+      "a": "<p>Compare cities in the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, and see how savings could grow in the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a stroopwafel."
+}
