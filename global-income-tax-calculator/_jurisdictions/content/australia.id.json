@@ -137,31 +137,31 @@
     {
       "key": "resident",
       "title": "Berapa gaji bersih penduduk tetap di Australia dengan gaji A$100.000?",
-      "intro": "<p>Contoh ini untuk warga atau penduduk tetap (<em>permanent resident</em>, PR) dengan satu pekerjaan sepanjang tahun. Kalkulator mengurangi dulu potongan standar A$1.000 untuk biaya kerja, sehingga penghasilan kena pajaknya A$99.000. Dari situ pajak penghasilan menjadi A$20.220, karena bagian di atas A$45.000 sudah masuk tarif 30% dan LITO sudah habis. <em>Medicare levy</em> 2% dari A$99.000 menambah A$1.980. Gaji bersihnya sekitar A$77.800, atau 77,8% dari gaji, dan tarif pajak pada dolar berikutnya yang kamu dapat adalah 32% (30% pajak ditambah 2% <em>Medicare levy</em>).</p>",
+      "intro": "<p>Contoh ini untuk warga atau penduduk tetap (<em>permanent resident</em>, PR) dengan satu pekerjaan sepanjang tahun. Kalkulator mengurangi dulu potongan standar A$1.000 untuk biaya kerja, sehingga penghasilan kena pajaknya A$99.000. Dari situ pajak penghasilan menjadi A$20.220, karena bagian di atas A$45.000 sudah masuk tarif 30% dan LITO sudah habis. <em>Medicare levy</em> 2% dari A$99.000 menambah A$1.980. Gaji bersihnya sekitar A$77.800, atau 77,8% dari gaji, dan tarif marjinal (pajak atas setiap tambahan dolar penghasilan) sebesar 32%, yaitu 30% pajak ditambah 2% <em>Medicare levy</em>.</p>",
       "after": "<p>Di luar angka itu, pemberi kerja menyetor <em>super</em> A$12.000 (12% dari gaji) ke dana pensiunmu.</p>"
     },
     {
       "key": "temporary-resident",
       "title": "Berapa pajak pemegang visa kerja sementara di Australia dengan gaji A$100.000?",
-      "intro": "<p>Contoh ini untuk pekerja terampil dengan visa sementara yang dianggap penduduk pajak. Tarif pajaknya sama dengan penduduk tetap, sehingga pajak penghasilannya juga A$20.220, tetapi kalkulator tidak menghitung <em>Medicare levy</em> untuk status ini. Gaji bersihnya karena itu sekitar A$79.780 (79,8%), lebih tinggi A$1.980 daripada contoh penduduk tetap, dengan tarif pajak pada dolar berikutnya 30%.</p>",
+      "intro": "<p>Contoh ini untuk pekerja terampil dengan visa sementara yang dianggap penduduk pajak. Tarif pajaknya sama dengan penduduk tetap, sehingga pajak penghasilannya juga A$20.220, tetapi kalkulator tidak menghitung <em>Medicare levy</em> untuk status ini. Karena itu, gaji bersihnya sekitar A$79.780 (79,8%), lebih tinggi A$1.980 daripada contoh penduduk tetap, dengan tarif marjinal 30%.</p>",
       "after": "<p>Selisih A$1.980 itu bisa hilang kalau ternyata kamu tetap harus membayar <em>Medicare levy</em>, jadi cek hakmu atas Medicare dan kemungkinan pembebasannya di situs Services Australia dan ATO.</p>"
     },
     {
       "key": "working-holiday-maker",
       "title": "Cara menghitung pajak *working holiday maker* di Australia",
-      "intro": "<p>Contoh ini untuk pemegang visa <em>working holiday</em> subclass 462 dengan penghasilan A$55.000 setahun. Tarif <em>working holiday maker</em> mengenakan 15% pada A$45.000 pertama, yaitu A$6.750, lalu 30% pada sisa A$10.000, yaitu A$3.000. Totalnya A$9.750, jadi gaji bersihnya sekitar A$45.250 (82,3% dari gaji), dan tarif pajak pada dolar berikutnya 30%. Tidak ada <em>Medicare levy</em> pada contoh ini.</p>",
+      "intro": "<p>Contoh ini untuk pemegang visa <em>working holiday</em> subclass 462 dengan penghasilan A$55.000 setahun. Tarif <em>working holiday maker</em> mengenakan 15% pada A$45.000 pertama, yaitu A$6.750, lalu 30% pada sisa A$10.000, yaitu A$3.000. Totalnya A$9.750, jadi gaji bersihnya sekitar A$45.250 (82,3% dari gaji), dengan tarif marjinal 30%. Tidak ada <em>Medicare levy</em> pada contoh ini.</p>",
       "after": "<p>Pemberi kerja tetap menyetor <em>super</em> sebesar A$6.600, tetapi pada <em>working holiday maker</em> uang itu hanya bisa diambil lewat DASP saat kamu pulang, dengan pajak yang sangat berat.</p>"
     },
     {
       "key": "foreign-resident",
       "title": "Berapa pajak penduduk asing (*foreign resident*) di Australia untuk gaji A$100.000?",
       "intro": "<p>Contoh ini untuk orang yang bekerja di Australia tetapi belum dianggap penduduk pajak, misalnya karena masa tinggalnya singkat dan tempat tinggal tetapnya masih di luar negeri. Tidak ada batas bebas pajak, sehingga 30% berlaku sejak dolar pertama: A$100.000 dikalikan 30% menghasilkan pajak A$30.000. Gaji bersihnya sekitar A$70.000 (70%), atau A$9.780 lebih sedikit daripada pemegang visa sementara yang dianggap penduduk pajak pada gaji yang sama. Penduduk asing tidak dikenai <em>Medicare levy</em>.</p>",
-      "after": "<p>Status ini sangat mahal, jadi periksa dengan ATO apakah kamu memang penduduk asing atau sebenarnya penduduk pajak.</p>"
+      "after": "<p>Status ini membuat pajakmu jauh lebih besar, jadi periksa dengan ATO apakah kamu memang penduduk asing atau sebenarnya penduduk pajak.</p>"
     },
     {
       "key": "no-private-health-cover",
       "title": "Berapa <em>Medicare levy surcharge</em> kalau gaji A$150.000 tanpa asuransi rumah sakit swasta?",
-      "intro": "<p>Contoh ini untuk penduduk tetap lajang dengan gaji A$150.000 yang tidak punya asuransi rumah sakit swasta. Setelah potongan standar A$1.000, penghasilan kena pajaknya A$149.000, dengan pajak penghasilan A$36.200 dan <em>Medicare levy</em> A$2.980. Karena penghasilan itu masuk tingkat 1,25% (di atas A$123.000), <em>Medicare levy surcharge</em> menambah sekitar A$1.863. Gaji bersihnya sekitar A$108.958 (72,6%), dan tarif pajak pada dolar berikutnya 40,3% (37% ditambah 2% <em>Medicare levy</em> dan 1,25% <em>surcharge</em>).</p>",
+      "intro": "<p>Contoh ini untuk penduduk tetap lajang dengan gaji A$150.000 yang tidak punya asuransi rumah sakit swasta. Setelah potongan standar A$1.000, penghasilan kena pajaknya A$149.000, dengan pajak penghasilan A$36.200 dan <em>Medicare levy</em> A$2.980. Karena penghasilan itu masuk tingkat 1,25% (di atas A$123.000), <em>Medicare levy surcharge</em> menambah sekitar A$1.863. Gaji bersihnya sekitar A$108.958 (72,6%), dengan tarif marjinalnya 40,3% (37% ditambah 2% <em>Medicare levy</em> dan 1,25% <em>surcharge</em>).</p>",
       "after": "<p>Kalau kamu punya asuransi rumah sakit swasta yang memenuhi syarat, baris <em>surcharge</em> ini hilang. Bandingkan dengan premi asuransinya sebelum memutuskan.</p>"
     }
   ],
@@ -173,7 +173,7 @@
     },
     {
       "h3": "Asuransi rumah sakit swasta untuk menghindari <em>Medicare levy surcharge</em>",
-      "html": "<p>Kalau penghasilanmu di atas ambang <em>surcharge</em> dan kamu memenuhi syarat memakainya, asuransi rumah sakit swasta menghapus tambahan 1% sampai 1,5% itu. Pada contoh gaji A$150.000 di atas, <em>surcharge</em>-nya sekitar A$1.863, jadi bandingkan angka itu dengan premi asuransi yang kamu butuhkan. Cocok untuk penduduk tetap berpenghasilan menengah ke atas. Asuransi yang dipilih harus asuransi rumah sakit yang memenuhi syarat, bukan asuransi tambahan yang hanya mencakup layanan umum.</p>"
+      "html": "<p>Kalau penghasilanmu di atas ambang <em>surcharge</em> dan kamu memenuhi syarat memakainya, asuransi rumah sakit swasta menghapus tambahan 1% sampai 1,5% itu. Pada gaji A$150.000 tanpa asuransi, <em>surcharge</em>-nya sekitar A$1.863, jadi bandingkan angka itu dengan premi asuransi yang kamu butuhkan. Cocok untuk penduduk tetap berpenghasilan menengah ke atas. Asuransi yang dipilih harus asuransi rumah sakit yang memenuhi syarat, bukan asuransi tambahan yang hanya mencakup layanan umum.</p>"
     },
     {
       "h3": "Potongan biaya kerja dengan bukti",
@@ -212,7 +212,7 @@
     },
     {
       "q": "Apa itu <em>Medicare levy surcharge</em> dan siapa yang membayarnya?",
-      "a": "<p>Tambahan 1% sampai 1,5% dari penghasilan untuk penduduk yang penghasilannya melewati ambang tertentu dan tidak punya asuransi rumah sakit swasta. Pada gaji A$150.000 tanpa asuransi, besarnya sekitar A$1.863. Penjelasannya ada di contoh di atas, dan ambang resminya di situs ATO.</p>"
+      "a": "<p>Tambahan 1% sampai 1,5% dari penghasilan untuk penduduk yang penghasilannya melewati ambang tertentu dan tidak punya asuransi rumah sakit swasta. Pada gaji A$150.000 tanpa asuransi, besarnya sekitar A$1.863. Ambang resminya ada di situs ATO.</p>"
     },
     {
       "q": "Kenapa banyak orang di Australia mendapat <em>refund</em> pajak setelah 30 Juni?",

@@ -10,11 +10,11 @@
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan 2026 (<em>Einkommensteuer</em>)",
-        "html": "<p>Pajak penghasilan Jerman dihitung dengan rumus yang naik mulus, bukan dengan tingkat berpatok tetap. Penghasilan kena pajak sampai €12.348 bebas pajak (<em>Grundfreibetrag</em>). Di atasnya tarif marjinal naik dari 14% sampai sekitar 24%, lalu dari sekitar 24% sampai 42%, dan tarif tetap 42% berlaku sampai €277.825 sebelum menjadi 45%.</p><p>Penghasilan kena pajak bukan gaji kotor. Kalkulator mengurangi gaji kotor dengan potongan standar biaya kerja €1.230 (<em>Werbungskosten-Pauschbetrag</em>) dan potongan standar pengeluaran khusus €36, lalu dengan iuran pensiun, iuran perawatan jangka panjang dan bagian iuran kesehatan untuk perlindungan dasar yang kamu bayar. Itulah sebabnya pajak atas gaji kotor €65.000 dihitung dari penghasilan kena pajak sekitar €50.637, bukan dari €65.000.</p>",
+        "html": "<p>Pajak penghasilan Jerman dihitung dengan rumus yang kenaikannya mulus, bukan dengan tingkat tarif yang tetap. Penghasilan kena pajak sampai €12.348 bebas pajak (<em>Grundfreibetrag</em>). Di atasnya tarif marginal naik dari 14% sampai sekitar 24%, lalu dari sekitar 24% sampai 42%, dan tarif tetap 42% berlaku sampai €277.825 sebelum menjadi 45%.</p><p>Penghasilan kena pajak bukan gaji kotor. Kalkulator mengurangi gaji kotor dengan potongan standar biaya kerja €1.230 (<em>Werbungskosten-Pauschbetrag</em>) dan potongan standar pengeluaran khusus €36, lalu dengan iuran pensiun, iuran perawatan jangka panjang dan bagian iuran kesehatan untuk perlindungan dasar yang kamu bayar. Itulah sebabnya pajak atas gaji kotor €65.000 dihitung dari penghasilan kena pajak sekitar €50.637, bukan dari €65.000.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
-            "Tarif marjinal"
+            "Tarif marginal"
           ],
           "rows": [
             ["Sampai €12.348", "0%"],
@@ -78,25 +78,25 @@
     {
       "key": "single",
       "title": "Berapa gaji bersih lajang di Jerman dengan gaji kotor €65.000 setahun?",
-      "intro": "<p>Contoh ini untuk lajang tanpa anak di kelas pajak I dengan satu pekerjaan sepanjang tahun, tanpa pajak gereja. Dari gaji kotor €65.000, kalkulator mengurangi potongan standar dan iuran sosial yang boleh dikurangkan, sehingga penghasilan kena pajaknya sekitar €50.637 dan pajak penghasilannya €10.772. Iuran sosial totalnya €14.138, yaitu pensiun €6.045, pengangguran €845, kesehatan €5.688 dan perawatan jangka panjang €1.560. Gaji bersihnya sekitar €40.091, atau 61,7% dari gaji kotor, dan tarif potongan pada euro berikutnya 50,1%, gabungan tarif pajak pada zona yang sedang naik dan iuran sosial 21,75%.</p>",
+      "intro": "<p>Contoh ini untuk lajang tanpa anak di kelas pajak I dengan satu pekerjaan sepanjang tahun, tanpa pajak gereja. Dari gaji kotor €65.000, kalkulator mengurangi potongan standar dan iuran sosial yang boleh dikurangkan, sehingga penghasilan kena pajaknya sekitar €50.637 dan pajak penghasilannya €10.772. Iuran sosial totalnya €14.138, yaitu pensiun €6.045, pengangguran €845, kesehatan €5.688 dan perawatan jangka panjang €1.560. Gaji bersihnya sekitar €40.091, atau 61,7% dari gaji kotor, dan tarif marginalnya 50,1%, gabungan tarif marginal pajak dan iuran sosial 21,75%.</p>",
       "after": "<p><em>Soli</em> tidak muncul di contoh ini karena pajak penghasilan €10.772 masih di bawah ambang €20.350, dan pajak gereja juga nol karena kalkulator memakai tarif 0%.</p>"
     },
     {
       "key": "nurse",
       "title": "Berapa gaji bersih perawat di Jerman dengan gaji €42.000?",
-      "intro": "<p>Contoh ini untuk perawat (<em>Pflegefachkraft</em>) lajang tanpa anak di kelas pajak I, misalnya lulusan <em>Ausbildung</em> atau perawat yang kualifikasinya sudah diakui dan kini bekerja penuh waktu. Angka €42.000 setahun hanya ilustrasi, bukan tarif gaji resmi, jadi ganti dengan gajimu sendiri. Penghasilan kena pajaknya sekitar €32.271, dengan pajak penghasilan €4.866 (11,6% dari gaji kotor). Iuran sosial sebesar €9.135 (21,75% dari gaji kotor) justru lebih besar daripada pajaknya: pensiun €3.906, pengangguran €546, kesehatan €3.675 dan perawatan jangka panjang tanpa anak €1.008. Gaji bersihnya sekitar €27.999, atau 66,7% dari gaji kotor, dan tarif potongan pada euro berikutnya 44,8%.</p>",
+      "intro": "<p>Contoh ini untuk perawat (<em>Pflegefachkraft</em>) lajang tanpa anak di kelas pajak I, misalnya lulusan <em>Ausbildung</em> atau perawat yang kualifikasinya sudah diakui dan kini bekerja penuh waktu. Angka €42.000 setahun hanya ilustrasi, bukan tarif gaji resmi, jadi ganti dengan gajimu sendiri. Penghasilan kena pajaknya sekitar €32.271, dengan pajak penghasilan €4.866 (11,6% dari gaji kotor). Iuran sosial sebesar €9.135 (21,75% dari gaji kotor) justru lebih besar daripada pajaknya: pensiun €3.906, pengangguran €546, kesehatan €3.675 dan perawatan jangka panjang tanpa anak €1.008. Gaji bersihnya sekitar €27.999, atau 66,7% dari gaji kotor, dan tarif marginalnya 44,8%.</p>",
       "after": "<p>Dua hal yang menggeser angka ini adalah iuran tambahan dana kesehatanmu, yang berbeda-beda antar dana, dan ada tidaknya anak, karena orang tua membayar iuran perawatan jangka panjang 1,8%, bukan 2,4%.</p>"
     },
     {
       "key": "married-sole-earner",
       "title": "Cara menghitung pajak kelas III di Jerman untuk pasangan dengan satu pencari nafkah",
-      "intro": "<p>Contoh ini untuk pasangan menikah dengan satu anak dan satu pencari nafkah, di kelas pajak III, dengan gaji kotor €65.000 dan pasangan tanpa penghasilan. Kalkulator memakai pembagian penghasilan pasangan (<em>Ehegattensplitting</em>): penghasilan kena pajak sekitar €51.027 dibagi dua, dipajaki, lalu hasilnya dikali dua, sehingga pajak penghasilannya hanya €5.972, dibanding €10.772 untuk lajang dengan gaji yang sama. Iuran perawatan jangka panjang juga lebih rendah, €1.170 (1,8%) dibanding €1.560, karena ada anak. Gaji bersihnya sekitar €45.281, atau 69,7% dari gaji kotor, dan tarif potongan pada euro berikutnya 42,7%.</p>",
+      "intro": "<p>Contoh ini untuk pasangan menikah dengan satu anak dan satu pencari nafkah, di kelas pajak III, dengan gaji kotor €65.000 dan pasangan tanpa penghasilan. Kalkulator memakai pembagian penghasilan pasangan (<em>Ehegattensplitting</em>): penghasilan kena pajak sekitar €51.027 dibagi dua, dipajaki, lalu hasilnya dikali dua, sehingga pajak penghasilannya hanya €5.972, dibanding €10.772 untuk lajang dengan gaji yang sama. Iuran perawatan jangka panjang juga lebih rendah, €1.170 (1,8%) dibanding €1.560, karena ada anak. Gaji bersihnya sekitar €45.281, atau 69,7% dari gaji kotor, dan tarif marginalnya 42,7%.</p>",
       "after": "<p>Tunjangan anak (<em>Kindergeld</em>) dan keringanan pajak untuk anak tidak dimodelkan: anak di contoh ini hanya mengubah iuran perawatan jangka panjang. Kalau pasanganmu juga bekerja, pilihan kelasnya berubah dan hasilnya tidak bisa dibaca dari contoh ini.</p>"
     },
     {
       "key": "church-tax",
       "title": "Berapa pajak gereja di Jerman untuk gaji €65.000 dan apa dampaknya ke gaji bersih?",
-      "intro": "<p>Contoh ini sama dengan contoh lajang €65.000 di kelas I, tetapi kamu tercatat sebagai anggota gereja yang memungut pajak gereja, dengan tarif 9% dari pajak penghasilan. Pajak penghasilannya tetap €10.772, dan pajak gereja menambah €969 (9% dari €10.772). Gaji bersihnya turun menjadi sekitar €39.121, atau 60,2% dari gaji kotor, dan tarif potongan pada euro berikutnya naik ke 52,6%, karena pajak gereja ikut membesar setiap kali pajak penghasilan bertambah.</p>",
+      "intro": "<p>Contoh ini sama dengan contoh lajang €65.000 di kelas I, tetapi kamu tercatat sebagai anggota gereja yang memungut pajak gereja, dengan tarif 9% dari pajak penghasilan. Pajak penghasilannya tetap €10.772, dan pajak gereja menambah €969 (9% dari €10.772). Gaji bersihnya turun menjadi sekitar €39.121, atau 60,2% dari gaji kotor, dan tarif marginalnya naik ke 52,6%, karena pajak gereja ikut membesar setiap kali pajak penghasilan bertambah.</p>",
       "after": "<p>Pajak gereja berhenti kalau kamu resmi keluar dari gereja, dan di Bayern dan Baden-Württemberg tarifnya 8%, bukan 9%.</p>"
     }
   ],

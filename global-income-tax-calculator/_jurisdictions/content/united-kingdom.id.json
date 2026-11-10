@@ -38,7 +38,7 @@
       },
       {
         "h3": "Rentang £100.000 sampai £125.140: tarif efektif 60%",
-        "html": "<p>Di atas penghasilan £100.000, <em>personal allowance</em> menyusut £1 untuk setiap £2 penghasilan tambahan, dan habis sama sekali di £125.140. Akibatnya, setiap £2 tambahan gaji menaikkan penghasilan kena pajak sebesar £3: £2 dari gaji itu sendiri dan £1 dari allowance yang hilang. Dengan tarif 40%, pajak atas £3 itu adalah £1,20, atau 60% dari £2 tambahan gaji tadi. Tarif 2% NI masih ditambahkan di atasnya, sehingga tarif marginal efektif sekitar 62%.</p><p>Dalam rentang ini, kamu kehilangan lebih banyak dari tiap £1 kenaikan gaji daripada orang yang berpenghasilan £150.000, yang tarif marginalnya hanya 47% (45% pajak plus 2% NI). Kalkulator ini memasukkan penyusutan allowance itu ke dalam angka pajak, dan di Skotlandia efeknya lebih besar lagi karena tarif 45% ikut terkalikan.</p>"
+        "html": "<p>Di atas penghasilan £100.000, <em>personal allowance</em> menyusut £1 untuk setiap £2 penghasilan tambahan, dan habis sama sekali di £125.140. Akibatnya, setiap £2 tambahan gaji menaikkan penghasilan kena pajak sebesar £3: £2 dari gaji itu sendiri dan £1 dari <em>allowance</em> yang hilang. Dengan tarif 40%, pajak atas £3 itu adalah £1,20, atau 60% dari £2 tambahan gaji tadi. Tarif 2% NI masih ditambahkan di atasnya, sehingga tarif marginal efektif sekitar 62%.</p><p>Dalam rentang ini, kamu kehilangan lebih banyak dari tiap £1 kenaikan gaji daripada orang yang berpenghasilan £150.000, yang tarif marginalnya hanya 47% (45% pajak plus 2% NI). Kalkulator ini memasukkan penyusutan <em>allowance</em> itu ke dalam angka pajak, dan di Skotlandia efeknya lebih besar lagi karena tarif 45% ikut terkalikan.</p>"
       },
       {
         "h3": "Tarif pajak penghasilan di Skotlandia",
@@ -142,26 +142,26 @@
     {
       "key": "england",
       "title": "Berapa gaji bersih di Inggris dengan gaji £60.000 setahun?",
-      "intro": "<p>Contoh ini untuk karyawan di Inggris, Wales, atau Irlandia Utara dengan satu pekerjaan sepanjang tahun dan tanpa pinjaman mahasiswa. Dari gaji £60.000, £12.570 pertama bebas pajak, sehingga penghasilan kena pajaknya £47.430. Bagian £37.700 pertama kena tarif 20%, dan sisa £9.730 kena tarif 40%, jadi pajak penghasilannya £11.432. NI sebesar £3.211 dipotong terpisah. Gaji bersihnya sekitar £45.357 (75,6%), dan tarif potongan pada pound berikutnya yang kamu dapat adalah 42% (40% pajak ditambah 2% NI).</p>",
+      "intro": "<p>Contoh ini untuk karyawan di Inggris, Wales, atau Irlandia Utara dengan satu pekerjaan sepanjang tahun dan tanpa pinjaman mahasiswa. Dari gaji £60.000, £12.570 pertama bebas pajak, sehingga penghasilan kena pajaknya £47.430. Bagian £37.700 pertama kena tarif 20%, dan sisa £9.730 kena tarif 40%, jadi pajak penghasilannya £11.432. NI sebesar £3.211 dipotong terpisah. Gaji bersihnya sekitar £45.357 (75,6%), dan tarif marginalnya, yaitu potongan atas setiap £1 tambahan, 42% (40% pajak ditambah 2% NI).</p>",
       "after": "<p>Di tingkat 40%, tiap £1 yang masuk ke pensiun lewat potongan gaji menghemat sekitar 42 sen pajak dan NI (lihat bagian strategi).</p>"
     },
     {
       "key": "scotland",
       "title": "Berapa lebih besar pajak gaji £60.000 di Skotlandia?",
-      "intro": "<p>Contoh ini memakai gaji dan aturan lain yang sama persis dengan contoh sebelumnya, hanya saja tempat tinggal utamanya di Skotlandia. Dengan enam tingkat tarif Skotlandia, pajak penghasilan menjadi £13.182, naik sekitar £1.750 dibandingkan pajak £11.432 di bagian Inggris lain. NI tetap £3.211. Gaji bersihnya sekitar £43.607 (72,7%), dan tarif potongan pada pound berikutnya 44% (42% pajak ditambah 2% NI).</p>",
+      "intro": "<p>Contoh ini memakai gaji dan aturan lain yang sama persis dengan contoh sebelumnya, hanya saja tempat tinggal utamanya di Skotlandia. Dengan enam tingkat tarif Skotlandia, pajak penghasilan menjadi £13.182, naik sekitar £1.750 dibandingkan pajak £11.432 di bagian Inggris lain. NI tetap £3.211. Gaji bersihnya sekitar £43.607 (72,7%), dan tarif marginalnya 44% (42% pajak ditambah 2% NI).</p>",
       "after": "<p>Selisih ini muncul karena tingkat 42% di Skotlandia dimulai pada penghasilan lebih rendah daripada tingkat 40% di bagian Inggris lain, jadi sebagian besar gaji £60.000 sudah kena tarif lebih tinggi.</p>"
     },
     {
       "key": "student-loan",
       "title": "Berapa gaji bersih di Inggris dengan gaji £45.000 dan pinjaman mahasiswa Plan 2?",
-      "intro": "<p>Contoh ini untuk karyawan di luar Skotlandia dengan pinjaman mahasiswa <em>Plan 2</em>. Pajak penghasilan atas gaji £45.000 adalah £6.486 dan NI £2.594. Di atas itu, cicilan pinjaman memotong 9% dari penghasilan yang melewati ambang £29.385, yaitu £15.615, sehingga potongannya £1.405. Gaji bersihnya sekitar £34.514 (76,7%), dan tarif potongan pada pound berikutnya 37%: 20% pajak, 8% NI, dan 9% cicilan pinjaman.</p>",
+      "intro": "<p>Contoh ini untuk karyawan di luar Skotlandia dengan pinjaman mahasiswa <em>Plan 2</em>. Pajak penghasilan atas gaji £45.000 adalah £6.486 dan NI £2.594. Di atas itu, cicilan pinjaman memotong 9% dari penghasilan yang melewati ambang £29.385, yaitu £15.615, sehingga potongannya £1.405. Gaji bersihnya sekitar £34.514 (76,7%), dan tarif marginalnya 37%: 20% pajak, 8% NI, dan 9% cicilan pinjaman.</p>",
       "after": "<p>Cicilan ini diperlakukan seperti potongan lain di slip gaji, tetapi pinjaman mahasiswa bukan pajak, dan sisa utangnya mengikuti aturan jenis pinjamanmu.</p>"
     },
     {
       "key": "above-100k",
       "title": "Berapa pajak gaji £120.000 di Inggris, dan apa itu rentang 60%?",
-      "intro": "<p>Contoh ini memperlihatkan efek <em>personal allowance</em> yang menyusut. Pada gaji £120.000, penghasilan melewati £100.000 sebesar £20.000, sehingga allowance berkurang £10.000 dari £12.570 menjadi tinggal £2.570. Penghasilan kena pajaknya jadi £117.430, dan pajak penghasilannya £39.432. Setelah NI £4.411, gaji bersihnya sekitar £76.157 (63,5%), dan tarif potongan pada pound berikutnya 62% (40% pajak, 20% dari allowance yang hilang, dan 2% NI).</p>",
-      "after": "<p>Kalau penghasilan ini diturunkan kembali ke £100.000 lewat setoran pensiun, allowance penuh £12.570 kembali, dan pajak turun £12.000. Detailnya ada di bagian strategi.</p>"
+      "intro": "<p>Contoh ini memperlihatkan efek <em>personal allowance</em> yang menyusut. Pada gaji £120.000, penghasilan melewati £100.000 sebesar £20.000, sehingga <em>allowance</em> berkurang £10.000 dari £12.570 menjadi tinggal £2.570. Penghasilan kena pajaknya jadi £117.430, dan pajak penghasilannya £39.432. Setelah NI £4.411, gaji bersihnya sekitar £76.157 (63,5%), dan tarif marginalnya 62% (40% pajak, 20% dari <em>allowance</em> yang hilang, dan 2% NI).</p>",
+      "after": "<p>Kalau penghasilan ini diturunkan kembali ke £100.000 lewat setoran pensiun, <em>allowance</em> penuh £12.570 kembali, dan pajak turun £12.000. Detailnya ada di bagian strategi.</p>"
     }
   ],
   "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs resmi pemerintah Inggris. Cocok tidaknya bergantung pada rencanamu tinggal di sana.</p>",
@@ -172,7 +172,7 @@
     },
     {
       "h3": "Menurunkan penghasilan di bawah £100.000 untuk menghindari rentang 60%",
-      "html": "<p>Kalau penghasilanmu tepat di atas £100.000, setoran pensiun memberi dua penghematan sekaligus: pajak 40% atas setoran itu, dan allowance yang kembali. Pada contoh gaji £120.000, setoran £20.000 menurunkan penghasilan ke £100.000 dan memangkas pajak penghasilan dari £39.432 menjadi £27.432, penghematan £12.000. Kalau setoran itu lewat <em>salary sacrifice</em>, NI turun sekitar £400 lagi, sehingga biaya bersihnya sekitar £7.600 untuk £20.000 yang masuk ke dana pensiunmu. Cocok untuk penghasilan £100.000 sampai £125.140. Pertimbangkan baik-baik karena dananya terkunci sampai usia pensiun.</p>"
+      "html": "<p>Kalau penghasilanmu tepat di atas £100.000, setoran pensiun memberi dua penghematan sekaligus: pajak 40% atas setoran itu, dan <em>allowance</em> yang kembali. Pada contoh gaji £120.000, setoran £20.000 menurunkan penghasilan ke £100.000 dan memangkas pajak penghasilan dari £39.432 menjadi £27.432, penghematan £12.000. Kalau setoran itu lewat <em>salary sacrifice</em>, NI turun sekitar £400 lagi, sehingga biaya bersihnya sekitar £7.600 untuk £20.000 yang masuk ke dana pensiunmu. Cocok untuk penghasilan £100.000 sampai £125.140. Pertimbangkan baik-baik karena dananya terkunci sampai usia pensiun.</p>"
     },
     {
       "h3": "Pastikan kode pajak (<em>tax code</em>) benar",
@@ -199,7 +199,7 @@
     },
     {
       "q": "Kenapa pajak di Inggris terasa 60% untuk penghasilan £100.000 sampai £125.140?",
-      "a": "<p>Karena <em>personal allowance</em> £12.570 menyusut £1 untuk setiap £2 penghasilan di atas £100.000, dan habis di £125.140. Setiap £2 tambahan gaji menaikkan penghasilan kena pajak £3, dan £3 itu dipajaki 40%, sehingga £1,20 dari tiap £2 hilang sebagai pajak, atau 60%. Tarif 2% NI menambahnya menjadi sekitar 62%. Kalkulator ini menghitung penyusutan itu otomatis, dan pada gaji £120.000 allowance tinggal £2.570. Menurunkan penghasilan lewat setoran pensiun adalah cara yang umum untuk mengurangi dampaknya.</p>"
+      "a": "<p>Karena <em>personal allowance</em> £12.570 menyusut £1 untuk setiap £2 penghasilan di atas £100.000, dan habis di £125.140. Setiap £2 tambahan gaji menaikkan penghasilan kena pajak £3, dan £3 itu dipajaki 40%, sehingga £1,20 dari tiap £2 hilang sebagai pajak, atau 60%. Tarif 2% NI menambahnya menjadi sekitar 62%. Kalkulator ini menghitung penyusutan itu otomatis, dan pada gaji £120.000 <em>allowance</em> tinggal £2.570. Menurunkan penghasilan lewat setoran pensiun adalah cara yang umum untuk mengurangi dampaknya.</p>"
     },
     {
       "q": "Apakah saya harus mengisi laporan pajak tahunan di Inggris?",
