@@ -1,0 +1,146 @@
+{
+  "slug": "japan",
+  "lang": "en",
+  "title": "Japan Income Tax 2026: How to Calculate Take-Home Pay",
+  "h1": "How to calculate income tax and take-home pay in Japan (2026)",
+  "description": "Japanese income tax, resident tax and social insurance for foreign workers in 2026: first-year gap, rates, and four worked take-home examples in yen.",
+  "lede": "<p>Japan taxes residents on worldwide income with national income tax from 5% to 45%, plus a 10% resident tax and employee social insurance of roughly 15% of pay. On ¥6,000,000 in Tokyo a second-year resident keeps about ¥4,662,100 (77.7%). In your first year the same salary leaves about ¥4,969,300, because resident tax is billed on the previous year's income and you have none yet.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rules as the calculator models them, for an employee in Tokyo. Japan treats you as a resident if you have lived or intend to live in Japan for a year or more. Residents are taxed on income under the progressive national scale, and employers withhold it from each payslip. Social insurance (health, pension and employment) is taken from pay as well, and it is a large share of the deduction at ordinary salaries.</p>",
+    "blocks": [
+      {
+        "h3": "National income tax rates",
+        "html": "<p>National income tax is progressive, and the calculator adds the 2.1% reconstruction surtax to the result. Rates apply to taxable income, which is your salary less the employment income deduction, social insurance and the basic deduction (¥1,040,000 at the incomes in the examples, lower for high earners).</p>",
+        "table": {
+          "head": ["Taxable income", "Rate"],
+          "rows": [
+            ["Up to ¥1,950,000", "5%"],
+            ["¥1,950,001 to ¥3,300,000", "10%"],
+            ["¥3,300,001 to ¥6,950,000", "20%"],
+            ["¥6,950,001 to ¥9,000,000", "23%"],
+            ["¥9,000,001 to ¥18,000,000", "33%"],
+            ["¥18,000,001 to ¥40,000,000", "40%"],
+            ["Over ¥40,000,000", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "Employment income deduction",
+        "html": "<p>Salary earners do not pay tax on the full salary. A deduction that stands in for work expenses comes off first, and it grows with pay until it reaches a cap.</p>",
+        "table": {
+          "head": ["Annual salary", "Deduction"],
+          "rows": [
+            ["Up to ¥2,200,000", "¥740,000"],
+            ["¥2,200,001 to ¥3,600,000", "30% of salary + ¥80,000"],
+            ["¥3,600,001 to ¥6,600,000", "20% of salary + ¥440,000"],
+            ["¥6,600,001 to ¥8,500,000", "10% of salary + ¥1,100,000"],
+            ["Over ¥8,500,000", "¥1,950,000 (cap)"]
+          ]
+        }
+      },
+      {
+        "h3": "Resident tax",
+        "html": "<p>Resident tax goes to your prefecture and municipality. It is 10% of taxable income (6% municipal and 4% prefectural) plus a small per-capita amount, with a basic deduction of ¥430,000 instead of the national one. The key difference from national tax is timing: it is assessed on the <em>previous</em> calendar year's income and billed from June. That is why a new arrival pays none in the first year, and why the bill arrives in the second.</p>"
+      },
+      {
+        "h3": "Social insurance",
+        "html": "<p>Employees pay health insurance, the employees' pension and employment insurance from pay. The calculator uses the Tokyo rates for the Kyokai Kenpo health plan, 9.15% for the pension and 0.5% for employment insurance, based on a monthly pay band. It also adds the child-support levy that started with April 2026 wages. The pension and health contributions are deductible from taxable income, so they lower both income tax and resident tax.</p>"
+      },
+      {
+        "h3": "Non-residents",
+        "html": "<p>A non-resident who is paid for work done in Japan is taxed at a flat 20.42% (20% plus the surtax) withheld at source, with no deductions. The final rate is applied to the gross pay in the calculator.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "National Tax Agency", "url": "https://www.nta.go.jp/", "note": "income tax rates, deductions and withholding" },
+      { "name": "Japan Health Insurance Association (Kyokai Kenpo)", "url": "https://www.kyoukaikenpo.or.jp/", "note": "health insurance and pension rates" },
+      { "name": "Japan Pension Service", "url": "https://www.nenkin.go.jp/", "note": "employees' pension and the lump-sum withdrawal payment" },
+      { "name": "Immigration Services Agency of Japan", "url": "https://www.moj.go.jp/isa/", "note": "visa categories including Specified Skilled Worker" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident-tokyo",
+      "title": "How to calculate income tax and take-home pay in Tokyo on ¥6,000,000",
+      "intro": "<p>This is a second-year resident (or later) on ¥6,000,000 in Tokyo. The employment income deduction is ¥1,640,000. Social insurance takes ¥881,400, and the basic deduction brings taxable income down further, so national income tax is ¥149,300. Resident tax adds ¥307,200. Together you pay ¥456,500 in tax and keep about ¥4,662,100, or 77.7% of gross.</p>",
+      "after": "<p>Social insurance is the bigger bite: ¥881,400 against ¥456,500 of tax. Your marginal rate is 16.7%.</p>"
+    },
+    {
+      "key": "first-year",
+      "title": "Japan first-year tax: what ¥6,000,000 pays before resident tax starts",
+      "intro": "<p>The salary and national tax are the same as in the example above, but there is no resident tax in your first year in Japan because it follows last year's income, and you had none in Japan. You pay ¥149,300 of income tax and ¥881,400 of social insurance, and keep about ¥4,969,300, or 82.8% of gross. That is ¥307,200 more than the second-year resident.</p>",
+      "after": "<p>Plan for the drop. In year two the resident tax bill arrives (¥307,200 on this salary), usually spread across monthly deductions from June. Your take-home pay falls with no change in salary.</p>"
+    },
+    {
+      "key": "specified-skilled-worker",
+      "title": "Take-home pay for a Specified Skilled Worker in Japan on ¥3,000,000",
+      "intro": "<p>This is a Specified Skilled Worker or similar lower-paid employee on ¥3,000,000, in the second year or later. The employment income deduction is ¥980,000, so taxable income is small. National income tax is only ¥26,600 and resident tax is ¥115,600. Social insurance takes ¥457,728 (health ¥153,660, pension ¥285,480, employment insurance ¥15,000 and the child-support levy ¥3,588). You keep about ¥2,400,072, or 80.0% of gross.</p>",
+      "after": "<p>At this level social insurance is about three times the income tax. The pension is a real cost that Specified Skilled Workers can partly recover when they leave (see the strategies below). The marginal rate is 11.1%.</p>"
+    },
+    {
+      "key": "non-resident",
+      "title": "How much tax does a non-resident pay in Japan on ¥6,000,000?",
+      "intro": "<p>A non-resident paid for work done in Japan is taxed at a flat 20.42%, which is ¥1,225,200 on ¥6,000,000. There are no deductions and no resident tax. The calculator still takes social insurance of ¥881,400, because an employee covered by the schemes pays it. You keep about ¥3,893,400, or 64.9% of gross, which is ¥768,700 less than the second-year resident on the same pay.</p>",
+      "after": "<p>Check whether you are really a non-resident. Someone who has come to live in Japan for a year or more is a resident from the start, and the flat rate does not apply.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Japanese tax. Which ones apply depends on your residency and your employer.</p>",
+  "strategies": [
+    {
+      "h3": "Claim deductions at the year-end adjustment (nenmatsu chosei)",
+      "html": "<p><strong>Suits:</strong> any employee with a single employer. Your employer settles your income tax for the year in December (the nenmatsu chosei), and you can hand in forms for life insurance premiums, dependants, and some other deductions. The calculator only uses the basic deductions.</p><p><strong>Caveat:</strong> each deduction needs a certificate, and you may only claim what applies to you. Ask your employer's payroll team for the deadline.</p>"
+    },
+    {
+      "h3": "iDeCo individual pension contributions",
+      "html": "<p><strong>Suits:</strong> residents who expect to stay in Japan long enough to make it worthwhile. Contributions to iDeCo are deductible from taxable income, so they save both national and resident tax at your marginal rate. The monthly limit depends on whether your employer has its own pension plan.</p><p><strong>Caveat:</strong> the money is locked until a pension age, so it is a poor fit if you plan to leave soon. Check the current limits with your provider.</p>"
+    },
+    {
+      "h3": "Furusato nozei (hometown tax donations)",
+      "html": "<p><strong>Suits:</strong> residents who pay resident tax and have room in their limit. A donation to a local government above ¥2,000 reduces your income and resident tax by about the same amount, and most donors receive a gift from the town. The limit rises with income and your family situation.</p><p><strong>Caveat:</strong> it moves tax rather than cutting it, and it only works if you have resident tax to offset. It does little in your first year, when you pay none.</p>"
+    },
+    {
+      "h3": "Claim the pension lump-sum withdrawal payment when you leave",
+      "html": "<p><strong>Suits:</strong> Specified Skilled Workers, technical interns and other foreign nationals who contribute to the employees' pension and then leave Japan. Foreign nationals who do not qualify for a pension in Japan can apply for a lump-sum withdrawal payment after they leave, within a time limit.</p><p><strong>Caveat:</strong> the payment is subject to a 20.42% withholding tax that can be reclaimed through a tax representative, and the amount depends on the months you contributed. The Japan Pension Service explains how to apply.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, capital gains or a business.",
+    "<strong>No bonuses.</strong> Many Japanese contracts pay part of the year as a bonus, and social insurance on bonuses is calculated separately. The calculator treats your pay as twelve equal months.",
+    "<strong>Tokyo only.</strong> Health insurance rates and resident tax vary by region and by health plan, and a company with its own health society charges different rates.",
+    "<strong>Standard deductions only.</strong> It uses the basic deductions and does not include dependants, life insurance, medical expenses, iDeCo or furusato nozei.",
+    "<strong>Simplified residency.</strong> You choose the status. The calculator does not test whether you are a resident, or a non-permanent resident, under the residency rules.",
+    "<strong>The second year's resident tax is estimated.</strong> The calculator uses this year's income as a stand-in for last year's. If your pay changed, your resident tax bill will differ.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on ¥6,000,000 in Japan?",
+      "a": "<p>A second-year resident in Tokyo pays about ¥456,500 in national and resident tax and ¥881,400 in social insurance, keeping about ¥4,662,100. In the first year there is no resident tax, so you keep about ¥4,969,300. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Why is there no resident tax in my first year in Japan, and why does my pay drop in the second?",
+      "a": "<p>Resident tax is based on the previous calendar year's income, and it is billed to people who lived in Japan on 1 January. If you arrive during the year, there is no earlier Japanese income to assess, so nothing is charged. A year later you owe resident tax on your first year's pay, and the municipality bills it from June. If your employer withholds it, your monthly pay falls although your salary has not changed.</p><p>The calculator shows the full-year figure for each case, so a payslip in the second year will not match the first-year example.</p>"
+    },
+    {
+      "q": "What is the year-end adjustment (nenmatsu chosei)?",
+      "a": "<p>Employers withhold income tax from each payslip using a standard table. In December (or sometimes early in the new year) they recalculate your tax for the whole year using the deductions you have declared, and any overpayment is refunded in your pay. Most employees do not file a separate tax return. If you changed jobs mid-year, had other income or want to claim a deduction your employer cannot, you may have to file one yourself in February to March.</p><p>The calculator works out the final full-year tax, so it is closest to the result after this adjustment, not to a single month's payslip.</p>"
+    },
+    {
+      "q": "Why is so much of my pay taken for social insurance?",
+      "a": "<p>Japan's employees' pension (9.15% of pay in the calculator) and health insurance (about 4.9%, more with long-term care for people aged 40 and over) are compulsory for most full-time employees, and your employer pays a matching share on top. At ¥6,000,000 the total is ¥881,400, which is more than the income tax. Unlike tax, the pension is capped at a monthly pay band, so high earners pay a smaller share.</p>"
+    },
+    {
+      "q": "Can I get my pension back when I leave Japan?",
+      "a": "<p>Foreign nationals who paid into the employees' pension and then leave can often claim a lump-sum withdrawal payment, within a time limit after leaving. The amount depends on how many months you contributed and your pay, and a 20.42% tax is withheld that you can reclaim through a tax representative. Check eligibility and the current cap on months on the <a href=\"https://www.nenkin.go.jp/\">Japan Pension Service website</a>.</p>"
+    },
+    {
+      "q": "What if I live in Japan for less than a year?",
+      "a": "<p>A non-resident paid for work in Japan is taxed at a flat 20.42% withheld at source, with no deductions, as in the non-resident example. Someone who is expected to stay for a year or more is a resident from the day they arrive, so this applies to short assignments, not to a long stay that has just begun.</p>"
+    },
+    {
+      "q": "How does Japan's cost of living change what ¥6,000,000 buys?",
+      "a": "<p>Take-home pay is only half the picture. See what it buys in Tokyo against your home city in the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, and test how a higher savings rate builds up over time in the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a matcha latte."
+}
