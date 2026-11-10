@@ -48,3 +48,4 @@
 }
 .jx-table tbody th { width: 34%; }
 .jx-prose + .gd-table-wrap { margin-top: 6px; }
+.jx em { font-style: italic; font-weight: inherit; color: inherit; }
