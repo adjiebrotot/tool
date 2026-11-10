@@ -563,6 +563,10 @@ dispCur: Currency to show amounts in  (most important)
 dispPer: Show amounts per year or per month
   One of: year (Year), month (Month). Default year.
   Display only. year or month.
+chartMeasure: Show take-home as
+  One of: pct (% of gross), amount (Amount). Default pct.
+  Display only. What the chart across the pay range reads: pct (take-home as a share of gross, the
+  default) or amount (take-home pay a year).
 
 JSON
 `json={"jobs":[{...},{...}]}` sets one to four jobs. Each job is an object of the field keys above, for its own country: country (required, the ISO code), dir, amount (a number), period, and any of that country's fields. A field left out keeps its default. A field named in the link outside the json (amount=95000) replaces that value in job 1. Use json for the user's own comparison; a Quick Start's jobs are examples.

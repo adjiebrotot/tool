@@ -107,12 +107,45 @@ td.src a:hover{text-decoration:underline;}
 th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0;}
 .badge{border-radius:var(--radius-pill);padding:2px 9px;font-size:.72rem;font-weight:700;display:inline-block;font-family:'DM Sans',sans-serif;white-space:nowrap;}
 .badge-muted{background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border);}
-.job-block+.job-block{margin-top:22px;}
-.job-block h3{font-size:1rem;margin:0 0 6px;display:flex;align-items:center;gap:8px;}
-.job-block h3 .job-dot{width:11px;height:11px;border-radius:50%;}
-.job-block .job-meta{color:var(--muted);font-size:.8rem;margin:0 0 8px;}
-.job-block .job-notes{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem;line-height:1.5;}
+/* ── Take-home pay breakdowns: one job at a time, picked beside the title ── */
+.detail-head .view-label{font-size:.82rem;color:var(--muted);font-weight:600;}
+.pf-view-select{font-size:.8rem;padding:5px 30px 5px 10px;min-width:150px;max-width:240px;width:auto;flex:0 0 auto;}
+.job-block .job-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;color:var(--muted);font-size:.82rem;margin:2px 0 12px;}
+.job-block .job-meta strong{color:var(--text);font-size:.95rem;}
+.job-block .job-meta .job-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.job-block .job-meta-sep{opacity:.6;}
+.job-block .job-notes{margin:12px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem;line-height:1.55;}
 .job-block .ns{margin:6px 0 0;}
+/* The columns hold their width, and every header sits over its column the way its cells do:
+   words to the left, money to the right, the status badge centred. */
+.lines-table{table-layout:fixed;min-width:980px;}
+.lines-table col.c-line{width:auto;}
+.lines-table col.c-kind{width:118px;}
+.lines-table col.c-amt{width:150px;}
+.lines-table col.c-status{width:116px;}
+.lines-table col.c-src{width:200px;}
+.lines-table col.c-from{width:104px;}
+.lines-table :is(th,td){padding:11px 14px;vertical-align:middle;}
+.lines-table thead th{white-space:nowrap;}
+.lines-table thead th.l{text-align:left;}
+.lines-table thead th.r{text-align:right;}
+.lines-table thead th .th-unit{display:inline;margin-left:4px;}
+.lines-table td:first-child{line-height:1.45;}
+.lines-table td.amt{text-align:right;}
+.lines-table td.st{text-align:center;}
+.lines-table td.src{line-height:1.4;}
+.lines-table td.from{white-space:nowrap;}
+.lines-table tr.sub td:first-child{padding-left:30px;}
+.lines-table tr.total td{background:var(--bg-subtle);}
+.lines-table tbody tr.total:first-child td{border-top:none;}
+
+/* ── The chart's measure, beside its title (rentvsownhouse's graph switches) ── */
+.chart-head h2{display:flex;align-items:center;gap:6px;}
+.chart-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.chart-controls .seg-group{width:auto;background:none;border:none;padding:0;gap:8px;flex-wrap:nowrap;}
+.chart-controls .seg-group>.seg-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:6px 14px;font-size:13px;font-weight:600;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast);}
+.chart-controls .seg-group>.seg-btn:hover:not(.active){border-color:var(--accent);color:var(--text);}
+.chart-controls .seg-group>.seg-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);box-shadow:none;}
 
 .verdict{margin-bottom:18px;}
 /* Opened from the Cost of Living Comparator (openFromComparator in script.js). */

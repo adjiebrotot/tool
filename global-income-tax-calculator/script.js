@@ -173,6 +173,7 @@ function pickJob(i){
   if(i === ACTIVE || i < 0 || i >= JOBS.length) return;
   syncActive();
   ACTIVE = i;
+  linesPick = null;
   writeJob(JOBS[ACTIVE]);
   clearQuickStart();
   if(persist) persist.schedule();
@@ -183,6 +184,7 @@ function addJob(){
   syncActive();
   JOBS.push(JSON.parse(JSON.stringify(JOBS[ACTIVE])));
   ACTIVE = JOBS.length - 1;
+  linesPick = null;
   writeJob(JOBS[ACTIVE]);
   clearQuickStart();
   if(persist) persist.schedule();
@@ -192,6 +194,7 @@ function removeJob(i){
   if(JOBS.length <= 1) return;
   syncActive();
   JOBS.splice(i, 1);
+  linesPick = null;
   if(i < ACTIVE) ACTIVE--;
   ACTIVE = Math.min(ACTIVE, JOBS.length - 1);
   writeJob(JOBS[ACTIVE]);
@@ -450,7 +453,10 @@ function axisCurs(ok){
   const curs = [...new Set(ok.map(x => x.r.cur))];
   return disp().cur === 'local' && curs.length > 1 ? curs : [commonCur(ok.map(x => x.r))];
 }
+// What the chart's y axis reads: the share of gross taken home (pct, as it always has) or the take-home itself (amount).
+const chartMeasure = () => ($('chartMeasure') && $('chartMeasure').value === 'amount') ? 'amount' : 'pct';
 function sweep(results){
+  const amt = chartMeasure() === 'amount';
   const ok = results.map((r, i) => ({ r, i })).filter(x => !x.r.notSupported);
   const curs = axisCurs(ok);
   const cc = curs[0];   // the lines are plotted in the first axis's currency; the others restate it
@@ -462,9 +468,9 @@ function sweep(results){
     for(let s = 1; s <= N; s++){
       const x = xMax*s/N, local = E.convert(x, cc, r.cur);
       const v = E.compute(r.country, local, r.knobs);
-      pts.push({ x, y: v.notSupported || !v.gross ? null : v.net/v.gross*100 });
+      pts.push({ x, y: v.notSupported || !v.gross ? null : amt ? E.convert(v.net, r.cur, cc) : v.net/v.gross*100, net: v.notSupported ? null : v.net });
     }
-    const own = { x: E.convert(r.entered, r.cur, cc), y: r.net/r.gross*100, own: true };
+    const own = { x: E.convert(r.entered, r.cur, cc), y: amt ? E.convert(r.net, r.cur, cc) : r.net/r.gross*100, net: r.net, own: true };
     pts.push(own);
     pts.sort((a, b) => a.x - b.x);
     return { i, r, pts };
@@ -507,7 +513,15 @@ function updateChart(results){
       pointBackgroundColor: c, pointBorderColor: cssVar('--panel'), pointBorderWidth: 2
     };
   });
-  const cc = sw.cc;
+  const cc = sw.cc, amt = chartMeasure() === 'amount';
+  // A job's take-home at a point: its share of gross, or the amount in its own currency (or the one picked to show).
+  const jobCur = i => disp().cur === 'local' ? sw.series[i].r.cur : cc;
+  const yText = (it, short) => {
+    if(it.parsed.y == null) return 'not loaded';
+    if(!amt) return it.parsed.y.toFixed(1) + (short ? '%' : '% taken home');
+    const s = sw.series[it.datasetIndex], c = jobCur(it.datasetIndex);
+    return money(E.convert(it.raw.net, s.r.cur, c), c) + (short ? '' : ' taken home');
+  };
   // Gross pay at one point of the axis, in every axis's currency.
   const grossAt = x => sw.curs.map(c => money(E.convert(x, cc, c), c)).join(' ≈ ');
   // Axis k restates the first one in its own currency: same span, so the zoom keeps them in step.
@@ -535,11 +549,11 @@ function updateChart(results){
         backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted, borderColor: grid, borderWidth: 1, padding: 10,
         callbacks: {
           title: items => items.length ? 'Gross ' + grossAt(items[0].parsed.x) + ' a year' + (items[0].raw && items[0].raw.own ? ' (as entered)' : '') : '',
-          label: ctx => '  ' + ctx.dataset.label + ': ' + (ctx.parsed.y == null ? 'not loaded' : ctx.parsed.y.toFixed(1) + '% taken home'),
+          label: ctx => '  ' + ctx.dataset.label + ': ' + yText(ctx),
           afterBody(items){
             if(!items.length) return;
             $('hoverBox').textContent = 'Gross ' + grossAt(items[0].parsed.x) + ' a year  |  '
-              + items.map(it => it.dataset.label + ': ' + (it.parsed.y == null ? 'not loaded' : it.parsed.y.toFixed(1) + '%')).join('  |  ');
+              + items.map(it => it.dataset.label + ': ' + yText(it, true)).join('  |  ');
           }
         }
       }),
@@ -547,10 +561,11 @@ function updateChart(results){
       sharedYFit: { auto: { axes: ['y'] } }
     },
     scales: Object.assign(xScales, {
-      y: { title: { display: true, text: 'Take-home (% of gross)', color: muted, font: { size: 11 } },
-        ticks: { color: muted, font: { size: 11 }, callback: v => v + '%' }, grid: { color: grid } }
+      y: { title: { display: true, text: amt ? 'Take-home pay (' + cc + ' a year)' : 'Take-home (% of gross)', color: muted, font: { size: 11 } },
+        ticks: { color: muted, font: { size: 11 }, callback: v => amt ? money(v, cc, true) : v + '%' }, grid: { color: grid } }
     })
   };
+  $('chartTitle').textContent = chartTitle();
   if(chart) chart.destroy();
   chart = new Chart($('chartCanvas'), { type: 'line', data: { datasets }, options, plugins: [SharedZoom.plugin] });
   renderLegend(datasets);
@@ -593,27 +608,45 @@ function renderCompare(results){
   $('compareWrap').innerHTML = h;
 }
 const KIND_WORD = { tax: 'Tax', social: 'Contribution', other: 'From pay', benefit: 'Tax-free cash', deduction: 'Deduction', credit: 'Credit', employer: 'Employer, on top', info: 'Note' };
+// The breakdown shows one job at a time, picked beside its title. It follows the job the form
+// shows until the reader picks another, and falls back to job 1 when the one picked is removed.
+let linesPick = null;
+const SRC_TIP = '<ul><li><strong>Official:</strong> confirmed on a government page.</li><li><strong>Secondary:</strong> a Big Four, law firm or payroll source citing the rule.</li><li><strong>Assumption:</strong> a stated modelling choice.</li></ul>';
+function linesJobIndex(n){
+  const i = linesPick == null ? ACTIVE : linesPick;
+  return i >= 0 && i < n ? i : 0;
+}
+function renderLinesPicker(results){
+  const sel = $('linesJob'), idx = linesJobIndex(results.length);
+  sel.innerHTML = results.map((r, i) => '<option value="' + i + '">' + esc(jobTitle(JOBS[i], i)) + '</option>').join('');
+  sel.value = String(idx);
+  const many = results.length > 1;
+  sel.hidden = !many; $('linesJobLabel').hidden = !many;
+  return idx;
+}
 function renderLines(results){
-  let h = '';
-  results.forEach((r, i) => {
-    const job = JOBS[i], c = E.C[job.country];
-    h += '<div class="job-block"><h3><span class="job-dot" style="background:' + colourOf(i) + '"></span>' + esc(jobTitle(job, i)) + '</h3>';
-    h += '<p class="job-meta">' + esc(c.year) + (c.place ? ' · ' + esc(c.place) : '') + ' · amounts in ' + esc(r.cur) + ' ' + esc(perWord()) + '</p>';
-    if(r.notSupported){ h += '<div class="warning ns">' + esc(r.reason) + '</div></div>'; return; }
-    h += '<table><thead><tr><th>Line</th><th>Kind</th><th>Amount <span class="th-unit">' + esc(r.cur) + '</span></th><th>Status</th><th>Source</th><th>From</th></tr></thead><tbody>';
-    h += '<tr class="total"><td>Gross pay</td><td></td><td>' + esc(money(r.gross/perDiv(), r.cur)) + '</td><td></td><td></td><td></td></tr>';
-    r.lines.forEach(l => {
-      const summed = ['tax', 'social', 'other', 'benefit'].includes(l.kind);
-      const src = E.SRC[l.src] || { name: '', url: '' };
-      const amt = (l.kind === 'info' && !l.amount) ? '' : (summed && l.kind !== 'benefit' ? '−' : l.kind === 'benefit' ? '+' : '') + money(l.amount/perDiv(), r.cur).replace('−', '');
-      h += '<tr' + (summed ? '' : ' class="sub"') + '><td>' + esc(l.label) + '</td><td class="note">' + esc(KIND_WORD[l.kind] || '') + '</td><td>' + esc(amt) + '</td>'
-        + '<td>' + badge(l.status) + '</td><td class="src">' + (src.url ? '<a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + '</a>' : esc(src.name)) + '</td><td class="note">' + esc(l.from) + '</td></tr>';
-    });
-    h += '<tr class="total"><td>Take-home pay</td><td></td><td>' + esc(money(r.net/perDiv(), r.cur)) + '</td><td></td><td></td><td></td></tr>';
-    h += '</tbody></table>';
-    if(r.notes && r.notes.length) h += '<ul class="job-notes">' + r.notes.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>';
-    h += '</div>';
+  const i = renderLinesPicker(results);
+  const r = results[i], job = JOBS[i], c = E.C[job.country];
+  let h = '<div class="job-block">';
+  h += '<p class="job-meta"><span class="job-dot" style="background:' + colourOf(i) + '"></span><strong>' + esc(jobTitle(job, i)) + '</strong>'
+    + '<span class="job-meta-sep">·</span>' + esc(c.year) + (c.place ? ' · ' + esc(c.place) : '') + ' · amounts in ' + esc(r.cur) + ' ' + esc(perWord()) + '</p>';
+  if(r.notSupported){ $('linesWrap').innerHTML = h + '<div class="warning ns">' + esc(r.reason) + '</div></div>'; return; }
+  h += '<div class="table-wrap explainer"><table class="lines-table"><colgroup><col class="c-line"><col class="c-kind"><col class="c-amt"><col class="c-status"><col class="c-src"><col class="c-from"></colgroup>'
+    + '<thead><tr><th class="l">Line</th><th class="l">Kind</th><th class="r">Amount <span class="th-unit">' + esc(r.cur) + '</span></th><th>Status</th>'
+    + '<th class="l">Source <i class="tip-icon" data-tip="' + esc(SRC_TIP) + '"></i></th><th class="l">From</th></tr></thead><tbody>';
+  const blank = '<td></td><td></td><td></td>';
+  h += '<tr class="total"><td>Gross pay</td><td></td><td class="amt">' + esc(money(r.gross/perDiv(), r.cur)) + '</td>' + blank + '</tr>';
+  r.lines.forEach(l => {
+    const summed = ['tax', 'social', 'other', 'benefit'].includes(l.kind);
+    const src = E.SRC[l.src] || { name: '', url: '' };
+    const amt = (l.kind === 'info' && !l.amount) ? '' : (summed && l.kind !== 'benefit' ? '−' : l.kind === 'benefit' ? '+' : '') + money(l.amount/perDiv(), r.cur).replace('−', '');
+    h += '<tr' + (summed ? '' : ' class="sub"') + '><td>' + esc(l.label) + '</td><td class="note">' + esc(KIND_WORD[l.kind] || '') + '</td><td class="amt">' + esc(amt) + '</td>'
+      + '<td class="st">' + badge(l.status) + '</td><td class="src">' + (src.url ? '<a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + '</a>' : esc(src.name)) + '</td><td class="note from">' + esc(l.from) + '</td></tr>';
   });
+  h += '<tr class="total"><td>Take-home pay</td><td></td><td class="amt">' + esc(money(r.net/perDiv(), r.cur)) + '</td>' + blank + '</tr>';
+  h += '</tbody></table></div>';
+  if(r.notes && r.notes.length) h += '<ul class="job-notes">' + r.notes.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>';
+  h += '</div>';
   $('linesWrap').innerHTML = h;
 }
 
@@ -700,7 +733,8 @@ function exportLinesCsv(){
   });
   downloadBlob(rows.join('\n'), 'global-salary-lines.csv', 'text/csv;charset=utf-8;');
 }
-const CHART_TITLE = 'Take-home share across the pay range';
+// The title follows the measure the chart reads (the h2 on the page and the exports alike).
+const chartTitle = () => chartMeasure() === 'amount' ? 'Take-home pay across the pay range' : 'Take-home share across the pay range';
 function chartSubtitle(){
   if(!last) return '';
   return last.results.map((r, i) => r.notSupported ? jobTitle(JOBS[i], i) + ': not loaded' : jobTitle(JOBS[i], i) + ' ' + pct(r.net/r.gross)).join(' · ');
@@ -720,7 +754,7 @@ function chartPngAtSize(){
   ctx.scale(OUT, OUT);
   ctx.fillStyle = cssVar('--panel') || '#fff'; ctx.fillRect(0, 0, outW, outH);
   ctx.fillStyle = cssVar('--text'); ctx.font = '700 26px "DM Sans", sans-serif';
-  ctx.fillText(CHART_TITLE, pad, pad + 22);
+  ctx.fillText(chartTitle(), pad, pad + 22);
   ctx.fillStyle = cssVar('--muted'); ctx.font = '400 15px "DM Sans", sans-serif';
   ctx.fillText(chartSubtitle(), pad, pad + 48);
   ctx.drawImage(src, pad, headH, plotW, plotH);
@@ -761,7 +795,7 @@ function chartSvgAtSize(){
   };
   const bg = document.createElementNS(NS, 'rect');
   bg.setAttribute('width', W); bg.setAttribute('height', H); bg.setAttribute('fill', cssVar('--panel') || '#fff'); svg.appendChild(bg);
-  text(CHART_TITLE, pad, pad + 16, 19, 700, cssVar('--text'));
+  text(chartTitle(), pad, pad + 16, 19, 700, cssVar('--text'));
   text(chartSubtitle(), pad, pad + 34, 11, 400, cssVar('--muted'));
   const img = document.createElementNS(NS, 'image');
   img.setAttribute('x', pad); img.setAttribute('y', headH); img.setAttribute('width', plotW); img.setAttribute('height', plotH);
@@ -881,11 +915,13 @@ function init(){
   });
   $('csvBtn').addEventListener('click', exportCsv);
   $('linesCsvBtn').addEventListener('click', exportLinesCsv);
+  $('linesJob').addEventListener('change', () => { linesPick = Number($('linesJob').value); if(last) renderLines(last.results); });
+  $('chartMeasure').addEventListener('change', () => { if(last) updateChart(last.results); });
   $('svgBtn').addEventListener('click', chartSvg);
   $('pngBtn').addEventListener('click', exportPng);
   $('copyBtn').addEventListener('click', () => SharedShare.copyImage(() => chartPng(), $('copyBtn')));
   $('resetZoomBtn').addEventListener('click', () => { if(chart) chart.resetZoom(); });
-  $('chartCanvas').addEventListener('mouseleave', () => { $('hoverBox').textContent = 'Hover the chart to read each job\'s take-home share at that gross pay.'; });
+  $('chartCanvas').addEventListener('mouseleave', () => { $('hoverBox').textContent = 'Hover the chart to read each job\'s take-home at that gross pay.'; });
   document.querySelectorAll('.quick-start-btn').forEach(b => b.addEventListener('click', () => applyQuickStart(b.dataset.preset)));
 
   startLive();
@@ -915,7 +951,7 @@ function init(){
     }
   });
   SharedScenario.mount('.quick-start-row', { tool: 'global-salary-calculator', persist });
-  SharedFold.attach($('linesSection'), { key: 'global-salary-calculator-lines', bodies: ['.table-wrap'] });
+  SharedFold.attach($('linesSection'), { key: 'global-salary-calculator-lines', bodies: ['.lines-body'] });
   render();
 
   openFromComparator();
