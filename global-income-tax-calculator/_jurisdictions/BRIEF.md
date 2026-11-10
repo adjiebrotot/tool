@@ -123,7 +123,17 @@ site are absolute (`https://tool.adjiebrotots.com/...`), external links absolute
   with the decimal comma: 2,5%).
 - `strategies`: 3 to 5, each with who it suits and a caveat.
 - `limits`: 4 to 7.
-- `faq`: 5 to 8. Link related pages where they really help:
+- `faq`: 5 to 8. At least two are the country's own quirks, the questions people only ask
+  about that country because its system surprises them, answered with the mechanism. For
+  example: Indonesia, why the PPh 21 cut is bigger in December (monthly TER rates in January
+  to November, then the full-year reconciliation in December); Japan, why the first year has
+  no resident tax and the second year's pay drops; Germany, what the tax classes are and why
+  the class III/V split evens out in the return; Australia, why tax is refunded after
+  30 June; Singapore, why there is no withholding and the bill comes the next year; UK, the
+  60% band between £100,000 and £125,140; US, why a state with no income tax still has FICA;
+  Gulf states, end-of-service gratuity in place of a pension. Say what the calculator does
+  with it (it works out the full-year figure, so a monthly payslip can differ month to month).
+  Link related pages where they really help:
   - The calculator: https://tool.adjiebrotots.com/global-income-tax-calculator/
   - Cost of Living Comparator (what a salary buys in another city): https://tool.adjiebrotots.com/costofliving-comparator/
   - Financial Freedom Calculator: https://tool.adjiebrotots.com/financialfreedom/

@@ -124,7 +124,10 @@ const pct = (v, lang) => { const s = (v * 100).toFixed(1); return (lang === 'id'
 function readContent(slug, lang){
   const f = join(CONTENT, `${slug}.${lang}.json`);
   if(!existsSync(f)) return null;
-  return JSON.parse(readFileSync(f, 'utf8'));
+  // Writers sometimes italicise the Markdown way (*term*): make it HTML everywhere.
+  const em = v => typeof v === 'string' ? v.replace(/(^|[^*\w])\*([^*\n]+?)\*(?![*\w])/g, '$1<em>$2</em>')
+    : Array.isArray(v) ? v.map(em) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === 'lineLabels' ? x : em(x)])) : v;
+  return em(JSON.parse(readFileSync(f, 'utf8')));
 }
 
 const PROBLEMS = [];
@@ -210,7 +213,7 @@ function page(p, lang){
   const law = c.law || {};
   const lawBlocks = (law.blocks || []).map(b => `
       <h3>${b.h3}</h3>
-      ${b.html || ''}${b.table ? `
+      ${b.html ? `<div class="jx-prose">${b.html}</div>` : ''}${b.table ? `
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr>${b.table.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
         <tbody>${b.table.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(b.table.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n          ')}</tbody>

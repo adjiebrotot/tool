@@ -46,3 +46,5 @@
   .jx-toc { gap: 6px; }
   .jx-marg { display: block; margin: 4px 0 0; }
 }
+.jx-table tbody th { width: 34%; }
+.jx-prose + .gd-table-wrap { margin-top: 6px; }
