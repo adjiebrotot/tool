@@ -540,7 +540,6 @@ export function aiPage(T, models, demo) {
   <main>
     <header class="gd-hero">
       <h1>${glyph(T, M)}Use ${esc(T.name)} in your AI</h1>
-      <p class="gd-lead">Install one skill in Claude, ChatGPT, Grok, Gemini or Copilot, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens ${esc(T.name)} on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open ai-dl" href="${attr(zipName)}" download><span aria-hidden="true">⬇</span>&nbsp;Download ${esc(zipName)}</a>
         <a class="gd-skip" href="../">Open the tool</a>
@@ -671,7 +670,6 @@ ${inGroup(g).map(card).join('\n')}
   <main>
     <header class="gd-hero">
       <h1>Use Adjie Brotools in your AI</h1>
-      <p class="gd-lead">${items.length} of these free calculators come with a skill for Claude, ChatGPT, Grok, Gemini and Copilot. Install the ones you need, then ask your question in plain words. Your AI looks up what you did not say, lists every assumption with its source, and replies with one link that opens the tool on your scenario. The tool works out the answer, so the figures you see are the tool's, not the chatbot's.</p>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open" href="#tools">See the ${items.length} skills</a>
         <a class="gd-skip" href="#install">How to install</a>
