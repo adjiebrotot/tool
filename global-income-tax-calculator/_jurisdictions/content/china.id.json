@@ -7,7 +7,7 @@
   "place": "Shanghai",
   "lede": "<p>Tiongkok memajaki gaji penduduk pajaknya dengan tarif bertingkat 3% sampai 45% atas penghasilan setahun, setelah dikurangi pengurang dasar CN¥60.000 (CN¥5.000 per bulan), iuran jaminan sosial, dan dana perumahan. Pemberi kerja memotong pajaknya tiap bulan dengan metode kumulatif, lalu selisihnya diselesaikan lewat rekonsiliasi tahunan pada 1 Maret sampai 30 Juni tahun berikutnya. Sebagai gambaran, gaji CN¥360.000 setahun di Shanghai menyisakan gaji bersih (<em>take-home pay</em>) sekitar CN¥266.520 (74,0%), dan pekerja ekspatriat bergaji CN¥600.000 dengan tunjangan bebas pajak CN¥120.000 menerima sekitar CN¥467.832 (78,0%).</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini untuk tahun pajak 2026 (1 Januari sampai 31 Desember) dengan tarif iuran Shanghai. Kamu dianggap penduduk pajak kalau punya tempat tinggal tetap di Tiongkok atau tinggal di sana 183 hari atau lebih dalam satu tahun pajak. Kalkulator ini hanya menghitung penduduk pajak. Bukan penduduk pajak berarti hanya penghasilan dari pekerjaan di Tiongkok yang dipajaki, dengan aturan tarif yang berbeda.</p>",
+    "intro": "<p>Aturan di bawah ini untuk tahun pajak 2026 (1 Januari sampai 31 Desember) dengan tarif iuran Shanghai. Kamu dianggap penduduk pajak kalau punya tempat tinggal tetap di Tiongkok atau tinggal di sana 183 hari atau lebih dalam satu tahun pajak. Kalkulator ini hanya menghitung penduduk pajak. Kalau kamu bukan penduduk pajak, hanya penghasilan dari pekerjaan di Tiongkok yang dipajaki, dengan aturan tarif yang berbeda.</p>",
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan tahunan untuk penduduk",
@@ -34,7 +34,7 @@
       },
       {
         "h3": "Pemotongan kumulatif bulanan dan rekonsiliasi tahunan",
-        "html": "<p>Tiongkok memakai metode pemotongan kumulatif (<em>cumulative withholding</em>). Setiap bulan, pemberi kerja menjumlahkan semua gajimu dari Januari sampai bulan itu, mengurangkan pengurang yang berjalan, mencari pajak kumulatifnya dengan tarif tahunan di atas, lalu memotong selisihnya dari pajak yang sudah dipotong bulan-bulan sebelumnya. Akibatnya, pajak bulanan kecil di awal tahun dan naik ketika penghasilan kumulatifmu masuk ke tingkat tarif yang lebih tinggi.</p><p>Setelah tahun berakhir, kamu menghitung ulang pajak setahun penuh lewat rekonsiliasi tahunan (<em>annual reconciliation</em>) pada 1 Maret sampai 30 Juni, biasanya lewat aplikasi resmi Individual Income Tax. Kelebihan potongan dikembalikan, dan kekurangannya kamu bayar. Kalkulator menghitung pajak setahun penuh, yaitu hasil akhir rekonsiliasi.</p>"
+        "html": "<p>Tiongkok memakai metode pemotongan kumulatif (<em>cumulative withholding</em>). Setiap bulan, pemberi kerja menjumlahkan semua gajimu dari Januari sampai bulan itu, mengurangkan pengurang yang berlaku sampai bulan itu, mencari pajak kumulatifnya dengan tarif tahunan bertingkat, lalu memotong selisihnya dari pajak yang sudah dipotong bulan-bulan sebelumnya. Akibatnya, pajak bulanan kecil di awal tahun dan naik ketika penghasilan kumulatifmu masuk ke tingkat tarif yang lebih tinggi.</p><p>Setelah tahun berakhir, kamu menghitung ulang pajak setahun penuh lewat rekonsiliasi tahunan (<em>annual reconciliation</em>) pada 1 Maret sampai 30 Juni, biasanya lewat aplikasi resmi Individual Income Tax. Kelebihan potongan dikembalikan, dan kekurangannya kamu bayar. Kalkulator menghitung pajak setahun penuh, yaitu hasil akhir rekonsiliasi.</p>"
       },
       {
         "h3": "Tunjangan ekspatriat bebas pajak",
@@ -60,13 +60,13 @@
     {
       "key": "local-shanghai",
       "title": "Berapa gaji bersih di Shanghai dengan gaji CN¥360.000 setahun?",
-      "intro": "<p>Contoh ini untuk penduduk pajak biasa, tanpa tunjangan ekspatriat dan tanpa pengurang khusus, dengan satu pekerjaan sepanjang tahun. Gaji bulanannya CN¥30.000, di dalam batas iuran, sehingga jaminan sosial 10,5% berjumlah CN¥37.800 dan dana perumahan 7% berjumlah CN¥25.200. Setelah pengurang dasar CN¥60.000, penghasilan kena pajaknya CN¥237.000, yang jatuh di tingkat 20%, sehingga pajaknya CN¥30.480. Gaji bersihnya sekitar CN¥266.520, atau 74,0% dari gaji, dan tarif pajak pada yuan berikutnya yang kamu dapat adalah 34,0%.</p>",
-      "after": "<p>Angka 34,0% itu berasal dari iuran sosial dan dana perumahan sebesar 17,5% dari tiap yuan tambahan, ditambah pajak 20% atas 82,5% sisanya. Pada contoh ini iuran masih di bawah batas atas, jadi ia ikut naik bersama gaji.</p>"
+      "intro": "<p>Contoh ini untuk penduduk pajak biasa, tanpa tunjangan ekspatriat dan tanpa pengurang khusus, dengan satu pekerjaan sepanjang tahun. Gaji bulanannya CN¥30.000, di dalam batas iuran, sehingga jaminan sosial 10,5% berjumlah CN¥37.800 dan dana perumahan 7% berjumlah CN¥25.200. Setelah pengurang dasar CN¥60.000, penghasilan kena pajaknya CN¥237.000, yang jatuh di tingkat 20%, sehingga pajaknya CN¥30.480. Gaji bersihnya sekitar CN¥266.520, atau 74,0% dari gaji, dengan tarif marjinal (pajak dan iuran atas setiap tambahan yuan penghasilan) sebesar 34,0%.</p>",
+      "after": "<p>Angka 34,0% itu berasal dari iuran sosial dan dana perumahan sebesar 17,5% dari tiap yuan tambahan, ditambah pajak 20% atas 82,5% sisanya. Pada contoh ini iuran masih di bawah batas atas, jadi iuran itu ikut naik bersama gaji.</p>"
     },
     {
       "key": "expat-allowances",
       "title": "Berapa pajak ekspatriat di Shanghai dengan gaji CN¥600.000 dan tunjangan bebas pajak CN¥120.000?",
-      "intro": "<p>Contoh ini untuk ekspatriat dengan gaji CN¥600.000 setahun yang tunjangannya (misalnya sewa rumah dan kursus bahasa) senilai CN¥120.000 diakui bebas pajak. Gaji bulanannya CN¥50.000, di atas batas atas iuran, sehingga jaminan sosial dihitung dari batas itu dan berjumlah sekitar CN¥47.271, dan dana perumahan sekitar CN¥31.514. Penghasilan kena pajaknya sekitar CN¥341.215, di tingkat 25%, dan pajaknya sekitar CN¥53.384. Gaji bersihnya sekitar CN¥467.832 (78,0%), dengan tarif pajak pada yuan berikutnya 25,0%.</p>",
+      "intro": "<p>Contoh ini untuk ekspatriat dengan gaji CN¥600.000 setahun yang tunjangannya (misalnya sewa rumah dan kursus bahasa) senilai CN¥120.000 diakui bebas pajak. Gaji bulanannya CN¥50.000, di atas batas atas iuran, sehingga jaminan sosial dihitung dari batas itu dan berjumlah sekitar CN¥47.271, dan dana perumahan sekitar CN¥31.514. Penghasilan kena pajaknya sekitar CN¥341.215, di tingkat 25%, dan pajaknya sekitar CN¥53.384. Gaji bersihnya sekitar CN¥467.832 (78,0%), dengan tarif marjinal 25,0%.</p>",
       "after": "<p>Tanpa tunjangan bebas pajak, gaji yang sama menghasilkan pajak sekitar CN¥85.445 dan gaji bersih sekitar CN¥435.771 (72,6%), jadi tunjangan itu menghemat sekitar CN¥32.061 setahun.</p>"
     }
   ],
@@ -97,7 +97,7 @@
   "faq": [
     {
       "q": "Bagaimana cara kerja pemotongan pajak kumulatif di Tiongkok, dan kenapa pajak bulanan naik sepanjang tahun?",
-      "a": "<p>Pemberi kerja memotong pajak berdasarkan penghasilan kumulatif sejak Januari, bukan penghasilan bulan itu saja. Pada gaji tetap CN¥30.000 per bulan seperti contoh pertama, setelah iuran dan pengurang dasar penghasilan kena pajak bulan pertama sekitar CN¥19.750, jadi pajaknya hanya sekitar CN¥593. Penghasilan kumulatif lalu naik ke tingkat 10% dan akhirnya 20%, sehingga pajak per bulan membesar sampai sekitar CN¥3.950 pada bulan-bulan terakhir, sementara total setahunnya CN¥30.480. Gaji bersihmu karena itu lebih tebal di awal tahun dan menipis di akhir tahun. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+      "a": "<p>Pemberi kerja memotong pajak berdasarkan penghasilan kumulatif sejak Januari, bukan penghasilan bulan itu saja. Pada gaji tetap CN¥30.000 per bulan (CN¥360.000 setahun), setelah iuran dan pengurang dasar penghasilan kena pajak bulan pertama sekitar CN¥19.750, jadi pajaknya hanya sekitar CN¥593. Penghasilan kumulatif lalu naik ke tingkat 10% dan akhirnya 20%, sehingga pajak per bulan membesar sampai sekitar CN¥3.950 pada bulan-bulan terakhir, sementara total setahunnya CN¥30.480. Karena itu, gaji bersihmu lebih tebal di awal tahun dan menipis di akhir tahun. Kalkulator ini menghitung pajak setahun penuh, sehingga slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
     },
     {
       "q": "Apa itu rekonsiliasi pajak tahunan di Tiongkok dan apakah saya wajib ikut?",
@@ -113,11 +113,11 @@
     },
     {
       "q": "Berapa iuran jaminan sosial dan dana perumahan yang dipotong di Shanghai?",
-      "a": "<p>Menurut kalkulator ini, bagianmu 10,5% untuk jaminan sosial (pensiun 8%, kesehatan 2%, pengangguran 0,5%) dan 5% sampai 7% untuk dana perumahan, dihitung dari gaji bulanan sampai batas atas sekitar CN¥37.302 (sampai Juni) atau CN¥37.731 (mulai Juli). Pada gaji CN¥600.000, iurannya karena itu terpotong batas atas: sekitar CN¥47.271 untuk jaminan sosial dan CN¥31.514 untuk dana perumahan. Pemberi kerja membayar bagian yang sepadan di luar gajimu.</p>"
+      "a": "<p>Menurut kalkulator ini, bagianmu 10,5% untuk jaminan sosial (pensiun 8%, kesehatan 2%, pengangguran 0,5%) dan 5% sampai 7% untuk dana perumahan, dihitung dari gaji bulanan sampai batas atas sekitar CN¥37.302 (sampai Juni) atau CN¥37.731 (mulai Juli). Pada gaji CN¥600.000, iurannya terkena batas atas: sekitar CN¥47.271 untuk jaminan sosial dan CN¥31.514 untuk dana perumahan. Pemberi kerja membayar bagian yang sepadan di luar gajimu.</p>"
     },
     {
       "q": "Kapan saya dianggap penduduk pajak di Tiongkok?",
-      "a": "<p>Kamu dianggap penduduk pajak kalau punya tempat tinggal tetap di Tiongkok atau tinggal di sana 183 hari atau lebih dalam satu tahun pajak. Penduduk pajak membayar pajak dengan tarif tahunan bertingkat di atas, dan kalkulator ini hanya menghitung status itu. Kalau kamu tinggal lebih singkat, aturannya berbeda, jadi tanyakan ke pemberi kerja atau otoritas pajak.</p>"
+      "a": "<p>Kamu dianggap penduduk pajak kalau punya tempat tinggal tetap di Tiongkok atau tinggal di sana 183 hari atau lebih dalam satu tahun pajak. Penduduk pajak membayar pajak dengan tarif tahunan bertingkat 3% sampai 45%, dan kalkulator ini hanya menghitung status itu. Kalau kamu tinggal lebih singkat, aturannya berbeda, jadi tanyakan ke pemberi kerja atau otoritas pajak.</p>"
     },
     {
       "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Shanghai dibandingkan dengan Indonesia?",

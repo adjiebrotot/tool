@@ -148,7 +148,7 @@
     {
       "key": "scotland",
       "title": "Berapa lebih besar pajak gaji £60.000 di Skotlandia?",
-      "intro": "<p>Contoh ini memakai gaji dan aturan lain yang sama persis dengan contoh sebelumnya, hanya saja tempat tinggal utamanya di Skotlandia. Dengan enam tingkat tarif Skotlandia, pajak penghasilan menjadi £13.182, naik sekitar £1.750 dibandingkan pajak £11.432 di bagian Inggris lain. NI tetap £3.211. Gaji bersihnya sekitar £43.607 (72,7%), dan tarif marginalnya 44% (42% pajak ditambah 2% NI).</p>",
+      "intro": "<p>Contoh ini memakai gaji dan aturan lain yang sama persis dengan contoh gaji £60.000 di Inggris, Wales, atau Irlandia Utara, hanya saja tempat tinggal utamanya di Skotlandia. Dengan enam tingkat tarif Skotlandia, pajak penghasilan menjadi £13.182, naik sekitar £1.750 dibandingkan pajak £11.432 di bagian Inggris lain. NI tetap £3.211. Gaji bersihnya sekitar £43.607 (72,7%), dan tarif marginalnya 44% (42% pajak ditambah 2% NI).</p>",
       "after": "<p>Selisih ini muncul karena tingkat 42% di Skotlandia dimulai pada penghasilan lebih rendah daripada tingkat 40% di bagian Inggris lain, jadi sebagian besar gaji £60.000 sudah kena tarif lebih tinggi.</p>"
     },
     {

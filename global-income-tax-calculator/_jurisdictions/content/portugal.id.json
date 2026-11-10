@@ -59,7 +59,7 @@
       },
       {
         "h3": "Tambahan solidaritas untuk penghasilan tinggi",
-        "html": "<p>Untuk penghasilan kena pajak yang tinggi, Portugal menambahkan pajak solidaritas (<em>taxa adicional de solidariedade</em>): 2,5% untuk bagian di atas €80.000 sampai €250.000, dan 5% untuk bagian di atas €250.000. Tambahan ini dikenakan di atas tarif IRS di atas.</p>"
+        "html": "<p>Untuk penghasilan kena pajak yang tinggi, Portugal menambahkan pajak solidaritas (<em>taxa adicional de solidariedade</em>): 2,5% untuk bagian di atas €80.000 sampai €250.000, dan 5% untuk bagian di atas €250.000. Tambahan ini dikenakan di samping tarif IRS biasa.</p>"
       },
       {
         "h3": "Iuran jaminan sosial: 11% karyawan, 23,75% pemberi kerja",
@@ -99,19 +99,19 @@
     {
       "key": "irs-jovem",
       "title": "Berapa gaji bersih pekerja muda dengan IRS Jovem di Portugal kalau gaji bruto €30.000?",
-      "intro": "<p>Contoh ini untuk pekerja muda pada tahun pertama IRS Jovem dengan gaji bruto €30.000. Pada tahun pertama 100% gaji dibebaskan, tetapi pembebasannya dibatasi €29.542, sehingga hampir seluruh gaji lolos dari pajak dan IRS menjadi nol. Yang tersisa hanya iuran jaminan sosial €3.300. Gaji bersihnya sekitar €26.700 (89,0% dari gaji), dan potongan pada euro berikutnya hanya iuran 11,0%. Itu sekitar €4.450 lebih banyak daripada penduduk pajak biasa pada gaji yang sama.</p>",
+      "intro": "<p>Contoh ini untuk pekerja muda pada tahun pertama IRS Jovem dengan gaji bruto €30.000. Pada tahun pertama 100% gaji dibebaskan, tetapi pembebasannya dibatasi €29.542, sehingga hampir seluruh gaji lolos dari pajak dan IRS menjadi nol. Yang tersisa hanya iuran jaminan sosial €3.300. Gaji bersihnya sekitar €26.700 (89,0% dari gaji), dan tarif marginalnya hanya 11,0%, yaitu iuran jaminan sosial. Itu sekitar €4.450 lebih banyak daripada penduduk pajak biasa pada gaji yang sama.</p>",
       "after": "<p>Keuntungannya mengecil tiap beberapa tahun: pada gaji yang sama, gaji bersih sekitar €26.595 pada tahun kedua, €25.617 pada tahun kelima, dan €24.182 pada tahun kedelapan.</p>"
     },
     {
       "key": "ifici",
       "title": "Cara menghitung pajak IFICI di Portugal dengan gaji bruto €70.000",
-      "intro": "<p>Contoh ini untuk pekerja pindahan yang memakai rezim IFICI dengan gaji bruto €70.000. IRS dihitung dengan tarif tunggal 20%, yaitu €14.000, dan iuran jaminan sosial 11% adalah €7.700. Gaji bersihnya sekitar €48.300 (69,0% dari gaji), dengan potongan gabungan 31,0% pada euro berikutnya. Penduduk pajak biasa dengan gaji sama menerima sekitar €43.377, jadi IFICI menambah sekitar €4.923 setahun.</p>",
+      "intro": "<p>Contoh ini untuk pekerja pindahan yang memakai rezim IFICI dengan gaji bruto €70.000. IRS dihitung dengan tarif tunggal 20%, yaitu €14.000, dan iuran jaminan sosial 11% adalah €7.700. Gaji bersihnya sekitar €48.300 (69,0% dari gaji), dengan tarif marginal gabungan 31,0%. Penduduk pajak biasa dengan gaji sama menerima sekitar €43.377, jadi IFICI menambah sekitar €4.923 setahun.</p>",
       "after": "<p>Pada gaji yang lebih rendah, tarif tunggal ini bisa justru merugikan: pada gaji bruto €30.000, kalkulator menghasilkan gaji bersih sekitar €20.700 dengan IFICI, dibandingkan €22.250 untuk penduduk pajak biasa.</p>"
     },
     {
       "key": "non-resident",
-      "title": "Berapa pajak non-resident di Portugal untuk gaji bruto €30.000?",
-      "intro": "<p>Contoh ini untuk orang yang bekerja di Portugal tetapi tidak dianggap penduduk pajak. Gaji dikenai tarif tunggal 25%, yaitu €7.500, tanpa pengurang apa pun, ditambah iuran jaminan sosial €3.300. Gaji bersihnya sekitar €19.200 (64,0% dari gaji), dan potongan gabungan pada euro berikutnya 36,0%. Itu sekitar €3.050 lebih sedikit daripada penduduk pajak biasa pada gaji yang sama.</p>",
+      "title": "Berapa pajak <em>non-resident</em> di Portugal untuk gaji bruto €30.000?",
+      "intro": "<p>Contoh ini untuk orang yang bekerja di Portugal tetapi tidak dianggap penduduk pajak. Gaji dikenai tarif tunggal 25%, yaitu €7.500, tanpa pengurang apa pun, ditambah iuran jaminan sosial €3.300. Gaji bersihnya sekitar €19.200 (64,0% dari gaji), dan tarif marginalnya 36,0%. Itu sekitar €3.050 lebih sedikit daripada penduduk pajak biasa pada gaji yang sama.</p>",
       "after": "<p>Periksa dengan Portal das Finanças apakah kamu benar-benar bukan penduduk pajak, karena status penduduk pajak memberi tarif yang jauh lebih ringan pada gaji ini.</p>"
     }
   ],
@@ -119,11 +119,11 @@
   "strategies": [
     {
       "h3": "Cek apakah kamu memenuhi syarat IRS Jovem",
-      "html": "<p>Selisihnya paling besar pada tahun pertama: pada contoh gaji €30.000 di atas, gaji bersih naik sekitar €4.450. Cocok untuk pekerja muda yang menjadi penduduk pajak Portugal dan memenuhi syarat usia dan kualifikasi. Peringatannya, manfaatnya menyusut sampai tahun kesepuluh dan ada batas bagian yang dibebaskan, jadi cek syarat terbaru di Portal das Finanças.</p>"
+      "html": "<p>Selisihnya paling besar pada tahun pertama: pada gaji bruto €30.000, gaji bersih naik sekitar €4.450. Cocok untuk pekerja muda yang menjadi penduduk pajak Portugal dan memenuhi syarat usia dan kualifikasi. Peringatannya, manfaatnya menyusut sampai tahun kesepuluh dan ada batas bagian yang dibebaskan, jadi cek syarat terbaru di Portal das Finanças.</p>"
     },
     {
       "h3": "Tanyakan IFICI kalau gajimu menengah ke atas dan bidangmu memenuhi syarat",
-      "html": "<p>Pada contoh gaji €70.000, IFICI menambah gaji bersih sekitar €4.923 setahun. Cocok untuk pekerja pindahan di bidang yang diakui rezim ini, dengan gaji cukup besar. Peringatannya, tarif tunggal 20% justru lebih berat daripada skala bertingkat pada gaji rendah, dan syarat bidang pekerjaan serta lama tidak berdomisili di Portugal harus dipenuhi. Minta pemberi kerja atau konsultan pajak menghitung kedua cara.</p>"
+      "html": "<p>Pada gaji bruto €70.000, IFICI menambah gaji bersih sekitar €4.923 setahun. Cocok untuk pekerja pindahan di bidang yang diakui rezim ini, dengan gaji cukup besar. Peringatannya, tarif tunggal 20% justru lebih berat daripada skala bertingkat pada gaji rendah, dan syarat bidang pekerjaan serta lama tidak berdomisili di Portugal harus dipenuhi. Minta pemberi kerja atau konsultan pajak menghitung kedua cara.</p>"
     },
     {
       "h3": "Minta faktur dengan nomor pajak (NIF) untuk pengeluaran yang dapat dikurangkan",
@@ -131,7 +131,7 @@
     },
     {
       "h3": "Rencana pensiun (<em>PPR</em>)",
-      "html": "<p>Setoran ke rencana poupança reforma (PPR) bisa memberi manfaat pajak dalam batas tertentu. Cocok untuk penduduk pajak yang berencana tinggal lama di Portugal. Uangnya terikat sampai pensiun atau syarat pencairan lain terpenuhi, dan batas manfaatnya berubah-ubah, jadi cek di Portal das Finanças sebelum menyetor.</p>"
+      "html": "<p>Setoran ke rencana <em>poupança reforma</em> (PPR) bisa memberi manfaat pajak dalam batas tertentu. Cocok untuk penduduk pajak yang berencana tinggal lama di Portugal. Uangnya terikat sampai pensiun atau syarat pencairan lain terpenuhi, dan batas manfaatnya berubah-ubah, jadi cek di Portal das Finanças sebelum menyetor.</p>"
     }
   ],
   "limits": [
@@ -165,7 +165,7 @@
       "a": "<p>IFICI adalah rezim pajak bagi pekerja pindahan di bidang tertentu, seperti riset dan inovasi, dengan tarif tunggal 20%. Rezim ini menggantikan NHR, rezim lama yang sudah tidak menerima pendaftar baru. Pada gaji bruto €70.000, kalkulator menghasilkan gaji bersih €48.300 dengan IFICI dibandingkan sekitar €43.377 untuk penduduk pajak biasa. Syarat bidang pekerjaan dan lama tidak berdomisili di Portugal ada di Portal das Finanças.</p>"
     },
     {
-      "q": "Berapa pajak untuk non-resident yang bekerja di Portugal?",
+      "q": "Berapa pajak untuk <em>non-resident</em> yang bekerja di Portugal?",
       "a": "<p>Gaji dari Portugal dikenai tarif tunggal 25% tanpa pengurang. Pada gaji bruto €30.000, pajaknya €7.500, ditambah iuran €3.300, sehingga gaji bersihnya sekitar €19.200. Kalau kamu memenuhi syarat penduduk pajak, tarif bertingkat biasanya jauh lebih ringan pada gaji ini.</p>"
     },
     {

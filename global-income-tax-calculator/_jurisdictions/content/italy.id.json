@@ -98,18 +98,18 @@
       "key": "employee-milan",
       "title": "Berapa gaji bersih di Milan kalau gaji bruto €45.000?",
       "intro": "<p>Contoh ini untuk karyawan lajang yang tinggal di Milan dengan satu pekerjaan sepanjang tahun. Iuran INPS €4.136 menurunkan penghasilan kena pajaknya menjadi €40.865. IRPEF sebelum pengurang sekitar €10.685, dan kredit pekerja €793 menurunkannya menjadi €9.892. Tambahan Lombardia €611 dan tambahan Milan €327 membuat total pajaknya sekitar €10.830. Gaji bersihnya sekitar €30.034 (66,7% dari gaji), dan tiap euro tambahan dikenai potongan gabungan sekitar 49,3%.</p>",
-      "after": "<p>Potongan marjinal sebesar itu muncul karena beberapa hal berlaku sekaligus: iuran INPS 9,19%, tarif IRPEF 33%, tambahan Lombardia 1,72% dan Milan 0,8%, ditambah kredit pekerja yang menyusut seiring penghasilan naik.</p>"
+      "after": "<p>Tarif marginal sebesar itu muncul karena beberapa hal berlaku sekaligus: iuran INPS 9,19%, tarif IRPEF 33%, tambahan Lombardia 1,72% dan Milan 0,8%, ditambah kredit pekerja yang menyusut seiring penghasilan naik.</p>"
     },
     {
       "key": "impatriate",
       "title": "Cara menghitung pajak rezim impatriat 50% di Italia dengan gaji bruto €80.000",
-      "intro": "<p>Contoh ini untuk pekerja yang pindah dari luar negeri dan memakai rezim impatriat 50% di Milan, dengan gaji bruto €80.000. Iuran INPS €7.590 menyisakan €72.410, dan separuhnya, €36.205, dikecualikan dari pajak. IRPEF dihitung dari sisa €36.205 saja, menjadi €7.476 setelah kredit pekerja dan keringanan <em>cuneo fiscale</em> senilai €1.672. Tambahan Lombardia €531 dan tambahan Milan €290 menyusul. Gaji bersihnya sekitar €64.114 (80,1% dari gaji), dengan potongan gabungan sekitar 35,7% pada euro berikutnya. Tanpa rezim ini, gaji bersih untuk gaji yang sama sekitar €47.339, jadi rezim ini menambah sekitar €16.775 setahun.</p>",
+      "intro": "<p>Contoh ini untuk pekerja yang pindah dari luar negeri dan memakai rezim impatriat 50% di Milan, dengan gaji bruto €80.000. Iuran INPS €7.590 menyisakan €72.410, dan separuhnya, €36.205, dikecualikan dari pajak. IRPEF dihitung dari sisa €36.205 saja, menjadi €7.476 setelah kredit pekerja dan keringanan <em>cuneo fiscale</em> senilai €1.672. Tambahan Lombardia €531 dan tambahan Milan €290 menyusul. Gaji bersihnya sekitar €64.114 (80,1% dari gaji), dengan tarif marginal gabungan sekitar 35,7%. Tanpa rezim ini, gaji bersih untuk gaji yang sama sekitar €47.339, jadi rezim ini menambah sekitar €16.775 setahun.</p>",
       "after": "<p>Kalkulator menghitung kredit pajak dari penghasilan yang sudah dikurangi, dan itu sebuah asumsi, jadi konfirmasikan ke bagian penggajian pemberi kerjamu.</p>"
     },
     {
       "key": "impatriate-with-child",
       "title": "Berapa gaji bersih rezim impatriat 60% di Italia untuk pekerja dengan anak dan gaji bruto €80.000?",
-      "intro": "<p>Contoh ini sama dengan contoh sebelumnya, tetapi pekerjanya punya anak di bawah umur, sehingga 60% penghasilan dikecualikan, yaitu €43.446. Penghasilan kena pajaknya tinggal sekitar €28.964, IRPEF setelah kredit pekerja dan <em>cuneo fiscale</em> (senilai €2.891) hanya €3.867, tambahan Lombardia €406, dan tambahan Milan €232. Gaji bersihnya sekitar €67.905 (84,9% dari gaji), dengan potongan gabungan sekitar 26,1% pada euro berikutnya. Itu sekitar €3.791 lebih banyak daripada contoh 50%.</p>",
+      "intro": "<p>Contoh ini sama dengan contoh rezim impatriat 50% dengan gaji bruto €80.000, tetapi pekerjanya punya anak di bawah umur, sehingga 60% penghasilan dikecualikan, yaitu €43.446. Penghasilan kena pajaknya tinggal sekitar €28.964, IRPEF setelah kredit pekerja dan <em>cuneo fiscale</em> (senilai €2.891) hanya €3.867, tambahan Lombardia €406, dan tambahan Milan €232. Gaji bersihnya sekitar €67.905 (84,9% dari gaji), dengan tarif marginal gabungan sekitar 26,1%. Itu sekitar €3.791 lebih banyak daripada contoh 50%.</p>",
       "after": "<p>Kalkulator tidak menghitung pengurang khusus untuk anak, hanya perubahan persentase yang dikecualikan.</p>"
     }
   ],
@@ -117,7 +117,7 @@
   "strategies": [
     {
       "h3": "Tanyakan rezim impatriat sebelum pindah",
-      "html": "<p>Selisihnya bisa sangat besar: pada contoh gaji €80.000 di atas, rezim 50% menambah gaji bersih sekitar €16.775 setahun. Cocok untuk pekerja berkualifikasi yang direkrut dari luar Italia dengan gaji menengah ke atas. Peringatannya, rezim ini punya syarat tentang lama tidak berdomisili di Italia dan kualifikasi, dan berlaku untuk jangka waktu terbatas. Minta pemberi kerja dan konsultan pajak memastikannya sebelum kamu menandatangani kontrak.</p>"
+      "html": "<p>Selisihnya bisa sangat besar: pada gaji bruto €80.000, rezim 50% menambah gaji bersih sekitar €16.775 setahun. Cocok untuk pekerja berkualifikasi yang direkrut dari luar Italia dengan gaji menengah ke atas. Peringatannya, rezim ini punya syarat tentang lama tidak berdomisili di Italia dan kualifikasi, dan berlaku untuk jangka waktu terbatas. Minta pemberi kerja dan konsultan pajak memastikannya sebelum kamu menandatangani kontrak.</p>"
     },
     {
       "h3": "Dana pensiun tambahan (<em>previdenza complementare</em>)",
@@ -156,7 +156,7 @@
     },
     {
       "q": "Kenapa potongan pada euro tambahan di gaji €45.000 mencapai hampir 50%?",
-      "a": "<p>Pada gaji sekitar €45.000, beberapa hal terjadi sekaligus: IRPEF 33% sudah berlaku, tambahan Lombardia 1,72% dan Milan 0,8% ikut, iuran INPS 9,19% terus dipotong dari tiap euro, dan kredit pekerja menyusut seiring penghasilan naik, sehingga pajak yang sudah dikurangi justru bertambah lebih cepat daripada tarifnya. Kalkulator menghitung gabungan itu sebagai sekitar 49,3% pada euro berikutnya.</p>"
+      "a": "<p>Pada gaji sekitar €45.000, beberapa hal terjadi sekaligus: IRPEF 33% sudah berlaku, tambahan Lombardia 1,72% dan Milan 0,8% ikut, iuran INPS 9,19% terus dipotong dari tiap euro, dan kredit pekerja menyusut seiring penghasilan naik, sehingga pajak yang sudah dikurangi justru bertambah lebih cepat daripada tarifnya. Kalkulator menghitung gabungan itu sebagai tarif marginal sekitar 49,3%.</p>"
     },
     {
       "q": "Siapa yang bisa memakai rezim impatriat di Italia?",

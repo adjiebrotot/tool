@@ -10,7 +10,7 @@
     "blocks": [
       {
         "h3": "Tarif tunggal 22%",
-        "html": "<p>Estonia tidak punya tingkat tarif. Satu tarif 22% dikenakan pada penghasilan kena pajak, yaitu gaji setelah dikurangi iuran asuransi pengangguran, iuran pilar pensiun kedua dan tunjangan bebas pajak di bawah. Karena itu tarif marginalmu sedikit di atas 22% (24,8% pada contoh di bawah): iuran pekerja ikut dipotong dari setiap euro tambahan, sedangkan pajak 22% dikenakan pada sisanya.</p>"
+        "html": "<p>Estonia tidak punya tingkat tarif. Satu tarif 22% dikenakan pada penghasilan kena pajak, yaitu gaji setelah dikurangi iuran asuransi pengangguran, iuran pilar pensiun kedua dan tunjangan bebas pajak. Karena itu tarif marginalmu sedikit di atas 22% (24,8% pada gaji €36.000 dengan iuran pilar kedua 2%): iuran pekerja ikut dipotong dari setiap euro tambahan, sedangkan pajak 22% dikenakan pada sisanya.</p>"
       },
       {
         "h3": "Tunjangan bebas pajak €700 sebulan",
@@ -73,21 +73,21 @@
     {
       "key": "employee",
       "title": "Berapa gaji bersih di Estonia dengan gaji €36.000 dan pilar pensiun kedua 2%?",
-      "intro": "<p>Contoh ini untuk pekerja dengan satu pekerjaan sepanjang tahun dan iuran pilar kedua 2%. Dari gaji €36.000 dipotong iuran asuransi pengangguran €576 dan iuran pilar kedua €720. Tunjangan bebas pajak €8.400 mengurangi lagi, sehingga penghasilan kena pajaknya €26.304 dan pajak 22%-nya sekitar €5.787. Gaji bersihnya sekitar €28.917 (80,3%), dan setiap euro tambahan dipotong sekitar 24,8%: 22% pajak pada bagian yang tersisa setelah iuran, ditambah iuran 3,6%.</p>",
+      "intro": "<p>Contoh ini untuk pekerja dengan satu pekerjaan sepanjang tahun dan iuran pilar kedua 2%. Dari gaji €36.000 dipotong iuran asuransi pengangguran €576 dan iuran pilar kedua €720. Tunjangan bebas pajak €8.400 mengurangi lagi, sehingga penghasilan kena pajaknya €26.304 dan pajak 22%-nya sekitar €5.787. Gaji bersihnya sekitar €28.917 (80,3%), dan tarif marginalnya sekitar 24,8%: 22% pajak pada bagian yang tersisa setelah iuran, ditambah iuran 3,6%.</p>",
       "after": "<p>Uang €720 di pilar kedua tidak hilang. Uang itu masuk ke rekening pensiunmu, jadi gaji bersih €28.917 belum mencakup tabunganmu sendiri.</p>"
     },
     {
       "key": "no-second-pillar",
       "title": "Berapa gaji bersih di Estonia kalau tidak ikut pilar pensiun kedua?",
-      "intro": "<p>Contoh ini untuk pekerja dengan gaji €36.000 yang memilih iuran pilar kedua 0%. Potongannya tinggal iuran asuransi pengangguran €576, sehingga penghasilan kena pajak setelah tunjangan bebas pajak menjadi €27.024 dan pajaknya sekitar €5.945. Gaji bersihnya sekitar €29.479 (81,9%), dan setiap euro tambahan dipotong sekitar 23,2%.</p>",
-      "after": "<p>Selisih gaji bersih dengan contoh sebelumnya hanya €562 per tahun, padahal €720 mengalir ke rekening pensiun. Alasannya, iuran pilar kedua mengurangi penghasilan kena pajak, sehingga pajak turun sekitar €158.</p>"
+      "intro": "<p>Contoh ini untuk pekerja dengan gaji €36.000 yang memilih iuran pilar kedua 0%. Potongannya tinggal iuran asuransi pengangguran €576, sehingga penghasilan kena pajak setelah tunjangan bebas pajak menjadi €27.024 dan pajaknya sekitar €5.945. Gaji bersihnya sekitar €29.479 (81,9%), dan tarif marginalnya sekitar 23,2%.</p>",
+      "after": "<p>Selisih gaji bersih dengan contoh iuran pilar kedua 2% hanya €562 per tahun, padahal €720 mengalir ke rekening pensiun. Alasannya, iuran pilar kedua mengurangi penghasilan kena pajak, sehingga pajak turun sekitar €158.</p>"
     }
   ],
   "strategyIntro": "<p>Cara-cara di bawah ini sah dan dijelaskan oleh EMTA atau otoritas Estonia lainnya. Cocok tidaknya bergantung pada statusmu.</p>",
   "strategies": [
     {
       "h3": "Memilih persentase iuran pilar pensiun kedua",
-      "html": "<p>Iuran lebih tinggi menurunkan gaji bersih bulanan, tetapi tidak sebesar angka iurannya, karena sebagian dikembalikan lewat pajak yang lebih rendah. Tabel di atas menunjukkan bahwa menaikkan iuran dari 2% ke 6% pada gaji €36.000 menurunkan gaji bersih sekitar €1.123 setahun, padahal tabungan pensiunmu bertambah €1.440. Cocok untuk kamu yang berencana tinggal lama di Estonia dan ingin menabung untuk pensiun. Bagi yang berencana pulang tidak lama lagi, cek dulu aturan penarikan dananya sebelum menaikkan iuran.</p>"
+      "html": "<p>Iuran lebih tinggi menurunkan gaji bersih bulanan, tetapi tidak sebesar angka iurannya, karena sebagian dikembalikan lewat pajak yang lebih rendah. Pada gaji €36.000, menaikkan iuran dari 2% ke 6% menurunkan gaji bersih sekitar €1.123 setahun (dari €28.917 ke €27.794), padahal tabungan pensiunmu bertambah €1.440. Cocok untuk kamu yang berencana tinggal lama di Estonia dan ingin menabung untuk pensiun. Bagi yang berencana pulang tidak lama lagi, cek dulu aturan penarikan dananya sebelum menaikkan iuran.</p>"
     },
     {
       "h3": "Pastikan tunjangan bebas pajak dipakai di satu pemberi kerja",
@@ -118,11 +118,11 @@
     },
     {
       "q": "Apa itu pilar pensiun kedua di Estonia, dan apakah wajib?",
-      "a": "<p>Pilar kedua adalah dana pensiun yang dikelola swasta, dengan iuran yang dipotong dari gajimu dan dibayarkan ke rekeningmu sendiri. Kalkulator ini menyediakan pilihan 0%, 2%, 4% dan 6% dari gaji. Aturan siapa yang wajib ikut dan siapa yang boleh keluar sudah beberapa kali berubah, jadi tanyakan pemberi kerjamu dan cek di Eesti.ee untuk statusmu. Pilihan yang kamu buat mengubah gaji bersih bulananmu, seperti terlihat di tabel pada bagian hukum pajak.</p>"
+      "a": "<p>Pilar kedua adalah dana pensiun yang dikelola swasta, dengan iuran yang dipotong dari gajimu dan dibayarkan ke rekeningmu sendiri. Kalkulator ini menyediakan pilihan 0%, 2%, 4% dan 6% dari gaji. Aturan siapa yang wajib ikut dan siapa yang boleh keluar sudah beberapa kali berubah, jadi tanyakan pemberi kerjamu dan cek di Eesti.ee untuk statusmu. Pilihan yang kamu buat mengubah gaji bersih bulananmu: pada gaji €36.000, iuran 0% menyisakan €29.479 setahun dan iuran 6% menyisakan €27.794.</p>"
     },
     {
       "q": "Kenapa tarif marginal gaji di Estonia 24,8%, bukan 22%?",
-      "a": "<p>Tarif pajaknya memang tunggal 22%, tetapi setiap euro tambahan juga dikenai iuran pekerja: 1,6% untuk asuransi pengangguran dan 2% untuk pilar kedua, yaitu 3,6% dari euro tambahan itu. Pajak 22% dikenakan pada sisanya (96,4%), yaitu sekitar 21,2%, dan jumlahnya 24,8%. Tanpa pilar kedua, tarif marginalnya turun menjadi 23,2%.</p>"
+      "a": "<p>Tarif pajaknya memang tunggal 22%, tetapi setiap euro tambahan juga dikenai iuran pekerja: 1,6% untuk asuransi pengangguran dan 2% untuk pilar kedua, yaitu 3,6% dari euro tambahan itu. Pajak 22% dikenakan pada sisanya (96,4%), yaitu sekitar 21,2%, sehingga totalnya 24,8%. Tanpa pilar kedua, tarif marginalnya turun menjadi 23,2%.</p>"
     },
     {
       "q": "Siapa yang membayar pajak sosial 33% dan apakah saya ikut menanggungnya?",

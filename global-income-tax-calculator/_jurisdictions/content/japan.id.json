@@ -7,7 +7,7 @@
   "place": "Tokyo",
   "lede": "<p>Jepang memotong gaji lewat tiga jalur: pajak penghasilan nasional bertingkat 5% sampai 45% (ditambah pajak tambahan rekonstruksi 2,1% dari pajak itu), pajak penduduk (<em>resident tax</em>) sekitar 10% yang baru ditagih mulai tahun kedua, dan iuran jaminan sosial sekitar 14,7% dari gaji pada gaji menengah. Sebagai gambaran, pekerja <em>Tokutei Ginou</em> (<em>Specified Skilled Worker</em>, SSW) dengan gaji ¥3.000.000 setahun menerima gaji bersih (<em>take-home pay</em>) sekitar ¥2.400.072 (80,0%) di tahun kedua, dan sekitar ¥115.600 lebih tinggi di tahun pertama karena pajak penduduk belum ada.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini untuk tahun 2026 dan memakai tarif iuran wilayah Tokyo. Tarifmu ditentukan oleh status penduduk, bukan kewarganegaraan. Orang yang punya tempat tinggal di Jepang atau tinggal di sana setahun atau lebih dianggap penduduk (<em>resident</em>), dan pekerja asing yang datang dengan kontrak kerja setahun atau lebih umumnya dianggap penduduk sejak hari pertama. Status lain, termasuk masa tinggal yang jelas lebih singkat, dikenai tarif <em>non-resident</em> yang <em>flat</em>.</p>",
+    "intro": "<p>Aturan di bawah ini untuk tahun 2026 dan memakai tarif iuran wilayah Tokyo. Tarifmu ditentukan oleh status penduduk, bukan kewarganegaraan. Orang yang punya tempat tinggal di Jepang atau tinggal di sana setahun atau lebih dianggap penduduk (<em>resident</em>), dan pekerja asing yang datang dengan kontrak kerja setahun atau lebih umumnya dianggap penduduk sejak hari pertama. Status lain, termasuk masa tinggal yang jelas lebih singkat, dikenai tarif tunggal untuk <em>non-resident</em>.</p>",
     "blocks": [
       {
         "h3": "Pajak penghasilan nasional untuk penduduk",
@@ -30,7 +30,7 @@
       },
       {
         "h3": "Potongan penghasilan kerja dan pengurang dasar",
-        "html": "<p>Pekerja bergaji tidak perlu membuktikan biayanya. Jepang memberi potongan penghasilan kerja (<em>employment income deduction</em>) otomatis yang besarnya mengikuti gaji, dan nilainya berhenti naik di ¥1.950.000. Di atas itu, kalkulator memakai pengurang dasar yang berkisar dari ¥1.040.000 untuk penghasilan (setelah potongan kerja) sampai ¥4.890.000, ¥670.000 sampai ¥6.550.000, dan ¥620.000 sampai ¥23.500.000, lalu mengecil dan habis di atas ¥25.000.000.</p>",
+        "html": "<p>Pekerja bergaji tidak perlu membuktikan biayanya. Jepang memberi potongan penghasilan kerja (<em>employment income deduction</em>) otomatis yang besarnya mengikuti gaji, dan nilainya berhenti naik di ¥1.950.000. Selain itu, kalkulator memakai pengurang dasar bertingkat: ¥1.040.000 untuk penghasilan (setelah potongan kerja) sampai ¥4.890.000, ¥670.000 sampai ¥6.550.000, dan ¥620.000 sampai ¥23.500.000, lalu mengecil dan habis di atas ¥25.000.000.</p>",
         "table": {
           "head": [
             "Gaji setahun",
@@ -97,19 +97,19 @@
     {
       "key": "resident-tokyo",
       "title": "Berapa gaji bersih di Tokyo dengan gaji ¥6.000.000 setahun?",
-      "intro": "<p>Contoh ini untuk insinyur atau profesional lajang di tahun kedua bekerja atau lebih, dengan satu pekerjaan sepanjang tahun. Iuran <em>shakai hoken</em> menyedot ¥881.400, dan potongan penghasilan kerja ¥1.640.000 (20% dari gaji ditambah ¥440.000) mengurangi dasar pajak. Dengan pengurang dasar ¥1.040.000, penghasilan kena pajaknya sekitar ¥2.438.600, sehingga pajak penghasilan nasional hanya ¥149.300. Pajak penduduk justru lebih besar, yaitu ¥307.200. Gaji bersihnya sekitar ¥4.662.100, atau 77,7% dari gaji, dan tarif pajak pada yen berikutnya yang kamu dapat adalah 16,7%.</p>",
+      "intro": "<p>Contoh ini untuk insinyur atau profesional lajang di tahun kedua bekerja atau lebih, dengan satu pekerjaan sepanjang tahun. Iuran <em>shakai hoken</em> menyedot ¥881.400, dan potongan penghasilan kerja ¥1.640.000 (20% dari gaji ditambah ¥440.000) mengurangi dasar pajak. Dengan pengurang dasar ¥1.040.000, penghasilan kena pajaknya sekitar ¥2.438.600, sehingga pajak penghasilan nasional hanya ¥149.300. Pajak penduduk justru lebih besar, yaitu ¥307.200. Gaji bersihnya sekitar ¥4.662.100, atau 77,7% dari gaji, dengan tarif marjinal (pajak atas setiap tambahan yen penghasilan) sebesar 16,7%.</p>",
       "after": "<p>Pajak penduduk lebih besar daripada pajak nasional pada contoh ini karena pajak nasional memakai pengurang dasar yang lebih besar, sementara pajak penduduk memakai ¥430.000.</p>"
     },
     {
       "key": "first-year",
       "title": "Berapa gaji bersih di tahun pertama kerja di Jepang, gaji ¥6.000.000 tanpa pajak penduduk?",
-      "intro": "<p>Contoh ini memakai gaji dan semua iuran yang sama dengan contoh sebelumnya, tetapi untuk tahun pertama, ketika pajak penduduk belum ditagih. Pajak penghasilan nasional tetap ¥149.300, dan iuran <em>shakai hoken</em> tetap ¥881.400. Gaji bersihnya karena itu sekitar ¥4.969.300 (82,8%), atau ¥307.200 lebih tinggi daripada tahun kedua, dengan tarif pajak pada yen berikutnya 8,7%.</p>",
+      "intro": "<p>Contoh ini untuk lajang bergaji ¥6.000.000 di tahun pertama, ketika pajak penduduk belum ditagih. Pajak penghasilan nasional sebesar ¥149.300 dan iuran <em>shakai hoken</em> sebesar ¥881.400, sama seperti di tahun kedua. Karena itu, gaji bersihnya sekitar ¥4.969.300 (82,8%), atau ¥307.200 lebih tinggi daripada tahun kedua, dengan tarif marjinal 8,7%.</p>",
       "after": "<p>Kalau kamu tiba di tengah tahun, pajak penduduk tahun depan dihitung dari penghasilan sebagian tahun saja. Lonjakan penuhnya baru terasa setahun kemudian, saat pajak itu dihitung dari satu tahun kerja penuh. Sisihkan sebagian uang tahun pertama untuk itu.</p>"
     },
     {
       "key": "specified-skilled-worker",
       "title": "Berapa gaji bersih <em>Tokutei Ginou</em> di Jepang dengan gaji ¥3.000.000 setahun?",
-      "intro": "<p>Contoh ini untuk pekerja <em>Specified Skilled Worker</em> (SSW), lajang, di tahun kedua dengan gaji ¥3.000.000 setahun (sekitar ¥250.000 per bulan). Potongan penghasilan kerja ¥980.000 dan pengurang dasar ¥1.040.000 membuat pajak penghasilan nasionalnya hanya ¥26.600. Iuran <em>shakai hoken</em> berjumlah ¥457.728, dan pajak penduduk ¥115.600, lebih besar daripada pajak nasional. Gaji bersihnya sekitar ¥2.400.072 (80,0%), dan tarif pajak pada yen berikutnya 11,1%.</p>",
+      "intro": "<p>Contoh ini untuk pekerja <em>Specified Skilled Worker</em> (SSW), lajang, di tahun kedua dengan gaji ¥3.000.000 setahun (sekitar ¥250.000 per bulan). Potongan penghasilan kerja ¥980.000 dan pengurang dasar ¥1.040.000 membuat pajak penghasilan nasionalnya hanya ¥26.600. Iuran <em>shakai hoken</em> berjumlah ¥457.728, dan pajak penduduk ¥115.600, lebih besar daripada pajak nasional. Gaji bersihnya sekitar ¥2.400.072 (80,0%), dengan tarif marjinal 11,1%.</p>",
       "after": "<p>Pada gaji ini, iuran jaminan sosial (¥457.728) sekitar tiga kali lebih besar daripada pajak penghasilan dan pajak penduduk digabung (¥142.200), jadi itulah potongan terbesar. Kalau perusahaan juga memotong biaya asrama atau makan, hal itu tidak dihitung di sini.</p>"
     },
     {

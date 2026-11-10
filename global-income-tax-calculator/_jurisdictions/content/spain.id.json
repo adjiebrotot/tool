@@ -86,13 +86,13 @@
     {
       "key": "beckham-law",
       "title": "Berapa pajak hukum Beckham di Spanyol untuk gaji bruto €90.000?",
-      "intro": "<p>Contoh ini untuk pekerja yang pindah ke Spanyol dan memilih hukum Beckham dengan gaji bruto €90.000. Jaminan sosial dihitung sampai batas dasar iuran, sehingga hanya €3.979, bukan 6,5% dari seluruh gaji. Pajaknya 24% dari €90.000, yaitu €21.600. Gaji bersihnya sekitar €64.421 (71,6% dari gaji), dan karena tarifnya tunggal dan iuran sudah berhenti di batas dasar, potongan gabungan pada euro berikutnya hanya 24,0%. Sebagai pembanding, penduduk pajak biasa di Madrid dengan gaji sama menerima sekitar €59.574, jadi rezim ini menambah sekitar €4.847 setahun.</p>",
-      "after": "<p>Kalkulator memajaki 24% dari seluruh gaji bruto pada rezim ini. Cek ke AEAT atau konsultan pajak bagaimana dasar pajaknya dihitung untuk kasusmu.</p>"
+      "intro": "<p>Contoh ini untuk pekerja yang pindah ke Spanyol dan memilih hukum Beckham dengan gaji bruto €90.000. Jaminan sosial dihitung sampai batas dasar iuran, sehingga hanya €3.979, bukan 6,5% dari seluruh gaji. Pajaknya 24% dari €90.000, yaitu €21.600. Gaji bersihnya sekitar €64.421 (71,6% dari gaji), dan karena tarifnya tunggal dan iuran sudah berhenti di batas dasar, tarif marginalnya hanya 24,0%. Sebagai pembanding, penduduk pajak biasa di Madrid dengan gaji sama menerima sekitar €59.574, jadi rezim ini menambah sekitar €4.847 setahun.</p>",
+      "after": "<p>Kalkulator menerapkan tarif 24% pada seluruh gaji bruto dalam rezim ini. Cek ke AEAT atau konsultan pajak bagaimana dasar pajaknya dihitung untuk kasusmu.</p>"
     },
     {
       "key": "resident-two-children",
       "title": "Berapa gaji bersih di Madrid untuk pekerja dengan dua anak dan gaji bruto €45.000?",
-      "intro": "<p>Contoh ini sama dengan contoh Madrid sebelumnya, tetapi pekerjanya punya dua anak yang menjadi tanggungan. Minimum pribadi dan keluarganya naik, sehingga bagian negara turun menjadi €4.253 dan bagian Madrid menjadi €3.679, atau sekitar €7.932 secara total. Gaji bersihnya sekitar €34.143 (75,9% dari gaji), sekitar €950 lebih banyak daripada lajang tanpa anak, dan potongan gabungan pada euro berikutnya tetap 40,1%.</p>",
+      "intro": "<p>Contoh ini sama dengan contoh lajang di Madrid dengan gaji bruto €45.000, tetapi pekerjanya punya dua anak yang menjadi tanggungan. Minimum pribadi dan keluarganya naik, sehingga bagian negara turun menjadi €4.253 dan bagian Madrid menjadi €3.679, atau sekitar €7.932 secara total. Gaji bersihnya sekitar €34.143 (75,9% dari gaji), sekitar €950 lebih banyak daripada lajang tanpa anak, dan tarif marginalnya tetap 40,1%.</p>",
       "after": "<p>Kalkulator hanya menghitung minimum untuk anak. Pengurang untuk pasangan, penyandang disabilitas atau tanggungan lain tidak dimodelkan.</p>"
     }
   ],
@@ -100,7 +100,7 @@
   "strategies": [
     {
       "h3": "Ajukan hukum Beckham tepat waktu",
-      "html": "<p>Selisihnya bisa besar: pada contoh gaji €90.000 di atas, rezim ini menambah gaji bersih sekitar €4.847 setahun. Cocok untuk pekerja yang pindah dari luar Spanyol dengan gaji menengah ke atas. Peringatannya, rezim ini harus diajukan dalam waktu yang dibatasi setelah kamu mulai bekerja (umumnya enam bulan), dan pada gaji yang lebih rendah tarif tunggal 24% bisa justru lebih berat daripada skala bertingkat. Minta pemberi kerja atau konsultan pajak menghitung kedua cara untuk kasusmu.</p>"
+      "html": "<p>Selisihnya bisa besar: pada gaji bruto €90.000, rezim ini menambah gaji bersih sekitar €4.847 setahun. Cocok untuk pekerja yang pindah dari luar Spanyol dengan gaji menengah ke atas. Peringatannya, rezim ini harus diajukan dalam waktu yang dibatasi setelah kamu mulai bekerja (umumnya enam bulan), dan pada gaji yang lebih rendah tarif tunggal 24% bisa justru lebih berat daripada skala bertingkat. Minta pemberi kerja atau konsultan pajak menghitung kedua cara untuk kasusmu.</p>"
     },
     {
       "h3": "Rencana pensiun (<em>plan de pensiones</em>)",
@@ -120,7 +120,7 @@
     "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
     "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji bruto setahun. Pembayaran 14 kali tidak mengubah angka tahunan, hanya cara membaginya.",
     "<strong>Hanya skala Madrid.</strong> Komunitas otonom lain memakai skala IRPF sendiri, sehingga hasilnya akan berbeda. Hukum Beckham sama di semua komunitas.",
-    "<strong>Pengurang keluarga terbatas.</strong> Hanya minimum untuk anak yang dihitung. Pengurang untuk pasangan, disabilitas, hipotek atau pengurang komunitas tidak dimodelkan.",
+    "<strong>Pengurang keluarga terbatas.</strong> Hanya minimum untuk anak yang dihitung. Pengurang untuk pasangan, disabilitas, KPR atau pengurang komunitas tidak dimodelkan.",
     "<strong>Tanpa perjanjian pajak dan perkiraan saja.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Spanyol serta kewajiban lapor di Indonesia tidak dihitung. Hasilnya gambaran, bukan nasihat pajak."
   ],
   "faq": [
@@ -142,7 +142,7 @@
     },
     {
       "q": "Kenapa iuran jaminan sosial berhenti naik pada gaji tinggi?",
-      "a": "<p>Iuran jaminan sosial di Spanyol dihitung dari gaji sampai batas dasar iuran, yang di kalkulator ini €5.101,20 per bulan atau sekitar €61.214 setahun. Gaji di atas batas itu tidak dikenai iuran tambahan. Pada gaji bruto €90.000 di rezim Beckham, iurannya hanya €3.979, bukan 6,5% dari seluruh gaji, sehingga potongan pada euro berikutnya semata-mata pajaknya, yaitu 24,0%.</p>"
+      "a": "<p>Iuran jaminan sosial di Spanyol dihitung dari gaji sampai batas dasar iuran, yang di kalkulator ini €5.101,20 per bulan atau sekitar €61.214 setahun. Gaji di atas batas itu tidak dikenai iuran tambahan. Pada gaji bruto €90.000 di rezim Beckham, iurannya hanya €3.979, bukan 6,5% dari seluruh gaji, sehingga tarif marginalnya semata-mata pajak, yaitu 24,0%.</p>"
     },
     {
       "q": "Apakah punya anak mengurangi pajak di Spanyol?",

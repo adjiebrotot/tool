@@ -11,7 +11,7 @@
     "blocks": [
       {
         "h3": "Pajak penghasilan negara",
-        "html": "<p>Pajak negara bersifat progresif dan hanya dikenakan pada bagian penghasilan di dalam tiap tingkat. Dasarnya adalah gaji setelah dikurangi potongan biaya kerja (kalkulator memakai potongan standar €750) dan iuran sosial pekerja di bawah. Pajak ini kemudian dikurangi kredit pajak penghasilan kerja, seperti dijelaskan di bagian kredit.</p>",
+        "html": "<p>Pajak negara bersifat progresif dan hanya dikenakan pada bagian penghasilan di dalam tiap tingkat. Dasarnya adalah gaji setelah dikurangi potongan biaya kerja (kalkulator memakai potongan standar €750) dan iuran sosial pekerja. Pajak ini kemudian dikurangi kredit pajak penghasilan kerja (lihat bagian Kredit pajak penghasilan kerja).</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -51,7 +51,7 @@
       },
       {
         "h3": "Kredit pajak penghasilan kerja",
-        "html": "<p>Pekerja mendapat kredit pajak penghasilan kerja (<em>työtulovähennys</em>) yang mengurangi pajak negara, pajak kota dan iuran kesehatan secara proporsional. Kalkulator ini memakai nilai maksimum sekitar €3.430, lalu kreditnya mengecil untuk penghasilan yang lebih tinggi, dan itu salah satu sebab tarif marginal di gaji menengah terasa tinggi. Pada contoh gaji €55.000 di bawah, kreditnya €3.119.</p>"
+        "html": "<p>Pekerja mendapat kredit pajak penghasilan kerja (<em>työtulovähennys</em>) yang mengurangi pajak negara, pajak kota dan iuran kesehatan secara proporsional. Kalkulator ini memakai nilai maksimum sekitar €3.430, lalu kreditnya mengecil untuk penghasilan yang lebih tinggi, dan itu salah satu sebab tarif marginal di gaji menengah terasa tinggi. Pada gaji €55.000, kreditnya €3.119.</p>"
       },
       {
         "h3": "Rezim <em>key employee</em>: pajak final 25%",
@@ -77,13 +77,13 @@
     {
       "key": "resident-helsinki",
       "title": "Berapa gaji bersih di Helsinki dengan gaji €55.000 per tahun?",
-      "intro": "<p>Contoh ini untuk penduduk pajak yang bekerja di Helsinki tanpa pajak gereja. Iuran sosial totalnya sekitar €4.989 (€4.015 TyEL, €490 asuransi pengangguran dan €484 tunjangan sakit), sehingga penghasilan kena pajaknya sekitar €49.262 setelah potongan biaya kerja. Dari situ pajak negara menjadi €7.732, pajak kota €1.997, iuran kesehatan €414 dan pajak Yle €160. Kredit pajak penghasilan kerja €3.119 sudah memotong tiga pajak pertama secara proporsional. Gaji bersihnya sekitar €39.708 (72,2%), dan setiap euro tambahan dipotong sekitar 45,1%.</p>",
+      "intro": "<p>Contoh ini untuk penduduk pajak yang bekerja di Helsinki tanpa pajak gereja. Iuran sosial totalnya sekitar €4.989 (€4.015 TyEL, €490 asuransi pengangguran dan €484 tunjangan sakit), sehingga penghasilan kena pajaknya sekitar €49.262 setelah potongan biaya kerja. Dari situ pajak negara menjadi €7.732, pajak kota €1.997, iuran kesehatan €414 dan pajak Yle €160. Kredit pajak penghasilan kerja €3.119 sudah memotong tiga pajak pertama secara proporsional. Gaji bersihnya sekitar €39.708 (72,2%), dan tarif marginalnya sekitar 45,1%.</p>",
       "after": "<p>Kalau kamu anggota Gereja Lutheran di Helsinki, pajak gereja 1,00% menurunkan gaji bersih pada gaji yang sama menjadi sekitar €39.215. Isi kolom pajak gereja di kalkulator untuk melihat angkamu.</p>"
     },
     {
       "key": "key-employee",
       "title": "Cara menghitung pajak <em>key employee</em> 25% di Finlandia untuk gaji €90.000",
-      "intro": "<p>Contoh ini untuk tenaga ahli yang direkrut dari luar negeri dan memilih rezim <em>key employee</em>. Iuran sosial tetap dipotong, yaitu €6.570 TyEL, €801 asuransi pengangguran dan €792 tunjangan sakit. Pajaknya satu tarif: 25% dari gaji €90.000 adalah €22.500. Gaji bersihnya sekitar €59.337 (65,9%), dan setiap euro tambahan dipotong 34,1%, yaitu 25% pajak ditambah sekitar 9,07% iuran sosial.</p>",
+      "intro": "<p>Contoh ini untuk tenaga ahli yang direkrut dari luar negeri dan memilih rezim <em>key employee</em>. Iuran sosial tetap dipotong, yaitu €6.570 TyEL, €801 asuransi pengangguran dan €792 tunjangan sakit. Pajaknya satu tarif: 25% dari gaji €90.000 adalah €22.500. Gaji bersihnya sekitar €59.337 (65,9%), dan tarif marginalnya 34,1%, yaitu 25% pajak ditambah sekitar 9,07% iuran sosial.</p>",
       "after": "<p>Rezim ini tidak selalu lebih ringan. Pada gaji €90.000, skema biasa menyisakan sekitar €57.683, jadi <em>key employee</em> lebih besar sekitar €1.654. Pada gaji €70.000, sebaliknya, skema biasa menyisakan sekitar €47.480 dan <em>key employee</em> €46.151, jadi bandingkan dulu dengan gajimu.</p>"
     }
   ],
@@ -91,7 +91,7 @@
   "strategies": [
     {
       "h3": "Membandingkan rezim <em>key employee</em> dengan skema biasa",
-      "html": "<p>Pajak final 25% memberi kepastian, tetapi tidak selalu menyisakan lebih banyak, seperti terlihat pada perbandingan gaji €90.000 dan €70.000 di atas. Cocok untuk tenaga ahli yang direkrut dari luar negeri dengan gaji tinggi dan memenuhi syarat. Caranya: hitung kedua skema di kalkulator dengan gajimu, lalu tanyakan pemberi kerja soal syarat dan jangka waktunya. Rezim ini berlaku untuk jangka waktu terbatas, jadi perhitungkan juga tahun-tahun setelah rezim berakhir.</p>"
+      "html": "<p>Pajak final 25% memberi kepastian, tetapi tidak selalu menyisakan lebih banyak: pada gaji €90.000 rezim ini unggul sekitar €1.654, sedangkan pada gaji €70.000 skema biasa menyisakan lebih banyak (€47.480 dibanding €46.151). Cocok untuk tenaga ahli yang direkrut dari luar negeri dengan gaji tinggi dan memenuhi syarat. Caranya: hitung kedua skema di kalkulator dengan gajimu, lalu tanyakan pemberi kerja soal syarat dan jangka waktunya. Rezim ini berlaku untuk jangka waktu terbatas, jadi perhitungkan juga tahun-tahun setelah rezim berakhir.</p>"
     },
     {
       "h3": "Potongan yang sah untuk biaya kerja",
@@ -126,7 +126,7 @@
     },
     {
       "q": "Kenapa tarif marginal gaji menengah di Finlandia bisa 45%?",
-      "a": "<p>Di gaji €55.000, bagian gaji berikutnya jatuh pada tingkat pajak negara 33,25% (tarif itu naik menjadi 37,5% di atas penghasilan kena pajak €52.100), ditambah pajak kota 5,30% dan iuran kesehatan 1,10%, sedangkan kredit pajak penghasilan kerja mengecil untuk penghasilan yang lebih tinggi. Di atas itu masih ada iuran sosial sekitar 9,07% dari gaji. Gabungan semuanya membuat tambahan €1.000 hanya menyisakan sekitar €549. Karena itu tarif marginal 45,1% pada contoh €55.000.</p>"
+      "a": "<p>Pada gaji €55.000, euro tambahan jatuh pada tingkat pajak negara 33,25% (tarif itu naik menjadi 37,5% di atas penghasilan kena pajak €52.100), ditambah pajak kota 5,30% dan iuran kesehatan 1,10%, sedangkan kredit pajak penghasilan kerja mengecil untuk penghasilan yang lebih tinggi. Di atas itu masih ada iuran sosial sekitar 9,07% dari gaji. Gabungan semuanya membuat tambahan €1.000 hanya menyisakan sekitar €549. Karena itulah tarif marginal pada gaji €55.000 mencapai 45,1%.</p>"
     },
     {
       "q": "Apa itu kartu pajak (<em>verokortti</em>) dan bagaimana mendapatkannya?",
