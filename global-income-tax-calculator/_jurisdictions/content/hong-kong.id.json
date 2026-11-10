@@ -66,7 +66,7 @@
       },
       {
         "h3": "Tarif standar: batas atas bagi penghasilan tinggi",
-        "html": "<p>Cara kedua adalah tarif standar yang dikenakan pada penghasilan bersih (gaji dikurangi iuran MPF) sebelum tunjangan. Hasilnya dibandingkan dengan cara pertama, dan yang lebih kecil itulah pajakmu. Pada penghasilan menengah, tarif progresif hampir selalu lebih rendah. Pada penghasilan yang sangat tinggi, tarif standar yang menang, sehingga tarif efektif tidak naik melewati 15%.</p>",
+        "html": "<p>Cara kedua adalah tarif standar yang dikenakan pada penghasilan bersih (gaji dikurangi iuran MPF) sebelum tunjangan. Hasilnya dibandingkan dengan cara pertama, dan yang lebih kecil itulah pajakmu. Pada penghasilan menengah, tarif progresif hampir selalu lebih rendah. Pada penghasilan yang sangat tinggi, tarif standar yang menang, sehingga tarif efektif tidak naik melewati 15% sampai HK$5.000.000, dan bagian di atasnya kena 16%.</p>",
         "table": {
           "head": [
             "Penghasilan bersih sebelum tunjangan",
@@ -116,13 +116,13 @@
     {
       "key": "single",
       "title": "Berapa gaji bersih di Hong Kong dengan gaji HK$600.000 setahun untuk lajang?",
-      "intro": "<p>Contoh ini untuk lajang dengan gaji HK$600.000 setahun (HK$50.000 sebulan). Iuran MPF 5% sudah melewati batas, sehingga yang disetor HK$18.000, dan penghasilan bersihnya HK$582.000. Setelah tunjangan dasar HK$145.000, penghasilan kena pajaknya HK$437.000. Tarif progresifnya menghasilkan pajak HK$56.290, jauh di bawah tarif standar 15% (HK$87.300), sehingga yang dipakai tarif progresif. Gaji bersihnya sekitar HK$525.710, atau 87,6% dari gaji kotor (sekitar HK$43.809 sebulan), dengan tarif marjinal (pajak atas setiap tambahan gaji) 17%.</p>",
+      "intro": "<p>Contoh ini untuk lajang dengan gaji HK$600.000 setahun (HK$50.000 sebulan). Iuran MPF 5% sudah melewati batas, sehingga yang disetor HK$18.000, dan penghasilan bersihnya HK$582.000. Setelah tunjangan dasar HK$145.000, penghasilan kena pajaknya HK$437.000. Tarif progresifnya menghasilkan pajak HK$56.290, jauh di bawah tarif standar 15% (HK$87.300), sehingga yang dipakai tarif progresif. Gaji bersihnya sekitar HK$525.710, atau 87,6% dari gaji kotor (sekitar HK$43.809 sebulan), dengan tarif marginal (pajak atas setiap tambahan gaji) 17%.</p>",
       "after": "<p>Pajak HK$56.290 itu tidak dipotong dari slip gajimu, jadi sisihkan sekitar HK$4.700 setiap bulan untuk tagihan IRD setelah tahun pajak berakhir.</p>"
     },
     {
       "key": "married-two-children",
       "title": "Cara menghitung pajak gaji di Hong Kong untuk pasangan menikah dengan dua anak dan gaji HK$900.000",
-      "intro": "<p>Contoh ini untuk pekerja menikah dengan dua anak dan gaji HK$900.000 setahun. Tunjangannya HK$570.000, yaitu HK$290.000 untuk status menikah ditambah HK$280.000 untuk dua anak. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000 dan penghasilan kena pajaknya HK$312.000. Pajaknya HK$35.040 (3,9% dari gaji kotor), sedangkan tarif standar akan menghasilkan sekitar HK$132.300, jadi tarif progresif dipakai. Gaji bersihnya sekitar HK$846.960 (94,1%), dengan tarif marjinal yang tetap 17% karena penghasilan kena pajaknya sudah di atas HK$200.000.</p>",
+      "intro": "<p>Contoh ini untuk pekerja menikah dengan dua anak dan gaji HK$900.000 setahun. Tunjangannya HK$570.000, yaitu HK$290.000 untuk status menikah ditambah HK$280.000 untuk dua anak. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000 dan penghasilan kena pajaknya HK$312.000. Pajaknya HK$35.040 (3,9% dari gaji kotor), sedangkan tarif standar akan menghasilkan sekitar HK$132.300, jadi tarif progresif dipakai. Gaji bersihnya sekitar HK$846.960 (94,1%), dengan tarif marginal yang tetap 17% karena penghasilan kena pajaknya sudah di atas HK$200.000.</p>",
       "after": "<p>Kalkulator ini memakai tunjangan menikah penuh, jadi periksa di IRD bagaimana tunjangan itu berlaku kalau pasanganmu juga bekerja.</p>"
     },
     {
@@ -136,7 +136,7 @@
   "strategies": [
     {
       "h3": "Iuran sukarela MPF yang bisa dikurangkan",
-      "html": "<p>Selain iuran wajib, kamu bisa menyetor iuran sukarela ke akun MPF khusus yang disebut <em>Tax-Deductible Voluntary Contributions</em> (TVC), dan setoran itu mengurangi penghasilan kena pajak sampai batas tahunan. Cocok untuk yang tarif marjinalnya sudah 17% dan memang ingin menabung untuk pensiun. Uangnya terkunci sampai usia pensiun, jadi jangan menyetor uang yang mungkin kamu perlukan lebih cepat. Cek batas tahunan yang berlaku di IRD.</p>"
+      "html": "<p>Selain iuran wajib, kamu bisa menyetor iuran sukarela ke akun MPF khusus yang disebut <em>Tax-Deductible Voluntary Contributions</em> (TVC), dan setoran itu mengurangi penghasilan kena pajak sampai batas tahunan. Cocok untuk yang tarif marginalnya sudah 17% dan memang ingin menabung untuk pensiun. Uangnya terkunci sampai usia pensiun, jadi jangan menyetor uang yang mungkin kamu perlukan lebih cepat. Cek batas tahunan yang berlaku di IRD.</p>"
     },
     {
       "h3": "Klaim tunjangan dan pengurang lain yang berhak",
@@ -159,7 +159,7 @@
   "faq": [
     {
       "q": "Kenapa pajak gaji Hong Kong dihitung dengan dua cara dan dipilih yang lebih rendah?",
-      "a": "<p>IRD menghitung pajak dengan tarif progresif atas penghasilan setelah tunjangan, lalu dengan tarif standar 15% atas penghasilan sebelum tunjangan. Yang kamu bayar adalah yang lebih kecil. Bagi sebagian besar pekerja tarif progresif lebih rendah, sedangkan pada penghasilan tinggi, misalnya gaji HK$3.000.000, tarif standar yang menang: HK$447.300 dibandingkan HK$464.290. Karena itu tarif marjinal tertinggi yang kamu rasakan 15% dan bukan 17%. Kalkulator ini memilih yang lebih kecil secara otomatis.</p>"
+      "a": "<p>IRD menghitung pajak dengan tarif progresif atas penghasilan setelah tunjangan, lalu dengan tarif standar 15% atas penghasilan sebelum tunjangan. Yang kamu bayar adalah yang lebih kecil. Bagi sebagian besar pekerja tarif progresif lebih rendah, sedangkan pada penghasilan tinggi, misalnya gaji HK$3.000.000, tarif standar yang menang: HK$447.300 dibandingkan HK$464.290. Karena itu tarif marginal tertinggi yang kamu rasakan 15% dan bukan 17%. Kalkulator ini memilih yang lebih kecil secara otomatis.</p>"
     },
     {
       "q": "Kenapa tidak ada potongan pajak di slip gaji Hong Kong, dan apa itu <em>provisional tax</em>?",

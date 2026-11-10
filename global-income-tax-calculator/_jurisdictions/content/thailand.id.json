@@ -108,13 +108,13 @@
     {
       "key": "single",
       "title": "Berapa gaji bersih di Thailand dengan gaji ฿100.000 sebulan untuk lajang?",
-      "intro": "<p>Contoh ini untuk lajang dengan gaji ฿100.000 sebulan, atau ฿1.200.000 setahun. Iuran jaminan sosial sudah mencapai batas ฿10.500, pengurang biaya kerja ฿100.000 (batas 50% sudah terlampaui) dan tunjangan pribadi ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan pajaknya ฿122.375, dari ฿7.500 di tingkat 5%, ฿20.000 di tingkat 10%, ฿37.500 di tingkat 15%, ฿50.000 di tingkat 20% dan ฿7.375 di tingkat 25%. Gaji bersihnya sekitar ฿1.067.125, atau 88,9% dari gaji kotor (sekitar ฿88.927 sebulan), dengan tarif marjinal (pajak atas setiap tambahan gaji) 25%.</p>",
+      "intro": "<p>Contoh ini untuk lajang dengan gaji ฿100.000 sebulan, atau ฿1.200.000 setahun. Iuran jaminan sosial sudah mencapai batas ฿10.500, pengurang biaya kerja ฿100.000 (batas 50% sudah terlampaui) dan tunjangan pribadi ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan pajaknya ฿122.375, dari ฿7.500 di tingkat 5%, ฿20.000 di tingkat 10%, ฿37.500 di tingkat 15%, ฿50.000 di tingkat 20% dan ฿7.375 di tingkat 25%. Gaji bersihnya sekitar ฿1.067.125, atau 88,9% dari gaji kotor (sekitar ฿88.927 sebulan), dengan tarif marginal (pajak atas setiap tambahan gaji) 25%.</p>",
       "after": "<p>Pemberi kerja memotong pajak tiap bulan, jadi angka ini adalah hasil setahun penuh, bukan potongan satu bulan tertentu.</p>"
     },
     {
       "key": "married-with-children",
       "title": "Cara menghitung pajak di Thailand untuk karyawan menikah dengan dua anak dan gaji ฿1.800.000",
-      "intro": "<p>Contoh ini untuk karyawan dengan gaji ฿1.800.000 setahun yang menikah dengan pasangan tanpa penghasilan dan punya dua anak yang sama-sama lahir 2018 atau sesudahnya. Tunjangannya ฿210.000: ฿60.000 untuk diri sendiri, ฿60.000 untuk pasangan, ฿30.000 untuk anak pertama, dan ฿60.000 untuk anak kedua, karena tunjangan lebih besar bagi anak yang lahir 2018 atau sesudahnya baru berlaku mulai anak kedua. Setelah iuran ฿10.500 dan pengurang biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.479.500 dan pajaknya ฿234.875. Gaji bersihnya sekitar ฿1.554.625 (86,4%, sekitar ฿129.552 sebulan), dengan tarif marjinal 25%.</p>",
+      "intro": "<p>Contoh ini untuk karyawan dengan gaji ฿1.800.000 setahun yang menikah dengan pasangan tanpa penghasilan dan punya dua anak yang sama-sama lahir 2018 atau sesudahnya. Tunjangannya ฿210.000: ฿60.000 untuk diri sendiri, ฿60.000 untuk pasangan, ฿30.000 untuk anak pertama, dan ฿60.000 untuk anak kedua, karena tunjangan lebih besar bagi anak yang lahir 2018 atau sesudahnya baru berlaku mulai anak kedua. Setelah iuran ฿10.500 dan pengurang biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.479.500 dan pajaknya ฿234.875. Gaji bersihnya sekitar ฿1.554.625 (86,4%, sekitar ฿129.552 sebulan), dengan tarif marginal 25%.</p>",
       "after": "<p>Kalau anak pertamamu lahir sebelum 2018, hitungannya sama: anak pertama tetap ฿30.000. Cek jumlah tunjangan anakmu di Revenue Department.</p>"
     }
   ],
@@ -122,7 +122,7 @@
   "strategies": [
     {
       "h3": "Dana pensiun dan <em>provident fund</em>",
-      "html": "<p>Thailand memberi pengurang pajak untuk iuran ke dana pensiun, seperti <em>provident fund</em> dari pemberi kerja, reksa dana pensiun (RMF) dan asuransi pensiun, sampai batas gabungan tertentu. Cocok untuk penduduk pajak yang tarif marjinalnya 15% atau lebih dan memang ingin menabung jangka panjang. Ada syarat masa kepemilikan, dan melanggarnya bisa membuat pengurang yang sudah kamu pakai ditarik kembali, jadi baca syaratnya di Revenue Department. Kalkulator tidak menghitung pengurang ini.</p>"
+      "html": "<p>Thailand memberi pengurang pajak untuk iuran ke dana pensiun, seperti <em>provident fund</em> dari pemberi kerja, reksa dana pensiun (RMF) dan asuransi pensiun, sampai batas gabungan tertentu. Cocok untuk penduduk pajak yang tarif marginalnya 15% atau lebih dan memang ingin menabung jangka panjang. Ada syarat masa kepemilikan, dan melanggarnya bisa membuat pengurang yang sudah kamu pakai ditarik kembali, jadi baca syaratnya di Revenue Department. Kalkulator tidak menghitung pengurang ini.</p>"
     },
     {
       "h3": "Premi asuransi jiwa dan kesehatan",

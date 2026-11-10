@@ -154,19 +154,19 @@
     {
       "key": "s-pass",
       "title": "Cara menghitung pajak pemegang S Pass di Singapura dengan gaji S$4.500 sebulan",
-      "intro": "<p>Contoh ini untuk pemegang S Pass dengan gaji S$4.500 sebulan, atau S$54.000 setahun. Aturan pajaknya sama dengan EP: tidak ada CPF dan hanya ada <em>earned income relief</em> S$1.000, sehingga penghasilan kena pajaknya S$53.000. Pajaknya terdiri atas S$200 (2% dari S$10.000), S$350 (3,5% dari S$10.000) dan S$910 (7% dari S$13.000), totalnya S$1.460. Gaji bersihnya sekitar S$52.540 (97,3% dari gaji kotor), dengan tarif marjinal (pajak atas setiap tambahan gaji) hanya 7%.</p>",
+      "intro": "<p>Contoh ini untuk pemegang S Pass dengan gaji S$4.500 sebulan, atau S$54.000 setahun. Aturan pajaknya sama dengan EP: tidak ada CPF dan hanya ada <em>earned income relief</em> S$1.000, sehingga penghasilan kena pajaknya S$53.000. Pajaknya terdiri atas S$200 (2% dari S$10.000), S$350 (3,5% dari S$10.000) dan S$910 (7% dari S$13.000), totalnya S$1.460. Gaji bersihnya sekitar S$52.540 (97,3% dari gaji kotor), dengan tarif marginal (pajak atas setiap tambahan gaji) hanya 7%.</p>",
       "after": "<p>Pada gaji sebesar ini pajak hanya sekitar 2,7% dari gaji kotor, sehingga yang lebih menentukan sisa uangmu adalah sewa dan biaya hidup. Hitung selisihnya dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
     },
     {
       "key": "citizen",
       "title": "Berapa gaji bersih warga negara atau PR tahun ketiga di Singapura dengan gaji S$120.000?",
-      "intro": "<p>Contoh ini untuk warga negara atau PR sejak tahun ketiga, berusia sampai 55 tahun, dengan gaji S$120.000. Iuran CPF karyawan 20% dihitung dari gaji sampai batas S$8.000 sebulan, sehingga setorannya S$19.200 setahun. Iuran itu juga menjadi pengurang pajak (<em>CPF relief</em>), jadi penghasilan kena pajak turun menjadi S$99.800 dan pajaknya S$5.627, lebih rendah S$2.208 daripada pemegang EP dengan gaji yang sama. Gaji bersihnya sekitar S$95.173, atau 79,3% dari gaji kotor, dengan tarif marjinal 11,5%.</p>",
+      "intro": "<p>Contoh ini untuk warga negara atau PR sejak tahun ketiga, berusia sampai 55 tahun, dengan gaji S$120.000. Iuran CPF karyawan 20% dihitung dari gaji sampai batas S$8.000 sebulan, sehingga setorannya S$19.200 setahun. Iuran itu juga menjadi pengurang pajak (<em>CPF relief</em>), jadi penghasilan kena pajak turun menjadi S$99.800 dan pajaknya S$5.627, lebih rendah S$2.208 daripada pemegang EP dengan gaji yang sama. Gaji bersihnya sekitar S$95.173, atau 79,3% dari gaji kotor, dengan tarif marginal 11,5%.</p>",
       "after": "<p>Gaji bersihnya S$16.992 lebih kecil daripada pemegang EP, tetapi selisih itu terutama berupa tabunganmu sendiri di CPF, belum termasuk setoran pemberi kerja, dan baru bisa dipakai sesuai aturan CPF.</p>"
     },
     {
       "key": "pr-first-year",
       "title": "Cara menghitung gaji bersih <em>permanent resident</em> (PR) Singapura di tahun pertama",
-      "intro": "<p>Contoh ini untuk PR di tahun pertama dengan gaji S$120.000. Iuran CPF karyawan baru 5%, yaitu S$400 sebulan atau S$4.800 setahun, sehingga pengurang pajaknya S$5.800 (S$1.000 ditambah iuran CPF). Penghasilan kena pajaknya S$114.200 dan pajaknya S$7.283, lebih rendah S$552 daripada pemegang EP. Gaji bersihnya sekitar S$107.917, atau 89,9% dari gaji kotor, dengan tarif marjinal 11,5%.</p>",
+      "intro": "<p>Contoh ini untuk PR di tahun pertama dengan gaji S$120.000. Iuran CPF karyawan baru 5%, yaitu S$400 sebulan atau S$4.800 setahun, sehingga pengurang pajaknya S$5.800 (S$1.000 ditambah iuran CPF). Penghasilan kena pajaknya S$114.200 dan pajaknya S$7.283, lebih rendah S$552 daripada pemegang EP. Gaji bersihnya sekitar S$107.917, atau 89,9% dari gaji kotor, dengan tarif marginal 11,5%.</p>",
       "after": "<p>Angka ini akan turun pada tahun kedua, ketika iuran naik ke 15%, dan lagi pada tahun ketiga, ketika iuran mencapai 20%. Kalkulator ini menghitung setiap tahap secara terpisah, jadi gunakan pilihan PR tahun kedua atau tahun ketiga untuk melihatnya.</p>"
     },
     {
@@ -180,7 +180,7 @@
   "strategies": [
     {
       "h3": "Menyetor ke SRS (<em>Supplementary Retirement Scheme</em>)",
-      "html": "<p>SRS adalah rekening pensiun sukarela di bank Singapura. Setoran ke SRS bisa mengurangi penghasilan kena pajak sampai batas tahunan, jadi penghematan pajaknya paling terasa kalau tarif marjinalmu sudah 11,5% atau lebih. Orang asing pun boleh membuka SRS, dan batas setoran untuk warga dan PR berbeda dengan batas untuk orang asing, jadi cek angkanya di IRAS. Uangnya terkunci: penarikan sebelum usia pensiun dikenai penalti dan seluruh jumlahnya menjadi penghasilan kena pajak.</p>"
+      "html": "<p>SRS adalah rekening pensiun sukarela di bank Singapura. Setoran ke SRS bisa mengurangi penghasilan kena pajak sampai batas tahunan, jadi penghematan pajaknya paling terasa kalau tarif marginalmu sudah 11,5% atau lebih. Orang asing pun boleh membuka SRS, dan batas setoran untuk warga dan PR berbeda dengan batas untuk orang asing, jadi cek angkanya di IRAS. Uangnya terkunci: penarikan sebelum usia pensiun dikenai penalti dan seluruh jumlahnya menjadi penghasilan kena pajak.</p>"
     },
     {
       "h3": "Setoran sukarela ke CPF (untuk warga dan PR)",
