@@ -9,8 +9,8 @@ assumed, and the tool works out the answer. The rest of this file is written for
 
 WHAT THIS TOOL DECIDES
 Take-home pay after income tax and employee social contributions for one to four jobs in 31
-countries and every US state, under 2026 rules, from gross to net or net to gross, with each line of
-the sum named, sourced and dated, and which job leaves the most.
+countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line
+of the sum named, sourced and dated, and which job leaves the most.
 
 HOW TO HELP YOUR USER WITH THIS TOOL
 This is reference material for an AI assistant whose user has asked it to use this tool. It
@@ -94,22 +94,19 @@ country: Country  (most important)
   (City of Zurich rules), GB, CA, US, BH, KW, OM, QA, SA, AE. A country's other fields only count
   when it is picked.
 usState: State  (most important)
-  One of: AL (Alabama (not loaded yet)), AK (Alaska), AZ (Arizona), AR (Arkansas), CA (California),
-  CO (Colorado), CT (Connecticut (not loaded yet)), DE (Delaware), DC (District of Columbia), FL
-  (Florida), GA (Georgia), HI (Hawaii), ID (Idaho), IL (Illinois), IN (Indiana), IA (Iowa), KS
-  (Kansas), KY (Kentucky), LA (Louisiana), ME (Maine (not loaded yet)), MD (Maryland), MA
-  (Massachusetts), MI (Michigan), MN (Minnesota (not loaded yet)), MS (Mississippi), MO (Missouri),
-  MT (Montana), NE (Nebraska), NV (Nevada), NH (New Hampshire), NJ (New Jersey), NM (New Mexico (not
-  loaded yet)), NY (New York), NC (North Carolina), ND (North Dakota), OH (Ohio (not loaded yet)),
-  OK (Oklahoma), OR (Oregon (not loaded yet)), PA (Pennsylvania), RI (Rhode Island (not loaded
-  yet)), SC (South Carolina (not loaded yet)), SD (South Dakota), TN (Tennessee), TX (Texas), UT
-  (Utah (not loaded yet)), VT (Vermont), VA (Virginia), WA (Washington), WV (West Virginia), WI
-  (Wisconsin (not loaded yet)), WY (Wyoming). Default CA.
+  One of: AK (Alaska), AZ (Arizona), AR (Arkansas), CA (California), CO (Colorado), DE (Delaware),
+  DC (District of Columbia), FL (Florida), GA (Georgia), HI (Hawaii), ID (Idaho), IL (Illinois), IN
+  (Indiana), IA (Iowa), KS (Kansas), KY (Kentucky), LA (Louisiana), MD (Maryland), MA
+  (Massachusetts), MI (Michigan), MS (Mississippi), MO (Missouri), MT (Montana), NE (Nebraska), NV
+  (Nevada), NH (New Hampshire), NJ (New Jersey), NY (New York), NC (North Carolina), ND (North
+  Dakota), OK (Oklahoma), PA (Pennsylvania), SD (South Dakota), TN (Tennessee), TX (Texas), VT
+  (Vermont), VA (Virginia), WA (Washington), WV (West Virginia), WY (Wyoming). Default CA.
   US only. The state, by its two-letter code (DC for Washington DC). States with no tax on wages:
-  AK, FL, NV, NH, SD, TN, TX, WA, WY. Not loaded yet, and the tool says so instead of a figure: AL,
-  CT, ME, MN, NM, OH, OR, RI, SC, UT, WI.
-  Tip on the page: Twelve states phase their deductions out on schedules not loaded yet. They say so
-  instead of showing a wrong figure.
+  AK, FL, NV, NH, SD, TN, TX, WA, WY. Not offered (their deduction phase-outs are not loaded), so a
+  link must not name them: AL, CT, ME, MN, NM, OH, OR, RI, SC, UT, WI.
+  Tip on the page: 39 states and DC. Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio,
+  Oregon, Rhode Island, South Carolina, Utah and Wisconsin phase their deductions out on schedules
+  not loaded here, so they are left out rather than shown with a wrong figure.
 usNyc: Live in New York City
   Checkbox: true or false. Default false.
   US, New York only. true adds New York City resident tax.

@@ -187,13 +187,27 @@ const CASES = [
   await ctx.close();
 }
 
-/* ── 4. A gated state says so instead of a figure ── */
+/* ── 4. The states not loaded are not offered, and a job saved with one says so ── */
 {
   const { ctx, page, errs } = await open();
-  await setJob(page, 'US', { usState: 'OH' }, 80000);
+  const gated = await page.evaluate(() => Object.keys(window.__GSC.E.US_ST_GATED));
+  const offered = await page.evaluate(() => [...document.getElementById('usState').options].map(o => o.value));
+  check('the state list offers 39 states and DC', offered.length === 40, offered.length);
+  check('no state that is not loaded is offered', !gated.some(s => offered.includes(s)), gated.filter(s => offered.includes(s)).join(','));
+  // A second job saved with Ohio (before the list was trimmed) still opens, and says why instead of a figure.
+  await setJob(page, 'US', { usState: 'TX' }, 80000);
+  await page.evaluate(() => {
+    window.__GSC.addJob();
+    window.__GSC.pickJob(0);
+    window.__GSC.JOBS()[1].usState = 'OH';
+    window.__GSC.render();
+  });
   const v = await page.evaluate(() => document.getElementById('verdict').innerText);
-  check('a gated state shows the reason, not a number', /not loaded/i.test(v) && !/\$\d/.test(v), v.slice(0, 120));
-  check('no page errors on a gated state', errs.length === 0, errs.slice(0, 3).join(' | '));
+  check('a saved job in a state not loaded shows the reason, not a number', /Ohio is not covered/i.test(v), v.slice(0, 160));
+  // As the form's job, a state the list no longer holds keeps the default (California).
+  const st = await page.evaluate(() => { window.__GSC.writeJob({ country: 'US', usState: 'OH' }); return document.getElementById('usState').value; });
+  check('as the form\'s job it falls back to the default state', st === 'CA', st);
+  check('no page errors on a state not loaded', errs.length === 0, errs.slice(0, 3).join(' | '));
   await ctx.close();
 }
 

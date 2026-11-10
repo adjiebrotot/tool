@@ -28,8 +28,8 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Welcome to the Global Income Tax Calculator',
-      body: 'Take-home pay after income tax and social contributions in <strong>31 countries</strong> ' +
-            'and every US state, each line with its source. About a minute.'
+      body: 'Take-home pay after income tax and social contributions in <strong>31 countries</strong>, ' +
+            '39 US states and DC, each line with its source. About a minute.'
     },
     {
       target: '.quick-start-row',
