@@ -882,6 +882,19 @@ html{scrollbar-gutter:stable;}
 .assumptions li+li{margin-top:5px;}
 .assumptions strong{color:var(--text);}
 
+/* ── Questions: the card under What this assumes, folded the same way ──
+   Static HTML from <tool>/faq.json (_ref/faq-bake.mjs), mirrored in the page's
+   FAQPage JSON-LD; display:none while folded keeps it in the HTML crawlers read. */
+.faq-card{padding:20px;margin-bottom:18px;}
+.faq-card h2{margin:0 0 10px;font-size:1.1rem;}
+.faq-card .assumes-head{flex-wrap:nowrap;margin-bottom:10px;}
+.faq-card .assumes-head h2{margin:0;}
+.faq-card.is-folded .assumes-head{margin-bottom:0;}
+.faq-item+.faq-item{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.faq-item h3{margin:0 0 6px;font-size:.95rem;line-height:1.4;color:var(--text);}
+.faq-item p{margin:0;color:var(--muted);font-size:.85rem;line-height:1.65;}
+.faq-item p+p{margin-top:6px;}
+
 /* ── Assumptions tab glyph (mask form, for the tools whose tab bars use
    .ricon). The .tico form is the same drawing inline. ── */
 .ricon-assume{background-color:currentColor;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");}

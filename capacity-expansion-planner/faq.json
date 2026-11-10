@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "How is a whole year of demand represented in the plan?",
+      "a": [
+        "Each decision year is run hour by hour over typical days of each season, and every hour is weighted by the hours of the year it stands for. A temperate climate has four seasons and a tropical one two. With One typical day, each season is a single weekday. With the 'A weekday and a weekend day' or 'A typical week' choices it is finer, but slower to solve."
+      ]
+    },
+    {
+      "q": "How does the plan count the capital cost of a new plant?",
+      "a": [
+        "Capital is paid as an annuity of the overnight cost at the Discount rate (7% real by default) over the plant's life, only for years inside the plan. At 7% a 25-year life costs about 8.6% of the overnight cost a year. The first payment falls in the year it enters service, so a plant that lives out its life inside the plan pays 1.07 times its overnight cost."
+      ]
+    },
+    {
+      "q": "Does the plan include transmission, reserve margin or start-up costs?",
+      "a": [
+        "No. The grid is a single copper-plate bus: every plant serves every load with no network limits or losses, and every hour is known in advance. Firm plants run anywhere from zero to their availability, with no start-up costs or minimum output, and no reserve margin is held beyond what the typical days need. To allow for it, lower a plant's Availability or turn on the still, overcast peak day."
+      ]
+    },
+    {
+      "q": "What does the still, overcast peak day add to the plan?",
+      "a": [
+        "It adds one extra day in the peak season with a quarter of the normal sun and a tenth of the normal wind, standing for 2 days of that season each year. The plan then has to serve peak demand with almost no solar or wind, so it holds more firm capacity or storage. Without it, a plan can lean on solar and wind that the typical days always deliver."
+      ]
+    },
+    {
+      "q": "What is the difference between a real and a nominal discount rate here?",
+      "a": [
+        "All money is at first-year prices, so the plan always runs on a real rate. Real mode takes the Discount rate as typed. Nominal mode converts it as (1 + nominal) divided by (1 + inflation) minus 1, so 10.2% nominal with 3% inflation is about 7% real. At 7%, a cost ten years out counts about 0.51 of the same cost in the first year."
+      ]
+    },
+    {
+      "q": "Why does a plant that retires partway through a decision step keep running?",
+      "a": [
+        "A decision year counts in whole. A plant in service in it runs, and is paid for, in every year that decision year stands for, which is up to 5 years with the default Years between decisions. So a retirement date or a life ending mid-step runs on to the end of the step. Choosing 1 year between decisions removes this, at the cost of a bigger problem to solve."
+      ]
+    }
+  ]
+}

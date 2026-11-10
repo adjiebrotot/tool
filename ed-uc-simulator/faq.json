@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "How are nodal prices found when the dispatch is a unit commitment?",
+      "a": [
+        "A mixed-integer problem has no duals, so the tool solves it a second time as a linear problem with the on and off pattern held as the first run found it. The prices are then the duals of each bus's power balance in each hour. A unit that is off can only set the price above every running unit, as the next to start."
+      ]
+    },
+    {
+      "q": "What is the difference between the four dispatch modes?",
+      "a": [
+        "Only Unit commitment, mixed-integer decides on and off exactly, with start-up costs, minimum stable loading and minimum up and down times. The linear relaxation lets a unit be partly on, so its cost is a lower bound on the true one. Economic dispatch keeps every unit on, with no start-ups or up and down times. The no-minimum-output variant lets each unit run from zero to its rating."
+      ]
+    },
+    {
+      "q": "Does the model include network losses, reactive power, N-1 security or reserves?",
+      "a": [
+        "No to all four. Power flows are a lossless DC power flow: every voltage is 1 p.u., power splits by reactance, and there is no reactive power. No operating reserve is held, no outage is tested, and forecasts of solar, wind and demand are perfect. Line limits (the Line limits switch) are the only network security constraint. To allow for reserve, raise a load or derate a unit's rating by hand."
+      ]
+    },
+    {
+      "q": "How are ramp limits treated for a unit that starts up or shuts down?",
+      "a": [
+        "A ramp limit caps the change in output between hours as a share of the rating, and 1 means none. For a committable unit, the start-up hour reaches at most its minimum loading plus one hour's ramp up, and a shut-down falls from at most its minimum plus one hour's ramp down. Without that allowance, a unit ramping 31% an hour could only start at 69% or more, and load would be shed instead."
+      ]
+    },
+    {
+      "q": "What sets the price when demand cannot be met, and can I turn that off?",
+      "a": [
+        "With Allow load shedding on, unserved load is cut at the Value of lost load (VoLL), which defaults to 10,000 per MWh and is accepted from 100 to 100,000. Shedding is the last resort, so VoLL caps every price. With it off, a shortfall makes the problem infeasible and nothing is solved. The tool also checks before solving whether minimum loadings exceed what load and storage can absorb."
+      ]
+    },
+    {
+      "q": "How does a battery's efficiency work in the dispatch?",
+      "a": [
+        "The Round-trip efficiency is split evenly: charging and discharging each take its square root. A battery at 88% loses about 6.2% going in and the same coming out. With End where it started on, it must end the horizon holding what it began with, so it cannot be drained for free. The hours are solved together, so charging can shift energy across the whole horizon."
+      ]
+    }
+  ]
+}

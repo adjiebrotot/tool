@@ -4494,8 +4494,10 @@
      "What this assumes" (.assumes-card) folds the same way, by itself, on
      every page: SharedFold.assumes() runs at load.                          */
   function makeFold(){
-    var TEXT = { en: {show: 'Show table', hide: 'Hide table', showA: 'Show assumptions', hideA: 'Hide assumptions'},
-                 id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel', showA: 'Tampilkan asumsi', hideA: 'Sembunyikan asumsi'} };
+    var TEXT = { en: {show: 'Show table', hide: 'Hide table', showA: 'Show assumptions', hideA: 'Hide assumptions',
+                      showQ: 'Show questions', hideQ: 'Hide questions'},
+                 id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel', showA: 'Tampilkan asumsi', hideA: 'Sembunyikan asumsi',
+                      showQ: 'Tampilkan pertanyaan', hideQ: 'Sembunyikan pertanyaan'} };
     var CHEV = '<svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
     function attach(card, opts){
       opts = opts || {};
@@ -4542,21 +4544,26 @@
       set(open, false);
       return { open: function(){ set(true, true); }, close: function(){ set(false, true); }, isOpen: function(){ return open; }, button: btn };
     }
-    /* Every "What this assumes" card: its title moves into a head row and the
-       list folds under it, closed until the reader opens it. One key a page,
+    /* Every "What this assumes" card, and the "Questions" card under it
+       (.faq-card, written into the HTML by _ref/faq-bake.mjs so a crawler reads
+       it while it is folded): its title moves into a head row and the body
+       folds under it, closed until the reader opens it. One key a card a page,
        shared by its English and Indonesian copies. */
     function assumes(root){
-      (root || document).querySelectorAll('.assumes-card').forEach(function(card){
+      (root || document).querySelectorAll('.assumes-card, .faq-card').forEach(function(card){
         if(card.__fold) return;
         var h = card.querySelector('h2, h3');
         if(!h) return;
+        var faq = card.classList.contains('faq-card');
         var head = document.createElement('div');
         head.className = 'detail-head assumes-head';
         h.parentNode.insertBefore(head, h);
         head.appendChild(h);
         var path = (location.pathname || '/').replace(/index\.html$/, '').replace(/\/id\/$/, '/');
         var L = TEXT[pageLang()];
-        attach(card, { key: 'assumes:' + path, host: head, bodies: ['.assumptions'], text: {show: L.showA, hide: L.hideA} });
+        attach(card, faq
+          ? { key: 'faq:' + path, host: head, bodies: ['.faq-list'], text: {show: L.showQ, hide: L.hideQ} }
+          : { key: 'assumes:' + path, host: head, bodies: ['.assumptions'], text: {show: L.showA, hide: L.hideA} });
       });
     }
     return { attach: attach, assumes: assumes };
