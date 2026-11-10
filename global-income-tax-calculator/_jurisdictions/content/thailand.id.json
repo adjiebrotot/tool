@@ -75,7 +75,7 @@
             ],
             [
               "Anak lahir 2018 atau sesudahnya",
-              "฿60.000 per anak, menurut <em>input</em> kalkulator"
+              "฿60.000 per anak, mulai anak kedua"
             ]
           ]
         }
@@ -114,8 +114,8 @@
     {
       "key": "married-with-children",
       "title": "Cara menghitung pajak di Thailand untuk karyawan menikah dengan dua anak dan gaji ฿1.800.000",
-      "intro": "<p>Contoh ini untuk karyawan dengan gaji ฿1.800.000 setahun yang menikah dengan pasangan tanpa penghasilan dan punya dua anak lahir 2018 atau sesudahnya. Tunjangannya ฿240.000: ฿60.000 untuk diri sendiri, ฿60.000 untuk pasangan, dan ฿120.000 untuk dua anak yang dihitung ฿60.000 masing-masing. Setelah iuran ฿10.500 dan pengurang biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.449.500 dan pajaknya ฿227.375. Gaji bersihnya sekitar ฿1.562.125 (86,8%, sekitar ฿130.177 sebulan), dan tarif pajak pada gaji berikutnya 25%.</p>",
-      "after": "<p>Menurut keterangan kalkulator, tunjangan ฿60.000 untuk anak lahir 2018 atau sesudahnya berlaku mulai anak kedua, jadi tunjangan anak pertama bisa lebih rendah. Cek jumlah tunjangan anakmu di Revenue Department.</p>"
+      "intro": "<p>Contoh ini untuk karyawan dengan gaji ฿1.800.000 setahun yang menikah dengan pasangan tanpa penghasilan dan punya dua anak yang sama-sama lahir 2018 atau sesudahnya. Tunjangannya ฿210.000: ฿60.000 untuk diri sendiri, ฿60.000 untuk pasangan, ฿30.000 untuk anak pertama, dan ฿60.000 untuk anak kedua, karena tunjangan lebih besar bagi anak yang lahir 2018 atau sesudahnya baru berlaku mulai anak kedua. Setelah iuran ฿10.500 dan pengurang biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.479.500 dan pajaknya ฿234.875. Gaji bersihnya sekitar ฿1.554.625 (86,4%, sekitar ฿129.552 sebulan), dan tarif pajak pada gaji berikutnya 25%.</p>",
+      "after": "<p>Kalau anak pertamamu lahir sebelum 2018, hitungannya sama: anak pertama tetap ฿30.000. Cek jumlah tunjangan anakmu di Revenue Department.</p>"
     }
   ],
   "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs Revenue Department. Cocok tidaknya bergantung pada statusmu sebagai penduduk pajak.</p>",
@@ -169,7 +169,7 @@
     },
     {
       "q": "Apakah pasangan dan anak mengurangi pajak di Thailand?",
-      "a": "<p>Ya, keduanya mengurangi pajak. Pasangan tanpa penghasilan memberi tunjangan ฿60.000, anak lahir sebelum 2018 ฿30.000, dan anak lahir 2018 atau sesudahnya ฿60.000 menurut <em>input</em> kalkulator. Menurut keterangan kalkulator, jumlah ฿60.000 itu berlaku mulai anak kedua, jadi cek jumlah untuk anak pertamamu di Revenue Department. Pada gaji ฿1.800.000, tunjangan keluarga membuat pajak jadi ฿227.375.</p>"
+      "a": "<p>Ya, keduanya mengurangi pajak. Pasangan tanpa penghasilan memberi tunjangan ฿60.000, anak lahir sebelum 2018 ฿30.000, dan anak lahir 2018 atau sesudahnya ฿60.000 mulai anak kedua, sedangkan anak pertama tetap ฿30.000. Pada gaji ฿1.800.000 dengan pasangan dan dua anak, pajaknya jadi ฿234.875.</p>"
     },
     {
       "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Thailand dibandingkan dengan Indonesia?",

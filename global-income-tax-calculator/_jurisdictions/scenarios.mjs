@@ -135,7 +135,7 @@ export const PAGES = [
   ]},
   { slug: 'thailand', cc: 'TH', ex: [
     { key: 'single', amount: 1200000, inputs: {} },
-    { key: 'married-with-children', amount: 1800000, inputs: { thSpouse: true, thKidsNew: '2' } },
+    { key: 'married-with-children', amount: 1800000, inputs: { thSpouse: true, thKids: '1', thKidsNew: '1' } },
   ]},
   { slug: 'united-arab-emirates', cc: 'AE', ex: [
     { key: 'expat', amount: 300000, inputs: { gulfNat: 'expat' } },
