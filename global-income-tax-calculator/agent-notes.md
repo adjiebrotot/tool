@@ -7,8 +7,8 @@ heading (this) is not published. The headings are the same for every tool; see
 `rentvsownhouse/agent-notes.md` for what each one holds.
 
 The form shows one job at a time. Plain field keys set job 1. Up to four jobs travel in the
-`json` key (Json below), and a Quick Start brings its own four. The two display options
-(dispCur, dispPer) belong to the page, not to a job.
+`json` key (Json below), and a Quick Start brings its own four. The display options
+(dispCur, dispPer, chartMeasure) belong to the page, not to a job.
 
 ## Decides
 
@@ -129,6 +129,7 @@ Take-home pay after income tax and employee social contributions for one to four
 - gulfWagePct: Gulf states. Share of pay that contributions are charged on, in %; 100 by default (Saudi Arabia counts basic pay plus housing).
 - dispCur: Display only. local (each job in its own currency) or a code (USD, EUR, GBP, AUD, SGD, IDR, JPY, CHF, CAD, HKD, AED, CNY, KRW, MYR, THB, TWD, SEK, NOK, SAR, QAR, BHD, KWD, OMR) to read every job in one currency. Comparing jobs in different currencies reads best in one.
 - dispPer: Display only. year or month.
+- chartMeasure: Display only. What the chart across the pay range reads: pct (take-home as a share of gross, the default) or amount (take-home pay a year).
 
 ## Hide
 

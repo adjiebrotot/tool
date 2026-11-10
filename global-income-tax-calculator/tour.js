@@ -84,8 +84,8 @@ window.__TOUR = {
     {
       target: '#linesSection',
       onEnter: gitcSeed,
-      title: '⑧ Line by line, with sources',
-      body: 'Every tax and contribution, its <strong>source</strong> and the date its rule took effect, ' +
+      title: '⑧ Take-home pay breakdowns',
+      body: 'One job at a time, picked beside the title: every tax and contribution, its <strong>source</strong> and the date its rule took effect, ' +
             'marked Official, Secondary or Assumption. Open it from its chevron.'
     },
     {

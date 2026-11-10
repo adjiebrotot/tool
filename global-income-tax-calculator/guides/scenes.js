@@ -132,12 +132,12 @@ export const SCENES = [
     },
   },
   {
-    // Line by line, each with its source.
+    // The take-home pay breakdowns, each line with its source.
     name: 'lines',
     async run(S) {
       await quick(S, 'europe');
       S.begin();
-      S.mark('Open Line by line');
+      S.mark('Open the breakdowns');
       await S.scrollTo('#linesSection', 16, 600);
       await S.focus('#linesSection .detail-head', { pad: 40 });
       await S.click('#linesSection .detail-head h2', { after: 900 });

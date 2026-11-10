@@ -173,7 +173,7 @@
   <div class="ctrl-tabs stacked">
     <button class="ctrl-tab active" data-tab="salary" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5h.01M18 14.5h.01"/></svg><span>Salary</span></button>
     <button class="ctrl-tab" data-tab="household" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7.5" r="3.2"/><path d="M3 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><circle cx="17.5" cy="10.5" r="2.2"/><path d="M16 15.2c2.9-.4 5 1.7 5 4.8"/></svg><span>Household</span></button>
-    <button class="ctrl-tab" data-tab="details" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Details</span></button>
+    <button class="ctrl-tab" data-tab="details" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 12.5h7M8.5 16.5h5"/></svg><span>Details</span></button>
   </div>
   <div class="job-scope" id="jobScope">
   <div class="ctrl-panel active" id="tab-salary">
@@ -637,7 +637,11 @@
 
   <section class="chart-card card">
     <div class="chart-head">
-      <h2>Take-home share across the pay range <i class="tip-icon" data-tip="Each line keeps its job's own rules and changes only the gross pay. The dot is the job as entered."></i></h2>
+      <h2><span id="chartTitle">Take-home share across the pay range</span> <i class="tip-icon" data-tip="Each line keeps its job's own rules and changes only the gross pay. The dot is the job as entered."></i></h2>
+      <div class="chart-controls">
+        <select class="sel-input seg-src" id="chartMeasure" aria-label="Show take-home as"><option value="pct" selected>% of gross</option><option value="amount">Amount</option></select>
+        <i class="tip-icon" data-tip="<strong>% of gross:</strong> the share of gross pay taken home.<br><strong>Amount:</strong> take-home pay a year, in money."></i>
+      </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="svgBtn" type="button" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="pngBtn" type="button" title="Download this chart as PNG">⬇ PNG</button>
@@ -648,7 +652,7 @@
     <div class="sub" id="chartSub" hidden></div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
-    <div class="hover-box" id="hoverBox">Hover the chart to read each job's take-home share at that gross pay.</div>
+    <div class="hover-box" id="hoverBox">Hover the chart to read each job's take-home at that gross pay.</div>
   </section>
 
   <section class="detail-section card" id="compareSection">
@@ -663,12 +667,14 @@
 
   <section class="detail-section card" id="linesSection">
     <div class="detail-head">
-      <h2>Line by line, with sources <i class="tip-icon" data-tip="<ul><li><strong>Official:</strong> confirmed on a government page.</li><li><strong>Secondary:</strong> a Big Four, law firm or payroll source citing the rule.</li><li><strong>Assumption:</strong> a stated modelling choice.</li></ul>"></i></h2>
+      <h2>Take-home pay breakdowns</h2>
       <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="linesCsvBtn" type="button" title="Download these lines as CSV">⬇ CSV</button>
+        <span class="view-label" id="linesJobLabel">Job</span>
+        <select class="sel-input pf-view-select" id="linesJob" data-no-persist aria-labelledby="linesJobLabel" title="Choose which job to break down"></select>
+        <button class="btn-secondary btn-sm" id="linesCsvBtn" type="button" title="Download every job's lines as CSV">⬇ CSV</button>
       </div>
     </div>
-    <div class="table-wrap" id="linesWrap"></div>
+    <div class="lines-body" id="linesWrap"></div>
   </section>
 
   <!-- Multiplex ad (Multiplex 1): after the results, before What this assumes (.ad-slot in shared.css) -->
