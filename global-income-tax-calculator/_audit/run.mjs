@@ -228,6 +228,22 @@ for(const [c, g, k] of SAMPLE){
 }
 console.log(`  lines: ${SAMPLE.length - lineIssues}/${SAMPLE.length} sample cases add up with known sources`);
 
+/* ── 3b. Taxable income adds up: the page's first block is gross pay plus
+   the lines marked base (+1 added, -1 taken off), floored at 0, and it must
+   land on r.taxable. Every sample case, at seven pay levels from a fifth to
+   five times its own. ─────────────────────────────────────────────────────── */
+{ let bad = 0, n = 0; const misses = [];
+  for(const [c, g0, k] of SAMPLE) for(const f of [0.2, 0.5, 0.8, 1, 1.5, 2.5, 5]){
+    const r = E.compute(c, g0*f, k);
+    if(r.notSupported || r.taxable == null) continue;   // the Gulf states: no income tax
+    n++;
+    const built = Math.max(0, r.gross + r.lines.reduce((a, l) => a + (l.base ? l.base*l.amount : 0), 0));
+    const ok = near(built, r.taxable, 0.01) && r.lines.every(l => !l.base || l.base === 1 || l.base === -1);
+    if(!ok){ bad++; if(misses.length < 4) misses.push(c + ' ' + Math.round(g0*f) + ' built ' + built.toFixed(2) + ' vs ' + Number(r.taxable).toFixed(2)); }
+  }
+  check('taxable income: gross and the base lines land on r.taxable (' + n + ' cases)', bad === 0, misses.join(' | '));
+  console.log(`  taxable income: ${n - bad}/${n} cases add up from gross`); }
+
 /* ── 4. Layer D: round trips, non-negativity, caps ───────────────────────── */
 let seed = 12345;
 const rnd = () => { seed = (seed*1103515245 + 12345) % 2147483648; return seed/2147483648; };

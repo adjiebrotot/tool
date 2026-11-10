@@ -132,7 +132,7 @@ export const SCENES = [
     },
   },
   {
-    // The take-home pay breakdowns, each line with its source.
+    // The take-home pay breakdowns: a year of pay as a sum, each line's badge carrying its source.
     name: 'lines',
     async run(S) {
       await quick(S, 'europe');
@@ -141,9 +141,12 @@ export const SCENES = [
       await S.scrollTo('#linesSection', 16, 600);
       await S.focus('#linesSection .detail-head', { pad: 40 });
       await S.click('#linesSection .detail-head h2', { after: 900 });
-      S.mark('Every line, its source and its date');
+      S.mark('Follow the sum');
       await S.focus('#linesWrap .job-block:first-child', { pad: 20 });
-      await S.moveTo('#linesWrap .job-block:first-child td.src a', { ms: 800 });
+      await S.moveTo('#linesWrap .lines-table tr.total td.lbl', { ms: 800 });
+      await S.wait(2200);
+      S.mark('Hover a badge for its source');
+      await S.moveTo('#linesWrap .lines-table td.st .badge', { ms: 800 });
       await S.wait(2600);
       await S.focus();
     },

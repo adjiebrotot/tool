@@ -104,9 +104,8 @@ usState: State  (most important)
   US only. The state, by its two-letter code (DC for Washington DC). States with no tax on wages:
   AK, FL, NV, NH, SD, TN, TX, WA, WY. Not offered (their deduction phase-outs are not loaded), so a
   link must not name them: AL, CT, ME, MN, NM, OH, OR, RI, SC, UT, WI.
-  Tip on the page: 39 states and DC. Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio,
-  Oregon, Rhode Island, South Carolina, Utah and Wisconsin phase their deductions out on schedules
-  not loaded here, so they are left out rather than shown with a wrong figure.
+  Tip on the page: 39 states and DC. Eleven states are left out because their deduction phase-outs
+  are not loaded here.
 usNyc: Live in New York City
   Checkbox: true or false. Default false.
   US, New York only. true adds New York City resident tax.
@@ -143,15 +142,25 @@ auRes: Residency (Citizen or permanent resident, Temporary resident, Medicare-ex
   (Foreign resident), whm (Working holiday maker). Default pr.
   Australia. pr (citizen or permanent resident), temp (temporary resident, Medicare-exempt), foreign
   (foreign resident) or whm (working holiday maker).
-  Tip on the page: A foreign resident pays no Medicare levy and gets no tax-free threshold.
+  Tip on the page: Citizen or permanent resident: Australian citizens and permanent visa holders,
+  such as skilled 189, 190 or 186, or partner 801 and 100. Temporary resident: Temporary visa
+  holders without Medicare access, such as 482 Skills in Demand, 485 Graduate or 500 Student.
+  Foreign resident: In Australia under 6 months with no plan to settle, such as on a visitor 600 or
+  short-stay 400 visa. Working holiday maker: Backpackers on a Working Holiday (417) or Work and
+  Holiday (462) visa.
 sgRes: Residency
   One of: ep (Employment Pass or S Pass), citizen (Citizen, or PR from year 3), pr1 (Permanent
   resident, year 1), pr2 (Permanent resident, year 2), nonres (Non-resident (under 183 days)).
   Default ep.
   Singapore. ep (Employment Pass or S Pass, no CPF), citizen (citizen, or PR from year 3), pr1, pr2
   (permanent resident in year 1 or 2) or nonres (under 183 days).
-  Tip on the page: Only citizens and permanent residents pay CPF. A PR pays graduated rates in the
-  first two years.
+  Tip on the page: Employment Pass or S Pass: foreign professionals and skilled workers on an
+  Employment Pass or S Pass. Citizen, or PR from year 3: Singapore citizens, and permanent residents
+  from the third year after PR was granted. Permanent resident, year 1: new Singapore permanent
+  residents in the first year after PR was granted, often after an Employment Pass or S Pass.
+  Permanent resident, year 2: Singapore permanent residents in the second year after PR was granted.
+  Non-resident: anyone in Singapore under 183 days in the year, such as visiting staff on a short
+  assignment.
 sgAge: Age
   One of: 55 or under, 60 (Above 55 to 60), 65 (Above 60 to 65), 70 (Above 65 to 70), 99 (Above 70).
   Default 55.
@@ -162,31 +171,40 @@ usRes: Tax status
   One of: res (Citizen or resident), nra (Nonresident alien). Default res.
   US. res (citizen or resident) or nra (nonresident alien: no standard deduction, files as single;
   most new H-1B, L-1, F-1 holders in their first year).
-  Tip on the page: A nonresident alien (most new H-1B, L-1 or F-1 holders before the substantial
-  presence test) gets no standard deduction and files as single.
+  Tip on the page: Citizen or resident: US citizens, green card holders, and visa holders such as
+  H-1B or L-1 who pass the substantial presence test. Nonresident alien: people who fail both tests,
+  such as F-1 or J-1 students in their first 5 calendar years, or new H-1B arrivals before 183 days.
 deClass: Tax class
   One of: I (Class I, single), III (Class III, married, partner earns little). Default I.
   Germany. I (single) or III (married, partner earns little or nothing).
-  Tip on the page: Class III taxes the couple on splitting: twice the tax on half the income.
+  Tip on the page: Class I: single, divorced or widowed employees. Couples who both earn alike use
+  class IV, taxed the same. Class III: married or registered partners where one earns little or
+  nothing and the partner is in class V.
 idRes: Residency (Resident or Non-resident (PPh 26))
   One of: res (Resident), nonres (Non-resident (PPh 26)). Default res.
   Indonesia. res or nonres (under 183 days: 20% of gross, final).
-  Tip on the page: Under 183 days in 12 months with no intent to stay: 20% of gross, final, with no
-  allowances.
+  Tip on the page: Resident: Indonesians, and foreigners in Indonesia 183 days or more in 12 months
+  or intending to reside, including KITAS and KITAP holders. Non-resident: foreigners on a short
+  assignment, under 183 days in 12 months with no intent to reside.
 myRes: Residency (Citizen or permanent resident, Expat, tax resident (182 days or more) or Expat, non-resident)
   One of: citizen (Citizen or permanent resident), expat (Expat, tax resident (182 days or more)),
   nonres (Expat, non-resident). Default citizen.
   Malaysia. citizen (citizen or PR), expat (tax resident, 182 days or more) or nonres (30% flat).
+  Tip on the page: Citizen or permanent resident: Malaysian citizens and permanent residents. Expat,
+  tax resident: foreign nationals on an Employment Pass who are in Malaysia 182 days or more in the
+  year. Expat, non-resident: foreign employees in Malaysia under 182 days in the year, such as short
+  assignments.
 nlRuling: 30% ruling
   Checkbox: true or false. Default false.
   Netherlands. true for the 30% ruling (a recruited expat above the salary norm).
-  Tip on the page: Up to 30% of pay tax-free for a recruited expat above the salary norm, for up to
-  5 years. 27% from 2027.
+  Tip on the page: For employees recruited from abroad who lived over 150 km from the Dutch border.
+  Up to 30% of pay is tax-free above the salary norm, 27% from 2027.
 noRes: Scheme (Ordinary tax or PAYE scheme, 25% flat)
   One of: res (Ordinary tax), paye (PAYE scheme, 25% flat). Default res.
   Norway. res (ordinary tax) or paye (25% flat scheme for short stays, up to 725,050 a year).
-  Tip on the page: A foreign worker on a short stay can choose 25% of gross, final, up to 725,050 a
-  year.
+  Tip on the page: Ordinary tax: people living in Norway, including foreigners staying over 183 days
+  in 12 months. PAYE scheme: foreign workers who are not Norwegian tax residents, such as short
+  stays and cross-border commuters.
 noNi: Member of Norwegian national insurance
   Checkbox: true or false. Default true.
   Norway, PAYE only. false when not a member of Norwegian national insurance (17.4%).
@@ -194,42 +212,54 @@ noNi: Member of Norwegian national insurance
 seRes: Residency (Resident or Non-resident, SINK 22.5%)
   One of: res (Resident), sink (Non-resident, SINK 22.5%). Default res.
   Sweden. res or sink (non-resident, 22.5% flat).
-  Tip on the page: SINK is a flat 22.5% on pay for a non-resident (20% from 2027).
+  Tip on the page: Resident: people living in Sweden or staying 6 months or more, including foreign
+  hires on a work permit. Non-resident, SINK: people working in Sweden who live abroad, such as
+  commuters or assignments under 6 months.
 fiRes: Scheme (Ordinary tax or Key employee, 25% flat)
   One of: res (Ordinary tax), key (Key employee, 25% flat). Default res.
   Finland. res or key (key employee 25% flat, needs 5,800 a month or more).
-  Tip on the page: A recruited expert earning at least 5,800 a month can pay 25% final tax for up to
-  84 months.
+  Tip on the page: Ordinary tax: employees taxed at the progressive rates, including residents and
+  foreigners staying over 6 months. Key employee: foreign experts recruited from abroad, earning at
+  least 5,800 a month, not Finnish residents in the last 5 years.
 beExpat: Expat regime
   Checkbox: true or false. Default false.
   Belgium. true for the expat regime (35% of gross tax-free; needs more than 70,000 a year).
-  Tip on the page: A recruited expat on more than 70,000 a year can receive up to 35% of gross as a
-  tax and social security free reimbursement.
+  Tip on the page: For employees recruited or posted from abroad earning over 70,000 a year: up to
+  35% of gross as a tax and social security free reimbursement.
 itImp: Regime (Resident, Impatriate, 50% exempt or Impatriate with a minor child, 60% exempt)
   One of: none (Resident), imp50 (Impatriate, 50% exempt), imp60 (Impatriate with a minor child, 60%
   exempt). Default none.
   Italy. none, imp50 (impatriate, 50% exempt) or imp60 (impatriate with a minor child, 60% exempt).
-  Tip on the page: The impatriate regime takes 50% of pay (60% with a minor child) out of income tax
-  for 5 years. Social security stays on all of it.
+  Tip on the page: Resident: people living in Italy, taxed at the ordinary progressive rates.
+  Impatriate, 50% exempt: highly qualified workers moving to Italy after 3 years abroad (longer if
+  staying with the same employer), who commit to stay 4 years. Impatriate with a minor child: the
+  same impatriate workers with a minor child, or a child born or adopted while on the regime.
 frCadre: Contract
   One of: noncadre (Non-cadre), cadre (Cadre). Default noncadre.
   France. noncadre or cadre.
-  Tip on the page: A cadre (manager or professional) also pays the 0.024% APEC contribution.
+  Tip on the page: Non-cadre: employees who are not managers or professionals, such as clerks,
+  technicians and workers. Cadre: managers and professionals with cadre status under their
+  collective agreement.
 frImp: Impatriate regime, 30% forfait
   Checkbox: true or false. Default false.
   France. true for the impatriate regime (30% of pay exempt from income tax).
-  Tip on the page: Recruited from abroad: 30% of pay is exempt from income tax for up to 8 years.
-  Social contributions stay on all of it.
+  Tip on the page: For employees recruited from abroad who were not French tax residents in the last
+  5 years: 30% of pay is exempt from income tax for up to 8 years.
 esRegime: Regime (Resident or Beckham regime, 24% flat)
   One of: res (Resident), beckham (Beckham regime, 24% flat). Default res.
   Spain. res or beckham (24% flat to 600,000).
-  Tip on the page: A worker moving to Spain can be taxed at 24% to 600,000 (47% above) for 6 years.
+  Tip on the page: Resident: people living in Spain over 183 days a year, including those who moved
+  here earlier. Beckham regime: workers who move to Spain for a job, including digital nomad visa
+  holders, not Spanish residents in the last 5 years.
 ptRegime: Regime (Resident, IRS Jovem, IFICI, 20% flat or Non-resident, 25% flat)
   One of: res (Resident), jovem (IRS Jovem), ifici (IFICI, 20% flat), nonres (Non-resident, 25%
   flat). Default res.
   Portugal. res, jovem (IRS Jovem), ifici (20% flat) or nonres (25% flat).
-  Tip on the page: IRS Jovem exempts part of the pay of workers up to 35 in their first 10 years of
-  work. IFICI is the 20% regime for qualifying new residents.
+  Tip on the page: Resident: people living in Portugal, taxed at the ordinary progressive rates. IRS
+  Jovem: workers up to age 35 in their first 10 years of earning, whatever their education, who are
+  not claimed as a dependant. IFICI: new residents in qualifying jobs, such as researchers, teachers
+  and tech roles, not Portuguese residents in the last 5 years. Non-resident: people paid from
+  Portuguese work who live elsewhere, such as short assignments.
 ptJovemYear: Year of work
   One of: 1 (Year 1), 2 (Year 2), 3 (Year 3), 4 (Year 4), 5 (Year 5), 6 (Year 6), 7 (Year 7), 8
   (Year 8), 9 (Year 9), 10 (Year 10). Default 1.
@@ -241,21 +271,27 @@ jpRes: Residency (Resident, year 2 or later, Resident, first year or Non-residen
   flat). Default y2.
   Japan. y2 (resident, year 2 or later), y1 (first year: no resident tax yet) or nonres (20.42%
   flat).
-  Tip on the page: Resident tax is charged on last year's income, so there is none in the first
-  year.
+  Tip on the page: Resident, year 2 or later: people who had an address in Japan on 1 January, so
+  they owe resident tax on last year's income. Resident, first year: people who moved to Japan this
+  year on a work visa, so had no address there on 1 January. Non-resident: people with no home in
+  Japan who stay under one year, such as short assignments.
 krMethod: Tax method
   One of: prog (Progressive rates), flat (19% flat rate for foreign workers). Default prog.
   South Korea. prog (progressive) or flat (19% election for foreign workers).
-  Tip on the page: A foreign worker can elect 19% of gross (20.9% with local tax) instead of the
-  progressive rates, until 31 Dec 2026.
+  Tip on the page: Progressive rates: the standard method for every employee, foreign or Korean. 19%
+  flat rate: foreign nationals working in Korea who elect it, for work until 31 Dec 2026.
 cnRes: Status
   One of: local (Standard), expat (Expat with tax-free allowances). Default local.
   China. local (standard) or expat (tax-free allowances in cnAllow).
-  Tip on the page: An expat may take housing, language and school allowances tax-free instead of the
-  special deductions, until 31 Dec 2027.
+  Tip on the page: Standard: Chinese nationals, and foreigners who take the usual special additional
+  deductions. Expat: foreign nationals living in China, who may take housing, language and school
+  allowances tax-free until 31 Dec 2027.
 twRes: Residency (Resident (183 days or more) or Non-resident)
   One of: res (Resident (183 days or more)), nonres (Non-resident). Default res.
   Taiwan (China). res (183 days or more) or nonres.
+  Tip on the page: Resident: citizens, and foreigners on a residence certificate (ARC) who stay 183
+  days or more in the year. Non-resident: foreigners in Taiwan under 183 days in the year, such as
+  short assignments.
 twGold: Gold Card
   Checkbox: true or false. Default false.
   Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
@@ -264,12 +300,14 @@ gulfNat: Citizenship
   One of: expat (Expatriate), national (National). Default expat.
   UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Oman. expat or national. None of them taxes wages;
   nationals pay pension contributions.
-  Tip on the page: Pension schemes cover nationals. Expatriates get an end-of-service gratuity
-  instead.
+  Tip on the page: Expatriate: foreign workers on an employer-sponsored work residence permit.
+  National: citizens of the country you work in, covered by its pension scheme.
 saScheme: GOSI scheme
   One of: legacy (Joined before 3 Jul 2024), new (New entrant from 3 Jul 2024). Default legacy.
   Saudi nationals. legacy (joined GOSI before 3 Jul 2024) or new (new entrant).
-  Tip on the page: New entrants pay a rate that rises each July: 10.25% to June 2026, then 10.75%.
+  Tip on the page: Joined before 3 Jul 2024: employees already registered with GOSI before 3 July
+  2024. New entrant: employees first registered with GOSI from 3 July 2024. The rate steps up each
+  July.
 
 [Household: Household]
 usFiling: Filing status  (most important)
@@ -451,7 +489,6 @@ seBurial: Burial fee
 eeP2: Pension pillar II
   One of: 0 (Off), 2 (2%), 4 (4%), 6 (6%). Default 2.
   Estonia. Pension pillar II contribution: 0, 2, 4 or 6 (%).
-  Tip on the page: Your contribution to the funded pension, deducted before tax.
 eePension: At pension age
   Checkbox: true or false. Default false.
   Estonia. true at pension age (tax-free 776 a month).

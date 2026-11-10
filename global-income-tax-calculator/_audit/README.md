@@ -4,7 +4,7 @@ Two harnesses, both run from the repository root.
 
 | Run | What it holds |
 | --- | --- |
-| `node global-income-tax-calculator/_audit/run.mjs` | The engine (`engine.js`) against the spec. Replays all 422 golden cases (`golden-v11.json`, written by `gsc_reference_model.py`, spec v11) to ±1 unit of local currency: income tax, employee contributions and net. Then the Layer A anchors (spec §5.1), the line items adding up to the totals with a known source and status, 50 net-to-gross round trips for each of 33 presets, the caps of Layer D and the guards. |
+| `node global-income-tax-calculator/_audit/run.mjs` | The engine (`engine.js`) against the spec. Replays all 422 golden cases (`golden-v11.json`, written by `gsc_reference_model.py`, spec v11) to ±1 unit of local currency: income tax, employee contributions and net. Then the Layer A anchors (spec §5.1), the line items adding up to the totals with a known source and status, the taxable income the breakdown builds from gross pay (the lines marked `base`) landing on the engine's own, 50 net-to-gross round trips for each of 33 presets, the caps of Layer D and the guards. |
 | `node global-income-tax-calculator/_audit/page.mjs` | The page. Types 47 golden cases into the real form (country, every field, a monthly amount) and reads the figures the page shows, then net to gross, the display currency and per-month views, a period switch that must not move the answer, three jobs kept over a reload, the eleven states not loaded left out of the state list, and a job saved with one of them showing its reason instead of a figure. Needs Chart.js cached in `_ref/.libcache/` (run `node _ref/chart-check.mjs` once). |
 
 Regenerate the golden file with `python3 gsc_reference_model.py` in this folder; it writes
