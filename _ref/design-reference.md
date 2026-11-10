@@ -219,6 +219,24 @@ written into the HTML:
 - **Short.** Bold lead, one sentence after it; a longer reason goes in an (i)
   tip. Before there is anything to describe, one line says what to enter.
 
+Under it sits a **Questions** card (`.faq-card`, folded the same way), written into
+the HTML from `<tool>/faq.json` by `node _ref/faq-bake.mjs`, which also writes the
+page's `FAQPage` JSON-LD to match it word for word (an `/id/` page reads the `"id"`
+list; `bake-id.mjs` applies it). It is there for search and AI answer engines, so it
+must not read as keyword stuffing:
+
+- **Only what this model decides.** Where a default comes from (source, year,
+  figure), how a number is worked out, which assumption moves the answer most,
+  what the model leaves out and how to allow for it, or why it differs from a
+  well-known rule of thumb. A generic site could not write the same answer.
+- **Never** a generic definition ("What is DCA?"), sitewide boilerplate (free,
+  private, financial advice) or a list of cities or tickers for keywords.
+- **Answer first, then a figure.** The first sentence answers on its own; every
+  answer carries a figure, source, date or formula the code really uses. 3 to 6
+  questions, about 40 to 90 words each, plain text, no tool name or link.
+
+`node _ref/faq-bake.mjs --check` fails on a stale page or a broken rule.
+
 ### Page text
 
 No em-dashes in page text, tips or placeholders; a lone `—` marking an empty

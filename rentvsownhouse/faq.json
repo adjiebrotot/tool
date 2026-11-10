@@ -1,0 +1,78 @@
+{
+  "en": [
+    {
+      "q": "What does the renter do with the money they don't spend on a home?",
+      "a": [
+        "The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
+      ]
+    },
+    {
+      "q": "How is net equity worked out for someone who owns?",
+      "a": [
+        "It is the home's value less Selling cost, less the loan still owed, plus savings, as if the home were sold at the end of each year. No tax is taken on the gain. Selling cost matters to the timing: at the starting values over 10 years, 0% selling cost puts the breakeven in year 2, 2.5% in year 3 and 5% in year 4."
+      ]
+    },
+    {
+      "q": "What does the breakeven year mean, and why is there sometimes none?",
+      "a": [
+        "It is the first year from which owning stays ahead of renting until the end of the Time horizon. The search runs backwards from the final year, so a lead that is lost again later is not counted, and if renting is ahead in the last year there is no breakeven. At the starting values, House price growth of 2% a year gives year 15, 3% gives year 7 and 5% gives year 3."
+      ]
+    },
+    {
+      "q": "Does the model include tax on rental savings or on the sale of the home?",
+      "a": [
+        "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
+      ]
+    },
+    {
+      "q": "How does the model treat a fixed rate that later turns floating?",
+      "a": [
+        "Set the mortgage to Detail mode and give each period of the Mortgage rate schedule a fixed rate or a floating range. Floating periods run at the middle of their range, and the chart band shows the low and high ends. Each change of rate re-spreads the balance over the term left, so the payment is recalculated. The Jakarta Quick Start, as of October 2026, uses 8.5% fixed for 5 years, then floating at 11% to 13% (so 12% in the table)."
+      ]
+    },
+    {
+      "q": "How does Rent-Then-Buy price the later purchase?",
+      "a": [
+        "It buys at the home's price grown at House price growth to the end of the chosen year, with the same Down payment, setup costs scaled to that price and a new loan on the same terms. At the starting values, a purchase after 5 years costs about $1.02 million instead of $800,000. The cash it saved while renting becomes that deposit, and the model warns if the starting cash falls short."
+      ]
+    }
+  ],
+  "id": [
+    {
+      "q": "Dari mana asumsi bunga KPR 8,5% lalu 11% sampai 13% di Quick Start Jakarta?",
+      "a": [
+        "Angkanya dari suku bunga KPR bank besar per Oktober 2026: BCA menawarkan fixed 5 tahun 8,5% untuk rumah bekas, lalu floating sekitar 11% (BCA) sampai 13% (Mandiri). Promo 3,81% BCA tidak dipakai karena hanya untuk rumah baru dari developer rekanan. Di tabel, periode floating memakai nilai tengah, 12%, dan setiap pergantian bunga menghitung ulang cicilan dari sisa pokok dan sisa tenor 20 tahun."
+      ]
+    },
+    {
+      "q": "Berapa biaya awal beli apartemen Rp 2 miliar di Jakarta menurut Quick Start?",
+      "a": [
+        "Totalnya Rp 127,5 juta, atau 6,38% dari harga. Rinciannya: BPHTB 5% dikali (harga dikurangi Rp 250 juta, batas untuk perolehan pertama) sebesar Rp 87,5 juta, akta PPAT, balik nama dan biaya BPN sekitar 1% (Rp 20 juta), provisi bank 1% dari pinjaman 80% (Rp 16 juta), serta Rp 4 juta untuk appraisal, administrasi dan akta APHT. Rumah kedua tidak mendapat potongan BPHTB itu."
+      ]
+    },
+    {
+      "q": "Kenapa penyewa dianggap punya tabungan, dan bunganya berapa?",
+      "a": [
+        "Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Bebas Risiko, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar."
+      ]
+    },
+    {
+      "q": "Berapa kenaikan harga properti yang dibutuhkan agar membeli lebih unggul dari menyewa?",
+      "a": [
+        "Untuk apartemen 2 kamar tidur Rp 2 miliar di Quick Start Jakarta, sekitar 5,5% per tahun. Pada Kenaikan harga properti (RPPI) 2,5% yang dipakai Quick Start, kekayaan bersih tahun ke-20 adalah sekitar Rp 3,3 miliar untuk beli dan Rp 5,4 miliar untuk sewa, jadi Tahun breakeven kosong. Pada 5,5% breakeven jatuh di tahun ke-17, dan pada 6% di tahun ke-13."
+      ]
+    },
+    {
+      "q": "Apa itu biaya penjualan 5,5% dan kenapa dipotong dari kekayaan bersih pemilik?",
+      "a": [
+        "Itu PPh final penjual 2,5% dari harga jual (PP 34/2016) ditambah komisi agen sekitar 3%. Kekayaan bersih pemilik dihitung seolah rumah dijual di akhir Jangka waktu: nilai rumah dikurangi Biaya penjualan dan sisa KPR, ditambah kas. Tanpa pajak tambahan atas keuntungan. Untuk rumah Rp 2 miliar yang tak berubah nilainya, biaya itu sudah Rp 110 juta."
+      ]
+    },
+    {
+      "q": "Apakah perhitungannya memasukkan pajak, KPR subsidi, atau uang sewa dibayar di muka?",
+      "a": [
+        "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka plus deposit. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
+      ]
+    }
+  ]
+}

@@ -87,37 +87,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/financingvscash/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Should I buy it now by installment or pay cash?",
+      "name": "At what loan rate does financing beat paying cash?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use the free Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/. Enter the price, the installment terms, and the return you would earn on the cash you keep invested; it compares the total cost of each path so you can see whether paying cash or financing-and-investing leaves you better off."
+        "text": "When the loan costs less than the cash would earn, after fees. The tool invests the money financing frees up at the Risk-Free Rate, untaxed, and Net Benefit vs Cash is the difference in ending wealth. In the car Quick Start, the 3 year loan at 8.4% with 10% down and a $400 fee loses by $3,059 against a 4.5% Risk-Free Rate. It only draws level at about 3.81%, below 4.5%, because the fee also has to be earned back."
       }
     },
     {
       "@type": "Question",
-      "name": "My loan is quoted at 5% flat. What interest rate am I really paying?",
+      "name": "Does having more cash change whether financing is worth it?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Far more than 5%. A flat rate charges interest on the original amount for the whole term, so you keep paying interest on money you have already repaid. On a 5-year loan a 5% flat rate works out near 9% effective. Set Loan Type to Flat rate in the Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/ and it prints the Effective Rate (EAR) beside the quoted one, with an All-in Rate that adds the fees, so a flat quote and an ordinary installment quote can be compared directly."
+        "text": "No. Available Cash must cover the purchase, but any surplus is invested at the same Risk-Free Rate whether you pay cash or finance, so it cancels out of Net Benefit. In the car Quick Start, moving Available Cash from $60,000 to $54,000 or $66,000 changes the result by $0. What matters is the gap between the Finance Rate and the Risk-Free Rate, the term, the fees and the down payment."
       }
     },
     {
       "@type": "Question",
-      "name": "The dealer quoted me a monthly payment but no interest rate. How do I work it out?",
+      "name": "Does a longer loan term make financing look better or worse?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Set Loan Type to Known repayment in the Finance vs Cash tool at https://tool.adjiebrotots.com/financingvscash/, enter the amount financed, the term and the repayment, and it solves the rate the plan implies. The repayment can be a single amount or a stepped plan, for example month 1 to 2 at one amount and month 3 to 6 at another, and the solved rate is shown as an effective annual rate."
+        "text": "Worse whenever the loan costs more than the cash earns. A longer term means paying that gap for more years. In the car Quick Start the 3 year loan scores a Net Benefit of about -$3.1k. Stretched to 48 months it falls to about -$4.1k, and shortened to 24 months it improves to about -$2.1k. Term moved the result more than any other input, ahead of the Finance Rate, the Risk-Free Rate and the fee."
       }
     },
     {
       "@type": "Question",
-      "name": "Is it better to finance a purchase or pay cash and invest the difference?",
+      "name": "How does it compare a store plan that only quotes the instalment?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It depends on the financing rate versus your investment return. The Finance vs Cash tool models both: paying in full versus financing while investing the unused cash, so you can tell whether a low-rate or 0% installment plan actually beats paying cash. Free and fully in your browser at https://tool.adjiebrotots.com/financingvscash/."
+        "text": "It solves for the rate hidden in the payments, using the Known repayment, solve rate loan type, and then scores that loan like any other. On an $1,800 phone, 24 payments of $82 works out to about 9.1% a year, and so does 36 payments of $57. Both lose to cash at a 4.5% Risk-Free Rate, and the longer plan loses more. 12 payments of $150 is exactly 0% and beats cash."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is a flat rate loan so much dearer than the same rate on a declining balance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A flat rate charges interest on the original amount for the whole term, even after you have repaid part of it. In the motorbike Quick Start, Rp 28 million is borrowed over 36 months at 0.9% a month. Flat, the instalment is about Rp 1,029,778, against Rp 914,034 on a declining balance, roughly Rp 4.2 million more in total. Its effective rate is about 19% a year, not 10.8%. Set Rate Convention to Nominal (APR) for a rate quoted per month."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the comparison leave out?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tax, risk and the item itself. Cash earns the Risk-Free Rate untaxed and loan interest is never deducted, so enter an after-tax Risk-Free Rate if yours is taxed. What the item is later worth is left out of both paths. Early repayment penalties, break costs and a 0% promotion that charges interest back are not modelled. Only fees you enter in Origination Fee or Admin Fee count."
       }
     }
   ]
@@ -460,6 +477,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>At what loan rate does financing beat paying cash?</h3>
+        <p>When the loan costs less than the cash would earn, after fees. The tool invests the money financing frees up at the Risk-Free Rate, untaxed, and Net Benefit vs Cash is the difference in ending wealth. In the car Quick Start, the 3 year loan at 8.4% with 10% down and a $400 fee loses by $3,059 against a 4.5% Risk-Free Rate. It only draws level at about 3.81%, below 4.5%, because the fee also has to be earned back.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does having more cash change whether financing is worth it?</h3>
+        <p>No. Available Cash must cover the purchase, but any surplus is invested at the same Risk-Free Rate whether you pay cash or finance, so it cancels out of Net Benefit. In the car Quick Start, moving Available Cash from $60,000 to $54,000 or $66,000 changes the result by $0. What matters is the gap between the Finance Rate and the Risk-Free Rate, the term, the fees and the down payment.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does a longer loan term make financing look better or worse?</h3>
+        <p>Worse whenever the loan costs more than the cash earns. A longer term means paying that gap for more years. In the car Quick Start the 3 year loan scores a Net Benefit of about -$3.1k. Stretched to 48 months it falls to about -$4.1k, and shortened to 24 months it improves to about -$2.1k. Term moved the result more than any other input, ahead of the Finance Rate, the Risk-Free Rate and the fee.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does it compare a store plan that only quotes the instalment?</h3>
+        <p>It solves for the rate hidden in the payments, using the Known repayment, solve rate loan type, and then scores that loan like any other. On an $1,800 phone, 24 payments of $82 works out to about 9.1% a year, and so does 36 payments of $57. Both lose to cash at a 4.5% Risk-Free Rate, and the longer plan loses more. 12 payments of $150 is exactly 0% and beats cash.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is a flat rate loan so much dearer than the same rate on a declining balance?</h3>
+        <p>A flat rate charges interest on the original amount for the whole term, even after you have repaid part of it. In the motorbike Quick Start, Rp 28 million is borrowed over 36 months at 0.9% a month. Flat, the instalment is about Rp 1,029,778, against Rp 914,034 on a declining balance, roughly Rp 4.2 million more in total. Its effective rate is about 19% a year, not 10.8%. Set Rate Convention to Nominal (APR) for a rate quoted per month.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the comparison leave out?</h3>
+        <p>Tax, risk and the item itself. Cash earns the Risk-Free Rate untaxed and loan interest is never deducted, so enter an after-tax Risk-Free Rate if yours is taxed. What the item is later worth is left out of both paths. Early repayment penalties, break costs and a 0% promotion that charges interest back are not modelled. Only fees you enter in Origination Fee or Admin Fee count.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>

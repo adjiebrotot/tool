@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "Which tax year and rules does it use for each country?",
+      "a": [
+        "Each country uses its 2026 rules, and the page shows the exact year beside the job: Australia 2026-27 (from 1 July 2026), the UK 2026/27 (from 6 April 2026), Singapore YA2027 (income earned in 2026), and the US under IRS Rev. Proc. 2025-32. The rules were researched on 10 November 2026. Every line in the breakdown carries a source and an Official, Secondary or Assumption badge."
+      ]
+    },
+    {
+      "q": "How does it find the gross pay for a take-home amount I want?",
+      "a": [
+        "With I know my set to Take-home pay, it searches for the lowest gross whose net reaches your target. It scans 400 steps up the pay range to the first step that reaches it, then narrows by bisection to within 0.5 of a currency unit. The scan matters because net pay does not always rise with gross, as with the New York recapture tax."
+      ]
+    },
+    {
+      "q": "Why do some US states say they are not loaded?",
+      "a": [
+        "Eleven states are left out because their tax has income-dependent deductions, exemptions or credits the tool does not model: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. A flat deduction would misstate the tax, so it shows a message instead of a figure. Nine states with no tax on wages are loaded, and the rest are modelled."
+      ]
+    },
+    {
+      "q": "What does the marginal rate mean, and why is it not the average rate?",
+      "a": [
+        "The marginal rate is the share of your next 1% of pay that goes to tax and contributions. It is worked out as one minus the extra take-home pay over the extra gross, so it can be well above or below your average rate. In the US, Social Security is 6.2% only up to 184,500, so the marginal rate falls once pay passes that wage base."
+      ]
+    },
+    {
+      "q": "Does the take-home figure include bonuses, equity or employer contributions?",
+      "a": [
+        "No. It covers employment income for one full year in one job, with no bonuses, equity, benefits in kind, other income, tax treaties or foreign tax credits. Employer-side costs are shown but never deducted from your pay. Australia's 12% super guarantee is paid on top unless you turn on Amount includes super, which treats your amount as a package and divides it by 1.12."
+      ]
+    },
+    {
+      "q": "Do exchange rates change the tax calculation?",
+      "a": [
+        "No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The tool fetches the day's rates from ExchangeRate-API when it can and falls back to a bundled set dated 10 November 2026. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then gives each currency its own gross pay axis, lined up at the rate."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "en": [
+    {
+      "q": "What is the difference between Required, Global and Scaled salary on the map?",
+      "a": [
+        "Required salary shows what each city needs to keep your savings ratio or your nominal savings. Global salary keeps your own salary everywhere, converted at today's exchange rate, so the map shows what you would save. Scaled salary pays you the same multiple of local pay in each city, so no exchange rate enters it. Required is the default."
+      ]
+    },
+    {
+      "q": "Where do the Scale by figures (Minimum wage, Average salary, Median salary) come from?",
+      "a": [
+        "The average is a crowd-sourced after-tax figure, city by city, worked out from purchasing power and cost-of-living indices of 13 October 2026. The median is that average times the country's median-to-average ratio of earnings, from ILOSTAT, the OECD, Eurostat or a national statistics office. The minimum wage is the statutory gross figure: hourly rates times 40 hours a week, daily rates times 26 days."
+      ]
+    },
+    {
+      "q": "Why are some cities left without a colour in Scaled salary mode?",
+      "a": [
+        "A city goes without a colour when it has no pay yardstick to scale by, and the city card says which one is missing. Some countries set no statutory minimum wage, not every country publishes both a median and an average wage, and a few cities lack a trustworthy salary figure. A city with no index or exchange rate for your lifestyle also shows no estimate."
+      ]
+    },
+    {
+      "q": "How does the map decide a city is cheaper or dearer than mine?",
+      "a": [
+        "It compares living cost in your currency over yours. In Required and Global mode a dot is cheaper below 1 and dearer above 1. In Scaled mode it compares the share of pay your lifestyle takes there against the share it takes now. Within 0.05% of 1, a city counts as equal. In Global and Scaled mode, a city where the salary cannot cover the lifestyle turns red."
+      ]
+    },
+    {
+      "q": "Why might a Scaled salary differ from what I would really be paid in that city?",
+      "a": [
+        "Scaled salary assumes you would hold the same place in the local pay scale, and real pay for one job can differ by far more than that. Minimum wages are gross while your salary is net, so a country that taxes low pay harder looks better paid than it is. A median uses one national ratio, so a large city's true median is likely lower."
+      ]
+    }
+  ]
+}

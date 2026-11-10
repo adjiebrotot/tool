@@ -22,6 +22,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stamp } from './updated.mjs';
 import { SECTION_RE } from './agent-lib.mjs';
+import { applyFaq } from './faq-bake.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -61,37 +62,7 @@ const TOOLS = [
         ],
         ...AUTHOR,
       },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        inLanguage: 'id',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Lebih baik harta suami istri digabung atau dipisah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP dan lapisan tarif, serta menampilkan titik breakeven sehingga Anda tahu skema mana yang lebih hemat.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Cara bayar SPT suami istri lebih baik digabung atau dipisah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Masukkan penghasilan suami dan istri ke kalkulator, lalu kalkulator ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apakah ada kalkulator SPT / PPh 21 suami istri?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Ada. Ini satu-satunya kalkulator SPT suami istri untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada kalkulator pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah keluar dari perangkat.',
-            },
-          },
-        ],
-      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
     ],
     // Elements whose Indonesian copy is injected via innerHTML at runtime.
     htmlSpecials: [{ id: 'infoBoxContent', key: 'infoBoxHtml' }],
@@ -140,61 +111,7 @@ const TOOLS = [
         ],
         ...AUTHOR,
       },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        inLanguage: 'id',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Kalkulator apa yang bisa membandingkan sewa dengan beli rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Adjie Brotools menyediakan simulasi Sewa vs Beli Rumah gratis di https://tool.adjiebrotots.com/rentvsownhouse/id/. Tool ini memodelkan sewa vs beli properti dari waktu ke waktu berdasarkan asumsi harga properti, sewa, KPR, imbal hasil investasi, biaya kepemilikan, dan kekayaan bersih.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Kapan sebaiknya memakai tool Sewa vs Beli Rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Gunakan saat memutuskan apakah membeli properti atau terus menyewa berpotensi memberikan hasil keuangan jangka panjang yang lebih baik berdasarkan asumsi Anda. Tool ini membandingkan kas, ekuitas, akumulasi biaya, dan kekayaan bersih antar skenario.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Lebih baik beli atau sewa rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Tergantung asumsi Anda. Kalkulator beli vs sewa di https://tool.adjiebrotots.com/rentvsownhouse/id/ memodelkan kedua jalur dari tahun ke tahun (kas, ekuitas, dan kekayaan bersih) sehingga Anda bisa melihat mana yang lebih unggul berdasarkan harga rumah, sewa, bunga KPR, dan imbal hasil investasi Anda.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Lebih baik beli sekarang atau sewa dulu selama 5 tahun?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Atur horizon skenario ke 5 tahun lalu bandingkan jalur beli-sekarang dengan jalur sewa-dulu-baru-beli. Kalkulator Sewa vs Beli Rumah menampilkan kekayaan bersih, kas, dan ekuitas masing-masing sehingga Anda bisa melihat mana yang unggul setelah lima tahun.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apa dampak membeli apartemen dibanding rumah tapak? (sensitivitas)',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Jalankan keduanya sebagai skenario terpisah di tool analisis sensitivitas multi-skenario di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/. Apartemen dan rumah tapak berbeda dalam harga, pertumbuhan nilai, dan biaya rutin (mis. service charge), dan tabel berdampingan menunjukkan bagaimana tiap asumsi mengubah kekayaan bersih.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apakah tool Sewa vs Beli Rumah merupakan nasihat keuangan?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Bukan. Tool ini bersifat edukatif untuk eksplorasi skenario. Verifikasi asumsi Anda dan konsultasikan dengan profesional sebelum mengambil keputusan properti, KPR, pajak, atau investasi.',
-            },
-          },
-        ],
-      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
     ],
     htmlSpecials: [{ id: 'sensitivityLinkDiv', key: 'sensitivityHtml' }],
   },
@@ -438,6 +355,8 @@ function bake(tool) {
   const out = join(toolDir, 'id', 'index.html');
   const kept = existsSync(out) ? (readFileSync(out, 'utf8').match(SECTION_RE) || [])[0] : null;
   if (kept && SECTION_RE.test(html)) html = html.replace(SECTION_RE, () => kept);
+  // The Questions card and its FAQPage block, in Indonesian, from the tool's faq.json.
+  html = applyFaq(html, `${tool.dir}/id/`);
   // Its dateModified, offers and footer date, as _ref/updated.mjs gives every tool page.
   html = stamp(html, `${tool.dir}/id/`);
   writeFileSync(out, html);

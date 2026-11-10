@@ -1,0 +1,39 @@
+{
+  "en": [
+    {
+      "q": "What does Towards Weight do with each top-up?",
+      "a": [
+        "It spends the top-up only on assets below their target weight, in proportion to each shortfall, and never sells anything. Each asset's shortfall is its Target Weight times total portfolio value, less what it is worth now. If the shortfalls add up to more than the cash, each buy is scaled down to fit.",
+        "If every asset is at or above target, nothing is bought and the cash waits, so some money can sit uninvested. The tile's Cash share shows how much."
+      ]
+    },
+    {
+      "q": "How much does idle cash earn while it waits to be invested?",
+      "a": [
+        "Nothing, unless you set it: the Risk-free rate starts at 0%. A rate is applied each trading day as (1 + rate) to the power of 1/252, or you can follow a money market ticker through Risk-Free Account.",
+        "This matters for a Separate schedule rebalance or a rare trigger, which can hold each top-up in cash for up to three months. At 4%, as in the monthly against quarterly rebalance example, that cash earns interest, shown in the table's Interest column."
+      ]
+    },
+    {
+      "q": "What do the Buying fee and Selling fee charge, and what does rebalancing cost?",
+      "a": [
+        "Each is a percentage of every trade, starting at 0.1% for both, and the table's Fees column keeps the running total. Towards Weight, Constant Allocation and Trend Following never sell, so only the Buying fee applies to them.",
+        "Constant Weight sells whatever is above target, then buys the shortfalls, so it pays both fees. Over the 50/50 SPY and GOVT example, splitting each top-up and never rebalancing ended $1,720 ahead of holding 50/50, because shares beat bonds and the winner was left to grow."
+      ]
+    },
+    {
+      "q": "What is the difference between Constant Weight and Constant Allocation?",
+      "a": [
+        "Constant Weight keeps the whole portfolio on its Target Weights by selling what is over and buying what is under, either at every top-up or on a Separate schedule. Constant Allocation only splits each new top-up by the weights and never rebalances what is already held.",
+        "So the weights mean different things: a share of the whole portfolio for Constant Weight, and a share of each top-up for Constant Allocation. With Constant Allocation the holdings drift toward whichever asset has done best."
+      ]
+    },
+    {
+      "q": "Why can a portfolio with less return have the higher Sharpe ratio?",
+      "a": [
+        "Sharpe measures return above the portfolio's own Risk-free rate per unit of daily swing, so a smoother portfolio can score higher while earning less. In the DHHF.AX and AAA.AX example, 80/20 ended at $78,915 against $75,604 for 60/40 on $60,000 put in, with CAGR (TWR) 8.42% against 7.19%.",
+        "Yet 60/40 had the higher Sharpe, 1.08 against 0.96. The portfolio's swing is measured from its own daily values, so the cash-heavy mix pays better per unit of risk even though it ends lower."
+      ]
+    }
+  ]
+}

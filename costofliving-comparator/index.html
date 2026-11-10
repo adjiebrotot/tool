@@ -84,29 +84,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/costofliving-comparator/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "I want to move from Jakarta to Perth — how much can I save?",
+      "name": "Where do the city prices behind the estimates come from?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use the free Cost of Living Comparator at https://tool.adjiebrotots.com/costofliving-comparator/. Pick Jakarta and Perth, enter your income, and it estimates how the same lifestyle costs in each city and how much of your salary is left over — so you can see your potential savings before relocating."
+        "text": "They come from a crowd-sourced survey of 547 cities, bundled with the tool and updated on 22 May 2026, plus one set of exchange rates from the same date. Each city has separate indices for rent, groceries, eating out, electricity, water, gas, fuel and overall cost with and without housing, all rebased to Perth = 100. The base city cancels out of every ratio, so it never shows in a result."
       }
     },
     {
       "@type": "Question",
-      "name": "What salary do I need if I move from Bangkok to Singapore?",
+      "name": "How is the salary I need in another city worked out?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Compare Bangkok and Singapore in the Cost of Living Comparator at https://tool.adjiebrotots.com/costofliving-comparator/ to find the equivalent salary that preserves your current standard of living after the difference in housing, food, transport, and other costs — useful for an offer or salary negotiation."
+        "text": "With the Savings ratio target, it is your expenses there divided by one minus your savings ratio today. If you save 25% now and the same lifestyle costs 3,000 a month there, you need 3,000 ÷ 0.75 = 4,000 net. With Nominal savings, it is the expenses there plus your current monthly savings converted at today's exchange rate."
       }
     },
     {
       "@type": "Question",
-      "name": "How do I compare the cost of living between two cities?",
+      "name": "Why does the exchange rate not change my estimated living costs?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Select any two of 500+ cities, enter your income, and the comparator shows where your money goes furthest and the equivalent salary or savings — a relocation and geoarbitrage analysis that runs entirely in your browser, free, with no account."
+        "text": "Estimates use the rate the indices were priced at (May 2026), because each index is already a ratio of local prices. A weaker rupiah does not make a Perth lunch dearer in Australian dollars. Today's market rate, from a daily feed kept for six hours, only converts money that crosses the border: the home-currency figures, the nominal savings target, and the Remittance and International Travel rows."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the salary it gives include income tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Every salary is take-home pay, as you type it, and the model never works out tax or social charges. The salary you need is therefore a net figure, not a gross offer. To compare a gross offer, first turn it into your expected monthly net pay in that country, then enter that. Schooling and health cover paid through tax are also left out."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are Medical Care and Health Insurance rows scaled?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both rows use the World Bank's ICP 2021 health price level for the country, divided by its everyday price level, then multiplied by the city's cost-of-living index without housing. The ratio has no exchange rate in it, so it rides on the city's current index. Because it is set per country, two cities in one country share the same health ratio, and a country the ICP did not price shows no estimate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "If I choose Exclude housing, is my rent taken out of my expenses?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Exclude housing only switches the overall index to the one without rent, as when an employer pays for your home. Your Expenses figure is not changed. If it still contains rent, that rent is scaled by an index with no rent in it, which understates a move to a dearer city. Either leave the rent out of your figure or keep housing included."
       }
     }
   ]
@@ -231,6 +256,37 @@
   <h2>What this assumes</h2>
   <ul class="assumptions" id="assumptions"></ul>
 </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Where do the city prices behind the estimates come from?</h3>
+        <p>They come from a crowd-sourced survey of 547 cities, bundled with the tool and updated on 22 May 2026, plus one set of exchange rates from the same date. Each city has separate indices for rent, groceries, eating out, electricity, water, gas, fuel and overall cost with and without housing, all rebased to Perth = 100. The base city cancels out of every ratio, so it never shows in a result.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is the salary I need in another city worked out?</h3>
+        <p>With the Savings ratio target, it is your expenses there divided by one minus your savings ratio today. If you save 25% now and the same lifestyle costs 3,000 a month there, you need 3,000 ÷ 0.75 = 4,000 net. With Nominal savings, it is the expenses there plus your current monthly savings converted at today's exchange rate.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why does the exchange rate not change my estimated living costs?</h3>
+        <p>Estimates use the rate the indices were priced at (May 2026), because each index is already a ratio of local prices. A weaker rupiah does not make a Perth lunch dearer in Australian dollars. Today's market rate, from a daily feed kept for six hours, only converts money that crosses the border: the home-currency figures, the nominal savings target, and the Remittance and International Travel rows.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the salary it gives include income tax?</h3>
+        <p>No. Every salary is take-home pay, as you type it, and the model never works out tax or social charges. The salary you need is therefore a net figure, not a gross offer. To compare a gross offer, first turn it into your expected monthly net pay in that country, then enter that. Schooling and health cover paid through tax are also left out.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How are Medical Care and Health Insurance rows scaled?</h3>
+        <p>Both rows use the World Bank's ICP 2021 health price level for the country, divided by its everyday price level, then multiplied by the city's cost-of-living index without housing. The ratio has no exchange rate in it, so it rides on the city's current index. Because it is set per country, two cities in one country share the same health ratio, and a country the ICP did not price shows no estimate.</p>
+      </div>
+      <div class="faq-item">
+        <h3>If I choose Exclude housing, is my rent taken out of my expenses?</h3>
+        <p>No. Exclude housing only switches the overall index to the one without rent, as when an employer pays for your home. Your Expenses figure is not changed. If it still contains rent, that rent is scaled by an index with no rent in it, which understates a move to a dearer city. Either leave the rent out of your figure or keep housing included.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 
 </div><!-- /container -->
 

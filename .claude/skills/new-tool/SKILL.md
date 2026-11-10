@@ -77,8 +77,9 @@ Before calling it done, every line here must hold:
       a chevron (`SharedFold`), and a closing **What this assumes** card (folded closed
       by `shared.js`), built from the
       reader's own input on every redraw: only lines for what their plan uses, each naming
-      its figure ("Inflation is 2.5% a year", not "Inflation is modelled"). Display options
-      sit beside the results they change.
+      its figure ("Inflation is 2.5% a year", not "Inflation is modelled"), then a folded
+      **Questions** card from `<tool>/faq.json` (`node _ref/faq-bake.mjs`; rules in
+      `_ref/design-reference.md`). Display options sit beside the results they change.
 - [ ] **Units everywhere**: the unit is the field's prefix or suffix, never the label;
       `data-unit` when it lives in a column header, `data-unitless` for a seed. Every y axis
       names its unit, every x axis is titled, every table shows its unit per column

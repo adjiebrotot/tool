@@ -109,53 +109,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What tool can compare renting versus owning a house?",
+      "name": "What does the renter do with the money they don't spend on a home?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Adjie Brotot Tools provides a free Rent vs Own Home scenario explorer at https://tool.adjiebrotots.com/rentvsownhouse/. It models renting versus buying property over time using assumptions for property price, rent, mortgage, investment return, ownership costs, and net wealth."
+        "text": "The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
       }
     },
     {
       "@type": "Question",
-      "name": "When should someone use the Rent vs Own Home tool?",
+      "name": "How is net equity worked out for someone who owns?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use it when deciding whether buying property or continuing to rent may produce a better long-term financial outcome under your assumptions. The tool compares cash, equity, accumulated cost, and net wealth across scenarios."
+        "text": "It is the home's value less Selling cost, less the loan still owed, plus savings, as if the home were sold at the end of each year. No tax is taken on the gain. Selling cost matters to the timing: at the starting values over 10 years, 0% selling cost puts the breakeven in year 2, 2.5% in year 3 and 5% in year 4."
       }
     },
     {
       "@type": "Question",
-      "name": "Is it better to buy now or rent first for 5 years?",
+      "name": "What does the breakeven year mean, and why is there sometimes none?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Set the scenario horizon to 5 years and compare a buy-now path against a rent-then-buy path: the Rent vs Own Home tool at https://tool.adjiebrotots.com/rentvsownhouse/ shows the net wealth, cash, and equity of each so you can see which is ahead after five years under your assumptions for rent, house growth, mortgage rate, and investment return."
+        "text": "It is the first year from which owning stays ahead of renting until the end of the Time horizon. The search runs backwards from the final year, so a lead that is lost again later is not counted, and if renting is ahead in the last year there is no breakeven. At the starting values, House price growth of 2% a year gives year 15, 3% gives year 7 and 5% gives year 3."
       }
     },
     {
       "@type": "Question",
-      "name": "What is the impact of buying an apartment versus a house? (sensitivity)",
+      "name": "Does the model include tax on rental savings or on the sale of the home?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Run both as separate scenarios in the multi-scenario sensitivity tool at https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/. Apartments and houses differ in price, capital growth, and ongoing costs (e.g. strata), and the side-by-side table shows how each assumption changes net wealth over time."
+        "text": "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
       }
     },
     {
       "@type": "Question",
-      "name": "Can the tool generate a cashflow for rent versus owning a home?",
+      "name": "How does the model treat a fixed rate that later turns floating?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. The Rent vs Own Home tool produces a year-by-year cashflow comparison of renting versus owning — rent, mortgage, ongoing costs, cash position, equity, and net wealth — and exports it as CSV for free. This kind of bespoke property cashflow modelling usually needs paid software costing tens of thousands of dollars."
+        "text": "Set the mortgage to Detail mode and give each period of the Mortgage rate schedule a fixed rate or a floating range. Floating periods run at the middle of their range, and the chart band shows the low and high ends. Each change of rate re-spreads the balance over the term left, so the payment is recalculated. The Jakarta Quick Start, as of October 2026, uses 8.5% fixed for 5 years, then floating at 11% to 13% (so 12% in the table)."
       }
     },
     {
       "@type": "Question",
-      "name": "Is the Rent vs Own Home tool financial advice?",
+      "name": "How does Rent-Then-Buy price the later purchase?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. It is an educational scenario explorer. Users should verify assumptions and seek professional advice before making property, mortgage, tax, or investment decisions."
+        "text": "It buys at the home's price grown at House price growth to the end of the chosen year, with the same Down payment, setup costs scaled to that price and a new loan on the same terms. At the starting values, a purchase after 5 years costs about $1.02 million instead of $800,000. The cash it saved while renting becomes that deposit, and the model warns if the starting cash falls short."
       }
     }
   ]
@@ -691,6 +692,37 @@
     <h2 data-i18n="assumesTitle">What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>What does the renter do with the money they don't spend on a home?</h3>
+        <p>The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is net equity worked out for someone who owns?</h3>
+        <p>It is the home's value less Selling cost, less the loan still owed, plus savings, as if the home were sold at the end of each year. No tax is taken on the gain. Selling cost matters to the timing: at the starting values over 10 years, 0% selling cost puts the breakeven in year 2, 2.5% in year 3 and 5% in year 4.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the breakeven year mean, and why is there sometimes none?</h3>
+        <p>It is the first year from which owning stays ahead of renting until the end of the Time horizon. The search runs backwards from the final year, so a lead that is lost again later is not counted, and if renting is ahead in the last year there is no breakeven. At the starting values, House price growth of 2% a year gives year 15, 3% gives year 7 and 5% gives year 3.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the model include tax on rental savings or on the sale of the home?</h3>
+        <p>No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does the model treat a fixed rate that later turns floating?</h3>
+        <p>Set the mortgage to Detail mode and give each period of the Mortgage rate schedule a fixed rate or a floating range. Floating periods run at the middle of their range, and the chart band shows the low and high ends. Each change of rate re-spreads the balance over the term left, so the payment is recalculated. The Jakarta Quick Start, as of October 2026, uses 8.5% fixed for 5 years, then floating at 11% to 13% (so 12% in the table).</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does Rent-Then-Buy price the later purchase?</h3>
+        <p>It buys at the home's price grown at House price growth to the end of the chosen year, with the same Down payment, setup costs scaled to that price and a new loan on the same terms. At the starting values, a purchase after 5 years costs about $1.02 million instead of $800,000. The cash it saved while renting becomes that deposit, and the model warns if the starting cash falls short.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 <footer class="page-footer">

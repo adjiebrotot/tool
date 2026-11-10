@@ -1,0 +1,39 @@
+{
+  "en": [
+    {
+      "q": "Where do the return and volatility presets come from?",
+      "a": [
+        "Each preset is a long-run nominal figure, before tax and fees, as of 2026-09: global diversified shares 8.5% with 15% volatility, United States shares 10% and 15.5%, Australian shares 9.5% and 16%, government bonds 5% and 6%, gold 7.5% and 17%. The US figure is the S&P 500 total return from 1928; gold starts in 1971.",
+        "The cash preset is 4% with 1% volatility, a current savings rate rather than a long-run one. Cash has historically beaten inflation by only about 0.5 to 1%, so treat it as generous."
+      ]
+    },
+    {
+      "q": "How is the amount needed to stop work worked out, and why is it not simply 25 times spending?",
+      "a": [
+        "The tool finds the smallest pot that never runs out before the life expectancy, month by month, with spending taken at the start of each month. For Just Die at a constant return this is the present value of an annuity due: monthly spending at retirement, over the months to life expectancy, discounted at the real monthly return.",
+        "The 25 times rule is the same arithmetic at a 4% real return. Here the real return uses Fisher, not subtraction (8.5% with 2.5% inflation is 5.85%), and the FIRE number shows the withdrawal rate it implies."
+      ]
+    },
+    {
+      "q": "Does the freedom age allow for tax and fees?",
+      "a": [
+        "No tax is modelled at all, and fees only count through the return you enter. The Expected return (CAGR) and the Savings or Net income you type are taken as already after tax, so enter pay after tax and a return after fund fees.",
+        "Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly. If tax on withdrawals is large, lower the return a point or two and treat the age as optimistic."
+      ]
+    },
+    {
+      "q": "Which input moves the retirement age the most?",
+      "a": [
+        "The real return, set by Inflation and the Expected return (CAGR) together. On the Moderate FIRE plan, free at 44y 4m, one point more inflation adds 2.8 years and one point less return adds 2.1 years.",
+        "Your own levers are smaller: 10% less spending or 10% more Savings moves it about a year. Spending cuts also shrink the pot needed for every retired year, so they do slightly more than saving more. Test your plan at a real return a point lower."
+      ]
+    },
+    {
+      "q": "How is Chance it works calculated without running thousands of simulations?",
+      "a": [
+        "It is worked out directly, not simulated. Returns are lognormal and independent month to month, and each month counts by the money exposed in it, so a bad year near stopping hurts most. Checked against 5,000 simulated futures, the 90% confidence pot agreed to about 1% and the chance to about a point.",
+        "Volatility moves the age only once you ask for caution: at the default Investment outcome chance of 50% it is ignored, at 90% each 5 points shifts it about 2 years."
+      ]
+    }
+  ]
+}
