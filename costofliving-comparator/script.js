@@ -1240,6 +1240,7 @@ function renderSimpleEarn(area,from,to){
         <div class="field-label">Net salary</div>
         <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="se_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
+        ${gitcHint(from,'gross')}
       </div>
       <div class="field-row">
         <div class="field-label">Expenses</div>
@@ -1442,7 +1443,7 @@ function buildDetailHTML(fromCity,toCities){
   const savLabel=cf?`<br><select class="freq-sel" id="dtSavingsFreq" aria-label="Savings frequency">${unitOptions('',savFreq)}</select>`:'';
 
   // Salary row
-  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div>${S.goal==='save'?gitcHint(fromCity,'gross',0,true):''}</td>`;
+  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div>${gitcHint(fromCity,'gross',0,true)}</td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
@@ -1450,7 +1451,7 @@ function buildDetailHTML(fromCity,toCities){
       const reqM=calcReqSal(i,fromCity,tc);
       const req=reqM==null?null:reqM/incomeMult();
       const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
-      return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span>${reqM!=null&&reqM>0?gitcHint(tc,'need',reqM,true):''}</td>`;
+      return`<td class="num-td"><div class="req-cell"><span class="req-val">${fmtC(req,curr)}</span><span class="req-meta"><span class="sub-num">required${why}</span>${reqM!=null&&reqM>0?gitcHint(tc,'need',reqM,true):''}</span></div></td>`;
     }
     return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div>${gitcHint(tc,'gross',0,true)}</td>`;
   }).join('');

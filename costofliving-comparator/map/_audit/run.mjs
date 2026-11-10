@@ -483,7 +483,7 @@ for(const plan of PLANS){
   // The mini cache is rewritten as an older page saved it, then reloaded.
   await page.evaluate(() => {
     for(let i = 0; i < localStorage.length; i++){
-      const k = localStorage.key(i), v = JSON.parse(localStorage.getItem(k) || 'null');
+      const k = localStorage.key(i); let v = null; try { v = JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { continue; }
       if(!v || !v.__extra || !v.__extra.fromKey) continue;
       delete v.__extra.scale; delete v.__extra.views.scaled; v.__extra.mode = 'global';
       localStorage.setItem(k, JSON.stringify(v));
