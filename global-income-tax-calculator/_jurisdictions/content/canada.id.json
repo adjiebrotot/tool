@@ -130,7 +130,7 @@
   "faq": [
     {
       "q": "Berapa gaji bersih dari gaji C$90.000 di Kanada?",
-      "a": "<p>Bergantung pada provinsi. Sekitar C$67.197 di Ontario, C$68.193 di British Columbia, C$67.509 di Alberta, dan C$63.235 di Quebec. Semuanya sudah termasuk pajak federal, pajak provinsi, CPP atau QPP, dan EI.</p>"
+      "a": "<p>Hasilnya bergantung pada provinsi: sekitar C$67.197 di Ontario, C$68.193 di British Columbia, C$67.509 di Alberta, dan C$63.235 di Quebec. Semuanya sudah termasuk pajak federal, pajak provinsi, CPP atau QPP, dan EI.</p>"
     },
     {
       "q": "Kenapa orang di Quebec mengisi dua laporan pajak?",
@@ -150,7 +150,7 @@
     },
     {
       "q": "Apakah kalkulator ini memuat semua provinsi Kanada?",
-      "a": "<p>Tidak. Hanya Ontario, British Columbia, Alberta, dan Quebec, empat provinsi yang paling banyak dituju pendatang. Untuk provinsi lain, hasilnya tidak tersedia, dan kamu perlu mengecek tarifnya di situs pemerintah provinsi.</p>"
+      "a": "<p>Belum semuanya, karena hanya Ontario, British Columbia, Alberta, dan Quebec yang dimuat, empat provinsi yang paling banyak dituju pendatang. Untuk provinsi lain, hasilnya tidak tersedia, dan kamu perlu mengecek tarifnya di situs pemerintah provinsi.</p>"
     },
     {
       "q": "Kapan saya melapor pajak di Kanada, dan apakah saya mendapat pengembalian?",

@@ -110,7 +110,7 @@
       "key": "specified-skilled-worker",
       "title": "Berapa gaji bersih <em>Tokutei Ginou</em> di Jepang dengan gaji ¥3.000.000 setahun?",
       "intro": "<p>Contoh ini untuk pekerja <em>Specified Skilled Worker</em> (SSW), lajang, di tahun kedua dengan gaji ¥3.000.000 setahun (sekitar ¥250.000 per bulan). Potongan penghasilan kerja ¥980.000 dan pengurang dasar ¥1.040.000 membuat pajak penghasilan nasionalnya hanya ¥26.600. Iuran <em>shakai hoken</em> berjumlah ¥457.728, dan pajak penduduk ¥115.600, lebih besar daripada pajak nasional. Gaji bersihnya sekitar ¥2.400.072 (80,0%), dan tarif pajak pada yen berikutnya 11,1%.</p>",
-      "after": "<p>Pada gaji ini, iuran jaminan sosial adalah potongan terbesar. Kalau perusahaan juga memotong biaya asrama atau makan, hal itu tidak dihitung di sini.</p>"
+      "after": "<p>Pada gaji ini, iuran jaminan sosial (¥457.728) sekitar tiga kali lebih besar daripada pajak penghasilan dan pajak penduduk digabung (¥142.200), jadi itulah potongan terbesar. Kalau perusahaan juga memotong biaya asrama atau makan, hal itu tidak dihitung di sini.</p>"
     },
     {
       "key": "non-resident",

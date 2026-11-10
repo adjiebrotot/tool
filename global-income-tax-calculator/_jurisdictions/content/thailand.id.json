@@ -1,0 +1,185 @@
+{
+  "slug": "thailand",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Thailand 2026",
+  "h1": "Cara menghitung pajak penghasilan di Thailand (2026)",
+  "description": "Pajak gaji di Thailand 2026: tarif 0% sampai 35%, pengurang biaya kerja 50%, jaminan sosial dan tunjangan, plus contoh gaji bersih.",
+  "lede": "<p>Thailand memajaki gaji dengan tarif progresif dari 0% sampai 35%, dan ฿150.000 pertama dari penghasilan kena pajak bebas pajak. Sebelum tarif dipakai, gaji dikurangi pengurang biaya kerja sebesar 50% (maksimal ฿100.000), tunjangan pribadi dan iuran jaminan sosial. Sebagai gambaran, gaji ฿1.200.000 setahun untuk lajang menyisakan gaji bersih (<em>take-home pay</em>) sekitar ฿1.067.125 setelah pajak ฿122.375 dan iuran jaminan sosial ฿10.500.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak 2026, yaitu tahun kalender. Orang yang tinggal di Thailand 180 hari atau lebih dalam setahun dianggap penduduk pajak. Kalkulator ini menghitung gaji dari pekerjaan di Thailand dengan aturan penduduk pajak dan tidak punya pilihan khusus untuk non-resident. Pajaknya dipotong pemberi kerja setiap bulan, lalu diselesaikan lewat laporan tahunan.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan",
+        "html": "<p>Tarif bertingkat di bawah ini hanya berlaku untuk bagian penghasilan kena pajak di dalam tiap tingkat. Penghasilan kena pajak adalah gaji setahun dikurangi pengurang biaya kerja, tunjangan dan iuran jaminan sosial.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "฿0 sampai ฿150.000",
+              "0%"
+            ],
+            [
+              "฿150.001 sampai ฿300.000",
+              "5%"
+            ],
+            [
+              "฿300.001 sampai ฿500.000",
+              "10%"
+            ],
+            [
+              "฿500.001 sampai ฿750.000",
+              "15%"
+            ],
+            [
+              "฿750.001 sampai ฿1.000.000",
+              "20%"
+            ],
+            [
+              "฿1.000.001 sampai ฿2.000.000",
+              "25%"
+            ],
+            [
+              "฿2.000.001 sampai ฿5.000.000",
+              "30%"
+            ],
+            [
+              "Di atas ฿5.000.000",
+              "35%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Pengurang biaya kerja dan tunjangan",
+        "html": "<p>Dari gaji, Thailand pertama-tama mengurangi 50% sebagai pengurang biaya kerja (<em>employment expense deduction</em>), dengan batas atas ฿100.000. Batas itu tercapai pada gaji ฿200.000 setahun, jadi untuk gaji yang lebih besar pengurangnya tetap ฿100.000. Setelah itu dikurangkan tunjangan di bawah ini dan iuran jaminan sosial, dan sisanya adalah penghasilan kena pajak.</p>",
+        "table": {
+          "head": [
+            "Tunjangan",
+            "Jumlah setahun"
+          ],
+          "rows": [
+            [
+              "Pribadi",
+              "฿60.000"
+            ],
+            [
+              "Pasangan tanpa penghasilan",
+              "฿60.000"
+            ],
+            [
+              "Anak lahir sebelum 2018",
+              "฿30.000 per anak"
+            ],
+            [
+              "Anak lahir 2018 atau sesudahnya",
+              "฿60.000 per anak, menurut <em>input</em> kalkulator"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Jaminan sosial (<em>Social Security Office</em>)",
+        "html": "<p>Karyawan membayar iuran jaminan sosial 5% dari gaji, dihitung dari gaji sampai batas ฿17.500 sebulan. Karena itu iuran maksimalnya ฿875 sebulan atau ฿10.500 setahun, dan gaji di atas batas itu tidak menambah iuran. Pemberi kerja menyetor bagiannya sendiri di luar gaji. Kalkulator ini mengurangkan iuran karyawan dari penghasilan kena pajak.</p>"
+      },
+      {
+        "h3": "Potongan bulanan dan laporan tahunan",
+        "html": "<p>Pemberi kerja memotong pajak dari gaji setiap bulan dan menyetorkannya ke Revenue Department. Setelah tahun berakhir, kamu melaporkan penghasilan setahun dengan formulir PND 91 (untuk yang hanya bergaji) paling lambat akhir Maret, dengan batas yang biasanya sedikit lebih longgar kalau diisi lewat e-filing. Kalau potongan bulanan lebih besar daripada pajak sebenarnya, selisihnya dikembalikan.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Revenue Department Thailand, tarif pajak, pengurang dan tunjangan",
+        "url": "https://www.rd.go.th/"
+      },
+      {
+        "name": "Social Security Office Thailand, iuran dan batas upah",
+        "url": "https://www.sso.go.th/"
+      },
+      {
+        "name": "Immigration Bureau Thailand, visa dan izin tinggal",
+        "url": "https://www.immigration.go.th/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single",
+      "title": "Berapa gaji bersih di Thailand dengan gaji ฿100.000 sebulan untuk lajang?",
+      "intro": "<p>Contoh ini untuk lajang dengan gaji ฿100.000 sebulan, atau ฿1.200.000 setahun. Iuran jaminan sosial mentok di ฿10.500, pengurang biaya kerja ฿100.000 (batas 50% sudah terlampaui) dan tunjangan pribadi ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan pajaknya ฿122.375, dari ฿7.500 di tingkat 5%, ฿20.000 di tingkat 10%, ฿37.500 di tingkat 15%, ฿50.000 di tingkat 20% dan ฿7.375 di tingkat 25%. Gaji bersihnya sekitar ฿1.067.125, atau 88,9% dari gaji kotor (sekitar ฿88.927 sebulan), dan tarif pajak pada gaji berikutnya 25%.</p>",
+      "after": "<p>Pajak bulanan dipotong pemberi kerja, jadi angka ini sama dengan jumlah yang kamu terima setahun, bukan satu bulan tertentu.</p>"
+    },
+    {
+      "key": "married-with-children",
+      "title": "Cara menghitung pajak di Thailand untuk karyawan menikah dengan dua anak dan gaji ฿1.800.000",
+      "intro": "<p>Contoh ini untuk karyawan dengan gaji ฿1.800.000 setahun yang menikah dengan pasangan tanpa penghasilan dan punya dua anak lahir 2018 atau sesudahnya. Tunjangannya ฿240.000: ฿60.000 untuk diri sendiri, ฿60.000 untuk pasangan, dan ฿120.000 untuk dua anak yang dihitung ฿60.000 masing-masing. Setelah iuran ฿10.500 dan pengurang biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.449.500 dan pajaknya ฿227.375. Gaji bersihnya sekitar ฿1.562.125 (86,8%, sekitar ฿130.177 sebulan), dan tarif pajak pada gaji berikutnya 25%.</p>",
+      "after": "<p>Menurut keterangan kalkulator, tunjangan ฿60.000 untuk anak lahir 2018 atau sesudahnya berlaku mulai anak kedua, jadi tunjangan anak pertama bisa lebih rendah. Cek jumlah tunjangan anakmu di Revenue Department.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs Revenue Department. Cocok tidaknya bergantung pada statusmu sebagai penduduk pajak.</p>",
+  "strategies": [
+    {
+      "h3": "Dana pensiun dan <em>provident fund</em>",
+      "html": "<p>Thailand memberi pengurang pajak untuk iuran ke dana pensiun, seperti <em>provident fund</em> dari pemberi kerja, reksa dana pensiun (RMF) dan asuransi pensiun, sampai batas gabungan tertentu. Cocok untuk penduduk pajak yang tarif marjinalnya 15% atau lebih dan memang ingin menabung jangka panjang. Ada syarat masa kepemilikan, dan melanggarnya bisa membuat pengurang yang sudah kamu pakai ditarik kembali, jadi baca syaratnya di Revenue Department. Kalkulator tidak menghitung pengurang ini.</p>"
+    },
+    {
+      "h3": "Premi asuransi jiwa dan kesehatan",
+      "html": "<p>Premi asuransi jiwa dan asuransi kesehatan yang memenuhi syarat bisa dikurangkan dari penghasilan kena pajak, dengan batas masing-masing. Cocok untuk yang memang butuh asuransi itu, bukan sekadar mencari pengurang pajak. Simpan bukti pembayaran dan cek batas terbaru di Revenue Department.</p>"
+    },
+    {
+      "h3": "Donasi resmi",
+      "html": "<p>Donasi ke lembaga yang diakui, misalnya rumah sakit, sekolah dan badan sosial yang terdaftar, bisa dikurangkan dari penghasilan kena pajak, dengan batas persentase dari penghasilan. Beberapa jenis donasi bahkan dihitung lebih dari satu kali. Gunakan jalur resmi dan simpan bukti donasi.</p>"
+    },
+    {
+      "h3": "Lapor pajak tahunan untuk meminta kembali kelebihan potongan",
+      "html": "<p>Potongan bulanan dihitung dari perkiraan, jadi kalau kamu bekerja hanya sebagian tahun atau punya pengurang yang tidak diperhitungkan pemberi kerja, pajak yang sudah dipotong bisa lebih besar daripada pajak sebenarnya. Kelebihannya dikembalikan lewat laporan tahunan. Cocok untuk semua penduduk pajak, terutama yang pindah kerja atau tiba di tengah tahun.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, saham atau fasilitas dari pemberi kerja.",
+    "<strong>Hanya aturan penduduk pajak.</strong> Kalkulator tidak punya pilihan non-resident dan tidak membahas penghasilan dari luar Thailand yang dibawa masuk.",
+    "<strong>Pengurang hanya yang dasar.</strong> Selain biaya kerja, tunjangan pribadi, pasangan, anak dan jaminan sosial, pengurang untuk dana pensiun, asuransi, donasi dan tunjangan orang tua tidak dihitung.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda dan kewajiban lapor di Indonesia tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Hasil akhirnya ditentukan Revenue Department, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Kenapa pengurang biaya kerja di Thailand berhenti di ฿100.000?",
+      "a": "<p>Thailand mengurangi 50% dari gaji sebagai biaya kerja, tetapi dibatasi maksimal ฿100.000. Batas itu tercapai pada gaji ฿200.000 setahun, sehingga gaji yang lebih besar mendapat pengurang tetap ฿100.000 dan porsi pengurangnya makin kecil. Akibatnya, pada gaji ฿1.200.000 pengurang itu hanya sekitar 8% dari gaji. Kalkulator ini memakai aturan itu secara otomatis.</p>"
+    },
+    {
+      "q": "Kenapa iuran jaminan sosial Thailand berhenti naik walau gaji naik?",
+      "a": "<p>Iuran 5% dihitung dari gaji sampai batas ฿17.500 sebulan, sehingga maksimalnya ฿875 sebulan atau ฿10.500 setahun. Pada gaji ฿100.000 sebulan, iuran tetap ฿10.500 setahun, jauh di bawah 5% dari gaji. Iuran itu dikurangkan dari penghasilan kena pajak dalam kalkulator ini.</p>"
+    },
+    {
+      "q": "Berapa lama harus tinggal di Thailand supaya dianggap penduduk pajak?",
+      "a": "<p>Orang yang tinggal di Thailand 180 hari atau lebih dalam satu tahun kalender dianggap penduduk pajak. Kalkulator ini memakai aturan penduduk pajak untuk gaji dari pekerjaan di Thailand dan tidak punya pilihan non-resident, jadi untuk masa tinggal yang pendek, tanyakan ke Revenue Department.</p>"
+    },
+    {
+      "q": "Berapa gaji bersih dari gaji ฿100.000 sebulan di Thailand?",
+      "a": "<p>Untuk lajang, gaji bersihnya sekitar ฿88.927 sebulan (฿1.067.125 setahun, 88,9%), setelah pajak ฿122.375 dan iuran jaminan sosial ฿10.500. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kapan harus lapor pajak tahunan di Thailand kalau pajak sudah dipotong tiap bulan?",
+      "a": "<p>Setelah tahun berakhir, kamu melaporkan penghasilan setahun dengan formulir PND 91 (untuk yang hanya bergaji), paling lambat akhir Maret, dengan batas yang biasanya sedikit lebih longgar kalau lewat e-filing. Potongan bulanan hanya perkiraan, jadi di laporan itulah pajak yang sebenarnya dihitung dan kelebihan potongan dikembalikan. Kalkulator ini menghitung pajak setahun penuh, jadi potongan di slip gajimu bisa berbeda.</p>"
+    },
+    {
+      "q": "Apakah pasangan dan anak mengurangi pajak di Thailand?",
+      "a": "<p>Ya, keduanya mengurangi pajak. Pasangan tanpa penghasilan memberi tunjangan ฿60.000, anak lahir sebelum 2018 ฿30.000, dan anak lahir 2018 atau sesudahnya ฿60.000 menurut <em>input</em> kalkulator. Menurut keterangan kalkulator, jumlah ฿60.000 itu berlaku mulai anak kedua, jadi cek jumlah untuk anak pertamamu di Revenue Department. Pada gaji ฿1.800.000, tunjangan keluarga membuat pajak jadi ฿227.375.</p>"
+    },
+    {
+      "q": "Berapa besar uang yang bisa ditabung kalau bekerja di Thailand dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena sewa dan biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Social security (5%, wage ceiling 17,500 a month)": "Jaminan sosial (5%, batas upah ฿17.500 sebulan)",
+    "Employment expense deduction (50%, max 100k)": "Pengurang biaya kerja (50%, maksimal ฿100.000)",
+    "Personal, spouse and child allowances": "Tunjangan pribadi, pasangan dan anak",
+    "Personal income tax": "Pajak penghasilan"
+  }
+}

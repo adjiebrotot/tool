@@ -1,0 +1,204 @@
+{
+  "slug": "portugal",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Portugal 2026",
+  "h1": "Cara menghitung pajak penghasilan di Portugal (2026)",
+  "description": "Pajak gaji di Portugal 2026: tarif IRS, IRS Jovem, IFICI, tarif 25% non-resident, plus contoh gaji bersih untuk pekerja asing dari Indonesia.",
+  "place": "daratan Portugal",
+  "lede": "<p>Portugal memajaki gaji dengan IRS, pajak penghasilan bertingkat dari 12,2% sampai 48%, setelah iuran jaminan sosial karyawan 11%. Pemberi kerja membayar tambahan 23,75% di luar gaji, jadi biaya kerja untuk perusahaan lebih besar daripada gaji bruto. Sebagai gambaran, gaji bruto €30.000 untuk penduduk pajak biasa menyisakan gaji bersih (<em>take-home pay</em>) sekitar €22.250 setelah iuran dan IRS, atau 74,2% dari gaji. Pekerja muda bisa memakai IRS Jovem, dan kalkulator ini juga menghitung rezim IFICI dan tarif <em>non-resident</em>.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini berlaku pada 2026 untuk Portugal daratan. Portugal memajaki penduduk pajaknya atas penghasilan dari seluruh dunia. Kamu umumnya dianggap penduduk pajak kalau tinggal di Portugal lebih dari 183 hari dalam periode 12 bulan, atau kalau pada 31 Desember punya tempat tinggal yang menunjukkan niat menjadikannya tempat tinggal utama. Urutan hitungan gaji karyawan adalah iuran jaminan sosial lebih dulu, lalu IRS dihitung dari sisa penghasilan setelah pengurang.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif IRS untuk penduduk pajak",
+        "html": "<p>IRS (<em>Imposto sobre o Rendimento das Pessoas Singulares</em>) dihitung bertingkat. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat. Yang dipajaki adalah penghasilan setelah pengurang spesifik (<em>dedução específica</em>), yaitu €4.587,09 atau sebesar iuran jaminan sosialmu kalau lebih besar. Penghasilan yang sangat rendah juga dilindungi oleh <em>mínimo de existência</em>, batas penghasilan yang tidak boleh dipajaki sampai di bawah kebutuhan dasar.</p><p>Dari pajak yang terhitung, kamu masih mengurangkan €250 sebagai pengurang tetap, ditambah pengurang untuk tanggungan dan pengeluaran tertentu yang dibahas di bagian strategi.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "€0 sampai €8.342",
+              "12,2%"
+            ],
+            [
+              "€8.343 sampai €12.587",
+              "15,2%"
+            ],
+            [
+              "€12.588 sampai €17.838",
+              "20,7%"
+            ],
+            [
+              "€17.839 sampai €23.089",
+              "23,6%"
+            ],
+            [
+              "€23.090 sampai €29.397",
+              "30,6%"
+            ],
+            [
+              "€29.398 sampai €43.090",
+              "34,6%"
+            ],
+            [
+              "€43.091 sampai €46.566",
+              "43,1%"
+            ],
+            [
+              "€46.567 sampai €86.634",
+              "44,6%"
+            ],
+            [
+              "Di atas €86.634",
+              "48%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Tambahan solidaritas untuk penghasilan tinggi",
+        "html": "<p>Untuk penghasilan kena pajak yang tinggi, Portugal menambahkan pajak solidaritas (<em>taxa adicional de solidariedade</em>): 2,5% untuk bagian di atas €80.000 sampai €250.000, dan 5% untuk bagian di atas €250.000. Tambahan ini dikenakan di atas tarif IRS di atas.</p>"
+      },
+      {
+        "h3": "Iuran jaminan sosial: 11% karyawan, 23,75% pemberi kerja",
+        "html": "<p>Iuran jaminan sosial karyawan 11% dari gaji bruto, dan pemberi kerja membayar 23,75% lagi di luar gaji. Bagian pemberi kerja tidak mengurangi gaji bersihmu, tetapi menambah biaya perusahaan: pada gaji bruto €30.000, biaya totalnya sekitar €37.125. Kalkulator menampilkan bagian pemberi kerja sebagai baris terpisah dan tidak memasukkannya ke gaji bersih.</p>"
+      },
+      {
+        "h3": "IRS Jovem, IFICI, dan tarif <em>non-resident</em>",
+        "html": "<p>IRS Jovem membebaskan sebagian gaji pekerja muda dari IRS: 100% pada tahun pertama, 75% pada tahun kedua sampai keempat, 50% pada tahun kelima sampai ketujuh, dan 25% pada tahun kedelapan sampai kesepuluh, dengan batas bagian yang dibebaskan €29.542,15 per tahun. Syarat usia dan kualifikasinya ditentukan Portal das Finanças, jadi cek sebelum mengandalkannya.</p><p>IFICI (<em>Incentivo Fiscal à Investigação Científica e Inovação</em>) adalah rezim yang menggantikan rezim NHR lama untuk pekerja pindahan di bidang tertentu, dengan tarif tunggal 20% pada penghasilan yang memenuhi syarat. Pekerja yang tidak menjadi penduduk pajak Portugal dikenai tarif tunggal 25% atas gaji dari Portugal.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Portal das Finanças, IRS dan rezim khusus",
+        "url": "https://info.portaldasfinancas.gov.pt/"
+      },
+      {
+        "name": "Segurança Social, iuran karyawan dan pemberi kerja",
+        "url": "https://www.seg-social.pt/"
+      },
+      {
+        "name": "ePortugal, portal layanan pemerintah",
+        "url": "https://eportugal.gov.pt/"
+      },
+      {
+        "name": "Governo de Portugal, Ministério das Finanças",
+        "url": "https://www.portugal.gov.pt/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "Berapa gaji bersih di Portugal kalau gaji bruto €30.000?",
+      "intro": "<p>Contoh ini untuk penduduk pajak lajang dengan satu pekerjaan sepanjang tahun. Iuran jaminan sosial 11% mengambil €3.300. Dari gaji bruto, pengurang spesifik €4.587 menyisakan penghasilan kena pajak sekitar €25.413, lalu tarif bertingkat menghasilkan pajak sekitar €4.700, yang turun menjadi €4.450 setelah pengurang tetap €250. Gaji bersihnya sekitar €22.250 (74,2% dari gaji). Tiap euro tambahan dikenai potongan gabungan sekitar 41,6%, yaitu tarif IRS 30,6% ditambah iuran 11%.</p>",
+      "after": "<p>Pemberi kerja membayar iuran €7.125 di luar gaji, sehingga biaya totalnya sekitar €37.125.</p>"
+    },
+    {
+      "key": "irs-jovem",
+      "title": "Berapa gaji bersih pekerja muda dengan IRS Jovem di Portugal kalau gaji bruto €30.000?",
+      "intro": "<p>Contoh ini untuk pekerja muda pada tahun pertama IRS Jovem dengan gaji bruto €30.000. Pada tahun pertama 100% gaji dibebaskan, tetapi pembebasannya dibatasi €29.542, sehingga hampir seluruh gaji lolos dari pajak dan IRS menjadi nol. Yang tersisa hanya iuran jaminan sosial €3.300. Gaji bersihnya sekitar €26.700 (89,0% dari gaji), dan potongan pada euro berikutnya hanya iuran 11,0%. Itu sekitar €4.450 lebih banyak daripada penduduk pajak biasa pada gaji yang sama.</p>",
+      "after": "<p>Keuntungannya mengecil tiap beberapa tahun: pada gaji yang sama, gaji bersih sekitar €26.595 pada tahun kedua, €25.617 pada tahun kelima, dan €24.182 pada tahun kedelapan.</p>"
+    },
+    {
+      "key": "ifici",
+      "title": "Cara menghitung pajak IFICI di Portugal dengan gaji bruto €70.000",
+      "intro": "<p>Contoh ini untuk pekerja pindahan yang memakai rezim IFICI dengan gaji bruto €70.000. IRS dihitung dengan tarif tunggal 20%, yaitu €14.000, dan iuran jaminan sosial 11% adalah €7.700. Gaji bersihnya sekitar €48.300 (69,0% dari gaji), dengan potongan gabungan 31,0% pada euro berikutnya. Penduduk pajak biasa dengan gaji sama menerima sekitar €43.377, jadi IFICI menambah sekitar €4.923 setahun.</p>",
+      "after": "<p>Pada gaji yang lebih rendah, tarif tunggal ini bisa justru merugikan: pada gaji bruto €30.000, kalkulator menghasilkan gaji bersih sekitar €20.700 dengan IFICI, dibandingkan €22.250 untuk penduduk pajak biasa.</p>"
+    },
+    {
+      "key": "non-resident",
+      "title": "Berapa pajak non-resident di Portugal untuk gaji bruto €30.000?",
+      "intro": "<p>Contoh ini untuk orang yang bekerja di Portugal tetapi tidak dianggap penduduk pajak. Gaji dikenai tarif tunggal 25%, yaitu €7.500, tanpa pengurang apa pun, ditambah iuran jaminan sosial €3.300. Gaji bersihnya sekitar €19.200 (64,0% dari gaji), dan potongan gabungan pada euro berikutnya 36,0%. Itu sekitar €3.050 lebih sedikit daripada penduduk pajak biasa pada gaji yang sama.</p>",
+      "after": "<p>Periksa dengan Portal das Finanças apakah kamu benar-benar bukan penduduk pajak, karena status penduduk pajak memberi tarif yang jauh lebih ringan pada gaji ini.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di Portal das Finanças. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Cek apakah kamu memenuhi syarat IRS Jovem",
+      "html": "<p>Selisihnya paling besar pada tahun pertama: pada contoh gaji €30.000 di atas, gaji bersih naik sekitar €4.450. Cocok untuk pekerja muda yang menjadi penduduk pajak Portugal dan memenuhi syarat usia dan kualifikasi. Peringatannya, manfaatnya menyusut sampai tahun kesepuluh dan ada batas bagian yang dibebaskan, jadi cek syarat terbaru di Portal das Finanças.</p>"
+    },
+    {
+      "h3": "Tanyakan IFICI kalau gajimu menengah ke atas dan bidangmu memenuhi syarat",
+      "html": "<p>Pada contoh gaji €70.000, IFICI menambah gaji bersih sekitar €4.923 setahun. Cocok untuk pekerja pindahan di bidang yang diakui rezim ini, dengan gaji cukup besar. Peringatannya, tarif tunggal 20% justru lebih berat daripada skala bertingkat pada gaji rendah, dan syarat bidang pekerjaan serta lama tidak berdomisili di Portugal harus dipenuhi. Minta pemberi kerja atau konsultan pajak menghitung kedua cara.</p>"
+    },
+    {
+      "h3": "Minta faktur dengan nomor pajak (NIF) untuk pengeluaran yang dapat dikurangkan",
+      "html": "<p>Sebagian pengeluaran, yaitu kesehatan, pendidikan dan sewa rumah, memberi pengurang dari pajak sampai batas tertentu: kalkulator memakai 15% dari biaya kesehatan sampai €1.000, 30% dari biaya pendidikan sampai €800, dan 15% dari sewa sampai €900. Agar tercatat, minta faktur dengan nomor pajakmu (<em>número de identificação fiscal</em>, NIF). Cocok untuk penduduk pajak yang punya pengeluaran semacam itu. Kalkulator hanya menghitungnya kalau kamu mengisinya, dan contoh di sini tidak memakainya.</p>"
+    },
+    {
+      "h3": "Rencana pensiun (<em>PPR</em>)",
+      "html": "<p>Setoran ke rencana poupança reforma (PPR) bisa memberi manfaat pajak dalam batas tertentu. Cocok untuk penduduk pajak yang berencana tinggal lama di Portugal. Uangnya terikat sampai pensiun atau syarat pencairan lain terpenuhi, dan batas manfaatnya berubah-ubah, jadi cek di Portal das Finanças sebelum menyetor.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji bruto setahun. Pembayaran 14 kali tidak mengubah angka tahunan, hanya cara membaginya.",
+    "<strong>Hanya Portugal daratan.</strong> Madeira dan Azores punya tarif sendiri dan tidak dimodelkan.",
+    "<strong>Pengurang keluarga hanya kalau diisi.</strong> Tanggungan, biaya kesehatan, pendidikan dan sewa baru masuk hitungan kalau kamu mengisinya, dan contoh di sini tidak memakainya.",
+    "<strong>Syarat rezim khusus tidak diperiksa.</strong> Kalkulator tidak memeriksa apakah kamu memenuhi syarat IRS Jovem atau IFICI, hanya menghitung hasilnya kalau kamu memilihnya.",
+    "<strong>Tanpa perjanjian pajak dan perkiraan saja.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Portugal serta kewajiban lapor di Indonesia tidak dihitung. Hasilnya gambaran, bukan nasihat pajak."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji bruto €30.000 di Portugal?",
+      "a": "<p>Untuk penduduk pajak lajang, gaji bersihnya sekitar €22.250 setahun (74,2%), setelah iuran jaminan sosial €3.300 dan IRS sekitar €4.450. Kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kenapa gaji di Portugal dibayar 14 kali dan bagaimana menghitung gaji bersih bulanannya?",
+      "a": "<p>Banyak kontrak di Portugal membayar gaji dalam 14 pembayaran setahun: 12 bulanan, ditambah dua tunjangan, yaitu tunjangan liburan (<em>subsídio de férias</em>) dan tunjangan Natal (<em>subsídio de Natal</em>). Sebagian kontrak membagi tunjangan itu rata ke 12 bulan. Kalkulator ini menghitung angka tahunan, jadi untuk mendapat gaji bersih per pembayaran, bagi hasilnya dengan 14 atau 12 sesuai kontrakmu. Pada gaji bruto €30.000, gaji bersih €22.250 menjadi sekitar €1.589 per pembayaran dengan 14 kali, atau sekitar €1.854 dengan 12 kali. Pajak dipotong tiap pembayaran berdasarkan perkiraan setahun, dan selisihnya diselesaikan lewat laporan pajak tahunan.</p>"
+    },
+    {
+      "q": "Kenapa pemberi kerja di Portugal membayar iuran tambahan 23,75% di luar gaji?",
+      "a": "<p>Di Portugal, jaminan sosial dibiayai dua pihak: karyawan 11% dari gaji bruto dan pemberi kerja 23,75% di luar gaji. Bagian pemberi kerja tidak mengurangi gaji bersihmu, tetapi menambah biaya perusahaan, sehingga gaji bruto €30.000 berarti biaya sekitar €37.125 bagi pemberi kerja. Karena itu angka gaji bersih menunjukkan sebagian saja dari biaya mempekerjakanmu.</p>"
+    },
+    {
+      "q": "Apa itu IRS Jovem dan siapa yang bisa memakainya?",
+      "a": "<p>IRS Jovem adalah rezim yang membebaskan sebagian gaji pekerja muda dari IRS: 100% pada tahun pertama, lalu menurun bertahap sampai 25% pada tahun kedelapan sampai kesepuluh, dengan batas bagian yang dibebaskan €29.542,15 per tahun. Pada gaji bruto €30.000, gaji bersih tahun pertama sekitar €26.700 dibandingkan €22.250 untuk penduduk pajak biasa. Syarat usia dan kualifikasinya ada di Portal das Finanças.</p>"
+    },
+    {
+      "q": "Apa itu IFICI dan apa bedanya dengan rezim NHR?",
+      "a": "<p>IFICI adalah rezim pajak bagi pekerja pindahan di bidang tertentu, seperti riset dan inovasi, dengan tarif tunggal 20%. Rezim ini menggantikan NHR, rezim lama yang sudah tidak menerima pendaftar baru. Pada gaji bruto €70.000, kalkulator menghasilkan gaji bersih €48.300 dengan IFICI dibandingkan sekitar €43.377 untuk penduduk pajak biasa. Syarat bidang pekerjaan dan lama tidak berdomisili di Portugal ada di Portal das Finanças.</p>"
+    },
+    {
+      "q": "Berapa pajak untuk non-resident yang bekerja di Portugal?",
+      "a": "<p>Gaji dari Portugal dikenai tarif tunggal 25% tanpa pengurang. Pada gaji bruto €30.000, pajaknya €7.500, ditambah iuran €3.300, sehingga gaji bersihnya sekitar €19.200. Kalau kamu memenuhi syarat penduduk pajak, tarif bertingkat biasanya jauh lebih ringan pada gaji ini.</p>"
+    },
+    {
+      "q": "Kapan seseorang dianggap penduduk pajak Portugal?",
+      "a": "<p>Umumnya kalau kamu tinggal di Portugal lebih dari 183 hari dalam periode 12 bulan, atau kalau pada 31 Desember kamu punya tempat tinggal yang menunjukkan niat menjadikannya tempat tinggal utama. Penduduk pajak dikenai pajak atas penghasilan dari seluruh dunia. Untuk kasus yang tidak jelas, tanyakan ke Portal das Finanças atau konsultan pajak.</p>"
+    },
+    {
+      "q": "Berapa uang yang bisa ditabung kalau bekerja di Portugal dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Social security (11%)": "Jaminan sosial karyawan (11%)",
+    "Employer social security (23.75%), on top": "Jaminan sosial pemberi kerja (23,75%), dibayar di luar gaji",
+    "Specific deduction": "Pengurang spesifik",
+    "Subsistence minimum (mínimo de existência)": "Batas kebutuhan dasar (mínimo de existência)",
+    "IRS, after deductions from tax": "IRS, setelah pengurang dari pajak",
+    "Solidarity surcharge (2.5% above 80,000, 5% above 250,000)": "Tambahan solidaritas (2,5% di atas €80.000, 5% di atas €250.000)",
+    "IRS, IFICI regime (20% flat)": "IRS, rezim IFICI (tarif tunggal 20%)",
+    "IRS, non-resident (25% flat)": "IRS, non-resident (tarif tunggal 25%)",
+    "IRS Jovem exempt share (year 1, 100%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-1, 100%)",
+    "IRS Jovem exempt share (year 2, 75%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-2, 75%)",
+    "IRS Jovem exempt share (year 3, 75%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-3, 75%)",
+    "IRS Jovem exempt share (year 4, 75%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-4, 75%)",
+    "IRS Jovem exempt share (year 5, 50%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-5, 50%)",
+    "IRS Jovem exempt share (year 6, 50%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-6, 50%)",
+    "IRS Jovem exempt share (year 7, 50%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-7, 50%)",
+    "IRS Jovem exempt share (year 8, 25%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-8, 25%)",
+    "IRS Jovem exempt share (year 9, 25%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-9, 25%)",
+    "IRS Jovem exempt share (year 10, 25%)": "Bagian IRS Jovem yang dibebaskan (tahun ke-10, 25%)",
+    "Deductions from tax (family expenses)": "Pengurang dari pajak (pengeluaran keluarga)",
+    "Deductions from tax (family expenses, health, education, rent)": "Pengurang dari pajak (pengeluaran keluarga, kesehatan, pendidikan, sewa)",
+    "Deductions from tax (family expenses, dependants)": "Pengurang dari pajak (pengeluaran keluarga, tanggungan)",
+    "Deductions from tax (family expenses, dependants, health, education, rent)": "Pengurang dari pajak (pengeluaran keluarga, tanggungan, kesehatan, pendidikan, sewa)"
+  }
+}

@@ -236,6 +236,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/canada/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -374,6 +380,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -411,6 +423,12 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -500,7 +518,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
