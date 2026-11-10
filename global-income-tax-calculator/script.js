@@ -673,6 +673,10 @@ function breakdownRows(r){
     off.filter(l => l.kind === 'other').forEach(l => rows.push({ sec, op: '−', label: l.label, amount: l.amount, line: l }));
     group(sec, '−', 'Deductible contributions', off.filter(l => l.kind === 'social'), []);
     off.filter(l => l.kind !== 'other' && l.kind !== 'social').forEach(l => rows.push({ sec, op: '−', label: l.label, amount: l.amount, line: l }));
+    // Taxable income stops at 0: on low pay (or none) the deductions can be bigger than the pay, and
+    // what they cannot use is added back in one row, so the block still adds up.
+    const raw = base.reduce((a, l) => a + l.base*l.amount, r.gross);
+    if(raw < -0.005) rows.push({ sec, op: '+', label: 'Deductions bigger than the pay, unused', amount: -raw });
     rows.push({ sec, op: '=', label: r.taxableLabel || 'Taxable income', amount: r.taxable, cls: 'total' });
   }
   const sec = 'Take-home pay', at = p => ls.filter(l => placeOf(l) === p);
@@ -1058,7 +1062,7 @@ function init(){
     }
   };
 
-  window.__GSC = { E, JOBS: () => JOBS, active: () => ACTIVE, compute: computeJob, readJob, writeJob, applyQuickStart, pickJob, addJob, removeJob, render };
+  window.__GSC = { E, JOBS: () => JOBS, active: () => ACTIVE, compute: computeJob, rows: breakdownRows, readJob, writeJob, applyQuickStart, pickJob, addJob, removeJob, render };
 }
 
 /* ═════════════════════ From the Cost of Living Comparator ═════════════════════
