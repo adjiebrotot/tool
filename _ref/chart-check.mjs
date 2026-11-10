@@ -395,8 +395,8 @@ const PAGES = [
     charts: ['chartCanvas'],
   },
   {
-    name: 'global-salary-calculator',
-    url: '/global-salary-calculator/',
+    name: 'global-income-tax-calculator',
+    url: '/global-income-tax-calculator/',
     charts: ['chartCanvas'],
   },
   {

@@ -35,7 +35,7 @@ export const CARDS = [
   ['financialfreedom', 'financialfreedom/'],
   ['financingvscash', 'financingvscash/'],
   ['financingvscash-loan-types', 'financingvscash/loan-types/'],
-  ['global-salary-calculator', 'global-salary-calculator/'],
+  ['global-income-tax-calculator', 'global-income-tax-calculator/'],
   ['graphvisualiser', 'graphvisualiser/'],
   ['jsonvisualiser', 'jsonvisualiser/'],
   ['loadflow-simulator', 'loadflow-simulator/'],

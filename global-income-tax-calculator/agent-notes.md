@@ -1,4 +1,4 @@
-# Global Salary Calculator: notes for the AI section
+# Global Income Tax Calculator: notes for the AI section
 
 Hand-written. `node _ref/agent-doc.mjs` merges these notes with the fields it reads from the
 page and writes the skill reference (`ai/skill/references/`), the AI section in `index.html` and the line in
@@ -58,8 +58,8 @@ Take-home pay after income tax and employee social contributions for one to four
 - jpRes: Japan. y2 (resident, year 2 or later), y1 (first year: no resident tax yet) or nonres (20.42% flat).
 - krMethod: South Korea. prog (progressive) or flat (19% election for foreign workers).
 - cnRes: China. local (standard) or expat (tax-free allowances in cnAllow).
-- twRes: Taiwan. res (183 days or more) or nonres.
-- twGold: Taiwan residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
+- twRes: Taiwan (China). res (183 days or more) or nonres.
+- twGold: Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
 - gulfNat: UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Oman. expat or national. None of them taxes wages; nationals pay pension contributions.
 - saScheme: Saudi nationals. legacy (joined GOSI before 3 Jul 2024) or new (new entrant).
 - usFiling: US residents. S (single) or MFJ (married filing jointly).
@@ -83,10 +83,10 @@ Take-home pay after income tax and employee social contributions for one to four
 - ptDepMid: Portugal. Dependants aged 4 to 6, 0 to 4.
 - ptDepYoung: Portugal. Dependants aged 3 or under, 0 to 4.
 - caKids: Canada, Ontario only. Children 18 or under, 0 to 6 (Ontario Tax Reduction).
-- hkMarried: Hong Kong. true for married with a partner with no income.
-- hkKids: Hong Kong. Children, 0 to 6.
-- twStatus: Taiwan residents. single or married (filing jointly).
-- twKids: Taiwan residents. Minor children, 0 to 6.
+- hkMarried: Hong Kong (China). true for married with a partner with no income.
+- hkKids: Hong Kong (China). Children, 0 to 6.
+- twStatus: Taiwan (China) residents. single or married (filing jointly).
+- twKids: Taiwan (China) residents. Minor children, 0 to 6.
 - krDeps: South Korea, progressive method. Dependants beyond the employee, 0 to 6.
 - auCover: Australia, citizens and PRs. false when there is no private hospital cover (adds the Medicare levy surcharge above 105,000).
 - auSuper: Australia. true when the amount is a package that includes the 12% super guarantee.
@@ -125,7 +125,7 @@ Take-home pay after income tax and employee social contributions for one to four
 - cnHf: China. Housing fund rate: 5, 6 or 7 (%).
 - cnAllow: China, expats. Tax-free housing, language and school allowances a year, in yuan.
 - cnSpecial: China, local. Special additional deductions a year, in yuan.
-- hkMpf: Hong Kong. false when exempt from MPF.
+- hkMpf: Hong Kong (China). false when exempt from MPF.
 - gulfWagePct: Gulf states. Share of pay that contributions are charged on, in %; 100 by default (Saudi Arabia counts basic pay plus housing).
 - dispCur: Display only. local (each job in its own currency) or a code (USD, EUR, GBP, AUD, SGD, IDR, JPY, CHF, CAD, HKD, AED, CNY, KRW, MYR, THB, TWD, SEK, NOK, SAR, QAR, BHD, KWD, OMR) to read every job in one currency. Comparing jobs in different currencies reads best in one.
 - dispPer: Display only. year or month.
@@ -134,13 +134,13 @@ Take-home pay after income tax and employee social contributions for one to four
 
 ## Quick Starts
 
-There are 5 Quick Starts, each four jobs side by side: Asia hubs (Singapore, Hong Kong, Tokyo, Dubai), European tech (London, Amsterdam with the 30% ruling, Berlin, Zurich), US states (US$150,000 single in Texas, California, New York City and Illinois), Same take-home, Southern Europe (the gross for €4,000 a month net in Paris, Madrid, Lisbon and Milan) and Family of four (a sole earner on €80,000 with two children in Belgium, France, Germany and the Netherlands).
+There are 5 Quick Starts, each four jobs side by side: Asia hubs (Singapore, Hong Kong (China), Tokyo, Dubai), European tech (London, Amsterdam with the 30% ruling, Berlin, Zurich), US states (US$150,000 single in Texas, California, New York City and Illinois), Same take-home, Southern Europe (the gross for €4,000 a month net in Paris, Madrid, Lisbon and Milan) and Family of four (a sole earner on €80,000 with two children in Belgium, France, Germany and the Netherlands).
 
 Use one only when the user's question is that comparison: a field named in the link replaces the value in job 1 alone, and the other three jobs stay as the Quick Start has them. For the user's own jobs, send json instead.
 
 ## Example
 
-Request: using tool.adjiebrotots.com/global-salary-calculator, what is my take-home pay on £85,000 in London?
+Request: using tool.adjiebrotots.com/global-income-tax-calculator, what is my take-home pay on £85,000 in London?
 
 Link:
 - country=GB

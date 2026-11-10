@@ -1,4 +1,4 @@
-// Global Salary Calculator: engine audit.
+// Global Income Tax Calculator: engine audit.
 //
 // 1. Golden values. Every case the spec v11 reference model generates
 //    (golden-v11.json, written by gsc_reference_model.py in this folder) is
@@ -12,7 +12,7 @@
 // 4. Layer D properties: net to gross round trips (50 targets a preset),
 //    non-negativity, caps that hold.
 //
-// Run: node global-salary-calculator/_audit/run.mjs
+// Run: node global-income-tax-calculator/_audit/run.mjs
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

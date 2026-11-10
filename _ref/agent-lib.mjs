@@ -128,7 +128,7 @@ export const PAGES = [
     virtual: [{ key: 'salary', min: 0, max: 100000000000, value: '0' }, { key: 'expense', min: 0, max: 100000000000, value: '0' }],
     virtualRead: colVirtualRead, virtualWrite: colVirtualWrite },
   // Up to four jobs: plain fields are job 1, json carries them all; the probe reads the jobs as loaded.
-  { page: 'global-salary-calculator', url: '/global-salary-calculator/', lang: 'en', notes: 'global-salary-calculator/agent-notes.md',
+  { page: 'global-income-tax-calculator', url: '/global-income-tax-calculator/', lang: 'en', notes: 'global-income-tax-calculator/agent-notes.md',
     insertBefore: '<!-- Display ad (Display 1', probe: gscProbe },
   { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
@@ -179,7 +179,7 @@ export const PAGES = [
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
    What a link set beyond the fields, for a kept link's "probe" to name. The names a probe
    returns are frozen with the links that name them: add, never rename. */
-// Global Salary Calculator: the jobs as loaded, by country and place, and which one the form shows.
+// Global Income Tax Calculator: the jobs as loaded, by country and place, and which one the form shows.
 export function gscProbe() {
   const g = window.__GSC;
   if (!g) return {};

@@ -1,7 +1,7 @@
-Global Salary Calculator: use this tool with an AI assistant
-https://tool.adjiebrotots.com/global-salary-calculator/
+Global Income Tax Calculator: use this tool with an AI assistant
+https://tool.adjiebrotots.com/global-income-tax-calculator/
 
-This is the full reference for one page of the skill brotools-global-salary-calculator: read SKILL.md first.
+This is the full reference for one page of the skill brotools-global-income-tax-calculator: read SKILL.md first.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it
@@ -35,7 +35,7 @@ user: if they want something this tool does not do, help them as you normally wo
    page), say so and give the tool's address.
 
 LINK FORMAT
-https://tool.adjiebrotots.com/global-salary-calculator/#load&v=1&qs=<quick start>&<key>=<value>&...&why.<key>=<your reason>&note=<one line>
+https://tool.adjiebrotots.com/global-income-tax-calculator/#load&v=1&qs=<quick start>&<key>=<value>&...&why.<key>=<your reason>&note=<one line>
 - After #load come key=value pairs joined by &. Percent-encode each value (a space is %20, & is %26,
   # is %23, + is %2B).
 - v=1 is the format version. qs=<key> starts from that Quick Start; without it the tool starts from
@@ -51,8 +51,8 @@ https://tool.adjiebrotots.com/global-salary-calculator/#load&v=1&qs=<quick start
   not know is skipped and listed. Never use the keys s, open or embed.
 
 EXAMPLE
-Request: using tool.adjiebrotots.com/global-salary-calculator, what is my take-home pay on £85,000
-in London?
+Request: using tool.adjiebrotots.com/global-income-tax-calculator, what is my take-home pay on
+£85,000 in London?
 A reply in that form:
 Your inputs:
 - Gross pay: A$85,000
@@ -61,18 +61,18 @@ Assumptions:
    loan.
 2. Take-home: after income tax and National Insurance only. Pension contributions through salary
    sacrifice are not included.
-https://tool.adjiebrotots.com/global-salary-calculator/#load&v=1&country=GB&why.country=London%20is%20in%20England,%20so%20the%20rest%20of%20UK%20rates%20apply&ukRegion=ruk&dir=gross&amount=85000&why.amount=%C2%A385,000%20a%20year%20before%20tax,%20as%20the%20user%20said&period=yearly&note=London,%20November%202026
+https://tool.adjiebrotots.com/global-income-tax-calculator/#load&v=1&country=GB&why.country=London%20is%20in%20England,%20so%20the%20rest%20of%20UK%20rates%20apply&ukRegion=ruk&dir=gross&amount=85000&why.amount=%C2%A385,000%20a%20year%20before%20tax,%20as%20the%20user%20said&period=yearly&note=London,%20November%202026
 ```
-https://tool.adjiebrotots.com/global-salary-calculator/#load&v=1&country=GB&why.country=London%20is%20in%20England,%20so%20the%20rest%20of%20UK%20rates%20apply&ukRegion=ruk&dir=gross&amount=85000&why.amount=%C2%A385,000%20a%20year%20before%20tax,%20as%20the%20user%20said&period=yearly&note=London,%20November%202026
+https://tool.adjiebrotots.com/global-income-tax-calculator/#load&v=1&country=GB&why.country=London%20is%20in%20England,%20so%20the%20rest%20of%20UK%20rates%20apply&ukRegion=ruk&dir=gross&amount=85000&why.amount=%C2%A385,000%20a%20year%20before%20tax,%20as%20the%20user%20said&period=yearly&note=London,%20November%202026
 ```
 Open the link to see the result.
 
 QUICK STARTS (qs)
-There are 5 Quick Starts, each four jobs side by side: Asia hubs (Singapore, Hong Kong, Tokyo,
-Dubai), European tech (London, Amsterdam with the 30% ruling, Berlin, Zurich), US states (US$150,000
-single in Texas, California, New York City and Illinois), Same take-home, Southern Europe (the gross
-for €4,000 a month net in Paris, Madrid, Lisbon and Milan) and Family of four (a sole earner on
-€80,000 with two children in Belgium, France, Germany and the Netherlands).
+There are 5 Quick Starts, each four jobs side by side: Asia hubs (Singapore, Hong Kong (China),
+Tokyo, Dubai), European tech (London, Amsterdam with the 30% ruling, Berlin, Zurich), US states
+(US$150,000 single in Texas, California, New York City and Illinois), Same take-home, Southern
+Europe (the gross for €4,000 a month net in Paris, Madrid, Lisbon and Milan) and Family of four (a
+sole earner on €80,000 with two children in Belgium, France, Germany and the Netherlands).
 Use one only when the user's question is that comparison: a field named in the link replaces the
 value in job 1 alone, and the other three jobs stay as the Quick Start has them. For the user's own
 jobs, send json instead.
@@ -83,12 +83,12 @@ Most important: country, dir, amount, period, usState, usFiling, caProv, ukRegio
 
 [Salary: Where you work]
 country: Country  (most important)
-  One of: AU (Australia), CN (China (Shanghai)), HK (Hong Kong), ID (Indonesia), JP (Japan (Tokyo)),
-  MY (Malaysia), SG (Singapore), KR (South Korea), TW (Taiwan), TH (Thailand), BE (Belgium), EE
-  (Estonia), FI (Finland), FR (France), DE (Germany), IT (Italy (Milan)), NL (Netherlands), NO
-  (Norway), PT (Portugal), ES (Spain (Madrid)), SE (Sweden), CH (Switzerland (Zurich)), GB (United
-  Kingdom), CA (Canada), US (United States), BH (Bahrain), KW (Kuwait), OM (Oman), QA (Qatar), SA
-  (Saudi Arabia), AE (United Arab Emirates). Default AU.
+  One of: AU (Australia), CN (China (Shanghai)), HK (Hong Kong (China)), ID (Indonesia), JP (Japan
+  (Tokyo)), MY (Malaysia), SG (Singapore), KR (South Korea), TW (Taiwan (China)), TH (Thailand), BE
+  (Belgium), EE (Estonia), FI (Finland), FR (France), DE (Germany), IT (Italy (Milan)), NL
+  (Netherlands), NO (Norway), PT (Portugal), ES (Spain (Madrid)), SE (Sweden), CH (Switzerland
+  (Zurich)), GB (United Kingdom), CA (Canada), US (United States), BH (Bahrain), KW (Kuwait), OM
+  (Oman), QA (Qatar), SA (Saudi Arabia), AE (United Arab Emirates). Default AU.
   The country the job is in, by ISO code: AU, CN (Shanghai rules), HK, ID, JP (Tokyo rules), MY, SG,
   KR, TW, TH, BE, EE, FI, FR, DE, IT (Milan rules), NL, NO, PT (mainland), ES (Madrid rules), SE, CH
   (City of Zurich rules), GB, CA, US, BH, KW, OM, QA, SA, AE. A country's other fields only count
@@ -258,10 +258,10 @@ cnRes: Status
   special deductions, until 31 Dec 2027.
 twRes: Residency (Resident (183 days or more) or Non-resident)
   One of: res (Resident (183 days or more)), nonres (Non-resident). Default res.
-  Taiwan. res (183 days or more) or nonres.
+  Taiwan (China). res (183 days or more) or nonres.
 twGold: Gold Card
   Checkbox: true or false. Default false.
-  Taiwan residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
+  Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
   Tip on the page: A Gold Card holder excludes 50% of salary above 3,000,000 for 5 years.
 gulfNat: Citizenship
   One of: expat (Expatriate), national (National). Default expat.
@@ -351,16 +351,16 @@ caKids: Children 18 or under
   Tip on the page: Each child adds 554 to the Ontario Tax Reduction.
 hkMarried: Married, partner with no income
   Checkbox: true or false. Default false.
-  Hong Kong. true for married with a partner with no income.
+  Hong Kong (China). true for married with a partner with no income.
 hkKids: Children
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
-  Hong Kong. Children, 0 to 6.
+  Hong Kong (China). Children, 0 to 6.
 twStatus: Household (Single or Married, filing jointly)
   One of: single (Single), married (Married, filing jointly). Default single.
-  Taiwan residents. single or married (filing jointly).
+  Taiwan (China) residents. single or married (filing jointly).
 twKids: Minor children
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
-  Taiwan residents. Minor children, 0 to 6.
+  Taiwan (China) residents. Minor children, 0 to 6.
 krDeps: Dependants
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
   South Korea, progressive method. Dependants beyond the employee, 0 to 6.
@@ -538,7 +538,7 @@ cnSpecial: Special additional deductions
   Tip on the page: Children, elderly care, housing rent or loan interest, further study.
 hkMpf: MPF member
   Checkbox: true or false. Default true.
-  Hong Kong. false when exempt from MPF.
+  Hong Kong (China). false when exempt from MPF.
   Tip on the page: 5% of pay, at most 1,500 a month, and nothing below 7,100 a month. Deductible up
   to 18,000.
 gulfWagePct: Contributory share of pay
@@ -554,8 +554,8 @@ dispCur: Currency to show amounts in  (most important)
   pound (GBP)), AUD (Australian dollar (AUD)), SGD (Singapore dollar (SGD)), IDR (Indonesian rupiah
   (IDR)), JPY (Japanese yen (JPY)), CHF (Swiss franc (CHF)), CAD (Canadian dollar (CAD)), HKD (Hong
   Kong dollar (HKD)), AED (UAE dirham (AED)), CNY (Chinese yuan (CNY)), KRW (Korean won (KRW)), MYR
-  (Malaysian ringgit (MYR)), THB (Thai baht (THB)), TWD (Taiwan dollar (TWD)), SEK (Swedish krona
-  (SEK)), NOK (Norwegian krone (NOK)), SAR (Saudi riyal (SAR)), QAR (Qatari riyal (QAR)), BHD
+  (Malaysian ringgit (MYR)), THB (Thai baht (THB)), TWD (New Taiwan dollar (TWD)), SEK (Swedish
+  krona (SEK)), NOK (Norwegian krone (NOK)), SAR (Saudi riyal (SAR)), QAR (Qatari riyal (QAR)), BHD
   (Bahraini dinar (BHD)), KWD (Kuwaiti dinar (KWD)), OMR (Omani rial (OMR)). Default local.
   Display only. local (each job in its own currency) or a code (USD, EUR, GBP, AUD, SGD, IDR, JPY,
   CHF, CAD, HKD, AED, CNY, KRW, MYR, THB, TWD, SEK, NOK, SAR, QAR, BHD, KWD, OMR) to read every job

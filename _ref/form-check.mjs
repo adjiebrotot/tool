@@ -106,7 +106,7 @@ const PAGES = [
       await page.waitForTimeout(400);
   } },
   // Opens on two jobs; the Family of four Quick Start puts four on screen.
-  { path: 'global-salary-calculator', setup: async page => {
+  { path: 'global-income-tax-calculator', setup: async page => {
       await page.evaluate(() => { const b = document.querySelector('.quick-start-btn[data-preset="family"]'); if (b) b.click(); });
       await page.waitForTimeout(300);
   } },

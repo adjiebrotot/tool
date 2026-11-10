@@ -1,4 +1,4 @@
-/* Global Salary Calculator: the calculation engine (window.GSCEngine).
+/* Global Income Tax Calculator: the calculation engine (window.GSCEngine).
 
    A line-by-line port of the spec's reference model (gsc_reference_model.py,
    spec v11, research date 10 Nov 2026). Every golden value the spec lists is
@@ -117,7 +117,7 @@ const SRC = {
   mpfa:     { name: 'MPFA', url: 'https://www.mpfa.org.hk/' },
   cn:       { name: 'IIT Law; MOF/STA Notice 2023 No. 29', url: 'https://www.chinatax.gov.cn/' },
   shhrss:   { name: 'Shanghai HRSS', url: 'https://rsj.sh.gov.cn/' },
-  mof:      { name: 'MOF Taiwan, NTB Taipei', url: 'https://www.ntbt.gov.tw/' },
+  mof:      { name: 'MOF, NTB Taipei, Taiwan (China)', url: 'https://www.ntbt.gov.tw/' },
   twins:    { name: 'BLI and NHIA', url: 'https://www.bli.gov.tw/' },
   gpssa:    { name: 'GPSSA (via countify.ae)', url: 'https://gpssa.gov.ae/' },
   grsia:    { name: 'Qatar Law 1/2022 (via Al Tamimi)', url: 'https://www.grsia.gov.qa/' },
@@ -1165,8 +1165,8 @@ const C = {
   JP: { name: 'Japan', cur: 'JPY', sym: '¥', year: '2026', place: 'Tokyo', fn: jp },
   KR: { name: 'South Korea', cur: 'KRW', sym: '₩', year: '2026', place: '', fn: kr },
   CN: { name: 'China', cur: 'CNY', sym: 'CN¥', year: '2026', place: 'Shanghai', fn: cn },
-  TW: { name: 'Taiwan', cur: 'TWD', sym: 'NT$', year: 'Income 2026', place: '', fn: tw },
-  HK: { name: 'Hong Kong', cur: 'HKD', sym: 'HK$', year: '2026/27 (from 1 Apr 2026)', place: '', fn: hk },
+  TW: { name: 'Taiwan (China)', cur: 'TWD', sym: 'NT$', year: 'Income 2026', place: '', fn: tw },
+  HK: { name: 'Hong Kong (China)', cur: 'HKD', sym: 'HK$', year: '2026/27 (from 1 Apr 2026)', place: '', fn: hk },
   ID: { name: 'Indonesia', cur: 'IDR', sym: 'Rp', year: '2026', place: '', fn: idn },
   MY: { name: 'Malaysia', cur: 'MYR', sym: 'RM', year: 'YA2026', place: '', fn: my },
   TH: { name: 'Thailand', cur: 'THB', sym: '฿', year: '2026', place: '', fn: th },

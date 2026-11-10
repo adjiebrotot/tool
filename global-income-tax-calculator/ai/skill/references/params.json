@@ -1,17 +1,17 @@
 {
- "skill": "brotools-global-salary-calculator",
- "tool": "Global Salary Calculator",
+ "skill": "brotools-global-income-tax-calculator",
+ "tool": "Global Income Tax Calculator",
  "site": "https://tool.adjiebrotots.com",
  "format": "load link version 1",
  "whyMax": 200,
  "pages": [
   {
-   "page": "global-salary-calculator",
-   "url": "/global-salary-calculator/",
-   "base": "https://tool.adjiebrotots.com/global-salary-calculator/",
+   "page": "global-income-tax-calculator",
+   "url": "/global-income-tax-calculator/",
+   "base": "https://tool.adjiebrotots.com/global-income-tax-calculator/",
    "lang": "en",
-   "title": "Global Salary Calculator",
-   "reference": "references/global-salary-calculator.md",
+   "title": "Global Income Tax Calculator",
+   "reference": "references/global-income-tax-calculator.md",
    "decides": "Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries and every US state, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.",
    "important": [
     "country",
@@ -41,7 +41,7 @@
       },
       {
        "value": "HK",
-       "label": "Hong Kong"
+       "label": "Hong Kong (China)"
       },
       {
        "value": "ID",
@@ -65,7 +65,7 @@
       },
       {
        "value": "TW",
-       "label": "Taiwan"
+       "label": "Taiwan (China)"
       },
       {
        "value": "TH",
@@ -2127,7 +2127,7 @@
       },
       {
        "value": "TWD",
-       "label": "Taiwan dollar (TWD)"
+       "label": "New Taiwan dollar (TWD)"
       },
       {
        "value": "SEK",

@@ -55,7 +55,7 @@ const PAGES = [
   { path: 'dcasimulator/',             preset: 'equity-mmf',   probe: '#secList',  ignore: ['detailSelect'] },
   { path: 'dcasimulator/portfolio/',   preset: 'rebal-freq',   probe: '#pfList',   ignore: ['detailPfSelect'] },
   // The jobs live in JS state (Persist extra): a third job added, then edited.
-  { path: 'global-salary-calculator/', preset: 'europe',       probe: '.metrics',
+  { path: 'global-income-tax-calculator/', preset: 'europe',       probe: '.metrics',
     also: `document.getElementById('addJob').click();
            var c = document.getElementById('country'); c.value = 'ES'; c.dispatchEvent(new Event('change', {bubbles: true}));
            var k = document.getElementById('esKids'); k.value = '2'; k.dispatchEvent(new Event('change', {bubbles: true}));` },

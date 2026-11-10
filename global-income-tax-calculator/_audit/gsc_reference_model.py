@@ -1,4 +1,4 @@
-"""Global Salary Calculator - reference model (spec v11, research date 10 Nov 2026).
+"""Global Income Tax Calculator - reference model (spec v11, research date 10 Nov 2026).
 v11 adds: NY benefit recapture for all tiers + NY DBL (0.5%, max 0.60/wk); US state engine (25 states + DC, 12 gated);
 CH married DBST full official tariff (guard removed); BE 5+ children (+7,070 each) and single-parent supplement (+1,980);
 PT dependants / health / education / rent deductions with art.78(7) cap; JP child-support levy months knob;
