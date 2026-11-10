@@ -125,7 +125,7 @@
     },
     {
       "q": "Do I pay Canadian tax in the year I arrive?",
-      "a": "<p>Usually you are a part-year resident, taxed on worldwide income from the date you become resident and not on earlier income. Your tax credits are prorated. The calculator assumes a full year in one job, so it overstates a part year. Check your status with the CRA.</p>"
+      "a": "<p>Usually you are a part-year resident, taxed on worldwide income from the date you become resident and not on earlier income. Some tax credits are prorated. The calculator assumes a full year in one job, so it overstates a part year. Check your status with the CRA.</p>"
     },
     {
       "q": "What is the difference between an RRSP and a TFSA?",

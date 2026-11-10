@@ -67,7 +67,7 @@
     {
       "key": "married-sole-earner",
       "title": "How much tax does a married sole earner pay in Germany on €65,000 (class III)?",
-      "intro": "<p>This is a married employee in tax class III with a partner who has no income, and a child, so the long-term care rate is 1.8%. The splitting tariff taxes half of taxable income (about €51,000) and doubles the result, so income tax falls to €5,972, against €10,772 for a single person on the same pay. Social insurance is €13,748, and you keep about €45,281, or 69.7% of gross. That is about €5,190 more than the single example.</p>",
+      "intro": "<p>This is a married employee in tax class III with a partner who has no income, and a child, so the long-term care rate is 1.8%. Taxable income is about €51,000. The splitting tariff taxes half of it (about €25,500) and doubles the result, so income tax falls to €5,972, against €10,772 for a single person on the same pay. Social insurance is €13,748, and you keep about €45,281, or 69.7% of gross. That is about €5,190 more than the single example, partly because of the lower long-term care rate.</p>",
       "after": "<p>The splitting tariff is also why the class III and V pair is settled in the tax return. If both partners work, the combined result depends on both salaries and on the class combination. The calculator does not model a working partner, child allowances or child benefit.</p>"
     },
     {

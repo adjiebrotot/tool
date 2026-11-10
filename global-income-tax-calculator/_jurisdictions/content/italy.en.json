@@ -10,7 +10,7 @@
     "blocks": [
       {
         "h3": "National IRPEF bands",
-        "html": "<p>IRPEF is charged on taxable income, which is your salary after employee social contributions. The calculator then subtracts the employment credit (<em>detrazione per lavoro dipendente</em>) from the tax. The credit is highest at low incomes and phases out to nil at €50,000.</p>",
+        "html": "<p>IRPEF is charged on taxable income, which is your salary after employee social contributions. The calculator then subtracts the employment credit (<em>detrazione per lavoro dipendente</em>) from the tax. The credit is highest at low incomes and phases out to nil at €50,000. Between about €20,000 and €40,000 of taxable income an extra credit of up to €1,000 (the <em>cuneo fiscale</em>, or tax-wedge, credit) also applies, and the calculator includes it.</p>",
         "table": {
           "head": ["Taxable income", "Rate"],
           "rows": [

@@ -1,0 +1,189 @@
+{
+  "slug": "france",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Prancis 2026",
+  "h1": "Cara menghitung pajak penghasilan di Prancis (2026)",
+  "description": "Pajak gaji di Prancis 2026: tarif bertingkat, quotient familial, iuran sosial cadre dan non-cadre, rezim impatriat, plus contoh gaji bersih.",
+  "lede": "<p>Prancis memajaki penghasilan dengan tarif bertingkat untuk tiap bagian keluarga (<em>part</em>): 0% sampai €11.600, 11% sampai €29.579, 30% sampai €84.577, 41% sampai €181.917, dan 45% di atasnya. Sebelum pajak dihitung, karyawan sudah membayar iuran sosial dan CSG sekitar seperlima dari gaji bruto. Sebagai gambaran, gaji bruto €45.000 untuk lajang non-<em>cadre</em> menyisakan gaji bersih (<em>take-home pay</em>) sekitar €32.554 setelah iuran dan pajak penghasilan, atau 72,3% dari gaji.</p>",
+  "law": {
+    "intro": "<p>Angka di bawah ini adalah angka yang berlaku pada 2026 dan dimuat di kalkulator. Prancis memajaki penduduk pajaknya atas penghasilan dari seluruh dunia, dan statusnya tidak ditentukan oleh kewarganegaraan atau jenis visa. Kamu dianggap penduduk pajak kalau tempat tinggal utamamu, kegiatan profesional utamamu atau pusat kepentingan ekonomimu ada di Prancis, dan satu dari ketiganya sudah cukup. Urutan hitungan untuk gaji karyawan selalu sama: iuran sosial dipotong lebih dulu, lalu pajak penghasilan dihitung dari sisanya.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan (<em>barème</em>)",
+        "html": "<p>Pajak penghasilan Prancis (<em>impôt sur le revenu</em>) memakai lima tingkat tarif. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat, dan batas di bawah ini berlaku untuk satu <em>part</em>, bukan untuk seluruh keluarga. Yang dipajaki adalah penghasilan setelah iuran sosial yang boleh dikurangkan dan potongan biaya kerja 10% (dengan batas bawah dan batas atas yang sudah dimuat kalkulator), bukan gaji bruto.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak per <em>part</em>",
+            "Tarif"
+          ],
+          "rows": [
+            ["€0 sampai €11.600", "0%"],
+            ["€11.601 sampai €29.579", "11%"],
+            ["€29.580 sampai €84.577", "30%"],
+            ["€84.578 sampai €181.917", "41%"],
+            ["Di atas €181.917", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "<em>Quotient familial</em>: pajak dihitung per bagian keluarga",
+        "html": "<p>Sebelum tarif dipakai, penghasilan kena pajak dibagi jumlah <em>part</em> keluarga, pajaknya dihitung untuk satu <em>part</em>, lalu hasilnya dikalikan lagi dengan jumlah <em>part</em>. Cara ini disebut <em>quotient familial</em>, dan akibatnya keluarga yang lebih besar membayar lebih sedikit pada penghasilan yang sama. Lajang mendapat 1 <em>part</em>, pasangan menikah 2 <em>part</em>, anak pertama dan kedua masing-masing menambah 0,5 <em>part</em>, dan anak ketiga dan seterusnya masing-masing menambah 1 <em>part</em>.</p><p>Keuntungan dari tiap setengah <em>part</em> ada batasnya (<em>plafonnement</em>): kalkulator memakai batas sekitar €1.807 per setengah <em>part</em>. Kalau pajaknya kecil, ada pula keringanan bernama <em>décote</em> yang memangkasnya, bahkan sampai nol untuk penghasilan rendah.</p>"
+      },
+      {
+        "h3": "Iuran sosial karyawan dan CSG",
+        "html": "<p>Iuran di bawah ini dipotong dari gaji bruto sebelum kamu menerima gaji. Batas yang dipakai adalah plafon tahunan jaminan sosial (<em>plafond annuel de la sécurité sociale</em>, PASS) sebesar €48.060. CSG dan CRDS dihitung dari sekitar 98,25% gaji sampai empat kali PASS, dan dari seluruh gaji di atas batas itu. Dari semua komponen ini, hanya yang bertanda dapat dikurangkan yang mengurangi penghasilan kena pajak.</p>",
+        "table": {
+          "head": [
+            "Komponen",
+            "Tarif yang dipakai kalkulator"
+          ],
+          "rows": [
+            ["Asuransi hari tua (<em>vieillesse</em>), dapat dikurangkan", "6,90% sampai PASS, ditambah 0,40% atas seluruh gaji"],
+            ["AGIRC-ARRCO (pensiun tambahan), dapat dikurangkan", "3,15% sampai PASS, 8,64% pada bagian antara 1 dan 8 kali PASS"],
+            ["CEG (iuran keseimbangan umum), dapat dikurangkan", "0,86% sampai PASS, 1,08% pada bagian antara 1 dan 8 kali PASS"],
+            ["CET (iuran keseimbangan teknis), dapat dikurangkan", "0,14% dari gaji sampai 8 kali PASS, hanya kalau gaji melewati PASS"],
+            ["APEC (khusus <em>cadre</em>), dapat dikurangkan", "0,024% dari gaji sampai 4 kali PASS"],
+            ["CSG, dapat dikurangkan", "6,8%"],
+            ["CSG yang tidak dapat dikurangkan dan CRDS", "2,9%"]
+          ]
+        }
+      },
+      {
+        "h3": "<em>Cadre</em> atau bukan",
+        "html": "<p>Status <em>cadre</em> (karyawan tingkat manajer atau profesional, sebagaimana ditetapkan perjanjian kerja bersama di sektornya) memengaruhi iuran. Di kalkulator, perbedaannya hanya iuran APEC sebesar 0,024% gaji. Perlindungan tambahan khusus <em>cadre</em> umumnya dibayar pemberi kerja, sehingga tidak muncul sebagai potongan di gaji bersihmu dan tidak dimodelkan di sini. Kontrak kerja dan slip gaji menunjukkan statusmu.</p>"
+      },
+      {
+        "h3": "Rezim impatriat untuk pekerja yang direkrut dari luar negeri",
+        "html": "<p>Pekerja yang pindah ke Prancis dari luar negeri untuk bekerja di sana, dan belum menjadi penduduk pajak Prancis selama beberapa tahun sebelumnya, bisa mendapat rezim <em>impatriés</em> (pasal 155 B <em>Code général des impôts</em>). Rezim ini membebaskan sebagian penghasilan dari pajak untuk jangka waktu terbatas. Kalkulator memodelkan opsi yang paling sederhana, yaitu pembebasan secara <em>forfait</em> sebesar 30% dari penghasilan setelah iuran yang dapat dikurangkan, sebelum potongan biaya kerja 10% dihitung. Syarat lengkapnya ada di situs resmi pajak Prancis, jadi jangan menganggap rezim ini otomatis berlaku untuk setiap pekerja asing.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "service-public.gouv.fr, cara menghitung pajak penghasilan",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419"
+      },
+      {
+        "name": "URSSAF dan AGIRC-ARRCO, iuran sosial karyawan",
+        "url": "https://www.urssaf.fr/"
+      },
+      {
+        "name": "service-public.gouv.fr, <em>contribution exceptionnelle sur les hauts revenus</em> (CEHR)",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130"
+      },
+      {
+        "name": "Légifrance, <em>Code général des impôts</em>, pasal 155 B (rezim impatriat)",
+        "url": "https://www.legifrance.gouv.fr/"
+      },
+      {
+        "name": "Direction générale des Finances publiques, impots.gouv.fr",
+        "url": "https://www.impots.gouv.fr/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single-non-cadre",
+      "title": "Berapa gaji bersih di Prancis kalau gaji bruto €45.000 dan bukan <em>cadre</em>?",
+      "intro": "<p>Contoh ini untuk lajang tanpa anak dengan satu pekerjaan sepanjang tahun. Iuran sosial dan CSG mengambil €9.378 dari gaji bruto, tetapi €1.282 di antaranya (CSG yang tidak dapat dikurangkan dan CRDS) tidak boleh dikurangkan, sehingga penghasilan setelah iuran yang dipajaki adalah €36.904. Potongan biaya kerja 10% (sekitar €3.690) menurunkannya menjadi penghasilan kena pajak €33.214. Pajaknya €3.068: 11% untuk bagian sampai €29.579 dan 30% untuk sisanya. Gaji bersihnya sekitar €32.554 (72,3% dari gaji), dan tiap euro tambahan dikenai potongan gabungan sekitar 43,0%, karena iuran sosial dan tarif pajak 30% berlaku sekaligus.</p>",
+      "after": "<p>Kalau kamu membagi gaji bersih ini dengan 12, hasilnya sekitar €2.713 per bulan.</p>"
+    },
+    {
+      "key": "cadre",
+      "title": "Cara menghitung gaji bersih <em>cadre</em> di Prancis dengan gaji bruto €70.000",
+      "intro": "<p>Contoh ini untuk <em>cadre</em> lajang dengan gaji bruto €70.000. Gaji ini sudah melewati PASS, sehingga iuran CET sebesar €98 ikut dibayar, dan status <em>cadre</em> menambah APEC sekitar €17. Total iuran sosial dan CSG menjadi €14.442. Setelah potongan biaya kerja, penghasilan kena pajaknya €51.797, dan pajaknya €8.643 karena sebagian penghasilan itu sudah masuk tingkat 30%. Gaji bersihnya sekitar €46.915 (67,0% dari gaji), dengan potongan gabungan sekitar 42,2% pada euro berikutnya.</p>",
+      "after": "<p>Pada gaji yang sama, lajang non-<em>cadre</em> hampir tidak berbeda: selisihnya hanya APEC sekitar €17.</p>"
+    },
+    {
+      "key": "married-two-children",
+      "title": "Berapa pajak keluarga dengan dua anak di Prancis kalau gaji bruto €70.000?",
+      "intro": "<p>Contoh ini untuk <em>cadre</em> yang menikah dan punya dua anak, dengan pasangan yang tidak berpenghasilan sendiri, sehingga seluruh €70.000 dipajaki sebagai penghasilan satu keluarga. Iurannya sama dengan contoh <em>cadre</em> lajang, tetapi keluarga ini mendapat 3 <em>part</em>: 2 untuk pasangan dan 0,5 untuk tiap anak. Penghasilan kena pajak €51.797 dibagi 3 menjadi sekitar €17.266 per <em>part</em>, sehingga pajak sebelum keringanan sekitar €1.870, lalu <em>décote</em> menurunkannya menjadi €1.233. Gaji bersihnya sekitar €54.325 (77,6% dari gaji), atau €7.410 lebih banyak daripada <em>cadre</em> lajang, dan potongan gabungan pada euro berikutnya sekitar 31,8%.</p>",
+      "after": "<p>Kalau pasanganmu juga bekerja, penghasilan keduanya digabung untuk pajak, jadi hasilnya akan berbeda dari contoh ini.</p>"
+    },
+    {
+      "key": "impatriate",
+      "title": "Berapa gaji bersih pekerja asing di Prancis dengan rezim impatriat dan gaji bruto €90.000?",
+      "intro": "<p>Contoh ini untuk <em>cadre</em> lajang yang direkrut dari luar Prancis dengan gaji bruto €90.000 dan memakai rezim impatriat. Setelah iuran sosial, kalkulator membebaskan 30% dari penghasilan yang dapat dikurangkan, yaitu €22.248, lalu menerapkan potongan biaya kerja 10%. Penghasilan kena pajaknya menjadi €46.721 dan pajaknya €7.120. Tanpa rezim ini, pajak untuk gaji yang sama €13.127 dan gaji bersihnya €58.468, sehingga rezim ini menambah gaji bersih sekitar €6.007. Gaji bersihnya €64.475 (71,6% dari gaji), dengan potongan gabungan sekitar 35,5% pada euro berikutnya.</p>",
+      "after": "<p>Rezim ini tidak berlaku otomatis. Tanyakan ke pemberi kerja apakah kamu memenuhi syaratnya, dan cek syaratnya di situs pajak Prancis sebelum mengandalkan angka ini.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs resmi pajak Prancis. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Tanyakan rezim impatriat sebelum kontrak ditandatangani",
+      "html": "<p>Selisih pajaknya bisa besar: pada contoh gaji €90.000 di atas, rezim ini menambah gaji bersih sekitar €6.007 setahun. Cocok untuk pekerja yang direkrut dari luar Prancis, terutama dengan gaji menengah ke atas. Peringatannya, rezim ini punya syarat soal status dan lama tidak berdomisili di Prancis, dan kalkulator hanya memodelkan opsi <em>forfait</em> 30%. Minta pemberi kerja atau konsultan pajak memastikan syaratnya.</p>"
+    },
+    {
+      "h3": "Setoran sukarela ke PER (<em>plan d'épargne retraite</em>)",
+      "html": "<p>Setoran sukarela ke PER, rencana pensiun individu, bisa dikurangkan dari penghasilan kena pajak dalam batas tahunan tertentu, jadi manfaatnya paling terasa kalau tarif marjinalmu sudah 30% atau lebih. Cocok untuk penduduk pajak yang berencana tinggal lama di Prancis. Uangnya terkunci sampai pensiun, kecuali pada beberapa keadaan tertentu seperti membeli rumah tinggal utama, dan saat dicairkan kembali ada pajaknya. Cek batas setoran yang berlaku di situs impots.gouv.fr sebelum menyetor banyak.</p>"
+    },
+    {
+      "h3": "<em>Frais réels</em> kalau biaya kerjamu lebih dari 10%",
+      "html": "<p>Potongan biaya kerja 10% adalah pilihan standar. Kalau biaya nyatamu lebih besar, misalnya ongkos perjalanan ke tempat kerja yang jauh, kamu boleh mengklaim biaya sebenarnya (<em>frais réels</em>) sebagai gantinya. Cocok untuk pekerja yang bolak-balik jauh atau punya biaya kerja besar yang tidak diganti pemberi kerja. Simpan semua bukti pengeluaran, karena kantor pajak bisa memintanya. Kalkulator hanya memakai potongan 10%.</p>"
+    },
+    {
+      "h3": "Kredit pajak untuk pengasuhan anak dan jasa rumah tangga",
+      "html": "<p>Biaya pengasuhan anak kecil di luar rumah dan jasa rumah tangga yang dibayar sesuai aturan memberi kredit pajak yang kira-kira separuh dari biaya, dalam batas tahunan. Cocok untuk keluarga dengan anak kecil atau yang mempekerjakan bantuan rumah tangga secara resmi. Pembayarannya harus tercatat dan lewat jalur yang diakui, dan batas serta syaratnya berubah-ubah, jadi cek angka terbaru di service-public.gouv.fr.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji bruto setahun.",
+    "<strong>Satu penghasilan per keluarga.</strong> Pada contoh pasangan menikah, pasangan dianggap tidak berpenghasilan sendiri. Kalau keduanya bekerja, hasilnya berbeda.",
+    "<strong>Penghasilan sangat tinggi tidak dihitung penuh.</strong> Di atas sekitar €250.000 untuk lajang, pajak minimum 20% (CDHR) bisa berlaku dan tidak dimuat, sehingga kalkulator bisa menolak menghitung.",
+    "<strong>Iuran asuransi kesehatan perusahaan hanya kalau diisi.</strong> Bagian karyawan dari <em>mutuelle</em> baru masuk hitungan kalau kamu mengisinya, dan contoh di sini tidak memakainya.",
+    "<strong>Tanpa perjanjian pajak dan perkiraan saja.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Prancis serta kewajiban lapor di Indonesia tidak dihitung. Hasilnya gambaran, bukan nasihat pajak."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji bruto €45.000 di Prancis?",
+      "a": "<p>Untuk lajang non-<em>cadre</em>, gaji bersihnya sekitar €32.554 setahun (72,3%), setelah iuran sosial dan CSG €9.378 dan pajak penghasilan €3.068. Angka untuk kasusmu bisa kamu coba di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kenapa slip gaji di Prancis sudah dipotong pajak padahal laporan pajak baru diisi setahun sekali?",
+      "a": "<p>Sejak 2019, pajak penghasilan Prancis dipotong langsung dari gaji tiap bulan lewat <em>prélèvement à la source</em>, yaitu pemotongan pajak di muka. Besarnya memakai tarif pribadi yang ditetapkan kantor pajak dari laporan tahun sebelumnya. Kalau kamu baru datang dan belum punya tarif itu, pemberi kerja memakai tarif netral (<em>taux neutre</em>) menurut tabel gaji, yang tidak selalu sama dengan pajak yang sebenarnya. Slip gajinya pun menampilkan dua angka: <em>net avant impôt</em> (gaji bersih sebelum pajak) dan <em>net payé</em> (yang masuk rekeningmu setelah pajak). Setiap musim semi kamu mengisi laporan pajak tahunan, lalu kantor pajak membandingkan potongan itu dengan pajak yang sebenarnya dan mengembalikan kelebihannya atau menagih kekurangannya. Kalkulator ini menghitung pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+    },
+    {
+      "q": "Apa itu <em>quotient familial</em> dan kenapa keluarga membayar pajak jauh lebih kecil?",
+      "a": "<p>Penghasilan kena pajak dibagi jumlah <em>part</em> keluarga (lajang 1, pasangan menikah 2, ditambah 0,5 untuk tiap anak pertama dan kedua dan 1 untuk tiap anak berikutnya), pajaknya dihitung untuk satu <em>part</em>, lalu dikalikan kembali. Karena tingkat tarif tinggi baru terkena pada penghasilan per <em>part</em> yang besar, keluarga besar sering tetap berada di tingkat rendah. Pada gaji bruto €70.000, <em>cadre</em> lajang membayar pajak €8.643, sedangkan keluarga dengan dua anak (3 <em>part</em>) membayar €1.233. Keuntungannya dibatasi sekitar €1.807 per setengah <em>part</em>.</p>"
+    },
+    {
+      "q": "Kenapa sebagian CSG tidak bisa dikurangkan dari penghasilan kena pajak?",
+      "a": "<p>CSG (<em>contribution sociale généralisée</em>) dan CRDS adalah iuran yang membiayai jaminan sosial dan melunasi utangnya. Dari total 9,7% yang dipotong, hanya 6,8% yang boleh dikurangkan dari penghasilan kena pajak. Sisanya, 2,9%, dibayar dari uang yang tetap dipajaki. Pada gaji bruto €45.000, bagian yang tidak dapat dikurangkan itu €1.282, sehingga pajak penghasilan dihitung dari angka yang masih memuatnya.</p>"
+    },
+    {
+      "q": "Apa bedanya <em>cadre</em> dan non-<em>cadre</em> untuk gaji bersih?",
+      "a": "<p>Di kalkulator, perbedaannya hanya iuran APEC 0,024% dari gaji, sekitar €17 pada gaji bruto €70.000. Perlindungan tambahan untuk <em>cadre</em> umumnya dibayar pemberi kerja dan tidak muncul sebagai potongan di gajimu. Karena itu <em>cadre</em> dan non-<em>cadre</em> dengan gaji bruto sama hampir selalu membawa pulang jumlah yang mirip, dan perbedaan yang lebih besar biasanya ada pada gaji bruto yang ditawarkan, bukan pada potongannya.</p>"
+    },
+    {
+      "q": "Siapa yang bisa memakai rezim impatriat di Prancis?",
+      "a": "<p>Rezim ini untuk pekerja yang pindah ke Prancis dari luar negeri untuk bekerja di sana dan belum menjadi penduduk pajak Prancis dalam beberapa tahun sebelumnya. Pembebasannya berlaku untuk jangka waktu terbatas. Pada contoh gaji bruto €90.000, kalkulator memakai opsi <em>forfait</em> 30% dan menghasilkan gaji bersih €64.475 dibandingkan €58.468 tanpa rezim. Syarat lengkapnya ada di situs pajak Prancis, dan pemberi kerjamu biasanya tahu apakah posisimu memenuhinya.</p>"
+    },
+    {
+      "q": "Kapan seseorang dianggap penduduk pajak Prancis?",
+      "a": "<p>Cukup memenuhi satu dari tiga hal: tempat tinggal utamamu di Prancis, kegiatan profesional utamamu di Prancis, atau pusat kepentingan ekonomimu di Prancis. Penduduk pajak dikenai pajak atas penghasilan dari seluruh dunia. Pilih status yang sesuai kondisimu, dan tanyakan ke kantor pajak untuk kasus yang tidak jelas.</p>"
+    },
+    {
+      "q": "Berapa uang yang bisa ditabung kalau bekerja di Prancis dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Old-age insurance (6.90% to the cap, 0.40% on all)": "Asuransi hari tua (6,90% sampai batas, 0,40% atas seluruh gaji)",
+    "AGIRC-ARRCO supplementary pension": "Pensiun tambahan AGIRC-ARRCO",
+    "CEG general balance contribution": "Iuran keseimbangan umum CEG",
+    "CET technical balance contribution (0.14%)": "Iuran keseimbangan teknis CET (0,14%)",
+    "APEC (cadres, 0.024%)": "APEC (khusus cadre, 0,024%)",
+    "CSG, deductible (6.8%)": "CSG, dapat dikurangkan (6,8%)",
+    "CSG non-deductible and CRDS (2.9%)": "CSG tidak dapat dikurangkan dan CRDS (2,9%)",
+    "Impatriate regime, exempt share (30% forfait)": "Rezim impatriat, bagian yang dibebaskan (forfait 30%)",
+    "Professional expenses deduction (10%)": "Potongan biaya kerja (10%)",
+    "Income tax (1 part)": "Pajak penghasilan (1 part)",
+    "Income tax (1.5 parts)": "Pajak penghasilan (1,5 part)",
+    "Income tax (2 parts)": "Pajak penghasilan (2 part)",
+    "Income tax (2.5 parts)": "Pajak penghasilan (2,5 part)",
+    "Income tax (3 parts)": "Pajak penghasilan (3 part)",
+    "High income contribution (CEHR, 3% then 4%)": "Iuran penghasilan tinggi (CEHR, 3% lalu 4%)",
+    "Company health and protection cover, your share": "Asuransi kesehatan dan perlindungan perusahaan, bagianmu"
+  }
+}

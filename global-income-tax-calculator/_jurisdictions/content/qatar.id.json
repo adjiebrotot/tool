@@ -1,0 +1,116 @@
+{
+  "title": "Pajak Gaji di Qatar 2026: Gaji Bersih dan Pensiun",
+  "h1": "Cara menghitung pajak penghasilan di Qatar (2026)",
+  "description": "Qatar tidak memajaki gaji. Lihat gaji bersih pekerja asing, iuran pensiun GRSIA 7% untuk warga negara dan tambahan 14% dari pemberi kerja.",
+  "lede": "<p>Qatar tidak memungut pajak penghasilan atas gaji, dan pekerja asing tidak membayar iuran pensiun dari gajinya. Warga negara Qatar membayar iuran pensiun GRSIA 7% dari upah, sementara pemberi kerja menambah 14% di luar gaji. Gaji QAR240.000 setahun tetap QAR240.000 bagi pekerja asing, dan menjadi QAR223.200 bagi warga negara setelah iuran GRSIA.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Di Qatar, yang membedakan potongan gaji adalah kewarganegaraan.</p>",
+    "blocks": [
+      {
+        "h3": "Tidak ada pajak penghasilan atas gaji",
+        "html": "<p>Gaji dari pekerjaan di Qatar tidak dikenai pajak penghasilan perorangan. Karena itu gaji bersih pekerja asing sama dengan gaji bruto, selama kontrak tidak memotong biaya lain.</p>"
+      },
+      {
+        "h3": "Pensiun GRSIA untuk warga negara",
+        "html": "<p>General Retirement and Social Insurance Authority (GRSIA) mengelola pensiun warga negara Qatar. Kalkulator menghitung iuran pegawai 7% dari upah dengan batas QAR100.000 sebulan, dan iuran pemberi kerja 14% yang dibayar di luar gaji.</p>",
+        "table": {
+          "head": [
+            "Pihak",
+            "Besar iuran"
+          ],
+          "rows": [
+            [
+              "Pegawai warga negara",
+              "7%"
+            ],
+            [
+              "Pemberi kerja",
+              "14%"
+            ],
+            [
+              "Pekerja asing",
+              "0%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Pekerja asing: tanpa iuran pensiun",
+        "html": "<p>Pekerja asing tidak ikut iuran pensiun GRSIA. Aturan ketenagakerjaan Qatar mengatur tunjangan akhir masa kerja bagi pekerja asing, tetapi kalkulator tidak menghitungnya, jadi baca kontrak dan sumber resmi untuk besarnya.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "General Retirement and Social Insurance Authority (GRSIA), Qatar",
+        "url": "https://www.grsia.gov.qa/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Cara menghitung gaji bersih pekerja asing di Qatar dengan gaji QAR240.000",
+      "intro": "<p>Contoh ini untuk pekerja asing, termasuk WNI, dengan gaji QAR240.000 setahun atau QAR20.000 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran pensiun, sehingga gaji bersihnya tetap QAR240.000 (100%).</p>",
+      "after": "<p>Tunjangan akhir masa kerja dan tunjangan lain di kontrak belum dihitung.</p>"
+    },
+    {
+      "key": "national",
+      "title": "Berapa iuran pensiun GRSIA warga Qatar bergaji QAR240.000?",
+      "intro": "<p>Contoh ini sebagai pembanding untuk warga negara. Iuran GRSIA 7% menjadi QAR16.800, sehingga gaji bersihnya QAR223.200 (93,0%) dan 7,0% dari tambahan gaji berikutnya masuk ke iuran. Di luar gaji, pemberi kerja menyetor QAR33.600 (14% dari upah).</p>",
+      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Karena tidak ada pajak penghasilan, fokusmu adalah kontrak dan tabungan.</p>",
+  "strategies": [
+    {
+      "h3": "Baca isi kontrak sebelum berangkat",
+      "html": "<p>Tanpa pajak yang mengubah angka gaji, kontrak adalah satu-satunya sumber potongan dan tunjangan. Periksa gaji, tunjangan tempat tinggal dan tunjangan akhir masa kerja, lalu minta penjelasan tertulis untuk hal yang belum jelas. Cocok untuk semua calon pekerja.</p>"
+    },
+    {
+      "h3": "Siapkan tabungan pensiun sendiri",
+      "html": "<p>Pekerja asing tidak ikut pensiun GRSIA, jadi hitung berapa yang perlu kamu tabung setiap bulan di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    },
+    {
+      "h3": "Bandingkan sisa gaji dengan biaya hidup",
+      "html": "<p>Gaji bersih penuh belum berarti tabungan besar. Bandingkan biaya hidup di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung penghasilan usaha, sewa atau investasi.",
+    "<strong>Tanpa tunjangan akhir masa kerja, tunjangan dan bonus.</strong> Semua angka dihitung dari satu angka gaji setahun.",
+    "<strong>Iuran bergantung pada upah yang diperhitungkan.</strong> Kalkulator punya isian porsi gaji yang menjadi dasar iuran, untuk kasus ketika tunjangan tidak ikut dihitung.",
+    "<strong>Pajak lain tidak dihitung.</strong> Pajak atas konsumsi dan biaya lain tidak dimodelkan.",
+    "<strong>Kewajiban pajak di Indonesia tidak dihitung.</strong> Status pajakmu di Indonesia bergantung pada tempat tinggal dan lamanya kamu berada di Indonesia (patokannya 183 hari), bukan pada tempat gajimu dibayar. Tanyakan ke DJP atau konsultan pajak sebelum berangkat.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Aturan bisa berubah, jadi cek ke sumber resmi sebelum memutuskan."
+  ],
+  "faq": [
+    {
+      "q": "Apakah ada pajak penghasilan untuk gaji di Qatar?",
+      "a": "<p>Gaji dari pekerjaan di Qatar tidak dikenai pajak penghasilan perorangan, baik untuk warga negara maupun pekerja asing. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Apa bedanya pekerja asing dan warga Qatar dalam hal pensiun?",
+      "a": "<p>Warga negara Qatar membayar iuran GRSIA 7% dari upah dengan batas QAR100.000 sebulan, dan pemberi kerja menambah 14%. Pekerja asing tidak membayar iuran pensiun dan tidak mendapat pensiun dari GRSIA, sehingga tabungan hari tua menjadi urusan sendiri.</p>"
+    },
+    {
+      "q": "Kenapa iuran pemberi kerja 14% tidak mengurangi gaji bersih?",
+      "a": "<p>Iuran itu dibayar pemberi kerja di luar gaji yang tertulis di kontrak, langsung ke dana pensiun warga negara. Karena itu uangnya tampil sebagai baris pembanding dan tidak ikut memotong gaji bersih.</p>"
+    },
+    {
+      "q": "Apakah ada tunjangan akhir masa kerja untuk pekerja asing di Qatar?",
+      "a": "<p>Aturan ketenagakerjaan Qatar mengatur tunjangan akhir masa kerja bagi pekerja, tetapi kalkulator tidak menghitungnya. Besarnya mengikuti gaji dan lama bekerja, jadi baca kontrak dan sumber resmi.</p>"
+    },
+    {
+      "q": "Apakah gaji dari Qatar masih harus dilaporkan di Indonesia?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang ditentukan oleh tempat tinggal dan lamanya kamu berada di Indonesia, dengan patokan 183 hari. Tanyakan kasusmu ke DJP di <a href=\"https://www.pajak.go.id/\">pajak.go.id</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
+    "GRSIA pension (7%, cap 100,000 a month)": "Pensiun GRSIA (7%, batas upah QAR100.000 sebulan)",
+    "Employer 14%, on top": "Pemberi kerja 14%, dibayar di luar gaji",
+    "No pension contribution for expatriates": "Tanpa iuran pensiun untuk pekerja asing"
+  },
+  "slug": "qatar",
+  "lang": "id"
+}
