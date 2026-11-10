@@ -9,7 +9,7 @@ Global Income Tax Calculator is a free calculator that runs in the user's browse
 
 ## What it decides
 
-- **Global Income Tax Calculator** (`global-income-tax-calculator`): Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries and every US state, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.
+- **Global Income Tax Calculator** (`global-income-tax-calculator`): Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.
 
 ## Workflow
 

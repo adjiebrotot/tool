@@ -307,6 +307,8 @@ const US_ST = {
   WV: [b([10000,25000,40000,60000],[.0211,.0281,.0316,.0422,.0458]), b([10000,25000,40000,60000],[.0211,.0281,.0316,.0422,.0458]), [0,0], [2000,4000], [0,0]],
   DC: [b([10000,40000,60000,250000,500000,1000000],[.04,.06,.065,.085,.0925,.0975,.1075]), b([10000,40000,60000,250000,500000,1000000],[.04,.06,.065,.085,.0925,.0975,.1075]), [16100,32200], [0,0], [0,0]]
 };
+// Left out of the state list: these phase their deductions out on schedules not loaded. A job saved
+// with one (before the list was trimmed) still reaches here and says so instead of a figure.
 const US_ST_GATED = {
   AL: 'standard deduction phase-down and the deduction for federal income tax', CT: 'personal exemption phase-out and CT benefit recapture',
   ME: 'standard deduction and exemption phase-out', MN: 'standard deduction phase-down', NM: 'low and middle income exemption phase-out',
@@ -370,7 +372,7 @@ function us(g, k){
   const F = '1 Jan 2026', lines = [], st = k.usState || 'TX';
   const nra = k.usRes === 'nra', fs = nra ? 'S' : (k.usFiling === 'MFJ' ? 'MFJ' : 'S');
   if(st !== 'CA' && st !== 'NY' && st !== 'IL' && US_ST_GATED[st])
-    return NS(US_STATES[st] + ' is not loaded yet. Missing: its ' + US_ST_GATED[st] + '. A flat deduction would misstate the tax.');
+    return NS(US_STATES[st] + ' is not covered: the rules for its ' + US_ST_GATED[st] + ' are not loaded, and a flat deduction would misstate the tax.');
   const stLines = [], stTax = usStateLines(g, st, fs, k, stLines);
   const notes = [];
   if(nra){

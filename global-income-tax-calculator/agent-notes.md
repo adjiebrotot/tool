@@ -12,7 +12,7 @@ The form shows one job at a time. Plain field keys set job 1. Up to four jobs tr
 
 ## Decides
 
-Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries and every US state, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.
+Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.
 
 ## Most important
 
@@ -29,7 +29,7 @@ Take-home pay after income tax and employee social contributions for one to four
 ## Fields
 
 - country: The country the job is in, by ISO code: AU, CN (Shanghai rules), HK, ID, JP (Tokyo rules), MY, SG, KR, TW, TH, BE, EE, FI, FR, DE, IT (Milan rules), NL, NO, PT (mainland), ES (Madrid rules), SE, CH (City of Zurich rules), GB, CA, US, BH, KW, OM, QA, SA, AE. A country's other fields only count when it is picked.
-- usState: US only. The state, by its two-letter code (DC for Washington DC). States with no tax on wages: AK, FL, NV, NH, SD, TN, TX, WA, WY. Not loaded yet, and the tool says so instead of a figure: AL, CT, ME, MN, NM, OH, OR, RI, SC, UT, WI.
+- usState: US only. The state, by its two-letter code (DC for Washington DC). States with no tax on wages: AK, FL, NV, NH, SD, TN, TX, WA, WY. Not offered (their deduction phase-outs are not loaded), so a link must not name them: AL, CT, ME, MN, NM, OH, OR, RI, SC, UT, WI.
 - usNyc: US, New York only. true adds New York City resident tax.
 - caProv: Canada only. ON, BC, AB or QC. Other provinces are not loaded.
 - ukRegion: UK only. ruk (England, Wales or Northern Ireland) or sco (Scotland), which sets the income tax bands.
