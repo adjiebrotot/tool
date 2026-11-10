@@ -1,0 +1,126 @@
+/* Global Salary Calculator: page-specific layer.
+   Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
+@import url('../fonts.css');
+
+:root{ --input-bg:rgba(28,41,66,0.7); }
+
+.container{max-width:1440px;}
+.layout{grid-template-columns:390px 1fr;}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+h1{font-size:1.85rem;margin:0 0 4px;}
+
+/* ── Quick Start scenarios ── */
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+
+/* ── Jobs: the options being compared ── */
+.jobs-bar{padding:12px 16px 10px;border-bottom:1px solid var(--border);}
+.jobs-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.jobs-label{font-weight:700;font-size:.88rem;}
+.jobs-list{display:flex;flex-direction:column;gap:6px;}
+.job-row{display:flex;align-items:center;gap:6px;}
+.job-chip{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);padding:7px 10px;font:inherit;font-size:.84rem;cursor:pointer;transition:border-color var(--motion-fast),background-color var(--motion-fast);}
+.job-chip:hover{border-color:var(--accent);}
+.job-chip.active{border-color:var(--accent-strong);background:var(--bg-subtle);box-shadow:var(--shadow-sm);}
+.job-chip .job-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.job-chip .job-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.job-chip .job-pay{margin-left:auto;color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;white-space:nowrap;}
+.job-row .job-del{flex-shrink:0;}
+
+/* A choice in words (Gross pay, Year) is not a count: it keeps the page's own font. */
+.seg-count.seg-words .seg-btn{font-family:inherit;font-variant-numeric:normal;}
+.view-opt .seg-count{width:auto;}
+
+/* ── Control panel extras ── */
+.ctrl-tab{padding:10px 4px;font-size:.78rem;line-height:1.3;}
+.ctrl-tabs.stacked .tico{width:1.45em;height:1.45em;}
+.ctrl-panel>:first-child{margin-top:0;}
+.inline-row{display:flex;gap:8px;align-items:center;}
+.inline-row .grow{flex:1;min-width:0;}
+.period-sel{flex:0 0 auto;width:auto;}
+.affix-wrap .suffix{font-size:.8rem;}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.field-group .field-sub{margin:8px 0 2px;color:var(--muted);font-size:.8rem;line-height:1.45;}
+.empty-note{color:var(--muted);font-size:.84rem;line-height:1.5;margin:4px 2px;}
+.empty-note:empty{display:none;}
+[data-hidden]{display:none !important;}
+
+/* ── Display options beside the results ── */
+.view-bar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;padding:12px 18px;margin-bottom:18px;}
+.view-opt{display:flex;align-items:center;gap:10px;}
+.view-label{font-weight:700;font-size:.86rem;white-space:nowrap;}
+.view-opt .sel-input{width:auto;min-width:0;}
+
+/* ── KPI strip ── */
+.metrics{grid-template-columns:repeat(4,1fr);}
+.metrics.n2{grid-template-columns:repeat(2,1fr);}
+.metrics.n3{grid-template-columns:repeat(3,1fr);}
+.metric{padding:14px 16px;min-height:96px;}
+.metric .label{display:flex;align-items:center;gap:7px;}
+.metric .label .job-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.metric .value{font-size:1.35rem;}
+.metric .value.small{font-size:1.02rem;letter-spacing:0;}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.4;}
+
+/* ── Chart ── */
+.chart-card{padding:20px;margin-bottom:18px;}
+.chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
+.legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
+.legend-item.hidden{opacity:.35;}
+.canvas-wrap{height:430px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
+
+/* ── Tables ── */
+.detail-section{padding:20px;margin-bottom:18px;}
+.detail-head{margin-bottom:10px;}
+.detail-section.is-folded .detail-head{margin-bottom:0;}
+table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.85rem;}
+th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+th{font-family:'DM Sans',sans-serif;}
+th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
+.table-wrap{max-height:none;overflow-y:visible;overflow-x:auto;}
+tr:hover td{background:rgba(141,187,255,.05);}
+body.light tr:hover td{background:rgba(90,145,232,.05);}
+tr.total td{font-weight:800;border-top:1.5px solid var(--border);}
+tr.sub td{color:var(--muted);}
+tr.sub td:first-child{padding-left:22px;}
+td.note,td.src{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;white-space:normal;text-align:left;}
+td.src a{color:var(--accent-strong);text-decoration:none;}
+td.src a:hover{text-decoration:underline;}
+th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0;}
+.badge{border-radius:var(--radius-pill);padding:2px 9px;font-size:.72rem;font-weight:700;display:inline-block;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.badge-muted{background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border);}
+.job-block+.job-block{margin-top:22px;}
+.job-block h3{font-size:1rem;margin:0 0 6px;display:flex;align-items:center;gap:8px;}
+.job-block h3 .job-dot{width:11px;height:11px;border-radius:50%;}
+.job-block .job-meta{color:var(--muted);font-size:.8rem;margin:0 0 8px;}
+.job-block .job-notes{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem;line-height:1.5;}
+.job-block .ns{margin:6px 0 0;}
+
+.verdict{margin-bottom:18px;}
+.assumes-card{margin-bottom:18px;}
+.page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px;}
+.footer-note{color:var(--muted);}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .metrics,.metrics.n3{grid-template-columns:repeat(2,1fr);}
+  .canvas-wrap{height:360px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .page-footer{padding:0 10px 16px;}
+  .metrics,.metrics.n2,.metrics.n3{grid-template-columns:1fr;}
+  .canvas-wrap{height:300px;}
+  .ctrl-tab{font-size:.7rem;}
+  .view-bar{padding:12px 14px;}
+}
