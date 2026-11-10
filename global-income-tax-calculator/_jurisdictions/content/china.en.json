@@ -49,13 +49,13 @@
       "key": "local-shanghai",
       "title": "How to calculate income tax in Shanghai on CN¥360,000 a year",
       "intro": "<p>This is a local employee in Shanghai on CN¥360,000. Social insurance at 10.5% is CN¥37,800 and the housing fund at 7% is CN¥25,200. Taxable income is CN¥360,000 less the CN¥60,000 basic deduction and these two, so CN¥237,000. That is in the 20% band, giving CN¥30,480 of tax. You keep about CN¥266,520, or 74.0% of gross.</p>",
-      "after": "<p>The contributions lower your taxable income, so each extra yuan of pay costs 34% (20% tax on a pay that is also 17.5% contributions), not 20%. The calculator assumes no special additional deductions, so a parent or a renter would pay less.</p>"
+      "after": "<p>The contributions lower your taxable income, so each extra yuan of pay costs about 34%, not 20%: you pay 17.5% more in contributions, and 20% tax on the remaining 82.5%. The calculator assumes no special additional deductions, so a parent or a renter would pay less.</p>"
     },
     {
       "key": "expat-allowances",
       "title": "Take-home pay for an expat in Shanghai with CN¥120,000 of tax-free allowances",
       "intro": "<p>This is a foreign employee on CN¥600,000 who receives CN¥120,000 of tax-free allowances, such as housing or children's schooling. Social insurance is capped at CN¥47,271 and the housing fund at CN¥31,514. Taxable income is CN¥341,215 after the CN¥60,000 basic deduction, contributions and the allowances. That is in the 25% band, so tax is CN¥53,384, and you keep about CN¥467,832, or 78.0% of gross.</p>",
-      "after": "<p>Without the allowances, taxable income would be CN¥120,000 higher and the tax about CN¥30,000 more, since that slice is taxed at 25%. Allowances only count if they are properly documented and paid within the rules, and the option ends after 2027 under the current notice.</p>"
+      "after": "<p>Without the allowances, taxable income would be CN¥120,000 higher and the tax about CN¥32,000 more, since that slice is taxed at 25% and 30%. Allowances only count if they are properly documented and paid within the rules, and the option ends after 2027 under the current notice.</p>"
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to reduce Chinese tax. Which ones apply depends on your status and your employer.</p>",
@@ -109,7 +109,7 @@
     },
     {
       "q": "Why is my marginal rate on CN¥360,000 higher than 20%?",
-      "a": "<p>The pension, medical and housing fund contributions grow with pay until the ceiling, so an extra yuan of salary also adds contributions. In the calculator, 20% tax on the part left after contributions plus 17.5% of contributions gives about 34%. Above the ceiling, as for the expat example, contributions stop rising and the marginal rate falls back to the tax rate alone (25%).</p>"
+      "a": "<p>The pension, medical and housing fund contributions grow with pay until the ceiling, so an extra yuan of salary also adds contributions. In the calculator, 17.5% goes to contributions and 20% tax applies to the remaining 82.5%, which gives about 34%. Above the ceiling, as for the expat example, contributions stop rising and the marginal rate falls back to the tax rate alone (25%).</p>"
     }
   ],
   "bmc": "Found this useful? Buy me a xiaolongbao."
