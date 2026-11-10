@@ -1,0 +1,125 @@
+{
+  "slug": "saudi-arabia",
+  "lang": "en",
+  "title": "Saudi Arabia Income Tax 2026: Take-Home Pay Guide",
+  "h1": "Income tax in Saudi Arabia (2026): what do you keep from your salary?",
+  "description": "Saudi Arabia charges no income tax on salary. See what expats keep, what Saudi nationals pay to GOSI, legacy and new-entrant schemes, with two worked examples.",
+  "lede": "<p>Saudi Arabia charges no personal income tax on employment income, so an expat on SAR 240,000 a year keeps the full SAR 240,000. A Saudi national in the older GOSI scheme pays 9.75% of salary, about SAR 23,400, and keeps SAR 216,600. The employer pays GOSI on top for both groups: a 2% occupational hazards premium for an expat, a larger share for a national.</p>",
+  "law": {
+    "intro": "<p>The figures are the 2026 rules as the calculator models them. Salary is not taxed for individuals in Saudi Arabia, so what differs is social insurance through the General Organization for Social Insurance (GOSI): Saudi nationals contribute to annuities and unemployment cover, and expats do not.</p>",
+    "blocks": [
+      {
+        "h3": "No personal income tax on salary",
+        "html": "<p>There is no tax on wages, allowances or bonuses for an individual in Saudi Arabia, and no withholding on your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+      },
+      {
+        "h3": "GOSI for Saudi nationals: legacy and new entrants",
+        "html": "<p>Saudi nationals pay into GOSI on pay up to SAR 45,000 a month. The calculator offers two schemes. Under the legacy scheme the employee pays 9.75% (annuities and the SANED unemployment cover). Under the newer scheme for entrants, the employee rate is 10.25% to June 2026 and 10.75% from July 2026. Which one you are in depends on when you started contributing, so check your GOSI record.</p>",
+        "table": {
+          "head": [
+            "Scheme",
+            "Employee rate",
+            "Monthly pay cap"
+          ],
+          "rows": [
+            [
+              "Legacy (annuities and SANED)",
+              "9.75%",
+              "SAR 45,000"
+            ],
+            [
+              "New entrant, to June 2026",
+              "10.25%",
+              "SAR 45,000"
+            ],
+            [
+              "New entrant, from July 2026",
+              "10.75%",
+              "SAR 45,000"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Expats: employer-paid hazards premium only",
+        "html": "<p>Non-Saudi employees do not pay the pension and unemployment contributions. The employer pays an occupational hazards premium of 2% of pay on their behalf, up to the same cap. This is on top of your salary and does not reduce your take-home pay. End-of-service benefits for expats come from the employer under the labour law, not from GOSI.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "General Organization for Social Insurance (GOSI)",
+        "url": "https://www.gosi.gov.sa/",
+        "note": "contribution rates and schemes"
+      },
+      {
+        "name": "ZATCA, Zakat, Tax and Customs Authority",
+        "url": "https://zatca.gov.sa/",
+        "note": "taxes in Saudi Arabia"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "Take-home pay for an expat in Saudi Arabia on SAR 240,000",
+      "intro": "<p>An expat on SAR 240,000 pays no income tax and no GOSI contribution, so the whole SAR 240,000 is take-home pay, 100% of gross. The employer pays a 2% occupational hazards premium of SAR 4,800 on top, which does not affect your pay.</p>",
+      "after": "<p>Your end-of-service award is a separate payment from the employer and is not in this figure.</p>"
+    },
+    {
+      "key": "national",
+      "title": "How much does a Saudi national pay in GOSI on SAR 240,000 (legacy scheme)?",
+      "intro": "<p>A Saudi national in the legacy scheme pays no income tax but 9.75% of pay to GOSI: SAR 23,400 a year. You keep SAR 216,600, or 90.3% of gross, and the marginal rate is 9.8% (9.75% rounded) while pay is below the SAR 45,000 monthly cap.</p>",
+      "after": "<p>A new entrant to GOSI would pay 10.25% to June 2026 and 10.75% from July 2026, so slightly more. The employer's own share is not shown in the table.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
+  "strategies": [
+    {
+      "h3": "Check your home-country tax residency before you move",
+      "html": "<p><strong>Suits:</strong> every expat. Zero tax in the Gulf does not always mean zero tax overall: some countries tax citizens on worldwide income, and others treat you as resident until you meet their exit conditions.</p><p><strong>Caveat:</strong> the rules sit in your home country's law, not in the Gulf state's. Ask your home tax authority or an adviser, and keep records of your move.</p>"
+    },
+    {
+      "h3": "Save and invest the extra take-home yourself",
+      "html": "<p><strong>Suits:</strong> expats who keep the whole salary. Without a pension deduction, retirement saving is your own job. Regular contributions to a pension or investment plan in your home country or a low-cost portfolio are the usual route.</p><p><strong>Caveat:</strong> a gratuity at the end of the contract is not a retirement plan, and where you invest decides the tax on the returns. Use the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> to see how much you need.</p>"
+    },
+    {
+      "h3": "Check which GOSI scheme applies (nationals)",
+      "html": "<p><strong>Suits:</strong> Saudi nationals changing jobs or starting their first one. The legacy and new-entrant schemes have different employee rates.</p><p><strong>Caveat:</strong> you cannot choose the scheme. It depends on your GOSI history, so confirm with GOSI or your employer.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year, with no other income, bonuses or a part year.",
+    "<strong>Gratuity not modelled.</strong> End-of-service gratuity depends on your basic pay, length of service and contract, so it is not added to the figures.",
+    "<strong>Home-country tax.</strong> The calculator shows only what the Gulf state takes. Your home country may still tax you on worldwide income, depending on its rules and any treaty.",
+    "<strong>You choose the status.</strong> The calculator takes national or expat from you and does not test whether you qualify.",
+    "<strong>Package versus cash.</strong> The calculator takes the gross pay you enter. Housing, schooling or flight allowances in your contract are not split out.",
+    "<strong>Employer share for nationals.</strong> Only the employee side of GOSI is shown for nationals, not the employer's contribution."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on SAR 240,000 in Saudi Arabia?",
+      "a": "<p>An expat pays no income tax and no GOSI contribution and keeps SAR 240,000. A Saudi national in the legacy scheme pays 9.75% to GOSI and keeps SAR 216,600. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the difference between GOSI legacy and new entrants?",
+      "a": "<p>Both are for Saudi nationals. The legacy scheme takes 9.75% of pay from the employee for annuities and SANED, the unemployment cover. The newer scheme for new entrants has a higher employee rate that rises in steps: 10.25% to June 2026 and 10.75% from July 2026. Both apply on pay up to SAR 45,000 a month. Your GOSI start date decides which one you are in.</p>"
+    },
+    {
+      "q": "Do expats pay GOSI in Saudi Arabia?",
+      "a": "<p>Not the pension or unemployment part. An expat's employer pays a 2% occupational hazards premium (SAR 4,800 on SAR 240,000), which is not taken from your pay. The employer also owes you an end-of-service award at the end of your contract under the labour law, which is the replacement for a pension.</p>"
+    },
+    {
+      "q": "Is there really no income tax in Saudi Arabia?",
+      "a": "<p>There is no personal income tax on salary for individuals. The country has other taxes, such as VAT on purchases and levies for businesses and employers, but they are not taken from your pay. Your home country may still tax you.</p>"
+    },
+    {
+      "q": "Do I need to keep paying tax at home while I work in Saudi Arabia?",
+      "a": "<p>It depends on your home country's rules, which the calculator does not model. Some countries tax citizens on worldwide income or keep treating you as resident for a time. Check with your home tax authority.</p>"
+    },
+    {
+      "q": "What does a Saudi salary buy compared with home?",
+      "a": "<p>The <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> shows what a salary buys in another city, which matters because many packages include housing.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me an Arabic coffee."
+}

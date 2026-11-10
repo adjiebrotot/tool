@@ -1,0 +1,130 @@
+{
+  "slug": "italy",
+  "lang": "en",
+  "title": "Italian Income Tax 2026: How to Calculate It in Milan",
+  "h1": "How to calculate income tax and take-home pay in Italy (2026, Milan)",
+  "description": "Italian IRPEF for 2026 with Lombardy and Milan surtaxes, INPS contributions and the impatriate regime at 50% or 60%, with three worked take-home examples.",
+  "lede": "<p>Italy taxes residents on worldwide income with three IRPEF bands of 23%, 33% and 43%, plus a regional and a municipal surtax. This page models an employee living in Milan, in the Lombardy region. On a €45,000 salary an employee pays about €14,966 in INPS, IRPEF and surtaxes and keeps about €30,034, or 66.7% of gross. The impatriate regime can exclude 50% or 60% of income from tax, which lifts take-home pay on €80,000 to about €64,114 or €67,905.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rates as the calculator models them, for a full-year employee in Milan. Italy's tax is a national IRPEF plus two local layers, and the local layers depend on where you live, so the regional and municipal figures here are for Lombardy and Milan only. In Italy you can also be taxed as a resident if you are registered in the civil registry, have your habitual home or your centre of interests there for most of the year.</p>",
+    "blocks": [
+      {
+        "h3": "National IRPEF bands",
+        "html": "<p>IRPEF is charged on taxable income, which is your salary after employee social contributions. The calculator then subtracts the employment credit (<em>detrazione per lavoro dipendente</em>) from the tax. The credit is highest at low incomes and phases out to nil at €50,000.</p>",
+        "table": {
+          "head": ["Taxable income", "Rate"],
+          "rows": [
+            ["€0 to €28,000", "23%"],
+            ["€28,001 to €50,000", "33%"],
+            ["Over €50,000", "43%"]
+          ]
+        }
+      },
+      {
+        "h3": "Lombardy regional surtax and Milan municipal surtax",
+        "html": "<p>The regional surtax is progressive. The municipal surtax in this model is 0.8% of taxable income once it passes €23,000, and nil below that.</p>",
+        "table": {
+          "head": ["Taxable income", "Lombardy regional surtax"],
+          "rows": [
+            ["€0 to €15,000", "1.23%"],
+            ["€15,001 to €28,000", "1.58%"],
+            ["€28,001 to €50,000", "1.72%"],
+            ["Over €50,000", "1.73%"]
+          ]
+        }
+      },
+      {
+        "h3": "INPS social contributions",
+        "html": "<p>The employee share of INPS is 9.19% of gross salary, plus an extra 1% on the part above €56,224. The calculator applies them up to a cap of €122,295. Contributions are deducted before IRPEF is worked out, so they lower the tax base. The employer pays a larger share on top, which is not part of your take-home pay.</p>"
+      },
+      {
+        "h3": "Impatriate regime",
+        "html": "<p>Workers who move their tax residence to Italy can qualify for a regime that excludes part of their employment income from IRPEF. The calculator offers a 50% exclusion, or 60% where the conditions for the higher rate are met, which this page illustrates as a case with a child. The excluded income is capped at €600,000. Under the current rules the regime is generally meant for people who were not resident in Italy for the preceding years, and who commit to staying and working here for a minimum period. Check the exact conditions with the Agenzia delle Entrate or your payroll provider, because the calculator does not test eligibility.</p><p>Tax credits are worked out on the reduced income, as the calculator notes, so confirm the final figure with your payroll provider.</p>"
+      },
+      {
+        "h3": "The 730 tax return",
+        "html": "<p>Your employer withholds IRPEF and the local surtaxes from each payslip as your tax substitute. The simplified return known as the <em>modello 730</em> is how employees reconcile the year: you add deductions and credits such as medical costs or dependants, and the result is either extra tax withheld or a refund paid through payroll. The calculator shows the full-year tax, so it matches the final bill, not each payslip.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "Agenzia delle Entrate", "url": "https://www.agenziaentrate.gov.it/", "note": "IRPEF, surtaxes, 730, impatriate regime" },
+      { "name": "INPS", "url": "https://www.inps.it/", "note": "employee contributions and ceilings" },
+      { "name": "Ministero dell'Economia e delle Finanze", "url": "https://www.mef.gov.it/", "note": "tax legislation" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "employee-milan",
+      "title": "How much tax and take-home pay on a €45,000 salary in Milan?",
+      "intro": "<p>This is an employee on €45,000 in Milan with no special regime. INPS takes €4,136 (9.19%), so taxable income is about €40,865. IRPEF on those bands is reduced by the employment credit of €793 to leave €9,892. The Lombardy surtax adds €611 and the Milan municipal surtax adds €327. In total you pay about €14,966, keep about €30,034, and take home 66.7% of gross.</p>",
+      "after": "<p>The marginal rate is high at 49.3%. The 33% IRPEF band, the employment credit that is still phasing out, both surtaxes and INPS all apply to the next euro.</p>"
+    },
+    {
+      "key": "impatriate",
+      "title": "How the Italian impatriate regime changes tax on a €80,000 salary",
+      "intro": "<p>This is an employee on €80,000 who qualifies for the 50% exclusion. INPS takes €7,590, leaving €72,410. Half of that, €36,205, is excluded, so IRPEF is charged on €36,205. After the employment and cuneo credits of €1,672, IRPEF is €7,476. The Lombardy surtax adds €531 and the Milan surtax adds €290. You keep about €64,114, or 80.1% of gross.</p>",
+      "after": "<p>The marginal rate is 35.7%. Credits are worked out on the reduced income, so treat this as an estimate and confirm it with payroll.</p>"
+    },
+    {
+      "key": "impatriate-with-child",
+      "title": "Italian take-home pay on €80,000 with the 60% impatriate exclusion",
+      "intro": "<p>The same €80,000 salary with the 60% exclusion leaves €28,964 of taxable income (60% of €72,410, or €43,446, is excluded). IRPEF after €2,891 of employment and cuneo credits is €3,867. The Lombardy surtax is €406 and the Milan surtax is €232. You keep about €67,905, or 84.9% of gross.</p>",
+      "after": "<p>That is about €3,800 more take-home pay than with the 50% exclusion, and the marginal rate falls to 26.1%. The 60% rate depends on conditions such as having a minor child, so check eligibility before you rely on it.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Italian tax. Which ones apply depends on your residence and situation.</p>",
+  "strategies": [
+    {
+      "h3": "Check eligibility for the impatriate regime before you move",
+      "html": "<p><strong>Suits:</strong> people moving their tax residence to Italy for work, as in the €80,000 examples. The exclusion is the largest lever in the page.</p><p><strong>Caveat:</strong> it has conditions on your earlier residence, how long you stay and the type of work, and some of them are easier to meet if you plan ahead. The calculator does not test them.</p>"
+    },
+    {
+      "h3": "Supplementary pension fund contributions",
+      "html": "<p><strong>Suits:</strong> employees on the 33% band or above. Contributions to a supplementary pension fund (<em>previdenza complementare</em>) can be deducted from income up to an annual limit, so check the current cap with the Agenzia delle Entrate.</p><p><strong>Caveat:</strong> the money is tied up until retirement apart from limited early-access rules, and the benefit is taxed when paid.</p>"
+    },
+    {
+      "h3": "Company welfare and fringe benefits",
+      "html": "<p><strong>Suits:</strong> employees whose employer offers welfare benefits such as meal vouchers, transport passes or contributions to health funds. Many of these are exempt from income tax up to thresholds.</p><p><strong>Caveat:</strong> the thresholds change and depend on your family situation, so confirm with your employer's payroll.</p>"
+    },
+    {
+      "h3": "Claim deductions and credits in the 730",
+      "html": "<p><strong>Suits:</strong> any resident employee. Medical costs, mortgage interest on a main home, dependants and some education costs give a tax credit or a deduction when you file.</p><p><strong>Caveat:</strong> you need receipts, and each item has its own limit. The calculator does not include these items.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Milan and Lombardy only.</strong> The regional and municipal surtaxes are the ones for Lombardy and Milan. Other regions and cities charge different rates.",
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, property income, freelance work or a part year.",
+    "<strong>No bonuses or equity.</strong> Bonuses, stock options and extra payments are not modelled separately.",
+    "<strong>No eligibility test for the impatriate regime.</strong> You choose the 50% or 60% option. The calculator does not check your residence history or family situation.",
+    "<strong>Single person, no dependants.</strong> Family credits and deductions are not included.",
+    "<strong>No deductions in the 730.</strong> Medical costs, mortgage interest and similar items are not modelled.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on €45,000 in Italy?",
+      "a": "<p>An employee in Milan pays about €14,966 in INPS contributions, IRPEF and the regional and municipal surtaxes, and keeps about €30,034. Outside Milan the surtaxes differ. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the Italian impatriate regime and who gets 50% or 60%?",
+      "a": "<p>It excludes part of your employment income from IRPEF when you move your tax residence to Italy. The calculator offers a 50% exclusion, and 60% for the case with a child, and caps the excluded amount at €600,000. The real rules set conditions on how long you were non-resident before and on your commitment to stay, so read the details on the <a href=\"https://www.agenziaentrate.gov.it/\">Agenzia delle Entrate site</a> before relying on it.</p>"
+    },
+    {
+      "q": "Why do I pay regional and municipal taxes on top of IRPEF?",
+      "a": "<p>Italy lets regions and municipalities add their own surtaxes to the national IRPEF, so the total depends on where you live. In this model Lombardy charges between 1.23% and 1.73% by band, and Milan charges 0.8% of taxable income once it passes €23,000. Rome, Naples or a small town would give a different total.</p>"
+    },
+    {
+      "q": "What is the 730 return and do I have to file it?",
+      "a": "<p>The <em>modello 730</em> is a simplified annual return for employees. Your employer withholds tax every month and acts as your tax substitute, so you may not owe anything extra. Filing a 730 lets you claim deductions and credits for medical costs, dependants and similar items, and the refund or balance is settled through your payroll. Rules on who must file depend on your situation, so check with the tax agency or a local tax assistance office.</p><p>The calculator computes the full-year tax, so a refund from a 730 would change the result.</p>"
+    },
+    {
+      "q": "Why is the marginal rate near 49% on €45,000 in Milan?",
+      "a": "<p>Several things apply at once on the next euro: the 33% IRPEF band, the employment credit that is still phasing out between €28,000 and €50,000, the Lombardy surtax of 1.72%, the Milan surtax of 0.8%, and the 9.19% INPS contribution that lowers your take-home. They add up to about 49.3% of gross, even though the headline IRPEF band is 33%. Above €50,000 the credit is gone and the band becomes 43%.</p>"
+    },
+    {
+      "q": "Is INPS paid on top of my gross salary?",
+      "a": "<p>The employee share (9.19%, and 1% more above €56,224) comes out of your gross salary. The employer pays a larger share on top, which is not shown in the take-home figure. Many Italian contracts also pay the annual salary over more than twelve monthly instalments, so your monthly payslip can differ from the annual figure divided by twelve.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me an espresso."
+}

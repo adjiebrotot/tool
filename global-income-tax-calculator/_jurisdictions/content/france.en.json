@@ -63,7 +63,7 @@
     {
       "key": "married-two-children",
       "title": "Take-home pay on €70,000 in France for a married cadre with two children",
-      "intro": "<p>The salary and contributions are the same as in the single cadre case, so net contributions are still about €14,442. What changes is the number of parts: a married couple with two children has 3 parts. Taxable income per part is much lower, so most of it falls in the 11% slice, and the <em>décote</em> cuts the bill further. Income tax falls from €8,643 to €1,233, and you keep about €54,325, or 77.6% of gross.</p>",
+      "intro": "<p>The salary and contributions are the same as in the single cadre case, so contributions are still about €14,442. What changes is the number of parts: a married couple with two children has 3 parts. Taxable income per part is much lower, so most of it falls in the 11% slice, and the <em>décote</em> cuts the bill further. Income tax falls from €8,643 to €1,233, and you keep about €54,325, or 77.6% of gross.</p>",
       "after": "<p>The marginal rate drops to 31.8%. The example assumes one earner: if your spouse also works, their income is added to the household before the parts are applied, which this calculator does not model.</p>"
     },
     {

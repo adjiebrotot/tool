@@ -1,0 +1,133 @@
+{
+  "slug": "south-korea",
+  "lang": "en",
+  "title": "South Korea Income Tax 2026: How to Calculate It",
+  "h1": "How to calculate income tax in South Korea (2026)",
+  "description": "South Korean income tax for employees and foreign workers in 2026: rates, local tax, the 19% flat election, social insurance and three worked KRW examples.",
+  "lede": "<p>South Korea taxes residents on worldwide income with progressive national rates from 6% to 45%, plus a local income tax of 10% of the national amount and about 9% of pay in social insurance. On ₩60,000,000 an employee on the standard scale keeps about ₩49,694,841 (82.8%). Foreign employees can elect a flat 19% national rate instead, which in the calculator only comes out ahead above roughly ₩162 million.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rules as the calculator models them, for an employee. Korea treats you as a resident if you have a domicile or have lived in Korea for 183 days or more. Employers withhold tax from each payslip under a standard table and settle the final amount in February, in the year-end tax settlement. The social insurance contributions are taken from pay and are deductible from taxable income.</p>",
+    "blocks": [
+      {
+        "h3": "National income tax rates",
+        "html": "<p>Rates apply to taxable income. Taxable income is your salary less the earned income deduction (see below), a ₩1,500,000 personal deduction for you and for each dependant, and your social insurance contributions. The calculator then subtracts an earned income tax credit.</p>",
+        "table": {
+          "head": ["Taxable income", "Rate"],
+          "rows": [
+            ["Up to ₩14,000,000", "6%"],
+            ["₩14,000,001 to ₩50,000,000", "15%"],
+            ["₩50,000,001 to ₩88,000,000", "24%"],
+            ["₩88,000,001 to ₩150,000,000", "35%"],
+            ["₩150,000,001 to ₩300,000,000", "38%"],
+            ["₩300,000,001 to ₩500,000,000", "40%"],
+            ["₩500,000,001 to ₩1,000,000,000", "42%"],
+            ["Over ₩1,000,000,000", "45%"]
+          ]
+        }
+      },
+      {
+        "h3": "Earned income deduction",
+        "html": "<p>Employees get a deduction that stands in for work expenses. It falls as a share of pay as salary rises, and it is capped at ₩20,000,000.</p>",
+        "table": {
+          "head": ["Annual salary", "Deduction"],
+          "rows": [
+            ["Up to ₩5,000,000", "70% of salary"],
+            ["₩5,000,001 to ₩15,000,000", "₩3,500,000 + 40% of the part over ₩5,000,000"],
+            ["₩15,000,001 to ₩45,000,000", "₩7,500,000 + 15% of the part over ₩15,000,000"],
+            ["₩45,000,001 to ₩100,000,000", "₩12,000,000 + 5% of the part over ₩45,000,000"],
+            ["Over ₩100,000,000", "₩14,750,000 + 2% of the part over ₩100,000,000 (cap ₩20,000,000)"]
+          ]
+        }
+      },
+      {
+        "h3": "Local income tax and the 19% flat election",
+        "html": "<p>On top of the national tax, local income tax is 10% of the national amount, so a 15% national rate costs 16.5% in all. Foreign employees can elect a flat 19% national rate on their whole salary, with no deductions or credits, instead of the standard scale. With local tax it comes to 20.9% of gross. It is a time-limited relief, so check with the National Tax Service that it is available for you and how to elect it.</p>"
+      },
+      {
+        "h3": "Social insurance",
+        "html": "<p>The calculator takes the employee's share of the national pension (4.75% of pay up to a monthly cap, which rises on 1 July), health insurance (3.595%), long-term care (13.14% of the health premium) and employment insurance (0.9%). Employers pay their own shares on top.</p>"
+      }
+    ],
+    "sources": [
+      { "name": "National Tax Service", "url": "https://www.nts.go.kr/", "note": "income tax rates, year-end settlement and the flat-rate election" },
+      { "name": "Hometax", "url": "https://www.hometax.go.kr/", "note": "filing and year-end settlement documents" },
+      { "name": "National Pension Service", "url": "https://www.nps.or.kr/", "note": "pension contributions and refunds for foreign nationals" },
+      { "name": "National Health Insurance Service", "url": "https://www.nhis.or.kr/", "note": "health and long-term care premiums" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "progressive",
+      "title": "How to calculate Korean income tax on ₩60,000,000 a year",
+      "intro": "<p>This is an employee on the standard progressive scale. The earned income deduction is ₩12,750,000, and after your ₩1,500,000 personal deduction and ₩5,830,430 of social insurance, taxable income is about ₩39,919,570. That is in the 15% band, giving ₩4,727,936 before the earned income tax credit of ₩660,000. National tax is ₩4,067,936 and local tax adds ₩406,794. You keep about ₩49,694,841, or 82.8% of gross.</p>",
+      "after": "<p>Social insurance (₩5,830,430) is larger than the income tax and local tax together (₩4,474,730). The marginal rate is 23.8%.</p>"
+    },
+    {
+      "key": "flat-rate-foreign-worker",
+      "title": "South Korea's 19% flat tax for foreign workers: take-home pay on ₩150,000,000",
+      "intro": "<p>This is a foreign employee on ₩150,000,000 who elects the 19% flat rate. National tax is ₩28,500,000, local tax is ₩2,850,000 and social insurance is ₩11,144,675. You keep about ₩107,505,326, or 71.7% of gross, and the marginal rate is 25.9%.</p>",
+      "after": "<p>At this salary the flat election does not pay in the calculator. The standard scale would leave about ₩109,241,275, which is ₩1,735,949 more. The flat rate starts to win at about ₩162,000,000 for a single person, and the gap widens above that. The calculator uses no dependants here, so a family would break even later.</p>"
+    },
+    {
+      "key": "eps-worker",
+      "title": "How much tax does an EPS worker in Korea pay on ₩30,000,000?",
+      "intro": "<p>This is a worker under the Employment Permit System (EPS) on ₩30,000,000. The earned income deduction is ₩9,750,000, and the earned income tax credit (₩613,370) cancels more than half of the ₩1,115,218 of tax before credit. National tax is ₩501,848 and local tax is ₩50,185. Social insurance takes ₩2,915,215. You keep about ₩26,532,752, or 88.4% of gross.</p>",
+      "after": "<p>Do not elect the flat 19% at this pay. It would charge ₩5,700,000 of national tax, against ₩501,848 on the standard scale. The marginal rate is 15.3%.</p>"
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Korean tax. Which ones apply depends on your visa and your employer.</p>",
+  "strategies": [
+    {
+      "h3": "Use the year-end settlement to claim deductions",
+      "html": "<p><strong>Suits:</strong> any employee. In January you collect documents for deductions such as health care, education, insurance and credit card spending from Hometax and hand them to your employer, who settles your tax in the February payroll. The calculator only models the standard deductions.</p><p><strong>Caveat:</strong> each deduction has its own rules and thresholds, so check what applies to you with your payroll team.</p>"
+    },
+    {
+      "h3": "Compare the 19% flat election with the standard scale",
+      "html": "<p><strong>Suits:</strong> foreign employees on high salaries and few deductions. In the calculator a single person gains from about ₩162,000,000 of salary, while the standard scale is better below that.</p><p><strong>Caveat:</strong> the election is a time-limited relief, and the rules on how and when you may choose it or switch back are the National Tax Service's. Confirm them before you decide.</p>"
+    },
+    {
+      "h3": "Claim dependants and family deductions",
+      "html": "<p><strong>Suits:</strong> employees with a spouse, children or parents who meet the income and residency tests. Each dependant adds a personal deduction (₩1,500,000 in the calculator), and more deductions apply to some situations.</p><p><strong>Caveat:</strong> dependants must meet the tests, and the foreign family members of a foreign worker are subject to their own rules. They also do not apply under the flat election.</p>"
+    },
+    {
+      "h3": "Check the pension refund when you leave",
+      "html": "<p><strong>Suits:</strong> foreign workers who leave Korea for good. Foreign nationals from some countries can claim a lump-sum refund of national pension contributions when they leave, depending on their country's agreement with Korea.</p><p><strong>Caveat:</strong> eligibility depends on your nationality, so check with the National Pension Service before you rely on it.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, a business or a part year.",
+    "<strong>No bonuses or equity.</strong> Bonuses, stock options and allowances are not modelled separately.",
+    "<strong>Standard deductions only.</strong> It applies the earned income deduction, a personal deduction per person and social insurance. Card spending, medical, education, insurance and housing deductions from the year-end settlement are not included.",
+    "<strong>Single person by default.</strong> Dependants only add a personal deduction, and spouse and child tax credits are not modelled.",
+    "<strong>Simplified residency.</strong> You choose the method. The calculator does not test whether you are a resident or whether the flat election is open to you.",
+    "<strong>Social insurance simplified.</strong> The national pension cap, the health insurance cap and any exemptions for foreign nationals follow the rates listed above, not your contract.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on ₩60,000,000 in South Korea?",
+      "a": "<p>On the standard scale you pay about ₩4,474,730 in national and local income tax and ₩5,830,430 in social insurance, and keep about ₩49,694,841. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "What is the 19% flat tax for foreign workers in Korea, and when does it pay?",
+      "a": "<p>Foreign employees can elect to pay a flat 19% national income tax on their whole salary, instead of the progressive scale. There are no deductions or credits under the flat rate, and local tax of 10% is added, so the total is 20.9%. It only pays when the standard scale would take more, which in the calculator happens for a single person from about ₩162,000,000. Below that the standard scale is cheaper, as in the ₩60,000,000 and ₩30,000,000 examples. Check the conditions and deadline with the National Tax Service.</p>"
+    },
+    {
+      "q": "What is the year-end tax settlement in Korea, and why does my February pay change?",
+      "a": "<p>Through the year your employer withholds tax using a standard table. In January you collect documents for deductions, such as health care, education and insurance, and your employer recalculates your tax for the full year in the February payroll. If too much was withheld you get a refund in your pay, and if too little you pay extra, so your February pay can be higher or lower than usual.</p><p>The calculator works out the full-year tax, so a monthly payslip can differ from it.</p>"
+    },
+    {
+      "q": "What is the local income tax in Korea?",
+      "a": "<p>Local income tax is charged on top of the national income tax at 10% of the national amount, so you pay it automatically when your employer withholds. It is a separate line on the settlement, not an extra tax on your income. A 15% national band costs 16.5% in total.</p>"
+    },
+    {
+      "q": "Do I pay Korean pension and health insurance as a foreigner?",
+      "a": "<p>Foreign employees are generally covered by the national pension, health insurance and employment insurance, with some exceptions that depend on nationality and the visa. The calculator includes all four contributions. Pension refunds when you leave depend on your country's agreement with Korea, so check with the <a href=\"https://www.nps.or.kr/\">National Pension Service</a>.</p>"
+    },
+    {
+      "q": "Does the standard scale or the flat rate work better for an EPS worker?",
+      "a": "<p>For a worker on ₩30,000,000 the standard scale is far cheaper: ₩501,848 of national tax against ₩5,700,000 under the flat 19%. The earned income deduction and tax credit shield most of a low salary from tax, and the flat rate removes both.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a cup of tteokbokki."
+}
