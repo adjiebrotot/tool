@@ -213,3 +213,16 @@ html.map-full-open{overflow:hidden;scrollbar-gutter:auto;}
   .map-card.is-full .map-foot{display:none;}
 }
 @media(max-width:400px){ .metrics{grid-template-columns:1fr;} }
+
+/* A pointer to the Global Income Tax Calculator under a salary, where the
+   city's tax rules are loaded there (gitcHint in script.js). Quiet by default:
+   a muted line with the globe, the link part in the accent. */
+.gitc-hint{font-family:'DM Sans',sans-serif;display:flex;align-items:flex-start;gap:7px;margin-top:8px;padding:7px 10px;border:1px dashed var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:.78rem;line-height:1.45;text-decoration:none;transition:border-color var(--motion-fast,150ms),background-color var(--motion-fast,150ms),color var(--motion-fast,150ms);}
+.gitc-hint:hover,.gitc-hint:focus-visible{border-style:solid;border-color:var(--accent);background:var(--bg-subtle);color:var(--text);}
+.gitc-hint .gitc-ico{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--accent-strong);}
+.gitc-hint strong{color:var(--text);font-weight:600;}
+.gitc-hint .gitc-go{color:var(--accent-strong);font-weight:700;white-space:nowrap;}
+.gitc-hint:hover .gitc-go{text-decoration:underline;}
+/* On a city's card: tighter, and clickable once the card is pinned. */
+.map-card-pop .gitc-hint{margin-top:8px;padding:6px 8px;font-size:.74rem;}
+.map-card-pop:not(.pinned) .gitc-hint{opacity:.85;}

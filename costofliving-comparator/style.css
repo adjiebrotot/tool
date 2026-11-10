@@ -212,3 +212,12 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .gitc-hint:hover .gitc-go{text-decoration:underline;}
 .gitc-hint.compact{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 7px;font-size:.72rem;font-weight:600;color:var(--accent-strong);white-space:nowrap;}
 .gitc-hint.compact .gitc-ico{width:12px;height:12px;margin-top:0;}
+
+/* A required salary in the detailed table: the amount, "required" and the
+   calculator pointer stacked, all right-aligned, the same in every column
+   whatever its width. */
+.dt .req-cell{display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.dt .req-cell .req-val{color:var(--positive-em);font-weight:700;}
+.dt .req-cell .req-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;line-height:1.2;}
+.dt .req-cell .req-meta .sub-num{display:inline-flex;align-items:center;gap:4px;}
+.dt .req-cell .gitc-hint.compact{margin-top:0;}
