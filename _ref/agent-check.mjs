@@ -75,7 +75,11 @@ if (!pages.length) { console.error(`agent-check: no page in PAGES matches "${FIL
 const AGENT_MAX = 512 * 1024;           // shared.js: a longer fragment is refused whole
 const KEPT_FILE = join(ROOT, '_ref', 'agent-links.json');
 const KEPT = JSON.parse(readFileSync(KEPT_FILE, 'utf8'));
-const keptFor = P => KEPT.links.filter(k => k.page === P.url);
+// A kept link made at a tool's old address is checked where the tool lives now
+// (the old address forwards there, hash and all).
+const MOVED = { '/global-salary-calculator/': '/global-income-tax-calculator/' };
+const pageOf = k => MOVED[k.page] || k.page;
+const keptFor = P => KEPT.links.filter(k => pageOf(k) === P.url);
 
 const IDS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'H', 'N'];
 const tally = Object.fromEntries(IDS.map(id => [id, { pass: 0, fail: 0 }]));
@@ -658,7 +662,7 @@ try {
   for (const P of eng) check('A6', `${P.page} solved at least one kept model`, (solvedSeen.get(P.page) || 0) > 0, '');
 
   /* ── A1/A2: the files themselves ── */
-  const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === k.page)).map(k => `${k.page} "${k.name}"`);
+  const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === pageOf(k))).map(k => `${k.page} "${k.name}"`);
   check('A2', 'every kept link names a page in PAGES', orphans.length === 0, list(orphans));
   const listedUrls = [...llmsSec.matchAll(/^- .*?: (\S+\/ai\/) \(skill:/gm)].map(m => m[1]);
   const strays = listedUrls.filter(u => !TOOLS.some(T => aiUrl(T) === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'skill', 'SKILL.md')));

@@ -60,7 +60,7 @@ Tools with a skill (AI page, then the skill):
 - Financial Freedom: https://tool.adjiebrotots.com/financialfreedom/ai/ (skill: https://tool.adjiebrotots.com/financialfreedom/ai/brotools-financialfreedom.zip; read directly: https://tool.adjiebrotots.com/financialfreedom/ai/skill/SKILL.md)
 - Valuate Everything: https://tool.adjiebrotots.com/valuateeverything/ai/ (skill: https://tool.adjiebrotots.com/valuateeverything/ai/brotools-valuateeverything.zip; read directly: https://tool.adjiebrotots.com/valuateeverything/ai/skill/SKILL.md)
 - Cost of Living Comparator: https://tool.adjiebrotots.com/costofliving-comparator/ai/ (skill: https://tool.adjiebrotots.com/costofliving-comparator/ai/brotools-costofliving-comparator.zip; read directly: https://tool.adjiebrotots.com/costofliving-comparator/ai/skill/SKILL.md)
-- Global Salary Calculator: https://tool.adjiebrotots.com/global-salary-calculator/ai/ (skill: https://tool.adjiebrotots.com/global-salary-calculator/ai/brotools-global-salary-calculator.zip; read directly: https://tool.adjiebrotots.com/global-salary-calculator/ai/skill/SKILL.md)
+- Global Income Tax Calculator: https://tool.adjiebrotots.com/global-income-tax-calculator/ai/ (skill: https://tool.adjiebrotots.com/global-income-tax-calculator/ai/brotools-global-income-tax-calculator.zip; read directly: https://tool.adjiebrotots.com/global-income-tax-calculator/ai/skill/SKILL.md)
 - DCA Scenario Explorer: https://tool.adjiebrotots.com/dcasimulator/ai/ (skill: https://tool.adjiebrotots.com/dcasimulator/ai/brotools-dcasimulator.zip; read directly: https://tool.adjiebrotots.com/dcasimulator/ai/skill/SKILL.md)
 - Load Flow Simulator: https://tool.adjiebrotots.com/loadflow-simulator/ai/ (skill: https://tool.adjiebrotots.com/loadflow-simulator/ai/brotools-loadflow-simulator.zip; read directly: https://tool.adjiebrotots.com/loadflow-simulator/ai/skill/SKILL.md)
 - ED/UC Simulator: https://tool.adjiebrotots.com/ed-uc-simulator/ai/ (skill: https://tool.adjiebrotots.com/ed-uc-simulator/ai/brotools-ed-uc-simulator.zip; read directly: https://tool.adjiebrotots.com/ed-uc-simulator/ai/skill/SKILL.md)
@@ -146,6 +146,10 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Cost of Living Comparator: Map View — https://tool.adjiebrotots.com/costofliving-comparator/map/
   - "How much would I need to earn in every other city to keep my lifestyle?"
   - "Where in the world would my salary save the most?"
+- Global Income Tax Calculator — https://tool.adjiebrotots.com/global-income-tax-calculator/
+  - "What is my take-home pay on £85,000 in London?"
+  - "What gross salary do I need to take home €4,000 a month in Madrid?"
+  - "Which job offer leaves more after tax, Singapore or Hong Kong (China)?"
 - DCA Scenario Explorer — https://tool.adjiebrotots.com/dcasimulator/
   - "Which asset is more worth it, a money market fund or an equity fund?"
   - "How do I compare multiple dollar-cost-averaging strategies?"
@@ -376,6 +380,15 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - What it does: compares cost of living across cities to estimate where income goes furthest.
 - Exchange rates: money converted between currencies uses a live daily rate fetched in the browser (ExchangeRate-API, with a fallback feed), while the cost estimates stay on the rate the cost-of-living indices were priced at.
 - Related page: https://tool.adjiebrotots.com/costofliving-comparator/map/ — Map View, which runs the same comparison from one city against all 500+ at once, on a world map. Enter a net salary and a lifestyle (one living-cost figure, or rent, groceries and other costs as separate rows) and each city shows the net salary it needs to keep the same savings ratio or the same amount of savings, in the user's own currency first and the city's currency in brackets. Global salary mode keeps the user's own salary everywhere and shows what it would save in each city, with the cities where it does not cover the lifestyle in red. Scaled salary mode takes the user's salary as a multiple of their own city's minimum wage, average net salary or median net salary, pays that same multiple of each city's own figure, and shows what it would save there; average salaries are city by city (New York and Houston differ), minimum wages are the city's, state's or country's own, and cities without a figure say why. Cities are coloured from cheapest to dearest against the user's own city.
+
+### Global Income Tax Calculator
+
+- URL: https://tool.adjiebrotots.com/global-income-tax-calculator/ (formerly the Global Salary Calculator, at /global-salary-calculator/, which forwards here)
+- How to use it (illustrated guide, the real tool running live): https://tool.adjiebrotots.com/global-income-tax-calculator/guides/ : search a country, type the pay, solve the gross pay a take-home needs, compare jobs in different currencies, read every line with its source, then how the tax is worked out with a worked London and Singapore example.
+- Best for: people weighing a job offer abroad, or checking what a salary leaves after income tax and social contributions.
+- What it does: 2026 income tax and employee social contributions for 31 countries and every US state (with Canada's four largest provinces, Scotland and New York City), each line with its source and the date its rule took effect. Gross to net, or net to gross (the gross pay that leaves a take-home you set). Up to four jobs side by side, each in its own currency; residency, expat regimes (the Dutch 30% ruling, Spain's Beckham regime, Italy's impatriates) and household change the tax where they apply.
+- Exchange rates: for reading only, from the same live daily feed as the Cost of Living Comparator. Jobs in different currencies get one chart axis per currency, lined up at the rate.
+- Related: the Cost of Living Comparator points here from a net salary in a covered city, to find the gross salary behind it.
 
 ### Video to GIF Converter
 

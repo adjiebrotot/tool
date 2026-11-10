@@ -1,4 +1,4 @@
-/* Global Salary Calculator: page-specific layer.
+/* Global Income Tax Calculator: page-specific layer.
    Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
 @import url('../fonts.css');
 
@@ -34,7 +34,17 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 
 /* A choice in words (Gross pay, Year) is not a count: it keeps the page's own font. */
 .seg-count.seg-words .seg-btn{font-family:inherit;font-variant-numeric:normal;}
+/* Words are not counts: each button is as wide as its word (Month, Take-home pay), never squeezed to an equal share. */
+.seg-count.seg-words .seg-btn{flex:1 0 auto;min-width:max-content;padding:6px 12px;}
 .view-opt .seg-count{width:auto;}
+
+/* ── Searchable pickers (country, state, province) ──
+   The site's .combo-input (SharedDropdown.searchable), dressed as the Cost of
+   Living Comparator's city search: a chosen place reads as picked, and a
+   chevron says the list opens. */
+.controls .combo-input{width:100%;background-image:var(--sel-chevron);background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+.controls .combo-input.has-value{border-color:var(--accent-strong);background-color:var(--positive-bg);}
+.controls .combo-input:focus{background-color:var(--panel);}
 
 /* ── Control panel extras ── */
 .ctrl-tab{padding:10px 4px;font-size:.78rem;line-height:1.3;}
@@ -105,6 +115,10 @@ th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-r
 .job-block .ns{margin:6px 0 0;}
 
 .verdict{margin-bottom:18px;}
+/* Opened from the Cost of Living Comparator (openFromComparator in script.js). */
+.from-col{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;margin-bottom:18px;font-size:.86rem;line-height:1.5;color:var(--muted);border-left:3px solid var(--accent);}
+.from-col strong{color:var(--text);}
+.from-col-text{flex:1;}
 .assumes-card{margin-bottom:18px;}
 .page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px;}
 .footer-note{color:var(--muted);}

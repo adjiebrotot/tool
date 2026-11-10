@@ -106,6 +106,22 @@
       '<g class="tg ob" style="animation-delay:-2s"><circle class="fg" cx="54" cy="91" r="3"/><rect class="fg" x="39" y="69" width="30" height="14" rx="4"/>' +
         '<path class="fg" d="M50.5 82L54 87L57.5 82Z"/><text class="fw" x="54" y="80" font-size="11">$$$</text></g>',
 
+    // A payslip: the gross bar, then tax (gold) and contributions (mint) fall away, leaving the
+    // take-home; the globe beside it turns, one payslip for each country.
+    'global-income-tax-calculator':
+      '<rect class="w" x="18" y="26" width="70" height="80" rx="5"/>' +
+      '<path class="sq t" d="M28 38H58M28 94H50"/>' +
+      '<rect class="fb" x="28" y="48" width="50" height="9" rx="2"/>' +
+      '<rect class="fB" x="28" y="66" width="28" height="9" rx="2"/>' +
+      '<rect class="tx ot fg" x="56" y="66" width="13" height="9" rx="2"/>' +
+      '<rect class="tx ot fm" x="69" y="66" width="9" height="9" rx="2" style="animation-delay:-.35s"/>' +
+      '<path class="sb" stroke-width="2" d="M28 84H56"/>' +
+      '<circle class="w" cx="88" cy="36" r="16"/>' +
+      '<path class="sb" stroke-width="2" stroke-opacity=".45" d="M72 36H104"/>' +
+      '<g class="sb" stroke-width="2" stroke-opacity=".7"><path class="mr ol" d="M88 20A8 16 0 0 1 88 52"/>' +
+        '<path class="mr m2 ol" d="M88 20A8 16 0 0 1 88 52" style="animation-delay:-2s"/>' +
+        '<path class="mr m3 ol" d="M88 20A8 16 0 0 1 88 52" style="animation-delay:-4s"/></g>',
+
     // A globe with three clocks around it, each at its own time.
     worldclock:
       '<circle class="w" cx="60" cy="62" r="26"/>' +
@@ -355,6 +371,9 @@
     'costofliving-comparator': '&{--d:6s}&.mr{animation-name:taCl1}&.m2{transform:scaleX(-1)}&.m3{opacity:0}&.tg{animation-name:taCl2}' +
       '@keyframes taCl1{0%{transform:scaleX(-2);opacity:0}25%,75%{opacity:1}100%{transform:scaleX(2);opacity:0}}' +
       '@keyframes taCl2{0%{transform:scale(0);opacity:0}7%{transform:scale(1.15);opacity:1}11%,40%{transform:none;opacity:1}48%,100%{transform:scale(.6);opacity:0}}',
+
+    'global-income-tax-calculator': '&{--d:6s}&.tx{animation-name:taGi1}&.mr{animation-name:taCl1}&.m2{transform:scaleX(-1)}&.m3{opacity:0}' +
+      '@keyframes taGi1{0%,22%{transform:none;opacity:1}40%,66%{transform:translateY(20px) rotate(8deg);opacity:0}67%{transform:translateY(-8px);opacity:0}80%,100%{transform:none;opacity:1}}',
 
     worldclock: '&{--d:8s}&.mh{animation-name:taWc;animation-timing-function:linear}' +
       '@keyframes taWc{to{transform:rotate(360deg)}}',

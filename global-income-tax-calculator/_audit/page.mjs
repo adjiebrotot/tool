@@ -1,4 +1,4 @@
-// Global Salary Calculator: page audit.
+// Global Income Tax Calculator: page audit.
 //
 // Drives the REAL page in headless Chromium (Chart.js from _ref/.libcache/, run
 // node _ref/chart-check.mjs once to fill it) the way a reader does: picks the
@@ -7,7 +7,7 @@
 // page's plumbing to them (field reading, numbers typed with commas, a monthly
 // period, net to gross, the display currency, the saved jobs).
 //
-// Run: node global-salary-calculator/_audit/page.mjs
+// Run: node global-income-tax-calculator/_audit/page.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync, readFileSync } from 'node:fs';
@@ -50,7 +50,7 @@ async function open(clean = true){
     return route.fulfill({ status: 204, body: '' });
   });
   await page.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname, '1'); } catch(e){} });
-  await page.goto(ORIGIN + '/global-salary-calculator/');
+  await page.goto(ORIGIN + '/global-income-tax-calculator/');
   await page.waitForFunction(() => window.__GSC);
   return { ctx, page, errs };
 }

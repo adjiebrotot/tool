@@ -359,6 +359,82 @@ function fmtN(v,d=0){
   if(v==null||!isFinite(v))return'—';
   return Number(v).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
 }
+// ═══════════════════════════════════════════════════════════
+// GLOBAL INCOME TAX CALCULATOR HINT
+//
+// The salaries here are net (take-home). Where a city's tax rules are loaded
+// in the Global Income Tax Calculator (../global-income-tax-calculator/), a
+// short line under the salary points there: in "I can save" to turn a known
+// gross salary into this net one, in "I need to earn" to find the gross that
+// leaves the net income needed. The link opens the calculator set to the city
+// (#from=col, read by that tool's script.js), in a new tab so this comparison
+// stays as it is. The coverage below mirrors the calculator's engine.js: a
+// country whose rules are for one city (Zurich, Milan, Madrid, Tokyo,
+// Shanghai) counts only for that city, a US state only once its rules are
+// loaded, Canada for its four provinces, Portugal for the mainland.
+// ═══════════════════════════════════════════════════════════
+const GITC_COUNTRY = {
+  'Australia':'AU','Singapore':'SG','United Kingdom':'GB','Germany':'DE','United States':'US','Canada':'CA','France':'FR',
+  'Netherlands':'NL','Belgium':'BE','Switzerland':'CH','Italy':'IT','Spain':'ES','Portugal':'PT','Norway':'NO','Sweden':'SE',
+  'Finland':'FI','Estonia':'EE','Japan':'JP','South Korea':'KR','China':'CN','Taiwan (China)':'TW','Hong Kong (China)':'HK',
+  'Indonesia':'ID','Malaysia':'MY','Thailand':'TH','United Arab Emirates':'AE','Saudi Arabia':'SA','Qatar':'QA','Bahrain':'BH',
+  'Kuwait':'KW','Oman':'OM'
+};
+const GITC_ONE_CITY = { CH:'Zurich', IT:'Milan', ES:'Madrid', JP:'Tokyo', CN:'Shanghai' };
+const GITC_US_NOT_LOADED = ['AL','CT','ME','MN','NM','OH','OR','RI','SC','UT','WI'];
+const GITC_CA_PROV = {
+  'Toronto':'ON','Markham':'ON','Ottawa':'ON','Hamilton':'ON','London':'ON','Kitchener':'ON','Mississauga':'ON','Kingston':'ON',
+  'Brampton':'ON','St.Catharines':'ON','Windsor':'ON','Victoria':'BC','Nanaimo, BC':'BC','Vancouver':'BC','Kamloops':'BC',
+  'Surrey':'BC','Kelowna':'BC','Calgary':'AB','Edmonton':'AB','Red Deer':'AB','Quebec City':'QC','Montreal':'QC'
+};
+const GITC_SCOTLAND = ['Glasgow','Edinburgh','Aberdeen','Dundee','Inverness','Stirling','Perth'];
+const GITC_PT_ISLANDS = ['Funchal','Ponta Delgada','Angra do Heroismo'];
+// The calculator's fields for a city, or null when its rules are not loaded there.
+function gitcJob(city){
+  if(!city) return null;
+  const code = GITC_COUNTRY[city.country];
+  if(!code) return null;
+  if(GITC_ONE_CITY[code] && GITC_ONE_CITY[code] !== city.city) return null;
+  const job = { country: code };
+  if(code === 'US'){
+    const m = /,\s*([A-Z]{2})$/.exec(city.city);
+    if(!m || GITC_US_NOT_LOADED.includes(m[1])) return null;
+    job.usState = m[1];
+    if(m[1] === 'NY' && /^New York\b/.test(city.city)) job.usNyc = 'true';
+  } else if(code === 'CA'){
+    if(!GITC_CA_PROV[city.city]) return null;
+    job.caProv = GITC_CA_PROV[city.city];
+  } else if(code === 'GB'){
+    job.ukRegion = GITC_SCOTLAND.includes(city.city) ? 'sco' : 'ruk';
+  } else if(code === 'PT' && GITC_PT_ISLANDS.includes(city.city)) return null;
+  return job;
+}
+// kind 'gross': the reader may know a gross salary there. kind 'need': the net
+// income needed there, monthly, in the city's currency. compact: a table cell.
+function gitcHint(city, kind, monthly, compact){
+  const job = gitcJob(city);
+  if(!job) return '';
+  const q = Object.assign({ from: 'col' }, job, kind === 'need'
+    ? { dir: 'net', amount: Math.max(0, Math.round(monthly || 0)), period: 'monthly' }
+    : { dir: 'gross', period: 'monthly' });
+  const href = '../global-income-tax-calculator/#' + Object.keys(q).map(k => k + '=' + encodeURIComponent(q[k])).join('&');
+  const place = escAttr(city.city);
+  const icon = '<svg class="gitc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/></svg>';
+  const go = kind === 'need' ? 'Find the gross salary' : 'Find your net salary';
+  if(compact){
+    const tip = kind === 'need'
+      ? place + ' is covered by the Global Income Tax Calculator: find the gross salary that leaves this net income.'
+      : 'Know the gross salary? ' + place + ' is covered by the Global Income Tax Calculator: find the net salary.';
+    return `<a class="gitc-hint compact" href="${href}" target="_blank" rel="noopener" data-tip="${tip}" aria-label="${tip}">${icon}<span>${kind === 'need' ? 'Gross needed' : 'Gross to net'}</span><span aria-hidden="true">↗</span></a>`;
+  }
+  const lead = kind === 'need'
+    ? `<strong>${place}</strong> is covered by the Global Income Tax Calculator.`
+    : `Know the gross salary? <strong>${place}</strong> is covered by the Global Income Tax Calculator.`;
+  const tail = kind === 'need' ? ' that leaves this net income' : '';
+  return `<a class="gitc-hint" href="${href}" target="_blank" rel="noopener">${icon}<span class="gitc-text">${lead} <span class="gitc-go">${go}${tail} ↗</span></span></a>`;
+}
+const escAttr = t => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 function fmtC(v,curr,compact=false){
   if(v==null||!isFinite(v))return'—';
   const n=Number(v), abs=Math.abs(n), sign=n<0?'-':'';
@@ -1029,6 +1105,7 @@ function renderSimpleSave(area,from,to){
         <div class="field-label">Net salary</div>
         <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
+        ${gitcHint(from,'gross')}
       </div>
       <div class="field-row">
         <div class="field-label">Expenses</div>
@@ -1051,6 +1128,7 @@ function renderSimpleSave(area,from,to){
         <div class="field-label">Net salary</div>
         <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_ts" data-min="0" data-max="100000000000" value="${formatMoneyValue(ts)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(ts,tc,fc)}
+        ${gitcHint(to,'gross')}
       </div>
       <div class="field-row">
         <div class="field-label">
@@ -1186,6 +1264,7 @@ function renderSimpleEarn(area,from,to){
           <div class="req-val">${fmtC(toReq,tc)}</div>
           ${cc(toReq,tc,fc)}
         </div>
+        ${toReq!=null&&isFinite(toReq)&&toReq>0?gitcHint(to,'need',toReq):''}
       </div>
       <div class="field-row">
         <div class="field-label">
@@ -1363,7 +1442,7 @@ function buildDetailHTML(fromCity,toCities){
   const savLabel=cf?`<br><select class="freq-sel" id="dtSavingsFreq" aria-label="Savings frequency">${unitOptions('',savFreq)}</select>`:'';
 
   // Salary row
-  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div>${S.goal==='save'?gitcHint(fromCity,'gross',0,true):''}</td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
@@ -1371,9 +1450,9 @@ function buildDetailHTML(fromCity,toCities){
       const reqM=calcReqSal(i,fromCity,tc);
       const req=reqM==null?null:reqM/incomeMult();
       const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
-      return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span></td>`;
+      return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span>${reqM!=null&&reqM>0?gitcHint(tc,'need',reqM,true):''}</td>`;
     }
-    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
+    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div>${gitcHint(tc,'gross',0,true)}</td>`;
   }).join('');
 
   // Expense rows

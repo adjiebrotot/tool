@@ -3,8 +3,8 @@
    tax jargon from the countries this tool covers; site-wide terms stay in
    shared.js. */
 
-/* ── Global Salary Calculator ── */
-SharedAbbr.glossary('global-salary-calculator', {
+/* ── Global Income Tax Calculator ── */
+SharedAbbr.glossary('global-income-tax-calculator', {
   AGI:   ['Adjusted Gross Income', 'US income after a few adjustments, before the standard deduction'],
   AHV:   ['Alters- und Hinterlassenenversicherung', 'Swiss old-age and survivors insurance, with disability (IV) and loss of earnings (EO) cover'],
   ALV:   ['Arbeitslosenversicherung', 'Swiss unemployment insurance'],
@@ -35,9 +35,9 @@ SharedAbbr.glossary('global-salary-calculator', {
   LIFT:  ['Low-income Individuals and Families Tax credit', 'an Ontario credit for low earners'],
   LITO:  ['Low Income Tax Offset', 'an Australian rebate that tapers away as income rises'],
   MFJ:   ['Married Filing Jointly', 'a US filing status that taxes a couple together'],
-  MPF:   ['Mandatory Provident Fund', 'Hong Kong\'s compulsory retirement scheme'],
+  MPF:   ['Mandatory Provident Fund', 'Hong Kong (China)\'s compulsory retirement scheme'],
   NBU:   ['Nichtberufsunfallversicherung', 'Swiss insurance against accidents away from work'],
-  NHI:   ['National Health Insurance', 'Taiwan\'s single-payer health insurance'],
+  NHI:   ['National Health Insurance', 'Taiwan (China)\'s single-payer health insurance'],
   NPS:   ['National Pension Service', 'the Korean national pension'],
   ONSS:  ['Office National de Sécurité Sociale', 'Belgian social security'],
   PAYE:  ['Pay As You Earn', 'tax withheld from pay; in Norway, a flat 25% scheme for short-stay foreign workers'],

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Global Salary Calculator: the page.
+   Global Income Tax Calculator: the page.
 
    The sums are engine.js's (GSCEngine), held to the spec's golden values by
    _audit/run.mjs. This file reads the form, keeps up to four jobs, and draws
@@ -67,6 +67,17 @@ function writeJob(job){
     setValue(el, v);
   });
   refreshFormats();
+  refreshCombos();
+}
+// The searchable pickers (country, state, province) show their select's value; a value set by code needs a refresh.
+const COMBOS = ['country', 'usState', 'caProv'];
+// A picker left open with a half-typed search (the reader clicked a Quick Start instead) closes on the new value.
+function refreshCombos(){
+  COMBOS.forEach(id => {
+    const s = $(id), c = s && s._combo;
+    if(!c) return;
+    if(document.activeElement !== c.input) c.close(); else c.refresh();
+  });
 }
 // A job as the engine reads it.
 function knobsOf(job){
@@ -122,11 +133,23 @@ function applyVisibility(){
   });
   // Money fields wear the job's own currency.
   scope.querySelectorAll('[data-cur-sym]').forEach(p => { p.textContent = E.C[country].sym; });
+  fitPrefixes();
   const net = $('dir').value === 'net';
   $('amountLabel').firstChild.textContent = (net ? 'Take-home pay' : 'Gross pay') + ' ';
   $('amountTip').setAttribute('data-tip', net
     ? 'What lands in your account after income tax and employee contributions. The gross pay that leaves it is solved for.'
     : 'Before income tax and employee contributions. Contributions your employer pays on top are not part of it.');
+}
+
+// A symbol wider than the shared inset (SAR, CHF, AED) pushes the number along, so the two never touch.
+function fitPrefixes(){
+  scope.querySelectorAll('.affix-wrap [data-cur-sym]').forEach(p => {
+    const input = p.parentNode.querySelector('.affix-input');
+    if(!input) return;
+    const w = p.getBoundingClientRect().width;
+    // Hidden rows measure 0: they are fitted again when they show (applyVisibility runs on every change).
+    input.style.paddingLeft = w ? Math.max(32, Math.ceil(p.offsetLeft + w + 7)) + 'px' : '';
+  });
 }
 
 /* ───────────────────────── Jobs ───────────────────────── */
@@ -235,6 +258,96 @@ function computeJob(job){
   return r;
 }
 
+/* ───────────────────────── Live exchange rates ─────────────────────────
+   The same mechanism as the Cost of Living Comparator: a free, keyless,
+   CORS-open daily feed read from the browser, the next source on any failure,
+   and the rates bundled in engine.js when every source fails. A rate more than
+   LIVE_SANITY times off the bundled one is a feed error, so that currency keeps
+   the bundled rate. Every sum is still worked out in the job's own currency:
+   the rates only restate it (Show amounts in, the chart's axes, the ranking).
+   Kept in localStorage and asked for again after LIVE_TTL; the comparator's
+   own saved rate counts too, since both pages share the site's storage. */
+const FX_BUNDLED = Object.assign({}, E.FX), FX_BUNDLED_DATE = E.FX_DATE;
+const FX_SRC = { name: 'open.er-api.com', url: 'https://www.exchangerate-api.com' };
+const LIVE_KEY = 'global-income-tax-calculator:live-fx', COL_LIVE_KEY = 'costofliving-comparator:live-fx';
+const LIVE_TTL = 6*3600*1000, LIVE_TIMEOUT = 8000, LIVE_SANITY = 5;
+const LIVE_SOURCES = [
+  { name: 'ExchangeRate-API', home: 'https://www.exchangerate-api.com', url: 'https://open.er-api.com/v6/latest/USD',
+    parse: j => {
+      if(!j || j.result !== 'success' || !j.rates) throw new Error('bad payload');
+      return { date: new Date(j.time_last_update_unix*1000).toISOString().slice(0, 10), rates: j.rates };
+    } },
+  ...['https://latest.currency-api.pages.dev/v1/currencies/usd.min.json',
+      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json'].map(url => ({
+    name: 'Fawaz Ahmed\'s Currency API', home: 'https://github.com/fawazahmed0/exchange-api', url,
+    parse: j => {
+      if(!j || !j.usd || !j.date) throw new Error('bad payload');
+      const rates = {};
+      Object.keys(j.usd).forEach(k => { rates[k.toUpperCase()] = j.usd[k]; });
+      return { date: j.date, rates };
+    } }))
+];
+const BUNDLED_ISO = '2026-11-10';
+const fxDateWords = iso => new Date(iso + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+// Only this page's currencies, each within the sanity bound; null when nothing usable is left or it is older than the bundled rates.
+function cleanLive(raw, src){
+  if(!raw || !raw.rates || !/^\d{4}-\d{2}-\d{2}$/.test(raw.date) || raw.date < BUNDLED_ISO) return null;
+  const rates = {};
+  Object.keys(FX_BUNDLED).forEach(c => {
+    const v = Number(raw.rates[c]), b = FX_BUNDLED[c];
+    if(c === 'USD') return;
+    if(isFinite(v) && v > 0 && v/b < LIVE_SANITY && b/v < LIVE_SANITY) rates[c] = v;
+  });
+  return Object.keys(rates).length ? { rates, date: raw.date, source: src.name, url: src.home } : null;
+}
+let LIVE = null;
+function useLive(live){
+  LIVE = live;
+  Object.keys(FX_BUNDLED).forEach(c => { E.FX[c] = live && live.rates[c] ? live.rates[c] : FX_BUNDLED[c]; });
+  E.FX_DATE = live ? fxDateWords(live.date) : FX_BUNDLED_DATE;
+  FX_SRC.name = live ? live.source : 'open.er-api.com';
+  FX_SRC.url = live ? live.url : 'https://www.exchangerate-api.com';
+}
+function readLive(key){
+  try {
+    const raw = JSON.parse(localStorage.getItem(key) || 'null');
+    if(!raw || !raw.live || !isFinite(raw.savedAt)) return null;
+    const live = cleanLive(raw.live, { name: raw.live.source, home: raw.live.url });
+    return live ? { live, savedAt: raw.savedAt } : null;
+  } catch(e){ return null; }
+}
+async function fetchJson(url){
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const t = ctl ? setTimeout(() => ctl.abort(), LIVE_TIMEOUT) : 0;
+  try {
+    const res = await fetch(url, { cache: 'no-cache', signal: ctl ? ctl.signal : undefined });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
+async function refreshLive(){
+  for(const src of LIVE_SOURCES){
+    try {
+      const live = cleanLive(src.parse(await fetchJson(src.url)), src);
+      if(!live) continue;
+      if(LIVE && LIVE.date > live.date) return;   // never trade a newer rate for a lagging mirror's
+      useLive(live);
+      try { localStorage.setItem(LIVE_KEY, JSON.stringify({ savedAt: Date.now(), live })); } catch(e){}
+      const a = document.activeElement;
+      if(!(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName))) render();
+      return;
+    } catch(e){ /* next source */ }
+  }
+}
+// Called once at load: the freshest saved rate straight away (so the page never opens on the
+// bundled rate and then jumps), then the feed when that one is old. A guide's demo keeps the bundled rate.
+function startLive(){
+  if(/[?&]demo(&|$)/.test(location.search)) return;
+  const saved = [readLive(LIVE_KEY), readLive(COL_LIVE_KEY)].filter(Boolean).sort((a, b) => b.live.date.localeCompare(a.live.date) || b.savedAt - a.savedAt)[0];
+  if(saved) useLive(saved.live);
+  if(!saved || Date.now() - saved.savedAt > LIVE_TTL) refreshLive();
+}
+
 /* ───────────────────────── Display ───────────────────────── */
 const disp = () => ({ cur: $('dispCur').value, per: $('dispPer').value });
 const perDiv = () => disp().per === 'month' ? 12 : 1;
@@ -262,7 +375,7 @@ function renderVerdict(results){
   const ns = results.map((r, i) => ({ r, i })).filter(x => x.r.notSupported);
   const nsLine = ns.map(x => 'Job ' + (x.i + 1) + ' (' + esc(E.C[x.r.country].name) + ') is not worked out: ' + esc(x.r.reason)).join(' ');
   if(ok.length === 1){
-    const { r } = ok[0], name = E.C[r.country].name;
+    const { r } = ok[0], name = jobPlace(r.job);
     const net = showMoney(r.net, r), gross = showMoney(r.gross, r);
     const title = r.solved
       ? 'To take home ' + esc(showMoney(r.target, r)) + ' ' + perWord() + ' in ' + esc(name) + ' you need <span class="v-num">' + esc(gross) + '</span> gross.'
@@ -330,13 +443,21 @@ function renderMetrics(results){
 
 /* ───────────────────────── Chart ───────────────────────── */
 let chart = null, chartCur = 'USD';
+// The currencies the x axis reads in. Jobs in different currencies, each shown in its own,
+// get an axis per currency, lined up at the exchange rate so one point across them is one pay;
+// a single display currency (Show amounts in) puts them all on one axis.
+function axisCurs(ok){
+  const curs = [...new Set(ok.map(x => x.r.cur))];
+  return disp().cur === 'local' && curs.length > 1 ? curs : [commonCur(ok.map(x => x.r))];
+}
 function sweep(results){
   const ok = results.map((r, i) => ({ r, i })).filter(x => !x.r.notSupported);
-  const cc = commonCur(ok.map(x => x.r));
+  const curs = axisCurs(ok);
+  const cc = curs[0];   // the lines are plotted in the first axis's currency; the others restate it
   chartCur = cc;
   const maxG = Math.max(1, ...ok.map(x => E.convert(x.r.entered, x.r.cur, cc)));
   const xMax = maxG*2.5, N = 60;
-  return { cc, xMax, series: ok.map(({ r, i }) => {
+  return { cc, curs, xMax, series: ok.map(({ r, i }) => {
     const pts = [];
     for(let s = 1; s <= N; s++){
       const x = xMax*s/N, local = E.convert(x, cc, r.cur);
@@ -372,9 +493,9 @@ function updateChart(results){
   }
   const sw = sweep(results);
   const grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
-  const mixed = new Set(sw.series.map(s => s.r.cur)).size > 1 && disp().cur === 'local';
-  $('chartSub').hidden = !mixed;
-  $('chartSub').textContent = mixed ? 'Gross pay in US dollars at the rates of ' + E.FX_DATE + ', so jobs in different currencies share one axis.' : '';
+  const multi = sw.curs.length > 1;
+  $('chartSub').hidden = !multi;
+  $('chartSub').textContent = multi ? 'One gross pay axis per currency (' + sw.curs.join(', ') + '), lined up at the exchange rates of ' + E.FX_DATE + '.' : '';
   const datasets = sw.series.map(s => {
     const c = colourOf(s.i);
     return {
@@ -387,6 +508,24 @@ function updateChart(results){
     };
   });
   const cc = sw.cc;
+  // Gross pay at one point of the axis, in every axis's currency.
+  const grossAt = x => sw.curs.map(c => money(E.convert(x, cc, c), c)).join(' ≈ ');
+  // Axis k restates the first one in its own currency: same span, so the zoom keeps them in step.
+  const AX = ['x', 'x2', 'x3', 'x4'];
+  const span = c => E.convert(sw.xMax, cc, c);
+  const xScales = {};
+  sw.curs.forEach((c, k) => {
+    xScales[AX[k]] = { type: 'linear', min: 0, max: span(c), position: k % 2 ? 'top' : 'bottom',
+      // The first axis names the measure; each other one reads by its symbol, which keeps the plot tall with four currencies.
+      title: { display: !k, text: sw.curs.length > 1 ? 'Gross pay a year' : 'Gross pay (' + c + ' a year)', color: muted, font: { size: 11 } },
+      ticks: { color: muted, maxTicksLimit: 9, font: { size: 11 }, callback: v => money(v, c, true) },
+      grid: k ? { drawOnChartArea: false, color: grid } : { color: grid } };
+  });
+  const zoom = SharedZoom.options({ min: 0, max: sw.xMax, points: 61 });
+  if(sw.curs.length > 1 && zoom.limits){
+    const base = zoom.limits.x;
+    sw.curs.forEach((c, k) => { zoom.limits[AX[k]] = { min: 0, max: span(c), minRange: E.convert(base.minRange, cc, c) }; });
+  }
   const options = {
     responsive: true, maintainAspectRatio: false, animation: { duration: 250 },
     interaction: { mode: 'nearest', axis: 'x', intersect: false },
@@ -395,25 +534,22 @@ function updateChart(results){
       tooltip: SharedChartTip.options({
         backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted, borderColor: grid, borderWidth: 1, padding: 10,
         callbacks: {
-          title: items => items.length ? 'Gross ' + money(items[0].parsed.x, cc) + ' a year' + (items[0].raw && items[0].raw.own ? ' (as entered)' : '') : '',
+          title: items => items.length ? 'Gross ' + grossAt(items[0].parsed.x) + ' a year' + (items[0].raw && items[0].raw.own ? ' (as entered)' : '') : '',
           label: ctx => '  ' + ctx.dataset.label + ': ' + (ctx.parsed.y == null ? 'not loaded' : ctx.parsed.y.toFixed(1) + '% taken home'),
           afterBody(items){
             if(!items.length) return;
-            $('hoverBox').textContent = 'Gross ' + money(items[0].parsed.x, cc) + ' a year  |  '
+            $('hoverBox').textContent = 'Gross ' + grossAt(items[0].parsed.x) + ' a year  |  '
               + items.map(it => it.dataset.label + ': ' + (it.parsed.y == null ? 'not loaded' : it.parsed.y.toFixed(1) + '%')).join('  |  ');
           }
         }
       }),
-      zoom: SharedZoom.options({ min: 0, max: sw.xMax, points: 61 }),
+      zoom,
       sharedYFit: { auto: { axes: ['y'] } }
     },
-    scales: {
-      x: { type: 'linear', min: 0, max: sw.xMax,
-        title: { display: true, text: 'Gross pay (' + cc + ' a year)', color: muted, font: { size: 11 } },
-        ticks: { color: muted, maxTicksLimit: 9, font: { size: 11 }, callback: v => money(v, cc, true) }, grid: { color: grid } },
+    scales: Object.assign(xScales, {
       y: { title: { display: true, text: 'Take-home (% of gross)', color: muted, font: { size: 11 } },
         ticks: { color: muted, font: { size: 11 }, callback: v => v + '%' }, grid: { color: grid } }
-    }
+    })
   };
   if(chart) chart.destroy();
   chart = new Chart($('chartCanvas'), { type: 'line', data: { datasets }, options, plugins: [SharedZoom.plugin] });
@@ -504,7 +640,7 @@ function renderAssumptions(results){
   });
   const curs = new Set(results.map(r => r.cur));
   if(disp().cur !== 'local' || curs.size > 1)
-    li.push('<strong>Exchange rates</strong> are those of ' + E.FX_DATE + ' (open.er-api.com), for reading only: every sum is worked out in the job\'s own currency.');
+    li.push('<strong>Exchange rates</strong> are those of ' + E.FX_DATE + ' (<a href="' + esc(FX_SRC.url) + '" target="_blank" rel="noopener">' + esc(FX_SRC.name) + '</a>' + (LIVE ? '' : ', bundled with the page') + '), for reading only: every sum is worked out in the job\'s own currency.');
   li.push('<strong>Employment income only.</strong> No bonuses, equity, benefits in kind, other income, tax treaties or foreign tax credits.');
   li.push('<strong>A full year</strong> in one job. Where a rule changes mid-year (a cap from 1 July, a rate from 1 June) each month is worked out and summed.');
   $('assumptions').innerHTML = li.map(x => '<li>' + x + '</li>').join('');
@@ -538,7 +674,7 @@ const q = v => '"' + String(v).replace(/"/g, '""') + '"';
 function exportCsv(){
   if(!last) return;
   const { results } = last, rows = [];
-  rows.push([q('Global Salary Calculator, tool.adjiebrotots.com/global-salary-calculator')]);
+  rows.push([q('Global Income Tax Calculator, tool.adjiebrotots.com/global-income-tax-calculator')]);
   rows.push([q('Amounts ' + perWord() + ', ' + (disp().cur === 'local' ? 'each job in its own currency' : disp().cur))]);
   rows.push([q('Item')].concat(results.map((r, i) => q(jobTitle(JOBS[i], i) + ' (' + (disp().cur === 'local' ? r.cur : disp().cur) + ')'))));
   compareRows(results).forEach(([label, fn, cls]) => {
@@ -602,7 +738,7 @@ function chartPngAtSize(){
     ctx.textBaseline = 'alphabetic';
   }
   ctx.fillStyle = cssVar('--muted'); ctx.font = '400 13px "DM Sans", sans-serif';
-  ctx.fillText('Made using tool.adjiebrotots.com/global-salary-calculator', pad, outH - 14);
+  ctx.fillText('Made using tool.adjiebrotots.com/global-income-tax-calculator', pad, outH - 14);
   return out;
 }
 function chartSvg(){ const a = arguments; return SharedExport.atDesktopSize('chartCanvas', () => chartSvgAtSize.apply(null, a)); }
@@ -644,11 +780,11 @@ function chartSvgAtSize(){
       x += widths[i] - markW - gap + itemGap;
     });
   }
-  text('Made using tool.adjiebrotots.com/global-salary-calculator', pad, H - 10, 10, 400, cssVar('--muted'));
+  text('Made using tool.adjiebrotots.com/global-income-tax-calculator', pad, H - 10, 10, 400, cssVar('--muted'));
   const xml = '<?xml version="1.0" encoding="utf-8"?>\n' + new XMLSerializer().serializeToString(svg);
-  downloadBlob(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }), 'global-salary-calculator.svg');
+  downloadBlob(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }), 'global-income-tax-calculator.svg');
 }
-function exportPng(){ chartPng().toBlob(b => downloadBlob(b, 'global-salary-calculator.png')); }
+function exportPng(){ chartPng().toBlob(b => downloadBlob(b, 'global-income-tax-calculator.png')); }
 
 /* ───────────────────────── Quick Start ───────────────────────── */
 /* Each opens from the page's defaults, so none inherits what was on screen. */
@@ -712,6 +848,12 @@ function init(){
     className: /^\d/.test(sel.options[0].value) ? '' : 'seg-words',
     ariaLabel: (sel.closest('.field-row, .view-opt') && sel.closest('.field-row, .view-opt').querySelector('.field-label, .view-label') || {}).textContent || sel.id
   }));
+  // Country, state and province are searchable: type a few letters instead of scrolling. The select stays the field of record.
+  if(window.SharedDropdown && SharedDropdown.searchable){
+    SharedDropdown.searchable($('country'), { placeholder: 'Search country…', chip: o => (E.C[o.value] || {}).cur || '' });
+    SharedDropdown.searchable($('usState'), { placeholder: 'Search state…', chip: o => o.value });
+    SharedDropdown.searchable($('caProv'), { placeholder: 'Search province…', chip: o => o.value });
+  }
   scope.querySelectorAll('.fmt-num').forEach(el => SharedFmt.attachCurrencyInput(el, { maxDecimals: 2 }));
   scope.querySelectorAll('.fmt-pct').forEach(el => SharedFmt.attachCurrencyInput(el, { maxDecimals: 3 }));
   SharedFreq.attachSelect($('period'), $('amount'), { maxDecimals: 2 });
@@ -721,10 +863,13 @@ function init(){
     document.querySelectorAll('.ctrl-panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     $('tab-' + tab.dataset.tab).classList.add('active');
+    fitPrefixes();
   }));
 
-  scope.addEventListener('input', () => { clearQuickStart(); render(); });
-  scope.addEventListener('change', () => { clearQuickStart(); render(); });
+  // Typing a search into a picker is not a change: the pick itself fires on its select.
+  const fromForm = e => !(e.target && e.target.classList && e.target.classList.contains('combo-input'));
+  scope.addEventListener('input', e => { if(fromForm(e)){ clearQuickStart(); render(); } });
+  scope.addEventListener('change', e => { if(fromForm(e)){ clearQuickStart(); render(); } });
   $('dispCur').addEventListener('change', render);
   $('dispPer').addEventListener('change', render);
   $('addJob').addEventListener('click', addJob);
@@ -743,6 +888,7 @@ function init(){
   $('chartCanvas').addEventListener('mouseleave', () => { $('hoverBox').textContent = 'Hover the chart to read each job\'s take-home share at that gross pay.'; });
   document.querySelectorAll('.quick-start-btn').forEach(b => b.addEventListener('click', () => applyQuickStart(b.dataset.preset)));
 
+  startLive();
   JOBS = DEFAULT_JOBS().map(j => j ? fullJob(j) : readJob());
   ACTIVE = 0;
 
@@ -772,7 +918,79 @@ function init(){
   SharedFold.attach($('linesSection'), { key: 'global-salary-calculator-lines', bodies: ['.table-wrap'] });
   render();
 
+  openFromComparator();
+
+  // The tour's example and its hand-back (tour.js): Asia hubs in each job's own currency.
+  window.__GSC_TOUR = {
+    seed(){ applyQuickStart('asia'); $('dispCur').value = 'local'; $('dispCur').dispatchEvent(new Event('change')); },
+    saveState(){ syncActive(); return { jobs: JSON.parse(JSON.stringify(JOBS)), active: ACTIVE, dispCur: $('dispCur').value, dispPer: $('dispPer').value,
+      qs: (document.querySelector('.quick-start-btn.active') || {}).dataset }; },
+    restoreState(snap){
+      if(!snap || !Array.isArray(snap.jobs) || !snap.jobs.length) return;
+      JOBS = snap.jobs; ACTIVE = Math.min(snap.active || 0, JOBS.length - 1);
+      writeJob(JOBS[ACTIVE]);
+      $('dispCur').value = snap.dispCur || 'local';
+      $('dispPer').value = snap.dispPer || 'year';
+      $('dispPer').dispatchEvent(new Event('change'));
+      clearQuickStart();
+      if(snap.qs && snap.qs.preset) document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === snap.qs.preset));
+      if(persist) persist.save();
+      render();
+    }
+  };
+
   window.__GSC = { E, JOBS: () => JOBS, active: () => ACTIVE, compute: computeJob, readJob, writeJob, applyQuickStart, pickJob, addJob, removeJob, render };
+}
+
+/* ═════════════════════ From the Cost of Living Comparator ═════════════════════
+   The comparator points here under a salary in a city whose rules are loaded
+   (gitcHint in costofliving-comparator/script.js), with the city as fields:
+     #from=col&country=US&usState=CA[&usNyc=true|caProv=ON|ukRegion=sco]
+       &dir=gross|net[&amount=<monthly>]&period=monthly
+   It opens one job on that place, per month, and the hash leaves the address
+   so a reload keeps the reader's own edits. Only these keys are read; a value
+   the form does not hold is skipped, never thrown on. */
+const FROM_COL_KEYS = ['country', 'usState', 'usNyc', 'caProv', 'ukRegion', 'dir', 'amount', 'period'];
+function openFromComparator(){
+  const h = location.hash || '';
+  if(!/^#from=col(&|$)/.test(h)) return;
+  const q = new URLSearchParams(h.slice(1));
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  const country = String(q.get('country') || '').toUpperCase();
+  if(!E.C[country]) return;
+  const job = { country };
+  FROM_COL_KEYS.forEach(k => {
+    if(k === 'country' || !q.has(k)) return;
+    const el = FIELDS.find(f => handle(f) === k), v = q.get(k);
+    if(!el) return;
+    if(el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v)) return;
+    if(k === 'amount'){
+      const n = Number(v);
+      if(isFinite(n) && n > 0) job.amount = SharedFmt.formatThousands(String(Math.min(n, 1e11)), { maxDecimals: 2 });
+      return;
+    }
+    job[k] = el.type === 'checkbox' ? v === 'true' : v;
+  });
+  if(!job.amount) job.amount = job.period === 'monthly' ? '10,000' : DEFAULTS.amount;
+  JOBS = [fullJob(job)];
+  ACTIVE = 0;
+  writeJob(JOBS[0]);
+  $('dispCur').value = 'local';
+  $('dispPer').value = job.period === 'monthly' ? 'month' : 'year';
+  $('dispPer').dispatchEvent(new Event('change'));
+  clearQuickStart();
+  if(persist) persist.save();
+  render();
+  const place = jobPlace(JOBS[0]);
+  const note = document.createElement('div');
+  note.className = 'from-col card';
+  note.setAttribute('role', 'status');
+  note.innerHTML = '<span class="from-col-text"><strong>Opened from the Cost of Living Comparator</strong> on ' + esc(place) + ', per month. '
+    + (job.dir === 'net' ? 'The gross pay shown is what leaves the net income it needs.' : 'Enter the gross salary to see the take-home pay.')
+    + ' Set residency and household on the left to match you.</span>' + SharedIcon.button('close', 'Dismiss', 'from-col-close');
+  note.querySelector('.from-col-close').addEventListener('click', () => note.remove());
+  $('verdict').insertAdjacentElement('beforebegin', note);
+  if(job.dir !== 'net') setTimeout(() => { try { $('amount').focus({ preventScroll: true }); $('amount').select(); } catch(e){} }, 300);
 }
 
 /* ═════════════════════ AI links ═════════════════════
