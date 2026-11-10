@@ -242,13 +242,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/canada/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/china/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/china/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -291,6 +309,12 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -351,6 +375,12 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -435,6 +465,12 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/spain/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/spain/id/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

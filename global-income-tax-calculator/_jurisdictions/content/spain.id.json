@@ -1,0 +1,170 @@
+{
+  "slug": "spain",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Spanyol 2026",
+  "h1": "Cara menghitung pajak penghasilan di Spanyol (2026)",
+  "description": "Pajak gaji di Spanyol 2026: IRPF bagian negara dan Madrid, jaminan sosial, hukum Beckham 24%, plus contoh gaji bersih untuk pekerja asing.",
+  "place": "Madrid",
+  "lede": "<p>Spanyol memajaki gaji dengan IRPF, yang terbagi dua bagian: bagian negara dengan tarif 9,5% sampai 24,5% dan bagian komunitas otonom, yang di Madrid berkisar 8,5% sampai 20,5%. Kedua bagian dijumlahkan, dan di tingkat teratas totalnya mencapai 45%. Sebagai gambaran, gaji bruto €45.000 di Madrid menyisakan gaji bersih (<em>take-home pay</em>) sekitar €33.194 setelah jaminan sosial dan IRPF, atau 73,8% dari gaji. Pekerja yang baru pindah bisa memilih rezim khusus yang dikenal sebagai hukum Beckham, dengan tarif tunggal 24% sampai €600.000.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini berlaku pada 2026 untuk karyawan yang tinggal di Madrid. Spanyol memajaki penduduk pajaknya atas penghasilan dari seluruh dunia. Kamu umumnya dianggap penduduk pajak kalau tinggal di Spanyol lebih dari 183 hari dalam satu tahun kalender, atau kalau pusat kepentingan ekonomimu ada di sana. Urutan hitungan gaji karyawan adalah jaminan sosial lebih dulu, lalu IRPF dihitung dari sisa penghasilan setelah beberapa pengurang.</p>",
+    "blocks": [
+      {
+        "h3": "IRPF terbagi dua: bagian negara",
+        "html": "<p>IRPF (<em>Impuesto sobre la Renta de las Personas Físicas</em>) dihitung dua kali dengan skala yang berbeda dan hasilnya dijumlahkan. Bagian pertama adalah skala negara, yang sama di seluruh Spanyol. Tarif hanya berlaku untuk bagian penghasilan di dalam tiap tingkat.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif bagian negara"
+          ],
+          "rows": [
+            ["€0 sampai €12.450", "9,5%"],
+            ["€12.451 sampai €20.200", "12%"],
+            ["€20.201 sampai €35.200", "15%"],
+            ["€35.201 sampai €60.000", "18,5%"],
+            ["€60.001 sampai €300.000", "22,5%"],
+            ["Di atas €300.000", "24,5%"]
+          ]
+        }
+      },
+      {
+        "h3": "IRPF terbagi dua: bagian Madrid",
+        "html": "<p>Bagian kedua ditetapkan tiap komunitas otonom. Kalkulator memakai skala Comunidad de Madrid di bawah ini. Komunitas lain memakai skala sendiri, jadi gaji yang sama bisa menghasilkan gaji bersih yang berbeda kalau kamu tinggal di Katalonia atau Valencia, misalnya.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif bagian Madrid"
+          ],
+          "rows": [
+            ["€0 sampai €13.362,22", "8,5%"],
+            ["€13.362,23 sampai €19.004,63", "10,7%"],
+            ["€19.004,64 sampai €35.425,68", "12,8%"],
+            ["€35.425,69 sampai €57.320,40", "17,4%"],
+            ["Di atas €57.320,40", "20,5%"]
+          ]
+        }
+      },
+      {
+        "h3": "Jaminan sosial dan pengurang dari gaji",
+        "html": "<p>Iuran jaminan sosial karyawan dipotong dulu sebesar 6,5% dari gaji (6,55% untuk kontrak sementara), dihitung sampai batas dasar iuran €5.101,20 per bulan, atau sekitar €61.214 setahun. Dari penghasilan setelah iuran, kalkulator mengurangkan €2.000 untuk biaya lain (<em>otros gastos</em>), dan untuk penghasilan rendah ada pengurang kerja tambahan (pasal 20 UU IRPF) yang habis di kisaran €19.750.</p><p>Spanyol juga membebaskan sebagian penghasilan lewat minimum pribadi dan keluarga (<em>mínimo personal y familiar</em>): pajak atas minimum itu dihitung lalu dikurangkan dari pajakmu. Pada bagian negara, minimum pribadinya €5.550, dengan tambahan €2.400 untuk anak pertama dan €2.700 untuk anak kedua. Madrid memakai angka yang sedikit lebih tinggi.</p>"
+      },
+      {
+        "h3": "Hukum Beckham: tarif 24% untuk pekerja yang pindah",
+        "html": "<p>Pekerja yang pindah ke Spanyol dan belum menjadi penduduk pajak Spanyol dalam lima tahun sebelumnya bisa memilih rezim khusus untuk pekerja yang datang dari luar negeri, yang dikenal sebagai hukum Beckham. Dengan rezim ini, gaji dipajaki dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya, bukan dengan skala bertingkat di atas, dan umumnya hanya penghasilan dari sumber di Spanyol yang dipajaki. Rezim ini berlaku untuk tahun kedatangan dan lima tahun berikutnya. Syarat lengkapnya ada di situs AEAT, jadi jangan menganggap rezim ini otomatis berlaku untuk setiap pekerja asing.</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Agencia Tributaria (AEAT), IRPF dan rezim pekerja pindahan",
+        "url": "https://sede.agenciatributaria.gob.es/"
+      },
+      {
+        "name": "Seguridad Social, iuran dan batas dasar iuran",
+        "url": "https://www.seg-social.es/"
+      },
+      {
+        "name": "Comunidad de Madrid, skala IRPF komunitas",
+        "url": "https://www.comunidad.madrid/"
+      },
+      {
+        "name": "Ministerio de Hacienda",
+        "url": "https://www.hacienda.gob.es/"
+      },
+      {
+        "name": "Boletín Oficial del Estado (BOE), Ley 35/2006 tentang IRPF",
+        "url": "https://www.boe.es/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident-madrid",
+      "title": "Berapa gaji bersih di Madrid kalau gaji bruto €45.000?",
+      "intro": "<p>Contoh ini untuk karyawan lajang tanpa anak yang tinggal di Madrid dengan satu pekerjaan sepanjang tahun. Jaminan sosial 6,5% mengambil €2.925. Setelah biaya lain €2.000, penghasilan kena pajaknya €40.075, dan kalkulator menghitung IRPF dua kali: bagian negara €4.737 dan bagian Madrid €4.144, yang berjumlah sekitar €8.881. Gaji bersihnya sekitar €33.194 (73,8% dari gaji), dan tiap euro tambahan dikenai potongan gabungan sekitar 40,1%, yaitu 18,5% bagian negara dan 17,4% bagian Madrid pada sisa penghasilan setelah iuran, ditambah iuran 6,5% itu sendiri.</p>",
+      "after": "<p>Pembayaran gaji di Spanyol sering terbagi 14 kali, sehingga gaji bersih €33.194 sama dengan sekitar €2.371 per pembayaran, bukan €2.766 per bulan.</p>"
+    },
+    {
+      "key": "beckham-law",
+      "title": "Berapa pajak hukum Beckham di Spanyol untuk gaji bruto €90.000?",
+      "intro": "<p>Contoh ini untuk pekerja yang pindah ke Spanyol dan memilih hukum Beckham dengan gaji bruto €90.000. Jaminan sosial dihitung sampai batas dasar iuran, sehingga hanya €3.979, bukan 6,5% dari seluruh gaji. Pajaknya 24% dari €90.000, yaitu €21.600. Gaji bersihnya sekitar €64.421 (71,6% dari gaji), dan karena tarifnya tunggal dan iuran sudah berhenti di batas dasar, potongan gabungan pada euro berikutnya hanya 24,0%. Sebagai pembanding, penduduk pajak biasa di Madrid dengan gaji sama menerima sekitar €59.574, jadi rezim ini menambah sekitar €4.847 setahun.</p>",
+      "after": "<p>Kalkulator memajaki 24% dari seluruh gaji bruto pada rezim ini. Cek ke AEAT atau konsultan pajak bagaimana dasar pajaknya dihitung untuk kasusmu.</p>"
+    },
+    {
+      "key": "resident-two-children",
+      "title": "Berapa gaji bersih di Madrid untuk pekerja dengan dua anak dan gaji bruto €45.000?",
+      "intro": "<p>Contoh ini sama dengan contoh Madrid sebelumnya, tetapi pekerjanya punya dua anak yang menjadi tanggungan. Minimum pribadi dan keluarganya naik, sehingga bagian negara turun menjadi €4.253 dan bagian Madrid menjadi €3.679, atau sekitar €7.932 secara total. Gaji bersihnya sekitar €34.143 (75,9% dari gaji), sekitar €950 lebih banyak daripada lajang tanpa anak, dan potongan gabungan pada euro berikutnya tetap 40,1%.</p>",
+      "after": "<p>Kalkulator hanya menghitung minimum untuk anak. Pengurang untuk pasangan, penyandang disabilitas atau tanggungan lain tidak dimodelkan.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs Agencia Tributaria. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategies": [
+    {
+      "h3": "Ajukan hukum Beckham tepat waktu",
+      "html": "<p>Selisihnya bisa besar: pada contoh gaji €90.000 di atas, rezim ini menambah gaji bersih sekitar €4.847 setahun. Cocok untuk pekerja yang pindah dari luar Spanyol dengan gaji menengah ke atas. Peringatannya, rezim ini harus diajukan dalam waktu yang dibatasi setelah kamu mulai bekerja (umumnya enam bulan), dan pada gaji yang lebih rendah tarif tunggal 24% bisa justru lebih berat daripada skala bertingkat. Minta pemberi kerja atau konsultan pajak menghitung kedua cara untuk kasusmu.</p>"
+    },
+    {
+      "h3": "Rencana pensiun (<em>plan de pensiones</em>)",
+      "html": "<p>Setoran ke rencana pensiun bisa mengurangi penghasilan kena pajak dalam batas tahunan yang kecil. Cocok untuk penduduk pajak yang berencana tinggal lama di Spanyol dan sudah masuk tingkat tarif menengah ke atas. Uangnya terkunci sampai pensiun kecuali dalam keadaan tertentu, dan saat dicairkan ada pajaknya. Cek batas yang berlaku di AEAT sebelum menyetor.</p>"
+    },
+    {
+      "h3": "Tunjangan fleksibel (<em>retribución flexible</em>)",
+      "html": "<p>Sebagian tunjangan dari pemberi kerja, seperti asuransi kesehatan dan kupon makan, bisa dibebaskan dari pajak sampai batas tertentu kalau diatur lewat skema gaji fleksibel. Cocok untuk karyawan yang pemberi kerjanya menawarkan skema ini. Ada batas dan syarat untuk tiap jenis tunjangan, dan kalkulator tidak menghitungnya.</p>"
+    },
+    {
+      "h3": "Cek pengurang komunitas (<em>deducciones autonómicas</em>)",
+      "html": "<p>Selain IRPF negara, tiap komunitas otonom punya pengurang pajak sendiri, misalnya untuk keluarga atau sewa rumah dengan syarat tertentu. Cocok untuk penduduk pajak yang memenuhi syarat daerahnya. Syaratnya berbeda-beda dan berubah, jadi cek situs komunitas tempat kamu tinggal.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan.",
+    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji bruto setahun. Pembayaran 14 kali tidak mengubah angka tahunan, hanya cara membaginya.",
+    "<strong>Hanya skala Madrid.</strong> Komunitas otonom lain memakai skala IRPF sendiri, sehingga hasilnya akan berbeda. Hukum Beckham sama di semua komunitas.",
+    "<strong>Pengurang keluarga terbatas.</strong> Hanya minimum untuk anak yang dihitung. Pengurang untuk pasangan, disabilitas, hipotek atau pengurang komunitas tidak dimodelkan.",
+    "<strong>Tanpa perjanjian pajak dan perkiraan saja.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Spanyol serta kewajiban lapor di Indonesia tidak dihitung. Hasilnya gambaran, bukan nasihat pajak."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji bruto €45.000 di Madrid?",
+      "a": "<p>Untuk karyawan lajang tanpa anak, gaji bersihnya sekitar €33.194 setahun (73,8%), setelah jaminan sosial €2.925 dan IRPF sekitar €8.881 (bagian negara €4.737 dan bagian Madrid €4.144). Kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    },
+    {
+      "q": "Kenapa IRPF di Spanyol dibagi dua bagian, negara dan komunitas?",
+      "a": "<p>Spanyol membagi IRPF antara pemerintah pusat dan komunitas otonom. Pajak dihitung dua kali dengan skala yang berbeda dari penghasilan kena pajak yang sama: skala negara berlaku sama di seluruh Spanyol, sedangkan skala komunitas ditetapkan tiap daerah. Hasilnya dijumlahkan, jadi gaji yang sama bisa menghasilkan gaji bersih yang berbeda tergantung komunitas tempat kamu tinggal. Kalkulator ini memakai skala Madrid, dan pada contoh €45.000 bagian Madrid sekitar separuh dari total pajak.</p>"
+    },
+    {
+      "q": "Kenapa gaji di Spanyol dibayar 14 kali dan bagaimana menghitung gaji bersih bulanannya?",
+      "a": "<p>Banyak kontrak di Spanyol menetapkan gaji tahunan yang dibayar dalam 14 pembayaran: 12 bulanan, ditambah dua pembayaran ekstra (<em>pagas extra</em>) pada Juni dan Desember. Sebagian kontrak membagi gaji rata ke 12 bulan, dan ini disebut <em>prorrateo</em>. Kalkulator ini menghitung angka tahunan, jadi untuk mendapat gaji bersih per pembayaran, bagi hasilnya dengan 14 atau 12 sesuai kontrakmu. Pada gaji bruto €45.000 di Madrid, gaji bersih setahun €33.194 menjadi sekitar €2.371 per pembayaran dengan 14 kali, atau sekitar €2.766 dengan 12 kali. Pajak juga dipotong tiap pembayaran berdasarkan perkiraan setahun, sehingga selisihnya diselesaikan lewat laporan pajak tahunan.</p>"
+    },
+    {
+      "q": "Apa itu hukum Beckham dan siapa yang bisa memakainya?",
+      "a": "<p>Hukum Beckham adalah rezim khusus untuk pekerja yang pindah ke Spanyol, dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya, bukan skala IRPF bertingkat. Rezim ini untuk pekerja yang belum menjadi penduduk pajak Spanyol dalam lima tahun sebelumnya, dan berlaku untuk tahun kedatangan dan lima tahun berikutnya. Pada gaji bruto €90.000, kalkulator menghasilkan gaji bersih €64.421 dibandingkan sekitar €59.574 bagi penduduk pajak biasa di Madrid. Syarat lengkapnya ada di AEAT.</p>"
+    },
+    {
+      "q": "Kenapa iuran jaminan sosial berhenti naik pada gaji tinggi?",
+      "a": "<p>Iuran jaminan sosial di Spanyol dihitung dari gaji sampai batas dasar iuran, yang di kalkulator ini €5.101,20 per bulan atau sekitar €61.214 setahun. Gaji di atas batas itu tidak dikenai iuran tambahan. Pada gaji bruto €90.000 di rezim Beckham, iurannya hanya €3.979, bukan 6,5% dari seluruh gaji, sehingga potongan pada euro berikutnya semata-mata pajaknya, yaitu 24,0%.</p>"
+    },
+    {
+      "q": "Apakah punya anak mengurangi pajak di Spanyol?",
+      "a": "<p>Ya, lewat minimum pribadi dan keluarga yang dinaikkan untuk tiap anak yang menjadi tanggungan. Pada gaji bruto €45.000 di Madrid, dua anak menurunkan IRPF dari sekitar €8.881 menjadi €7.932, sehingga gaji bersih naik sekitar €950. Kalkulator hanya memodelkan minimum untuk anak.</p>"
+    },
+    {
+      "q": "Kapan seseorang dianggap penduduk pajak Spanyol?",
+      "a": "<p>Umumnya kalau kamu tinggal di Spanyol lebih dari 183 hari dalam satu tahun kalender, atau kalau pusat kepentingan ekonomimu ada di sana. Penduduk pajak dikenai pajak atas penghasilan dari seluruh dunia. Untuk kasus yang tidak jelas, tanyakan ke AEAT atau konsultan pajak.</p>"
+    },
+    {
+      "q": "Berapa uang yang bisa ditabung kalau bekerja di Spanyol dibandingkan dengan Indonesia?",
+      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Social security (6.50%, base cap 5,101.20 a month)": "Jaminan sosial (6,50%, batas dasar iuran €5.101,20 per bulan)",
+    "Social security (6.55%, base cap 5,101.20 a month)": "Jaminan sosial (6,55%, batas dasar iuran €5.101,20 per bulan)",
+    "Other expenses (2,000)": "Biaya lain (€2.000)",
+    "Reduction for work income (Art. 20)": "Pengurang penghasilan kerja (pasal 20)",
+    "IRPF, state share": "IRPF, bagian negara",
+    "IRPF, Madrid share": "IRPF, bagian Madrid",
+    "Minimum wage deduction (SMI), inside the IRPF": "Pengurang upah minimum (SMI), sudah termasuk di IRPF",
+    "Beckham regime (24% to 600,000, 47% above)": "Rezim Beckham (24% sampai €600.000, 47% di atasnya)"
+  }
+}

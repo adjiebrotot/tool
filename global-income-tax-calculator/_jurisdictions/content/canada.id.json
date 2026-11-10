@@ -1,0 +1,178 @@
+{
+  "slug": "canada",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Gaji di Kanada 2026",
+  "h1": "Cara menghitung pajak gaji di Kanada (2026)",
+  "description": "Pajak gaji di Kanada 2026: tarif federal dan provinsi, CPP, EI, Quebec, RRSP dan TFSA, plus contoh gaji bersih di Ontario, BC, Alberta, Quebec.",
+  "lede": "<p>Gaji di Kanada dipajaki oleh dua tingkat pemerintahan: pajak penghasilan federal dengan tarif bertingkat 14% sampai 33%, dan pajak provinsi yang tarifnya berbeda di tiap provinsi. Di atas itu, gajimu dipotong iuran pensiun (<em>Canada Pension Plan</em>, CPP) dan asuransi tenaga kerja (<em>Employment Insurance</em>, EI). Quebec punya sistem sendiri, termasuk laporan pajak provinsi yang terpisah. Sebagai gambaran, gaji C$90.000 di Ontario menyisakan gaji bersih (<em>take-home pay</em>) sekitar C$67.197 setahun, atau 74,7% dari gaji.</p>",
+  "law": {
+    "intro": "<p>Aturan di bawah ini untuk tahun pajak Kanada 2026, yang mengikuti tahun kalender 1 Januari sampai 31 Desember. Penduduk pajak Kanada dipajaki atas penghasilan dari seluruh dunia. Yang menentukan statusmu adalah ikatanmu dengan Kanada, misalnya tempat tinggal, pasangan atau keluarga, dan pekerjaan di sana, bukan jenis visa saja. Selain itu, orang yang tinggal di Kanada 183 hari atau lebih dalam setahun juga bisa dianggap penduduk pajak. Provinsi tempat tinggalmu pada 31 Desember menentukan pajak provinsi yang berlaku.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan federal",
+        "html": "<p>Pemerintah federal memajaki penghasilan kena pajak dengan lima tingkat, dan tiap tarif hanya berlaku untuk bagian penghasilan di dalam tingkatnya. Hampir semua orang juga mendapat kredit pajak untuk jumlah pribadi dasar (<em>basic personal amount</em>), sekitar C$16.452 untuk penghasilan sampai C$181.440 yang menyusut sampai C$14.829 di penghasilan C$258.482 ke atas. Kredit ini dihitung pada tarif terendah, 14%, jadi menurunkan pajak sekitar C$2.300. Kalkulator ini sudah memasukkannya, termasuk kredit untuk CPP, EI, dan kredit pekerja (<em>Canada employment amount</em>).</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif federal"
+          ],
+          "rows": [
+            ["C$0 sampai C$58.523", "14%"],
+            ["C$58.524 sampai C$117.045", "20,5%"],
+            ["C$117.046 sampai C$181.440", "26%"],
+            ["C$181.441 sampai C$258.482", "29%"],
+            ["Di atas C$258.482", "33%"]
+          ]
+        }
+      },
+      {
+        "h3": "CPP, CPP2, dan EI",
+        "html": "<p>CPP adalah iuran pensiun wajib sebesar 5,95% dari gaji antara C$3.500 dan C$74.600 setahun. Di atas C$74.600 sampai C$85.000, ada iuran tambahan CPP2 sebesar 4%. EI adalah asuransi kalau kamu kehilangan pekerjaan, sebesar 1,63% dari gaji sampai batas C$68.900. Ketiganya berhenti sendiri begitu penghasilanmu setahun melewati batas masing-masing, sehingga gaji bersih bulanan naik di akhir tahun bagi yang bergaji tinggi. Sebagian CPP dan EI mengurangi pajak lewat kredit, dan sebagian CPP bisa dikurangkan dari penghasilan.</p><p>Quebec memakai Quebec Pension Plan (QPP, 6,30%) sebagai pengganti CPP, tarif EI lebih rendah (1,30%), dan iuran cuti orang tua provinsi (QPIP, 0,43%).</p>"
+      },
+      {
+        "h3": "Tarif pajak provinsi",
+        "html": "<p>Setiap provinsi menetapkan tarif sendiri, dengan tingkat penghasilan yang berbeda. Kalkulator ini memuat empat provinsi: Ontario, British Columbia, Alberta, dan Quebec. Di Ontario ada tambahan pajak (<em>surtax</em>) pada pajak provinsi yang tinggi dan premi kesehatan (<em>Ontario Health Premium</em>) yang naik bertahap sampai C$900. Tarif tingkat pertamanya berkisar dari 5,05% di Ontario sampai 14% di Quebec.</p>",
+        "table": {
+          "head": [
+            "Provinsi",
+            "Tarif bertingkat (penghasilan kena pajak)"
+          ],
+          "rows": [
+            ["Ontario", "5,05% sampai C$53.891; 9,15% sampai C$107.785; 11,16% sampai C$150.000; 12,16% sampai C$220.000; 13,16% di atasnya"],
+            ["British Columbia", "5,6% sampai C$50.363; 7,7% sampai C$100.728; 10,5% sampai C$115.648; 12,29% sampai C$140.430; 14,7% sampai C$190.405; 16,8% sampai C$265.545; 20,5% di atasnya"],
+            ["Alberta", "8% sampai C$61.200; 10% sampai C$154.259; 12% sampai C$185.111; 13% sampai C$246.813; 14% sampai C$370.220; 15% di atasnya"],
+            ["Quebec", "14% sampai C$54.345; 19% sampai C$108.680; 24% sampai C$132.245; 25,75% di atasnya"]
+          ]
+        }
+      },
+      {
+        "h3": "Quebec: sistem dan laporan pajak sendiri",
+        "html": "<p>Quebec adalah satu-satunya provinsi yang mengelola pajak penghasilannya sendiri lewat <em>Revenu Québec</em>. Kalau kamu tinggal di Quebec, kamu mengisi dua laporan pajak tahunan: satu ke Canada Revenue Agency (CRA) untuk pajak federal, dan satu ke Revenu Québec untuk pajak provinsi. Sebagai imbalan, pajak federal untuk penduduk Quebec dikurangi 16,5% (<em>Quebec abatement</em>), dan ada potongan khusus pekerja sebesar 6% dari gaji, maksimum C$1.450. Kalkulator ini memakai kedua hal itu. Kredit pekerja (<em>work premium</em>), kredit solidaritas, dan premi asuransi obat RAMQ belum dimasukkan.</p>"
+      },
+      {
+        "h3": "Tahun pajak, slip T4, dan laporan tahunan",
+        "html": "<p>Pemberi kerja memotong pajak dan iuran setiap gajian berdasarkan formulir TD1 yang kamu isi, dan memberi slip T4 yang merinci semuanya pada akhir Februari tahun berikutnya. Kamu melapor ke CRA pada tahun berikutnya, umumnya sebelum 30 April. Kalau pajak yang dipotong lebih besar daripada pajak sebenarnya, selisihnya dikembalikan sebagai <em>refund</em>. Untuk bekerja kamu juga memerlukan <em>Social Insurance Number</em> (SIN).</p>"
+      }
+    ],
+    "sources": [
+      {
+        "name": "Canada Revenue Agency (CRA), pajak penghasilan, CPP, dan EI",
+        "url": "https://www.canada.ca/en/revenue-agency.html"
+      },
+      {
+        "name": "Revenu Québec, pajak penghasilan Quebec",
+        "url": "https://www.revenuquebec.ca/"
+      },
+      {
+        "name": "Pemerintah Ontario, anggaran dan pajak provinsi",
+        "url": "https://budget.ontario.ca/"
+      },
+      {
+        "name": "Pemerintah British Columbia",
+        "url": "https://www2.gov.bc.ca/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "ontario",
+      "title": "Berapa gaji bersih di Ontario dengan gaji C$90.000 setahun?",
+      "intro": "<p>Contoh ini untuk karyawan lajang di Ontario, seperti Toronto dan Ottawa, dengan satu pekerjaan sepanjang tahun. Dari gaji C$90.000, CPP sebesar C$4.230 dan CPP2 sebesar C$416 dipotong lebih dulu, begitu juga EI sebesar C$1.123. Pajak federal setelah kredit adalah C$11.252, pajak Ontario C$5.032, dan premi kesehatan Ontario C$750. Gaji bersihnya sekitar C$67.197 (74,7%), dan tarif potongan pada dolar berikutnya 29,7% (20,5% pajak federal ditambah 9,15% pajak Ontario), karena CPP dan EI sudah mencapai batasnya.</p>",
+      "after": "<p>Pada penghasilan ini, setoran RRSP C$10.000 menurunkan pajak sekitar C$2.970, jadi cocok dipertimbangkan bagi yang tinggal beberapa tahun.</p>"
+    },
+    {
+      "key": "british-columbia",
+      "title": "Berapa pajak dan gaji bersih di British Columbia dengan gaji C$90.000?",
+      "intro": "<p>Contoh ini memakai gaji, CPP, CPP2, dan EI yang sama dengan contoh Ontario, hanya saja pekerjanya di British Columbia (BC), seperti Vancouver. Pajak federal tetap C$11.252, tetapi pajak BC sekitar C$4.786 dan tidak ada premi kesehatan seperti di Ontario. Gaji bersihnya sekitar C$68.193 (75,8%), sekitar C$996 lebih besar daripada di Ontario, dan tarif potongan pada dolar berikutnya 28,2%.</p>",
+      "after": "<p>Selisih ini hanya soal pajak, dan sewa rumah di Vancouver bisa jauh lebih mahal. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "key": "alberta",
+      "title": "Berapa gaji bersih di Alberta dengan gaji C$90.000, dan apakah lebih besar dari Ontario?",
+      "intro": "<p>Contoh ini untuk karyawan di Alberta, seperti Calgary dan Edmonton, dengan CPP, CPP2, dan EI yang sama dengan dua contoh sebelumnya. Pajak federal tetap C$11.252, sedangkan pajak Alberta sekitar C$5.470, dan tidak ada premi kesehatan. Gaji bersihnya sekitar C$67.509 (75,0%), sekitar C$312 lebih besar daripada di Ontario, dan tarif potongan pada dolar berikutnya 30,5% (20,5% pajak federal ditambah 10% pajak Alberta).</p>",
+      "after": "<p>Alberta tidak memungut pajak penjualan provinsi, tetapi hal itu tidak termasuk dalam hitungan pajak penghasilan di sini.</p>"
+    },
+    {
+      "key": "quebec",
+      "title": "Cara menghitung pajak gaji C$90.000 di Quebec dengan QPP dan pajak provinsi sendiri",
+      "intro": "<p>Contoh ini untuk karyawan di Quebec, seperti Montreal. Iuran sosialnya berbeda dari provinsi lain: QPP C$4.479 dan QPP2 C$416 menggantikan CPP, EI C$896 dengan tarif Quebec, dan QPIP C$387. Pajak federal turun menjadi C$9.347 berkat pengurangan Quebec 16,5%, tetapi pajak Quebec sendiri C$11.240 jauh lebih besar daripada pajak provinsi di tempat lain. Gaji bersihnya sekitar C$63.235 (70,3%), sekitar C$3.962 lebih kecil daripada di Ontario, dan tarif potongan pada dolar berikutnya 36,5% (19% pajak Quebec, sekitar 17% pajak federal setelah pengurangan, dan 0,43% QPIP).</p>",
+      "after": "<p>Hasil ini belum memasukkan kredit khusus Quebec seperti kredit pekerja dan kredit solidaritas, sehingga pajak sebenarnya bisa lebih rendah bagi penghasilan tertentu.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs CRA. Cocok tidaknya bergantung pada rencanamu tinggal di sana.</p>",
+  "strategies": [
+    {
+      "h3": "<em>Registered Retirement Savings Plan</em> (RRSP)",
+      "html": "<p>RRSP adalah rekening pensiun yang setorannya mengurangi penghasilan kena pajak tahun itu. Pada gaji C$90.000 di Ontario, setoran C$10.000 menghemat sekitar C$2.970 pajak, sesuai tarif potongan marginal 29,7%. Pertumbuhannya tidak dipajaki selama di dalam rekening, tetapi penarikannya dihitung sebagai penghasilan. Cocok kalau kamu berada di tingkat pajak yang lebih tinggi sekarang daripada saat menarik nanti. Batas setorannya sekitar 18% dari penghasilan tahun sebelumnya yang kamu laporkan di Kanada, jadi pendatang baru memulai dari nol, dan penarikan setelah kamu tidak lagi menjadi penduduk Kanada dikenai pemotongan pajak tersendiri.</p>"
+    },
+    {
+      "h3": "<em>Tax-Free Savings Account</em> (TFSA)",
+      "html": "<p>TFSA berkebalikan dengan RRSP: setorannya tidak mengurangi pajak, tetapi pertumbuhan dan penarikannya bebas pajak. Cocok untuk tabungan jangka pendek atau darurat yang tidak ingin kamu pajaki lagi, dan untuk yang tinggal tidak lama sehingga RRSP kurang menarik. Ruang setorannya terbentuk selama kamu penduduk Kanada dan berusia dewasa. Setoran melebihi ruang itu, atau setoran saat kamu bukan penduduk, dikenai denda, jadi jangan menyetor lagi kalau kamu pindah keluar.</p>"
+    },
+    {
+      "h3": "Kredit biaya kuliah (<em>tuition credit</em>) yang dibawa ke depan",
+      "html": "<p>Kalau kamu pernah kuliah di lembaga Kanada yang memenuhi syarat, biaya kuliahnya menghasilkan kredit pajak federal. Kredit yang belum terpakai karena penghasilanmu waktu itu rendah bisa dibawa ke tahun-tahun berikutnya, dan memotong pajak ketika kamu mulai bekerja penuh. Cocok untuk lulusan yang bekerja di Kanada. Pastikan kamu punya formulir biaya kuliah dari kampus dan melaporkannya di laporan pajak.</p>"
+    },
+    {
+      "h3": "Lapor pajak tepat waktu untuk meminta <em>refund</em>",
+      "html": "<p>Pemberi kerja memotong pajak berdasarkan perkiraan gaji setahun, jadi pekerja yang hanya bekerja sebagian tahun atau punya kredit pajak sering membayar lebih dari yang seharusnya. Kelebihan itu hanya kembali kalau kamu melapor ke CRA, umumnya sebelum 30 April. Cocok untuk semua pekerja, terutama yang baru datang atau baru pindah. Di Quebec, ingat bahwa kamu perlu melapor ke dua instansi.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa, atau penghasilan dari usaha sendiri.",
+    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Kerja yang dimulai di tengah tahun dan pindah pemberi kerja tidak dimodelkan, padahal itu yang sering terjadi pada pendatang baru.",
+    "<strong>Tanpa bonus, saham, dan setoran RRSP.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, saham perusahaan, setoran RRSP, maupun kredit pajak biaya kuliah.",
+    "<strong>Hanya empat provinsi.</strong> Ontario, British Columbia, Alberta, dan Quebec dimuat. Provinsi dan wilayah lain belum bisa dihitung.",
+    "<strong>Kredit khusus Quebec tidak dimasukkan.</strong> Kredit pekerja, kredit solidaritas, dan premi asuransi obat RAMQ tidak dihitung.",
+    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Kanada, dan kewajiban lapor di Indonesia, tidak dihitung.",
+    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Status pajak dan hasil akhirnya ditentukan CRA dan kantor pajak provinsi, jadi perlakukan hasilnya sebagai gambaran."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji C$90.000 di Kanada?",
+      "a": "<p>Bergantung pada provinsi. Sekitar C$67.197 di Ontario, C$68.193 di British Columbia, C$67.509 di Alberta, dan C$63.235 di Quebec. Semuanya sudah termasuk pajak federal, pajak provinsi, CPP atau QPP, dan EI.</p>"
+    },
+    {
+      "q": "Kenapa orang di Quebec mengisi dua laporan pajak?",
+      "a": "<p>Karena Quebec mengelola pajak penghasilan provinsinya sendiri lewat Revenu Québec, sedangkan pajak federal tetap lewat CRA. Penduduk Quebec mengisi satu laporan ke masing-masing instansi, dengan angka penghasilan yang sama tetapi aturan potongan dan kredit yang berbeda. Sebagai gantinya, pajak federal penduduk Quebec dikurangi 16,5% (<em>Quebec abatement</em>), dan Quebec punya iuran sendiri: QPP menggantikan CPP, tarif EI lebih rendah, dan ada QPIP untuk cuti orang tua. Pada gaji C$90.000, gaji bersih di Quebec sekitar C$3.962 lebih kecil daripada di Ontario.</p>"
+    },
+    {
+      "q": "Kenapa gaji bersih saya naik di akhir tahun?",
+      "a": "<p>CPP dan EI punya batas penghasilan tahunan, yaitu C$74.600 untuk CPP dan C$68.900 untuk EI. Pemberi kerja memotongnya dari tiap gaji sampai batas itu tercapai, lalu berhenti. Pekerja bergaji tinggi mencapai batasnya sebelum tahun berakhir, jadi potongan di bulan-bulan terakhir lebih kecil dan gaji bersihnya naik. Kalkulator ini menghitung total setahun penuh, jadi slip gaji bulananmu bisa berbeda dari angka bulanan di sini.</p>"
+    },
+    {
+      "q": "Provinsi mana yang paling ringan pajaknya?",
+      "a": "<p>Pada gaji C$90.000, British Columbia menyisakan gaji bersih terbesar, lalu Alberta, Ontario, dan paling kecil Quebec. Urutan ini bisa berubah pada gaji lain karena tingkat tarif tiap provinsi berbeda. Biaya hidup, terutama sewa rumah, juga memengaruhi seberapa besar tabunganmu di akhir bulan, jadi cek <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> sebelum memutuskan kota.</p>"
+    },
+    {
+      "q": "Apa bedanya RRSP dengan TFSA, dan mana yang sebaiknya dipakai pendatang baru?",
+      "a": "<p>RRSP mengurangi pajak sekarang (setoran dikurangkan dari penghasilan) tetapi penarikannya dipajaki, sedangkan TFSA tidak mengurangi pajak sekarang tetapi penarikannya bebas pajak. Pendatang baru biasanya belum punya ruang RRSP yang besar karena ruangnya dihitung dari penghasilan yang dilaporkan di Kanada, jadi TFSA sering lebih mudah dimulai. Kalau pemberi kerjamu menambah setoran RRSP, manfaatkan itu lebih dulu. Keduanya tidak dimodelkan di kalkulator ini.</p>"
+    },
+    {
+      "q": "Apakah kalkulator ini memuat semua provinsi Kanada?",
+      "a": "<p>Tidak. Hanya Ontario, British Columbia, Alberta, dan Quebec, empat provinsi yang paling banyak dituju pendatang. Untuk provinsi lain, hasilnya tidak tersedia, dan kamu perlu mengecek tarifnya di situs pemerintah provinsi.</p>"
+    },
+    {
+      "q": "Kapan saya melapor pajak di Kanada, dan apakah saya mendapat pengembalian?",
+      "a": "<p>Tahun pajaknya sama dengan tahun kalender, dan umumnya kamu melapor ke CRA sebelum 30 April tahun berikutnya, memakai slip T4 dari pemberi kerja. Kalau pajak yang dipotong lebih besar daripada pajak sebenarnya, selisihnya dikembalikan sebagai <em>refund</em>, dan kalau lebih kecil kamu membayar kekurangannya. Baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk gambaran tabungan akhir bulan di berbagai kota, atau coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "CPP (5.95%)": "CPP (5,95%)",
+    "CPP2 (4%)": "CPP2 (4%)",
+    "EI (1.63%)": "EI (1,63%)",
+    "Federal income tax": "Pajak penghasilan federal",
+    "Ontario income tax": "Pajak penghasilan Ontario",
+    "Ontario Health Premium": "Ontario Health Premium (premi kesehatan)",
+    "British Columbia income tax": "Pajak penghasilan British Columbia",
+    "Alberta income tax": "Pajak penghasilan Alberta",
+    "QPP (6.30%)": "QPP (6,30%)",
+    "QPP2 (4%)": "QPP2 (4%)",
+    "EI, Quebec rate (1.30%)": "EI, tarif Quebec (1,30%)",
+    "QPIP (0.430%)": "QPIP (0,430%)",
+    "Federal tax, after the 16.5% Quebec abatement": "Pajak federal, setelah pengurangan Quebec 16,5%",
+    "Quebec income tax": "Pajak penghasilan Quebec",
+    "Deduction for workers (6%, max 1,450), Quebec only": "Potongan khusus pekerja (6%, maks. C$1.450), hanya Quebec"
+  },
+  "bmc": "Traktir kopi kalau hitungan gaji bersihmu terbantu."
+}
