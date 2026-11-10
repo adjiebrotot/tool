@@ -1259,7 +1259,13 @@ export function readFields() {
       });
     }
     const tipEl = (node && node.querySelector('.tip-icon[data-tip]')) || (row && row.querySelector('.tip-icon[data-tip]'));
-    if (tipEl && (!row || tipEl.closest(ROW) === row)) f.tip = tipText(tipEl.getAttribute('data-tip'));
+    if (tipEl && (!row || tipEl.closest(ROW) === row)) {
+      // A tip that explains the selected option only (data-tip-options) and finds it on each option's
+      // own data-opt-tip (global-income-tax-calculator): an AI reads them all, not just the default's.
+      const per = f.tag === 'select' && tipEl.hasAttribute('data-tip-options')
+        ? Array.from(first.options).map(o => o.getAttribute('data-opt-tip')).filter(Boolean) : [];
+      f.tip = per.length ? per.map(tipText).join(' ') : tipText(tipEl.getAttribute('data-tip'));
+    }
     byKey[key] = f;
     out.push(f);
   });

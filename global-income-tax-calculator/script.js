@@ -139,6 +139,16 @@ function applyVisibility(){
   $('amountTip').setAttribute('data-tip', net
     ? 'What lands in your account after income tax and employee contributions. The gross pay that leaves it is solved for.'
     : 'Before income tax and employee contributions. Contributions your employer pays on top are not part of it.');
+  optionTips();
+}
+// A tip that explains the selected option (data-tip-options on the row's tip icon) reads that
+// option's own data-opt-tip, so it follows the pick; the shared tooltip adds "Change the option…".
+function optionTips(){
+  scope.querySelectorAll('.tip-icon[data-tip-options]').forEach(icon => {
+    const row = icon.closest('.field-row, .toggle-row'), sel = row && row.querySelector('select');
+    const o = sel && sel.options[sel.selectedIndex];
+    if(o && o.hasAttribute('data-opt-tip')) icon.setAttribute('data-tip', o.getAttribute('data-opt-tip'));
+  });
 }
 
 // A symbol wider than the shared inset (SAR, CHF, AED) pushes the number along, so the two never touch.
@@ -424,7 +434,7 @@ function renderMetrics(results){
   if(results.length === 1){
     const r = results[0];
     if(r.notSupported){ el.innerHTML = metricCard('Take-home pay', '—', esc(r.reason)); el.className = 'metrics n2'; return; }
-    html += metricCard('<span class="tip-wrap">Take-home pay <i class="tip-icon" data-tip="Gross pay less income tax, employee contributions and other deductions taken from pay, plus any tax-free bonus.">?</i></span>',
+    html += metricCard('Take-home pay',
       showMoney(r.net, r), esc(perWord()) + (r.solved ? ', the target you set' : ''));
     html += metricCard('Gross pay', showMoney(r.gross, r), r.solved ? 'Solved for your take-home' : esc(perWord()));
     html += metricCard('Income tax', showMoney(r.incomeTax, r), pct(r.incomeTax/r.gross) + ' of gross, all levels');
@@ -572,12 +582,6 @@ function updateChart(results){
 }
 
 /* ───────────────────────── Tables ───────────────────────── */
-const STATUS = {
-  official: ['badge-success', 'Official', 'Confirmed on a government or statutory page.'],
-  secondary: ['badge-warning', 'Secondary', 'Confirmed by a Big Four firm, law firm, payroll vendor or a calculator citing the rule. Pending official confirmation.'],
-  assumption: ['badge-info', 'Assumption', 'A modelling choice, stated so you can weigh it.']
-};
-const badge = s => { const b = STATUS[s] || STATUS.secondary; return '<span class="badge ' + b[0] + '" data-tip="' + esc(b[2]) + '">' + b[1] + '</span>'; };
 function compareRows(results){
   const rows = [
     ['Gross pay', r => r.gross, 'total'],
@@ -607,11 +611,91 @@ function renderCompare(results){
   h += '</tbody></table>';
   $('compareWrap').innerHTML = h;
 }
-const KIND_WORD = { tax: 'Tax', social: 'Contribution', other: 'From pay', benefit: 'Tax-free cash', deduction: 'Deduction', credit: 'Credit', employer: 'Employer, on top', info: 'Note' };
+/* ───────────────────────── Take-home pay breakdown ─────────────────────────
+   One job at a time, picked beside the title, always a year in the job's own
+   currency (the sums are worked out yearly), written as a sum a reader can add up:
+   - Taxable income: gross pay, plus what the rules count on top of it, less each
+     line the engine marks as taken off (l.base), lands on r.taxable. A regime
+     that taxes gross pay as it is (a flat rate) has no steps, so no block.
+   - Take-home pay: gross pay less income tax, less contributions, less other
+     deductions from pay, plus tax-free cash. Credits and allowances that work
+     inside a tax read under it, muted and unsigned: already in the figure above.
+   - Not in take-home pay: what the employer pays on top (super, social security).
+   Each line's status badge links to its source and says, on hover, where the
+   rule comes from and when it took effect. */
+const STATUS = {
+  official: ['badge-success', 'Official', 'confirmed on a government page.'],
+  secondary: ['badge-warning', 'Secondary', 'a Big Four, law firm or payroll source citing the rule.'],
+  assumption: ['badge-info', 'Assumption', 'a modelling choice, stated so you can weigh it.']
+};
+// When the rule took effect, in words: a date reads "in force from", a year or tax year "rules for".
+function fromWords(f){
+  if(!f) return '';
+  if(/^(\d{1,2} )?[A-Z][a-z]{2} \d{4}$/.test(f)) return 'In force from ' + f + '.';
+  if(/thresholds/.test(f)) return 'Uses the ' + f + '.';
+  return 'Rules for ' + f.replace(/^Income /, 'income ') + '.';
+}
+function badge(l){
+  const b = STATUS[l.status] || STATUS.secondary, src = E.SRC[l.src] || { name: '', url: '' };
+  const tip = '<strong>' + b[1] + '</strong>, ' + b[2] + (src.name ? '<br>Source: ' + esc(src.name) + '.' : '') + (l.from ? ' ' + fromWords(l.from) : '');
+  const said = b[1] + '. ' + (src.name ? 'Source: ' + src.name + '. ' : '') + fromWords(l.from);
+  return src.url
+    ? '<a class="badge ' + b[0] + '" href="' + esc(src.url) + '" target="_blank" rel="noopener" data-tip="' + esc(tip) + '" aria-label="' + esc(said + ' Opens the source.') + '">' + b[1] + '</a>'
+    : '<span class="badge ' + b[0] + '" data-tip="' + esc(tip) + '" aria-label="' + esc(said) + '">' + b[1] + '</span>';
+}
+// Where a line reads in the take-home block (null: only in the taxable income block).
+function placeOf(l){
+  if(l.group) return l.group;
+  if(l.base && !SUMMED.includes(l.kind)) return null;
+  return { tax: 'tax', credit: 'tax', deduction: 'tax', social: 'social', other: 'other', benefit: 'benefit', employer: 'employer' }[l.kind] || 'note';
+}
+const SUMMED = ['tax', 'social', 'other', 'benefit'];
+/* The rows of one job's breakdown, for the table and its CSV alike. A row is
+   { sec } (a block's title) or { sec, op, label, amount, line, cls }, where op is
+   '+', '−', '=' or '' and cls is 'start', 'group', 'part', 'aside' or 'total'. */
+function breakdownRows(r){
+  const rows = [], ls = r.lines;
+  // A sum of several lines reads as one signed row with its parts under it; a single line is its own row.
+  const group = (sec, op, title, summed, asides) => {
+    if(!summed.length && !asides.length) return;
+    if(summed.length === 1 && !asides.length){ rows.push({ sec, op, label: summed[0].label, amount: summed[0].amount, line: summed[0] }); return; }
+    rows.push({ sec, op, label: title, amount: summed.reduce((a, l) => a + l.amount, 0), cls: 'group' });
+    ls.filter(l => summed.includes(l) || asides.includes(l)).forEach(l =>
+      rows.push({ sec, op: '', label: l.label, amount: (l.kind === 'info' && !l.amount) ? null : l.amount, line: l, cls: summed.includes(l) ? 'part' : 'aside' }));
+  };
+  const base = ls.filter(l => l.base);
+  if(r.taxable != null && base.length){
+    const sec = 'Taxable income';
+    rows.push({ sec });
+    rows.push({ sec, op: '', label: 'Gross pay', amount: r.gross, cls: 'start' });
+    base.filter(l => l.base > 0).forEach(l => rows.push({ sec, op: '+', label: l.label, amount: l.amount, line: l }));
+    const off = base.filter(l => l.base < 0);
+    off.filter(l => l.kind === 'other').forEach(l => rows.push({ sec, op: '−', label: l.label, amount: l.amount, line: l }));
+    group(sec, '−', 'Deductible contributions', off.filter(l => l.kind === 'social'), []);
+    off.filter(l => l.kind !== 'other' && l.kind !== 'social').forEach(l => rows.push({ sec, op: '−', label: l.label, amount: l.amount, line: l }));
+    rows.push({ sec, op: '=', label: r.taxableLabel || 'Taxable income', amount: r.taxable, cls: 'total' });
+  }
+  const sec = 'Take-home pay', at = p => ls.filter(l => placeOf(l) === p);
+  rows.push({ sec });
+  rows.push({ sec, op: '', label: 'Gross pay', amount: r.gross, cls: 'start' });
+  at('gross').forEach(l => rows.push({ sec, op: '', label: 'of which ' + l.label.charAt(0).toLowerCase() + l.label.slice(1), amount: l.amount, line: l, cls: 'aside' }));
+  ['tax', 'social', 'other', 'benefit'].forEach(p => {
+    const all = at(p), summed = all.filter(l => SUMMED.includes(l.kind));
+    group(sec, p === 'benefit' ? '+' : '−', { tax: 'Income tax', social: 'Social contributions', other: 'Other deductions from pay', benefit: 'Tax-free cash' }[p], summed, all.filter(l => !summed.includes(l)));
+  });
+  rows.push({ sec, op: '=', label: 'Take-home pay, a year', amount: r.net, cls: 'total' });
+  rows.push({ sec, op: '=', label: 'Take-home pay, a month', amount: r.net/12, cls: 'total' });
+  const employer = at('employer');
+  if(employer.length){
+    const sec = 'Not in take-home pay';
+    rows.push({ sec });
+    employer.forEach(l => rows.push({ sec, op: '', label: l.label, amount: l.amount, line: l }));
+  }
+  return rows;
+}
 // The breakdown shows one job at a time, picked beside its title. It follows the job the form
 // shows until the reader picks another, and falls back to job 1 when the one picked is removed.
 let linesPick = null;
-const SRC_TIP = '<ul><li><strong>Official:</strong> confirmed on a government page.</li><li><strong>Secondary:</strong> a Big Four, law firm or payroll source citing the rule.</li><li><strong>Assumption:</strong> a stated modelling choice.</li></ul>';
 function linesJobIndex(n){
   const i = linesPick == null ? ACTIVE : linesPick;
   return i >= 0 && i < n ? i : 0;
@@ -629,23 +713,19 @@ function renderLines(results){
   const r = results[i], job = JOBS[i], c = E.C[job.country];
   let h = '<div class="job-block">';
   h += '<p class="job-meta"><span class="job-dot" style="background:' + colourOf(i) + '"></span><strong>' + esc(jobTitle(job, i)) + '</strong>'
-    + '<span class="job-meta-sep">·</span>' + esc(c.year) + (c.place ? ' · ' + esc(c.place) : '') + ' · amounts in ' + esc(r.cur) + ' ' + esc(perWord()) + '</p>';
+    + '<span class="job-meta-sep">·</span>' + esc(c.year) + (c.place ? ' · ' + esc(c.place) : '') + ' · amounts in ' + esc(r.cur) + ' a year</p>';
   if(r.notSupported){ $('linesWrap').innerHTML = h + '<div class="warning ns">' + esc(r.reason) + '</div></div>'; return; }
-  h += '<div class="table-wrap explainer"><table class="lines-table"><colgroup><col class="c-line"><col class="c-kind"><col class="c-amt"><col class="c-status"><col class="c-src"><col class="c-from"></colgroup>'
-    + '<thead><tr><th class="l">Line</th><th class="l">Kind</th><th class="r">Amount <span class="th-unit">' + esc(r.cur) + '</span></th><th>Status</th>'
-    + '<th class="l">Source <i class="tip-icon" data-tip="' + esc(SRC_TIP) + '"></i></th><th class="l">From</th></tr></thead><tbody>';
-  const blank = '<td></td><td></td><td></td>';
-  h += '<tr class="total"><td>Gross pay</td><td></td><td class="amt">' + esc(money(r.gross/perDiv(), r.cur)) + '</td>' + blank + '</tr>';
-  r.lines.forEach(l => {
-    const summed = ['tax', 'social', 'other', 'benefit'].includes(l.kind);
-    const src = E.SRC[l.src] || { name: '', url: '' };
-    const amt = (l.kind === 'info' && !l.amount) ? '' : (summed && l.kind !== 'benefit' ? '−' : l.kind === 'benefit' ? '+' : '') + money(l.amount/perDiv(), r.cur).replace('−', '');
-    h += '<tr' + (summed ? '' : ' class="sub"') + '><td>' + esc(l.label) + '</td><td class="note">' + esc(KIND_WORD[l.kind] || '') + '</td><td class="amt">' + esc(amt) + '</td>'
-      + '<td class="st">' + badge(l.status) + '</td><td class="src">' + (src.url ? '<a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + '</a>' : esc(src.name)) + '</td><td class="note from">' + esc(l.from) + '</td></tr>';
+  h += '<div class="table-wrap explainer"><table class="lines-table"><colgroup><col class="c-op"><col class="c-line"><col class="c-amt"><col class="c-status"></colgroup>'
+    + '<thead><tr><th class="op" aria-label="Plus or minus"></th><th class="l">Line</th><th class="r">Amount <span class="th-unit">' + esc(r.cur) + ' a year</span></th><th class="c">Status</th></tr></thead><tbody>';
+  breakdownRows(r).forEach(row => {
+    if(row.op == null){ h += '<tr class="sec"><td colspan="4">' + esc(row.sec) + '</td></tr>'; return; }
+    const amt = row.amount == null ? '' : money(row.amount, r.cur);
+    h += '<tr' + (row.cls ? ' class="' + row.cls + '"' : '') + '><td class="op">' + esc(row.op) + '</td><td class="lbl">' + esc(row.label) + '</td>'
+      + '<td class="amt">' + esc(amt) + '</td><td class="st">' + (row.line ? badge(row.line) : '') + '</td></tr>';
   });
-  h += '<tr class="total"><td>Take-home pay</td><td></td><td class="amt">' + esc(money(r.net/perDiv(), r.cur)) + '</td>' + blank + '</tr>';
   h += '</tbody></table></div>';
-  if(r.notes && r.notes.length) h += '<ul class="job-notes">' + r.notes.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>';
+  const notes = r.lines.filter(l => placeOf(l) === 'note').map(l => l.label + '.').concat(r.notes || []);
+  if(notes.length) h += '<ul class="job-notes">' + notes.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul>';
   h += '</div>';
   $('linesWrap').innerHTML = h;
 }
@@ -719,17 +799,20 @@ function exportCsv(){
   });
   downloadBlob(rows.map(r => r.join(',')).join('\n'), 'global-salary-comparison.csv', 'text/csv;charset=utf-8;');
 }
+// The breakdown as the table writes it, every job: the same rows, a role for each so a sheet can add them up.
 function exportLinesCsv(){
   if(!last) return;
-  const rows = [[q('Job'), q('Country'), q('Line'), q('Kind'), q('Amount a year'), q('Currency'), q('Status'), q('Source'), q('Source URL'), q('Effective from')].join(',')];
+  const ROLE = { '+': 'added', '−': 'taken off', '=': 'result' };
+  const role = row => row.cls === 'start' ? 'start' : row.cls === 'part' ? 'part of the line above' : row.cls === 'aside' ? 'for reference, already counted' : ROLE[row.op] || 'for reference';
+  const rows = [[q('Job'), q('Country'), q('Section'), q('Role'), q('Line'), q('Amount a year'), q('Currency'), q('Status'), q('Source'), q('Source URL'), q('Effective from')].join(',')];
   last.results.forEach((r, i) => {
-    if(r.notSupported){ rows.push([q(i + 1), q(E.C[JOBS[i].country].name), q('Not worked out: ' + r.reason)].join(',')); return; }
-    rows.push([q(i + 1), q(E.C[r.country].name), q('Gross pay'), q(''), q(r.gross.toFixed(2)), q(r.cur), q(''), q(''), q(''), q('')].join(','));
-    r.lines.forEach(l => {
-      const s = E.SRC[l.src] || {};
-      rows.push([q(i + 1), q(E.C[r.country].name), q(l.label), q(KIND_WORD[l.kind] || l.kind), q(l.amount.toFixed(2)), q(r.cur), q(l.status), q(s.name || ''), q(s.url || ''), q(l.from)].join(','));
+    if(r.notSupported){ rows.push([q(i + 1), q(E.C[JOBS[i].country].name), q(''), q(''), q('Not worked out: ' + r.reason)].join(',')); return; }
+    breakdownRows(r).forEach(row => {
+      if(row.op == null) return;
+      const l = row.line, s = l ? E.SRC[l.src] || {} : {};
+      rows.push([q(i + 1), q(E.C[r.country].name), q(row.sec), q(role(row)), q(row.label), q(row.amount == null ? '' : row.amount.toFixed(2)), q(r.cur),
+        q(l ? l.status : ''), q(s.name || ''), q(s.url || ''), q(l ? l.from : '')].join(','));
     });
-    rows.push([q(i + 1), q(E.C[r.country].name), q('Take-home pay'), q(''), q(r.net.toFixed(2)), q(r.cur), q(''), q(''), q(''), q('')].join(','));
   });
   downloadBlob(rows.join('\n'), 'global-salary-lines.csv', 'text/csv;charset=utf-8;');
 }
