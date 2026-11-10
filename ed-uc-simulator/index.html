@@ -88,29 +88,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/ed-uc-simulator/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I solve a unit commitment problem online for free?",
+      "name": "How are nodal prices found when the dispatch is a unit commitment?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Open the ED/UC Simulator at https://tool.adjiebrotots.com/ed-uc-simulator/, draw the buses, lines, generators and loads, give each unit its cost, minimum output, start-up cost and minimum up and down times, and press Run dispatch. It builds the same mixed-integer problem PyPSA builds and solves it with HiGHS in your browser."
+        "text": "A mixed-integer problem has no duals, so the tool solves it a second time as a linear problem with the on and off pattern held as the first run found it. The prices are then the duals of each bus's power balance in each hour. A unit that is off can only set the price above every running unit, as the next to start."
       }
     },
     {
       "@type": "Question",
-      "name": "How are the nodal prices (LMP) worked out?",
+      "name": "What is the difference between the four dispatch modes?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Each price is the cost of serving one more MW at that bus in that hour, the dual of its power balance in a DC optimal power flow. A unit commitment has no duals, so it is solved again as a linear problem with the commitment held as found, the way electricity markets price it. The PJM 5-bus Quick Start reproduces the published prices."
+        "text": "Only Unit commitment, mixed-integer decides on and off exactly, with start-up costs, minimum stable loading and minimum up and down times. The linear relaxation lets a unit be partly on, so its cost is a lower bound on the true one. Economic dispatch keeps every unit on, with no start-ups or up and down times. The no-minimum-output variant lets each unit run from zero to its rating."
       }
     },
     {
       "@type": "Question",
-      "name": "What is the difference between economic dispatch and unit commitment?",
+      "name": "Does the model include network losses, reactive power, N-1 security or reserves?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Economic dispatch shares the load among units that are all available, cheapest first, within their limits. Unit commitment also decides which units run in each hour, so it weighs start-up costs, minimum stable loading and minimum up and down times. The simulator solves both on the same network so you can compare them."
+        "text": "No to all four. Power flows are a lossless DC power flow: every voltage is 1 p.u., power splits by reactance, and there is no reactive power. No operating reserve is held, no outage is tested, and forecasts of solar, wind and demand are perfect. Line limits (the Line limits switch) are the only network security constraint. To allow for reserve, raise a load or derate a unit's rating by hand."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are ramp limits treated for a unit that starts up or shuts down?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A ramp limit caps the change in output between hours as a share of the rating, and 1 means none. For a committable unit, the start-up hour reaches at most its minimum loading plus one hour's ramp up, and a shut-down falls from at most its minimum plus one hour's ramp down. Without that allowance, a unit ramping 31% an hour could only start at 69% or more, and load would be shed instead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What sets the price when demand cannot be met, and can I turn that off?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With Allow load shedding on, unserved load is cut at the Value of lost load (VoLL), which defaults to 10,000 per MWh and is accepted from 100 to 100,000. Shedding is the last resort, so VoLL caps every price. With it off, a shortfall makes the problem infeasible and nothing is solved. The tool also checks before solving whether minimum loadings exceed what load and storage can absorb."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does a battery's efficiency work in the dispatch?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Round-trip efficiency is split evenly: charging and discharging each take its square root. A battery at 88% loses about 6.2% going in and the same coming out. With End where it started on, it must end the horizon holding what it began with, so it cannot be drained for free. The hours are solved together, so charging can shift energy across the whole horizon."
       }
     }
   ]
@@ -440,6 +465,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>How are nodal prices found when the dispatch is a unit commitment?</h3>
+        <p>A mixed-integer problem has no duals, so the tool solves it a second time as a linear problem with the on and off pattern held as the first run found it. The prices are then the duals of each bus's power balance in each hour. A unit that is off can only set the price above every running unit, as the next to start.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the difference between the four dispatch modes?</h3>
+        <p>Only Unit commitment, mixed-integer decides on and off exactly, with start-up costs, minimum stable loading and minimum up and down times. The linear relaxation lets a unit be partly on, so its cost is a lower bound on the true one. Economic dispatch keeps every unit on, with no start-ups or up and down times. The no-minimum-output variant lets each unit run from zero to its rating.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the model include network losses, reactive power, N-1 security or reserves?</h3>
+        <p>No to all four. Power flows are a lossless DC power flow: every voltage is 1 p.u., power splits by reactance, and there is no reactive power. No operating reserve is held, no outage is tested, and forecasts of solar, wind and demand are perfect. Line limits (the Line limits switch) are the only network security constraint. To allow for reserve, raise a load or derate a unit's rating by hand.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How are ramp limits treated for a unit that starts up or shuts down?</h3>
+        <p>A ramp limit caps the change in output between hours as a share of the rating, and 1 means none. For a committable unit, the start-up hour reaches at most its minimum loading plus one hour's ramp up, and a shut-down falls from at most its minimum plus one hour's ramp down. Without that allowance, a unit ramping 31% an hour could only start at 69% or more, and load would be shed instead.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What sets the price when demand cannot be met, and can I turn that off?</h3>
+        <p>With Allow load shedding on, unserved load is cut at the Value of lost load (VoLL), which defaults to 10,000 per MWh and is accepted from 100 to 100,000. Shedding is the last resort, so VoLL caps every price. With it off, a shortfall makes the problem infeasible and nothing is solved. The tool also checks before solving whether minimum loadings exceed what load and storage can absorb.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does a battery's efficiency work in the dispatch?</h3>
+        <p>The Round-trip efficiency is split evenly: charging and discharging each take its square root. A battery at 88% loses about 6.2% going in and the same coming out. With End where it started on, it must end the horizon holding what it began with, so it cannot be drained for free. The hours are solved together, so charging can shift energy across the whole horizon.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>

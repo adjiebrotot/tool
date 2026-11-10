@@ -80,29 +80,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/global-salary-calculator/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How much is my take-home pay in another country?",
+      "name": "Which tax year and rules does it use for each country?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Pick the country, enter the gross salary, and the Global Salary Calculator at https://tool.adjiebrotots.com/global-salary-calculator/ shows income tax, social contributions and take-home pay for 2026, each line with its source and the date its rule took effect."
+        "text": "Each country uses its 2026 rules, and the page shows the exact year beside the job: Australia 2026-27 (from 1 July 2026), the UK 2026/27 (from 6 April 2026), Singapore YA2027 (income earned in 2026), and the US under IRS Rev. Proc. 2025-32. The rules were researched on 10 November 2026. Every line in the breakdown carries a source and an Official, Secondary or Assumption badge."
       }
     },
     {
       "@type": "Question",
-      "name": "What gross salary do I need to take home a set amount?",
+      "name": "How does it find the gross pay for a take-home amount I want?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Switch \"I know my\" to take-home pay and enter the amount you want. The calculator solves for the gross pay that leaves it, for each of up to four jobs, using the same 2026 rules."
+        "text": "With I know my set to Take-home pay, it searches for the lowest gross whose net reaches your target. It scans 400 steps up the pay range to the first step that reaches it, then narrows by bisection to within 0.5 of a currency unit. The scan matters because net pay does not always rise with gross, as with the New York recapture tax."
       }
     },
     {
       "@type": "Question",
-      "name": "How do I compare salary offers in different countries?",
+      "name": "Why do some US states say they are not loaded?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Add up to four jobs. Each keeps its own country, situation and currency, and the results show take-home pay side by side, converted to one currency for reading only, at rates dated on the page."
+        "text": "Eleven states are left out because their tax has income-dependent deductions, exemptions or credits the tool does not model: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. A flat deduction would misstate the tax, so it shows a message instead of a figure. Nine states with no tax on wages are loaded, and the rest are modelled."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the marginal rate mean, and why is it not the average rate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The marginal rate is the share of your next 1% of pay that goes to tax and contributions. It is worked out as one minus the extra take-home pay over the extra gross, so it can be well above or below your average rate. In the US, Social Security is 6.2% only up to 184,500, so the marginal rate falls once pay passes that wage base."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the take-home figure include bonuses, equity or employer contributions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It covers employment income for one full year in one job, with no bonuses, equity, benefits in kind, other income, tax treaties or foreign tax credits. Employer-side costs are shown but never deducted from your pay. Australia's 12% super guarantee is paid on top unless you turn on Amount includes super, which treats your amount as a package and divides it by 1.12."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do exchange rates change the tax calculation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The rates are dated 10 November 2026 and come from open.er-api.com. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then plots gross pay in US dollars."
       }
     }
   ]
@@ -677,6 +702,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Which tax year and rules does it use for each country?</h3>
+        <p>Each country uses its 2026 rules, and the page shows the exact year beside the job: Australia 2026-27 (from 1 July 2026), the UK 2026/27 (from 6 April 2026), Singapore YA2027 (income earned in 2026), and the US under IRS Rev. Proc. 2025-32. The rules were researched on 10 November 2026. Every line in the breakdown carries a source and an Official, Secondary or Assumption badge.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does it find the gross pay for a take-home amount I want?</h3>
+        <p>With I know my set to Take-home pay, it searches for the lowest gross whose net reaches your target. It scans 400 steps up the pay range to the first step that reaches it, then narrows by bisection to within 0.5 of a currency unit. The scan matters because net pay does not always rise with gross, as with the New York recapture tax.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why do some US states say they are not loaded?</h3>
+        <p>Eleven states are left out because their tax has income-dependent deductions, exemptions or credits the tool does not model: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. A flat deduction would misstate the tax, so it shows a message instead of a figure. Nine states with no tax on wages are loaded, and the rest are modelled.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the marginal rate mean, and why is it not the average rate?</h3>
+        <p>The marginal rate is the share of your next 1% of pay that goes to tax and contributions. It is worked out as one minus the extra take-home pay over the extra gross, so it can be well above or below your average rate. In the US, Social Security is 6.2% only up to 184,500, so the marginal rate falls once pay passes that wage base.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the take-home figure include bonuses, equity or employer contributions?</h3>
+        <p>No. It covers employment income for one full year in one job, with no bonuses, equity, benefits in kind, other income, tax treaties or foreign tax credits. Employer-side costs are shown but never deducted from your pay. Australia's 12% super guarantee is paid on top unless you turn on Amount includes super, which treats your amount as a package and divides it by 1.12.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do exchange rates change the tax calculation?</h3>
+        <p>No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The rates are dated 10 November 2026 and come from open.er-api.com. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then plots gross pay in US dollars.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>

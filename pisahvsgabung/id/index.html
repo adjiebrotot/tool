@@ -91,29 +91,54 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "inLanguage": "id",
+  "url": "https://tool.adjiebrotots.com/pisahvsgabung/id/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Lebih baik harta suami istri digabung atau dipisah?",
+      "name": "Berapa PTKP dan tarif PPh 21 yang dipakai untuk membandingkan pisah harta dan gabung harta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP dan lapisan tarif, serta menampilkan titik breakeven sehingga Anda tahu skema mana yang lebih hemat."
+        "text": "Alat ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya."
       }
     },
     {
       "@type": "Question",
-      "name": "Cara bayar SPT suami istri lebih baik digabung atau dipisah?",
+      "name": "Kenapa pajak Gabung Harta lebih kecil kalau suami dan istri sama-sama bekerja?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Masukkan penghasilan suami dan istri ke kalkulator, lalu kalkulator ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor."
+        "text": "Karena gaji istri menapaki lapisan tarifnya sendiri. Pada Gabung Harta, pemberi kerja istri memotong pajak final dengan PTKP istri sendiri, TK/0 (UU PPh Pasal 8 ayat 1), sehingga gajinya kembali dikenai 5% dan 15% dari awal. Pisah Harta menjumlahkan semua penghasilan dalam satu tangga tarif. Contoh gaji Rp 250 juta masing-masing, tanpa tanggungan: pajak Gabung Harta sekitar Rp 44,3 juta, Pisah Harta Rp 62,9 juta, selisih sekitar Rp 18,6 juta."
       }
     },
     {
       "@type": "Question",
-      "name": "Apakah ada kalkulator SPT / PPh 21 suami istri?",
+      "name": "Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ada. Ini satu-satunya kalkulator SPT suami istri untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada kalkulator pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah keluar dari perangkat."
+        "text": "Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Alat ini menampilkan titik balik itu untuk data Anda."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bagaimana kalau hanya suami atau hanya istri yang bergaji?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Alat ini menganggap pemberi kerja istri tidak memakai PTKP K."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bagaimana biaya jabatan dihitung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombolnya hanya bila pengurang yang Anda isi sudah memuat biaya jabatan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Apakah THR, bonus, dan iuran BPJS Ketenagakerjaan ikut dihitung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "THR, gaji ke-13, dan bonus ikut dihitung bila Anda memasukkannya ke gaji kotor setahun, karena alat ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga."
       }
     }
   ]
@@ -407,6 +432,37 @@
         <h2 data-i18n="assumesTitle">Asumsi yang dipakai</h2>
         <ul class="assumptions" id="assumptions"></ul>
       </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Pertanyaan</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Berapa PTKP dan tarif PPh 21 yang dipakai untuk membandingkan pisah harta dan gabung harta?</h3>
+        <p>Alat ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Kenapa pajak Gabung Harta lebih kecil kalau suami dan istri sama-sama bekerja?</h3>
+        <p>Karena gaji istri menapaki lapisan tarifnya sendiri. Pada Gabung Harta, pemberi kerja istri memotong pajak final dengan PTKP istri sendiri, TK/0 (UU PPh Pasal 8 ayat 1), sehingga gajinya kembali dikenai 5% dan 15% dari awal. Pisah Harta menjumlahkan semua penghasilan dalam satu tangga tarif. Contoh gaji Rp 250 juta masing-masing, tanpa tanggungan: pajak Gabung Harta sekitar Rp 44,3 juta, Pisah Harta Rp 62,9 juta, selisih sekitar Rp 18,6 juta.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?</h3>
+        <p>Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Alat ini menampilkan titik balik itu untuk data Anda.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Bagaimana kalau hanya suami atau hanya istri yang bergaji?</h3>
+        <p>Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Alat ini menganggap pemberi kerja istri tidak memakai PTKP K.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Bagaimana biaya jabatan dihitung?</h3>
+        <p>Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombolnya hanya bila pengurang yang Anda isi sudah memuat biaya jabatan.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Apakah THR, bonus, dan iuran BPJS Ketenagakerjaan ikut dihitung?</h3>
+        <p>THR, gaji ke-13, dan bonus ikut dihitung bila Anda memasukkannya ke gaji kotor setahun, karena alat ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
     </main>
   </section>
 </div>
