@@ -10,7 +10,12 @@
     "blocks": [
       {
         "h3": "Ordinary income tax (22%)",
-        "html": "<p>Ordinary income is taxed at a flat 22%. Before the rate applies, the calculator takes off two things: the minimum standard deduction (46% of gross pay, capped at NOK 95,700) and a personal allowance of NOK 114,540. For most salaries the cap bites, so about NOK 210,240 is taken off before the 22%.</p>"
+        "html": "<p>Ordinary income is taxed at a flat 22%. Before the rate applies, the calculator takes off two things: the minimum standard deduction (46% of gross pay, capped at NOK 95,700) and a personal allowance of NOK 114,540. For most salaries the cap bites, so about NOK 210,240 is taken off before the 22%.</p>",
+        "cite": [
+          { "name": "Skatteetaten, General income", "url": "https://www.skatteetaten.no/en/rates/general-income/#:~:text=General%20income%20is%20a%20net%20income" },
+          { "name": "Skatteetaten, Minimum standard deduction", "url": "https://www.skatteetaten.no/en/rates/minimum-standard-deduction/#:~:text=Your%20minimum%20standard%20deduction%20rate%20is" },
+          { "name": "Skatteetaten, Personal allowance", "url": "https://www.skatteetaten.no/en/rates/personal-allowance/#:~:text=The%20personal%20allowance%20is%20a%20general%20basic%20deduction" }
+        ]
       },
       {
         "h3": "Bracket tax (trinnskatt)",
@@ -46,37 +51,45 @@
               "17.8%"
             ]
           ]
-        }
+        },
+        "cite": [
+          { "name": "Skatteetaten, Bracket tax", "url": "https://www.skatteetaten.no/en/rates/bracket-tax/#:~:text=Bracket%20tax%20uses%20rising%20tax%20rates" }
+        ]
       },
       {
         "h3": "National insurance (7.6%)",
-        "html": "<p>Employees pay national insurance (trygdeavgift) of 7.6% of gross pay. It starts above NOK 99,650 and phases in at 25% of the amount above that threshold until the full 7.6% applies. The calculator applies this to salary income.</p>"
+        "html": "<p>Employees pay national insurance (trygdeavgift) of 7.6% of gross pay. It starts above NOK 99,650 and phases in at 25% of the amount above that threshold until the full 7.6% applies. The calculator applies this to salary income.</p>",
+        "cite": [
+          { "name": "Skatteetaten, National insurance contributions", "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/#:~:text=Lower%20limit%20in%20personal%20income" }
+        ]
       },
       {
         "h3": "The PAYE scheme for foreign workers",
-        "html": "<p>The PAYE scheme (PAYE-ordningen) is a simplified regime for foreign workers who meet the conditions set by the Norwegian Tax Administration. It replaces ordinary tax, bracket tax and national insurance with a flat 25% of gross pay, and it has no deductions. The calculator allows it for pay up to NOK 725,050 a year. It also has a switch for people who stay outside Norwegian national insurance, which lowers the flat rate to 17.4%. Check eligibility with Skatteetaten before choosing it.</p>"
+        "html": "<p>The PAYE scheme (PAYE-ordningen) is a simplified regime for foreign workers who meet the conditions set by the Norwegian Tax Administration. It replaces ordinary tax, bracket tax and national insurance with a flat 25% of gross pay, and it has no deductions. The calculator allows it for pay up to NOK 725,050 a year. It also has a switch for people who stay outside Norwegian national insurance, which lowers the flat rate to 17.4%. Check eligibility with Skatteetaten before choosing it.</p>",
+        "cite": [
+          { "name": "Skatteetaten, The PAYE scheme", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/the-a-melding/the-a-melding-guide/special-groups/paye-scheme/#:~:text=25%20percent" },
+          { "name": "Skatteetaten, PAYE for foreign workers", "url": "https://www.skatteetaten.no/en/person/foreign/are-you-intending-to-work-in-norway/tax-deduction-cards/paye/" }
+        ]
       },
       {
         "h3": "Tax card and withholding",
-        "html": "<p>Your employer withholds tax using your tax card (skattekort), which you get through Skatteetaten. Tax is withheld over ten and a half months, so December pay carries half the usual deduction and you see a larger payslip before Christmas. The final bill is settled in the tax return you file the following spring.</p>"
+        "html": "<p>Your employer withholds tax using your tax card (skattekort), which you get through Skatteetaten. Tax is withheld over ten and a half months, so December pay carries half the usual deduction and you see a larger payslip before Christmas. The final bill is settled in the tax return you file the following spring.</p>",
+        "cite": [
+          { "name": "Skatteetaten, The numbers in your tax deduction card", "url": "https://www.skatteetaten.no/en/person/taxes/tax-deduction-card-and-advance-tax/about-tax-deduction-card/the-numbers-in-your-tax-deduction-card/#:~:text=No%20tax%20is%20deducted%20from%20salary%20in%20June" },
+          { "name": "Skatteetaten, How to deduct the correct amount of tax", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/tax-deduction-cards-and-tax-deductions/how-to-deduct-the-correct-amount-of-tax/" }
+        ]
       }
     ],
     "sources": [
-      {
-        "name": "Skatteetaten (Norwegian Tax Administration)",
-        "url": "https://www.skatteetaten.no/",
-        "note": "rates, tax card, the PAYE scheme for foreign workers"
-      },
-      {
-        "name": "NAV, national insurance",
-        "url": "https://www.nav.no/",
-        "note": "membership of the National Insurance Scheme"
-      },
-      {
-        "name": "UDI, Norwegian Directorate of Immigration",
-        "url": "https://www.udi.no/",
-        "note": "visas and residence permits for workers"
-      }
+      { "name": "Skatteetaten, Bracket tax", "url": "https://www.skatteetaten.no/en/rates/bracket-tax/#:~:text=Bracket%20tax%20uses%20rising%20tax%20rates" },
+      { "name": "Skatteetaten, National insurance contributions", "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/#:~:text=Lower%20limit%20in%20personal%20income" },
+      { "name": "Skatteetaten, Minimum standard deduction", "url": "https://www.skatteetaten.no/en/rates/minimum-standard-deduction/#:~:text=Your%20minimum%20standard%20deduction%20rate%20is" },
+      { "name": "Skatteetaten, Personal allowance", "url": "https://www.skatteetaten.no/en/rates/personal-allowance/#:~:text=The%20personal%20allowance%20is%20a%20general%20basic%20deduction" },
+      { "name": "Skatteetaten, The PAYE scheme", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/the-a-melding/the-a-melding-guide/special-groups/paye-scheme/#:~:text=25%20percent" },
+      { "name": "Skatteetaten, The numbers in your tax deduction card", "url": "https://www.skatteetaten.no/en/person/taxes/tax-deduction-card-and-advance-tax/about-tax-deduction-card/the-numbers-in-your-tax-deduction-card/#:~:text=No%20tax%20is%20deducted%20from%20salary%20in%20June" }
+    ],
+    "introCite": [
+      { "name": "Skatteetaten, Tax liability in Norway", "url": "https://www.skatteetaten.no/en/person/taxes/get-the-taxes-right/abroad/tax-residence-in-norway-when-moving-to-or-from-norway/" }
     ]
   },
   "examples": [
@@ -84,32 +97,53 @@
       "key": "resident",
       "title": "How much tax do you pay in Norway on NOK 750,000?",
       "intro": "<p>This is a resident on ordinary tax with a NOK 750,000 salary. The minimum standard deduction hits its NOK 95,700 cap and the personal allowance adds NOK 114,540, so NOK 539,760 is taxed at 22%, giving NOK 118,747. Bracket tax on the full NOK 750,000 adds NOK 21,256, because the top NOK 24,950 sits in the 13.7% band. National insurance of 7.6% takes NOK 57,000. You keep about NOK 552,997, or 73.7% of gross.</p>",
-      "after": "<p>Your marginal rate is 43.3%: 22% ordinary tax, 13.7% bracket tax and 7.6% national insurance. Every extra krone you earn above NOK 725,050 loses about 43 øre.</p>"
+      "after": "<p>Your marginal rate is 43.3%: 22% ordinary tax, 13.7% bracket tax and 7.6% national insurance. Every extra krone you earn above NOK 725,050 loses about 43 øre.</p>",
+      "cite": [
+        { "name": "Skatteetaten, Bracket tax", "url": "https://www.skatteetaten.no/en/rates/bracket-tax/#:~:text=Bracket%20tax%20uses%20rising%20tax%20rates" },
+        { "name": "Skatteetaten, National insurance contributions", "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/#:~:text=Lower%20limit%20in%20personal%20income" },
+        { "name": "Skatteetaten, Minimum standard deduction", "url": "https://www.skatteetaten.no/en/rates/minimum-standard-deduction/#:~:text=Your%20minimum%20standard%20deduction%20rate%20is" }
+      ]
     },
     {
       "key": "paye-scheme",
       "title": "Norway PAYE scheme: take-home pay on NOK 600,000 at a flat 25%",
       "intro": "<p>This is a foreign worker on the PAYE scheme earning NOK 600,000. The scheme takes a flat 25% of gross pay, which is NOK 150,000, and nothing else, so you keep NOK 450,000, or 75.0% of gross. It works as a final tax, with no allowances or bracket tax to work out.</p>",
-      "after": "<p>The flat rate stays 25% at any income up to the NOK 725,050 limit, so it tends to suit higher salaries. Run your own pay both ways in the calculator, and confirm you qualify with Skatteetaten.</p>"
+      "after": "<p>The flat rate stays 25% at any income up to the NOK 725,050 limit, so it tends to suit higher salaries. Run your own pay both ways in the calculator, and confirm you qualify with Skatteetaten.</p>",
+      "cite": [
+        { "name": "Skatteetaten, The PAYE scheme", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/the-a-melding/the-a-melding-guide/special-groups/paye-scheme/#:~:text=25%20percent" }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to manage Norwegian tax. Which ones apply depends on your status and income.</p>",
   "strategies": [
     {
       "h3": "Check whether the PAYE scheme beats ordinary tax",
-      "html": "<p><strong>Suits:</strong> foreign workers who meet the scheme's conditions, especially on higher pay where bracket tax and national insurance add up. Compare your own salary under both regimes, as the 25% flat rate is simple but gives no allowances.</p><p><strong>Caveat:</strong> the scheme has eligibility rules and a time limit, and you may be unable to claim deductions. Confirm the current conditions with Skatteetaten.</p>"
+      "html": "<p><strong>Suits:</strong> foreign workers who meet the scheme's conditions, especially on higher pay where bracket tax and national insurance add up. Compare your own salary under both regimes, as the 25% flat rate is simple but gives no allowances.</p><p><strong>Caveat:</strong> the scheme has eligibility rules and a time limit, and you may be unable to claim deductions. Confirm the current conditions with Skatteetaten.</p>",
+      "cite": [
+        { "name": "Skatteetaten, The PAYE scheme", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/the-a-melding/the-a-melding-guide/special-groups/paye-scheme/#:~:text=25%20percent" }
+      ]
     },
     {
       "h3": "Claim deductions you are entitled to",
-      "html": "<p><strong>Suits:</strong> residents on ordinary tax. Deductions such as interest on loans and eligible work-related costs reduce the income taxed at 22%. The tax return is pre-filled, so check it and add what is missing.</p><p><strong>Caveat:</strong> deductions do not reduce bracket tax or national insurance, which are charged on gross pay. The calculator uses only the standard allowances.</p>"
+      "html": "<p><strong>Suits:</strong> residents on ordinary tax. Deductions such as interest on loans and eligible work-related costs reduce the income taxed at 22%. The tax return is pre-filled, so check it and add what is missing.</p><p><strong>Caveat:</strong> deductions do not reduce bracket tax or national insurance, which are charged on gross pay. The calculator uses only the standard allowances.</p>",
+      "cite": [
+        { "name": "Skatteetaten, Minimum standard deduction", "url": "https://www.skatteetaten.no/en/rates/minimum-standard-deduction/#:~:text=Your%20minimum%20standard%20deduction%20rate%20is" },
+        { "name": "Skatteetaten, Deduction for travel between home and work", "url": "https://www.skatteetaten.no/en/rates/deduction-for-travel-between-home-and-work/" }
+      ]
     },
     {
       "h3": "Keep your tax card up to date",
-      "html": "<p><strong>Suits:</strong> anyone with a second job, a change in income or a part-year stay. If your tax card does not reflect your real income, too little tax may be withheld and the gap appears in the following year's tax settlement.</p><p><strong>Caveat:</strong> updating the card changes withholding only. It does not change your final tax.</p>"
+      "html": "<p><strong>Suits:</strong> anyone with a second job, a change in income or a part-year stay. If your tax card does not reflect your real income, too little tax may be withheld and the gap appears in the following year's tax settlement.</p><p><strong>Caveat:</strong> updating the card changes withholding only. It does not change your final tax.</p>",
+      "cite": [
+        { "name": "Skatteetaten, How to deduct the correct amount of tax", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/tax-deduction-cards-and-tax-deductions/how-to-deduct-the-correct-amount-of-tax/" }
+      ]
     },
     {
       "h3": "Pension saving with a tax deduction",
-      "html": "<p><strong>Suits:</strong> residents who want to save for retirement. Norway has individual pension savings schemes that give a deduction against ordinary income, within an annual cap.</p><p><strong>Caveat:</strong> the cap changes, and the money is locked until retirement age. Look up the current limit with Skatteetaten.</p>"
+      "html": "<p><strong>Suits:</strong> residents who want to save for retirement. Norway has individual pension savings schemes that give a deduction against ordinary income, within an annual cap.</p><p><strong>Caveat:</strong> the cap changes, and the money is locked until retirement age. Look up the current limit with Skatteetaten.</p>",
+      "cite": [
+        { "name": "Skatteetaten, Maximum deduction for individual pension schemes", "url": "https://www.skatteetaten.no/en/rates/maximum-annual-deduction-for-payments-to-an-individual-pension-scheme/#:~:text=You%20can%20claim%20a%20deduction%20from%20general%20income" }
+      ]
     }
   ],
   "limits": [
@@ -123,27 +157,47 @@
   "faq": [
     {
       "q": "How much tax do I pay on NOK 750,000 in Norway?",
-      "a": "<p>A resident on ordinary tax pays about NOK 197,000 in income tax, bracket tax and national insurance, and keeps about NOK 553,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A resident on ordinary tax pays about NOK 197,000 in income tax, bracket tax and national insurance, and keeps about NOK 553,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        { "name": "Skatteetaten, Bracket tax", "url": "https://www.skatteetaten.no/en/rates/bracket-tax/#:~:text=Bracket%20tax%20uses%20rising%20tax%20rates" },
+        { "name": "Skatteetaten, National insurance contributions", "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/#:~:text=Lower%20limit%20in%20personal%20income" }
+      ]
     },
     {
       "q": "Why is my December pay larger in Norway?",
-      "a": "<p>Employers withhold tax over ten and a half months, not twelve. December carries only half the usual deduction, so the payslip is bigger before Christmas, and holiday pay is handled separately. The annual tax is the same either way.</p><p>The calculator works out the full-year tax, so a single payslip can differ from it, especially in December.</p>"
+      "a": "<p>Employers withhold tax over ten and a half months, not twelve. December carries only half the usual deduction, so the payslip is bigger before Christmas, and holiday pay is handled separately. The annual tax is the same either way.</p><p>The calculator works out the full-year tax, so a single payslip can differ from it, especially in December.</p>",
+      "cite": [
+        { "name": "Skatteetaten, The numbers in your tax deduction card", "url": "https://www.skatteetaten.no/en/person/taxes/tax-deduction-card-and-advance-tax/about-tax-deduction-card/the-numbers-in-your-tax-deduction-card/#:~:text=No%20tax%20is%20deducted%20from%20salary%20in%20June" }
+      ]
     },
     {
       "q": "What is a tax card (skattekort) in Norway?",
-      "a": "<p>The tax card tells your employer how much tax to withhold from each payment. Skatteetaten issues it and your employer retrieves it. If your income changes during the year, you can update the card so the withholding fits, and the final tax is settled in your tax return the following spring.</p>"
+      "a": "<p>The tax card tells your employer how much tax to withhold from each payment. Skatteetaten issues it and your employer retrieves it. If your income changes during the year, you can update the card so the withholding fits, and the final tax is settled in your tax return the following spring.</p>",
+      "cite": [
+        { "name": "Skatteetaten, How to deduct the correct amount of tax", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/tax-deduction-cards-and-tax-deductions/how-to-deduct-the-correct-amount-of-tax/" }
+      ]
     },
     {
       "q": "What is trinnskatt and how is it different from the 22% tax?",
-      "a": "<p>The 22% tax is charged on ordinary income after deductions. Trinnskatt (bracket tax) is charged on gross personal income with no deductions, in steps from 1.7% up to 17.8%. In the NOK 750,000 example the 22% tax is NOK 118,747 and trinnskatt adds NOK 21,256.</p>"
+      "a": "<p>The 22% tax is charged on ordinary income after deductions. Trinnskatt (bracket tax) is charged on gross personal income with no deductions, in steps from 1.7% up to 17.8%. In the NOK 750,000 example the 22% tax is NOK 118,747 and trinnskatt adds NOK 21,256.</p>",
+      "cite": [
+        { "name": "Skatteetaten, Bracket tax", "url": "https://www.skatteetaten.no/en/rates/bracket-tax/#:~:text=Bracket%20tax%20uses%20rising%20tax%20rates" },
+        { "name": "Skatteetaten, General income", "url": "https://www.skatteetaten.no/en/rates/general-income/#:~:text=General%20income%20is%20a%20net%20income" }
+      ]
     },
     {
       "q": "Is the Norwegian PAYE scheme worth it?",
-      "a": "<p>It charges a flat 25% of gross and nothing else, with no allowances. On NOK 600,000 that is NOK 150,000. Ordinary tax can come out lower at modest incomes and higher at larger ones, so compare both with your own pay. Eligibility depends on conditions set by Skatteetaten.</p>"
+      "a": "<p>It charges a flat 25% of gross and nothing else, with no allowances. On NOK 600,000 that is NOK 150,000. Ordinary tax can come out lower at modest incomes and higher at larger ones, so compare both with your own pay. Eligibility depends on conditions set by Skatteetaten.</p>",
+      "cite": [
+        { "name": "Skatteetaten, The PAYE scheme", "url": "https://www.skatteetaten.no/en/business-and-organisation/employer/the-a-melding/the-a-melding-guide/special-groups/paye-scheme/#:~:text=25%20percent" }
+      ]
     },
     {
       "q": "Do I pay national insurance on top of income tax?",
-      "a": "<p>Yes, employees pay 7.6% national insurance of gross pay once it passes NOK 99,650, phased in above that. It buys membership of the National Insurance Scheme, which covers sickness benefit and pension rights. On the PAYE scheme the flat 25% covers it.</p>"
+      "a": "<p>Yes, employees pay 7.6% national insurance of gross pay once it passes NOK 99,650, phased in above that. It buys membership of the National Insurance Scheme, which covers sickness benefit and pension rights. On the PAYE scheme the flat 25% covers it.</p>",
+      "cite": [
+        { "name": "Skatteetaten, National insurance contributions", "url": "https://www.skatteetaten.no/en/rates/national-insurance-contributions/#:~:text=Lower%20limit%20in%20personal%20income" }
+      ]
     },
     {
       "q": "How does Norway compare with other countries?",

@@ -14,9 +14,11 @@
 .jx .gd-sec a:not(.btn-primary) { color: var(--accent-strong, var(--accent)); }
 .jx-item + .jx-item { border-top: 1px dashed var(--border); padding-top: 4px; }
 
-.jx-cite { margin: 6px 0 0 !important; font-size: .8rem; line-height: 1.5; color: var(--muted); max-width: 62rem; }
+.jx .jx-cite, .jx .gd-sec > p.jx-cite { margin: 6px 0 12px; font-size: .8rem; line-height: 1.5; color: var(--muted); max-width: 62rem; }
+.jx .gd-sec .jx-cite a { color: var(--muted); }
+.jx .gd-sec .jx-cite a:hover { color: var(--accent-strong, var(--accent)); }
 .jx-cite a { overflow-wrap: anywhere; }
-.gd-table-wrap + .jx-cite { margin-top: 8px !important; }
+.jx .gd-table-wrap + .jx-cite { margin-top: 8px; }
 .jx-sources { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); }
 .jx-sources h3 { margin-top: 0 !important; font-size: .9rem !important; color: var(--muted); }
 .jx-sources ul { margin: 0; padding-left: 1.2em; font-size: .86rem; line-height: 1.6; color: var(--muted); }

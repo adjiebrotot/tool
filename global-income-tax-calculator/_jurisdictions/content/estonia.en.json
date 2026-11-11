@@ -10,33 +10,39 @@
     "blocks": [
       {
         "h3": "Flat income tax and the tax-free allowance",
-        "html": "<p>Income is taxed at a flat 22%. Each month you can claim a tax-free allowance of €700 (€8,400 a year), and the calculator also has a setting for the higher €776 allowance. Taxable income is pay minus unemployment insurance, pension pillar II contributions and the allowance.</p>"
+        "html": "<p>Income is taxed at a flat 22%. Each month you can claim a tax-free allowance of €700 (€8,400 a year), and the calculator also has a setting for the higher €776 allowance. Taxable income is pay minus unemployment insurance, pension pillar II contributions and the allowance.</p>",
+        "cite": [
+          { "name": "EMTA, Tax rates", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" },
+          { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" }
+        ]
       },
       {
         "h3": "Employee contributions",
-        "html": "<p>Employees pay unemployment insurance of 1.6% of pay. Contributions to the second pension pillar are 2% by default, and the calculator lets you choose 0%, 2%, 4% or 6%. Both are deducted before income tax is worked out, so they lower your taxable income.</p>"
+        "html": "<p>Employees pay unemployment insurance of 1.6% of pay. Contributions to the second pension pillar are 2% by default, and the calculator lets you choose 0%, 2%, 4% or 6%. Both are deducted before income tax is worked out, so they lower your taxable income.</p>",
+        "cite": [
+          { "name": "EMTA, Unemployment insurance premiums", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/unemployment-insurance-premiums" },
+          { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" }
+        ]
       },
       {
         "h3": "What the employer pays on top",
-        "html": "<p>The employer pays social tax of 33% on top of your gross salary, so it does not reduce your take-home pay. It is part of the cost of hiring you, and it funds the state pension and health insurance. The calculator shows only what you pay.</p>"
+        "html": "<p>The employer pays social tax of 33% on top of your gross salary, so it does not reduce your take-home pay. It is part of the cost of hiring you, and it funds the state pension and health insurance. The calculator shows only what you pay.</p>",
+        "cite": [
+          { "name": "EMTA, Social tax", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/social-tax" }
+        ]
       }
     ],
     "sources": [
-      {
-        "name": "Estonian Tax and Customs Board (EMTA)",
-        "url": "https://www.emta.ee/",
-        "note": "income tax, allowance, employer social tax"
-      },
-      {
-        "name": "Pensionikeskus",
-        "url": "https://www.pensionikeskus.ee/",
-        "note": "second and third pension pillars"
-      },
-      {
-        "name": "Estonian Police and Border Guard Board",
-        "url": "https://www.politsei.ee/",
-        "note": "residence permits and registration"
-      }
+      { "name": "EMTA, Tax rates", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" },
+      { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" },
+      { "name": "EMTA, Unemployment insurance premiums", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/unemployment-insurance-premiums" },
+      { "name": "EMTA, Social tax", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/social-tax" },
+      { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" },
+      { "name": "EMTA, Contributions to the supplementary funded pension", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/contributions-supplementary-funded-pension#:~:text=up%20to%2015%25" },
+      { "name": "EMTA, Determining residency", "url": "https://www.emta.ee/en/private-client/foreigner-non-resident/tax-residency/determining-residency#:~:text=183%20days" }
+    ],
+    "introCite": [
+      { "name": "EMTA, Determining residency", "url": "https://www.emta.ee/en/private-client/foreigner-non-resident/tax-residency/determining-residency#:~:text=183%20days" }
     ]
   },
   "examples": [
@@ -44,28 +50,46 @@
       "key": "employee",
       "title": "How to calculate Estonian income tax on a €36,000 salary",
       "intro": "<p>This is an employee earning €36,000 with the default 2% pillar II contribution. Unemployment insurance takes €576 and pillar II takes €720. The €8,400 allowance is then deducted, leaving taxable income of €26,304. At 22% the income tax is €5,787. You keep about €28,917, or 80.3% of gross.</p>",
-      "after": "<p>Your marginal rate is 24.8%: the 22% tax, the 1.6% unemployment insurance and the 2% pillar II contribution, less the tax each of those contributions saves.</p>"
+      "after": "<p>Your marginal rate is 24.8%: the 22% tax, the 1.6% unemployment insurance and the 2% pillar II contribution, less the tax each of those contributions saves.</p>",
+      "cite": [
+        { "name": "EMTA, Tax rates", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" },
+        { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" },
+        { "name": "EMTA, Unemployment insurance premiums", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/unemployment-insurance-premiums" }
+      ]
     },
     {
       "key": "no-second-pillar",
       "title": "Estonian take-home pay on €36,000 without the second pension pillar",
       "intro": "<p>This is the same employee who chooses 0% for pillar II. Without the €720 contribution, taxable income is €27,024, and income tax is €5,945, which is about €158 more. Unemployment insurance of €576 still applies. You keep about €29,479, or 81.9% of gross, about €562 more than with pillar II.</p>",
-      "after": "<p>The extra take-home pay is not free. Pillar II money goes into a pension account in your own name, so you are choosing between cash now and retirement savings. Confirm what you can choose with the Pensionikeskus.</p>"
+      "after": "<p>The extra take-home pay is not free. Pillar II money goes into a pension account in your own name, so you are choosing between cash now and retirement savings. Confirm what you can choose with the Pensionikeskus.</p>",
+      "cite": [
+        { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to manage Estonian tax. Which ones apply depends on your status.</p>",
   "strategies": [
     {
       "h3": "Decide on the second pension pillar",
-      "html": "<p><strong>Suits:</strong> anyone who can choose. The pillar II contribution lowers your taxable income, so about 22% of it comes back as lower tax, and it builds a pension in your own name.</p><p><strong>Caveat:</strong> whether you can join, change or stop depends on your age and history, so check your options at the Pensionikeskus.</p>"
+      "html": "<p><strong>Suits:</strong> anyone who can choose. The pillar II contribution lowers your taxable income, so about 22% of it comes back as lower tax, and it builds a pension in your own name.</p><p><strong>Caveat:</strong> whether you can join, change or stop depends on your age and history, so check your options at the Pensionikeskus.</p>",
+      "cite": [
+        { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" }
+      ]
     },
     {
       "h3": "Use the third pension pillar",
-      "html": "<p><strong>Suits:</strong> residents who want to save more for retirement. Voluntary contributions to a third-pillar pension can reduce taxable income within a limit set by law.</p><p><strong>Caveat:</strong> the limit and conditions change, and the money is locked until retirement age. Look up the current rule with EMTA.</p>"
+      "html": "<p><strong>Suits:</strong> residents who want to save more for retirement. Voluntary contributions to a third-pillar pension can reduce taxable income within a limit set by law.</p><p><strong>Caveat:</strong> the limit and conditions change, and the money is locked until retirement age. Look up the current rule with EMTA.</p>",
+      "cite": [
+        { "name": "EMTA, Contributions to the supplementary funded pension", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/contributions-supplementary-funded-pension#:~:text=up%20to%2015%25" },
+        { "name": "Pensionikeskus, III pillar tax refund Q&A", "url": "https://pensionikeskus.ee/en/iii-pillar/contributions/questions-and-answers-about-the-iii-pillar-tax-refund" }
+      ]
     },
     {
       "h3": "Claim the allowance at one employer only",
-      "html": "<p><strong>Suits:</strong> anyone with more than one job. The €700 monthly allowance can be applied by one payer at a time, so tell your main employer to use it.</p><p><strong>Caveat:</strong> if two payers apply it, you may owe tax when you file the annual return.</p>"
+      "html": "<p><strong>Suits:</strong> anyone with more than one job. The €700 monthly allowance can be applied by one payer at a time, so tell your main employer to use it.</p><p><strong>Caveat:</strong> if two payers apply it, you may owe tax when you file the annual return.</p>",
+      "cite": [
+        { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" }
+      ]
     }
   ],
   "limits": [
@@ -79,23 +103,40 @@
   "faq": [
     {
       "q": "How much tax do I pay on €36,000 in Estonia?",
-      "a": "<p>An employee pays about €5,787 in income tax, plus €576 unemployment insurance and €720 into pillar II, and keeps about €28,917. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>An employee pays about €5,787 in income tax, plus €576 unemployment insurance and €720 into pillar II, and keeps about €28,917. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        { "name": "EMTA, Tax rates", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" },
+        { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" }
+      ]
     },
     {
       "q": "Is the €700 tax-free allowance really monthly?",
-      "a": "<p>Yes. It applies each month, which is €8,400 a year in the calculator. You claim it through one payer at a time. If you have two jobs, the allowance should go to your main one, and the second employer withholds without it. Any difference is settled in your annual tax return.</p>"
+      "a": "<p>Yes. It applies each month, which is €8,400 a year in the calculator. You claim it through one payer at a time. If you have two jobs, the allowance should go to your main one, and the second employer withholds without it. Any difference is settled in your annual tax return.</p>",
+      "cite": [
+        { "name": "EMTA, Calculation of basic exemption", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/tax-incentives/calculation-basic-exemption" }
+      ]
     },
     {
       "q": "Do I have to pay into the second pension pillar?",
-      "a": "<p>It is a choice for many people, which is why Estonia is unusual. The calculator uses 2% by default and lets you set 0%, 2%, 4% or 6%. A contribution lowers your taxable income and builds a pension in your name. Check your own options with the Pensionikeskus.</p>"
+      "a": "<p>It is a choice for many people, which is why Estonia is unusual. The calculator uses 2% by default and lets you set 0%, 2%, 4% or 6%. A contribution lowers your taxable income and builds a pension in your name. Check your own options with the Pensionikeskus.</p>",
+      "cite": [
+        { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" }
+      ]
     },
     {
       "q": "Does the pension contribution reduce my income tax?",
-      "a": "<p>Yes. Unemployment insurance and pillar II contributions are deducted before the 22% applies. In the example the €720 contribution lowers tax by about €158, so the real cost to you is about €562.</p>"
+      "a": "<p>Yes. Unemployment insurance and pillar II contributions are deducted before the 22% applies. In the example the €720 contribution lowers tax by about €158, so the real cost to you is about €562.</p>",
+      "cite": [
+        { "name": "EMTA, Contributions to mandatory funded pension", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" },
+        { "name": "EMTA, Tax rates", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" }
+      ]
     },
     {
       "q": "Who pays the 33% social tax?",
-      "a": "<p>Your employer pays it on top of your gross salary. It is not deducted from your pay and the calculator does not include it in your take-home figure, but it is part of what you cost to hire.</p>"
+      "a": "<p>Your employer pays it on top of your gross salary. It is not deducted from your pay and the calculator does not include it in your take-home figure, but it is part of what you cost to hire.</p>",
+      "cite": [
+        { "name": "EMTA, Social tax", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/social-tax" }
+      ]
     },
     {
       "q": "How does Estonia compare with other countries?",
