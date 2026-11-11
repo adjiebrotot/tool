@@ -7,6 +7,12 @@
   "lede": "<p>Belgium taxes residents on worldwide income with federal rates from 25% to 50%, plus a municipal surcharge, and employees pay 13.07% of gross in social security (ONSS). On a €55,000 salary a single employee pays €11,913 in federal tax, a €834 municipal surcharge and €7,189 in ONSS, and keeps about €34,526, or 62.8% of gross. A married couple with one earner and two children on €70,000 keeps about €48,105.</p>",
   "law": {
     "intro": "<p>Belgian tax is worked out on the calendar year's income and declared in the following year, so the page covers income 2026. Residents are taxed on worldwide income whatever their visa or citizenship. Your employer withholds professional tax from each payslip, and the annual return settles the exact bill.</p><p>The calculator works out the full-year result in one step. It only runs for a gross salary of at least about €26,803, which is twelve times the full-time minimum wage, because below that level the employment bonus rules change.</p>",
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: residence",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/residence#:~:text=Residents%20of%20Belgium%20are%20those"
+      }
+    ],
     "blocks": [
       {
         "h3": "Federal income tax rates",
@@ -34,40 +40,106 @@
               "50%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+          }
+        ]
       },
       {
         "h3": "Social security (ONSS) and deductions",
-        "html": "<p>Employees pay 13.07% of gross salary to the social security office (ONSS), deducted by the employer. It funds your health insurance cover, but you must also join a mutual fund (mutualité) to be reimbursed for care. Low earners get an employment bonus that reduces ONSS and tax, which fades out well below the salaries in the examples.</p><p>A lump-sum professional expenses deduction of 30% of your salary after ONSS is applied, up to €6,070 a year. The special social security contribution (CSSS) is an extra monthly deduction that rises with pay and reaches a cap of about €731 a year at higher incomes.</p>"
+        "html": "<p>Employees pay 13.07% of gross salary to the social security office (ONSS), deducted by the employer. It funds your health insurance cover, but you must also join a mutual fund (mutualité) to be reimbursed for care. Low earners get an employment bonus that reduces ONSS and tax, which fades out well below the salaries in the examples.</p><p>A lump-sum professional expenses deduction of 30% of your salary after ONSS is applied, up to €6,070 a year. The special social security contribution (CSSS) is an extra monthly deduction that rises with pay and reaches a cap of about €731 a year at higher incomes.</p>",
+        "cite": [
+          {
+            "name": "ONSS, which contributions exist (employee share 13.07%)",
+            "url": "https://www.socialsecurity.be/site_fr/employer/infos/employers_nsso/which-contributions.htm#:~:text=cotisations%20personnelles%20des%20travailleurs"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: deductions (professional expenses)",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=Employment%20expenses"
+          },
+          {
+            "name": "ONSS, employment bonus (bonus à l'emploi)",
+            "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/workers_reductions/workbonus.html"
+          }
+        ]
       },
       {
         "h3": "Municipal surcharge",
-        "html": "<p>On top of federal tax, your municipality charges a surcharge as a percentage of the federal tax. Most municipalities set it between 6% and 8%, and the calculator uses 7%. It depends on where you live on 1 January, so you can change the rate in the calculator to match your commune.</p>"
+        "html": "<p>On top of federal tax, your municipality charges a surcharge as a percentage of the federal tax. Most municipalities set it between 6% and 8%, and the calculator uses 7%. It depends on where you live on 1 January, so you can change the rate in the calculator to match your commune.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: local income taxes",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=Local%20income%20taxes"
+          }
+        ]
       },
       {
         "h3": "Married couples and the marital quotient",
-        "html": "<p>For married couples where one partner earns most of the income, the marital quotient lets the higher earner transfer up to 30% of professional income, capped at €11,780, to the partner. That amount is then taxed in the partner's hands, from the lowest bracket and using their own tax-free amount. The calculator treats the €70,000 example as a one-earner household and applies the quotient. The child supplements raise the tax-free amount: €2,130 for one child, €5,130 for two, €11,440 for three, €18,510 for four and €7,070 for each child after that.</p>"
+        "html": "<p>For married couples where one partner earns most of the income, the marital quotient lets the higher earner transfer up to 30% of professional income, capped at €11,780, to the partner. That amount is then taxed in the partner's hands, from the lowest bracket and using their own tax-free amount. The calculator treats the €70,000 example as a one-earner household and applies the quotient. The child supplements raise the tax-free amount: €2,130 for one child, €5,130 for two, €11,440 for three, €18,510 for four and €7,070 for each child after that.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: deductions (professional expenses)",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=Employment%20expenses"
+          }
+        ]
       },
       {
         "h3": "Expat regime",
-        "html": "<p>Belgium has a regime for qualifying employees who are recruited from abroad or seconded to Belgium. Part of your pay is treated as a reimbursement of the extra costs of living abroad, and that part is free of tax. The calculator models this as a tax and ONSS free reimbursement of 35% of gross pay, and only when gross pay is above €70,000. Eligibility depends on your role, salary and where you lived before. The ONSS exemption has its own ceiling, which the calculator does not apply. The regime is applied for with your employer, so check the conditions with the tax administration before relying on it.</p>"
+        "html": "<p>Belgium has a regime for qualifying employees who are recruited from abroad or seconded to Belgium. Part of your pay is treated as a reimbursement of the extra costs of living abroad, and that part is free of tax. The calculator models this as a tax and ONSS free reimbursement of 35% of gross pay, and only when gross pay is above €70,000. Eligibility depends on your role, salary and where you lived before. The ONSS exemption has its own ceiling, which the calculator does not apply. The regime is applied for with your employer, so check the conditions with the tax administration before relying on it.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
+            "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "FPS Finance (SPF Finances)",
-        "url": "https://finances.belgium.be/",
-        "note": "federal tax rates, tax-free amount and the expat regime"
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between",
+        "note": "federal tax rates and municipal surcharge"
       },
       {
-        "name": "Social security (socialsecurity.be)",
-        "url": "https://www.socialsecurity.be/",
-        "note": "ONSS contributions and employment bonus"
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: deductions (professional expenses)",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=Employment%20expenses",
+        "note": "professional expenses deduction and marital quotient"
       },
       {
-        "name": "Belgium.be",
-        "url": "https://www.belgium.be/",
-        "note": "official portal for living and working in Belgium"
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Social%20security%20contributions",
+        "note": "13.07% social security and the special contribution"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime",
+        "note": "expat regime"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Belgium individual: residence",
+        "url": "https://taxsummaries.pwc.com/belgium/individual/residence#:~:text=Residents%20of%20Belgium%20are%20those",
+        "note": "residence rules"
+      },
+      {
+        "name": "ONSS, which contributions exist (employee share 13.07%)",
+        "url": "https://www.socialsecurity.be/site_fr/employer/infos/employers_nsso/which-contributions.htm#:~:text=cotisations%20personnelles%20des%20travailleurs",
+        "note": "employee ONSS rate (official)"
+      },
+      {
+        "name": "ONSS, employment bonus (bonus à l'emploi)",
+        "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/workers_reductions/workbonus.html",
+        "note": "employment bonus (official)"
       }
     ]
   },
@@ -76,30 +148,68 @@
       "key": "single",
       "title": "How to calculate income tax in Belgium on a €55,000 salary (single)",
       "intro": "<p>This is a single employee on a €55,000 gross salary, with no children and a 7% municipal surcharge. ONSS is 13.07%, or €7,189. The 30% lump-sum deduction is capped at €6,070, so taxable income is about €41,742. Federal tax is €11,913 after the €11,550 tax-free amount, and the municipal surcharge adds €834. The special social security contribution is €539. You keep about €34,526, or 62.8% of gross.</p>",
-      "after": "<p>Your marginal rate is 56.0%, because the last euros are taxed at 45%, plus the municipal surcharge, plus ONSS on each extra euro of pay.</p>"
+      "after": "<p>Your marginal rate is 56.0%, because the last euros are taxed at 45%, plus the municipal surcharge, plus ONSS on each extra euro of pay.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "key": "married-two-children",
       "title": "How much tax does a married one-earner family pay in Belgium on €70,000?",
       "intro": "<p>This is a married employee with a non-working partner and two children, on €70,000 gross. ONSS is €9,149. After the €6,070 lump-sum deduction, the marital quotient transfers €11,780 to your partner, and the tax-free amount rises to €16,680 with the child supplement. Federal tax is €11,254, the municipal surcharge €788 and the special social security contribution €704. You keep about €48,105, or 68.7% of gross.</p>",
-      "after": "<p>The quotient and the child supplement together keep your federal tax lower than the single example despite a higher salary. If your partner also earns, the quotient is smaller or does not apply.</p>"
+      "after": "<p>The quotient and the child supplement together keep your federal tax lower than the single example despite a higher salary. If your partner also earns, the quotient is smaller or does not apply.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+        }
+      ]
     },
     {
       "key": "expat-regime",
       "title": "Take-home pay in Belgium on €100,000 under the expat regime",
       "intro": "<p>This is a qualifying employee on a €100,000 gross salary with the expat regime. The calculator treats 35% of gross, €35,000, as a tax and ONSS free reimbursement. ONSS is charged on the remaining €65,000 and comes to €8,495. After the lump-sum deduction and the tax-free amount, federal tax is €15,825 and the municipal surcharge €1,108. The special social security contribution is €731. You keep about €73,841, or 73.8% of gross.</p>",
-      "after": "<p>Without the regime the same salary would leave about €53,023, so the regime is worth about €20,800 a year as modelled. Whether you qualify is a legal question for you and your employer.</p>"
+      "after": "<p>Without the regime the same salary would leave about €53,023, so the regime is worth about €20,800 a year as modelled. Whether you qualify is a legal question for you and your employer.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to reduce Belgian tax. Which ones apply depends on your household and how you were hired.</p>",
   "strategies": [
     {
       "h3": "Check whether you qualify for the expat regime",
-      "html": "<p><strong>Suits:</strong> employees recruited from abroad or seconded to Belgium who meet the conditions on role, salary and prior residence. It can lower both tax and ONSS.</p><p><strong>Caveat:</strong> it is applied for with your employer, the ONSS exemption has its own ceiling, and not everyone qualifies. Get the conditions confirmed before you rely on it.</p>"
+      "html": "<p><strong>Suits:</strong> employees recruited from abroad or seconded to Belgium who meet the conditions on role, salary and prior residence. It can lower both tax and ONSS.</p><p><strong>Caveat:</strong> it is applied for with your employer, the ONSS exemption has its own ceiling, and not everyone qualifies. Get the conditions confirmed before you rely on it.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+        }
+      ]
     },
     {
       "h3": "Use the marital quotient",
-      "html": "<p><strong>Suits:</strong> married couples where one partner earns most of the income. Moving up to 30% of income, capped at €11,780, to the lower earner shifts it into the lower brackets.</p><p><strong>Caveat:</strong> it helps most when your partner has little or no income. If both of you earn a similar amount, it brings little.</p>"
+      "html": "<p><strong>Suits:</strong> married couples where one partner earns most of the income. Moving up to 30% of income, capped at €11,780, to the lower earner shifts it into the lower brackets.</p><p><strong>Caveat:</strong> it helps most when your partner has little or no income. If both of you earn a similar amount, it brings little.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+        }
+      ]
     },
     {
       "h3": "Ask about tax-friendly benefits in your package",
@@ -122,27 +232,67 @@
   "faq": [
     {
       "q": "How much tax do I pay on €55,000 in Belgium?",
-      "a": "<p>A single employee pays €11,913 in federal tax, a €834 municipal surcharge, €7,189 in ONSS and a €539 special social security contribution, and keeps about €34,526. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A single employee pays €11,913 in federal tax, a €834 municipal surcharge, €7,189 in ONSS and a €539 special social security contribution, and keeps about €34,526. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "q": "How does the Belgian marital quotient work?",
-      "a": "<p>In a married couple where one partner has most of the income, the higher earner can transfer up to 30% of their professional income, capped at €11,780, to the partner. That share is taxed as the partner's own income, from the bottom of the brackets and with their own tax-free amount, instead of at the higher earner's top rate. In the €70,000 example, €11,780 moves to the partner. The calculator applies it for married households only.</p>"
+      "a": "<p>In a married couple where one partner has most of the income, the higher earner can transfer up to 30% of their professional income, capped at €11,780, to the partner. That share is taxed as the partner's own income, from the bottom of the brackets and with their own tax-free amount, instead of at the higher earner's top rate. In the €70,000 example, €11,780 moves to the partner. The calculator applies it for married households only.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+        }
+      ]
     },
     {
       "q": "What is the municipal surcharge and why does it differ between towns?",
-      "a": "<p>Each Belgian municipality adds its own surcharge, expressed as a percentage of your federal income tax. It depends on where you live on 1 January and most communes set it between 6% and 8%. The calculator uses 7% and lets you change it. On the €55,000 single example the surcharge is €834.</p>"
+      "a": "<p>Each Belgian municipality adds its own surcharge, expressed as a percentage of your federal income tax. It depends on where you live on 1 January and most communes set it between 6% and 8%. The calculator uses 7% and lets you change it. On the €55,000 single example the surcharge is €834.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: local income taxes",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=Local%20income%20taxes"
+        }
+      ]
     },
     {
       "q": "How does the Belgian expat regime work?",
-      "a": "<p>For qualifying employees recruited from abroad or seconded to Belgium, part of the salary is treated as a reimbursement of extra living costs and is not taxed. The calculator models it as 35% of gross pay when gross pay is above €70,000, free of both tax and ONSS. On €100,000 that raises take-home pay from about €53,023 to €73,841. You apply with your employer, and eligibility and any cap should be checked with the tax administration.</p>"
+      "a": "<p>For qualifying employees recruited from abroad or seconded to Belgium, part of the salary is treated as a reimbursement of extra living costs and is not taxed. The calculator models it as 35% of gross pay when gross pay is above €70,000, free of both tax and ONSS. On €100,000 that raises take-home pay from about €53,023 to €73,841. You apply with your employer, and eligibility and any cap should be checked with the tax administration.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+        }
+      ]
     },
     {
       "q": "What is the special social security contribution (CSSS)?",
-      "a": "<p>It is an extra social security charge on top of the 13.07% ONSS. It is zero at low incomes, then rises in steps and stops at a cap of about €731 a year. In the examples it is €539 at €55,000 and €731 at €100,000.</p>"
+      "a": "<p>It is an extra social security charge on top of the 13.07% ONSS. It is zero at low incomes, then rises in steps and stops at a cap of about €731 a year. In the examples it is €539 at €55,000 and €731 at €100,000.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: special social security contribution",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Special%20social%20security%20contribution"
+        }
+      ]
     },
     {
       "q": "Why is take-home pay on my payslip different from the yearly figure?",
-      "a": "<p>The employer withholds professional tax each month with a set formula, and the annual return then settles the real bill, so you can get a refund or owe a balance. The calculator shows a full year at one salary, so it matches the final bill, not each payslip. Extras such as a 13th month or double holiday pay, which many Belgian jobs pay, are taxed too and are not in the model.</p>"
+      "a": "<p>The employer withholds professional tax each month with a set formula, and the annual return then settles the real bill, so you can get a refund or owe a balance. The calculator shows a full year at one salary, so it matches the final bill, not each payslip. Extras such as a 13th month or double holiday pay, which many Belgian jobs pay, are taxed too and are not in the model.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Belgium individual: tax administration (withholding and returns)",
+          "url": "https://taxsummaries.pwc.com/belgium/individual/tax-administration#:~:text=Payment%20of%20tax"
+        }
+      ]
     },
     {
       "q": "What does a salary buy in Belgium?",

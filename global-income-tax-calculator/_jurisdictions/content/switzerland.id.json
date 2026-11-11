@@ -8,10 +8,30 @@
   "lede": "<p>Swiss memajaki penghasilan di tiga lapis, yaitu federal, kanton, dan kota atau desa (<em>commune</em>), dan dua lapis terakhir bergantung pada tempat tinggalmu. Halaman ini hanya menghitung Kota Zürich. Untuk gaji kotor CHF 110.000, karyawan lajang di sana membayar sekitar CHF 14.278 pajak penghasilan dan CHF 10.693 iuran sosial, sehingga gaji bersihnya (<em>take-home pay</em>) sekitar CHF 85.029, atau 77,3% dari gaji kotor, sebelum premi asuransi kesehatan yang kamu bayar sendiri.</p>",
   "law": {
     "intro": "<p>Tahun pajak Swiss adalah tahun kalender, dan angka di halaman ini memakai aturan 2026 untuk Kota Zürich seperti yang dihitung <em>tool</em> ini. Penduduk dipajaki atas penghasilan dari seluruh dunia. Cara pajak dipungut bergantung pada izin tinggalmu: pekerja asing tanpa izin menetap (izin C) dipajaki langsung di sumber, sehingga umumnya tidak perlu mengisi laporan pajak sendiri.</p>",
+    "introCite": [
+      {
+        "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+        "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent"
+      }
+    ],
     "blocks": [
       {
         "h3": "Tiga lapis pajak",
-        "html": "<p>Penghasilan dipajaki oleh pemerintah federal (pajak federal langsung, DBST), Kanton Zürich, dan kota tempat tinggalmu. Kanton dan kota sama-sama bertolak dari \"pajak dasar\" kanton yang dihitung dengan satu tabel tarif, lalu masing-masing menerapkan pengalinya sendiri. Di <em>tool</em> ini kanton memungut 95% dari pajak dasar dan Kota Zürich memungut 119%. Ada pula pajak pribadi kecil (CHF 24 untuk lajang, CHF 48 untuk pasangan menikah). Di Indonesia, tarif Pasal 17 sama di seluruh negeri, sedangkan di Swiss tempat tinggalmu sampai tingkat kota ikut menentukan tagihan.</p><p>Pajak federal dihitung terpisah dan bersifat progresif. Untuk wajib pajak lajang, pajak itu mulai dari penghasilan kena pajak di atas CHF 15.200 dan naik bertahap sampai tarif tetap 11,5% untuk penghasilan sangat tinggi.</p>"
+        "html": "<p>Penghasilan dipajaki oleh pemerintah federal (pajak federal langsung, DBST), Kanton Zürich, dan kota tempat tinggalmu. Kanton dan kota sama-sama bertolak dari \"pajak dasar\" kanton yang dihitung dengan satu tabel tarif, lalu masing-masing menerapkan pengalinya sendiri. Di <em>tool</em> ini kanton memungut 95% dari pajak dasar dan Kota Zürich memungut 119%. Ada pula pajak pribadi kecil (CHF 24 untuk lajang, CHF 48 untuk pasangan menikah). Di Indonesia, tarif Pasal 17 sama di seluruh negeri, sedangkan di Swiss tempat tinggalmu sampai tingkat kota ikut menentukan tagihan.</p><p>Pajak federal dihitung terpisah dan bersifat progresif. Untuk wajib pajak lajang, pajak itu mulai dari penghasilan kena pajak di atas CHF 15.200 dan naik bertahap sampai tarif tetap 11,5% untuk penghasilan sangat tinggi.</p>",
+        "cite": [
+          {
+            "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+            "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+          },
+          {
+            "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+            "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent"
+          },
+          {
+            "name": "ESTV, tarif pajak federal langsung untuk orang pribadi 2026",
+            "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf"
+          }
+        ]
       },
       {
         "h3": "Tarif pajak dasar Kanton Zürich (lajang)",
@@ -75,51 +95,101 @@
               "13%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+            "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+          },
+          {
+            "name": "Kanton Zurich, petunjuk pengurang sosial dan tarif pajak (ZStB 34.1)",
+            "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-34-1.html#:~:text=Grundtarif"
+          }
+        ]
       },
       {
         "h3": "Iuran sosial",
-        "html": "<p>Pemberi kerja memotong bagianmu dari asuransi sosial langsung dari gaji kotor. Yang pertama adalah AHV/IV/EO (pensiun dasar, disabilitas, dan penggantian penghasilan) sebesar 5,3%, yang fungsinya mirip JHT dan JP di BPJS Ketenagakerjaan. Berikutnya asuransi pengangguran (ALV) 1,1% sampai gaji CHF 148.200, asuransi kecelakaan di luar pekerjaan (NBU) yang diasumsikan 0,4%, dan separuh iuran dana pensiun kerja (BVG, juga disebut pilar 2).</p><p>Iuran BVG dihitung dari gaji terkoordinasi, yaitu bagian gaji yang diasuransikan di dana pensiun, yang oleh <em>tool</em> ini dibatasi CHF 64.260. Persentasenya menurut kelompok usia: 3,5% (25 sampai 34 tahun), 5% (35 sampai 44), 7,5% (45 sampai 54), dan 9% (55 sampai 65). Hitungan ini memakai 5% kecuali kamu mengubahnya. Pilar 2 adalah tabungan yang tersimpan di dana pensiunmu, bukan uang yang hilang.</p>"
+        "html": "<p>Pemberi kerja memotong bagianmu dari asuransi sosial langsung dari gaji kotor. Yang pertama adalah AHV/IV/EO (pensiun dasar, disabilitas, dan penggantian penghasilan) sebesar 5,3%, yang fungsinya mirip JHT dan JP di BPJS Ketenagakerjaan. Berikutnya asuransi pengangguran (ALV) 1,1% sampai gaji CHF 148.200, asuransi kecelakaan di luar pekerjaan (NBU) yang diasumsikan 0,4%, dan separuh iuran dana pensiun kerja (BVG, juga disebut pilar 2).</p><p>Iuran BVG dihitung dari gaji terkoordinasi, yaitu bagian gaji yang diasuransikan di dana pensiun, yang oleh <em>tool</em> ini dibatasi CHF 64.260. Persentasenya menurut kelompok usia: 3,5% (25 sampai 34 tahun), 5% (35 sampai 44), 7,5% (45 sampai 54), dan 9% (55 sampai 65). Hitungan ini memakai 5% kecuali kamu mengubahnya. Pilar 2 adalah tabungan yang tersimpan di dana pensiunmu, bukan uang yang hilang.</p>",
+        "cite": [
+          {
+            "name": "BSV, jaminan sosial Swiss: tabel sinoptik tarif iuran (per 1.1.2026)",
+            "url": "https://sozialversicherungen.admin.ch/de/d/6877/download"
+          },
+          {
+            "name": "Informationsstelle AHV/IV, pembaruan jaminan sosial di Swiss (per 1 Januari 2026)",
+            "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf"
+          }
+        ]
       },
       {
         "h3": "Asuransi kesehatan adalah premi pribadi",
-        "html": "<p>Asuransi kesehatan dasar (KVG) wajib, tetapi tidak dipotong dari gaji. Berbeda dengan BPJS Kesehatan di Indonesia yang dipotong lewat pemberi kerja, di Swiss kamu memilih perusahaan asuransi sendiri dan membayar premi bulanan sendiri, biasanya dalam tiga bulan setelah kedatangan. Besar premi bergantung pada kanton, perusahaan asuransi, besar <em>deductible</em>, dan model asuransinya. <em>Tool</em> ini tidak menghitungnya, jadi anggarkan terpisah.</p>"
+        "html": "<p>Asuransi kesehatan dasar (KVG) wajib, tetapi tidak dipotong dari gaji. Berbeda dengan BPJS Kesehatan di Indonesia yang dipotong lewat pemberi kerja, di Swiss kamu memilih perusahaan asuransi sendiri dan membayar premi bulanan sendiri, biasanya dalam tiga bulan setelah kedatangan. Besar premi bergantung pada kanton, perusahaan asuransi, besar <em>deductible</em>, dan model asuransinya. <em>Tool</em> ini tidak menghitungnya, jadi anggarkan terpisah.</p>",
+        "cite": [
+          {
+            "name": "FOPH (BAG), asuransi kesehatan: kewajiban asuransi bagi penduduk Swiss",
+            "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months"
+          }
+        ]
       },
       {
         "h3": "Pajak di sumber (Quellensteuer) untuk pemegang izin B",
-        "html": "<p>Warga negara asing tanpa izin menetap (izin C), seperti kebanyakan pemegang izin B, dipajaki di sumber. Pemberi kerja memotong pajak dari setiap slip gaji memakai tabel kanton yang menggabungkan pajak federal, kanton, dan kota, dan kamu umumnya tidak perlu mengisi laporan pajak sendiri. Status pernikahan dan anak mengubah tabelnya. Di atas penghasilan kotor sekitar CHF 120.000, penetapan pajak biasa (<em>ordentliche Veranlagung</em>) menjadi wajib, dan dalam kasus tertentu kamu bisa memintanya.</p><p><em>Tool</em> ini menghitung penetapan biasa yang berlaku bagi warga Swiss dan pemegang izin C. Pajak di sumber untuk gaji yang sama biasanya berada di kisaran serupa, tetapi tidak persis sama.</p>"
+        "html": "<p>Warga negara asing tanpa izin menetap (izin C), seperti kebanyakan pemegang izin B, dipajaki di sumber. Pemberi kerja memotong pajak dari setiap slip gaji memakai tabel kanton yang menggabungkan pajak federal, kanton, dan kota, dan kamu umumnya tidak perlu mengisi laporan pajak sendiri. Status pernikahan dan anak mengubah tabelnya. Di atas penghasilan kotor sekitar CHF 120.000, penetapan pajak biasa (<em>ordentliche Veranlagung</em>) menjadi wajib, dan dalam kasus tertentu kamu bisa memintanya.</p><p><em>Tool</em> ini menghitung penetapan biasa yang berlaku bagi warga Swiss dan pemegang izin C. Pajak di sumber untuk gaji yang sama biasanya berada di kisaran serupa, tetapi tidak persis sama.</p>",
+        "cite": [
+          {
+            "name": "ESTV, pajak sumber (Quellensteuer) Swiss",
+            "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung"
+          },
+          {
+            "name": "Kanton Zurich, orang yang dikenai pajak sumber",
+            "url": "https://www.zh.ch/de/steuern-finanzen/steuern/quellensteuer/Quellensteuerpflichtige-Personen.html#:~:text=keine%20Niederlassungsbewilligung"
+          },
+          {
+            "name": "Kanton Zurich, lembar petunjuk pajak sumber (ZStB 87.3), ambang Fr. 120.000",
+            "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Eidgenössische Steuerverwaltung (ESTV), pajak federal dan potongan di sumber",
-        "url": "https://www.estv.admin.ch/",
-        "note": "pajak federal langsung dan pajak di sumber"
+        "name": "ESTV, tarif pajak federal langsung untuk orang pribadi 2026",
+        "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf",
+        "note": "tarif pajak federal langsung 2026"
       },
       {
-        "name": "Kanton Zürich, pajak dan keuangan",
-        "url": "https://www.zh.ch/de/steuern-finanzen.html",
-        "note": "tarif kanton dan pengali"
+        "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+        "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf",
+        "note": "UU pajak Zurich: tarif pajak penghasilan dan pajak kekayaan"
       },
       {
-        "name": "State Secretariat for Migration (SEM), izin tinggal dan kerja",
-        "url": "https://www.sem.admin.ch/",
-        "note": "izin dan aturan masuk"
+        "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+        "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent",
+        "note": "pengali pajak negara bagian dan komune"
       },
       {
-        "name": "ch.ch, portal resmi otoritas Swiss",
-        "url": "https://www.ch.ch/",
-        "note": "pindah ke Swiss, asuransi kesehatan, dan pensiun"
+        "name": "BSV, jaminan sosial Swiss: tabel sinoptik tarif iuran (per 1.1.2026)",
+        "url": "https://sozialversicherungen.admin.ch/de/d/6877/download",
+        "note": "tarif AHV/IV/EO dan asuransi pengangguran"
       },
       {
-        "name": "Bundesamt für Gesundheit (BAG), asuransi kesehatan dasar",
-        "url": "https://www.bag.admin.ch/",
-        "note": "KVG"
+        "name": "Informationsstelle AHV/IV, pembaruan jaminan sosial di Swiss (per 1 Januari 2026)",
+        "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf",
+        "note": "batas pilar 2 dan pilar 3a"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP), informasi pajak internasional",
-        "url": "https://www.pajak.go.id/",
-        "note": "sisi Indonesia"
+        "name": "FOPH (BAG), asuransi kesehatan: kewajiban asuransi bagi penduduk Swiss",
+        "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months",
+        "note": "asuransi kesehatan wajib"
+      },
+      {
+        "name": "Kanton Zurich, lembar petunjuk pajak sumber (ZStB 87.3), ambang Fr. 120.000",
+        "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von",
+        "note": "pajak sumber dan ambang CHF 120.000"
+      },
+      {
+        "name": "ESTV, pajak sumber (Quellensteuer) Swiss",
+        "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung",
+        "note": "pajak sumber"
       }
     ]
   },
@@ -128,26 +198,58 @@
       "key": "single-zurich",
       "title": "Berapa pajak dan gaji bersih di Zürich dengan gaji kotor CHF 110.000?",
       "intro": "<p>Misalkan seorang karyawan lajang berusia 35 sampai 44 tahun tinggal di Kota Zürich dengan gaji kotor CHF 110.000. Iuran sosialnya CHF 10.693: AHV/IV/EO CHF 5.830, ALV CHF 1.210, asuransi kecelakaan CHF 440, dan dana pensiun CHF 3.213. Penghasilan kena pajaknya sekitar CHF 93.400. Pajak kanton CHF 5.297 dan pajak kota CHF 6.635, ditambah pajak pribadi CHF 24 dan pajak federal CHF 2.321. Gaji bersihnya sekitar CHF 85.029, atau 77,3% dari gaji kotor, sebelum premi asuransi kesehatan.</p>",
-      "after": "<p>Tarif marjinalnya 30,3%. Iuran dana pensiun tetap CHF 3.213 pada gaji yang lebih tinggi, karena dihitung dari gaji terkoordinasi yang dibatasi.</p>"
+      "after": "<p>Tarif marjinalnya 30,3%. Iuran dana pensiun tetap CHF 3.213 pada gaji yang lebih tinggi, karena dihitung dari gaji terkoordinasi yang dibatasi.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+          "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+        },
+        {
+          "name": "ESTV, tarif pajak federal langsung untuk orang pribadi 2026",
+          "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf"
+        }
+      ]
     },
     {
       "key": "married-two-children-zurich",
       "title": "Gaji bersih pasangan menikah dengan dua anak di Zürich dengan gaji CHF 140.000",
       "intro": "<p>Bayangkan rumah tangga menikah di Kota Zürich dengan dua anak, yang hidup dari satu gaji kotor CHF 140.000. Iuran sosialnya CHF 12.733. Penghasilan kena pajaknya sekitar CHF 96.200 setelah potongan untuk pasangan menikah dan anak. Pajak kanton CHF 4.218 dan pajak kota CHF 5.284, ditambah pajak pribadi CHF 48 dan pajak federal CHF 1.385 setelah pengurangan CHF 263 untuk tiap anak. Gaji bersihnya sekitar CHF 116.332, atau 83,1% dari gaji kotor, sebelum premi asuransi kesehatan.</p>",
-      "after": "<p>Tarif pajak untuk pasangan menikah dan potongan anak menurunkan tarif efektif, meski gajinya lebih tinggi. Premi asuransi kesehatan untuk empat orang adalah biaya terpisah yang cukup besar.</p>"
+      "after": "<p>Tarif pajak untuk pasangan menikah dan potongan anak menurunkan tarif efektif, meski gajinya lebih tinggi. Premi asuransi kesehatan untuk empat orang adalah biaya terpisah yang cukup besar.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+          "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+        },
+        {
+          "name": "Kanton Zurich, petunjuk pengurang sosial dan tarif pajak (ZStB 34.1)",
+          "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-34-1.html#:~:text=Grundtarif"
+        }
+      ]
     },
     {
       "key": "church-member",
       "title": "Cara menghitung pajak gereja di Zürich dengan gaji kotor CHF 110.000",
       "intro": "<p>Kasus lajang bergaji CHF 110.000 diulang untuk anggota gereja yang diakui. Pajak gereja sebesar 10% dari pajak dasar kanton, yaitu CHF 558. Komponen lain tidak berubah, sehingga gaji bersihnya sekitar CHF 84.471, atau 76,8% dari gaji kotor, sekitar CHF 558 lebih kecil daripada tanpa keanggotaan gereja.</p>",
-      "after": "<p>Pajak gereja hanya berlaku kalau kamu anggota gereja yang diakui, dan keanggotaan itu kamu nyatakan saat mendaftar di tempat tinggalmu. Indonesia tidak punya pajak berbasis agama. <em>Tool</em> ini memakai 10% dari pajak dasar, sedangkan tarif sebenarnya ditetapkan secara lokal.</p>"
+      "after": "<p>Pajak gereja hanya berlaku kalau kamu anggota gereja yang diakui, dan keanggotaan itu kamu nyatakan saat mendaftar di tempat tinggalmu. Indonesia tidak punya pajak berbasis agama. <em>Tool</em> ini memakai 10% dari pajak dasar, sedangkan tarif sebenarnya ditetapkan secara lokal.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+          "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara lazim yang sah untuk menurunkan pajak di Swiss atau membangun tabungan jangka panjang. Mana yang berlaku bergantung pada izin tinggal, usia, dan pemberi kerjamu.</p>",
   "strategies": [
     {
       "h3": "Setor ke pilar 3a",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang sudah ikut dana pensiun kerja (pilar 2).</p><p>Setoran ke rekening pilar 3a, yang kira-kira setara DPLK di Indonesia, boleh dikurangkan dari penghasilan kena pajak sampai batas tahunan yang ditetapkan pemerintah federal, jadi cek angka terbarunya. Membuka lebih dari satu rekening memungkinkan penarikan bertahap kelak, yang bisa menurunkan pajak penarikan.</p><p><strong>Catatan:</strong> dana terkunci sampai sekitar lima tahun sebelum usia pensiun. Penarikan lebih awal hanya boleh untuk alasan tertentu, seperti membeli rumah, memulai usaha sendiri, atau meninggalkan Swiss secara permanen.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang sudah ikut dana pensiun kerja (pilar 2).</p><p>Setoran ke rekening pilar 3a, yang kira-kira setara DPLK di Indonesia, boleh dikurangkan dari penghasilan kena pajak sampai batas tahunan yang ditetapkan pemerintah federal, jadi cek angka terbarunya. Membuka lebih dari satu rekening memungkinkan penarikan bertahap kelak, yang bisa menurunkan pajak penarikan.</p><p><strong>Catatan:</strong> dana terkunci sampai sekitar lima tahun sebelum usia pensiun. Penarikan lebih awal hanya boleh untuk alasan tertentu, seperti membeli rumah, memulai usaha sendiri, atau meninggalkan Swiss secara permanen.</p>",
+      "cite": [
+        {
+          "name": "Informationsstelle AHV/IV, pembaruan jaminan sosial di Swiss (per 1 Januari 2026)",
+          "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf"
+        }
+      ]
     },
     {
       "h3": "Pertimbangkan pembelian tambahan manfaat dana pensiun",
@@ -159,7 +261,13 @@
     },
     {
       "h3": "Bandingkan kota sebelum menyewa tempat tinggal",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang bebas memilih tempat tinggal di dalam kanton.</p><p>Pengali kota di Kanton Zürich berbeda-beda, dan <em>tool</em> ini memungkinkan kamu mengganti pengali kotanya.</p><p><strong>Catatan:</strong> pengali yang lebih rendah sering datang bersama harga sewa dan ongkos komuter yang berbeda, jadi timbang semuanya sekaligus dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> orang yang bebas memilih tempat tinggal di dalam kanton.</p><p>Pengali kota di Kanton Zürich berbeda-beda, dan <em>tool</em> ini memungkinkan kamu mengganti pengali kotanya.</p><p><strong>Catatan:</strong> pengali yang lebih rendah sering datang bersama harga sewa dan ongkos komuter yang berbeda, jadi timbang semuanya sekaligus dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+          "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent"
+        }
+      ]
     }
   ],
   "limits": [
@@ -174,27 +282,75 @@
   "faq": [
     {
       "q": "Berapa pajak yang saya bayar dari gaji CHF 110.000 di Zürich?",
-      "a": "<p>Karyawan lajang di Kota Zürich membayar sekitar CHF 14.278 untuk pajak penghasilan dan CHF 10.693 untuk iuran sosial, sehingga tersisa sekitar CHF 85.029 sebelum asuransi kesehatan. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan lajang di Kota Zürich membayar sekitar CHF 14.278 untuk pajak penghasilan dan CHF 10.693 untuk iuran sosial, sehingga tersisa sekitar CHF 85.029 sebelum asuransi kesehatan. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+          "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+        },
+        {
+          "name": "ESTV, tarif pajak federal langsung untuk orang pribadi 2026",
+          "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf"
+        }
+      ]
     },
     {
       "q": "Apa itu Quellensteuer, dan apakah saya perlu lapor pajak sendiri di Swiss?",
-      "a": "<p>Kalau kamu warga negara asing tanpa izin C, pemberi kerja memotong pajak langsung dari gaji dengan tabel kanton dan kamu biasanya tidak mengisi laporan pajak. Di Indonesia kamu tetap melapor SPT Tahunan dengan bukti potong dari pemberi kerja, sedangkan di Swiss potongan itu umumnya sudah menuntaskan kewajibanmu. Kalau penghasilan kotormu di atas sekitar CHF 120.000, penetapan pajak biasa menjadi wajib, dan pada kasus lain kamu mungkin bisa memintanya. Warga negara Swiss dan pemegang izin C melapor setiap tahun. Karena <em>tool</em> ini menghitung penetapan biasa, angka potongan sebenarnya bisa sedikit berbeda.</p>"
+      "a": "<p>Kalau kamu warga negara asing tanpa izin C, pemberi kerja memotong pajak langsung dari gaji dengan tabel kanton dan kamu biasanya tidak mengisi laporan pajak. Di Indonesia kamu tetap melapor SPT Tahunan dengan bukti potong dari pemberi kerja, sedangkan di Swiss potongan itu umumnya sudah menuntaskan kewajibanmu. Kalau penghasilan kotormu di atas sekitar CHF 120.000, penetapan pajak biasa menjadi wajib, dan pada kasus lain kamu mungkin bisa memintanya. Warga negara Swiss dan pemegang izin C melapor setiap tahun. Karena <em>tool</em> ini menghitung penetapan biasa, angka potongan sebenarnya bisa sedikit berbeda.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, lembar petunjuk pajak sumber (ZStB 87.3), ambang Fr. 120.000",
+          "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von"
+        },
+        {
+          "name": "ESTV, pajak sumber (Quellensteuer) Swiss",
+          "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung"
+        }
+      ]
     },
     {
       "q": "Kenapa pajak di Swiss bergantung pada tempat tinggal?",
-      "a": "<p>Setiap kanton menetapkan tarifnya sendiri, dan tiap kota menerapkan pengali sendiri atas pajak dasar kanton. Di <em>tool</em> ini Kanton Zürich memungut 95% dari pajak dasar dan Kota Zürich 119%. Kanton atau kota lain bisa menghasilkan tagihan yang jauh lebih tinggi atau lebih rendah untuk gaji yang sama.</p>"
+      "a": "<p>Setiap kanton menetapkan tarifnya sendiri, dan tiap kota menerapkan pengali sendiri atas pajak dasar kanton. Di <em>tool</em> ini Kanton Zürich memungut 95% dari pajak dasar dan Kota Zürich 119%. Kanton atau kota lain bisa menghasilkan tagihan yang jauh lebih tinggi atau lebih rendah untuk gaji yang sama.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, tarif pengali pajak terkini (pengali pajak negara bagian 95 persen)",
+          "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent"
+        },
+        {
+          "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+          "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+        }
+      ]
     },
     {
       "q": "Apakah premi asuransi kesehatan dipotong dari gaji di Swiss?",
-      "a": "<p>Tidak, premi itu tidak dipotong dari gaji. Asuransi kesehatan dasar wajib, tetapi kamu membelinya sendiri dari perusahaan asuransi swasta dan membayar premi bulanan. Besar premi bergantung pada kanton, perusahaan asuransi, <em>deductible</em>, dan modelnya. <em>Tool</em> ini tidak menghitungnya, jadi kurangi sendiri gaji bersihnya dengan premimu.</p>"
+      "a": "<p>Tidak, premi itu tidak dipotong dari gaji. Asuransi kesehatan dasar wajib, tetapi kamu membelinya sendiri dari perusahaan asuransi swasta dan membayar premi bulanan. Besar premi bergantung pada kanton, perusahaan asuransi, <em>deductible</em>, dan modelnya. <em>Tool</em> ini tidak menghitungnya, jadi kurangi sendiri gaji bersihnya dengan premimu.</p>",
+      "cite": [
+        {
+          "name": "FOPH (BAG), asuransi kesehatan: kewajiban asuransi bagi penduduk Swiss",
+          "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months"
+        }
+      ]
     },
     {
       "q": "Kenapa ada pajak gereja di slip gaji, dan apakah saya kena?",
-      "a": "<p>Di Kanton Zürich, anggota gereja yang diakui membayar pajak gereja tambahan, dihitung sebagai persentase dari pajak dasar kanton. Dalam contoh, besarnya 10% atau CHF 558 untuk gaji CHF 110.000. Keanggotaan itu kamu nyatakan saat mendaftar di tempat tinggalmu. Kalau kamu tidak tercatat sebagai anggota gereja yang diakui, pajak ini tidak ada.</p>"
+      "a": "<p>Di Kanton Zürich, anggota gereja yang diakui membayar pajak gereja tambahan, dihitung sebagai persentase dari pajak dasar kanton. Dalam contoh, besarnya 10% atau CHF 558 untuk gaji CHF 110.000. Keanggotaan itu kamu nyatakan saat mendaftar di tempat tinggalmu. Kalau kamu tidak tercatat sebagai anggota gereja yang diakui, pajak ini tidak ada.</p>",
+      "cite": [
+        {
+          "name": "Kanton Zurich, UU Pajak (LS 631.1), § 35 tarif pajak penghasilan, § 200 pajak pribadi",
+          "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf"
+        }
+      ]
     },
     {
       "q": "Apakah ada pajak kekayaan di Swiss?",
-      "a": "<p>Ya, semua kanton memajaki kekayaan bersih setiap tahun, di samping pajak penghasilan. Indonesia tidak punya pajak kekayaan. Tarifnya di Swiss biasanya kecil, tetapi komponen ini tidak dihitung di <em>tool</em> ini, yang hanya mencakup pajak penghasilan dan iuran sosial.</p>"
+      "a": "<p>Ya, semua kanton memajaki kekayaan bersih setiap tahun, di samping pajak penghasilan. Indonesia tidak punya pajak kekayaan. Tarifnya di Swiss biasanya kecil, tetapi komponen ini tidak dihitung di <em>tool</em> ini, yang hanya mencakup pajak penghasilan dan iuran sosial.</p>",
+      "cite": [
+        {
+          "name": "SFBVG, pembayaran tunai saat pindah ke luar negeri",
+          "url": "https://sfbvg.ch/en/tasks/cash-payment-on-departure-abroad#:~:text=EU%20or%20EFTA%20country"
+        }
+      ]
     },
     {
       "q": "Apa itu pilar 2, dan apakah uangnya bisa kembali kalau saya pulang ke Indonesia?",
