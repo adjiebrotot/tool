@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../consent.js" defer></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online 3D Viewer: STEP, STL, OBJ, glTF, FBX and more | Adjie Brotools</title>
+<meta name="description" content="Open STEP, IGES, STL, OBJ, 3MF, glTF, FBX and 9 more 3D formats in your browser. Free and private: your model is never uploaded.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/online-3d-viewer/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Online 3D Viewer">
+<meta property="og:description" content="Open STEP, IGES, STL, OBJ, 3MF, glTF, FBX and 9 more 3D formats in your browser. Free and private: your model is never uploaded.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/online-3d-viewer/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/online-3d-viewer.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Online 3D Viewer, a free tool on Adjie Brotools">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Online 3D Viewer">
+<meta name="twitter:description" content="Open STEP, IGES, STL, OBJ, 3MF, glTF, FBX and 9 more 3D formats in your browser. Free and private: your model is never uploaded.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/online-3d-viewer.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Online 3D Viewer",
+  "url": "https://tool.adjiebrotots.com/online-3d-viewer/",
+  "description": "View 3D CAD and mesh models in the browser: STEP, IGES, BREP, Rhino 3DM, STL, OBJ, 3MF, AMF, glTF, GLB, FBX, COLLADA, USDZ, PLY, 3DS, OFF and VRML. Nothing is uploaded.",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "dateModified": "2026-11-11",
+  "screenshot": "https://tool.adjiebrotots.com/og/online-3d-viewer.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "inLanguage": "en",
+  "keywords": "online 3D viewer, STEP viewer, STP viewer online, STL viewer, OBJ viewer, glTF viewer, FBX viewer, 3MF viewer, IGES viewer, view CAD file in browser, 3D model viewer without upload",
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I open a STEP file without CAD software?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Drop the .step or .stp file on the free Online 3D Viewer at https://tool.adjiebrotots.com/online-3d-viewer/. OpenCascade, running in your browser, reads the exact CAD surfaces and shows the part or assembly in 3D with its colours, so no CAD licence or install is needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my 3D model uploaded to a server?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. The Online 3D Viewer reads the file inside your browser, so the model never leaves your device. Only the free reader libraries are downloaded, once, from a public CDN."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which 3D file formats can it open?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CAD files: STEP (.step, .stp), IGES (.igs, .iges), OpenCascade BREP and Rhino 3DM. Meshes: STL (ASCII and binary), OBJ with MTL and textures, 3MF, AMF, PLY (including point clouds), OFF and 3DS. Scenes: glTF and GLB (with Draco, Meshopt and KTX2 compression), FBX, COLLADA (.dae), USDZ, USDA, USDC and VRML (.wrl)."
+      }
+    }
+  ]
+}
+</script>
+  <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+  <script src="../pwa.js" defer></script>
+  <link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts.css">
+  <link rel="stylesheet" href="../dark.css">
+  <link rel="stylesheet" href="../light.css">
+<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
+  <link rel="stylesheet" href="../shared.css?v=20261110">
+  <link rel="stylesheet" href="style.css">
+  <!-- three.js, pinned. Loaded only when a model is opened (script.js warms it up once the page is idle). -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/",
+      "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js"
+    }
+  }
+  </script>
+</head>
+<body class="light">
+<script src="../theme.js"></script>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-left">
+    <h1 class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M12 2.8 20 7.4v9.2L12 21.2 4 16.6V7.4z"/> <path stroke="var(--accent2)" d="M4 7.4 12 12l8-4.6M12 12v9.2"/> </svg>Online <span>3D</span> Viewer</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
+    <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+  </div>
+</header>
+
+<!-- ── DROP ZONE ── -->
+<div id="dropZone">
+  <input type="file" id="fileInput" multiple data-no-persist aria-label="Open a 3D model"
+    accept=".step,.stp,.p21,.iges,.igs,.brep,.brp,.3dm,.stl,.obj,.mtl,.3mf,.amf,.gltf,.glb,.bin,.fbx,.dae,.usdz,.usda,.usdc,.usd,.ply,.3ds,.off,.wrl,.vrml,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tga,.tif,.tiff,.ktx2,.dds,.zip">
+  <div class="drop-icon" aria-hidden="true">
+    <svg viewBox="0 0 64 64" width="64" height="64" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="var(--accent)" d="M32 6 54 18.5v27L32 58 10 45.5v-27z"/>
+      <path stroke="var(--accent2)" d="M10 18.5 32 31l22-12.5M32 31v27"/>
+      <path stroke="var(--accent)" stroke-dasharray="2 5" d="M21 12.2 43 24.8"/>
+    </svg>
+  </div>
+  <div class="drop-title">Drop your 3D model here</div>
+  <div class="drop-sub">or click to browse. Nothing is uploaded: the model opens right here in your browser.</div>
+  <div class="drop-groups">
+    <div class="drop-group"><span class="drop-group-label">CAD</span><span class="fmt-badge">STEP</span><span class="fmt-badge">STP</span><span class="fmt-badge">IGES</span><span class="fmt-badge">BREP</span><span class="fmt-badge">3DM</span></div>
+    <div class="drop-group"><span class="drop-group-label">Mesh</span><span class="fmt-badge">STL</span><span class="fmt-badge">OBJ</span><span class="fmt-badge">3MF</span><span class="fmt-badge">AMF</span><span class="fmt-badge">PLY</span><span class="fmt-badge">OFF</span><span class="fmt-badge">3DS</span></div>
+    <div class="drop-group"><span class="drop-group-label">Scene</span><span class="fmt-badge">glTF</span><span class="fmt-badge">GLB</span><span class="fmt-badge">FBX</span><span class="fmt-badge">DAE</span><span class="fmt-badge">USDZ</span><span class="fmt-badge">WRL</span></div>
+  </div>
+  <div class="drop-hint">A model in several files (OBJ with its MTL and textures, glTF with its .bin) opens when they are dropped together, as one folder or as a .zip.</div>
+  <button class="btn-secondary" id="sampleBtn" type="button">Load a sample model</button>
+  <div class="drop-error" id="dropError" role="alert" data-no-abbr></div>
+  <div class="busy" id="dropBusy" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span class="busy-msg" id="dropBusyMsg">Reading…</span></div>
+</div>
+
+<!-- ── WORKSPACE ── -->
+<div id="workspace">
+  <div class="viewer-bar">
+    <div class="vb-file" data-no-abbr>
+      <span class="vb-name" id="fileName">model</span>
+      <span class="fmt-badge" id="fileFormat">STL</span>
+    </div>
+    <div class="vb-tools">
+      <label class="vb-toggle">
+        <span class="toggle-switch"><input type="checkbox" id="edgesToggle"><span class="toggle-track"><span class="toggle-knob"></span></span></span>
+        <span class="vb-toggle-label">Edges <span class="tip-icon" id="edgesTip" data-tip="Lines where two faces meet at more than 30°, like the edges on a CAD drawing.">?</span></span>
+      </label>
+      <label class="vb-toggle">
+        <span class="toggle-switch"><input type="checkbox" id="wireToggle"><span class="toggle-track"><span class="toggle-knob"></span></span></span>
+        <span class="vb-toggle-label">Wireframe</span>
+      </label>
+      <label class="vb-toggle">
+        <span class="toggle-switch"><input type="checkbox" id="gridToggle" checked><span class="toggle-track"><span class="toggle-knob"></span></span></span>
+        <span class="vb-toggle-label">Grid</span>
+      </label>
+      <div class="vb-up">
+        <span class="vb-toggle-label">Up <span class="tip-icon" id="upTip" data-tip="Which axis of the file points up. CAD and 3D-printing files are usually Z up; glTF, OBJ and FBX are Y up.">?</span></span>
+        <div class="seg-group" id="upGroup" role="group" aria-label="Up axis" data-seg-fit="off">
+          <button class="seg-btn" type="button" data-up="y">Y</button>
+          <button class="seg-btn" type="button" data-up="z">Z</button>
+        </div>
+      </div>
+      <button class="btn-secondary btn-sm vb-square" id="playBtn" type="button" title="Pause the animation" aria-label="Pause the animation" hidden>❚❚</button>
+      <button class="btn-secondary btn-sm vb-square" id="resetViewBtn" type="button" title="Reset the view" aria-label="Reset the view">⟳</button>
+      <button class="btn-secondary btn-sm" id="pngBtn" type="button" title="Download this view as a PNG picture">⬇ PNG</button>
+      <button class="btn-secondary btn-sm" id="openBtn" type="button" data-icon="open">Open model</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stage-note" id="stageNote" role="status" data-no-abbr hidden>
+      <div class="stage-note-text" id="stageNoteText"></div>
+      <button type="button" class="btn-bare" id="stageNoteClose" data-icon="close" title="Close this note" aria-label="Close this note"></button>
+    </div>
+    <dl class="info-card" id="infoCard" aria-label="Model details">
+      <div><dt>Format</dt><dd id="infoFormat">–</dd></div>
+      <div><dt>Parts</dt><dd id="infoParts">–</dd></div>
+      <div><dt>Triangles</dt><dd id="infoTris">–</dd></div>
+      <div><dt>Vertices <span class="tip-icon" data-tip="Distinct corner points. A cube has 8, however its file stores them.">?</span></dt><dd id="infoVerts">–</dd></div>
+      <div id="infoPointsRow" hidden><dt>Points</dt><dd id="infoPoints">–</dd></div>
+      <div id="infoLinesRow" hidden><dt>Line segments</dt><dd id="infoLines">–</dd></div>
+      <div><dt>Size <span class="tip-icon" id="sizeTip" data-tip="Width, depth and height along the file's own X, Y and Z axes.">?</span></dt><dd id="infoSize">–</dd></div>
+    </dl>
+    <div class="stage-hint" id="stageHint">Drag to turn · Scroll to zoom · Right-drag to pan</div>
+    <div class="stage-drop" id="stageDrop" aria-hidden="true"><span>Drop to open</span></div>
+    <div class="busy" id="stageBusy" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span class="busy-msg" id="stageBusyMsg">Reading…</span></div>
+  </div>
+</div><!-- #workspace -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-11">11 November 2026</time></span></p>
+    <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img loading="lazy" src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="../dropdown.js"></script>
+<script src="../chart-kit.js"></script>
+<script src="../shared.js?v=20261110"></script>
+<script src="abbr.js"></script>
+<script type="module" src="script.js"></script>
+<script src="../bmc.js" defer data-bmc-drag></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="Turned your model every which way? Turn my day around with a coffee!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
+</body>
+</html>

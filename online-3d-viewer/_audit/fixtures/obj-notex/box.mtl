@@ -1,0 +1,7 @@
+newmtl Red
+Kd 0.8 0.1 0.1
+Ka 0 0 0
+
+newmtl Checker
+Kd 1 1 1
+map_Kd textures/checker.png
