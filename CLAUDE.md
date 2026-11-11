@@ -3,6 +3,9 @@
 Static, client-side tools at tool.adjiebrotots.com, one folder per tool, named as one simple
 word or as hyphen-separated words (`capacity-expansion-planner`, never `capacityexpansion-planner`). Building a tool:
 `.claude/skills/new-tool/SKILL.md`. Design system: `_ref/design-reference.md`.
+A tax or social security rule in the Global Income Tax Calculator changed (a rate, a cap, a
+reform): `.claude/skills/tax-rule-update/SKILL.md`, which starts from
+`node global-income-tax-calculator/_jurisdictions/rules.mjs <country> <figure>`.
 
 ## Change an existing tool with the least damage
 
