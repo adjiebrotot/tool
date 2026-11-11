@@ -4,13 +4,13 @@
   "title": "Cara Menghitung Pajak Gaji di Norwegia 2026",
   "h1": "Cara menghitung pajak penghasilan di Norwegia (2026)",
   "description": "Hitung pajak gaji di Norwegia 2026: pajak 22%, trinnskatt, iuran 7,6% dan skema PAYE 25%, dibandingkan dengan PPh 21 untuk WNI yang mau kerja di sana.",
-  "lede": "<p>Pajak gaji di Norwegia terdiri dari tiga lapis: pajak 22% atas penghasilan biasa setelah potongan, <em>trinnskatt</em> (pajak bertingkat) yang dihitung dari gaji kotor, dan iuran asuransi nasional 7,6%. Untuk gaji NOK 750.000 setahun, total yang dibayar sekitar NOK 197.000, sehingga gaji bersih (<em>take-home pay</em>) sekitar NOK 552.997 atau 73,7% dari gaji kotor. Pekerja asing yang memenuhi syarat boleh memilih skema PAYE dengan tarif tunggal 25%, yang menyisakan NOK 450.000 dari gaji NOK 600.000.</p>",
+  "lede": "<p>Pajak gaji di Norwegia terdiri dari tiga lapis: pajak 22% atas penghasilan biasa setelah potongan, <em>trinnskatt</em> (pajak bertingkat) yang dihitung dari gaji kotor, dan iuran asuransi nasional 7,6%. Dari gaji kotor NOK 750.000 setahun, total yang dibayar sekitar NOK 197.000, sehingga gaji bersih (<em>take-home pay</em>) sekitar NOK 552.997 atau 73,7% dari gaji kotor. Pekerja asing yang memenuhi syarat boleh memilih skema PAYE dengan tarif tunggal 25%, yang menyisakan NOK 450.000 dari gaji NOK 600.000.</p>",
   "law": {
-    "intro": "<p>Semua angka di bawah memakai tarif 2026 sebagaimana dihitung <em>tool</em> ini, dalam krone Norwegia (NOK). <em>Tool</em> memakai tarif nasional standar, jadi tarif yang lebih rendah di Finnmark dan Troms bagian utara serta pos-pos khusus kotamadya tidak ikut dihitung. Pajak di Norwegia mengikuti status <em>resident</em> pajak, bukan jenis visa atau paspor. Bagi pembaca dari Indonesia, yang paling berbeda adalah jumlah lapisannya: PPh 21 hanya satu tarif progresif, sedangkan di Norwegia gaji kotor dipajaki lewat tiga jalur sekaligus.</p>",
+    "intro": "<p>Semua angka di bawah memakai tarif 2026 sebagaimana dihitung <em>tool</em> ini, dalam krone Norwegia (NOK). Hitungan <em>tool</em> memakai tarif nasional standar, jadi tarif yang lebih rendah di Finnmark dan Troms bagian utara serta komponen khusus kotamadya tidak ikut dihitung. Pajak di Norwegia mengikuti status penduduk pajak (<em>tax resident</em>, di Indonesia disebut subjek pajak dalam negeri), bukan jenis visa atau paspor. Kalau kamu terbiasa dengan PPh 21, yang paling berbeda adalah jumlah lapisannya: PPh 21 memakai satu skala tarif progresif, sedangkan di Norwegia gaji kotor dipajaki lewat tiga jalur sekaligus.</p>",
     "blocks": [
       {
         "h3": "Pajak penghasilan biasa (22%)",
-        "html": "<p>Penghasilan biasa dikenai tarif tunggal 22%, tetapi tarif itu hanya berlaku setelah dua potongan. Pertama, potongan standar minimum (<em>minstefradrag</em>) sebesar 46% dari gaji kotor, dengan batas atas NOK 95.700, yang kira-kira berperan seperti <em>biaya jabatan</em> di PPh 21 Indonesia, hanya saja persentasenya jauh lebih besar. Kedua, tunjangan pribadi NOK 114.540, yang fungsinya mirip PTKP: bagian penghasilan yang tidak kena pajak 22%. Untuk kebanyakan gaji penuh, batas potongan standar sudah tercapai, sehingga sekitar NOK 210.240 dikurangkan sebelum tarif 22% berlaku.</p>"
+        "html": "<p>Penghasilan biasa dikenai tarif tunggal 22%, tetapi tarif itu hanya berlaku setelah dua potongan. Pertama, potongan standar minimum (<em>minstefradrag</em>) sebesar 46% dari gaji kotor, dengan batas atas NOK 95.700, yang kira-kira berperan seperti biaya jabatan di PPh 21, hanya saja persentasenya jauh lebih besar. Kedua, tunjangan pribadi NOK 114.540, yang fungsinya mirip PTKP: bagian penghasilan yang tidak kena pajak 22%. Untuk kebanyakan gaji penuh, batas potongan standar sudah tercapai, sehingga sekitar NOK 210.240 dikurangkan sebelum tarif 22% berlaku.</p>"
       },
       {
         "h3": "Pajak bertingkat (trinnskatt)",
@@ -50,15 +50,15 @@
       },
       {
         "h3": "Iuran asuransi nasional (trygdeavgift, 7,6%)",
-        "html": "<p>Karyawan membayar <em>trygdeavgift</em> sebesar 7,6% dari gaji kotor, mulai dari gaji di atas NOK 99.650 dan naik bertahap dengan laju 25% dari kelebihannya sampai tarif penuh tercapai. Iuran ini membayar keanggotaan Skema Asuransi Nasional (<em>folketrygden</em>) yang menanggung tunjangan sakit dan hak pensiun, sehingga posisinya paling dekat dengan BPJS Ketenagakerjaan dan BPJS Kesehatan. Bedanya, ini dipungut pemerintah bersama pajak dan bukan tabungan yang bisa dicairkan seperti JHT.</p>"
+        "html": "<p>Karyawan membayar <em>trygdeavgift</em> sebesar 7,6% dari gaji kotor, mulai dari gaji di atas NOK 99.650 dan naik bertahap dengan laju 25% dari kelebihannya sampai tarif penuh tercapai. Iuran ini membayar keanggotaan Skema Asuransi Nasional (<em>folketrygden</em>) yang menanggung tunjangan sakit dan hak pensiun, sehingga yang paling mirip di Indonesia adalah BPJS Ketenagakerjaan dan BPJS Kesehatan. Bedanya, iuran ini dipungut pemerintah bersama pajak dan bukan tabungan yang bisa dicairkan seperti JHT.</p>"
       },
       {
         "h3": "Skema PAYE untuk pekerja asing",
-        "html": "<p>Skema PAYE (<em>PAYE-ordningen</em>) adalah rezim sederhana untuk pekerja asing yang memenuhi syarat Skatteetaten, kantor pajak Norwegia. Skema ini mengganti pajak biasa, <em>trinnskatt</em> dan iuran asuransi nasional dengan satu tarif tunggal 25% dari gaji kotor tanpa potongan apa pun, dan umumnya diperuntukkan bagi pekerja yang belum dianggap <em>resident</em> pajak Norwegia dengan masa pakai terbatas. <em>Tool</em> mengizinkan skema ini sampai gaji NOK 725.050 setahun, dan punya tombol bagi yang tetap berada di luar asuransi nasional Norwegia, yang menurunkan tarifnya menjadi 17,4%. Cek kelayakanmu ke Skatteetaten sebelum memilihnya.</p>"
+        "html": "<p>Skema PAYE (<em>PAYE-ordningen</em>) adalah rezim sederhana untuk pekerja asing yang memenuhi syarat Skatteetaten, kantor pajak Norwegia. Skema ini mengganti pajak biasa, <em>trinnskatt</em> dan iuran asuransi nasional dengan satu tarif tunggal 25% dari gaji kotor tanpa potongan apa pun, dan umumnya diperuntukkan bagi pekerja yang belum dianggap penduduk pajak Norwegia dengan masa berlaku terbatas. Hitungan <em>tool</em> memakai skema ini sampai gaji NOK 725.050 setahun, dan ada pilihan bagi yang tetap berada di luar asuransi nasional Norwegia, yang menurunkan tarifnya menjadi 17,4%. Cek kelayakanmu ke Skatteetaten sebelum memilihnya.</p>"
       },
       {
         "h3": "Kartu pajak dan pemotongan bulanan",
-        "html": "<p>Pemberi kerja memotong pajak berdasarkan kartu pajak (<em>skattekort</em>) yang diterbitkan Skatteetaten, mirip PPh 21 yang dipotong kantor lalu dibuktikan dengan <em>bukti potong</em> di Indonesia. Pemotongan hanya berlangsung selama sepuluh setengah bulan, sehingga gaji Desember dipotong separuh dan slip gajimu lebih tebal menjelang Natal; urutannya terbalik dari Indonesia, tempat potongan Desember justru yang terbesar karena penyesuaian setahun penuh. Tagihan akhir diselesaikan lewat laporan pajak (<em>skattemelding</em>) yang diajukan musim semi berikutnya, yang pada dasarnya serupa SPT Tahunan tetapi sudah terisi sebagian oleh otoritas pajak.</p>"
+        "html": "<p>Pemberi kerja memotong pajak berdasarkan kartu pajak (<em>skattekort</em>) yang diterbitkan Skatteetaten, mirip PPh 21 yang dipotong kantor lalu dibuktikan dengan bukti potong di Indonesia. Pemotongan hanya berlangsung selama sepuluh setengah bulan, sehingga gaji Desember dipotong separuh dan gaji bersihmu lebih tebal menjelang Natal. Urutannya terbalik dari Indonesia, tempat potongan Desember sering menjadi yang terbesar karena penyesuaian setahun penuh. Tagihan akhir diselesaikan lewat laporan pajak (<em>skattemelding</em>) yang diajukan musim semi berikutnya, yang pada dasarnya serupa SPT Tahunan tetapi sudah terisi sebagian oleh otoritas pajak.</p>"
       }
     ],
     "sources": [
@@ -80,75 +80,71 @@
     {
       "key": "resident",
       "title": "Berapa gaji bersih di Norwegia kalau gaji setahun NOK 750.000?",
-      "intro": "<p>Contoh ini untuk pekerja yang berstatus <em>resident</em> pajak dan memakai skema biasa. Potongan standar minimum mencapai batasnya NOK 95.700, ditambah tunjangan pribadi NOK 114.540, sehingga NOK 539.760 yang tersisa dikenai pajak 22% sebesar NOK 118.747. <em>Trinnskatt</em> dihitung dari seluruh NOK 750.000 dan menambah NOK 21.256, karena NOK 24.950 teratas sudah masuk lapisan 13,7%. Iuran asuransi nasional 7,6% mengambil NOK 57.000. Jadi dari gaji kotor setahun, yang tersisa di rekening sekitar NOK 552.997, atau 73,7%.</p>",
-      "after": "<p>Tarif marginalmu 43,3%, yaitu 22% pajak biasa, 13,7% <em>trinnskatt</em> dan 7,6% iuran asuransi, sehingga setiap krone tambahan di atas NOK 725.050 menyisakan sekitar 57 øre. Sebagai pembanding, lapisan tertinggi Pasal 17 di Indonesia adalah 35%, sedangkan angka 43,3% ini sudah memasukkan iuran asuransi yang di Indonesia berupa potongan BPJS terpisah.</p>"
+      "intro": "<p>Contoh ini untuk pekerja berstatus penduduk pajak yang memakai skema biasa. Potongan standar minimum mencapai batasnya NOK 95.700, ditambah tunjangan pribadi NOK 114.540, sehingga NOK 539.760 yang tersisa dikenai pajak 22% sebesar NOK 118.747. <em>Trinnskatt</em> dihitung dari seluruh NOK 750.000 dan menambah NOK 21.256, karena NOK 24.950 teratas sudah masuk lapisan 13,7%. Iuran asuransi nasional 7,6% mengambil NOK 57.000. Jadi dari gaji kotor NOK 750.000 setahun, yang tersisa di rekening sekitar NOK 552.997, atau 73,7%.</p>",
+      "after": "<p>Tarif marginalmu 43,3%, yaitu 22% pajak biasa, 13,7% <em>trinnskatt</em> dan 7,6% iuran asuransi, sehingga setiap krone tambahan di atas NOK 725.050 menyisakan sekitar 57 øre (satu krone terdiri dari 100 øre). Sebagai pembanding, lapisan tertinggi Pasal 17 di Indonesia adalah 35%, sedangkan angka 43,3% ini sudah memasukkan iuran asuransi yang di Indonesia berupa potongan BPJS terpisah.</p>"
     },
     {
       "key": "paye-scheme",
       "title": "Pajak skema PAYE Norwegia: gaji bersih dari NOK 600.000 dengan tarif tunggal 25%",
       "intro": "<p>Contoh ini untuk pekerja asing yang memenuhi syarat skema PAYE dan bergaji NOK 600.000. Skema ini hanya memungut 25% dari gaji kotor, yaitu NOK 150.000, dan tidak ada potongan lain, sehingga yang tersisa NOK 450.000 atau 75,0%. Pajaknya bersifat final: tidak ada tunjangan pribadi seperti PTKP dan tidak ada lapisan tarif yang perlu dihitung.</p>",
-      "after": "<p>Tarif 25% tetap sama di semua tingkat gaji sampai batas NOK 725.050, sehingga skema ini cenderung menguntungkan di gaji yang lebih tinggi, tempat <em>trinnskatt</em> dan iuran asuransi sudah banyak menggerus. Hitung gajimu di kedua skema di <em>tool</em> ini, lalu pastikan ke Skatteetaten bahwa kamu memenuhi syarat.</p>"
+      "after": "<p>Tarif 25% tidak berubah di semua tingkat gaji sampai batas NOK 725.050, sedangkan pajak biasa terus naik lewat <em>trinnskatt</em> dan iuran asuransi, sehingga skema ini cenderung menguntungkan di gaji yang lebih tinggi. Hitung gajimu di kedua skema di <em>tool</em> ini.</p>"
     }
   ],
-  "strategyIntro": "<p>Semua cara di bawah legal dan lazim dipakai; mana yang berlaku tergantung status dan penghasilanmu.</p>",
+  "strategyIntro": "<p>Beberapa cara berikut bisa menurunkan pajakmu secara sah, tetapi yang berlaku bergantung pada statusmu.</p>",
   "strategies": [
     {
-      "h3": "Bandingkan skema PAYE dengan pajak biasa",
-      "html": "<p>Cocok untuk pekerja asing yang memenuhi syarat dan bergaji tinggi, karena di situ <em>trinnskatt</em> dan iuran asuransi bertumpuk. Caranya, hitung gajimu di kedua skema, lalu pilih yang menyisakan lebih banyak. Perhatikan bahwa tarif tunggal 25% itu sederhana tetapi tidak memberi potongan, syarat kelayakannya ketat dan masa berlakunya terbatas, jadi konfirmasikan syarat terbarunya ke Skatteetaten.</p>"
+      "h3": "Klaim potongan yang memang berhak kamu ambil",
+      "html": "<p>Kalau kamu memakai pajak biasa, bunga pinjaman dan biaya kerja tertentu bisa mengurangi penghasilan yang dikenai pajak 22%. Laporan pajak Norwegia sudah terisi sebelumnya, jadi tugasmu memeriksa dan menambahkan yang belum ada, seperti melengkapi SPT Tahunan dari bukti potong. Potongan ini tidak mengurangi <em>trinnskatt</em> maupun iuran asuransi, yang dihitung dari gaji kotor, dan hitungan <em>tool</em> hanya memakai potongan standar.</p>"
     },
     {
-      "h3": "Klaim potongan yang menjadi hakmu",
-      "html": "<p>Cocok untuk pekerja yang memakai pajak biasa. Bunga pinjaman dan biaya kerja tertentu bisa mengurangi penghasilan yang dikenai pajak 22%, dan laporan pajak Norwegia sudah terisi sebelumnya, jadi tugasmu memeriksa lalu menambahkan yang belum ada, mirip melengkapi SPT Tahunan dari <em>bukti potong</em>. Potongan ini tidak mengurangi <em>trinnskatt</em> maupun iuran asuransi, yang dihitung dari gaji kotor, dan <em>tool</em> hanya memakai potongan standar.</p>"
-    },
-    {
-      "h3": "Jaga kartu pajak tetap sesuai",
-      "html": "<p>Cocok untuk siapa saja yang punya pekerjaan kedua, penghasilan yang berubah, atau hanya tinggal sebagian tahun. Kalau kartu pajakmu tidak mencerminkan penghasilan sebenarnya, pajak yang dipotong bisa terlalu sedikit dan selisihnya muncul di perhitungan tahun berikutnya. Mengubah kartu hanya mengubah pemotongan, bukan pajak akhirmu.</p>"
+      "h3": "Pastikan kartu pajakmu sesuai",
+      "html": "<p>Kalau kamu punya pekerjaan kedua, penghasilan yang berubah, atau hanya tinggal sebagian tahun, kartu pajak yang tidak mencerminkan penghasilan sebenarnya bisa membuat pajak yang dipotong terlalu sedikit, dan selisihnya muncul di perhitungan tahun berikutnya. Mengubah kartu hanya mengubah pemotongan, bukan pajak akhirmu.</p>"
     },
     {
       "h3": "Menabung pensiun dengan potongan pajak",
-      "html": "<p>Cocok untuk <em>resident</em> yang ingin menyiapkan pensiun di luar asuransi nasional. Norwegia punya tabungan pensiun individu yang memberi potongan atas penghasilan biasa dalam batas tahunan tertentu, seperti DPLK di Indonesia. Batasnya berubah dari tahun ke tahun dan dananya terkunci sampai usia pensiun, jadi cek batas terbarunya ke Skatteetaten.</p>"
+      "html": "<p>Kalau kamu ingin menyiapkan pensiun di luar asuransi nasional, Norwegia punya tabungan pensiun individu yang memberi potongan atas penghasilan biasa, seperti DPLK di Indonesia. Dananya terkunci sampai usia pensiun, serta aturan dan batasnya pernah berubah, jadi cek ke Skatteetaten sebelum memakainya.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari pekerjaan.</strong> <em>Tool</em> menghitung satu gaji selama setahun penuh, bukan bunga, keuntungan jual aset, usaha sendiri atau tahun yang tidak penuh.",
-    "<strong>Hanya tarif standar.</strong> Tarif yang lebih rendah di Finnmark dan Troms bagian utara serta pos yang bergantung pada kotamadya tidak dihitung.",
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungan <em>tool</em> memakai satu gaji selama setahun penuh, bukan bunga, keuntungan jual aset, usaha sendiri atau tahun yang tidak penuh.",
+    "<strong>Hanya tarif standar.</strong> Tarif yang lebih rendah di Finnmark dan Troms bagian utara serta komponen yang bergantung pada kotamadya tidak dihitung.",
     "<strong>Tanpa bonus dan saham.</strong> Opsi saham, bonus dan uang liburan (<em>feriepenger</em>) tidak dihitung terpisah.",
-    "<strong>Potongan standar saja.</strong> <em>Tool</em> memakai potongan standar minimum dan tunjangan pribadi, bukan potongan sesungguhnya seperti bunga pinjaman.",
-    "<strong>Kamu yang memilih skema.</strong> <em>Tool</em> tidak menguji apakah kamu berhak memakai skema PAYE atau benar-benar <em>resident</em> pajak Norwegia.",
+    "<strong>Potongan standar saja.</strong> Hitungan <em>tool</em> memakai potongan standar minimum dan tunjangan pribadi, bukan potongan sesungguhnya seperti bunga pinjaman.",
+    "<strong>Kamu yang memilih skema.</strong> Hitungan <em>tool</em> tidak menguji apakah kamu berhak memakai skema PAYE atau benar-benar penduduk pajak Norwegia.",
     "<strong>Tanpa pajak kekayaan dan tanpa P3B.</strong> Pajak kekayaan, kredit pajak luar negeri, perjanjian penghindaran pajak berganda dan pajak Indonesia atas penghasilan di luar negeri tidak dihitung."
   ],
   "faq": [
     {
       "q": "Berapa gaji bersih untuk gaji setahun NOK 750.000 di Norwegia?",
-      "a": "<p>Pekerja <em>resident</em> dengan skema biasa membayar sekitar NOK 197.000 untuk pajak biasa, <em>trinnskatt</em> dan iuran asuransi nasional, sehingga gaji bersihnya sekitar NOK 553.000. Coba gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Pekerja penduduk pajak dengan skema biasa membayar sekitar NOK 197.000 untuk pajak biasa, <em>trinnskatt</em> dan iuran asuransi nasional, sehingga gaji bersihnya sekitar NOK 553.000. Coba gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "Kenapa gaji Desember di Norwegia lebih besar?",
-      "a": "<p>Pemberi kerja memotong pajak selama sepuluh setengah bulan, bukan dua belas, sehingga bulan Desember hanya dipotong separuh dan uang liburan ditangani terpisah. Pajak setahunnya tetap sama. Di Indonesia pola ini terbalik: tarif efektif bulanan (TER) dipakai Januari sampai November, lalu Desember menyesuaikan ke pajak setahun penuh sehingga potongannya sering paling besar. <em>Tool</em> ini menghitung pajak setahun penuh, jadi satu slip gaji bisa berbeda darinya, terutama pada bulan Desember.</p>"
+      "a": "<p>Pemberi kerja memotong pajak selama sepuluh setengah bulan, bukan dua belas, sehingga bulan Desember hanya dipotong separuh dan uang liburan ditangani terpisah. Pajak setahunnya tetap sama. Di Indonesia polanya terbalik: tarif efektif rata-rata (TER) dipakai Januari sampai November, lalu Desember menyesuaikan ke pajak setahun penuh. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi satu slip gaji bisa berbeda darinya.</p>"
     },
     {
       "q": "Apa itu kartu pajak (skattekort) dan apa bedanya dengan bukti potong?",
-      "a": "<p>Kartu pajak memberi tahu pemberi kerja berapa pajak yang harus dipotong dari tiap pembayaran. Skatteetaten yang menerbitkannya dan pemberi kerja mengambilnya. Ia berfungsi sebagai instruksi pemotongan di muka, sedangkan <em>bukti potong</em> 1721-A1 di Indonesia adalah bukti setelah pemotongan. Kalau penghasilanmu berubah di tengah tahun, kartu bisa diperbarui, dan pajak akhir diselesaikan lewat laporan pajak musim semi berikutnya.</p>"
+      "a": "<p>Kartu pajak memberi tahu pemberi kerja berapa pajak yang dipotong dari tiap pembayaran. Skatteetaten menerbitkannya, dan kamu bisa memperbaruinya kalau penghasilan berubah. Ia berfungsi sebagai instruksi pemotongan di muka, sedangkan bukti potong 1721-A1 di Indonesia adalah bukti setelah pemotongan.</p>"
     },
     {
       "q": "Apa itu trinnskatt, dan apakah sama dengan pajak 22%?",
-      "a": "<p>Keduanya berbeda: pajak 22% dikenakan pada penghasilan biasa setelah potongan, sedangkan <em>trinnskatt</em> dikenakan pada gaji kotor tanpa potongan dan berjenjang dari 1,7% sampai 17,8%. Jadi satu gaji kena keduanya sekaligus, ditambah iuran asuransi nasional. Pada contoh NOK 750.000, pajak 22% sebesar NOK 118.747 dan <em>trinnskatt</em> menambah NOK 21.256. Dari sinilah tarif marginal 43,3% itu datang.</p>"
+      "a": "<p>Keduanya berbeda: pajak 22% dikenakan pada penghasilan biasa setelah potongan, sedangkan <em>trinnskatt</em> dikenakan pada gaji kotor tanpa potongan dan berjenjang dari 1,7% sampai 17,8%. Pada contoh NOK 750.000, pajak 22% sebesar NOK 118.747 dan <em>trinnskatt</em> menambah NOK 21.256.</p>"
     },
     {
       "q": "Apakah skema PAYE di Norwegia lebih menguntungkan?",
-      "a": "<p>Skema ini memungut 25% dari gaji kotor dan tidak ada yang lain, sehingga pada gaji NOK 600.000 pajaknya NOK 150.000. Pajak biasa bisa lebih ringan di gaji menengah dan lebih berat di gaji besar, jadi bandingkan dengan gajimu sendiri. Syarat kelayakannya ditentukan Skatteetaten.</p>"
+      "a": "<p>Skema ini memungut 25% dari gaji kotor dan tidak ada yang lain, sehingga pada gaji NOK 600.000 pajaknya NOK 150.000. Pajak biasa bisa lebih ringan di gaji menengah dan lebih berat di gaji besar, jadi bandingkan dengan gajimu sendiri.</p>"
     },
     {
       "q": "Bisakah iuran asuransi nasional diambil kembali kalau saya pulang ke Indonesia?",
-      "a": "<p>Iuran 7,6% itu bukan tabungan pribadi seperti JHT di BPJS Ketenagakerjaan, melainkan iuran keanggotaan skema asuransi nasional yang menanggung tunjangan sakit dan hak pensiun. Karena itu tidak ada saldo yang bisa dicairkan saat kamu pindah. Bagaimana hak pensiunnya diperlakukan bagi yang pulang ke Indonesia sebaiknya ditanyakan langsung ke NAV. Pada skema PAYE, tarif tunggal 25% sudah mencakup iuran ini.</p>"
+      "a": "<p>Iuran 7,6% itu bukan tabungan, melainkan keanggotaan skema asuransi nasional yang menanggung tunjangan sakit dan hak pensiun, sehingga tidak ada saldo yang bisa kamu cairkan seperti JHT. Bagaimana hak pensiunnya diperlakukan kalau kamu pulang ke Indonesia, tanyakan ke NAV (badan jaminan sosial Norwegia).</p>"
     },
     {
       "q": "Kalau kerja di Norwegia, apakah saya masih harus lapor SPT di Indonesia?",
-      "a": "<p>Itu tergantung status pajakmu di Indonesia. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia pada umumnya dapat menjadi subjek pajak luar negeri, tetapi penentuannya melihat keadaanmu, antara lain niat tinggal. Karena itu, sebelum berangkat, bicarakan ke KPP atau DJP supaya statusmu jelas dan penghasilan yang sama tidak dipajaki dua kali. Indonesia dan Norwegia punya P3B (perjanjian penghindaran pajak berganda), tetapi <em>tool</em> ini tidak menghitungnya dan tidak menghitung pajak Indonesia atas penghasilan di luar negeri. Ini bukan nasihat hukum.</p>"
+      "a": "<p>Selama kamu masih subjek pajak dalam negeri Indonesia, kamu tetap lapor SPT Tahunan dengan penghasilan dari seluruh dunia, termasuk gaji dari Norwegia, dan pajak yang sudah dibayar di sana pada umumnya dapat dikreditkan. Statusmu bisa berubah menjadi subjek pajak luar negeri kalau kamu berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan syarat lainnya terpenuhi; memiliki rumah atau keluarga di Indonesia bisa membuatmu tetap menjadi subjek pajak dalam negeri. Pajak 25% dari skema PAYE adalah pajak Norwegia, sedangkan kewajibanmu di Indonesia tetap ditentukan statusmu. Tanyakan ke KPP atau DJP, dan ingat bahwa Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Norwegia yang tidak dihitung <em>tool</em> ini.</p>"
     },
     {
-      "q": "Bagaimana gaji di Norwegia dibandingkan negara Nordik lain dan biaya hidupnya?",
-      "a": "<p>Lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/\">Swedia</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/\">Finlandia</a> dan <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/\">Estonia</a>. Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda: bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+      "q": "Bagaimana Norwegia dibandingkan negara Nordik dan Baltik lain?",
+      "a": "<p>Lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/\">Swedia</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/\">Finlandia</a> dan <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/\">Estonia</a>. Gaji bersih belum menjawab apakah hidup di sana lebih lega, sebab sewa dan harga makanan ikut menentukan; bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
     }
   ],
   "lineLabels": {

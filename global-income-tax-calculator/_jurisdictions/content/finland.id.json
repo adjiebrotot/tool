@@ -5,13 +5,13 @@
   "title": "Cara Menghitung Pajak Gaji di Finlandia 2026",
   "h1": "Cara menghitung pajak penghasilan di Finlandia (2026)",
   "description": "Hitung pajak gaji di Finlandia 2026 untuk Helsinki: pajak negara, pajak kota 5,30%, iuran TyEL dan rezim key employee 25%, dibandingkan dengan PPh 21.",
-  "lede": "<p>Finlandia memajaki gaji penduduknya dengan pajak negara progresif (12,64% sampai 37,5%), pajak kota dengan tarif seragam (5,30% di Helsinki), iuran kesehatan dan pajak siaran publik Yle, lalu dikurangi kredit pajak untuk yang bekerja. Dari gaji €55.000 setahun, penduduk Helsinki membayar sekitar €10.303 untuk pajak dan sekitar €4.989 untuk iuran pensiun dan asuransi, sehingga gaji bersihnya (<em>take-home pay</em>) sekitar €39.708 atau 72,2%. Tenaga ahli asing yang masuk rezim <em>key employee</em> dikenai 25% dan membawa pulang sekitar €59.337 dari gaji €90.000.</p>",
+  "lede": "<p>Finlandia memajaki gaji penduduknya dengan pajak negara progresif (12,64% sampai 37,5%), pajak kota dengan tarif seragam (5,30% di Helsinki), iuran kesehatan dan pajak siaran publik Yle, lalu dikurangi kredit pajak untuk yang bekerja. Dari gaji kotor €55.000 setahun, penduduk Helsinki membayar sekitar €10.303 untuk pajak dan sekitar €4.989 untuk iuran pensiun dan asuransi, sehingga gaji bersihnya (<em>take-home pay</em>) sekitar €39.708 atau 72,2%. Tenaga ahli asing yang masuk rezim <em>key employee</em> dikenai 25% dan membawa pulang sekitar €59.337 dari gaji €90.000.</p>",
   "law": {
-    "intro": "<p>Angka di bawah adalah tarif 2026 seperti yang dihitung <em>tool</em> ini, dalam euro. Halaman ini memodelkan Helsinki dengan pajak kota 5,30%. Tarif kota berbeda-beda di seluruh Finlandia dan <em>tool</em> membiarkanmu mengubahnya antara 4% dan 11%. Orang Indonesia biasanya masuk lewat izin tinggal bagi pekerja yang diurus Migri, dinas imigrasi Finlandia. Struktur pajaknya berlapis, tidak seperti PPh 21 yang hanya satu tarif progresif, jadi satu per satu lapisannya dijelaskan di bawah.</p>",
+    "intro": "<p>Angka di bawah adalah tarif 2026 seperti yang dihitung <em>tool</em> ini, dalam euro. Halaman ini memodelkan Helsinki dengan pajak kota 5,30%. Pajak di Finlandia mengikuti status penduduk pajak (<em>tax resident</em>, di Indonesia disebut subjek pajak dalam negeri), bukan jenis visa atau paspor. Kalau kamu terbiasa dengan PPh 21, pajak gaji di Finlandia menumpuk dari beberapa komponen, sedangkan PPh 21 memakai satu skala tarif progresif.</p>",
     "blocks": [
       {
         "h3": "Pajak negara dan pajak kota",
-        "html": "<p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, seperti tarif Pasal 17 di Indonesia (5% sampai 35%), hanya saja tarif lapisan terbawahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan <em>tool</em> memakai 5,30% untuk Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip <em>biaya jabatan</em> tetapi jauh lebih kecil, dan setelah iuran pensiun dan asuransimu.</p>",
+        "html": "<p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, seperti tarif Pasal 17 di Indonesia (5% sampai 35%), hanya saja tarif lapisan terbawahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan hitungan <em>tool</em> memakai tarif Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip biaya jabatan, tetapi berupa jumlah tetap, dan setelah iuran pensiun dan asuransimu.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -43,19 +43,19 @@
       },
       {
         "h3": "Iuran yang dipotong dari gaji",
-        "html": "<p>Karyawan membayar iuran pensiun kerja TyEL 7,30% dari gaji, asuransi pengangguran 0,89%, dan iuran tunjangan sakit harian 0,88% begitu gaji setahun melewati €17.255. Ketiganya dipotong sebelum pajak dihitung, jadi posisinya mirip potongan JHT dan JP di slip gaji Indonesia. Namun di Finlandia ada tiga pos, termasuk asuransi pengangguran yang di Indonesia tidak dipotong dari gaji karyawan; potongan BPJS karyawan di Indonesia hanya JHT, JP dan BPJS Kesehatan.</p>"
+        "html": "<p>Karyawan membayar iuran pensiun kerja TyEL 7,30% dari gaji, asuransi pengangguran 0,89%, dan iuran tunjangan sakit harian 0,88% begitu gaji setahun melewati €17.255. Ketiganya dipotong sebelum pajak dihitung, dan yang paling mirip di Indonesia adalah potongan JHT dan JP di slip gaji. Bedanya, asuransi pengangguran tidak ada di slip gaji Indonesia, karena potongan BPJS karyawan hanya JHT, JP dan BPJS Kesehatan.</p>"
       },
       {
         "h3": "Iuran kesehatan, pajak Yle dan pajak gereja",
-        "html": "<p>Iuran kesehatan 1,10% dari penghasilan kena pajak dipungut bersama pajak penghasilan. Pajak Yle adalah pajak penyiaran publik dengan batas €160 setahun. Kalau kamu anggota gereja, pajak gereja ditambahkan dengan persentase yang ditetapkan parokimu; <em>tool</em> menyediakan isian untuk ini dan memakai nol sebagai bawaan. Pajak gereja bersifat kewajiban anggota, berbeda dari zakat di Indonesia, yang dibayar sukarela dan, bila disalurkan lewat lembaga resmi, dapat mengurangi penghasilan bruto.</p>"
+        "html": "<p>Iuran kesehatan 1,10% dari penghasilan kena pajak dipungut bersama pajak penghasilan. Pajak Yle adalah pajak penyiaran publik dengan batas €160 setahun. Pajak gereja hanya berlaku untuk anggota gereja dan ditambahkan dengan persentase yang ditetapkan parokimu. Zakat di Indonesia berbeda, karena tidak dipungut negara dan, bila disalurkan lewat lembaga resmi, dapat mengurangi penghasilan bruto.</p>"
       },
       {
         "h3": "Kredit pajak penghasilan kerja",
-        "html": "<p>Kredit pajak bagi orang yang bekerja (<em>työtulovähennys</em>) mengurangi pajak di atas. <em>Tool</em> membaginya secara proporsional ke pajak negara, kota, gereja dan iuran kesehatan, seperti cara otoritas pajak membaginya, dan kredit ini tidak pernah bisa menurunkan total pajak di bawah nol.</p>"
+        "html": "<p>Kredit pajak bagi orang yang bekerja (<em>työtulovähennys</em>) mengurangi pajak di atas. Hitungan <em>tool</em> membaginya secara proporsional ke pajak negara, kota, gereja dan iuran kesehatan, seperti cara otoritas pajak membaginya, dan kredit ini tidak pernah bisa menurunkan total pajak di bawah nol.</p>"
       },
       {
         "h3": "Rezim key employee",
-        "html": "<p>Tenaga ahli asing yang memenuhi syarat boleh membayar pajak 25% atas gajinya sebagai ganti pajak penghasilan biasa. <em>Tool</em> mensyaratkan gaji bulanan minimal €5.800 (€69.600 setahun) dan tetap memungut iuran pensiun dan asuransi. Kelayakan dan pengajuannya lewat otoritas pajak Finlandia (Vero), dan rezim ini punya batas waktu. Bagi pembaca dari Indonesia, ini sebanding dengan pajak final atas penghasilan tertentu, bukan pajak progresif PPh 21.</p>"
+        "html": "<p>Tenaga ahli asing yang memenuhi syarat dapat dikenai pajak 25% atas gajinya sebagai ganti pajak penghasilan biasa. Hitungan <em>tool</em> memakai syarat gaji bulanan minimal €5.800 (€69.600 setahun) dan tetap menghitung iuran pensiun dan asuransi. Rezim ini mirip pajak final di Indonesia, yaitu tarif tunggal tanpa tarif progresif Pasal 17. Karena tidak memberi potongan atau kredit dan punya batas waktu, tanyakan kelayakan dan pengajuannya ke otoritas pajak Finlandia (Vero).</p>"
       }
     ],
     "sources": [
@@ -77,41 +77,36 @@
     {
       "key": "resident-helsinki",
       "title": "Berapa gaji bersih di Helsinki kalau gaji setahun €55.000?",
-      "intro": "<p>Contoh ini untuk penduduk pajak Helsinki dengan gaji €55.000. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalmu 45,1%, jauh di atas tarif kota 5,30%, karena pajak negara sudah masuk lapisan tinggi dan iuran serta kredit yang menyusut ikut dihitung. Anggota gereja menambahkan pajak gereja di atas angka ini.</p>"
+      "intro": "<p>Contoh ini untuk penduduk pajak Helsinki dengan gaji kotor €55.000 setahun. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalmu 45,1%, jauh di atas tarif kota 5,30%, karena pajak negara sudah masuk lapisan tinggi dan iuran serta kredit yang menyusut ikut dihitung.</p>"
     },
     {
       "key": "key-employee",
       "title": "Berapa gaji bersih key employee di Finlandia dengan gaji €90.000 dan pajak 25%?",
-      "intro": "<p>Contoh ini untuk <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600. Pajak tunggal 25% sebesar €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalnya 34,1%, yaitu pajak 25% ditambah iuran 9,07%. Apakah rezim ini menghemat uangmu bergantung pada gaji dan potonganmu, jadi bandingkan dengan pajak biasa di <em>tool</em> ini.</p>"
+      "intro": "<p>Contoh ini untuk <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600. Pajak tunggal 25% mencapai €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalnya 34,1%, yaitu pajak 25% ditambah iuran 9,07%. Hemat atau tidaknya rezim ini bergantung pada gaji dan potonganmu, jadi bandingkan dengan pajak biasa di <em>tool</em> ini.</p>"
     }
   ],
-  "strategyIntro": "<p>Cara-cara berikut legal dan lazim; mana yang berlaku tergantung statusmu.</p>",
+  "strategyIntro": "<p>Beberapa cara berikut bisa menurunkan pajakmu secara sah, tetapi yang berlaku bergantung pada statusmu.</p>",
   "strategies": [
     {
-      "h3": "Ajukan rezim key employee kalau memenuhi syarat",
-      "html": "<p>Cocok untuk tenaga ahli asing yang direkrut dari luar negeri dengan gaji bulanan di atas ambang. Rezim ini punya batas waktu dan syarat, dan tarif tunggal 25% tidak memberi potongan atau kredit, jadi konfirmasikan kelayakanmu ke otoritas pajak Finlandia.</p>"
-    },
-    {
       "h3": "Atur persentase pemotongan di kartu pajak",
-      "html": "<p>Cocok untuk siapa pun yang punya beberapa pekerjaan atau penghasilan yang berubah. Kartu pajak memuat persentase yang dipakai pemberi kerja: kartu yang terlalu rendah menimbulkan tagihan tahun berikutnya, dan yang terlalu tinggi menghasilkan pengembalian. Mengubah kartu hanya mengubah waktu pembayaran, bukan pajak akhirmu.</p>"
+      "html": "<p>Kalau kamu punya beberapa pekerjaan atau penghasilan yang berubah, persentase di kartu pajak menentukan berapa yang dipotong pemberi kerja. Kartu yang terlalu rendah menimbulkan tagihan tahun berikutnya, dan yang terlalu tinggi menghasilkan pengembalian. Mengubah kartu hanya secara administratif menggeser waktu pembayaran, bukan pajak akhirmu.</p>"
     },
     {
       "h3": "Klaim potongan perjalanan dan biaya kerja",
-      "html": "<p>Cocok untuk karyawan yang perjalanan ke tempat kerjanya jauh atau biaya kerjanya melebihi potongan standar. <em>Tool</em> memakai potongan tetap €750, dan jumlah yang lebih besar bisa diklaim kalau kamu punya bukti. Potongan ini berlaku di atas ambang tertentu dan perlu catatan, mirip menyimpan <em>bukti potong</em> dan kuitansi untuk SPT Tahunan.</p>"
+      "html": "<p>Kalau perjalanan ke tempat kerjamu jauh atau biaya kerjamu melebihi potongan standar, jumlah yang lebih besar bisa diklaim bila kamu punya bukti, sedangkan hitungan <em>tool</em> memakai potongan tetap €750. Potongan ini berlaku di atas ambang tertentu dan perlu catatan, mirip menyimpan bukti potong dan kuitansi untuk SPT Tahunan.</p>"
     },
     {
-      "h3": "Periksa status keanggotaan gereja",
-      "html": "<p>Cocok untuk orang yang tercatat sebagai anggota gereja hanya karena pendaftaran. Pajak gereja berupa persentase dari penghasilan kena pajak yang ditetapkan paroki, dan keluar dari gereja menghentikannya. Meski begitu, keanggotaan berkaitan dengan hal keagamaan dan kewarganegaraan yang perlu kamu pertimbangkan dahulu.</p>"
+      "h3": "Periksa tarif pajak kota sebelum memilih tempat tinggal",
+      "html": "<p>Tarif pajak kota berbeda antardaerah di Finlandia dan ikut mengubah gaji bersih dari gaji yang sama. Meski begitu, kota berpajak rendah belum tentu murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya Helsinki.</strong> Tarif kota bawaannya 5,30%, dan untuk kota lain kamu mengubahnya di <em>tool</em>.",
+    "<strong>Hanya Helsinki.</strong> Untuk kota lain, kamu mengubah tarif kotanya di <em>tool</em>.",
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Satu gaji selama setahun penuh; penghasilan modal, usaha sendiri dan tahun yang tidak penuh tidak dihitung.",
-    "<strong>Pajak gereja bersifat pilihan.</strong> Nilainya nol kecuali kamu mengisi tarifnya, dan kedua contoh mengasumsikan bukan anggota gereja.",
-    "<strong>Potongan disederhanakan.</strong> <em>Tool</em> memakai potongan biaya memperoleh penghasilan yang standar, bukan potongan nyatamu.",
-    "<strong>Kamu yang memilih rezim.</strong> <em>Tool</em> tidak menguji apakah kamu memenuhi syarat <em>key employee</em> atau benar-benar penduduk pajak Finlandia.",
+    "<strong>Potongan disederhanakan.</strong> Hitungan <em>tool</em> memakai potongan biaya memperoleh penghasilan yang standar, bukan potongan nyatamu.",
+    "<strong>Kamu yang memilih rezim.</strong> Hitungan <em>tool</em> tidak menguji apakah kamu memenuhi syarat <em>key employee</em> atau benar-benar penduduk pajak Finlandia.",
     "<strong>Tanpa bonus, saham dan P3B.</strong> Opsi saham, kredit pajak luar negeri, perjanjian penghindaran pajak berganda dan pajak Indonesia atas penghasilan di luar negeri tidak dihitung."
   ],
   "faq": [
@@ -121,15 +116,15 @@
     },
     {
       "q": "Apa itu persentase pemotongan di kartu pajak Finlandia (verokortti)?",
-      "a": "<p>Kartu pajak memberi pemberi kerja satu persentase untuk dipakai pada tiap pembayaran gaji. Otoritas pajak menentukannya dari perkiraan penghasilanmu, dan kamu boleh mengubahnya di tengah tahun. Pajak akhir diselesaikan setelah penetapan pajak tahun berikutnya, dengan pengembalian atau tagihan untuk selisihnya. Ini berbeda dari Indonesia yang memakai TER bulanan lalu penyesuaian di Desember. <em>Tool</em> menghitung pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.</p>"
+      "a": "<p>Kartu pajak memberi pemberi kerja satu persentase untuk dipakai pada tiap pembayaran gaji, ditentukan otoritas pajak dari perkiraan penghasilanmu dan bisa kamu ubah di tengah tahun. Selisihnya diselesaikan setelah penetapan pajak tahun berikutnya, sebagai pengembalian atau tagihan. Di Indonesia polanya memakai tarif efektif rata-rata (TER) bulanan lalu penyesuaian di Desember. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.</p>"
     },
     {
       "q": "Apakah saya wajib bayar pajak gereja di Finlandia?",
-      "a": "<p>Hanya kalau kamu anggota gereja Lutheran Evangelis atau Ortodoks. Paroki menetapkan tarifnya dan pajak ini dikenakan atas penghasilan kena pajak. Karena itu orang yang tidak terdaftar di gereja tidak membayarnya, dan di Indonesia tidak ada pajak keagamaan serupa, sebab zakat dibayar secara sukarela. <em>Tool</em> menyediakan isian pajak gereja dengan nilai bawaan nol, dan kedua contoh mengasumsikan kamu bukan anggota gereja.</p>"
+      "a": "<p>Hanya kalau kamu anggota gereja Lutheran Evangelis atau Ortodoks. Paroki menetapkan tarifnya dan pajak ini dikenakan atas penghasilan kena pajak. Orang yang tidak terdaftar di gereja tidak membayarnya, dan di Indonesia tidak ada pajak keagamaan serupa, sebab zakat tidak dipungut negara. Isian pajak gereja di <em>tool</em> bernilai nol secara bawaan, dan kedua contoh mengasumsikan kamu bukan anggota. Keanggotaan itu juga menyangkut urusan keyakinan dan layanan gereja, jadi pertimbangkan sebelum mengubahnya.</p>"
     },
     {
       "q": "Apa itu rezim pajak key employee?",
-      "a": "<p>Rezim ini mengenakan pajak penghasilan tunggal 25% bagi tenaga ahli asing yang memenuhi syarat, sebagai ganti pajak biasa. <em>Tool</em> mensyaratkan gaji minimal €5.800 sebulan dan tetap memungut iuran pensiun dan asuransi. Tarif 25% itu final dan tanpa potongan.</p>"
+      "a": "<p>Rezim ini mengenakan pajak 25% atas gaji bagi tenaga ahli asing yang memenuhi syarat, sebagai ganti pajak biasa. Pajak itu final dan tanpa potongan, dengan syarat gaji minimal €5.800 sebulan, dan iuran pensiun serta asuransi tetap dibayar.</p>"
     },
     {
       "q": "Kenapa tarif pajak marginal di Finlandia terasa begitu tinggi?",
@@ -137,15 +132,15 @@
     },
     {
       "q": "Apakah iuran pensiun TyEL bisa dicairkan kalau saya pulang ke Indonesia?",
-      "a": "<p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa diambil kapan saja seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun, dan cara klaimnya dari luar negeri sebaiknya ditanyakan ke Kela atau lembaga pensiun Finlandia sebelum kamu pindah.</p>"
+      "a": "<p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa kamu cairkan seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun, dan cara klaimnya dari luar negeri tanyakan ke Kela (badan jaminan sosial Finlandia) sebelum kamu pindah.</p>"
     },
     {
       "q": "Kalau kerja di Finlandia, apakah saya masih harus lapor SPT di Indonesia?",
-      "a": "<p>Itu tergantung statusmu: menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia pada umumnya dapat menjadi subjek pajak luar negeri, tetapi penentuannya melihat keadaanmu, termasuk niat tinggal. Sebelum berangkat, bicarakan ke KPP atau DJP agar statusmu jelas dan penghasilan yang sama tidak dipajaki dua kali. Indonesia dan Finlandia punya P3B (perjanjian penghindaran pajak berganda), tetapi <em>tool</em> ini tidak menghitungnya dan tidak menghitung pajak Indonesia atas penghasilan di luar negeri. Ini bukan nasihat hukum.</p>"
+      "a": "<p>Selama kamu masih subjek pajak dalam negeri Indonesia, kamu tetap lapor SPT Tahunan dengan penghasilan dari seluruh dunia, termasuk gaji dari Finlandia, dan pajak yang sudah dibayar di sana pada umumnya dapat dikreditkan. Statusmu bisa berubah menjadi subjek pajak luar negeri kalau kamu berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan syarat lainnya terpenuhi; memiliki rumah atau keluarga di Indonesia bisa membuatmu tetap menjadi subjek pajak dalam negeri. Pajak 25% rezim <em>key employee</em> dan persentase di kartu pajak adalah urusan Finlandia, bukan penentu statusmu di Indonesia. Tanyakan ke KPP atau DJP, dan ingat bahwa Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Finlandia yang tidak dihitung <em>tool</em> ini.</p>"
     },
     {
-      "q": "Bagaimana Finlandia dibandingkan negara Nordik lain dan biaya hidupnya?",
-      "a": "<p>Lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/\">Norwegia</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/\">Swedia</a> dan <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/\">Estonia</a>. Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda: bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+      "q": "Bagaimana Finlandia dibandingkan negara Nordik dan Baltik lain?",
+      "a": "<p>Lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/\">Norwegia</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/\">Swedia</a> dan <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/\">Estonia</a>. Untuk tahu seberapa jauh gaji bersih itu sampai di kota tujuan, gunakan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
     }
   ],
   "lineLabels": {
