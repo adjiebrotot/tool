@@ -6,11 +6,11 @@
   "description": "Pajak gaji di Thailand 2026 untuk penduduk pajak: tarif 0% sampai 35%, potongan biaya kerja 50%, jaminan sosial, dan dua contoh hitungan gaji bersih.",
   "lede": "<p>Thailand memajaki penduduk pajak dengan tarif bertingkat 0% sampai 35%, setelah potongan biaya kerja 50% (maksimal ฿100.000) dan tunjangan pribadi. Kamu umumnya menjadi penduduk pajak kalau tinggal di Thailand 180 hari atau lebih dalam satu tahun kalender. Dengan gaji ฿1.200.000 setahun, karyawan lajang membayar pajak penghasilan sekitar ฿122.375 dan menerima gaji bersih (<em>take-home pay</em>) sekitar ฿1.067.125.</p>",
   "law": {
-    "intro": "<p>Tahun pajak Thailand sama dengan tahun kalender. Kamu umumnya menjadi penduduk pajak kalau tinggal di Thailand 180 hari atau lebih dalam satu tahun, dan penduduk pajak dikenai pajak atas penghasilan dari pekerjaan yang dilakukan di Thailand. Pemberi kerja memotong pajak dari setiap slip gaji, seperti PPh 21 di Indonesia, dan kamu menyelesaikan selisihnya lewat laporan pajak tahunan di awal tahun berikutnya, seperti SPT Tahunan. Pemberi kerja juga memberimu surat keterangan potongan pajak setahun (<em>Form 50 Tawi</em>), padanan bukti potong 1721-A1. Aturan untuk penghasilan dari luar negeri yang dibawa masuk penduduk pajak ke Thailand berubah beberapa tahun terakhir dan tidak dihitung <em>tool</em>, jadi tanyakan ke Revenue Department kalau kamu punya penghasilan dari luar negeri.</p>",
+    "intro": "<p>Tahun pajak Thailand sama dengan tahun kalender. Penduduk pajak dikenai pajak atas penghasilan dari pekerjaan yang dilakukan di Thailand. Pemberi kerja memotong pajak dari setiap slip gaji, seperti PPh 21 di Indonesia, dan kamu menyelesaikan selisihnya lewat laporan pajak tahunan di awal tahun berikutnya, seperti SPT Tahunan. Pemberi kerja juga memberimu surat keterangan potongan pajak setahun (<em>Form 50 Tawi</em>), padanan bukti potong 1721-A1. Aturan untuk penghasilan dari luar negeri yang dibawa masuk penduduk pajak ke Thailand berubah beberapa tahun terakhir dan tidak dihitung <em>tool</em>, jadi tanyakan ke Revenue Department kalau kamu punya penghasilan dari luar negeri.</p>",
     "blocks": [
       {
         "h3": "Tarif pajak untuk penduduk pajak",
-        "html": "<p>Pajak dihitung dari penghasilan kena pajak, yaitu gaji dikurangi potongan biaya kerja, tunjangan dan iuran jaminan sosial. Tiap bagian dikenai tarif tingkatnya sendiri, seperti tarif Pasal 17 di Indonesia, hanya dengan tarif tertinggi 35% dan ambang bebas pajak yang lebih rendah.</p>",
+        "html": "<p>Pajak dihitung dari penghasilan kena pajak, yaitu gaji dikurangi potongan biaya kerja, tunjangan dan iuran jaminan sosial. Tiap bagian dikenai tarif tingkatnya sendiri, seperti tarif Pasal 17 di Indonesia. Tarif tertinggi 35% sama dengan Pasal 17, tetapi di Thailand sudah berlaku untuk penghasilan kena pajak di atas ฿5.000.000.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -84,14 +84,14 @@
     {
       "key": "single",
       "title": "Cara menghitung pajak penghasilan di Thailand untuk gaji ฿1.200.000 setahun (lajang)",
-      "intro": "<p>Contoh ini untuk karyawan lajang dengan gaji ฿1.200.000 setahun, atau ฿100.000 sebulan. Iuran jaminan sosialnya ฿10.500, potongan biaya kerjanya mentok di batas ฿100.000 (50% dari gajinya akan jauh lebih besar), dan tunjangan pribadinya ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan hanya bagian kecil di atas ฿1.000.000 yang masuk tingkat 25%. Pajak penghasilannya ฿122.375, sehingga gaji bersih yang kamu terima sekitar ฿1.067.125 setahun atau sekitar ฿88.927 sebulan, yaitu 88,9% dari gaji kotor, dan tarif marginalmu 25,0%.</p>",
-      "after": "<p>Potongan 50% terhenti di ฿100.000, jadi manfaatnya makin kecil bila gajimu naik. Pemberi kerja memotong pajak selama tahun berjalan, dan laporan tahunan menyelesaikan selisihnya. Untuk membandingkan daya beli gaji bersih ini dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "intro": "<p>Contoh ini untuk karyawan lajang dengan gaji ฿1.200.000 setahun, atau ฿100.000 sebulan. Iuran jaminan sosialnya ฿10.500, potongan biaya kerjanya terkena batas ฿100.000, karena 50% dari gaji ini jauh melebihi batas itu, dan tunjangan pribadinya ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan hanya bagian kecil di atas ฿1.000.000 yang masuk tingkat 25%. Pajak penghasilannya ฿122.375, sehingga gaji bersih yang kamu terima sekitar ฿1.067.125 setahun atau sekitar ฿88.927 sebulan, yaitu 88,9% dari gaji kotor, dan tarif marginalmu 25,0%.</p>",
+      "after": "<p>Pemberi kerja memotong pajak selama tahun berjalan, dan laporan tahunan menyelesaikan selisihnya. Untuk membandingkan daya beli gaji bersih ini dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
     },
     {
       "key": "married-with-children",
       "title": "Berapa pajak karyawan menikah dengan dua anak di Thailand dengan gaji ฿1.800.000?",
       "intro": "<p>Contoh ini untuk pekerja menikah dengan pasangan yang tidak berpenghasilan dan dua anak yang keduanya lahir pada 2018 atau sesudahnya. Total tunjangannya ฿210.000: ฿60.000 pribadi, ฿60.000 pasangan, ฿30.000 untuk anak pertama dan ฿60.000 untuk anak kedua, karena tunjangan yang lebih besar untuk anak kelahiran 2018 atau sesudahnya baru berlaku mulai anak kedua. Setelah iuran jaminan sosial ฿10.500 dan potongan biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.479.500 dan pajaknya ฿234.875. Gaji bersih yang kamu terima sekitar ฿1.554.625 setahun atau sekitar ฿129.552 sebulan, yaitu 86,4% dari gaji kotor.</p>",
-      "after": "<p>Tunjangan keluarga ini memangkas penghasilan kena pajak ฿150.000 lebih banyak daripada contoh lajang, tetapi baht berikutnya tetap dikenai 25%. Di Indonesia, status kawin dan jumlah anak juga menaikkan PTKP (K/0 sampai K/3), jadi logikanya mirip meski angkanya berbeda.</p>"
+      "after": "<p>Tunjangan keluarga ini memangkas penghasilan kena pajak ฿150.000 lebih banyak daripada karyawan lajang, tetapi baht berikutnya tetap dikenai 25%. Di Indonesia, status kawin dan jumlah anak juga menaikkan PTKP (K/0 sampai K/3), jadi logikanya mirip meski angkanya berbeda.</p>"
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang lazim dan sah untuk menekan pajak di Thailand. Yang berlaku untukmu bergantung pada status penduduk pajak dan keluargamu.</p>",
@@ -132,8 +132,8 @@
       "a": "<p>Kalau kamu tinggal di Thailand 180 hari atau lebih dalam satu tahun kalender, kamu menjadi penduduk pajak untuk tahun itu. Penduduk pajak dikenai tarif bertingkat atas penghasilan dari pekerjaan di Thailand, dengan potongan biaya kerja dan tunjangan. Hitung hari tinggalmu sebelum pindah atau pulang, karena statusmu bisa berbeda dari tahun ke tahun.</p>"
     },
     {
-      "q": "Kenapa gaji dipotong 50% dengan batas ฿100.000?",
-      "a": "<p>Hukum Thailand memberi karyawan potongan standar untuk biaya kerja tanpa kuitansi, sebesar 50% dari penghasilan kerja, maksimal ฿100.000. Pada gaji ฿200.000 setahun atau kurang, separuhnya dipotong. Di atas itu potongannya tetap ฿100.000, sehingga porsinya terhadap gaji mengecil ketika gajimu naik. Di Indonesia, potongan sejenis adalah biaya jabatan 5% dengan batas Rp6 juta setahun, dan <em>tool</em> menerapkannya otomatis.</p>"
+      "q": "Apa itu potongan biaya kerja 50% dengan batas ฿100.000 di Thailand?",
+      "a": "<p>Aturan pajak Thailand memberi karyawan potongan standar untuk biaya kerja tanpa kuitansi: 50% dari penghasilan kerja, maksimal ฿100.000. Pada gaji ฿200.000 setahun atau kurang, separuhnya bisa dikurangkan. Di atas itu potongannya tetap ฿100.000, sehingga porsinya terhadap gajimu makin kecil bila gajimu naik. Di Indonesia, potongan sejenis adalah biaya jabatan 5% dengan batas Rp6 juta setahun, dan <em>tool</em> menerapkannya otomatis.</p>"
     },
     {
       "q": "Kenapa iuran jaminan sosial Thailand berhenti di ฿875 sebulan?",
@@ -145,11 +145,11 @@
     },
     {
       "q": "Kenapa saya tetap harus melapor pajak kalau pemberi kerja sudah memotong?",
-      "a": "<p>Pemberi kerja memotong pajak tiap bulan memakai perkiraan yang menganggap gajimu tetap dan mengabaikan potongan yang bisa kamu klaim. Setelah tahun berakhir kamu melapor di awal tahun berikutnya untuk mengklaim tunjangan seperti asuransi atau dana pensiun, dan untuk menyelesaikan selisihnya. Logikanya sama dengan SPT Tahunan. <em>Tool</em> menampilkan pajak setahun penuh, jadi slip gaji bisa berbeda.</p>"
+      "a": "<p>Pemberi kerja memotong pajak tiap bulan memakai perkiraan yang berasumsi gajimu tetap dan mengabaikan potongan yang bisa kamu klaim. Setelah tahun berakhir kamu melapor di awal tahun berikutnya untuk mengklaim tunjangan seperti asuransi atau dana pensiun, dan untuk menyelesaikan selisihnya. Logikanya sama dengan SPT Tahunan. <em>Tool</em> menampilkan pajak setahun penuh, jadi slip gaji bisa berbeda.</p>"
     },
     {
       "q": "Apakah gaji di Thailand masih kena pajak di Indonesia?",
-      "a": "<p>Jawabannya bergantung pada statusmu di Indonesia. Menurut UU PPh, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat berubah menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP lewat KPP tempat NPWP-mu terdaftar agar penghasilanmu di Thailand tidak dikenai pajak dua kali. Indonesia dan Thailand juga punya P3B, tetapi penerapannya bergantung pada kondisimu.</p><p><em>Tool</em> ini hanya menghitung pajak Thailand, tidak menghitung pajak Indonesia atas penghasilan dari luar negeri maupun P3B, dan bukan nasihat hukum. Pastikan statusmu ke DJP atau konsultan pajak.</p>"
+      "a": "<p>Kalau kamu memenuhi syarat sebagai subjek pajak luar negeri (UU PPh dan PMK 18/2021: antara lain berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia), Indonesia hanya memajaki penghasilanmu yang bersumber dari Indonesia. Kalau belum, kamu masih subjek pajak dalam negeri dan melaporkan gajimu dari Thailand di SPT Tahunan, dengan kredit pajak luar negeri atau persetujuan penghindaran pajak berganda (P3B) untuk mencegah pajak ganda. Urus statusmu lewat KPP tempat NPWP-mu terdaftar.</p><p>Simpan Form 50 Tawi dari pemberi kerja sebagai bukti pajak yang sudah dipotong di Thailand untuk SPT Tahunan. Kalkulator ini hanya menghitung pajak Thailand, bukan pajak Indonesia atau P3B, dan bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {

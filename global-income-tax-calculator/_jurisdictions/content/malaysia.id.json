@@ -66,15 +66,15 @@
       },
       {
         "h3": "Pengurang pajak dan rebat",
-        "html": "<p>Setiap penduduk pajak mendapat pengurang RM9.000 untuk dirinya sendiri, padanan kasar PTKP di Indonesia. <em>Tool</em> menambahkan iuran EPF sampai RM4.000 dan SOCSO sampai RM350 kalau berlaku, RM4.000 untuk pasangan yang tidak berpenghasilan, dan RM2.000 untuk tiap anak ketika opsi itu dipakai. Ada juga rebat RM400 kalau penghasilan kena pajak RM35.000 atau kurang. Bedanya dengan PTKP, SPT sungguhan di Malaysia membuka banyak pengurang lain yang harus kamu klaim dengan bukti, seperti gaya hidup, medis, asuransi dan pendidikan, dan semuanya tidak dihitung di <em>tool</em> ini.</p>"
+        "html": "<p>Setiap penduduk pajak mendapat pengurang RM9.000 untuk dirinya sendiri, padanan kasar PTKP di Indonesia. <em>Tool</em> menambahkan iuran EPF sampai RM4.000 dan SOCSO sampai RM350 kalau berlaku, RM4.000 untuk pasangan yang tidak berpenghasilan, dan RM2.000 untuk tiap anak ketika opsi itu dipakai. Ada juga rebat RM400 kalau penghasilan kena pajak RM35.000 atau kurang. Bedanya dengan PTKP, laporan pajak sungguhan di Malaysia membuka banyak pengurang lain yang harus kamu klaim dengan bukti, seperti gaya hidup, medis, asuransi dan pendidikan, dan semuanya tidak dihitung di <em>tool</em> ini.</p>"
       },
       {
         "h3": "EPF, SOCSO, EIS dan LINDUNG 24 Jam",
-        "html": "<p>Warga negara membayar 11% gaji ke <em>Employees Provident Fund</em> (EPF atau KWSP), dana pensiun wajib yang fungsinya mirip JHT. Mereka juga membayar SOCSO dan EIS (jaminan kecelakaan kerja dan jaminan kehilangan pekerjaan, mirip BPJS Ketenagakerjaan) sebesar 0,5% dan 0,2% dari gaji sampai batas RM6.000 sebulan. <em>Tool</em> menghitung bagian EPF ekspat dan non-resident sebesar 2%, tanpa SOCSO dan EIS. <em>Tool</em> juga mengenakan iuran LINDUNG 24 Jam sebesar 0,75% dari gaji sampai RM6.000 sebulan mulai 1 Juni 2026, yaitu tujuh bulan dalam setahun. Pemberi kerja menyetor bagiannya sendiri di atas gajimu.</p>"
+        "html": "<p>Warga negara membayar 11% gaji ke Employees Provident Fund (EPF atau KWSP), dana pensiun wajib yang fungsinya mirip JHT. Mereka juga membayar SOCSO dan EIS (jaminan kecelakaan kerja dan jaminan kehilangan pekerjaan, mirip BPJS Ketenagakerjaan) sebesar 0,5% dan 0,2% dari gaji sampai batas RM6.000 sebulan. <em>Tool</em> menghitung bagian EPF ekspat dan non-resident sebesar 2%, tanpa SOCSO dan EIS. <em>Tool</em> juga mengenakan iuran LINDUNG 24 Jam sebesar 0,75% dari gaji sampai RM6.000 sebulan mulai 1 Juni 2026, yaitu tujuh bulan dalam setahun. Pemberi kerja menyetor bagiannya sendiri di atas gajimu.</p>"
       },
       {
         "h3": "PCB, Borang EA dan laporan pajak tahunan",
-        "html": "<p>Pemberi kerja memotong pajak dari tiap slip gaji lewat Potongan Cukai Bulanan (PCB), seperti PPh 21 yang dipotong tiap bulan di Indonesia. Setelah tahun berakhir, pemberi kerja memberimu Borang EA, ringkasan gaji dan potongan setahun yang padanannya bukti potong 1721-A1. Lalu kamu melapor lewat <em>e-Filing</em> LHDN (MyTax), setara SPT Tahunan, kira-kira antara April dan Mei tahun berikutnya. LHDN membandingkan total PCB dengan pajak yang sebenarnya terutang, dan selisihnya menjadi <em>refund</em> atau kurang bayar.</p>"
+        "html": "<p>Pemberi kerja memotong pajak dari tiap slip gaji lewat Potongan Cukai Bulanan (PCB), seperti PPh 21 yang dipotong tiap bulan di Indonesia. Setelah tahun berakhir, pemberi kerja memberimu Borang EA, ringkasan gaji dan potongan setahun yang padanannya bukti potong 1721-A1. Setelah itu kamu melapor lewat <em>e-Filing</em> LHDN (MyTax), setara SPT Tahunan, kira-kira antara April dan Mei tahun berikutnya. LHDN membandingkan total PCB dengan pajak yang sebenarnya terutang, dan selisihnya menjadi <em>refund</em> atau kurang bayar.</p>"
       }
     ],
     "sources": [
@@ -105,7 +105,7 @@
       "key": "citizen",
       "title": "Berapa pajak dan gaji bersih di Malaysia untuk gaji RM8.000 sebulan (RM96.000 setahun)?",
       "intro": "<p>Contoh ini untuk warga negara Malaysia dengan gaji RM8.000 sebulan, dan berguna sebagai pembanding bagi pekerja asing yang membayar EPF lebih kecil. Gaji ini dipotong EPF 11% sebesar RM10.560, SOCSO dan EIS RM504, serta iuran LINDUNG 24 Jam RM315. Pengurang pajaknya RM13.350, yaitu RM9.000 untuk dirimu sendiri, batas EPF RM4.000 dan SOCSO RM350, sehingga penghasilan kena pajaknya RM82.650. Pajak penghasilannya RM6.103,50, dan gaji bersihmu sekitar RM78.518 setahun atau sekitar RM6.543 sebulan, yaitu 81,8% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalmu di penghasilan ini sekitar 30%: 19% pajak ditambah 11% EPF, yang tetap menjadi tabunganmu karena EPF itu uangmu sendiri. Itu sebabnya pajaknya sendiri hanya sekitar 6% dari gaji kotor.</p>"
+      "after": "<p>Tarif marginal pajakmu 19%. Kalau iuran EPF 11% ikut dihitung, setiap ringgit tambahan gaji terpotong sekitar 30%, tetapi EPF tetap tabunganmu sendiri. Pajaknya sendiri hanya sekitar 6% dari gaji kotor.</p>"
     },
     {
       "key": "expat-resident",
@@ -131,7 +131,7 @@
       "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang punya pengurang di luar yang otomatis dihitung pemberi kerja, misalnya pasangan, anak atau biaya medis. Dengan formulir yang biasa disebut Borang TP1, PCB di slip gajimu bisa mengikuti pengurang itu, sehingga kamu tidak menunggu laporan tahunan untuk mendapatkan kelebihan potongan kembali.</p><p><strong>Perlu diingat:</strong> pemberi kerja hanya bisa memakai data yang kamu serahkan, dan pengurang itu tetap harus punya bukti kalau LHDN memeriksa.</p>"
     },
     {
-      "h3": "<em>Private Retirement Scheme</em> (PRS) dan premi asuransi jiwa",
+      "h3": "Private Retirement Scheme (PRS) dan premi asuransi jiwa",
       "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang ingin menambah tabungan pensiun. Setoran ke PRS yang disetujui dan sebagian premi asuransi jiwa mendapat pengurang sampai batas tertentu, jadi cek batas terbarunya di LHDN.</p><p><strong>Perlu diingat:</strong> uang PRS ditujukan untuk pensiun, dan penarikan sebelum waktunya dikenai potongan.</p>"
     },
     {
@@ -140,13 +140,13 @@
     },
     {
       "h3": "Atur tanggal tiba dan pergi dengan memperhitungkan status penduduk pajak",
-      "html": "<p><strong>Siapa yang cocok:</strong> ekspat dan pekerja yang memulai atau mengakhiri penugasan di tengah tahun. Mencapai 182 hari memberimu tarif penduduk pajak dan pengurang, yang jauh lebih murah daripada tarif tunggal 30% untuk non-resident.</p><p><strong>Perlu diingat:</strong> hanya hari yang benar-benar kamu habiskan di Malaysia yang dihitung, dan LHDN memakai ujian lain juga. Pastikan statusmu sebelum mengandalkannya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> ekspat dan pekerja yang memulai atau mengakhiri penugasan di tengah tahun. Mencapai 182 hari memberimu tarif penduduk pajak dan pengurang, yang jauh lebih murah daripada tarif non-resident.</p><p><strong>Perlu diingat:</strong> hanya hari yang benar-benar kamu habiskan di Malaysia yang dihitung, dan LHDN memakai ujian lain juga. Pastikan statusmu sebelum mengandalkannya.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari kerja.</strong> <em>Tool</em> menghitung satu gaji untuk satu tahun penuh, tanpa pendapatan sewa, investasi, usaha sendiri atau tahun yang hanya sebagian.",
     "<strong>Tanpa bonus dan tunjangan.</strong> Bonus, tunjangan dan fasilitas dari kantor tidak dihitung terpisah.",
-    "<strong>Status kamu yang memilih.</strong> <em>Tool</em> tidak menguji aturan 182 hari maupun ujian penduduk pajak lainnya.",
+    "<strong>Kamu sendiri yang memilih statusnya.</strong> <em>Tool</em> tidak menguji aturan 182 hari maupun ujian penduduk pajak lainnya.",
     "<strong>Pengurang pajak dasar.</strong> Hanya pengurang pribadi, EPF, SOCSO, pasangan dan anak yang dihitung, sedangkan pengurang medis, gaya hidup, pendidikan dan asuransi tidak.",
     "<strong>Hanya tiga status.</strong> Warga negara, ekspat dan non-resident. Status lain, misalnya penduduk tetap dengan perlakuan khusus, tidak dihitung terpisah.",
     "<strong>Pajak Indonesia dan P3B tidak dihitung.</strong> <em>Tool</em> tidak menghitung pajak di Indonesia atas penghasilan dari luar negeri, Persetujuan Penghindaran Pajak Berganda (P3B) maupun kredit pajak luar negeri.",
@@ -159,27 +159,23 @@
     },
     {
       "q": "Apa aturan 182 hari di Malaysia dan kenapa pengaruhnya besar?",
-      "a": "<p>Kamu umumnya menjadi penduduk pajak untuk satu tahun kalau berada di Malaysia 182 hari atau lebih dalam tahun itu. Penduduk pajak membayar tarif bertingkat 0% sampai 30% dengan pengurang, sedangkan non-resident membayar 30% tunggal tanpa pengurang. Pada gaji RM60.000 selisihnya besar, jadi menghitung hari sebelum berangkat atau pulang sangat berguna. Ada ujian lain untuk tinggal yang melintasi dua tahun, jadi tanyakan ke LHDN.</p>"
+      "a": "<p>Kamu umumnya menjadi penduduk pajak untuk satu tahun kalau berada di Malaysia 182 hari atau lebih dalam tahun itu. Penduduk pajak dikenai tarif bertingkat dengan pengurang, sedangkan non-resident dikenai tarif tunggal tanpa pengurang, jadi menghitung hari sebelum berangkat atau pulang sangat berguna. Ada ujian lain untuk tinggal yang melintasi dua tahun, jadi tanyakan ke LHDN.</p>"
     },
     {
       "q": "Apa itu PCB dan kenapa potongan di slip gaji berbeda dari tagihan pajak akhir tahun?",
-      "a": "<p>PCB (Potongan Cukai Bulanan) adalah potongan pajak bulanan yang diambil pemberi kerja dari gajimu dan disetor ke LHDN. Besarnya perkiraan dari tabel dan pengurang yang kamu laporkan, bukan pajak akhirmu. Setelah tahun berakhir, kamu melapor dengan data dari Borang EA, dan LHDN membandingkan total PCB dengan pajak yang sebenarnya terutang. Selisih itu menjadi <em>refund</em> atau kurang bayar, mirip selisih PPh 21 yang diselesaikan di SPT Tahunan, walaupun mekanisme bulanannya tidak sama dengan TER dan perhitungan ulang Desember di Indonesia.</p><p><em>Tool</em> menampilkan pajak setahun penuh pada satu gaji, jadi angkanya bisa berbeda dari PCB satu bulan.</p>"
+      "a": "<p>PCB (Potongan Cukai Bulanan) adalah potongan pajak bulanan yang diambil pemberi kerja dari gajimu dan disetor ke LHDN. Besarnya perkiraan dari tabel dan pengurang yang kamu laporkan, bukan pajak akhirmu. Setelah tahun berakhir, kamu melapor dengan data dari Borang EA, dan LHDN membandingkan total PCB dengan pajak yang sebenarnya terutang. Selisih itu menjadi <em>refund</em> atau kurang bayar, mirip selisih PPh 21 yang diselesaikan di SPT Tahunan, walaupun mekanisme bulanannya berbeda dari tarif efektif rata-rata (TER) dan perhitungan ulang Desember di Indonesia.</p><p><em>Tool</em> menampilkan pajak setahun penuh pada satu gaji, jadi angkanya bisa berbeda dari PCB satu bulan.</p>"
     },
     {
       "q": "Apakah pekerja asing membayar EPF di Malaysia?",
-      "a": "<p><em>Tool</em> menghitung bagian karyawan EPF sebesar 2% untuk pekerja non-warga negara, dibandingkan dengan 11% untuk warga negara, dan menghitungnya sebagai pengurang pajak sampai RM4.000. Aturan iuran untuk pekerja asing sudah berubah belakangan ini, jadi pastikan tarif terbarunya ke EPF dan pemberi kerjamu. Kalau kamu bertanya apakah EPF bisa ditarik saat pulang ke Indonesia, syaratnya ditetapkan EPF, jadi tanyakan langsung ke mereka sebelum berangkat.</p>"
-    },
-    {
-      "q": "Kenapa tarif non-resident di Malaysia 30% tunggal?",
-      "a": "<p>Non-resident tidak mendapat tingkat bebas pajak, tarif rendah maupun pengurang yang diterima penduduk pajak. Setiap ringgit penghasilan kerja dikenai 30%, sehingga <em>tool</em> menampilkan tarif yang sama di berapa pun gajinya. Penduduk pajak dengan gaji RM60.000 hanya membayar sebagian kecil dari jumlah itu.</p>"
+      "a": "<p><em>Tool</em> menghitung bagian karyawan EPF sebesar 2% untuk pekerja non-warga negara, dibandingkan dengan 11% untuk warga negara, dan menghitungnya sebagai pengurang pajak sampai RM4.000. Aturan iuran untuk pekerja asing sudah berubah belakangan ini, jadi pastikan tarif terbarunya ke EPF dan pemberi kerjamu. Soal penarikan EPF saat pulang ke Indonesia, syaratnya ditetapkan EPF, jadi tanyakan langsung ke mereka sebelum berangkat.</p>"
     },
     {
       "q": "Apa itu LINDUNG 24 Jam di slip gaji?",
-      "a": "<p>Itu iuran jaminan sosial yang dipakai <em>tool</em> sebesar 0,75% dari gaji sampai RM6.000 sebulan, mulai 1 Juni 2026, sehingga hanya berlaku tujuh bulan dalam setahun. Cek tarif resmi dan siapa saja yang wajib membayarnya ke PERKESO.</p>"
+      "a": "<p>LINDUNG 24 Jam adalah iuran jaminan sosial yang dihitung <em>tool</em> sebesar 0,75% dari gaji sampai RM6.000 sebulan, mulai 1 Juni 2026, sehingga hanya berlaku tujuh bulan dalam setahun. Cek tarif resmi dan siapa saja yang wajib membayarnya ke PERKESO.</p>"
     },
     {
       "q": "Apakah gaji di Malaysia masih kena pajak di Indonesia?",
-      "a": "<p>Jawabannya bergantung pada statusmu di Indonesia. Menurut UU PPh, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat berubah menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP lewat KPP tempat NPWP-mu terdaftar agar penghasilanmu di Malaysia tidak dikenai pajak dua kali. Indonesia dan Malaysia juga punya P3B, tetapi penerapannya bergantung pada kondisimu.</p><p><em>Tool</em> ini hanya menghitung pajak Malaysia, tidak menghitung pajak Indonesia atas penghasilan dari luar negeri maupun P3B, dan bukan nasihat hukum. Pastikan statusmu ke DJP atau konsultan pajak.</p>"
+      "a": "<p>Kalau kamu memenuhi syarat sebagai subjek pajak luar negeri (UU PPh dan PMK 18/2021: antara lain berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia), Indonesia hanya memajaki penghasilanmu yang bersumber dari Indonesia. Kalau belum, kamu masih subjek pajak dalam negeri dan melaporkan gajimu dari Malaysia di SPT Tahunan, dengan kredit pajak luar negeri atau persetujuan penghindaran pajak berganda (P3B) untuk mencegah pajak ganda. Urus statusmu lewat KPP tempat NPWP-mu terdaftar.</p><p>Simpan Borang EA sebagai bukti penghasilan dan pajak yang sudah dipotong di Malaysia untuk SPT Tahunan. Kalkulator ini hanya menghitung pajak Malaysia, bukan pajak Indonesia atau P3B, dan bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {
