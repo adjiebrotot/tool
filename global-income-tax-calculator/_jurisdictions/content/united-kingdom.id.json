@@ -4,13 +4,13 @@
   "title": "Cara Menghitung Pajak Gaji di Inggris 2026/27",
   "h1": "Cara menghitung pajak penghasilan di Inggris (2026/27)",
   "description": "Hitung pajak dan gaji bersih di Inggris 2026/27: income tax, National Insurance, tarif Skotlandia, dan tarif efektif 60% di atas £100.000.",
-  "lede": "<p>Gaji di Inggris dipotong pemberi kerja lewat sistem <em>PAYE</em>, mirip PPh 21 yang dipotong kantor di Indonesia: pajak penghasilan (<em>income tax</em>) dengan tarif 20%, 40% dan 45% setelah £12.570 pertama bebas pajak, ditambah iuran jaminan sosial <em>National Insurance</em> (NI). Untuk gaji £60.000 di Inggris, kamu membayar sekitar £11.432 pajak penghasilan dan £3.211 NI, sehingga gaji bersih (<em>take-home pay</em>) tinggal sekitar £45.357 setahun, atau £3.780 per bulan. Skotlandia punya tarif sendiri yang membuat angkanya lebih rendah, dan di rentang £100.000 sampai £125.140 tarif efektifnya melonjak jadi 60%.</p>",
+  "lede": "<p>Gaji di Inggris dipotong pemberi kerja lewat sistem PAYE, mirip PPh 21 yang dipotong kantor di Indonesia: pajak penghasilan (<em>income tax</em>) dengan tarif 20%, 40% dan 45% setelah £12.570 pertama bebas pajak, ditambah iuran jaminan sosial National Insurance (NI). Untuk gaji £60.000 di Inggris, kamu membayar sekitar £11.432 pajak penghasilan dan £3.211 NI, sehingga gaji bersih (<em>take-home pay</em>) tinggal sekitar £45.357 setahun, atau £3.780 per bulan. Skotlandia punya tarif sendiri yang membuat angkanya lebih rendah, dan di rentang £100.000 sampai £125.140 tarif efektifnya melonjak jadi 60%.</p>",
   "law": {
-    "intro": "<p>Tahun pajak Inggris berjalan dari 6 April sampai 5 April, dan angka di halaman ini mengikuti aturan 2026/27 seperti yang dipakai <em>tool</em>. Setiap bulan pemberi kerja memotong pajak dan NI langsung dari slip gaji berdasarkan kode pajak (<em>tax code</em>) yang diberikan otoritas pajak Inggris, <em>HMRC</em>. Karena itu kebanyakan karyawan tidak perlu mengisi laporan pajak sendiri seperti SPT Tahunan di Indonesia. Pajak Inggris juga dihitung per orang, jadi tidak ada pilihan gabung atau pisah seperti NPWP suami-istri.</p><p>Tarif yang berlaku tidak ditentukan oleh jenis visamu, melainkan oleh status penduduk pajak Inggris (<em>UK tax resident</em>), yang ditentukan lewat tes bernama <em>Statutory Residence Test</em>, dan oleh tempat tinggalmu, karena Skotlandia menetapkan tarif sendiri.</p>",
+    "intro": "<p>Tahun pajak Inggris berjalan dari 6 April sampai 5 April, dan angka di halaman ini mengikuti aturan 2026/27 seperti yang dipakai <em>tool</em>. Setiap bulan pemberi kerja memotong pajak dan NI langsung dari slip gaji berdasarkan kode pajak (<em>tax code</em>) yang diberikan otoritas pajak Inggris, HMRC. Karena itu kebanyakan karyawan tidak perlu mengisi laporan pajak sendiri seperti SPT Tahunan di Indonesia. Pajak Inggris juga dihitung per orang, jadi tidak ada pilihan gabung atau pisah seperti NPWP suami-istri.</p><p>Tarif yang berlaku tidak ditentukan oleh jenis visamu, melainkan oleh status penduduk pajak Inggris (<em>UK tax resident</em>), yang diuji lewat Statutory Residence Test, dan oleh tempat tinggalmu, karena Skotlandia menetapkan tarif sendiri.</p>",
     "blocks": [
       {
-        "h3": "Tarif pajak penghasilan di Inggris, Wales dan Irlandia Utara",
-        "html": "<p>Setiap orang mendapat <em>personal allowance</em> sebesar £12.570 yang bebas pajak, fungsinya mirip PTKP di Indonesia. Bedanya, di Inggris batas ini tidak bergantung pada status kawin atau jumlah tanggungan. Tarif di tabel berlaku untuk penghasilan sesudah batas bebas itu, sehingga tarif 40% baru mulai pada gaji £50.270 (£12.570 ditambah £37.700). Kode pajak standarnya adalah 1257L.</p><p>Pembagian tingkatnya mirip tarif Pasal 17 di Indonesia yang berjenjang 5% sampai 35%, hanya saja Inggris memakai tiga tingkat dengan tarif tertinggi 45%.</p>",
+        "h3": "Tarif pajak penghasilan di England, Wales dan Irlandia Utara",
+        "html": "<p>Setiap orang mendapat <em>personal allowance</em> sebesar £12.570 yang bebas pajak, fungsinya mirip PTKP di Indonesia. Bedanya, di Inggris batas ini tidak bergantung pada status kawin atau jumlah tanggungan. Tarif di daftar ini berlaku untuk penghasilan sesudah batas bebas itu, sehingga tarif 40% baru mulai pada gaji £50.270 (£12.570 ditambah £37.700). Kode pajak standarnya adalah 1257L.</p><p>Pembagian lapisannya mirip tarif Pasal 17 di Indonesia yang berlapis 5% sampai 35%, hanya saja England memakai tiga lapisan dengan tarif tertinggi 45%.</p>",
         "table": {
           "head": ["Penghasilan kena pajak (setelah <em>personal allowance</em>)", "Tarif"],
           "rows": [
@@ -22,7 +22,7 @@
       },
       {
         "h3": "Tarif pajak penghasilan di Skotlandia",
-        "html": "<p>Parlemen Skotlandia menetapkan sendiri tarif pajak atas gaji, dengan enam tingkat dan <em>personal allowance</em> yang sama. Tarif ini berlaku kalau tempat tinggal utamamu ada di Skotlandia, misalnya kalau kamu bekerja di Edinburgh atau Glasgow. Iuran NI tetap sama di seluruh Inggris. <em>Tool</em> ini membiarkanmu memilih tarif Skotlandia, sedangkan Wales dan Irlandia Utara memakai tabel Inggris.</p>",
+        "html": "<p>Parlemen Skotlandia menetapkan sendiri tarif pajak atas gaji, dengan enam lapisan dan <em>personal allowance</em> yang sama. Tarif ini berlaku kalau tempat tinggal utamamu ada di Skotlandia, misalnya kalau kamu bekerja di Edinburgh atau Glasgow. Iuran NI tetap sama di seluruh Inggris. Di <em>tool</em> ini kamu bisa memilih tarif Skotlandia, sedangkan Wales dan Irlandia Utara memakai tarif England.</p>",
         "table": {
           "head": ["Penghasilan kena pajak (setelah <em>personal allowance</em>)", "Tarif"],
           "rows": [
@@ -37,106 +37,106 @@
       },
       {
         "h3": "Rentang £100.000 sampai £125.140 dan tarif efektif 60%",
-        "html": "<p>Setiap £2 penghasilan di atas £100.000 memangkas <em>personal allowance</em> sebesar £1, sampai batas bebas pajak itu habis di £125.140. Akibatnya, tambahan £1 gaji di rentang ini dikenai tarif 40% dan sekaligus menarik 50 sen dari batas bebas pajak ke dalam penghasilan kena pajak, yang menambah pajak 20 sen lagi. Totalnya 60 sen pajak penghasilan untuk setiap £1 tambahan gaji, atau 62 sen kalau NI 2% dihitung. Hitungan <em>tool</em> ini sudah memasukkan pemangkasan tersebut di setiap contoh.</p>"
+        "html": "<p>Setiap £2 penghasilan di atas £100.000 memangkas <em>personal allowance</em> sebesar £1, sampai batas bebas pajak itu habis di £125.140. Akibatnya, tambahan £1 gaji di rentang ini dikenai tarif 40% dan sekaligus menarik 50 sen dari batas bebas pajak ke dalam penghasilan kena pajak, yang menambah pajak 20 sen lagi. Totalnya 60 sen pajak penghasilan untuk setiap £1 tambahan gaji, atau 62 sen kalau NI 2% dihitung. Dalam hitungan <em>tool</em> ini, pemangkasan tersebut sudah masuk di setiap contoh.</p>"
       },
       {
         "h3": "National Insurance (kelas 1)",
-        "html": "<p>NI adalah iuran jaminan sosial karyawan. Kamu membayar 8% untuk penghasilan antara £12.570 dan £50.270, lalu 2% untuk penghasilan di atasnya. Iuran ini dipotong sejak slip gaji pertama, siapa pun kewarganegaraanmu, dan tidak bergantung pada wilayah. Secara fungsi NI mirip BPJS Ketenagakerjaan karena ikut membentuk hak atas pensiun negara (<em>State Pension</em>), tetapi ada satu perbedaan penting: NI adalah iuran ke dana jaminan sosial negara, bukan tabungan pribadi seperti saldo JHT, sehingga tidak ada saldo yang bisa kamu tarik ketika pindah. Iuran NI yang dibayar pemberi kerja ada di luar gajimu dan tidak masuk angka gaji bersih.</p>"
+        "html": "<p>NI adalah iuran jaminan sosial karyawan. Kamu membayar 8% untuk penghasilan antara £12.570 dan £50.270, lalu 2% untuk penghasilan di atasnya. Iuran ini dipotong sejak slip gaji pertama, siapa pun kewarganegaraanmu, dan tidak bergantung pada wilayah. Fungsinya mirip BPJS Ketenagakerjaan karena ikut membentuk hak atas pensiun negara (State Pension), tetapi ada satu perbedaan penting: NI adalah iuran ke dana jaminan sosial negara, bukan tabungan pribadi seperti saldo JHT, sehingga tidak ada saldo yang bisa kamu tarik ketika pindah. Iuran NI yang dibayar pemberi kerja ada di luar gajimu dan tidak masuk angka gaji bersih.</p>"
       },
       {
         "h3": "Pinjaman mahasiswa dan pinjaman pascasarjana",
-        "html": "<p>Pinjaman mahasiswa Inggris dicicil lewat potongan gaji sebesar 9% dari penghasilan di atas batas tiap rencana (<em>plan</em>). <em>Tool</em> ini memakai £26.900 untuk Plan 1, £29.385 untuk Plan 2, £33.795 untuk Plan 4 dan £25.000 untuk Plan 5. Pinjaman pascasarjana dicicil 6% dari penghasilan di atas £21.000 dan bisa berjalan bersamaan dengan pinjaman rencana tadi. Potongan ini hanya muncul kalau kamu memang meminjam dari <em>Student Loans Company</em>, jadi tidak berlaku bagi kebanyakan mahasiswa internasional.</p>"
+        "html": "<p>Pinjaman mahasiswa Inggris dicicil lewat potongan gaji sebesar 9% dari penghasilan di atas batas tiap <em>plan</em> (jenis pinjaman). <em>Tool</em> ini memakai £26.900 untuk Plan 1, £29.385 untuk Plan 2, £33.795 untuk Plan 4 dan £25.000 untuk Plan 5. Pinjaman pascasarjana dicicil 6% dari penghasilan di atas £21.000 dan bisa berjalan bersamaan dengan pinjaman mahasiswa biasa. Potongan ini hanya muncul kalau kamu memang meminjam dari Student Loans Company, jadi tidak berlaku bagi kebanyakan mahasiswa internasional.</p>"
       }
     ],
     "sources": [
       { "name": "GOV.UK, tarif dan batas pajak penghasilan", "url": "https://www.gov.uk/income-tax-rates" },
-      { "name": "GOV.UK, <em>National Insurance</em>", "url": "https://www.gov.uk/national-insurance" },
+      { "name": "GOV.UK, National Insurance", "url": "https://www.gov.uk/national-insurance" },
       { "name": "GOV.UK, pembayaran kembali pinjaman mahasiswa", "url": "https://www.gov.uk/repaying-your-student-loan" },
-      { "name": "GOV.UK, visa <em>Skilled Worker</em>", "url": "https://www.gov.uk/skilled-worker-visa" }
+      { "name": "GOV.UK, visa Skilled Worker", "url": "https://www.gov.uk/skilled-worker-visa" }
     ]
   },
   "examples": [
     {
       "key": "england",
       "title": "Berapa gaji bersih di Inggris kalau gajinya £60.000 setahun?",
-      "intro": "<p>Contoh ini cocok untuk pemegang visa <em>Skilled Worker</em> atau karyawan baru yang tinggal di Inggris, tanpa pinjaman mahasiswa. Dari gaji £60.000, £12.570 bebas pajak, sehingga £47.430 yang dikenai tarif: £37.700 pertama kena 20% dan sisa £9.730 kena 40%, dengan hasil pajak penghasilan £11.432. NI menambah £3.211, dan yang masuk rekeningmu sekitar £45.357 setahun, atau £3.780 per bulan, yaitu 75,6% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalmu di sini 42%, yakni 40% pajak ditambah 2% NI karena gajimu sudah melewati £50.270. Karena itu setiap pound yang kamu masukkan ke pensiun lewat pemberi kerja dipotong dari pajak sebesar tarif tersebut.</p>"
+      "intro": "<p>Contoh ini cocok untuk pemegang visa Skilled Worker atau karyawan baru yang tinggal di Inggris, tanpa pinjaman mahasiswa. Dari gaji £60.000, £12.570 bebas pajak, sehingga £47.430 yang dikenai tarif: £37.700 pertama kena 20% dan sisa £9.730 kena 40%, sehingga pajak penghasilannya £11.432. NI menambah £3.211, dan yang masuk rekeningmu sekitar £45.357 setahun, atau £3.780 per bulan, yaitu 75,6% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalmu, yaitu persentase potongan dari tambahan £1 gaji berikutnya, di sini 42%: 40% pajak ditambah 2% NI karena gajimu sudah melewati £50.270. Artinya, setiap £1 yang kamu setor ke dana pensiun lewat potongan gaji bisa menghemat pajak sampai 42 sen.</p>"
     },
     {
       "key": "scotland",
       "title": "Pajak gaji £60.000 di Skotlandia: berapa bedanya dengan Inggris?",
       "intro": "<p>Gajinya sama, £60.000, tetapi kamu bekerja dan tinggal di Skotlandia. Batas bebas pajak tidak berubah, namun £47.430 penghasilan kena pajak dikenai tarif Skotlandia 19%, 20%, 21% dan 42%, sehingga pajak penghasilannya £13.182, lebih tinggi dari £11.432 di Inggris. NI tetap £3.211. Gaji bersihmu sekitar £43.607 setahun, atau £3.634 per bulan (72,7% dari gaji kotor), yaitu £1.750 lebih sedikit daripada di Inggris.</p>",
-      "after": "<p>Tarif marginal di Skotlandia pada gaji ini 44% (42% ditambah NI), sedangkan di Inggris 42%. Tarif Skotlandia memang sedikit lebih ringan untuk gaji rendah, tetapi selisihnya berbalik merugikan begitu gaji naik.</p>"
+      "after": "<p>Tarif marginal di Skotlandia pada gaji ini 44% (42% ditambah NI), sedangkan di Inggris 42%. Tarif Skotlandia memang sedikit lebih ringan untuk gaji rendah, tetapi begitu gaji naik, selisihnya berbalik dan Skotlandia menjadi lebih mahal.</p>"
     },
     {
       "key": "student-loan",
       "title": "Cara menghitung gaji bersih £45.000 di Inggris dengan cicilan pinjaman mahasiswa",
-      "intro": "<p>Contoh ini untuk orang yang bergaji £45.000 di Inggris dan sedang mencicil pinjaman mahasiswa Plan 2, misalnya karena dulu kuliah di Inggris sebagai penduduk setempat. Pajak penghasilan £6.486, dihitung dari £32.430 penghasilan kena pajak dengan tarif 20%, dan NI £2.594. Pinjaman mengambil 9% dari £15.615 di atas batas £29.385, yaitu £1.405. Gaji bersihmu sekitar £34.514 setahun (£2.876 per bulan), atau 76,7% dari gaji kotor.</p>",
-      "after": "<p>Cicilan ini menambah sembilan poin persentase ke tarif marginalmu sehingga menjadi 37% (20% pajak, 8% NI dan 9% pinjaman). Potongannya otomatis berhenti begitu penghasilanmu turun di bawah batas rencana.</p>"
+      "intro": "<p>Contoh ini untuk orang yang bergaji £45.000 di Inggris dan sedang mencicil pinjaman mahasiswa Plan 2, misalnya karena dulu kuliah di Inggris sebagai penduduk setempat. Pajak penghasilan £6.486, dihitung dari £32.430 penghasilan kena pajak dengan tarif 20%, dan NI £2.594. Cicilan pinjaman memotong 9% dari £15.615 yang melewati batas £29.385, yaitu £1.405. Gaji bersihmu sekitar £34.514 setahun (£2.876 per bulan), atau 76,7% dari gaji kotor.</p>",
+      "after": "<p>Cicilan ini menambah sembilan poin persentase pada tarif marginalmu sehingga menjadi 37% (20% pajak, 8% NI dan 9% pinjaman). Potongannya otomatis berhenti begitu penghasilanmu turun di bawah batas <em>plan</em>-nya.</p>"
     },
     {
       "key": "above-100k",
       "title": "Kenapa pajak gaji £120.000 di Inggris terasa 62%? Ini hitungannya",
       "intro": "<p>Pada gaji £120.000, batas bebas pajak sudah menyusut tinggal £2.570, karena berkurang £1 untuk setiap £2 di atas £100.000. Penghasilan kena pajaknya jadi £117.430: £37.700 pertama dikenai 20% dan sisa £79.730 dikenai 40%, sehingga pajak penghasilan mencapai £39.432. NI sebesar £4.411. Gaji bersihmu sekitar £76.157 setahun (£6.346 per bulan), atau 63,5% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalnya 62%, dan pajak penghasilan pada gaji ini £12.000 lebih besar daripada pada gaji £100.000, padahal gajinya hanya naik £20.000. Kalau pemberi kerjamu menyediakan <em>salary sacrifice</em> untuk pensiun, iuran ke sana bisa menurunkan penghasilan yang diperhitungkan kembali mendekati £100.000.</p>"
+      "after": "<p>Tarif marginalnya 62%, dan pajak penghasilan pada gaji ini £12.000 lebih besar daripada pada gaji £100.000, padahal gajinya hanya naik £20.000. Kalau pemberi kerjamu menyediakan <em>salary sacrifice</em> (skema memotong gaji sebelum pajak untuk iuran pensiun), iuran ke sana bisa menurunkan penghasilan kena pajakmu kembali ke sekitar £100.000.</p>"
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara sah dan lazim untuk menekan pajak di Inggris. Mana yang cocok bergantung pada gaji, pemberi kerja, dan berapa lama kamu berencana tinggal.</p>",
   "strategies": [
     {
       "h3": "Iuran pensiun lewat <em>salary sacrifice</em>",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menawarkan <em>salary sacrifice</em> atau skema potong gaji sebelum pajak, terutama yang bergaji £100.000 sampai £125.140. Pada contoh £120.000, iuran £20.000 menurunkan penghasilan yang diperhitungkan ke £100.000 dan mengembalikan batas bebas pajak secara penuh, sehingga pajak penghasilan turun sekitar £12.000. Skema ini juga bisa menghemat NI 2%.</p><p><strong>Catatan:</strong> uang di dalamnya baru bisa diambil setelah usia akses minimum pensiun, dan ada batas iuran tahunan yang masih mendapat keringanan pajak (cek angka terbarunya di GOV.UK). Kalau kamu pulang ke Indonesia, dana itu tetap tinggal di Inggris, jadi tanyakan dulu kemungkinan memindahkan atau mencairkannya.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menawarkan <em>salary sacrifice</em>, terutama yang bergaji £100.000 sampai £125.140. Untuk gaji £120.000, iuran £20.000 menurunkan penghasilan kena pajak ke £100.000 dan mengembalikan batas bebas pajak secara penuh, sehingga pajak penghasilan turun sekitar £12.000. Skema ini juga bisa menghemat NI 2%.</p><p><strong>Catatan:</strong> uang di dalamnya baru bisa diambil setelah usia akses minimum pensiun, dan ada batas iuran tahunan yang masih mendapat keringanan pajak (cek angka terbarunya di GOV.UK). Kalau kamu pulang ke Indonesia, dana itu tetap tinggal di Inggris, jadi tanyakan dulu kemungkinan memindahkan atau mencairkannya.</p>"
     },
     {
       "h3": "Cek kode pajak di slip gaji",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang baru mulai bekerja atau pindah kantor. Pemberi kerja memakai kode dari <em>HMRC</em>, dan kode 1257L memberi batas bebas pajak penuh. Pada beberapa slip gaji pertama sering dipakai kode darurat, yang bisa membuat pajak terpotong kelebihan atau kekurangan sampai kodenya diperbarui.</p><p><strong>Catatan:</strong> kode yang keliru tidak mengubah jumlah pajak setahun, hanya waktu pembayarannya. Periksa slip gaji dan akun <em>HMRC</em> daringmu, lalu laporkan kalau ada perubahan.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang baru mulai bekerja atau pindah kantor. Pemberi kerja memakai kode dari HMRC, dan kode 1257L memberi batas bebas pajak penuh. Pada beberapa slip gaji pertama sering dipakai kode darurat, yang bisa membuat pajak terpotong terlalu banyak atau terlalu sedikit sampai kodenya diperbarui.</p><p><strong>Catatan:</strong> kode yang keliru tidak mengubah jumlah pajak setahun, hanya waktu pembayarannya. Periksa slip gaji dan akun HMRC daringmu, lalu laporkan ke HMRC kalau ada yang tidak sesuai.</p>"
     },
     {
       "h3": "Pertimbangkan tarif Skotlandia saat memilih kota",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> orang yang masih bisa memilih kota tempat bekerja di Inggris. Seperti contoh £60.000 di atas, tarif Skotlandia membuat pajak £1.750 setahun lebih tinggi untuk gaji di kisaran itu. Untuk gaji yang lebih rendah, Skotlandia justru bisa sedikit lebih ringan.</p><p><strong>Catatan:</strong> tarif Skotlandia hanya berlaku kalau tempat tinggal utamamu di sana, jadi tidak bisa dipilih semata demi pajak. Bandingkan juga sewa dan biaya hidup di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> orang yang masih bisa memilih kota tempat bekerja di Inggris. Untuk gaji sekitar £60.000, tarif Skotlandia membuat pajak £1.750 setahun lebih tinggi. Untuk gaji yang lebih rendah, Skotlandia justru bisa sedikit lebih ringan.</p><p><strong>Catatan:</strong> tarif Skotlandia hanya berlaku kalau tempat tinggal utamamu di sana, jadi tidak bisa dipilih semata demi pajak. Bandingkan juga sewa dan biaya hidup di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Inggris lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP dan menyelesaikan status serta SPT Tahunan terakhirmu agar penghasilan yang sama tidak dipajaki dua kali.</p><p><strong>Catatan:</strong> Indonesia punya perjanjian penghindaran pajak berganda (P3B) dengan Inggris, tetapi kalkulator ini tidak menghitungnya. Untuk kasusmu, tanyakan langsung ke DJP atau konsultan pajak, karena ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Inggris lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Inggris, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari gaji.</strong> Hitungan ini mengasumsikan satu gaji untuk satu tahun pajak penuh. Usaha sendiri, sewa properti, tabungan, dividen dan keuntungan jual aset tidak masuk.",
+    "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun pajak penuh. Usaha sendiri, sewa properti, tabungan, dividen dan keuntungan jual aset tidak masuk.",
     "<strong>Tanpa bonus atau saham.</strong> Opsi saham, bonus dan tunjangan dalam bentuk barang tidak dihitung terpisah, dan tidak ada iuran pensiun yang dipotong.",
-    "<strong>Inggris dan Skotlandia saja.</strong> Kamu memilih tabel Inggris atau tabel Skotlandia. Wales dan Irlandia Utara memakai tabel Inggris, dan kalkulator tidak menguji tempat tinggal utamamu.",
-    "<strong>Status penduduk pajak dianggap sudah pasti.</strong> Hitungan ini menganggap kamu penduduk pajak Inggris selama setahun penuh, tanpa <em>Statutory Residence Test</em> dan tanpa rezim khusus untuk pendatang baru.",
-    "<strong>Orang lajang tanpa keringanan lain.</strong> Yang dipakai hanya <em>personal allowance</em> standar dan penyusutannya. <em>Marriage Allowance</em>, keringanan bagi tunanetra dan keringanan lain tidak dihitung.",
-    "<strong>Biaya di luar pajak tidak masuk.</strong> Biaya visa dan <em>Immigration Health Surcharge</em> (iuran kesehatan bagi pemegang visa) tidak dikurangkan dari gaji bersih.",
-    "<strong>Tanpa P3B dan pajak di Indonesia.</strong> Hitungan ini tidak memperhitungkan P3B Indonesia dan Inggris, juga tidak menghitung pajak Indonesia atas penghasilan dari luar negeri."
+    "<strong>England dan Skotlandia saja.</strong> Kamu memilih tarif England atau tarif Skotlandia. Wales dan Irlandia Utara memakai tarif England, dan kalkulator tidak menguji tempat tinggal utamamu.",
+    "<strong>Status penduduk pajak dianggap sudah jelas.</strong> Dalam hitungan <em>tool</em> ini, kamu dianggap penduduk pajak Inggris selama setahun penuh, tanpa Statutory Residence Test dan tanpa rezim khusus untuk pendatang baru.",
+    "<strong>Orang lajang tanpa keringanan lain.</strong> Yang dipakai hanya <em>personal allowance</em> standar dan penyusutannya. Marriage Allowance, keringanan bagi tunanetra dan keringanan lain tidak dihitung.",
+    "<strong>Biaya di luar pajak tidak masuk.</strong> Biaya visa dan Immigration Health Surcharge (iuran kesehatan bagi pemegang visa) tidak dikurangkan dari gaji bersih.",
+    "<strong>Tanpa P3B dan pajak Indonesia.</strong> Dua hal itu tidak dihitung."
   ],
   "faq": [
     {
       "q": "Berapa gaji bersih dari gaji £60.000 di Inggris?",
-      "a": "<p>Di Inggris kamu membayar sekitar £11.432 pajak penghasilan dan £3.211 NI, sehingga gaji bersihmu sekitar £45.357 setahun. Di Skotlandia angkanya sekitar £43.607. Hitung gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\"><em>tool</em> Global Income Tax Calculator</a>. Angka ini untuk setahun penuh, jadi slip gaji bulanan bisa sedikit berbeda.</p>"
+      "a": "<p>Untuk gaji £60.000 di England, kamu membayar sekitar £11.432 pajak penghasilan dan £3.211 NI, sehingga gaji bersihmu sekitar £45.357 setahun. Di Skotlandia angkanya sekitar £43.607. Hitung gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\"><em>tool</em> Global Income Tax Calculator</a>. Angka ini untuk setahun penuh, jadi slip gaji bulanan bisa sedikit berbeda.</p>"
     },
     {
       "q": "Kenapa tarif pajak efektif 60% untuk gaji £100.000 sampai £125.140?",
-      "a": "<p>Karena <em>personal allowance</em> £12.570 menyusut £1 untuk setiap £2 gaji di atas £100.000 dan habis di £125.140. Di rentang itu, tambahan £1 gaji kena tarif 40% dan sekaligus membuat 50 sen batas bebas pajak ikut dikenai pajak, yang menambah 20 sen. Totalnya 60 sen pajak penghasilan, atau 62 sen kalau NI 2% ikut dihitung.</p><p>Pada gaji £120.000 batas bebas pajak sudah tinggal £2.570, itulah sebabnya pajak penghasilannya £39.432. Kalkulator ini menerapkan penyusutan itu otomatis.</p>"
+      "a": "<p>Karena di rentang itu setiap tambahan £1 gaji kena tarif 40% dan sekaligus menghilangkan 50 sen batas bebas pajak, yang menambah 20 sen pajak. Hasilnya 60 sen pajak penghasilan per £1, atau 62 sen kalau NI 2% ikut dihitung.</p>"
     },
     {
       "q": "Apakah di Inggris saya harus melapor pajak sendiri seperti SPT Tahunan?",
-      "a": "<p>Kebanyakan karyawan tidak perlu. Pemberi kerja memotong pajak penghasilan dan NI lewat <em>PAYE</em> setiap bulan, jadi di akhir tahun pajak jumlahnya biasanya sudah pas dan tidak ada laporan tahunan seperti SPT Tahunan beserta bukti potong 1721-A1 di Indonesia. Laporan sendiri (<em>Self Assessment</em>) baru wajib kalau kamu punya penghasilan lain seperti sewa atau investasi, bekerja mandiri, atau masuk kasus lain yang ditetapkan <em>HMRC</em>. Kalau potongan <em>PAYE</em> ternyata berlebih, <em>HMRC</em> kadang mengembalikannya tanpa laporan.</p>"
+      "a": "<p>Kebanyakan karyawan tidak perlu. Pemberi kerja memotong pajak penghasilan dan NI lewat PAYE setiap bulan, jadi di akhir tahun pajak jumlahnya biasanya sudah pas dan tidak ada laporan tahunan seperti SPT Tahunan beserta bukti potong 1721-A1 di Indonesia. Laporan sendiri (Self Assessment) baru wajib kalau kamu punya penghasilan lain seperti sewa atau investasi, bekerja mandiri, atau masuk kasus lain yang ditetapkan HMRC. Kalau potongan PAYE ternyata berlebih, HMRC kadang mengembalikannya tanpa laporan.</p>"
     },
     {
       "q": "Apa itu kode pajak 1257L dan kenapa pajak slip gaji pertamaku terlihat besar?",
-      "a": "<p>Kode pajak memberi tahu pemberi kerja berapa bagian gajimu yang bebas pajak. Kode standarnya 1257L, sesuai batas bebas pajak £12.570. <em>HMRC</em> mengubahnya kalau kamu punya tunjangan kena pajak, pekerjaan kedua, atau pajak terutang. Kalau kamu mulai bekerja tanpa kode, beberapa slip gaji pertama bisa memakai kode darurat, sehingga pajaknya tampak tinggi sampai kode yang benar tiba. Kalkulator ini mengasumsikan batas bebas pajak standar sepanjang tahun.</p>"
+      "a": "<p>Kode pajak memberi tahu pemberi kerja berapa bagian gajimu yang bebas pajak. Kode standarnya 1257L, sesuai batas bebas pajak £12.570. HMRC mengubahnya kalau kamu punya tunjangan kena pajak, pekerjaan kedua, atau pajak terutang. Kalau kamu mulai bekerja tanpa kode, beberapa slip gaji pertama bisa memakai kode darurat, sehingga pajaknya tampak tinggi sampai kode yang benar tiba. Kalkulator ini mengasumsikan batas bebas pajak standar sepanjang tahun.</p>"
     },
     {
       "q": "Apakah pajak penghasilan Skotlandia berbeda dengan bagian Inggris lainnya?",
-      "a": "<p>Ya, tarifnya berbeda karena Skotlandia menetapkan sendiri tarif atas gaji, dengan enam tingkat dari 19% sampai 48%, sedangkan bagian Inggris lain memakai tiga tingkat dari 20% sampai 45%. Kalau tempat tinggal utamamu di Skotlandia, tarifnya berlaku untuk gajimu, dan pada gaji £60.000 selisihnya sekitar £1.750 setahun lebih mahal. NI dan aturan pinjaman mahasiswa sama di seluruh Inggris.</p>"
+      "a": "<p>Ya, tarifnya berbeda karena Skotlandia menetapkan sendiri tarif atas gaji, dengan enam lapisan dari 19% sampai 48%, sedangkan England, Wales dan Irlandia Utara memakai tiga lapisan dari 20% sampai 45%. Kalau tempat tinggal utamamu di Skotlandia, tarifnya berlaku untuk gajimu, dan pada gaji £60.000 selisihnya sekitar £1.750 setahun lebih mahal. NI dan aturan pinjaman mahasiswa sama di seluruh Inggris.</p>"
     },
     {
       "q": "Apakah iuran National Insurance bisa diambil kembali kalau saya pulang ke Indonesia?",
-      "a": "<p>Pada umumnya tidak bisa. NI dipotong sejak slip gaji pertama dengan tarif 8% dan 2%, apa pun visa dan lama tinggalmu. Berbeda dari saldo JHT di BPJS Ketenagakerjaan, NI bukan tabungan pribadi yang bisa dicairkan ketika kamu pindah. Kalau kamu cukup lama membayar NI, iuran itu menjadi dasar hak atas <em>State Pension</em>. Ada kemungkinan pembebasan lewat perjanjian jaminan sosial antara Inggris dan negara asal, yang tidak dihitung di sini, jadi tanyakan ke <em>HMRC</em> sebelum berasumsi kamu dikecualikan.</p>"
+      "a": "<p>Pada umumnya tidak bisa. NI dipotong sejak slip gaji pertama dengan tarif 8% dan 2%, apa pun visa dan lama tinggalmu. Berbeda dari saldo JHT di BPJS Ketenagakerjaan, NI bukan tabungan pribadi yang bisa dicairkan ketika kamu pindah. Untuk mendapat State Pension, kamu butuh sedikitnya 10 tahun iuran NI yang memenuhi syarat. Tanyakan ke HMRC kalau kamu ragu soal kewajibanmu.</p>"
     },
     {
       "q": "Kalau bekerja di Inggris, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang berubah menjadi subjek pajak luar negeri kalau kamu lama berada di luar negeri dan tidak lagi tinggal di Indonesia (aturan umumnya dijelaskan di bagian strategi). Memberi tahu DJP adalah langkah yang lazim. Indonesia dan Inggris juga punya P3B. Kalkulator ini hanya menghitung pajak di Inggris dan tidak menghitung P3B maupun pajak Indonesia atas penghasilan dari luar negeri, jadi konfirmasikan kasusmu ke DJP atau konsultan pajak.</p>"
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Inggris pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak yang sudah dibayar di Inggris dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Inggris, dan halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {

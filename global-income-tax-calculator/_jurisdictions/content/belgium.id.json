@@ -10,7 +10,7 @@
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan federal",
-        "html": "<p>Pajak federal berjenjang atas penghasilan kena pajak, yaitu gaji setelah ONSS dan potongan tetap biaya kerja. Setiap orang juga mendapat bagian bebas pajak €11.550, mirip PTKP di Indonesia. <em>Tool</em> ini menerapkannya dengan mengurangkan pajak yang jatuh pada irisan pertama itu, senilai sekitar €2.888 setahun pada tarif 25%. Setiap anak menambah jumlah bebas pajak. Jenjangnya seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi tarif tertinggi Belgia 50%.</p>",
+        "html": "<p>Pajak federal berlapis atas penghasilan kena pajak, yaitu gaji setelah ONSS dan potongan tetap biaya kerja. Setiap orang juga mendapat bagian bebas pajak €11.550, mirip PTKP di Indonesia. <em>Tool</em> ini menerapkannya dengan mengurangkan pajak yang jatuh pada irisan pertama itu, senilai sekitar €2.888 setahun pada tarif 25%. Setiap anak menambah jumlah bebas pajak. Lapisannya seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi tarif tertinggi Belgia 50%.</p>",
         "table": {
           "head": ["Penghasilan kena pajak", "Tarif"],
           "rows": [
@@ -23,15 +23,15 @@
       },
       {
         "h3": "Jaminan sosial (ONSS) dan potongan biaya kerja",
-        "html": "<p>Karyawan membayar 13,07% dari gaji kotor ke kantor jaminan sosial (ONSS), dipotong oleh pemberi kerja, mirip BPJS Ketenagakerjaan di Indonesia tetapi jauh lebih besar. ONSS membuka hakmu atas jaminan kesehatan, tetapi kamu masih harus mendaftar ke dana asuransi kesehatan (<em>mutualité</em>) untuk mendapat penggantian biaya berobat. Pekerja bergaji rendah mendapat bonus kerja yang mengurangi ONSS dan pajak, dan bonus itu menghilang jauh di bawah gaji pada contoh.</p><p>Potongan tetap biaya kerja sebesar 30% dari gaji setelah ONSS, maksimum €6.070 setahun, juga berlaku. Mirip biaya jabatan di Indonesia, tetapi persentase dan batasnya berbeda. Iuran sosial khusus (CSSS) adalah potongan bulanan tambahan yang naik seiring gaji dan berhenti di batas sekitar €731 setahun pada penghasilan lebih tinggi.</p>"
+        "html": "<p>Karyawan membayar 13,07% dari gaji kotor ke kantor jaminan sosial (ONSS), dipotong oleh pemberi kerja, mirip BPJS Ketenagakerjaan di Indonesia tetapi jauh lebih besar. ONSS membuka hakmu atas jaminan kesehatan, tetapi kamu wajib mendaftar ke dana asuransi kesehatan (<em>mutualité</em>) untuk mendapat penggantian biaya berobat. Pekerja bergaji rendah mendapat bonus kerja yang mengurangi ONSS dan pajak, dan bonus itu menghilang jauh di bawah gaji pada contoh.</p><p>Potongan tetap biaya kerja sebesar 30% dari gaji setelah ONSS, maksimum €6.070 setahun, juga berlaku. Mirip biaya jabatan di Indonesia, tetapi persentase dan batasnya berbeda. Iuran sosial khusus (CSSS) adalah potongan bulanan tambahan yang naik seiring gaji dan berhenti di batas sekitar €731 setahun pada penghasilan lebih tinggi.</p>"
       },
       {
         "h3": "Pajak tambahan kota",
-        "html": "<p>Selain pajak federal, kota tempat tinggalmu memungut pajak tambahan berupa persentase dari pajak federal. Kebanyakan kota menetapkannya antara 6% dan 8%, dan <em>tool</em> ini memakai 7%. Besarnya mengikuti tempat tinggalmu pada 1 Januari, jadi kamu bisa mengubah angkanya di kalkulator sesuai kotamu. Indonesia tidak punya lapisan pajak penghasilan di tingkat kota, jadi ini komponen yang mungkin baru bagimu.</p>"
+        "html": "<p>Selain pajak federal, kota tempat tinggalmu memungut pajak tambahan berupa persentase dari pajak federal. Kebanyakan kota menetapkannya antara 6% dan 8%, dan <em>tool</em> ini memakai 7%. Besarnya mengikuti tempat tinggalmu pada 1 Januari, jadi kamu bisa mengubah angkanya di kalkulator sesuai kotamu. Indonesia tidak punya pajak penghasilan tambahan dari kota, jadi ini komponen yang mungkin baru bagimu.</p>"
       },
       {
         "h3": "Pasangan menikah dan kuosien perkawinan",
-        "html": "<p>Untuk pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, kuosien perkawinan (<em>marital quotient</em>) memungkinkan pencari nafkah utama memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari jenjang terendah dan dengan bagian bebas pajaknya sendiri. Logikanya berbeda dari pilihan NPWP gabung atau pisah di Indonesia, yang dibahas di <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">artikel pajak suami-istri</a>. <em>Tool</em> ini memperlakukan contoh €70.000 sebagai rumah tangga dengan satu pencari nafkah dan menerapkan kuosien. Tambahan anak menaikkan jumlah bebas pajak: €2.130 untuk satu anak, €5.130 untuk dua, €11.440 untuk tiga, €18.510 untuk empat, dan €7.070 untuk tiap anak berikutnya.</p>"
+        "html": "<p>Untuk pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, kuosien perkawinan (<em>marital quotient</em>) memungkinkan pencari nafkah utama memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari lapisan terendah dan dengan bagian bebas pajaknya sendiri. Logikanya berbeda dari pilihan NPWP gabung atau pisah di Indonesia (lihat <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">artikel pajak suami-istri</a>). <em>Tool</em> ini memperlakukan contoh €70.000 sebagai rumah tangga dengan satu pencari nafkah dan menerapkan kuosien. Tambahan anak menaikkan jumlah bebas pajak: €2.130 untuk satu anak, €5.130 untuk dua, €11.440 untuk tiga, €18.510 untuk empat, dan €7.070 untuk tiap anak berikutnya.</p>"
       },
       {
         "h3": "Rezim ekspatriat",
@@ -55,13 +55,13 @@
       "key": "married-two-children",
       "title": "Berapa pajak keluarga menikah dengan satu pencari nafkah di Belgia dengan gaji €70.000?",
       "intro": "<p>Contoh ini untuk karyawan menikah, pasangan tidak bekerja dan punya dua anak, dengan gaji kotor €70.000. ONSS sebesar €9.149. Setelah potongan biaya kerja €6.070, kuosien perkawinan memindahkan €11.780 ke pasangan, dan jumlah bebas pajak naik menjadi €16.680 karena tambahan untuk anak. Pajak federalnya €11.254, pajak kota €788 dan CSSS €704. Gaji bersih keluargamu sekitar €48.105 setahun (€4.009 per bulan), atau 68,7% dari gaji kotor.</p>",
-      "after": "<p>Kuosien dan tambahan anak bersama-sama membuat pajak federalmu lebih rendah daripada contoh lajang, padahal gajinya lebih tinggi. Kalau pasanganmu juga bekerja, kuosien menjadi lebih kecil atau tidak berlaku.</p>"
+      "after": "<p>Kuosien dan tambahan anak bersama-sama membuat pajak federalmu (€11.254) lebih rendah daripada pajak lajang bergaji €55.000 (€11.913), padahal gajimu lebih tinggi. Kalau pasanganmu juga bekerja, kuosien menjadi lebih kecil atau tidak berlaku.</p>"
     },
     {
       "key": "expat-regime",
       "title": "Berapa gaji bersih di Belgia dengan gaji €100.000 di bawah rezim ekspatriat?",
       "intro": "<p>Contoh ini untuk karyawan yang memenuhi syarat dengan gaji kotor €100.000 dan rezim ekspatriat. <em>Tool</em> ini memperlakukan 35% dari gaji kotor, yaitu €35.000, sebagai penggantian bebas pajak dan bebas ONSS. ONSS dihitung atas sisa €65.000 dan hasilnya €8.496. Setelah potongan biaya kerja dan bagian bebas pajak, pajak federalnya €15.825 dan pajak kota €1.108, ditambah CSSS sebesar €731. Gaji bersihmu sekitar €73.841 setahun (€6.153 per bulan), atau 73,8% dari gaji kotor.</p>",
-      "after": "<p>Tanpa rezim ini, gaji yang sama menyisakan sekitar €53.023, jadi manfaatnya sekitar €20.800 setahun menurut model ini. Apakah kamu memenuhi syarat adalah urusan hukum antara kamu dan pemberi kerjamu.</p>"
+      "after": "<p>Tanpa rezim ini, gaji yang sama menyisakan sekitar €53.023, jadi manfaatnya sekitar €20.800 setahun menurut hitungan <em>tool</em> ini. Apakah kamu memenuhi syarat adalah urusan hukum antara kamu dan pemberi kerjamu.</p>"
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara sah dan lazim untuk menekan pajak di Belgia. Mana yang berlaku bergantung pada rumah tanggamu dan cara kamu direkrut.</p>",
@@ -72,7 +72,7 @@
     },
     {
       "h3": "Manfaatkan kuosien perkawinan",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> pasangan menikah yang salah satunya berpenghasilan jauh lebih besar. Memindahkan sampai 30% penghasilan, maksimum €11.780, ke pasangan yang berpenghasilan lebih kecil menggeser penghasilan itu ke jenjang yang lebih rendah.</p><p><strong>Catatan:</strong> manfaatnya terbesar ketika pasanganmu hanya punya sedikit atau tanpa penghasilan. Kalau gaji kalian berdua kurang lebih sama, hasilnya kecil.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> pasangan menikah yang salah satunya berpenghasilan jauh lebih besar. Memindahkan sampai 30% penghasilan, maksimum €11.780, ke pasangan yang berpenghasilan lebih kecil menggeser penghasilan itu ke lapisan yang lebih rendah.</p><p><strong>Catatan:</strong> manfaatnya terbesar ketika pasanganmu hanya punya sedikit atau tanpa penghasilan. Kalau gaji kalian berdua kurang lebih sama, hasilnya kecil.</p>"
     },
     {
       "h3": "Tanyakan tunjangan yang diperlakukan ramah pajak",
@@ -84,17 +84,17 @@
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belgia lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP dan menyelesaikan SPT Tahunan terakhirmu agar penghasilan yang sama tidak dipajaki dua kali.</p><p><strong>Catatan:</strong> Indonesia punya P3B dengan Belgia, tetapi <em>tool</em> ini tidak menghitungnya. Tanyakan kasusmu ke DJP atau konsultan pajak, karena ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belgia lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Belgia, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari gaji.</strong> Hitungan ini mengasumsikan satu gaji untuk satu tahun penuh. Penghasilan investasi, sewa properti, usaha, dan tahun yang tidak penuh tidak masuk.",
-    "<strong>Tanpa bonus atau tambahan.</strong> Gaji ke-13 (mirip THR), uang liburan ganda, mobil dinas, kupon makan dan tambahan serupa tidak dihitung terpisah.",
+    "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun penuh. Penghasilan investasi, sewa properti, usaha, dan tahun yang tidak penuh tidak masuk.",
+    "<strong>Tanpa bonus atau tambahan.</strong> Gaji ke-13, uang liburan ganda, mobil dinas, kupon makan dan tambahan serupa tidak dihitung terpisah.",
     "<strong>Gaji minimum.</strong> Kalkulator tidak berjalan di bawah sekitar €26.803 gaji kotor setahun, karena aturan bonus kerja berubah di titik itu.",
     "<strong>Satu tarif pajak kota.</strong> Kamu mengisi sendiri tarif pajak kotamu. Bawaannya 7%, dan kalkulator tidak mencari kotamu.",
     "<strong>Rumah tangga disederhanakan.</strong> Kuosien perkawinan mengasumsikan pasanganmu tidak punya penghasilan sendiri. Anak hanya berupa angka yang menaikkan jumlah bebas pajak, dan keringanan keluarga lain tidak dihitung.",
     "<strong>Rezim ekspatriat tidak diuji.</strong> Kamu yang memilih apakah rezim ini berlaku. Kalkulator tidak memeriksa kelayakan, batas atau syarat pada perananmu.",
-    "<strong>Tanpa P3B dan pajak di Indonesia.</strong> Hitungan ini tidak memperhitungkan P3B Indonesia dan Belgia, juga tidak menghitung pajak Indonesia atas penghasilan dari luar negeri."
+    "<strong>Tanpa P3B dan pajak Indonesia.</strong> Dua hal itu tidak dihitung."
   ],
   "faq": [
     {
@@ -103,11 +103,11 @@
     },
     {
       "q": "Apa itu kuosien perkawinan di Belgia dan bagaimana cara kerjanya?",
-      "a": "<p>Pada pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, pencari nafkah utama bisa memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari dasar jenjang dan dengan bagian bebas pajaknya sendiri, bukan pada tarif tertinggi pencari nafkah utama. Pada contoh €70.000, €11.780 berpindah ke pasangan. Kalkulator hanya menerapkannya untuk rumah tangga menikah.</p>"
+      "a": "<p>Pada pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, pencari nafkah utama bisa memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari lapisan terendah dan dengan bagian bebas pajaknya sendiri, bukan pada tarif tertinggi pencari nafkah utama. Untuk gaji kotor €70.000, €11.780 berpindah ke pasangan. Kalkulator hanya menerapkannya untuk rumah tangga menikah.</p>"
     },
     {
       "q": "Apa itu pajak tambahan kota di Belgia, dan kenapa beda tiap kota?",
-      "a": "<p>Setiap kota di Belgia menambahkan pajaknya sendiri, dinyatakan sebagai persentase dari pajak penghasilan federalmu. Besarnya mengikuti tempat tinggalmu pada 1 Januari, dan kebanyakan kota menetapkannya antara 6% dan 8%. Kalkulator memakai 7% dan membiarkanmu mengubahnya. Pada contoh lajang €55.000, pajak kotanya €834. Indonesia tidak punya pajak penghasilan lapisan kota seperti ini.</p>"
+      "a": "<p>Setiap kota di Belgia menambahkan pajaknya sendiri, dinyatakan sebagai persentase dari pajak penghasilan federalmu. Besarnya mengikuti tempat tinggalmu pada 1 Januari, dan kebanyakan kota menetapkannya antara 6% dan 8%. Kalkulator memakai 7%, dan kamu bisa mengubahnya. Untuk lajang bergaji kotor €55.000, pajak kotanya €834. Indonesia tidak punya pajak penghasilan lapisan kota seperti ini.</p>"
     },
     {
       "q": "Bagaimana rezim ekspatriat Belgia bekerja?",
@@ -115,7 +115,7 @@
     },
     {
       "q": "Apa itu iuran sosial khusus (CSSS) di slip gaji Belgia?",
-      "a": "<p>CSSS adalah iuran jaminan sosial tambahan di atas ONSS 13,07%. Nilainya nol pada penghasilan rendah, lalu naik bertahap dan berhenti di batas sekitar €731 setahun. Pada contoh, CSSS sebesar €539 untuk gaji €55.000 dan €731 untuk gaji €100.000.</p>"
+      "a": "<p>CSSS adalah iuran jaminan sosial tambahan di atas ONSS 13,07%. Nilainya nol pada penghasilan rendah, lalu naik berangsur-angsur dan berhenti di batas sekitar €731 setahun. CSSS sebesar €539 untuk gaji kotor €55.000 dan €731 untuk gaji kotor €100.000.</p>"
     },
     {
       "q": "Kenapa gaji bersih di slip gaji Belgia berbeda dengan angka setahun?",
@@ -123,11 +123,11 @@
     },
     {
       "q": "Apakah saya perlu ikut asuransi kesehatan sendiri di Belgia?",
-      "a": "<p>ONSS membuka hakmu atas jaminan kesehatan, tetapi untuk mendapat penggantian biaya berobat kamu harus mendaftar ke dana asuransi kesehatan (<em>mutualité</em>). Anggap itu langkah tambahan yang tidak ada di BPJS Kesehatan, yang terhubung ke NIK. Untuk membayangkan apa yang bisa dibeli dengan gaji bersihmu di tiap kota, buka <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
+      "a": "<p>ONSS membuka hakmu atas jaminan kesehatan, tetapi untuk mendapat penggantian biaya berobat kamu harus mendaftar ke dana asuransi kesehatan (<em>mutualité</em>). Berbeda dari BPJS Kesehatan, yang pendaftarannya lewat pemberi kerja dan NIK, di Belgia kamu sendiri wajib mendaftar ke salah satu dana asuransi tersebut. Untuk membayangkan apa yang bisa dibeli dengan gaji bersihmu di tiap kota, buka <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
     },
     {
       "q": "Kalau bekerja di Belgia, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang berubah menjadi subjek pajak luar negeri kalau kamu lama berada di luar negeri dan tidak lagi tinggal di Indonesia (aturan umumnya dijelaskan di bagian strategi). Memberi tahu DJP adalah langkah yang lazim. Indonesia dan Belgia juga punya P3B. Kalkulator ini hanya menghitung pajak di Belgia dan tidak menghitung P3B maupun pajak Indonesia atas penghasilan dari luar negeri, jadi konfirmasikan kasusmu ke DJP atau konsultan pajak.</p>"
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Belgia pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak yang sudah dibayar di Belgia dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Belgia, dan halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {
