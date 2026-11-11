@@ -70,41 +70,87 @@
               "24%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "IRAS, Individual income tax rates",
+            "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+          }
+        ]
       },
       {
         "h3": "Pajak untuk non-resident",
-        "html": "<p>Penghasilan kerja non-resident dikenai pajak mana yang lebih besar antara tarif tunggal 15% dan tarif penduduk tanpa pengurang pajak. Pada kebanyakan tingkat gaji, tarif tunggal 15% lebih tinggi, jadi non-resident dengan gaji S$60.000 membayar S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950.</p>"
+        "html": "<p>Penghasilan kerja non-resident dikenai pajak mana yang lebih besar antara tarif tunggal 15% dan tarif penduduk tanpa pengurang pajak. Pada kebanyakan tingkat gaji, tarif tunggal 15% lebih tinggi, jadi non-resident dengan gaji S$60.000 membayar S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950.</p>",
+        "cite": [
+          {
+            "name": "IRAS, Individual income tax rates",
+            "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+          },
+          {
+            "name": "IRAS, Working out my tax residency",
+            "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/working-out-my-tax-residency"
+          }
+        ]
       },
       {
         "h3": "Iuran CPF (Central Provident Fund)",
-        "html": "<p>CPF adalah tabungan wajib untuk warga negara dan <em>permanent resident</em> (PR) Singapura, dan fungsinya mirip gabungan JHT, JP dan BPJS Kesehatan. Pekerja asing dengan Employment Pass atau S Pass tidak membayar CPF. Besar bagian karyawan bergantung pada usia untuk warga negara, sedangkan PR membayar tarif yang lebih rendah secara bertahap pada dua tahun pertama sebelum tarif penuh berlaku mulai tahun ketiga. <em>Tool</em> menghitungnya dari gaji bulanan sampai batas S$8.000 dengan tarif bagian karyawan berikut.</p><ul><li>Warga negara dan PR berusia 55 tahun ke bawah: 20% (dipakai di contoh warga negara)</li><li>Di atas 55 sampai 60 tahun: 18%</li><li>Di atas 60 sampai 65 tahun: 12,5%</li><li>Di atas 65 sampai 70 tahun: 7,5%</li><li>Di atas 70 tahun: 5%</li><li>PR tahun pertama: 5% (tahun kedua 15% menurut hitungan <em>tool</em>)</li></ul><p>Pemberi kerja menyetor bagiannya sendiri di atas gajimu. Bagian karyawan dipotong dari gaji dan tidak dikenai pajak, karena dihitung sebagai pengurang pajak.</p>"
+        "html": "<p>CPF adalah tabungan wajib untuk warga negara dan <em>permanent resident</em> (PR) Singapura, dan fungsinya mirip gabungan JHT, JP dan BPJS Kesehatan. Pekerja asing dengan Employment Pass atau S Pass tidak membayar CPF. Besar bagian karyawan bergantung pada usia untuk warga negara, sedangkan PR membayar tarif yang lebih rendah secara bertahap pada dua tahun pertama sebelum tarif penuh berlaku mulai tahun ketiga. <em>Tool</em> menghitungnya dari gaji bulanan sampai batas S$8.000 dengan tarif bagian karyawan berikut.</p><ul><li>Warga negara dan PR berusia 55 tahun ke bawah: 20% (dipakai di contoh warga negara)</li><li>Di atas 55 sampai 60 tahun: 18%</li><li>Di atas 60 sampai 65 tahun: 12,5%</li><li>Di atas 65 sampai 70 tahun: 7,5%</li><li>Di atas 70 tahun: 5%</li><li>PR tahun pertama: 5% (tahun kedua 15% menurut hitungan <em>tool</em>)</li></ul><p>Pemberi kerja menyetor bagiannya sendiri di atas gajimu. Bagian karyawan dipotong dari gaji dan tidak dikenai pajak, karena dihitung sebagai pengurang pajak.</p>",
+        "cite": [
+          {
+            "name": "CPF Board, How much CPF contributions to pay",
+            "url": "https://www.cpf.gov.sg/employer/employer-obligations/how-much-cpf-contributions-to-pay"
+          },
+          {
+            "name": "CPF Board, CPF contributions for a foreign employee who becomes a Singapore PR",
+            "url": "https://www.cpf.gov.sg/service/article/do-i-need-to-pay-cpf-contributions-for-my-foreign-employee-who-has-recently-obtained-singapore-permanent-residence-status"
+          }
+        ]
       },
       {
         "h3": "Pengurang pajak yang dihitung <em>tool</em>",
-        "html": "<p><em>Tool</em> memberi <em>earned income relief</em> S$1.000 untuk setiap penduduk pajak, ditambah pengurang sebesar iuran CPF-mu, dengan batas total S$80.000. Dalam laporan pajak sungguhan ada pengurang lain untuk pasangan, anak, orang tua, biaya kursus atau setoran sukarela yang tidak dihitung di sini.</p>"
+        "html": "<p><em>Tool</em> memberi <em>earned income relief</em> S$1.000 untuk setiap penduduk pajak, ditambah pengurang sebesar iuran CPF-mu, dengan batas total S$80.000. Dalam laporan pajak sungguhan ada pengurang lain untuk pasangan, anak, orang tua, biaya kursus atau setoran sukarela yang tidak dihitung di sini.</p>",
+        "cite": [
+          {
+            "name": "IRAS, Tax reliefs",
+            "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Inland Revenue Authority of Singapore (IRAS), tarif pajak, status penduduk pajak, <em>relief</em> dan tagihan pajak",
-        "url": "https://www.iras.gov.sg/"
+        "name": "IRAS, Individual income tax rates",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
       },
       {
-        "name": "CPF Board, iuran CPF dan batas gaji",
-        "url": "https://www.cpf.gov.sg/"
+        "name": "IRAS, Working out my tax residency",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/working-out-my-tax-residency"
       },
       {
-        "name": "Ministry of Manpower (MOM), Employment Pass dan S Pass",
-        "url": "https://www.mom.gov.sg/"
+        "name": "IRAS, Tax reliefs",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs"
       },
       {
-        "name": "Immigration and Checkpoints Authority (ICA), permanent resident",
-        "url": "https://www.ica.gov.sg/"
+        "name": "IRAS, SRS contributions",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/special-tax-schemes/srs-contributions"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP), ketentuan subjek pajak luar negeri dan P3B",
-        "url": "https://www.pajak.go.id/"
+        "name": "CPF Board, How much CPF contributions to pay",
+        "url": "https://www.cpf.gov.sg/employer/employer-obligations/how-much-cpf-contributions-to-pay"
+      },
+      {
+        "name": "CPF Board, CPF contributions for a foreign employee who becomes a Singapore PR",
+        "url": "https://www.cpf.gov.sg/service/article/do-i-need-to-pay-cpf-contributions-for-my-foreign-employee-who-has-recently-obtained-singapore-permanent-residence-status"
+      },
+      {
+        "name": "IRAS, Tax clearance for non-Singapore citizen employees",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/employees/scenario-based-faqs-for-working-in-singapore-and-abroad/tax-clearance-for-non-singapore-citizen-employees"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "IRAS, Working out my tax residency",
+        "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/working-out-my-tax-residency"
       }
     ]
   },
@@ -113,31 +159,65 @@
       "key": "employment-pass",
       "title": "Cara menghitung pajak profesional dengan Employment Pass di Singapura (gaji S$120.000)",
       "intro": "<p>Pemegang Employment Pass yang menjadi penduduk pajak tidak membayar CPF, sehingga satu-satunya pengurang pajak adalah <em>earned income relief</em> S$1.000. Penghasilan kena pajaknya S$119.000, sehingga pajak penghasilan setelah dihitung per tingkat adalah S$7.835. Gaji bersihmu sekitar S$112.165 setahun atau sekitar S$9.347 sebulan, yaitu 93,5% dari gaji kotor.</p>",
-      "after": "<p>Gaji bersih pekerja asing di Singapura tampak tinggi dibandingkan warga negara dengan gaji yang sama karena tidak ada CPF yang dipotong. Pajaknya pun tidak dipotong dari slip gaji, jadi sisihkan uang untuk tagihan tahun depan. Untuk mengukur apa arti gaji bersih ini di Singapura dibandingkan dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "after": "<p>Gaji bersih pekerja asing di Singapura tampak tinggi dibandingkan warga negara dengan gaji yang sama karena tidak ada CPF yang dipotong. Pajaknya pun tidak dipotong dari slip gaji, jadi sisihkan uang untuk tagihan tahun depan. Untuk mengukur apa arti gaji bersih ini di Singapura dibandingkan dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     },
     {
       "key": "s-pass",
       "title": "Berapa pajak pemegang S Pass di Singapura dengan gaji S$4.500 sebulan?",
       "intro": "<p>Contoh ini cocok untuk tenaga terampil menengah, misalnya perawat atau teknisi, dengan gaji S$4.500 sebulan atau S$54.000 setahun. Pemegang S Pass yang menjadi penduduk pajak diperlakukan seperti pekerja asing lain: tanpa CPF dan dengan pengurang pajak S$1.000, sehingga penghasilan kena pajaknya S$53.000. Pajaknya dihitung per tingkat: S$20.000 pertama bebas pajak, S$10.000 berikutnya dikenai 2%, S$10.000 lagi dikenai 3,5%, dan hanya S$13.000 terakhir yang dikenai 7%, sehingga pajak penghasilannya S$1.460. Gaji bersih yang kamu terima sekitar S$52.540 setahun atau sekitar S$4.378 sebulan, yaitu 97,3% dari gaji kotor, dan setiap dolar tambahan dikenai 7,0%.</p>",
-      "after": "<p>Tagihannya datang setahun kemudian, jadi sisihkan sebagian gaji setiap bulan.</p>"
+      "after": "<p>Tagihannya datang setahun kemudian, jadi sisihkan sebagian gaji setiap bulan.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     },
     {
       "key": "citizen",
       "title": "Gaji bersih warga negara atau PR Singapura setelah CPF dan pajak dengan gaji S$120.000",
       "intro": "<p>Warga negara atau PR yang sudah melewati tahun ketiga dan berusia 55 tahun ke bawah membayar CPF 20% dari gaji bulanan sampai batas S$8.000, yaitu S$19.200 setahun. Iuran ini sekaligus menjadi pengurang pajak, sehingga total pengurang S$20.200, penghasilan kena pajak S$99.800 dan pajak penghasilan S$5.627. Gaji bersihmu sekitar S$95.173 setahun atau sekitar S$7.931 sebulan, yaitu 79,3% dari gaji kotor.</p>",
-      "after": "<p>CPF tidak hilang, karena uangnya masuk ke rekening CPF atas namamu untuk perumahan, kesehatan dan pensiun. Iuran karyawan 20% ini jauh lebih besar daripada iuran JHT, JP dan BPJS Kesehatan yang dipotong dari gaji karyawan di Indonesia (sekitar 4%), dan pemberi kerja menyetor bagian CPF lain di atas gajimu. Gaji bersihnya pun lebih rendah daripada pemegang Employment Pass dengan gaji sama.</p>"
+      "after": "<p>CPF tidak hilang, karena uangnya masuk ke rekening CPF atas namamu untuk perumahan, kesehatan dan pensiun. Iuran karyawan 20% ini jauh lebih besar daripada iuran JHT, JP dan BPJS Kesehatan yang dipotong dari gaji karyawan di Indonesia (sekitar 4%), dan pemberi kerja menyetor bagian CPF lain di atas gajimu. Gaji bersihnya pun lebih rendah daripada pemegang Employment Pass dengan gaji sama.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        },
+        {
+          "name": "CPF Board, How much CPF contributions to pay",
+          "url": "https://www.cpf.gov.sg/employer/employer-obligations/how-much-cpf-contributions-to-pay"
+        }
+      ]
     },
     {
       "key": "pr-first-year",
       "title": "Cara menghitung gaji bersih <em>permanent resident</em> (PR) Singapura di tahun pertama dengan gaji S$120.000",
       "intro": "<p>PR di tahun pertama membayar CPF bagian karyawan secara bertahap sebesar 5%, yaitu S$4.800. Bersama pengurang pajak S$1.000, total pengurangnya S$5.800 dan penghasilan kena pajaknya S$114.200. Pajak penghasilannya S$7.283, sehingga gaji bersihmu sekitar S$107.917 setahun atau sekitar S$8.993 sebulan, yaitu 89,9% dari gaji kotor.</p>",
-      "after": "<p>Mulai tahun kedua tarif CPF naik, jadi gaji bersih turun walaupun gajinya sama, dan tarif penuh berlaku mulai tahun ketiga. Kalau kamu merencanakan menjadi PR, hitung gaji bersih untuk ketiga tahun itu, bukan hanya tahun pertama.</p>"
+      "after": "<p>Mulai tahun kedua tarif CPF naik, jadi gaji bersih turun walaupun gajinya sama, dan tarif penuh berlaku mulai tahun ketiga. Kalau kamu merencanakan menjadi PR, hitung gaji bersih untuk ketiga tahun itu, bukan hanya tahun pertama.</p>",
+      "cite": [
+        {
+          "name": "CPF Board, CPF contributions for a foreign employee who becomes a Singapore PR",
+          "url": "https://www.cpf.gov.sg/service/article/do-i-need-to-pay-cpf-contributions-for-my-foreign-employee-who-has-recently-obtained-singapore-permanent-residence-status"
+        }
+      ]
     },
     {
       "key": "non-resident",
       "title": "Berapa pajak pekerja non-resident di Singapura dengan gaji S$60.000?",
       "intro": "<p>Pekerja yang tinggal di Singapura kurang dari 183 hari dikenai pajak mana yang lebih besar antara tarif tunggal 15% dan tarif penduduk tanpa pengurang pajak. Di sini 15% dari S$60.000 adalah S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950, sehingga yang berlaku S$9.000. Gaji bersih yang kamu terima S$51.000 setahun atau sekitar S$4.250 sebulan, yaitu 85,0% dari gaji kotor.</p>",
-      "after": "<p>Kalau rencana tinggalmu ternyata cukup lama untuk menjadi penduduk pajak, tagihan bisa turun tajam. IRAS punya aturan khusus untuk tinggal yang melintasi dua tahun kalender, jadi tanyakan ke IRAS dengan tanggal pastimu.</p>"
+      "after": "<p>Kalau rencana tinggalmu ternyata cukup lama untuk menjadi penduduk pajak, tagihan bisa turun tajam. IRAS punya aturan khusus untuk tinggal yang melintasi dua tahun kalender, jadi tanyakan ke IRAS dengan tanggal pastimu.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang lazim dan sah untuk menekan pajak di Singapura. Yang berlaku untukmu bergantung pada status penduduk pajak dan jenis izin kerjamu.</p>",
@@ -148,19 +228,43 @@
     },
     {
       "h3": "Setoran Supplementary Retirement Scheme (SRS)",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak dengan tarif marginal tinggi, termasuk orang asing, yang ingin punya rekening pensiun sukarela. Setoran dikurangkan dari penghasilan sampai batas tahunan yang lebih tinggi untuk orang asing daripada warga negara dan PR, jadi cek batas terbarunya di IRAS.</p><p><strong>Perlu diingat:</strong> uangnya terkunci sampai usia pensiun menurut aturan, dan penarikannya sebagian dikenai pajak. Penarikan lebih awal dikenai pajak penuh dan denda.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak dengan tarif marginal tinggi, termasuk orang asing, yang ingin punya rekening pensiun sukarela. Setoran dikurangkan dari penghasilan sampai batas tahunan yang lebih tinggi untuk orang asing daripada warga negara dan PR, jadi cek batas terbarunya di IRAS.</p><p><strong>Perlu diingat:</strong> uangnya terkunci sampai usia pensiun menurut aturan, dan penarikannya sebagian dikenai pajak. Penarikan lebih awal dikenai pajak penuh dan denda.</p>",
+      "cite": [
+        {
+          "name": "IRAS, SRS contributions",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/special-tax-schemes/srs-contributions"
+        }
+      ]
     },
     {
       "h3": "Setoran tunai tambahan ke CPF untuk diri sendiri atau keluarga",
-      "html": "<p><strong>Siapa yang cocok:</strong> warga negara dan PR. Setoran tunai ke rekening pensiun CPF milikmu atau anggota keluarga bisa memberi keringanan pajak sampai batas tahunan, dan uangnya memperoleh bunga CPF.</p><p><strong>Perlu diingat:</strong> dana terkunci di CPF dan tidak bebas ditarik. Batas keringanan dan syaratnya ditetapkan CPF Board dan IRAS.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> warga negara dan PR. Setoran tunai ke rekening pensiun CPF milikmu atau anggota keluarga bisa memberi keringanan pajak sampai batas tahunan, dan uangnya memperoleh bunga CPF.</p><p><strong>Perlu diingat:</strong> dana terkunci di CPF dan tidak bebas ditarik. Batas keringanan dan syaratnya ditetapkan CPF Board dan IRAS.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Tax reliefs",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs"
+        }
+      ]
     },
     {
       "h3": "Klaim semua pengurang pajak yang berhak kamu dapat",
-      "html": "<p><strong>Siapa yang cocok:</strong> semua penduduk pajak. Ada pengurang untuk pasangan, anak, orang tua, kursus yang disetujui dan lainnya. Tiap pengurang menurunkan penghasilan kena pajak, sehingga menghemat pajak sebesar tarif marginalmu. Bedanya dengan PTKP di Indonesia, yang melekat otomatis pada statusmu, sebagian besar pengurang di sini harus kamu klaim sendiri.</p><p><strong>Perlu diingat:</strong> tiap pengurang punya syarat dan batas tahunan, dan total semua pengurang dibatasi S$80.000. <em>Tool</em> hanya memakai <em>earned income relief</em> dan pengurang CPF.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> semua penduduk pajak. Ada pengurang untuk pasangan, anak, orang tua, kursus yang disetujui dan lainnya. Tiap pengurang menurunkan penghasilan kena pajak, sehingga menghemat pajak sebesar tarif marginalmu. Bedanya dengan PTKP di Indonesia, yang melekat otomatis pada statusmu, sebagian besar pengurang di sini harus kamu klaim sendiri.</p><p><strong>Perlu diingat:</strong> tiap pengurang punya syarat dan batas tahunan, dan total semua pengurang dibatasi S$80.000. <em>Tool</em> hanya memakai <em>earned income relief</em> dan pengurang CPF.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Tax reliefs",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/tax-reliefs"
+        }
+      ]
     },
     {
       "h3": "Hitung jumlah hari tinggalmu sebelum tiba atau pergi",
-      "html": "<p><strong>Siapa yang cocok:</strong> orang yang memulai atau mengakhiri penempatan di tengah tahun. Tinggal cukup lama membuatmu penduduk pajak, dan tarif penduduk dengan pengurang menghasilkan tagihan yang jauh lebih rendah daripada perlakuan non-resident.</p><p><strong>Perlu diingat:</strong> yang dihitung adalah hari tinggal sebenarnya, bukan tanggal di kontrak. Pemberi kerja juga wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan pajak bisa ditahan sampai urusannya selesai.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> orang yang memulai atau mengakhiri penempatan di tengah tahun. Tinggal cukup lama membuatmu penduduk pajak, dan tarif penduduk dengan pengurang menghasilkan tagihan yang jauh lebih rendah daripada perlakuan non-resident.</p><p><strong>Perlu diingat:</strong> yang dihitung adalah hari tinggal sebenarnya, bukan tanggal di kontrak. Pemberi kerja juga wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan pajak bisa ditahan sampai urusannya selesai.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Working out my tax residency",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/working-out-my-tax-residency"
+        }
+      ]
     }
   ],
   "limits": [
@@ -175,27 +279,67 @@
   "faq": [
     {
       "q": "Kenapa gaji di Singapura tidak dipotong pajak dan tagihannya datang tahun berikutnya?",
-      "a": "<p>Singapura tidak punya pemotongan pajak oleh pemberi kerja seperti PPh 21. Pemberi kerja membayar gaji penuh dan melaporkannya ke IRAS setelah tahun berakhir. IRAS lalu mengirim <em>Notice of Assessment</em>, beberapa bulan setelah laporan dikirim, sekitar pertengahan tahun berikutnya, dan kamu membayar pajak penghasilan 2026 pada 2027 (YA2027). Tagihannya umumnya bisa dicicil beberapa bulan lewat GIRO.</p><p>Akibatnya, tahun pertamamu terasa bergaji besar sementara tagihan datang belakangan, jadi uangnya perlu disisihkan. <em>Tool</em> menampilkan pajak setahun penuh, sehingga angkanya cocok dengan tagihan itu, bukan dengan slip gaji.</p>"
+      "a": "<p>Singapura tidak punya pemotongan pajak oleh pemberi kerja seperti PPh 21. Pemberi kerja membayar gaji penuh dan melaporkannya ke IRAS setelah tahun berakhir. IRAS lalu mengirim <em>Notice of Assessment</em>, beberapa bulan setelah laporan dikirim, sekitar pertengahan tahun berikutnya, dan kamu membayar pajak penghasilan 2026 pada 2027 (YA2027). Tagihannya umumnya bisa dicicil beberapa bulan lewat GIRO.</p><p>Akibatnya, tahun pertamamu terasa bergaji besar sementara tagihan datang belakangan, jadi uangnya perlu disisihkan. <em>Tool</em> menampilkan pajak setahun penuh, sehingga angkanya cocok dengan tagihan itu, bukan dengan slip gaji.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     },
     {
       "q": "Berapa gaji bersih untuk gaji S$120.000 di Singapura?",
-      "a": "<p>Pemegang Employment Pass yang menjadi penduduk pajak membayar pajak sekitar S$7.835 dan menerima S$112.165. Warga negara berusia 55 tahun ke bawah membayar pajak S$5.627 dan CPF S$19.200, lalu menerima S$95.173. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Pemegang Employment Pass yang menjadi penduduk pajak membayar pajak sekitar S$7.835 dan menerima S$112.165. Warga negara berusia 55 tahun ke bawah membayar pajak S$5.627 dan CPF S$19.200, lalu menerima S$95.173. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     },
     {
       "q": "Apakah pemegang Employment Pass atau S Pass wajib membayar CPF?",
-      "a": "<p>Tidak, CPF hanya untuk warga negara dan PR, jadi pekerja asing dengan Employment Pass atau S Pass menerima gaji penuh sebelum pajak penghasilan. Gaji bersih mereka karena itu tampak lebih tinggi daripada warga negara dengan gaji yang sama. Konsekuensinya, tidak ada tabungan CPF yang menumpuk untuk rumah atau pensiun, dan tidak ada padanan JHT yang bisa kamu cairkan saat pulang ke Indonesia.</p>"
+      "a": "<p>Tidak, CPF hanya untuk warga negara dan PR, jadi pekerja asing dengan Employment Pass atau S Pass menerima gaji penuh sebelum pajak penghasilan. Gaji bersih mereka karena itu tampak lebih tinggi daripada warga negara dengan gaji yang sama. Konsekuensinya, tidak ada tabungan CPF yang menumpuk untuk rumah atau pensiun, dan tidak ada padanan JHT yang bisa kamu cairkan saat pulang ke Indonesia.</p>",
+      "cite": [
+        {
+          "name": "CPF Board, CPF contributions for a foreign employee who becomes a Singapore PR",
+          "url": "https://www.cpf.gov.sg/service/article/do-i-need-to-pay-cpf-contributions-for-my-foreign-employee-who-has-recently-obtained-singapore-permanent-residence-status"
+        }
+      ]
     },
     {
       "q": "Kenapa gaji bersih PR turun di tahun kedua dan ketiga?",
-      "a": "<p>PR baru membayar tarif CPF yang lebih rendah secara bertahap pada dua tahun pertama, dan tarif penuh berlaku mulai tahun ketiga. <em>Tool</em> menghitung tahun pertama 5% untuk bagian karyawan dan tahun kedua 15%. Jadi walaupun gajinya tetap, gaji bersihmu turun ketika tarifnya naik. Tanyakan ke pemberi kerja tarif yang berlaku di slip gajimu.</p>"
+      "a": "<p>PR baru membayar tarif CPF yang lebih rendah secara bertahap pada dua tahun pertama, dan tarif penuh berlaku mulai tahun ketiga. <em>Tool</em> menghitung tahun pertama 5% untuk bagian karyawan dan tahun kedua 15%. Jadi walaupun gajinya tetap, gaji bersihmu turun ketika tarifnya naik. Tanyakan ke pemberi kerja tarif yang berlaku di slip gajimu.</p>",
+      "cite": [
+        {
+          "name": "CPF Board, CPF contributions for a foreign employee who becomes a Singapore PR",
+          "url": "https://www.cpf.gov.sg/service/article/do-i-need-to-pay-cpf-contributions-for-my-foreign-employee-who-has-recently-obtained-singapore-permanent-residence-status"
+        }
+      ]
     },
     {
       "q": "Berapa pajak kalau saya tinggal kurang dari 183 hari di Singapura?",
-      "a": "<p>Kamu menjadi non-resident dan penghasilan kerjamu dikenai pajak mana yang lebih besar antara tarif tunggal 15% dan tarif penduduk tanpa pengurang pajak. Pada gaji S$60.000 itu berarti S$9.000, bukan S$1.950, jadi menghitung hari sebelum berangkat sangat berguna.</p>"
+      "a": "<p>Kamu menjadi non-resident dan penghasilan kerjamu dikenai pajak mana yang lebih besar antara tarif tunggal 15% dan tarif penduduk tanpa pengurang pajak. Pada gaji S$60.000 itu berarti S$9.000, bukan S$1.950, jadi menghitung hari sebelum berangkat sangat berguna.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Working out my tax residency",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/working-out-my-tax-residency"
+        },
+        {
+          "name": "IRAS, Individual income tax rates",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-residency-and-tax-rates/individual-income-tax-rates"
+        }
+      ]
     },
     {
       "q": "Bagaimana pajaknya kalau saya berhenti dan pulang ke Indonesia di tengah tahun?",
-      "a": "<p>Pemberi kerja wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan IRAS dapat meminta pemberi kerja menahan gaji dan pembayaran lain sampai pajaknya beres. Karena pajak ditagih setelah tahun berakhir, pajak atas seluruh penghasilanmu sampai hari terakhir bekerja dinilai sekaligus. Siapkan pembayaran atau atur tagihan akhir sebelum hari terakhir kerja.</p>"
+      "a": "<p>Pemberi kerja wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan IRAS dapat meminta pemberi kerja menahan gaji dan pembayaran lain sampai pajaknya beres. Karena pajak ditagih setelah tahun berakhir, pajak atas seluruh penghasilanmu sampai hari terakhir bekerja dinilai sekaligus. Siapkan pembayaran atau atur tagihan akhir sebelum hari terakhir kerja.</p>",
+      "cite": [
+        {
+          "name": "IRAS, Tax clearance for non-Singapore citizen employees",
+          "url": "https://www.iras.gov.sg/taxes/individual-income-tax/employees/scenario-based-faqs-for-working-in-singapore-and-abroad/tax-clearance-for-non-singapore-citizen-employees"
+        }
+      ]
     },
     {
       "q": "Apakah gaji di Singapura masih kena pajak di Indonesia?",

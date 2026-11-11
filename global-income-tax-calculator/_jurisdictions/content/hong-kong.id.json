@@ -38,41 +38,83 @@
               "17%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "IRD, Allowances, deductions and tax rate table",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+          },
+          {
+            "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+          }
+        ]
       },
       {
         "h3": "Tunjangan pribadi, padanan PTKP",
-        "html": "<p>Tunjangan (<em>allowance</em>) fungsinya mirip PTKP: bagian penghasilan yang tidak dikenai pajak. <em>Tool</em> ini memakai HK$145.000 untuk orang lajang, HK$290.000 untuk yang menikah, dan HK$140.000 untuk setiap anak. Tunjangan hanya dipakai pada tarif progresif, bukan pada tarif standar. Tunjangan lain, misalnya untuk orang tua yang ditanggung, tidak dihitung.</p><p>Sebagai pembanding, PTKP TK/0 di Indonesia Rp54 juta, dan tambahan untuk pasangan serta tiap anak masing-masing Rp4,5 juta. Tunjangan menikah di Hong Kong dua kali tunjangan dasar, sementara di Indonesia tambahannya jauh lebih kecil.</p>"
+        "html": "<p>Tunjangan (<em>allowance</em>) fungsinya mirip PTKP: bagian penghasilan yang tidak dikenai pajak. <em>Tool</em> ini memakai HK$145.000 untuk orang lajang, HK$290.000 untuk yang menikah, dan HK$140.000 untuk setiap anak. Tunjangan hanya dipakai pada tarif progresif, bukan pada tarif standar. Tunjangan lain, misalnya untuk orang tua yang ditanggung, tidak dihitung.</p><p>Sebagai pembanding, PTKP TK/0 di Indonesia Rp54 juta, dan tambahan untuk pasangan serta tiap anak masing-masing Rp4,5 juta. Tunjangan menikah di Hong Kong dua kali tunjangan dasar, sementara di Indonesia tambahannya jauh lebih kecil.</p>",
+        "cite": [
+          {
+            "name": "IRD, Allowances, deductions and tax rate table",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+          },
+          {
+            "name": "IRD, 2026-27 Budget",
+            "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
+          }
+        ]
       },
       {
         "h3": "Iuran MPF, padanan JHT",
-        "html": "<p>Mandatory Provident Fund (MPF) adalah dana pensiun wajib bagi sebagian besar karyawan di Hong Kong, kira-kira seperti JHT dan JP di BPJS Ketenagakerjaan. Kamu membayar 5% dari gaji, tetapi hanya sampai gaji bulanan HK$30.000, sehingga iuranmu maksimal HK$1.500 sebulan atau HK$18.000 setahun. Pemberi kerja menambah iuran yang sama di luar gajimu. Di bawah gaji bulanan HK$7.100 pekerja tidak membayar iuran (<em>tool</em> ini tidak menghitungnya). Iuran wajib bisa dikurangkan dari penghasilan sampai HK$18.000 setahun.</p><p>Saldo MPF tersimpan di rekening atas namamu dan bisa kamu tarik di usia 65 tahun. Orang yang meninggalkan Hong Kong secara permanen juga bisa menariknya lebih awal. Pekerja rumah tangga umumnya dikecualikan dari MPF, jadi cek statusmu ke Mandatory Provident Fund Schemes Authority (MPFA), otoritas pengawas MPF.</p>"
+        "html": "<p>Mandatory Provident Fund (MPF) adalah dana pensiun wajib bagi sebagian besar karyawan di Hong Kong, kira-kira seperti JHT dan JP di BPJS Ketenagakerjaan. Kamu membayar 5% dari gaji, tetapi hanya sampai gaji bulanan HK$30.000, sehingga iuranmu maksimal HK$1.500 sebulan atau HK$18.000 setahun. Pemberi kerja menambah iuran yang sama di luar gajimu. Di bawah gaji bulanan HK$7.100 pekerja tidak membayar iuran (<em>tool</em> ini tidak menghitungnya). Iuran wajib bisa dikurangkan dari penghasilan sampai HK$18.000 setahun.</p><p>Saldo MPF tersimpan di rekening atas namamu dan bisa kamu tarik di usia 65 tahun. Orang yang meninggalkan Hong Kong secara permanen juga bisa menariknya lebih awal. Pekerja rumah tangga umumnya dikecualikan dari MPF, jadi cek statusmu ke Mandatory Provident Fund Schemes Authority (MPFA), otoritas pengawas MPF.</p>",
+        "cite": [
+          {
+            "name": "MPFA, Contributions",
+            "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+          }
+        ]
       },
       {
         "h3": "Tidak ada pemotongan di slip gaji",
-        "html": "<p>Di Indonesia, pemberi kerja memotong PPh 21 tiap bulan lalu memberimu bukti potong 1721-A1 untuk SPT Tahunan. Di Hong Kong tidak ada potongan bulanan. Pemberi kerja melaporkan gajimu setahun ke IRD, lalu kamu menerima formulir pajak (<em>tax return</em>) sekitar Mei dan mengisinya. Setelah itu IRD mengirim tagihan (<em>assessment</em>) berisi pajak tahun yang baru berakhir ditambah <em>provisional tax</em>, yaitu pajak muka untuk tahun berikutnya.</p>"
+        "html": "<p>Di Indonesia, pemberi kerja memotong PPh 21 tiap bulan lalu memberimu bukti potong 1721-A1 untuk SPT Tahunan. Di Hong Kong tidak ada potongan bulanan. Pemberi kerja melaporkan gajimu setahun ke IRD, lalu kamu menerima formulir pajak (<em>tax return</em>) sekitar Mei dan mengisinya. Setelah itu IRD mengirim tagihan (<em>assessment</em>) berisi pajak tahun yang baru berakhir ditambah <em>provisional tax</em>, yaitu pajak muka untuk tahun berikutnya.</p>",
+        "cite": [
+          {
+            "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Inland Revenue Department (IRD), pajak gaji, tunjangan dan pajak sementara",
-        "url": "https://www.ird.gov.hk/"
+        "name": "IRD, Allowances, deductions and tax rate table",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
       },
       {
-        "name": "Mandatory Provident Fund Schemes Authority (MPFA), iuran dan penarikan MPF",
-        "url": "https://www.mpfa.org.hk/"
+        "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
       },
       {
-        "name": "Immigration Department, visa dan izin kerja",
-        "url": "https://www.immd.gov.hk/"
+        "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
       },
       {
-        "name": "Labour Department, hak pekerja dan pekerja rumah tangga migran",
-        "url": "https://www.labour.gov.hk/"
+        "name": "IRD, 2026-27 Budget",
+        "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP), status subjek pajak dan SPT",
-        "url": "https://pajak.go.id/"
+        "name": "IRD, A brief guide to personal assessment",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam37e.pdf"
+      },
+      {
+        "name": "MPFA, Contributions",
+        "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
       }
     ]
   },
@@ -81,38 +123,84 @@
       "key": "single",
       "title": "Cara menghitung pajak gaji lajang di Hong Kong dengan gaji HK$600.000",
       "intro": "<p>Contoh pertama adalah pekerja lajang dengan gaji HK$600.000 setahun, atau HK$50.000 sebulan. Iuran MPF dibatasi HK$1.500 sebulan, jadi totalnya HK$18.000 dan bukan 5% dari seluruh gaji. Setelah iuran itu, penghasilan bersih HK$582.000. Tunjangan dasar HK$145.000, yang fungsinya mirip PTKP TK/0, menyisakan penghasilan kena pajak HK$437.000. Tarif progresif menghasilkan pajak HK$56.290, lebih kecil daripada hitungan tarif standar sebesar HK$87.300, sehingga tarif progresif yang dipakai. Gaji bersihmu sekitar HK$525.710 (87,6% dari gaji kotor), dan tarif marginalnya 17,0%.</p>",
-      "after": "<p>Iuran MPF tidak hilang karena tersimpan di rekening pensiunmu. Pajak HK$56.290 baru dibayar setelah tagihan IRD datang, jadi sisihkan sendiri dananya selama setahun.</p>"
+      "after": "<p>Iuran MPF tidak hilang karena tersimpan di rekening pensiunmu. Pajak HK$56.290 baru dibayar setelah tagihan IRD datang, jadi sisihkan sendiri dananya selama setahun.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "key": "married-two-children",
       "title": "Berapa pajak gaji di Hong Kong untuk keluarga dengan dua anak dan gaji HK$900.000?",
       "intro": "<p>Contoh kedua adalah satu pencari nafkah yang sudah menikah dan punya dua anak, dengan gaji HK$900.000 setahun. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000. Tunjangannya mencapai HK$570.000, yaitu HK$290.000 untuk status menikah dan HK$140.000 untuk tiap anak. Penghasilan kena pajak tinggal HK$312.000, sehingga pajak progresifnya HK$35.040, jauh di bawah hitungan tarif standar sebesar HK$132.300. Gaji bersihmu sekitar HK$846.960, atau 94,1% dari gaji kotor.</p>",
-      "after": "<p>Tunjangan keluarga membuat sebagian besar penghasilan tidak lagi masuk lapisan 17%, sehingga tarif efektifnya di bawah 4%. Tarif marginalnya tetap 17,0% untuk tambahan penghasilan berikutnya. Padanan PTKP K/2 di Indonesia jauh lebih kecil, itu sebabnya angka ini terlihat ringan dibandingkan PPh 21 untuk gaji setara.</p>"
+      "after": "<p>Tunjangan keluarga membuat sebagian besar penghasilan tidak lagi masuk lapisan 17%, sehingga tarif efektifnya di bawah 4%. Tarif marginalnya tetap 17,0% untuk tambahan penghasilan berikutnya. Padanan PTKP K/2 di Indonesia jauh lebih kecil, itu sebabnya angka ini terlihat ringan dibandingkan PPh 21 untuk gaji setara.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        },
+        {
+          "name": "IRD, 2026-27 Budget",
+          "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
+        }
+      ]
     },
     {
       "key": "high-earner",
       "title": "Gaji HK$3.000.000 di Hong Kong: kapan tarif standar 15% lebih murah?",
       "intro": "<p>Pada gaji HK$3.000.000, penghasilan bersih setelah iuran MPF HK$18.000 adalah HK$2.982.000. Hitungan progresif akan menghasilkan pajak yang jauh lebih besar, sehingga yang berlaku adalah tarif standar 15% dengan pajak HK$447.300. Gaji bersihmu sekitar HK$2.534.700 (84,5% dari gaji kotor), dan tarif marginalnya 15,0%. Pada tarif standar tunjangan tidak dipakai, jadi tunjangan HK$145.000 tidak mengurangi pajak.</p>",
-      "after": "<p>Untuk lajang tanpa anak, tarif standar mulai lebih murah di gaji sekitar HK$2,15 juta menurut hitungan <em>tool</em> ini. Di bawah angka itu tarif progresif lebih kecil, karena tunjangan ikut mengurangi pajak.</p>"
+      "after": "<p>Untuk lajang tanpa anak, tarif standar mulai lebih murah di gaji sekitar HK$2,15 juta menurut hitungan <em>tool</em> ini. Di bawah angka itu tarif progresif lebih kecil, karena tunjangan ikut mengurangi pajak.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p><strong>Strategi menekan pajak.</strong> Cara-cara berikut sah dan lazim dipakai di Hong Kong. Mana yang cocok bergantung pada keluarga dan penghasilanmu.</p>",
   "strategies": [
     {
       "h3": "Iuran sukarela MPF yang bisa dikurangkan",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memakai tarif progresif dan punya arus kas longgar. Iuran ke akun sukarela yang bisa dikurangkan (<em>Tax Deductible Voluntary Contribution</em>), atau premi anuitas tertentu, dapat dikurangkan dari penghasilan sampai batas tahunan di luar potongan MPF wajib. Ide dasarnya mirip menabung di DPLK di Indonesia. Tanyakan batas terbarunya ke IRD.</p><p><strong>Catatan:</strong> uangnya terkunci sampai usia pensiun, dan pengurangan ini tidak berguna kalau ternyata tarif standar yang lebih murah.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memakai tarif progresif dan punya arus kas longgar. Iuran ke akun sukarela yang bisa dikurangkan (<em>Tax Deductible Voluntary Contribution</em>), atau premi anuitas tertentu, dapat dikurangkan dari penghasilan sampai batas tahunan di luar potongan MPF wajib. Ide dasarnya mirip menabung di DPLK di Indonesia. Tanyakan batas terbarunya ke IRD.</p><p><strong>Catatan:</strong> uangnya terkunci sampai usia pensiun, dan pengurangan ini tidak berguna kalau ternyata tarif standar yang lebih murah.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "h3": "Klaim tunjangan tanggungan",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menanggung anak, pasangan, atau orang tua dan saudara yang memenuhi syarat. Tiap tunjangan mengurangi penghasilan kena pajak, mirip tambahan PTKP untuk tanggungan di Indonesia.</p><p><strong>Catatan:</strong> setiap tunjangan punya syarat dan butuh dokumen. <em>Tool</em> ini hanya menghitung tunjangan dasar, menikah, dan anak.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menanggung anak, pasangan, atau orang tua dan saudara yang memenuhi syarat. Tiap tunjangan mengurangi penghasilan kena pajak, mirip tambahan PTKP untuk tanggungan di Indonesia.</p><p><strong>Catatan:</strong> setiap tunjangan punya syarat dan butuh dokumen. <em>Tool</em> ini hanya menghitung tunjangan dasar, menikah, dan anak.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "h3": "Pengurang bunga KPR, donasi, dan biaya pendidikan",
-      "html": "<p><strong>Cocok untuk:</strong> pemilik rumah yang menempatinya sendiri, donatur tetap lembaga amal yang diakui, dan karyawan yang membayar kursus terkait pekerjaan. Donasi ke lembaga amal yang diakui kira-kira seperti zakat lewat lembaga resmi di Indonesia: bisa dikurangkan, asalkan penerimanya diakui otoritas pajak.</p><p><strong>Catatan:</strong> masing-masing punya batas dan syarat sendiri, dan <em>tool</em> ini tidak menghitungnya, jadi simpan semua kuitansinya.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> pemilik rumah yang menempatinya sendiri, donatur tetap lembaga amal yang diakui, dan karyawan yang membayar kursus terkait pekerjaan. Donasi ke lembaga amal yang diakui kira-kira seperti zakat lewat lembaga resmi di Indonesia: bisa dikurangkan, asalkan penerimanya diakui otoritas pajak.</p><p><strong>Catatan:</strong> masing-masing punya batas dan syarat sendiri, dan <em>tool</em> ini tidak menghitungnya, jadi simpan semua kuitansinya.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "h3": "Penilaian bersama atau pribadi untuk pasangan menikah",
-      "html": "<p><strong>Cocok untuk:</strong> pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD umumnya menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia; untuk logikanya, baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD umumnya menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia; untuk logikanya, baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>",
+      "cite": [
+        {
+          "name": "IRD, A brief guide to personal assessment",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam37e.pdf"
+        }
+      ]
     }
   ],
   "limits": [
@@ -127,19 +215,47 @@
   "faq": [
     {
       "q": "Berapa pajak gaji HK$20.000 sebulan di Hong Kong?",
-      "a": "<p>Untuk pekerja lajang dengan gaji HK$240.000 setahun, iuran MPF 5% sebesar HK$12.000 dan pajaknya sekitar HK$2.980, sehingga gaji bersihnya sekitar HK$225.020. Untuk gaji HK$600.000 setahun, pajaknya sekitar HK$56.290. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Untuk pekerja lajang dengan gaji HK$240.000 setahun, iuran MPF 5% sebesar HK$12.000 dan pajaknya sekitar HK$2.980, sehingga gaji bersihnya sekitar HK$225.020. Untuk gaji HK$600.000 setahun, pajaknya sekitar HK$56.290. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "q": "Apa beda tarif progresif dan tarif standar di Hong Kong?",
-      "a": "<p>IRD menghitung pajak gajimu dengan dua cara dan menagih angka yang lebih kecil: tarif progresif 2% sampai 17% setelah tunjangan, atau tarif standar 15% sebelum tunjangan. Hampir selalu tarif progresif yang menang, kecuali pada gaji sangat tinggi seperti HK$3.000.000 yang pajaknya HK$447.300 dengan tarif standar.</p><p><em>Tool</em> ini menjalankan keduanya dan menandai yang dipakai di label barisnya.</p>"
+      "a": "<p>IRD menghitung pajak gajimu dengan dua cara dan menagih angka yang lebih kecil: tarif progresif 2% sampai 17% setelah tunjangan, atau tarif standar 15% sebelum tunjangan. Hampir selalu tarif progresif yang menang, kecuali pada gaji sangat tinggi seperti HK$3.000.000 yang pajaknya HK$447.300 dengan tarif standar.</p><p><em>Tool</em> ini menjalankan keduanya dan menandai yang dipakai di label barisnya.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "q": "Kenapa pajak di Hong Kong tidak dipotong dari gaji, dan kenapa tahun pertama terasa membayar dua tahun sekaligus?",
-      "a": "<p>Hong Kong tidak punya pemotongan seperti PPh 21. Setelah tahun pajak berakhir pada 31 Maret, kamu mengisi formulir pajak dan menerima satu tagihan. Isinya pajak akhir untuk tahun yang baru selesai ditambah <em>provisional tax</em>, pajak muka untuk tahun berikutnya yang IRD perkirakan dari penghasilan yang sama. Tagihan itu dibayar dalam dua cicilan dengan cicilan pertama lebih besar, sehingga tahun pertama terasa seperti membayar dua tahun sekaligus.</p><p><em>Provisional tax</em> disesuaikan setelah penghasilan tahun berikutnya diketahui. <em>Tool</em> ini hanya menampilkan pajak satu tahun penuh.</p>"
+      "a": "<p>Hong Kong tidak punya pemotongan seperti PPh 21. Setelah tahun pajak berakhir pada 31 Maret, kamu mengisi formulir pajak dan menerima satu tagihan. Isinya pajak akhir untuk tahun yang baru selesai ditambah <em>provisional tax</em>, pajak muka untuk tahun berikutnya yang IRD perkirakan dari penghasilan yang sama. Tagihan itu dibayar dalam dua cicilan dengan cicilan pertama lebih besar, sehingga tahun pertama terasa seperti membayar dua tahun sekaligus.</p><p><em>Provisional tax</em> disesuaikan setelah penghasilan tahun berikutnya diketahui. <em>Tool</em> ini hanya menampilkan pajak satu tahun penuh.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        },
+        {
+          "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
+        }
+      ]
     },
     {
       "q": "Apakah saldo MPF bisa ditarik kalau saya pulang ke Indonesia?",
-      "a": "<p>Bisa, tetapi tidak otomatis. MPF adalah rekening pensiun atas namamu, mirip JHT, dan biasanya baru bisa ditarik di usia 65 tahun. Penarikan lebih awal salah satunya dibolehkan kalau kamu meninggalkan Hong Kong secara permanen, dengan surat pernyataan (<em>statutory declaration</em>) lewat penyelenggara dana (<em>trustee</em>). Syarat dan prosedur terbarunya ada di MPFA.</p>"
+      "a": "<p>Bisa, tetapi tidak otomatis. MPF adalah rekening pensiun atas namamu, mirip JHT, dan biasanya baru bisa ditarik di usia 65 tahun. Penarikan lebih awal salah satunya dibolehkan kalau kamu meninggalkan Hong Kong secara permanen, dengan surat pernyataan (<em>statutory declaration</em>) lewat penyelenggara dana (<em>trustee</em>). Syarat dan prosedur terbarunya ada di MPFA.</p>",
+      "cite": [
+        {
+          "name": "MPFA, Contributions",
+          "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+        }
+      ]
     },
     {
       "q": "Apakah pekerja rumah tangga migran di Hong Kong membayar pajak penghasilan?",
