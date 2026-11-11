@@ -24,7 +24,7 @@
       },
       {
         "h3": "Iuran pensiun GPSSA untuk warga negara UEA",
-        "html": "<p>Warga negara Emirat yang bekerja di sektor swasta dan pemerintah federal ikut dalam General Pension and Social Security Authority (GPSSA). <em>Tool</em> ini memotong 11% gaji dari pekerja, untuk gaji sampai AED70.000 sebulan. Pemberi kerja menambah 12,5% dan pemerintah 2,5% lagi, total 15% di luar gaji. Bagian itu dibayar di luar gajimu dan tidak mengurangi gaji bersih. Cara kerjanya mirip JHT dan JP di BPJS Ketenagakerjaan, hanya porsi pekerjanya jauh lebih besar daripada 2% JHT dan 1% JP.</p>",
+        "html": "<p>Warga negara Emirat yang bekerja di sektor swasta dan pemerintah federal ikut dalam General Pension and Social Security Authority (GPSSA). <em>Tool</em> ini memotong 11% gaji dari pekerja, untuk gaji sampai AED70.000 sebulan. Pemberi kerja wajib membayar 15% di luar gaji. Kalau gaji iuran warga negara itu di bawah AED20.000 sebulan, pemerintah menanggung 2,5 poin dari 15% itu, sehingga pemberi kerja membayar 12,5%. Bagian itu dibayar di luar gajimu dan tidak mengurangi gaji bersih. Cara kerjanya mirip JHT dan JP di BPJS Ketenagakerjaan, hanya porsi pekerjanya jauh lebih besar daripada 2% JHT dan 1% JP.</p>",
         "table": {
           "head": [
             "Pembayar",
@@ -39,20 +39,20 @@
             ],
             [
               "Pemberi kerja",
-              "12,5%",
+              "15% (12,5% kalau gaji di bawah AED20.000 sebulan)",
               "AED70.000 sebulan"
             ],
             [
               "Pemerintah",
-              "2,5%",
+              "2,5 poin dari 15% pemberi kerja, untuk gaji di bawah AED20.000 sebulan",
               "AED70.000 sebulan"
             ]
           ]
         },
         "cite": [
           {
-            "name": "GPSSA, tarif iuran menurut UU Federal No. 57 Tahun 2023 dan batas gaji AED 70.000",
-            "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+            "name": "GPSSA, pokok UU Federal 57/2023 (tarif dan batas AED 70.000)",
+            "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
           }
         ]
       },
@@ -81,8 +81,8 @@
         "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income#:~:text=Absence%20of%20taxation"
       },
       {
-        "name": "GPSSA, tarif iuran menurut UU Federal No. 57 Tahun 2023 dan batas gaji AED 70.000",
-        "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+        "name": "GPSSA, pokok UU Federal 57/2023 (tarif dan batas AED 70.000)",
+        "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
       },
       {
         "name": "Portal Pemerintah UEA, Tunjangan akhir masa kerja pekerja sektor swasta",
@@ -110,12 +110,12 @@
     {
       "key": "national",
       "title": "Berapa gaji bersih warga Emirat bergaji AED300.000 setelah iuran GPSSA?",
-      "intro": "<p>Contoh ini untuk warga negara UEA, bukan WNI. Dengan gaji AED300.000 yang sama, tidak ada pajak penghasilan, tetapi 11% masuk GPSSA, yaitu AED33.000 setahun. Gaji bersihnya AED267.000 (89,0% dari gaji kotor). Pemberi kerja menambah 12,5% dan pemerintah 2,5%, total AED45.000 di luar gaji, dan uang itu ikut masuk ke pensiunnya.</p>",
+      "intro": "<p>Contoh ini untuk warga negara UEA, bukan WNI. Dengan gaji AED300.000 yang sama, tidak ada pajak penghasilan, tetapi 11% masuk GPSSA, yaitu AED33.000 setahun. Gaji bersihnya AED267.000 (89,0% dari gaji kotor). Dengan gaji AED25.000 sebulan, gajinya di atas batas AED20.000 untuk bantuan pemerintah, jadi pemberi kerja membayar penuh 15% di luar gaji, yaitu AED45.000, dan uang itu ikut masuk ke pensiunnya.</p>",
       "after": "<p>Angka 11% adalah iuran pensiun yang kelak kembali sebagai manfaat, bukan pajak. Tarif marginalnya 11,0% sampai gaji menyentuh batas bulanan.</p>",
       "cite": [
         {
-          "name": "GPSSA, tarif iuran menurut UU Federal No. 57 Tahun 2023 dan batas gaji AED 70.000",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, pokok UU Federal 57/2023 (tarif dan batas AED 70.000)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     }
@@ -163,8 +163,8 @@
           "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
         },
         {
-          "name": "GPSSA, tarif iuran menurut UU Federal No. 57 Tahun 2023 dan batas gaji AED 70.000",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, pokok UU Federal 57/2023 (tarif dan batas AED 70.000)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     },
@@ -180,11 +180,11 @@
     },
     {
       "q": "Kenapa warga Emirat membayar 11% sedangkan pekerja asing tidak?",
-      "a": "<p>Warga negara ikut dalam dana pensiun federal GPSSA, yang dibiayai iuran pekerja, pemberi kerja (12,5%), dan pemerintah (2,5%). Pekerja asing berada di luar skema itu, jadi tidak ada yang dipotong. Iuran itu tetap mengurangi gaji bersihmu.</p>",
+      "a": "<p>Warga negara ikut dalam dana pensiun federal GPSSA, yang dibiayai iuran pekerja, pemberi kerja (15%, dengan 2,5 poin ditanggung pemerintah kalau gaji di bawah AED20.000 sebulan). Pekerja asing berada di luar skema itu, jadi tidak ada yang dipotong. Iuran itu tetap mengurangi gaji bersihmu.</p>",
       "cite": [
         {
-          "name": "GPSSA, tarif iuran menurut UU Federal No. 57 Tahun 2023 dan batas gaji AED 70.000",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, pokok UU Federal 57/2023 (tarif dan batas AED 70.000)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     },
@@ -215,7 +215,8 @@
     "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
     "GPSSA pension (11%, cap 70,000 a month)": "Pensiun GPSSA (11%, batas upah AED70.000 sebulan)",
     "Employer 12.5% and government 2.5%, on top": "Pemberi kerja 12,5% dan pemerintah 2,5%, dibayar di luar gaji",
-    "No pension contribution for expatriates (end-of-service gratuity instead)": "Tanpa iuran pensiun untuk pekerja asing"
+    "No pension contribution for expatriates (end-of-service gratuity instead)": "Tanpa iuran pensiun untuk pekerja asing",
+    "Employer 15%, on top": "Pemberi kerja 15%, dibayar di luar gaji"
   },
   "bmc": "Terbantu? Traktir segelas chai karak."
 }

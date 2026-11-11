@@ -12,15 +12,39 @@
         "h3": "Federal income tax brackets for single filers",
         "html": "<p>A single resident takes a standard deduction of $16,100, and the brackets apply to the remainder. Married couples filing jointly get a $32,200 deduction and wider brackets. The calculator uses these for the resident cases.</p>",
         "table": {
-          "head": ["Taxable income (single)", "Rate"],
+          "head": [
+            "Taxable income (single)",
+            "Rate"
+          ],
           "rows": [
-            ["$0 to $12,400", "10%"],
-            ["$12,401 to $50,400", "12%"],
-            ["$50,401 to $105,700", "22%"],
-            ["$105,701 to $201,775", "24%"],
-            ["$201,776 to $256,225", "32%"],
-            ["$256,226 to $640,600", "35%"],
-            ["Over $640,600", "37%"]
+            [
+              "$0 to $12,400",
+              "10%"
+            ],
+            [
+              "$12,401 to $50,400",
+              "12%"
+            ],
+            [
+              "$50,401 to $105,700",
+              "22%"
+            ],
+            [
+              "$105,701 to $201,775",
+              "24%"
+            ],
+            [
+              "$201,776 to $256,225",
+              "32%"
+            ],
+            [
+              "$256,226 to $640,600",
+              "35%"
+            ],
+            [
+              "Over $640,600",
+              "37%"
+            ]
           ]
         },
         "cite": [
@@ -38,15 +62,39 @@
         "h3": "Federal brackets for married couples filing jointly",
         "html": "<p>A joint return uses wider brackets and the larger standard deduction, taxed on combined income. The calculator treats it as one earner's pay with the joint table.</p>",
         "table": {
-          "head": ["Taxable income (joint)", "Rate"],
+          "head": [
+            "Taxable income (joint)",
+            "Rate"
+          ],
           "rows": [
-            ["$0 to $24,800", "10%"],
-            ["$24,801 to $100,800", "12%"],
-            ["$100,801 to $211,400", "22%"],
-            ["$211,401 to $403,550", "24%"],
-            ["$403,551 to $512,450", "32%"],
-            ["$512,451 to $768,700", "35%"],
-            ["Over $768,700", "37%"]
+            [
+              "$0 to $24,800",
+              "10%"
+            ],
+            [
+              "$24,801 to $100,800",
+              "12%"
+            ],
+            [
+              "$100,801 to $211,400",
+              "22%"
+            ],
+            [
+              "$211,401 to $403,550",
+              "24%"
+            ],
+            [
+              "$403,551 to $512,450",
+              "32%"
+            ],
+            [
+              "$512,451 to $768,700",
+              "35%"
+            ],
+            [
+              "Over $768,700",
+              "37%"
+            ]
           ]
         },
         "cite": [
@@ -95,8 +143,8 @@
             "url": "https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/#:~:text=SDI%20Rate"
           },
           {
-            "name": "NY Department of Taxation and Finance, income tax rates and tables (state and city)",
-            "url": "https://www.tax.ny.gov/pit/file/tax-tables/2025.htm#:~:text=New%20York%20City%20Resident%20Tax"
+            "name": "NY Department of Taxation and Finance, IT-2105-I (2026): New York State and City tax rates",
+            "url": "https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf"
           },
           {
             "name": "New York Paid Family Leave, 2026 updates and employee contribution rate",
@@ -162,8 +210,8 @@
         "note": "California rates"
       },
       {
-        "name": "NY Department of Taxation and Finance, income tax rates and tables (state and city)",
-        "url": "https://www.tax.ny.gov/pit/file/tax-tables/2025.htm#:~:text=New%20York%20City%20Resident%20Tax",
+        "name": "NY Department of Taxation and Finance, IT-2105-I (2026): New York State and City tax rates",
+        "url": "https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf",
         "note": "New York State and City rates"
       },
       {
@@ -227,8 +275,8 @@
       "after": "<p>The state figure includes a small recapture of the benefit of the lower brackets ($140 here). It applies once income passes a threshold, so tax rises slightly faster than the rates alone suggest.</p>",
       "cite": [
         {
-          "name": "NY Department of Taxation and Finance, income tax rates and tables (state and city)",
-          "url": "https://www.tax.ny.gov/pit/file/tax-tables/2025.htm#:~:text=New%20York%20City%20Resident%20Tax"
+          "name": "NY Department of Taxation and Finance, IT-2105-I (2026): New York State and City tax rates",
+          "url": "https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf"
         },
         {
           "name": "New York Paid Family Leave, 2026 updates and employee contribution rate",
@@ -348,7 +396,15 @@
       ]
     }
   ],
-  "limits": ["<strong>Employment income only.</strong> It models one salary for a full year. It does not cover self-employment, investment income, capital gains or a part year.", "<strong>No bonuses or equity.</strong> Stock awards, bonuses and allowances are not modelled separately.", "<strong>Standard deduction only.</strong> Residents take the standard deduction. Itemised deductions, the child tax credit and other credits are not included. Only a nonresident alien's state tax is itemised.", "<strong>Treaties are not modelled.</strong> A tax treaty exemption between the US and your country is not applied, nor are social security agreements.", "<strong>39 states and DC.</strong> Eleven states are not loaded and return a message. A few states use prior-year figures, which the result notes.", "<strong>Local tax only if you add it.</strong> City and county income taxes in states such as Maryland, Ohio, Pennsylvania and Indiana are included only when you enter a rate. Payroll programmes in other states are not modelled.", "<strong>You choose your status.</strong> The calculator does not test whether you are a resident or nonresident alien."],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover self-employment, investment income, capital gains or a part year.",
+    "<strong>No bonuses or equity.</strong> Stock awards, bonuses and allowances are not modelled separately.",
+    "<strong>Standard deduction only.</strong> Residents take the standard deduction. Itemised deductions, the child tax credit and other credits are not included. Only a nonresident alien's state tax is itemised.",
+    "<strong>Treaties are not modelled.</strong> A tax treaty exemption between the US and your country is not applied, nor are social security agreements.",
+    "<strong>39 states and DC.</strong> Eleven states are not loaded and return a message. A few states use prior-year figures, which the result notes.",
+    "<strong>Local tax only if you add it.</strong> City and county income taxes in states such as Maryland, Ohio, Pennsylvania and Indiana are included only when you enter a rate. Payroll programmes in other states are not modelled.",
+    "<strong>You choose your status.</strong> The calculator does not test whether you are a resident or nonresident alien."
+  ],
   "faq": [
     {
       "q": "How much tax do I pay on $120,000 in the US?",

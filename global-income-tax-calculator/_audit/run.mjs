@@ -89,6 +89,13 @@ const auRes = (g, pr) => {
   return { incomeTax: Math.max(0, t - lito) + med, social: 0 };
 };
 const CHANGED = {
+  // Taiwan at NT$6,000,000 (NT$500,000 a month): national health insurance is capped at the
+  // NHIA's top insured amount, NT$313,000 a month from 1 Jan 2025 (premium table, note 2), not
+  // v11's 219,500. Labour insurance stays 12.5% x 20% on NT$45,800 (BLI). Income tax unchanged.
+  'TW|resident_single|6000000': () => ({ incomeTax: 1265300.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|resident_married2kids|6000000': () => ({ incomeTax: 1068700.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|nonresident|6000000': () => ({ incomeTax: 1080000.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|resident_single_goldcard|6000000': () => ({ incomeTax: 814750.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
   'AU|pr|60000': () => auRes(60000, true),
   'AU|pr|120000': () => auRes(120000, true),
   'AU|pr|300000': () => auRes(300000, true),
@@ -342,7 +349,7 @@ capChk('IT INPS 122,295', g => line('IT', g, {}, 'itInps') <= 0.0919*122295 + 0.
 capChk('CH ALV 148,200 and BVG 64,260', g => line('CH', g, {}, 'chAlv') <= 0.011*148200 + 1e-6 && line('CH', g, {}, 'chBvg') <= 0.05*64260 + 1e-6);
 capChk('BE CSSS 731.28 a year', g => line('BE', g, {}, 'beCsss') <= 731.28 + 1e-6);
 capChk('US PFL 411.91', g => line('US', g, { usState: 'NY' }, 'usNyPfl') <= 411.91 + 1e-6);
-capChk('TW labour insurance and NHI', g => line('TW', g*10, {}, 'twLi') <= 12*0.025*45800 + 1e-6 && line('TW', g*10, {}, 'twNhi') <= 12*0.0517*0.3*219500 + 1e-6);
+capChk('TW labour insurance and NHI', g => line('TW', g*10, {}, 'twLi') <= 12*0.025*45800 + 1e-6 && line('TW', g*10, {}, 'twNhi') <= 12*0.0517*0.3*313000 + 1e-6);
 capChk('BH 4,000 a month', g => E.compute('BH', g, { gulfNat: 'national' }).social <= 12*0.08*4000 + 1e-6);
 capChk('JP pension 650k a month', g => line('JP', g*100, {}, 'jpPension') <= 12*jpRound(650000*0.0915) + 1e-6);
 function jpRound(x){ const f = Math.floor(x); return x - f > 0.5 ? f + 1 : f; }

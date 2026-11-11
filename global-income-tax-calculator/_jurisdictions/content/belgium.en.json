@@ -43,8 +43,12 @@
         },
         "cite": [
           {
-            "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
-            "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+            "name": "FPS Finance, tax rates (income 2026, assessment year 2027)",
+            "url": "https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates"
+          },
+          {
+            "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+            "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
           }
         ]
       },
@@ -85,8 +89,8 @@
         "html": "<p>For married couples where one partner earns most of the income, the marital quotient lets the higher earner transfer up to 30% of professional income, capped at €11,780, to the partner. That amount is then taxed in the partner's hands, from the lowest bracket and using their own tax-free amount. The calculator treats the €70,000 example as a one-earner household and applies the quotient. The child supplements raise the tax-free amount: €2,130 for one child, €5,130 for two, €11,440 for three, €18,510 for four and €7,070 for each child after that.</p>",
         "cite": [
           {
-            "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
-            "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+            "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+            "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
           },
           {
             "name": "PwC Worldwide Tax Summaries, Belgium individual: deductions (professional expenses)",
@@ -99,16 +103,16 @@
         "html": "<p>Belgium has a regime for qualifying employees who are recruited from abroad or seconded to Belgium. Part of your pay is treated as a reimbursement of the extra costs of living abroad, and that part is free of tax. The calculator models this as a tax and ONSS free reimbursement of 35% of gross pay, and only when gross pay is above €70,000. Eligibility depends on your role, salary and where you lived before. The ONSS exemption has its own ceiling, which the calculator does not apply. The regime is applied for with your employer, so check the conditions with the tax administration before relying on it.</p>",
         "cite": [
           {
-            "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
-            "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+            "name": "FPS Finance, special tax regime for inpatriate taxpayers and researchers",
+            "url": "https://finance.belgium.be/en/node/14642"
           }
         ]
       }
     ],
     "sources": [
       {
-        "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
-        "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between",
+        "name": "FPS Finance, tax rates (income 2026, assessment year 2027)",
+        "url": "https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates",
         "note": "federal tax rates and municipal surcharge"
       },
       {
@@ -122,8 +126,8 @@
         "note": "13.07% social security and the special contribution"
       },
       {
-        "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
-        "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime",
+        "name": "FPS Finance, special tax regime for inpatriate taxpayers and researchers",
+        "url": "https://finance.belgium.be/en/node/14642",
         "note": "expat regime"
       },
       {
@@ -151,12 +155,16 @@
       "after": "<p>Your marginal rate is 56.0%, because the last euros are taxed at 45%, plus the municipal surcharge, plus ONSS on each extra euro of pay.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+          "name": "FPS Finance, tax rates (income 2026, assessment year 2027)",
+          "url": "https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates"
         },
         {
           "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
           "url": "https://taxsummaries.pwc.com/belgium/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+          "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
         }
       ]
     },
@@ -167,12 +175,12 @@
       "after": "<p>The quotient and the child supplement together keep your federal tax lower than the single example despite a higher salary. If your partner also earns, the quotient is smaller or does not apply.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+          "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+          "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
         },
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+          "name": "FPS Finance, tax rates (income 2026, assessment year 2027)",
+          "url": "https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates"
         }
       ]
     },
@@ -183,8 +191,8 @@
       "after": "<p>Without the regime the same salary would leave about €53,023, so the regime is worth about €20,800 a year as modelled. Whether you qualify is a legal question for you and your employer.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+          "name": "FPS Finance, special tax regime for inpatriate taxpayers and researchers",
+          "url": "https://finance.belgium.be/en/node/14642"
         }
       ]
     }
@@ -196,8 +204,8 @@
       "html": "<p><strong>Suits:</strong> employees recruited from abroad or seconded to Belgium who meet the conditions on role, salary and prior residence. It can lower both tax and ONSS.</p><p><strong>Caveat:</strong> it is applied for with your employer, the ONSS exemption has its own ceiling, and not everyone qualifies. Get the conditions confirmed before you rely on it.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+          "name": "FPS Finance, special tax regime for inpatriate taxpayers and researchers",
+          "url": "https://finance.belgium.be/en/node/14642"
         }
       ]
     },
@@ -206,8 +214,8 @@
       "html": "<p><strong>Suits:</strong> married couples where one partner earns most of the income. Moving up to 30% of income, capped at €11,780, to the lower earner shifts it into the lower brackets.</p><p><strong>Caveat:</strong> it helps most when your partner has little or no income. If both of you earn a similar amount, it brings little.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+          "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+          "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
         }
       ]
     },
@@ -235,8 +243,8 @@
       "a": "<p>A single employee pays €11,913 in federal tax, a €834 municipal surcharge, €7,189 in ONSS and a €539 special social security contribution, and keeps about €34,526. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: taxes on personal income",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income#:~:text=federal%20tax%20rates%20range%20between"
+          "name": "FPS Finance, tax rates (income 2026, assessment year 2027)",
+          "url": "https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates"
         },
         {
           "name": "PwC Worldwide Tax Summaries, Belgium individual: social security contributions",
@@ -249,8 +257,8 @@
       "a": "<p>In a married couple where one partner has most of the income, the higher earner can transfer up to 30% of their professional income, capped at €11,780, to the partner. That share is taxed as the partner's own income, from the bottom of the brackets and with their own tax-free amount, instead of at the higher earner's top rate. In the €70,000 example, €11,780 moves to the partner. The calculator applies it for married households only.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: marital quotient",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/deductions#:~:text=marital%20quotient"
+          "name": "Chamber of Representatives, doc. 56K1243: Act of 15 July 2026 reforming personal income tax (marital quotient, tax-free amount)",
+          "url": "https://www.lachambre.be/FLWB/html/56/N/56K1243.html"
         }
       ]
     },
@@ -269,8 +277,8 @@
       "a": "<p>For qualifying employees recruited from abroad or seconded to Belgium, part of the salary is treated as a reimbursement of extra living costs and is not taxed. The calculator models it as 35% of gross pay when gross pay is above €70,000, free of both tax and ONSS. On €100,000 that raises take-home pay from about €53,023 to €73,841. You apply with your employer, and eligibility and any cap should be checked with the tax administration.</p>",
       "cite": [
         {
-          "name": "PwC Worldwide Tax Summaries, Belgium individual: special tax regime for expatriates",
-          "url": "https://taxsummaries.pwc.com/belgium/individual/income-determination#:~:text=Special%20tax%20regime"
+          "name": "FPS Finance, special tax regime for inpatriate taxpayers and researchers",
+          "url": "https://finance.belgium.be/en/node/14642"
         }
       ]
     },

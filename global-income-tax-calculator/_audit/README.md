@@ -14,6 +14,12 @@ Regenerate the golden file with `python3 gsc_reference_model.py` in this folder;
 
 Each is checked by `run.mjs` against its own source, not against the v11 golden file:
 
+- **Taiwan, national health insurance cap**: NT$313,000 a month (v11: 219,500). The NHIA
+  premium table says "自114年1月1日起，投保金額最高一級調整為313,000元" (from 1 Jan 2025 the top
+  insured amount is NT$313,000). The four golden cases at NT$6,000,000 are replayed with it.
+- **UAE, GPSSA employer share**: the employer owes 15%; only under AED 20,000 a month does the
+  government pay 2.5 points of it (GPSSA, main features of Federal Decree-Law 57 of 2023). The
+  amount was already 15% on top; the line now says who pays it at each level of pay.
 - **Illinois is loaded** (v11 gated it). 4.95% on wages less an exemption of 2,925 a person
   (5,850 joint), with no exemption at all above federal AGI 250,000 (500,000 joint). Official:
   Illinois Department of Revenue, Q&A 851 ("For tax year beginning January 1, 2026, it is $2,925

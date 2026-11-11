@@ -20,34 +20,49 @@
       },
       {
         "h3": "Iuran PIFSS untuk warga Kuwait",
-        "html": "<p>Kalkulator memotong 8% dari gaji warga Kuwait sampai KWD 2.750 sebulan, ditambah 2,5% lagi atas KWD 1.500 pertama gaji sebulan. Pada gaji KWD 18.000 setahun, gajinya KWD 1.500 sebulan, sehingga iurannya KWD 157,50 sebulan. Bagian pemberi kerja dibayar terpisah dan tidak ditampilkan.</p>",
+        "html": "<p>PIFSS membagi iuran warga Kuwait menjadi lima bagian, masing-masing dengan batas gaji bulanannya sendiri. Asuransi dasar memotong 5% dari gaji sampai KWD 1.500, dan asuransi tambahan memotong 5% dari gaji di atasnya, sampai KWD 1.250 berikutnya. Kenaikan pensiun (2,5%) dan asuransi pengangguran (0,5%, untuk sektor swasta dan minyak) berlaku atas gaji sampai KWD 2.750. Keempatnya berjumlah 8% dari gaji sebulan sampai KWD 2.750. Iuran remunerasi finansial menambah 2,5% atas gaji sampai KWD 1.500 selama 18 tahun pertama masa iuran. Pada gaji KWD 18.000 setahun, gajinya KWD 1.500 sebulan, sehingga iurannya KWD 157,50 sebulan. Bagian pemberi kerja (10% dasar, 10% tambahan, 1% kenaikan pensiun, 0,5% pengangguran) dibayar terpisah dan tidak ditampilkan.</p>",
         "table": {
           "head": [
             "Bagian",
             "Iuran karyawan",
-            "Berlaku untuk gaji sebulan sampai"
+            "Gaji sebulan yang dikenai"
           ],
           "rows": [
             [
-              "Iuran pokok",
-              "8%",
-              "KWD 2.750"
+              "Asuransi dasar",
+              "5%",
+              "Sampai KWD 1.500"
             ],
             [
-              "Iuran tambahan",
+              "Asuransi tambahan",
+              "5%",
+              "KWD 1.500 sampai KWD 2.750"
+            ],
+            [
+              "Kenaikan pensiun",
               "2,5%",
-              "KWD 1.500"
+              "Sampai KWD 2.750"
+            ],
+            [
+              "Asuransi pengangguran",
+              "0,5%",
+              "Sampai KWD 2.750"
+            ],
+            [
+              "Remunerasi finansial (18 tahun pertama)",
+              "2,5%",
+              "Sampai KWD 1.500"
             ]
           ]
         },
         "cite": [
           {
-            "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
-            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+            "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
           },
           {
-            "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+            "name": "PIFSS, FAQ: unsur gaji untuk asuransi dasar dan tambahan",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx#:~:text=mandatory%20supplementary%20insurance"
           }
         ]
       },
@@ -60,8 +75,8 @@
             "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
           },
           {
-            "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+            "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
           },
           {
             "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, indemnitas akhir masa kerja bagi ekspatriat",
@@ -84,8 +99,8 @@
         "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes"
       },
       {
-        "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-        "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+        "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
       }
     ],
     "introCite": [
@@ -119,8 +134,8 @@
           "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
         },
         {
-          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
         }
       ]
     }
@@ -172,8 +187,8 @@
           "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
         },
         {
-          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
         }
       ]
     },
@@ -186,8 +201,8 @@
           "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
         },
         {
-          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
         }
       ]
     },
@@ -203,15 +218,15 @@
     },
     {
       "q": "Berapa total iuran PIFSS untuk warga Kuwait?",
-      "a": "<p>Warga Kuwait membayar 8% dari gaji sebulan sampai KWD 2.750, ditambah 2,5% atas KWD 1.500 pertama. Pada gaji sebulan KWD 1.500 atau kurang, potongan totalnya 10,5%, sehingga yang bergaji lebih rendah menanggung persentase lebih besar.</p>",
+      "a": "<p>Ada lima bagian. Asuransi dasar (5% sampai KWD 1.500), asuransi tambahan (5% atas gaji antara KWD 1.500 dan KWD 2.750), kenaikan pensiun (2,5%) dan asuransi pengangguran (0,5%) berjumlah 8% atas gaji sebulan sampai KWD 2.750. Iuran remunerasi finansial menambah 2,5% atas gaji sampai KWD 1.500 selama 18 tahun pertama masa iuran. Pada gaji sebulan KWD 1.500 atau kurang, potongan totalnya 10,5%, sehingga yang bergaji lebih rendah menanggung persentase lebih besar.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
           "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
         },
         {
-          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
-          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          "name": "PIFSS, FAQ pemberi kerja: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D#:~:text=monthly%20contribution%20ratios"
         }
       ]
     },

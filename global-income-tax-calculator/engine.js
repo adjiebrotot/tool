@@ -129,7 +129,7 @@ const SRC = {
   il:       { name: 'Illinois Department of Revenue', url: 'https://tax.illinois.gov/research/taxrates/income.html' },
   ftb:      { name: 'California FTB 2026 rate schedules', url: 'https://www.ftb.ca.gov/forms/2026/2026-540-tax-rate-schedules.pdf' },
   edd:      { name: 'California EDD (SDI)', url: 'https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/' },
-  nydtf:    { name: 'NY DTF schedules (via ablewealth.com, nycpaycheckcalc.com)', url: 'https://www.tax.ny.gov/' },
+  nydtf:    { name: 'NY DTF, IT-2105-I (2026) rate schedules', url: 'https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf' },
   nypfl:    { name: 'NY Paid Family Leave 2026', url: 'https://paidfamilyleave.ny.gov/2026' },
   nysif:    { name: 'NYSIF disability benefits', url: 'https://www.wcb.ny.gov/content/main/DisabilityBenefits/employee-disability-benefits.jsp' },
   djp:      { name: 'DJP (pajak.go.id)', url: 'https://pajak.go.id/en/node/90251' },
@@ -143,7 +143,7 @@ const SRC = {
   se:       { name: 'Skatteverket', url: 'https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html' },
   ee:       { name: 'EMTA', url: 'https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates' },
   vero:     { name: 'vero.fi', url: 'https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/' },
-  be:       { name: 'SPF Finances', url: 'https://taxsummaries.pwc.com/belgium/individual/taxes-on-personal-income' },
+  be:       { name: 'FPS Finance, tax rates', url: 'https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates' },
   onss:     { name: 'ONSS instructions (via monsalaire-net.be, Aureus Social)', url: 'https://www.socialsecurity.be/site_fr/employer/infos/employers_nsso/which-contributions.htm' },
   it:       { name: 'Agenzia delle Entrate', url: 'https://www.agenziaentrate.gov.it/portale/imposta-sul-reddito-delle-persone-fisiche-irpef-/aliquote-e-calcolo-dell-irpef' },
   inps:     { name: 'INPS Circ. 6/2026', url: 'https://www.inps.it/' },
@@ -155,7 +155,7 @@ const SRC = {
   legifr:   { name: 'Légifrance, CGI art. 155 B', url: 'https://www.legifrance.gouv.fr/' },
   segsoc:   { name: 'Seguridad Social, Orden PJC/297/2026', url: 'https://www.boe.es/buscar/act.php?id=BOE-A-2026-7296' },
   aeat:     { name: 'AEAT, Ley 35/2006 (LIRPF)', url: 'https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html' },
-  madrid:   { name: 'Comunidad de Madrid scale (via guiafiscal.es)', url: 'https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-madrid.html' },
+  madrid:   { name: 'Comunidad de Madrid, Ley 13/2023 (BOE-A-2024-5610)', url: 'https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf' },
   ptat:     { name: 'Portal das Finanças, DL 212/2026', url: 'https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs68.aspx' },
   ptded:    { name: 'CIRS art. 78 (via academiafinancas.com, simula.pt)', url: 'https://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/codigos_tributarios/cirs_rep/Pages/irs78b.aspx' },
   nta:      { name: 'National Tax Agency', url: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm' },
@@ -172,12 +172,12 @@ const SRC = {
   cn:       { name: 'IIT Law; MOF/STA Notice 2023 No. 29', url: 'https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html' },
   shhrss:   { name: 'Shanghai HRSS', url: 'https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html' },
   mof:      { name: 'MOF, NTB Taipei, Taiwan (China)', url: 'https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate' },
-  twins:    { name: 'BLI and NHIA', url: 'https://www.bli.gov.tw/en/0011813.html' },
-  gpssa:    { name: 'GPSSA (via countify.ae)', url: 'https://gpssa.gov.ae/' },
+  twins:    { name: 'BLI and NHIA', url: 'https://www.bli.gov.tw/0014162.html' },
+  gpssa:    { name: 'GPSSA, Federal Decree-Law 57 of 2023', url: 'https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023' },
   grsia:    { name: 'Qatar Law 1/2022 (via Al Tamimi)', url: 'https://www.grsia.gov.qa/' },
-  gosi:     { name: 'GOSI, RD M/273 (via Silberson, SCPL)', url: 'https://www.gosi.gov.sa/GOSIOnline/Annuity&locale=en_US' },
+  gosi:     { name: 'GOSI via Saudi Press Agency (RD M/273, 30 Jun 2025)', url: 'https://www.spa.gov.sa/N2349640' },
   sio:      { name: 'SIO Bahrain (via Mercans, calcmena.com)', url: 'https://www.sio.gov.bh/en/law-no-24-of-1976' },
-  pifss:    { name: 'PIFSS', url: 'https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx' },
+  pifss:    { name: 'PIFSS, monthly contribution ratios', url: 'https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx?PID=YYH9cYwZKl8mrS+LNcoYzQ%3D%3D' },
   spf:      { name: 'Social Protection Fund Oman', url: 'https://decree.om/2023/rd20230052/' },
   spec:     { name: 'Spec v11 model assumption', url: '' }
 };
@@ -1243,7 +1243,7 @@ function twTax(n){ for(const [up, r, d] of TW_BR) if(up == null || n <= up) retu
 function tw(g, k){
   const F = '1 Jan 2026', lines = [], m = g/12;
   lines.push(L('twLi', 'Labour insurance, employee share', 12*0.125*0.20*min(m, 45800), 'social', 'twins', 'secondary', F));
-  lines.push(L('twNhi', 'National health insurance, employee share', 12*0.0517*0.30*min(m, 219500), 'social', 'twins', 'secondary', F));
+  lines.push(L('twNhi', 'National health insurance, employee share', 12*0.0517*0.30*min(m, 313000), 'social', 'twins', 'secondary', F));
   if(k.twRes === 'nonres'){
     const r = m <= 44250 ? 0.06 : 0.18;
     lines.push(L('twNr', 'Withholding, non-resident (' + r*100 + '%, final)', r*g, 'tax', 'mof', 'official', F));
@@ -1269,7 +1269,8 @@ function gulf(country){
     lines.push(inGroup(L('gulfTax', 'No personal income tax on employment', 0, 'info', country === 'OM' ? 'spf' : 'spec', 'secondary', F), 'tax'));
     if(country === 'AE'){
       if(nat){ add('aeGpssa', 'GPSSA pension (11%, cap 70,000 a month)', 12*0.11*min(m, 70000), 'gpssa');
-        lines.push(L('aeEr', 'Employer 12.5% and government 2.5%, on top', 12*0.15*min(m, 70000), 'employer', 'gpssa', 'secondary', F)); }
+        // GPSSA: the employer owes 15%; below AED 20,000 a month the government pays 2.5 points of it.
+        lines.push(L('aeEr', m < 20000 ? 'Employer 12.5% and government 2.5%, on top' : 'Employer 15%, on top', 12*0.15*min(m, 70000), 'employer', 'gpssa', 'official', F)); }
       else lines.push(inGroup(L('aeEx', 'No pension contribution for expatriates (end-of-service gratuity instead)', 0, 'info', 'gpssa', 'secondary', F), 'social'));
     } else if(country === 'QA'){
       if(nat){ add('qaPen', 'GRSIA pension (7%, cap 100,000 a month)', 12*0.07*min(m, 100000), 'grsia');

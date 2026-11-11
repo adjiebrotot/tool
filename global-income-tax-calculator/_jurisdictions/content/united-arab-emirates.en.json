@@ -24,7 +24,7 @@
       },
       {
         "h3": "GPSSA pension for UAE nationals",
-        "html": "<p>Emirati nationals working in the private and federal sectors are covered by the General Pension and Social Security Authority (GPSSA). The calculator deducts 11% of salary from the national, on pay up to AED 70,000 a month. The employer adds 12.5% and the government a further 2.5%, a total of 15% on top, which is shown as an employer cost and does not reduce take-home pay.</p>",
+        "html": "<p>Emirati nationals working in the private and federal sectors are covered by the General Pension and Social Security Authority (GPSSA). The calculator deducts 11% of salary from the national, on pay up to AED 70,000 a month. The employer owes 15% on top. When the national's contribution salary is under AED 20,000 a month, the government pays 2.5 points of that 15%, so the employer bears 12.5%. Either way it is shown as an employer cost and does not reduce take-home pay.</p>",
         "table": {
           "head": [
             "Who pays",
@@ -39,20 +39,20 @@
             ],
             [
               "Employer",
-              "12.5%",
+              "15% (12.5% under AED 20,000 a month)",
               "AED 70,000 a month"
             ],
             [
               "Government",
-              "2.5%",
+              "2.5 of the employer's 15 points, under AED 20,000 a month",
               "AED 70,000 a month"
             ]
           ]
         },
         "cite": [
           {
-            "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
-            "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+            "name": "GPSSA, main features of Federal Decree-Law 57 of 2023 (rates and AED 70,000 ceiling)",
+            "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
           }
         ]
       },
@@ -81,8 +81,8 @@
         "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income#:~:text=Absence%20of%20taxation"
       },
       {
-        "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
-        "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+        "name": "GPSSA, main features of Federal Decree-Law 57 of 2023 (rates and AED 70,000 ceiling)",
+        "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
       },
       {
         "name": "UAE Government portal, End of service benefits for private sector workers",
@@ -110,12 +110,12 @@
     {
       "key": "national",
       "title": "Take-home pay for an Emirati national on AED 300,000, after GPSSA",
-      "intro": "<p>A UAE national on the same AED 300,000 has no income tax either, but pays 11% into GPSSA: AED 33,000 a year. You keep AED 267,000, or 89.0% of gross. The employer also pays 12.5% and the government 2.5% on top, AED 45,000 in total, which goes into your pension and does not come from your pay.</p>",
+      "intro": "<p>A UAE national on the same AED 300,000 has no income tax either, but pays 11% into GPSSA: AED 33,000 a year. You keep AED 267,000, or 89.0% of gross. At AED 25,000 a month the pay is above the AED 20,000 line for government support, so the employer pays the full 15% on top, AED 45,000, which goes into your pension and does not come from your pay.</p>",
       "after": "<p>The 11% is a pension contribution that builds a benefit, not a tax. The marginal rate is 11% until pay passes the monthly cap.</p>",
       "cite": [
         {
-          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, main features of Federal Decree-Law 57 of 2023 (rates and AED 70,000 ceiling)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     }
@@ -163,8 +163,8 @@
           "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
         },
         {
-          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, main features of Federal Decree-Law 57 of 2023 (rates and AED 70,000 ceiling)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     },
@@ -180,11 +180,11 @@
     },
     {
       "q": "Why do UAE nationals pay 11% when expats pay nothing?",
-      "a": "<p>Nationals are covered by the federal pension fund, GPSSA, and it is funded by contributions from the worker, the employer (12.5%) and the government (2.5%). Expats are outside that scheme, so there is nothing to deduct. The 11% is a pension saving that comes back as a benefit, but it does reduce your take-home pay.</p>",
+      "a": "<p>Nationals are covered by the federal pension fund, GPSSA, and it is funded by contributions from the worker, the employer (15%, of which the government pays 2.5 points when pay is under AED 20,000 a month). Expats are outside that scheme, so there is nothing to deduct. The 11% is a pension saving that comes back as a benefit, but it does reduce your take-home pay.</p>",
       "cite": [
         {
-          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
-          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          "name": "GPSSA, main features of Federal Decree-Law 57 of 2023 (rates and AED 70,000 ceiling)",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-reviews-most-prominent-features-federal-law-no-57-2023#:~:text=bears%2011%25%20and%20the%20employer"
         }
       ]
     },
