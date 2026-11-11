@@ -146,7 +146,7 @@
     {
       "key": "foreign-resident",
       "title": "Australian tax for a foreign resident: what A$100,000 pays",
-      "intro": "<p>A foreign resident for tax purposes, such as someone working in Australia for a short stint without making it their home, gets no tax-free threshold. The first A$135,000 is taxed at 30%, so A$100,000 produces A$30,000 of income tax and you keep A$70,000, or 70.0% of gross. That is about A$7,800 less than the resident on the same salary.</p>",
+      "intro": "<p>A foreign resident for tax purposes, such as someone working in Australia for a short stint without making it their home, gets no tax-free threshold. The first A$135,000 is taxed at 30%, so A$100,000 produces A$30,000 of income tax and you keep A$70,000, or 70.0% of gross. That is A$7,480 less than the resident on the same salary.</p>",
       "after": "<p>Because the flat 30% starts from the first dollar, a foreign resident's marginal and average rates are the same at this income.</p>"
     },
     {
