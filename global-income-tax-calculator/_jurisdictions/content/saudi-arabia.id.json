@@ -4,17 +4,17 @@
   "title": "Pajak Gaji di Arab Saudi 2026: Gaji Bersih dan GOSI",
   "h1": "Berapa gaji bersih di Arab Saudi (2026), dan apakah ada pajak penghasilan?",
   "description": "Arab Saudi tidak memungut pajak penghasilan atas gaji. Lihat gaji bersih WNI sebagai pekerja asing, iuran GOSI warga Saudi, dan uang akhir masa kerja.",
-  "lede": "<p>Arab Saudi tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji SAR240.000 setahun menerima seluruh SAR240.000. Warga negara Saudi dalam skema GOSI lama membayar 9,75% dari gaji, sekitar SAR23.400, sehingga gaji bersih (<em>take-home pay</em>) mereka SAR216.600. Pemberi kerja menanggung premi GOSI di luar gaji untuk kedua kelompok: 2% untuk risiko kecelakaan kerja bagi pekerja asing, dan porsi yang lebih besar bagi warga negara.</p>",
+  "lede": "<p>Arab Saudi tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji SAR240.000 setahun menerima seluruh SAR240.000. Warga negara Saudi dalam skema lama General Organization for Social Insurance (GOSI) membayar 9,75% dari gaji, sekitar SAR23.400, sehingga gaji bersih (<em>take-home pay</em>) mereka SAR216.600. Pemberi kerja menanggung premi GOSI di luar gaji untuk kedua kelompok: 2% untuk risiko kecelakaan kerja bagi pekerja asing, dan porsi yang lebih besar bagi warga negara.</p>",
   "law": {
-    "intro": "<p>Angka di halaman ini adalah aturan 2026 seperti yang dihitung <em>tool</em> ini. Individu tidak membayar pajak atas gaji di Arab Saudi, jadi tidak ada PPh 21, SPT, maupun bukti potong. Yang membedakan adalah jaminan sosial lewat General Organization for Social Insurance (GOSI): warga negara Saudi membayar iuran pensiun dan asuransi pengangguran, sedangkan pekerja asing tidak.</p>",
+    "intro": "<p>Angka di halaman ini adalah aturan 2026 seperti yang dihitung <em>tool</em> ini. Individu tidak membayar pajak atas gaji di Arab Saudi, jadi tidak ada PPh 21, SPT, maupun bukti potong. Yang membedakan satu pekerja dari yang lain adalah jaminan sosial lewat GOSI: warga negara Saudi membayar iuran pensiun dan asuransi pengangguran, sedangkan pekerja asing tidak.</p>",
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
-        "html": "<p>Gaji, tunjangan, dan bonus seorang individu tidak dipajaki, dan tidak ada potongan pajak di slip gajimu. Dua hal sering membuat orang salah paham. Pertama, zakat di Arab Saudi dikelola otoritas pajak ZATCA dan dikenakan pada warga negara Saudi serta Teluk dan usaha mereka, bukan dipotong dari gaji pekerja asing. Kedua, Arab Saudi memungut pajak pertambahan nilai (PPN) 15% pada barang dan jasa, yang kamu bayar saat berbelanja dan tidak masuk hitungan ini.</p>"
+        "html": "<p>Gaji, tunjangan, dan bonus seorang individu tidak dipajaki, dan tidak ada potongan pajak di slip gajimu. Dua hal sering membuat orang salah paham. Pertama, zakat di Arab Saudi dikelola otoritas pajak Zakat, Tax and Customs Authority (ZATCA) dan dikenakan pada usaha milik warga negara Saudi dan negara Teluk lain (GCC), bukan dipotong dari gaji pekerja asing. Di Indonesia zakat bisa mengurangi penghasilan kena pajak; di Arab Saudi tidak ada pajak penghasilan atas gaji, jadi pertanyaan itu tidak muncul. Kedua, Arab Saudi memungut pajak pertambahan nilai (PPN) 15% pada barang dan jasa, yang kamu bayar saat berbelanja dan tidak masuk hitungan ini.</p>"
       },
       {
         "h3": "GOSI untuk warga negara Saudi: skema lama dan peserta baru",
-        "html": "<p>Warga negara Saudi membayar iuran GOSI untuk gaji sampai SAR45.000 sebulan. Skema lama memotong 9,75% dari pekerja untuk pensiun dan SANED, yaitu asuransi pengangguran. Pada skema untuk peserta baru, iuran pekerja 10,25% sampai Juni 2026 dan 10,75% mulai Juli 2026. Skema mana yang berlaku bergantung pada kapan seseorang mulai berkontribusi, jadi cek riwayat GOSI-nya. <em>Tool</em> ini memuat keduanya sebagai pilihan.</p>",
+        "html": "<p>Warga negara Saudi membayar iuran GOSI untuk gaji sampai SAR45.000 sebulan. Skema lama memotong 9,75% dari pekerja untuk pensiun dan SANED, yaitu asuransi pengangguran. Pada skema untuk peserta baru, iuran pekerja 10,75% sejak Juli 2026 (sebelumnya 10,25%). Skema mana yang berlaku bergantung pada riwayat kepesertaanmu di GOSI. <em>Tool</em> ini memuat keduanya sebagai pilihan.</p>",
         "table": {
           "head": [
             "Skema",
@@ -42,7 +42,7 @@
       },
       {
         "h3": "Pekerja asing: premi risiko kerja dari pemberi kerja dan uang akhir masa kerja",
-        "html": "<p>Pekerja asing tidak membayar iuran pensiun dan pengangguran GOSI. Pemberi kerja membayar premi risiko kecelakaan kerja 2% dari upah atas namamu, sampai batas upah yang sama. Premi itu dibayar di luar gaji dan tidak mengurangi gaji bersihmu. Sebagai pengganti pensiun, hukum ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service award</em>): setengah bulan upah untuk tiap tahun pada lima tahun pertama, lalu satu bulan upah untuk tiap tahun sesudahnya.</p><p>Berbeda dengan JHT yang kamu cicil tiap bulan, uang ini dibayar sekali saat kamu keluar, dan jumlahnya bisa berkurang kalau kamu yang mengundurkan diri.</p>"
+        "html": "<p>Pekerja asing tidak membayar iuran pensiun dan pengangguran GOSI. Pemberi kerja membayar premi risiko kecelakaan kerja 2% dari upah atas namamu, sampai batas upah yang sama. Premi itu dibayar di luar gaji dan tidak mengurangi gaji bersihmu. Di luar GOSI, hukum ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service award</em>). Aturan ini berlaku juga bagi warga Saudi, tetapi bagi pekerja asing uang inilah yang praktis menjadi pengganti pensiun. Besarnya setengah bulan upah untuk tiap tahun pada lima tahun pertama, lalu satu bulan upah untuk tiap tahun sesudahnya.</p><p>Berbeda dengan JHT yang kamu cicil tiap bulan, uang ini dibayar sekali saat kamu keluar, dan jumlahnya bisa berkurang kalau kamu yang mengundurkan diri.</p>"
       }
     ],
     "sources": [
@@ -68,40 +68,36 @@
     {
       "key": "expat",
       "title": "Berapa gaji bersih pekerja asing di Arab Saudi dengan gaji SAR240.000?",
-      "intro": "<p>Pekerja asing dengan gaji SAR240.000 setahun, atau SAR20.000 sebulan, tidak membayar pajak penghasilan maupun iuran GOSI. Seluruh SAR240.000 menjadi gaji bersih, 100% dari gaji kotor. Pemberi kerja membayar premi risiko kecelakaan kerja 2% sebesar SAR4.800 di luar gaji, dan itu tidak memengaruhi gajimu. Gaji sebesar itu di Indonesia sudah terkena PPh 21 dan iuran BPJS, sedangkan di sini tidak ada potongan sama sekali.</p>",
+      "intro": "<p>Pekerja asing dengan gaji SAR240.000 setahun, atau SAR20.000 sebulan, tidak membayar pajak penghasilan maupun iuran GOSI. Seluruh SAR240.000 menjadi gaji bersih, 100% dari gaji kotor. Pemberi kerja membayar premi risiko kecelakaan kerja 2% sebesar SAR4.800 di luar gaji, dan itu tidak memengaruhi gajimu. Gaji sebesar itu di Indonesia sudah terkena PPh 21 dan iuran BPJS, sedangkan di Arab Saudi tidak ada potongan sama sekali.</p>",
       "after": "<p>Uang akhir masa kerja dibayar terpisah oleh pemberi kerja dan belum masuk angka ini.</p>"
     },
     {
       "key": "national",
       "title": "Berapa iuran GOSI warga Saudi dengan gaji SAR240.000 (skema lama)?",
       "intro": "<p>Contoh ini untuk warga negara Saudi, bukan WNI. Dalam skema lama tidak ada pajak penghasilan, tetapi 9,75% gaji masuk GOSI, yaitu SAR23.400 setahun. Gaji bersihnya SAR216.600 (90,3% dari gaji kotor), dan tarif marginalnya 9,8% (pembulatan dari 9,75%) selama gaji bulanan di bawah batas SAR45.000.</p>",
-      "after": "<p>Peserta baru GOSI membayar 10,25% sampai Juni 2026 dan 10,75% mulai Juli 2026, jadi sedikit lebih besar. Porsi iuran pemberi kerja untuk warga negara tidak ditampilkan di tabel.</p>"
+      "after": "<p>Peserta baru GOSI membayar 10,75% sejak Juli 2026 (sebelumnya 10,25%), jadi sedikit lebih besar. Porsi iuran pemberi kerja untuk warga negara tidak dihitung oleh <em>tool</em> ini.</p>"
     }
   ],
-  "strategyIntro": "<p>Karena tidak ada pajak penghasilan untuk dihemat, strategi bagi pekerja asing bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
+  "strategyIntro": "<p><strong>Strategi untuk pekerja asing.</strong> Karena tidak ada pajak penghasilan untuk dihemat, strategi bagi pekerja asing bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
   "strategies": [
     {
-      "h3": "Pastikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk setiap WNI yang akan bekerja di Arab Saudi. Gaji tanpa pajak di sana belum berarti bebas pajak di mana pun, karena Indonesia menilai statusmu dari lamamu berada di luar negeri dan tempat tinggalmu. Tanyakan ke DJP bagaimana mengurus perubahan status, dan apakah ada P3B yang berlaku.</p><p><strong>Catatan:</strong> aturannya ada di hukum Indonesia, bukan Arab Saudi. Simpan bukti perjalanan dan kontrak kerjamu.</p>"
-    },
-    {
-      "h3": "Siapkan pensiun sendiri dan jaga jaminan sosial di Indonesia",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pekerja asing yang menerima gaji utuh. Tanpa iuran pensiun, tabungan hari tua jadi urusanmu, misalnya lewat DPLK, reksa dana, atau SBN. Pekerja migran Indonesia juga dapat tetap ikut program BPJS Ketenagakerjaan khusus pekerja migran, jadi tanyakan ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan.</p>"
+      "h3": "Siapkan dana pensiun sendiri",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji utuh. Tanpa iuran pensiun, tabungan hari tua jadi urusanmu, misalnya lewat DPLK, reksa dana, atau SBN. Pekerja migran Indonesia (PMI) juga punya program BPJS Ketenagakerjaan tersendiri; tanyakan syarat kepesertaannya ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan.</p>"
     },
     {
       "h3": "Pahami aturan uang akhir masa kerja sebelum menandatangani kontrak",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk calon pekerja yang membandingkan tawaran. Hukum ketenagakerjaan Saudi membedakan jumlah yang kamu terima menurut lama bekerja dan alasan berhenti. Bila kamu mengundurkan diri sebelum dua tahun, hak itu umumnya nol, dan baru penuh setelah sepuluh tahun. Pastikan juga gaji dibayar lewat bank dalam program perlindungan upah (<em>Wage Protection System</em>).</p><p><strong>Catatan:</strong> pemutusan oleh pemberi kerja dihitung berbeda dari pengunduran diri. Minta aturannya ditulis jelas di kontrak.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> calon pekerja yang membandingkan tawaran. Hukum ketenagakerjaan Saudi membedakan jumlah yang kamu terima menurut lama bekerja dan alasan berhenti, jadi tanyakan rinciannya sebelum menandatangani. Pastikan juga gaji dibayar lewat bank dalam program perlindungan upah (<em>Wage Protection System</em>).</p><p><strong>Catatan:</strong> pemutusan oleh pemberi kerja dihitung berbeda dari pengunduran diri. Minta aturannya ditulis jelas di kontrak.</p>"
     },
     {
-      "h3": "Warga Saudi: cek skema GOSI yang berlaku",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk warga negara Saudi yang berganti pekerjaan atau baru mulai bekerja. Skema lama dan peserta baru punya iuran pekerja yang berbeda.</p><p><strong>Catatan:</strong> kamu tidak bisa memilih skemanya. Itu ditentukan riwayat GOSI-mu, jadi konfirmasikan ke GOSI atau pemberi kerja.</p>"
+      "h3": "Kirim uang ke Indonesia dengan biaya yang wajar",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja yang rutin mengirim uang ke keluarga di Indonesia. Bandingkan kurs dan biaya antara bank dan penyedia kiriman uang resmi, bukan hanya biaya transfernya, karena selisih kurs sering lebih besar.</p><p><strong>Catatan:</strong> kiriman uang tidak mengubah status pajakmu di Indonesia.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada upah, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
-    "<strong>Pajak Indonesia dan P3B.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Arab Saudi. Pajak Indonesia atas penghasilan di luar negeri dan perjanjian penghindaran pajak berganda tidak dihitung.",
-    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini mengambil status warga negara atau pekerja asing darimu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Pajak Indonesia.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Arab Saudi. Pajak Indonesia atas penghasilan di luar negeri dan persetujuan penghindaran pajak berganda (P3B) tidak dihitung.",
+    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini memakai status yang kamu pilih (warga negara atau pekerja asing) dan tidak menguji apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Hitungannya memakai gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrak tidak dipisahkan.",
     "<strong>Porsi pemberi kerja untuk warga negara.</strong> Untuk warga negara hanya sisi pekerja GOSI yang ditampilkan, bukan iuran pemberi kerja."
   ],
@@ -112,27 +108,27 @@
     },
     {
       "q": "Kenapa uang akhir masa kerja bisa berkurang kalau saya mengundurkan diri?",
-      "a": "<p>Hukum ketenagakerjaan Saudi menetapkan haknya menurut lama bekerja dan cara kontrak berakhir. Kalau pemberi kerja yang mengakhiri kontrak, kamu umumnya menerima hak penuh: setengah bulan upah per tahun pada lima tahun pertama, lalu satu bulan upah per tahun sesudahnya. Kalau kamu yang mengundurkan diri, hanya sebagian yang diterima: tidak ada sebelum dua tahun, sepertiga setelah dua sampai kurang dari lima tahun, dua pertiga setelah lima sampai kurang dari sepuluh tahun, dan penuh setelah sepuluh tahun.</p><p>Berbeda dengan pesangon PHK di Indonesia atau JHT yang saldonya milikmu sendiri, hak ini ditentukan hukum ketenagakerjaan dan kontrakmu. <em>Tool</em> ini tidak menghitungnya.</p>"
+      "a": "<p>Hukum ketenagakerjaan Saudi menetapkan haknya menurut lama bekerja dan cara kontrak berakhir. Kalau pemberi kerja yang mengakhiri kontrak, kamu umumnya menerima hak penuh: setengah bulan upah per tahun pada lima tahun pertama, lalu satu bulan upah per tahun sesudahnya. Kalau kamu yang mengundurkan diri, kamu menerima sebagian menurut lama bekerja: tidak ada sebelum dua tahun, sepertiga setelah dua sampai kurang dari lima tahun, dua pertiga setelah lima sampai kurang dari sepuluh tahun, dan penuh setelah sepuluh tahun.</p><p><em>Tool</em> ini tidak menghitung uang akhir masa kerja.</p>"
     },
     {
       "q": "Apakah pekerja asing membayar GOSI di Arab Saudi?",
-      "a": "<p>Bukan iuran pensiun atau pengangguran. Pemberi kerja membayar premi risiko kecelakaan kerja 2% (SAR4.800 untuk gaji SAR240.000) di luar gajimu, jadi gaji bersihmu tidak berkurang. Sebagai gantinya tidak ada pensiun GOSI untukmu: yang kamu terima saat kontrak berakhir adalah uang akhir masa kerja dari pemberi kerja.</p>"
+      "a": "<p>Tidak membayar iuran pensiun atau pengangguran, tetapi pemberi kerja membayar premi risiko kecelakaan kerja 2% (SAR4.800 untuk gaji SAR240.000) di luar gajimu, jadi gaji bersihmu tidak berkurang. Karena itu kamu tidak mendapat pensiun GOSI; yang kamu terima saat kontrak berakhir adalah uang akhir masa kerja dari pemberi kerja.</p>"
     },
     {
       "q": "Benarkah tidak ada pajak penghasilan di Arab Saudi, dan bagaimana dengan zakat?",
-      "a": "<p>Individu tidak membayar pajak penghasilan atas gaji. Zakat yang dikelola ZATCA berlaku untuk warga negara Saudi dan Teluk serta usaha mereka, bukan dipotong dari gaji pekerja asing. Pajak konsumsi tetap ada: PPN 15% atas barang dan jasa. Berbeda dengan Indonesia, tidak ada pengurang zakat di slip gajimu, karena memang tidak ada pajak penghasilan yang bisa dikurangi.</p>"
+      "a": "<p>Individu tidak membayar pajak penghasilan atas gaji. Zakat yang dikelola ZATCA berlaku untuk usaha milik warga negara Saudi dan negara Teluk lain (GCC), bukan dipotong dari gaji pekerja asing. Pajak konsumsi tetap ada: PPN 15% atas barang dan jasa.</p>"
     },
     {
       "q": "Apakah saya masih harus melapor SPT Tahunan di Indonesia kalau bekerja di Arab Saudi?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri, dan langkah yang lazim adalah memberi tahu DJP supaya kamu tidak dipajaki dua kali. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan, dan karena Arab Saudi tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan ke DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri.</p>"
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, bukan pada Arab Saudi. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri; tanyakan prosedurnya ke KPP atau DJP sebelum berangkat. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan. Karena Arab Saudi tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan juga ke KPP atau DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri.</p>"
     },
     {
       "q": "Apa beda skema GOSI lama dan peserta baru?",
-      "a": "<p>Keduanya untuk warga negara Saudi. Skema lama memotong 9,75% dari pekerja untuk pensiun dan SANED. Skema peserta baru memotong lebih besar dan naik bertahap: 10,25% sampai Juni 2026 dan 10,75% mulai Juli 2026. Batas upahnya sama, SAR45.000 sebulan. Tanggal mulai kamu terdaftar di GOSI yang menentukan skema mana yang berlaku.</p>"
+      "a": "<p>Keduanya untuk warga negara Saudi: skema lama memotong 9,75% dari pekerja, sedangkan skema peserta baru memotong 10,75% sejak Juli 2026 (sebelumnya 10,25%), sama-sama untuk gaji sampai SAR45.000 sebulan.</p>"
     },
     {
       "q": "Berapa sisa gaji di Arab Saudi dibandingkan dengan Jakarta?",
-      "a": "<p>Banyak paket sudah termasuk tempat tinggal, jadi bandingkan juga biaya hidupmu, bukan hanya gaji bersih. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan apa yang bisa dibeli sebuah gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+      "a": "<p>Banyak paket sudah termasuk tempat tinggal, jadi bandingkan juga biaya hidupmu, bukan hanya gaji bersih. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan daya beli gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
     }
   ],
   "lineLabels": {

@@ -4,7 +4,7 @@
   "title": "Pajak Gaji di Uni Emirat Arab 2026: Gaji Bersih WNI",
   "h1": "Berapa gaji bersih di Uni Emirat Arab (2026), dan apakah benar tanpa pajak?",
   "description": "UEA tidak memungut pajak penghasilan atas gaji. Lihat gaji bersih WNI sebagai pekerja asing, iuran GPSSA warga Emirat, dan gratuity akhir kontrak.",
-  "lede": "<p>Uni Emirat Arab (UEA) tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji AED300.000 setahun menerima seluruh AED300.000. Warga negara Emirat membayar iuran pensiun GPSSA 11% dari gaji, sekitar AED33.000, sehingga gaji bersih (<em>take-home pay</em>) mereka AED267.000. Pekerja asing tidak punya iuran pensiun dan memperoleh tunjangan akhir masa kerja (<em>gratuity</em>) dari pemberi kerja.</p>",
+  "lede": "<p>Uni Emirat Arab (UEA) tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji AED300.000 setahun menerima seluruh AED300.000. Warga negara Emirat membayar iuran pensiun GPSSA 11% dari gaji, sekitar AED33.000, sehingga gaji bersih (<em>take-home pay</em>) mereka AED267.000. Pekerja asing tidak punya iuran pensiun dan memperoleh uang akhir masa kerja (<em>gratuity</em>) dari pemberi kerja.</p>",
   "law": {
     "intro": "<p>Angka di halaman ini adalah aturan 2026 seperti yang dihitung <em>tool</em> ini. UEA tidak memajaki gaji, bonus, ataupun tunjangan seorang individu, dan tidak ada SPT tahunan untuk penghasilan dari pekerjaan. Artinya tidak ada PPh 21, tidak ada bukti potong, dan tidak ada tarif seperti Pasal 17 yang naik sampai 35%. Yang membedakan satu orang dari yang lain hanyalah jaminan sosial: warga negara UEA masuk sistem pensiun federal, sementara pekerja asing tidak.</p>",
     "blocks": [
@@ -14,7 +14,7 @@
       },
       {
         "h3": "Iuran pensiun GPSSA untuk warga negara UEA",
-        "html": "<p>Warga negara Emirat yang bekerja di sektor swasta dan pemerintah federal tercakup dalam General Pension and Social Security Authority (GPSSA). <em>Tool</em> ini memotong 11% gaji dari pekerja, untuk gaji sampai AED70.000 sebulan. Pemberi kerja menambah 12,5% dan pemerintah 2,5% lagi, total 15% di luar gaji. Bagian itu tampil sebagai biaya pemberi kerja dan tidak mengurangi gaji bersih. Cara kerjanya mirip JHT dan JP di BPJS Ketenagakerjaan, hanya porsi pekerjanya jauh lebih besar daripada 2% JHT dan 1% JP.</p>",
+        "html": "<p>Warga negara Emirat yang bekerja di sektor swasta dan pemerintah federal ikut dalam General Pension and Social Security Authority (GPSSA). <em>Tool</em> ini memotong 11% gaji dari pekerja, untuk gaji sampai AED70.000 sebulan. Pemberi kerja menambah 12,5% dan pemerintah 2,5% lagi, total 15% di luar gaji. Bagian itu dibayar di luar gajimu dan tidak mengurangi gaji bersih. Cara kerjanya mirip JHT dan JP di BPJS Ketenagakerjaan, hanya porsi pekerjanya jauh lebih besar daripada 2% JHT dan 1% JP.</p>",
         "table": {
           "head": [
             "Pembayar",
@@ -41,12 +41,8 @@
         }
       },
       {
-        "h3": "Pekerja asing: gratuity sebagai ganti pensiun",
-        "html": "<p>Pekerja asing tidak membayar iuran GPSSA. Sebagai gantinya, hukum ketenagakerjaan UEA mewajibkan pemberi kerja membayar tunjangan akhir masa kerja (<em>gratuity</em>) saat kontrak berakhir, dihitung dari gaji pokok dan lama bekerja. Untuk perusahaan di luar zona bebas, aturannya 21 hari gaji pokok per tahun pada lima tahun pertama dan 30 hari per tahun sesudahnya, dengan syarat sudah bekerja minimal setahun dan batas total setara gaji dua tahun. Beberapa zona bebas, seperti Dubai International Financial Centre (DIFC), membolehkan pemberi kerja memakai skema tabungan kerja sebagai pengganti <em>gratuity</em>.</p><p>Bedanya dengan Indonesia: <em>gratuity</em> bukan tabungan yang kamu cicil tiap bulan seperti JHT, dan bukan pesangon yang hanya muncul saat PHK. Uangnya dibayar sekali oleh pemberi kerja saat kamu keluar. Cek kontrakmu untuk tahu aturan mana yang berlaku.</p>"
-      },
-      {
-        "h3": "Status pajakmu di Indonesia tetap urusanmu",
-        "html": "<p>Tanpa pajak di UEA, pertanyaan pajaknya pindah ke Indonesia: status subjek pajak dalam negeri atau luar negeri menentukan apakah gaji ini dilaporkan di SPT Tahunan. <em>Tool</em> ini tidak menghitung P3B maupun pajak Indonesia atas penghasilan di luar negeri.</p>"
+        "h3": "Pekerja asing: <em>gratuity</em> sebagai ganti pensiun",
+        "html": "<p>Pekerja asing tidak membayar iuran GPSSA. Sebagai gantinya, hukum ketenagakerjaan UEA mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>gratuity</em>) saat kontrak berakhir, dihitung dari gaji pokok dan lama bekerja. Untuk perusahaan di luar zona bebas, aturannya 21 hari gaji pokok per tahun pada lima tahun pertama dan 30 hari per tahun sesudahnya, dengan syarat sudah bekerja minimal setahun dan batas total setara gaji dua tahun. Zona bebas seperti Dubai International Financial Centre (DIFC) punya skema tabungan kerja sendiri (DEWS) sebagai pengganti <em>gratuity</em> bagi sebagian karyawan, jadi cek kontrakmu.</p><p>Bedanya dengan Indonesia: <em>gratuity</em> bukan tabungan yang kamu cicil tiap bulan seperti JHT, dan bukan pesangon yang hanya muncul saat PHK. Uangnya dibayar sekali oleh pemberi kerja saat kamu keluar. Cek kontrakmu untuk tahu aturan mana yang berlaku.</p>"
       }
     ],
     "sources": [
@@ -73,39 +69,35 @@
       "key": "expat",
       "title": "Berapa pajak gaji AED300.000 setahun untuk WNI yang bekerja di UEA?",
       "intro": "<p>Contoh ini untuk pekerja asing dengan gaji AED300.000 setahun, atau AED25.000 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran pensiun, sehingga gaji bersihnya tetap AED300.000 (100% dari gaji kotor). Tarif marginalnya 0%, jadi kenaikan gaji seluruhnya kamu terima. Bandingkan dengan gaji sebesar itu di Indonesia: ada PPh 21 yang dipotong tiap bulan, ditambah iuran BPJS.</p>",
-      "after": "<p>Harganya adalah tidak ada pensiun negara yang kamu bangun. <em>Gratuity</em> dibayar pemberi kerja saat kontrak berakhir dan belum masuk angka ini.</p>"
+      "after": "<p>Konsekuensinya, kamu tidak ikut mengumpulkan pensiun dari negara. <em>Gratuity</em> dibayar pemberi kerja saat kontrak berakhir dan belum masuk angka ini.</p>"
     },
     {
       "key": "national",
-      "title": "Gaji bersih warga Emirat dengan gaji AED300.000 setelah iuran GPSSA",
+      "title": "Berapa gaji bersih warga Emirat bergaji AED300.000 setelah iuran GPSSA?",
       "intro": "<p>Contoh ini untuk warga negara UEA, bukan WNI. Dengan gaji AED300.000 yang sama, tidak ada pajak penghasilan, tetapi 11% masuk GPSSA, yaitu AED33.000 setahun. Gaji bersihnya AED267.000 (89,0% dari gaji kotor). Pemberi kerja menambah 12,5% dan pemerintah 2,5%, total AED45.000 di luar gaji, dan uang itu ikut masuk ke pensiunnya.</p>",
       "after": "<p>Angka 11% adalah iuran pensiun yang kelak kembali sebagai manfaat, bukan pajak. Tarif marginalnya 11,0% sampai gaji menyentuh batas bulanan.</p>"
     }
   ],
-  "strategyIntro": "<p>Cara berikut lazim dan sah bagi pekerja asing. Karena tidak ada pajak untuk dihemat, strateginya bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
+  "strategyIntro": "<p><strong>Strategi untuk pekerja asing.</strong> Karena tidak ada pajak untuk dihemat, strateginya bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
   "strategies": [
     {
-      "h3": "Urus status pajak di Indonesia sebelum berangkat",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk semua WNI yang akan bekerja di UEA. Gaji tanpa pajak di UEA belum berarti bebas pajak sama sekali, karena status subjek pajak dalam negeri atau luar negeri di Indonesia bergantung pada lamamu berada di luar negeri dan tempat tinggalmu. Hubungi DJP untuk mengurus statusnya, dan tanyakan apakah ada P3B yang relevan.</p><p><strong>Catatan:</strong> aturan itu ada di hukum Indonesia, bukan di UEA. Simpan paspor dan bukti perjalananmu.</p>"
+      "h3": "Siapkan dana pensiun sendiri",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji utuh. Tanpa iuran pensiun, menyiapkan hari tua jadi tugasmu sendiri, misalnya lewat DPLK, reksa dana, atau SBN di Indonesia. Pekerja migran Indonesia (PMI) juga punya program BPJS Ketenagakerjaan tersendiri; tanyakan syarat kepesertaannya ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> <em>gratuity</em> bukan rencana pensiun. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan, atau baca <a href=\"https://blog.adjiebrotots.com/id/pensiun-tanpa-jadi-pns/\">pensiun tanpa jadi PNS</a>.</p>"
     },
     {
-      "h3": "Tabung dan investasikan sendiri selisihnya",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pekerja asing yang menerima gaji utuh. Tanpa iuran pensiun, menyiapkan hari tua jadi tugasmu sendiri, misalnya lewat DPLK, reksa dana, atau SBN di Indonesia. Pekerja migran Indonesia juga dapat tetap ikut program BPJS Ketenagakerjaan khusus pekerja migran, jadi tanyakan ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> <em>gratuity</em> bukan rencana pensiun. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan, atau baca <a href=\"https://blog.adjiebrotots.com/id/pensiun-tanpa-jadi-pns/\">pensiun tanpa jadi PNS</a>.</p>"
+      "h3": "Baca kontrak: <em>gratuity</em>, tunjangan, dan tiket pulang",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang membandingkan tawaran. Aturan <em>gratuity</em>, skema tabungan zona bebas, dan pembagian antara gaji pokok dan tunjangan menentukan berapa yang kamu terima saat keluar. Pastikan juga gaji dibayar lewat sistem perlindungan upah (<em>Wage Protection System</em>) dan tertulis siapa yang menanggung tiket pulang.</p><p><strong>Catatan:</strong> <em>gratuity</em> biasanya dihitung dari gaji pokok, sehingga paket bergaji pokok kecil dengan tunjangan besar bisa memberi <em>gratuity</em> lebih sedikit. Minta rinciannya secara tertulis.</p>"
     },
     {
-      "h3": "Baca kontrak: gratuity, tunjangan, dan tiket pulang",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk siapa pun yang membandingkan tawaran. Aturan <em>gratuity</em>, skema tabungan zona bebas, dan pembagian antara gaji pokok dan tunjangan menentukan berapa yang kamu terima saat keluar. Pastikan juga gaji dibayar lewat sistem perlindungan upah (<em>Wage Protection System</em>) dan tertulis siapa yang menanggung tiket pulang.</p><p><strong>Catatan:</strong> <em>gratuity</em> biasanya dihitung dari gaji pokok, sehingga paket bergaji pokok kecil dengan tunjangan besar bisa memberi <em>gratuity</em> lebih sedikit. Minta rinciannya secara tertulis.</p>"
-    },
-    {
-      "h3": "Kirim uang pulang dengan biaya yang masuk akal",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pekerja yang rutin mengirim uang ke keluarga di Indonesia. Bandingkan kurs dan biaya antara bank dan penyedia kiriman uang resmi, bukan hanya biaya transfernya, karena selisih kurs sering lebih besar.</p><p><strong>Catatan:</strong> kiriman uang tidak mengubah status pajakmu di Indonesia, yang ditentukan oleh lamamu berada di luar negeri dan tempat tinggalmu.</p>"
+      "h3": "Kirim uang ke Indonesia dengan biaya yang wajar",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja yang rutin mengirim uang ke keluarga di Indonesia. Bandingkan kurs dan biaya antara bank dan penyedia kiriman uang resmi, bukan hanya biaya transfernya, karena selisih kurs sering lebih besar.</p><p><strong>Catatan:</strong> kiriman uang tidak mengubah status pajakmu di Indonesia.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
-    "<strong>Gratuity tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
-    "<strong>Pajak Indonesia dan P3B.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil UEA. Pajak Indonesia atas penghasilan di luar negeri dan perjanjian penghindaran pajak berganda tidak dihitung.",
-    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini mengambil status warga negara atau pekerja asing darimu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong><em>Gratuity</em> tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
+    "<strong>Pajak Indonesia.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil UEA. Pajak Indonesia atas penghasilan di luar negeri dan persetujuan penghindaran pajak berganda (P3B) tidak dihitung.",
+    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini memakai status yang kamu pilih (warga negara atau pekerja asing) dan tidak menguji apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Hitungannya memakai gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrak tidak dipisahkan.",
     "<strong>Tambahan warga negara.</strong> Hanya iuran standar pekerja 11% dan bagian 15% pemberi kerja dan pemerintah yang dihitung."
   ],
@@ -115,12 +107,12 @@
       "a": "<p>Gaji tidak dikenai pajak penghasilan di sana. Pekerja asing dengan gaji AED300.000 setahun menerima seluruhnya, sedangkan warga negara Emirat membayar 11% ke GPSSA dan menerima AED267.000. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Berapa gratuity yang saya terima kalau kontrak di UEA selesai?",
-      "a": "<p>Sebagai gambaran, untuk perusahaan di luar zona bebas: dengan gaji pokok AED10.000 sebulan dan lima tahun bekerja, hitungannya 21 hari gaji pokok per tahun, yaitu sekitar AED7.000 per tahun atau AED35.000 secara total. Mulai tahun keenam, tiap tahun dihitung 30 hari, dengan batas setara gaji dua tahun. Dasarnya gaji pokok, bukan tunjangan, sehingga isi kontrak sangat berpengaruh.</p><p>Zona bebas seperti DIFC punya aturan sendiri, termasuk skema tabungan pengganti. <em>Tool</em> ini tidak menghitung <em>gratuity</em> karena bergantung pada kontrakmu.</p>"
+      "q": "Berapa <em>gratuity</em> yang saya terima kalau kontrak di UEA selesai?",
+      "a": "<p>Sebagai ilustrasi, bukan angka pasti: anggap gaji pokokmu AED10.000 sebulan dan kamu bekerja lima tahun di perusahaan di luar zona bebas. Hitungannya 21 hari gaji pokok per tahun, yaitu sekitar AED7.000 per tahun atau AED35.000 secara total. Mulai tahun keenam, tiap tahun dihitung 30 hari, dengan batas setara gaji dua tahun. Dasarnya gaji pokok, bukan tunjangan, sehingga isi kontrak sangat berpengaruh.</p><p>Zona bebas seperti DIFC punya aturan sendiri, termasuk skema tabungan pengganti. <em>Tool</em> ini tidak menghitung <em>gratuity</em> karena bergantung pada kontrakmu.</p>"
     },
     {
       "q": "Kenapa warga Emirat membayar 11% sedangkan pekerja asing tidak?",
-      "a": "<p>Warga negara tercakup dalam dana pensiun federal GPSSA, yang dibiayai iuran pekerja, pemberi kerja (12,5%), dan pemerintah (2,5%). Pekerja asing berada di luar skema itu, jadi tidak ada yang dipotong. Angka 11% adalah tabungan pensiun yang kembali sebagai manfaat, tetapi tetap mengurangi gaji bersih.</p>"
+      "a": "<p>Warga negara ikut dalam dana pensiun federal GPSSA, yang dibiayai iuran pekerja, pemberi kerja (12,5%), dan pemerintah (2,5%). Pekerja asing berada di luar skema itu, jadi tidak ada yang dipotong. Iuran itu tetap mengurangi gaji bersihmu.</p>"
     },
     {
       "q": "Benarkah tidak ada pajak sama sekali di UEA?",
@@ -128,18 +120,18 @@
     },
     {
       "q": "Apakah saya masih harus melapor SPT Tahunan di Indonesia kalau bekerja di UEA?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri, dan langkah yang lazim adalah memberi tahu DJP supaya kamu tidak dipajaki dua kali. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan. Karena UEA tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan ke DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri, jadi tanyakan statusmu ke kantor pajak sebelum berangkat.</p>"
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, bukan pada UEA. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri; tanyakan prosedurnya ke KPP atau DJP sebelum berangkat. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan. Karena UEA tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan juga ke KPP atau DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri.</p>"
     },
     {
       "q": "Berapa sisa gaji di UEA dibandingkan dengan di Jakarta?",
-      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya sewa tempat tinggal sering jadi selisih terbesar. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan apa yang bisa dibeli sebuah gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+      "a": "<p>Gaji bersih baru separuh gambaran, karena selisih terbesarnya biasanya ada di sewa tempat tinggal. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan daya beli gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
     }
   ],
   "lineLabels": {
     "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
     "GPSSA pension (11%, cap 70,000 a month)": "Pensiun GPSSA (11%, batas upah AED70.000 sebulan)",
     "Employer 12.5% and government 2.5%, on top": "Pemberi kerja 12,5% dan pemerintah 2,5%, dibayar di luar gaji",
-    "No pension contribution for expatriates (end-of-service gratuity instead)": "Tanpa iuran pensiun untuk pekerja asing (diganti gratuity akhir masa kerja)"
+    "No pension contribution for expatriates (end-of-service gratuity instead)": "Tanpa iuran pensiun untuk pekerja asing"
   },
   "bmc": "Terbantu? Traktir segelas chai karak."
 }

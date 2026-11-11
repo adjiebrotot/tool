@@ -4,17 +4,17 @@
   "title": "Pajak Gaji di Qatar 2026: Gaji Bersih Pekerja Asing",
   "h1": "Berapa gaji bersih di Qatar (2026), dan apakah ada pajak penghasilan?",
   "description": "Qatar tidak memungut pajak penghasilan atas gaji. Lihat gaji bersih WNI sebagai pekerja asing, iuran pensiun GRSIA warga Qatar, dan gratuity akhir kontrak.",
-  "lede": "<p>Qatar tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji QAR240.000 setahun menerima seluruh QAR240.000. Warga negara Qatar membayar iuran pensiun GRSIA 7% dari gaji, yaitu QAR16.800, sehingga gaji bersih (<em>take-home pay</em>) mereka QAR223.200. Pemberi kerja menambah 14% di luar gaji untuk warga negara, sedangkan pekerja asing menerima tunjangan akhir masa kerja (<em>gratuity</em>) sebagai pengganti pensiun.</p>",
+  "lede": "<p>Qatar tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji QAR240.000 setahun menerima seluruh QAR240.000. Warga negara Qatar membayar iuran pensiun GRSIA 7% dari gaji, yaitu QAR16.800, sehingga gaji bersih (<em>take-home pay</em>) mereka QAR223.200. Pemberi kerja menambah 14% di luar gaji untuk warga negara, sedangkan pekerja asing menerima uang akhir masa kerja (<em>gratuity</em>) sebagai pengganti pensiun.</p>",
   "law": {
     "intro": "<p>Angka di halaman ini adalah aturan 2026 seperti yang dihitung <em>tool</em> ini. Qatar tidak memajaki gaji individu, jadi tidak ada PPh 21, SPT, atau bukti potong untuk penghasilan dari pekerjaan. Yang membedakan satu pekerja dari yang lain hanya dana pensiun: warga negara Qatar berkontribusi lewat General Retirement and Social Insurance Authority (GRSIA), sedangkan pekerja asing tidak.</p>",
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
-        "html": "<p>Qatar tidak memajaki gaji, tunjangan, maupun bonus individu, jadi tidak ada lapisan tarif, tidak ada penghasilan tidak kena pajak seperti PTKP, dan tidak ada potongan pajak di slip gajimu. Karena tidak ada pajak penghasilan, tidak ada pula zakat atau iuran lain yang dipotong dari gaji pekerja asing dan perlu kamu klaim sebagai pengurang.</p>"
+        "html": "<p>Qatar tidak memajaki gaji individu, termasuk tunjangan dan bonus, jadi tidak ada lapisan tarif, tidak ada penghasilan tidak kena pajak seperti PTKP, dan tidak ada potongan pajak di slip gajimu.</p>"
       },
       {
         "h3": "Iuran pensiun GRSIA untuk warga negara Qatar",
-        "html": "<p><em>Tool</em> ini memotong 7% gaji dari warga negara Qatar untuk pensiun GRSIA, untuk gaji sampai QAR100.000 sebulan. Pemberi kerja menambah 14% di luar gaji. Porsi pemberi kerja tampil sebagai biaya dan tidak mengurangi gaji bersih. Skemanya serupa JHT dan JP di BPJS Ketenagakerjaan, tetapi porsi pekerja dan pemberi kerjanya jauh lebih besar.</p>",
+        "html": "<p><em>Tool</em> ini memotong 7% gaji warga negara Qatar sebagai iuran pensiun GRSIA, dihitung dari gaji sampai QAR100.000 sebulan. Pemberi kerja menambah 14% di luar gaji. Porsi pemberi kerja dibayar di luar gaji dan tidak mengurangi gaji bersih. Skemanya serupa JHT dan JP di BPJS Ketenagakerjaan, tetapi porsi pekerja dan pemberi kerjanya jauh lebih besar.</p>",
         "table": {
           "head": [
             "Pembayar",
@@ -36,12 +36,8 @@
         }
       },
       {
-        "h3": "Pekerja asing: tanpa pensiun, ada gratuity",
-        "html": "<p>Pekerja asing tidak membayar iuran GRSIA. Sebagai gantinya, hukum ketenagakerjaan Qatar mewajibkan pemberi kerja membayar tunjangan akhir masa kerja (<em>gratuity</em>) saat kontrak berakhir, dihitung dari gaji pokok dan lama bekerja. Syarat umumnya sudah bekerja minimal setahun, dengan hak sekurang-kurangnya tiga pekan gaji pokok untuk tiap tahun masa kerja, dan kontrak boleh memberi lebih.</p><p>Uang ini dibayar sekali saat kamu keluar, jadi bukan seperti JHT yang kamu cicil tiap bulan dan bukan pula pesangon PHK. Karena dasarnya gaji pokok, besar-kecilnya gaji pokok di kontrak sangat berpengaruh.</p>"
-      },
-      {
-        "h3": "Status pajakmu di Indonesia tetap urusanmu",
-        "html": "<p>Tanpa pajak di Qatar, pertanyaan pajaknya pindah ke Indonesia: status subjek pajak dalam negeri atau luar negeri menentukan apakah gaji ini dilaporkan di SPT Tahunan. <em>Tool</em> ini tidak menghitung P3B maupun pajak Indonesia atas penghasilan di luar negeri.</p>"
+        "h3": "Pekerja asing: tanpa pensiun, ada <em>gratuity</em>",
+        "html": "<p>Pekerja asing tidak membayar iuran GRSIA. Sebagai gantinya, hukum ketenagakerjaan Qatar mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>gratuity</em>) saat kontrak berakhir, dihitung dari gaji pokok dan lama bekerja. Syarat umumnya sudah bekerja minimal setahun, dengan hak sekurang-kurangnya tiga pekan gaji pokok untuk tiap tahun masa kerja, dan kontrak boleh memberi lebih.</p><p>Uang ini dibayar sekali saat kamu keluar, jadi bukan seperti JHT yang kamu cicil tiap bulan dan bukan pula pesangon PHK. Karena dasarnya gaji pokok, besar-kecilnya gaji pokok di kontrak sangat berpengaruh.</p>"
       }
     ],
     "sources": [
@@ -77,26 +73,26 @@
       "after": "<p>Angka 7% adalah iuran pensiun, bukan pajak. Tarif marginalnya 7,0% sampai gaji menyentuh batas QAR100.000 sebulan.</p>"
     }
   ],
-  "strategyIntro": "<p>Karena tidak ada pajak penghasilan untuk dihemat, strategi bagi pekerja asing bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
+  "strategyIntro": "<p><strong>Strategi untuk pekerja asing.</strong> Karena tidak ada pajak penghasilan untuk dihemat, strategi bagi pekerja asing bergeser ke status pajak, tabungan, dan isi kontrak.</p>",
   "strategies": [
     {
-      "h3": "Tanyakan status pajakmu ke DJP sebelum berangkat",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk setiap WNI yang akan bekerja di Qatar. Tanpa pajak di Qatar, yang menentukan adalah apakah Indonesia masih memandangmu sebagai subjek pajak dalam negeri, dan itu bergantung pada lamamu berada di luar negeri serta tempat tinggalmu. DJP bisa menjelaskan cara mengurus statusnya dan apakah ada P3B yang berlaku.</p><p><strong>Catatan:</strong> aturannya ada di hukum Indonesia, bukan Qatar. Simpan bukti perjalanan dan kontrakmu.</p>"
-    },
-    {
       "h3": "Pisahkan tabungan hari tua sejak gaji pertama",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pekerja asing yang menerima gaji utuh. Tanpa potongan pensiun, kebiasaan menabung harus datang darimu, misalnya otomatis ke DPLK, reksa dana, atau SBN di Indonesia. Pekerja migran Indonesia juga dapat tetap ikut program BPJS Ketenagakerjaan khusus pekerja migran, jadi tanyakan ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> <em>gratuity</em> bukan rencana pensiun, dan tempat kamu berinvestasi menentukan pajak atas hasilnya. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji utuh. Tanpa potongan pensiun, kamu sendiri yang harus disiplin menabung, misalnya lewat debit otomatis ke DPLK, reksa dana, atau SBN di Indonesia. Pekerja migran Indonesia (PMI) juga punya program BPJS Ketenagakerjaan tersendiri; tanyakan syarat kepesertaannya ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> <em>gratuity</em> bukan rencana pensiun, dan tempat kamu berinvestasi menentukan pajak atas hasilnya. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan.</p>"
     },
     {
-      "h3": "Pahami cara hitung gratuity sebelum menandatangani kontrak",
-      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk calon pekerja yang membandingkan tawaran. <em>Gratuity</em> adalah satu-satunya manfaat keluar dari pemberi kerja, dan dasarnya gaji pokok serta lama bekerja. Pastikan juga gaji dibayar lewat sistem perlindungan upah (<em>Wage Protection System</em>) dan tertulis siapa yang menanggung tiket pulang.</p><p><strong>Catatan:</strong> kontrak dengan gaji pokok kecil dan tunjangan besar bisa memberi <em>gratuity</em> lebih sedikit, jadi tanyakan rumusnya sebelum menandatangani.</p>"
+      "h3": "Pahami cara hitung <em>gratuity</em> sebelum menandatangani kontrak",
+      "html": "<p><strong>Cocok untuk:</strong> calon pekerja yang membandingkan tawaran. <em>Gratuity</em> adalah pembayaran utama dari pemberi kerja saat kamu keluar, dan dasarnya gaji pokok serta lama bekerja. Pastikan juga gaji dibayar lewat sistem perlindungan upah (<em>Wage Protection System</em>) dan tertulis siapa yang menanggung tiket pulang.</p><p><strong>Catatan:</strong> kontrak dengan gaji pokok kecil dan tunjangan besar bisa memberi <em>gratuity</em> lebih sedikit, jadi tanyakan rumusnya sebelum menandatangani.</p>"
+    },
+    {
+      "h3": "Kirim uang ke Indonesia dengan biaya yang wajar",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja yang rutin mengirim uang ke keluarga di Indonesia. Bandingkan kurs dan biaya antara bank dan penyedia kiriman uang resmi, bukan hanya biaya transfernya, karena selisih kurs sering lebih besar.</p><p><strong>Catatan:</strong> kiriman uang tidak mengubah status pajakmu di Indonesia.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
-    "<strong>Gratuity tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
-    "<strong>Pajak Indonesia dan P3B.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Qatar. Pajak Indonesia atas penghasilan di luar negeri dan perjanjian penghindaran pajak berganda tidak dihitung.",
-    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini mengambil status warga negara atau pekerja asing darimu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong><em>Gratuity</em> tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
+    "<strong>Pajak Indonesia.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Qatar. Pajak Indonesia atas penghasilan di luar negeri dan persetujuan penghindaran pajak berganda (P3B) tidak dihitung.",
+    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini memakai status yang kamu pilih (warga negara atau pekerja asing) dan tidak menguji apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Hitungannya memakai gaji kotor yang kamu masukkan. Tunjangan rumah, makan, atau tiket pulang di kontrak tidak dipisahkan."
   ],
   "faq": [
@@ -105,24 +101,24 @@
       "a": "<p>Pekerja asing tidak membayar pajak penghasilan, jadi gaji QAR240.000 diterima utuh. Warga negara Qatar membayar 7% ke GRSIA dan menerima QAR223.200. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Apakah gratuity di Qatar pengganti pensiun, dan kapan dibayar?",
+      "q": "Apakah <em>gratuity</em> di Qatar pengganti pensiun, dan kapan dibayar?",
       "a": "<p>Bagi pekerja asing, secara praktis ya. Mereka tidak masuk GRSIA, sehingga pemberi kerja membayar sekaligus saat kontrak berakhir, sekurang-kurangnya tiga pekan gaji pokok untuk tiap tahun masa kerja bila sudah bekerja minimal setahun. Uangnya datang sekali saat kamu pergi, bukan bulanan setelah pensiun. Karena dasarnya gaji pokok, selisih antara gaji pokok dan tunjangan di kontrak langsung memengaruhi jumlahnya. <em>Tool</em> ini tidak menghitungnya.</p>"
     },
     {
       "q": "Kenapa warga Qatar membayar 7% sedangkan pemberi kerja 14%?",
-      "a": "<p>Bagi warga negara, GRSIA dibiayai iuran bersama. Pekerja membayar 7% dan pemberi kerja 14%, keduanya untuk gaji sampai QAR100.000 sebulan. Hanya 7% yang mengurangi gaji bersihmu, sedangkan 14% dibayar di atas gajimu dan ditampilkan terpisah. Skemanya mirip BPJS Ketenagakerjaan, tetapi porsinya jauh lebih besar.</p>"
+      "a": "<p>Bagi warga negara, GRSIA dibiayai iuran bersama. Pekerja membayar 7% dan pemberi kerja 14%, keduanya untuk gaji sampai QAR100.000 sebulan. Hanya 7% yang mengurangi gaji bersihmu, sedangkan 14% dibayar di luar gajimu dan ditampilkan terpisah.</p>"
     },
     {
       "q": "Benarkah tidak ada pajak penghasilan di Qatar?",
-      "a": "<p>Atas gaji, tidak ada. Negara tidak memajaki penghasilan dari pekerjaan bagi individu, dan tidak ada SPT untuk gaji. Berbeda dengan Indonesia, tidak ada PPh 21 yang dipotong dan tidak ada bukti potong yang perlu kamu simpan. Yang tetap perlu kamu cek adalah status pajakmu di Indonesia.</p>"
+      "a": "<p>Atas gaji, tidak ada. Qatar tidak memajaki penghasilan individu dari pekerjaan, jadi tidak ada PPh 21 dan tidak ada bukti potong yang perlu kamu simpan.</p>"
     },
     {
       "q": "Apakah saya masih harus melapor SPT Tahunan di Indonesia kalau bekerja di Qatar?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri, dan langkah yang lazim adalah memberi tahu DJP supaya kamu tidak dipajaki dua kali. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan, dan karena Qatar tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan ke DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri.</p>"
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, bukan pada Qatar. Orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia dapat menjadi subjek pajak luar negeri; tanyakan prosedurnya ke KPP atau DJP sebelum berangkat. Kalau status subjek pajak dalam negeri tetap melekat, penghasilan dari luar negeri dilaporkan di SPT Tahunan. Karena Qatar tidak memungut pajak atas gaji, tidak ada pajak luar negeri yang bisa dikreditkan. Soal P3B, tanyakan juga ke KPP atau DJP.</p><p><em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan di luar negeri.</p>"
     },
     {
       "q": "Berapa sisa gaji di Qatar dibandingkan dengan di Jakarta?",
-      "a": "<p>Gaji bersih hanya separuh cerita, apalagi kalau paket sudah termasuk tempat tinggal. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan apa yang bisa dibeli sebuah gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+      "a": "<p>Gaji bersih baru separuh gambaran, apalagi kalau paket sudah termasuk tempat tinggal. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan daya beli gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
     }
   ],
   "lineLabels": {
