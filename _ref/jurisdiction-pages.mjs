@@ -52,9 +52,10 @@ const T = {
     open: 'Open the calculator',
     openOwn: 'Work out your own pay',
     langOther: 'Versi Indonesia', langOtherShort: 'ID', langOtherTitle: 'Baca dalam bahasa Indonesia',
-    toc: ['What the law says', 'Worked examples', 'Paying less tax, legally', 'What the calculator leaves out', 'Questions'],
-    h2: ['What the law says', 'Worked examples', 'How to pay less tax, legally', 'What the calculator does not model', 'Frequently asked questions'],
+    toc: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator leaves out', 'Questions'],
+    h2: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator does not model', 'Frequently asked questions'],
     sources: 'Sources',
+    cite: 'Source:',
     rulesLine: (year, place) => `Rules for ${year}${place ? ', ' + place : ''}. Every amount below is worked out by the calculator's own engine, the same one the tool runs.`,
     gross: 'Gross pay', grossW: 'a year, before tax',
     net: 'Take-home pay',
@@ -86,9 +87,10 @@ const T = {
     open: 'Buka kalkulatornya',
     openOwn: 'Hitung gajimu sendiri',
     langOther: 'English version', langOtherShort: 'EN', langOtherTitle: 'Read in English',
-    toc: ['Bunyi aturannya', 'Contoh perhitungan', 'Cara legal menghemat pajak', 'Yang tidak dihitung', 'Tanya jawab'],
-    h2: ['Apa kata aturannya', 'Contoh perhitungan', 'Cara legal menghemat pajak', 'Yang tidak dihitung kalkulator ini', 'Pertanyaan yang sering diajukan'],
+    toc: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung', 'Tanya jawab'],
+    h2: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung kalkulator ini', 'Pertanyaan yang sering diajukan'],
     sources: 'Sumber',
+    cite: 'Sumber:',
     rulesLine: (year, place) => `Aturan tahun ${year}${place ? ', ' + place : ''}. Semua angka di bawah ini dihitung oleh mesin hitung yang sama dengan yang dipakai kalkulatornya.`,
     gross: 'Gaji kotor', grossW: 'setahun, sebelum pajak',
     net: 'Gaji bersih',
@@ -137,6 +139,19 @@ function readContent(slug, lang){
 const PROBLEMS = [];
 function problem(msg){ PROBLEMS.push(msg); }
 
+// A fact's own source, right under it: a block's table, an example, a tip, an answer. Each
+// cite is { name, url, note? } and names the page that states the fact, not a home page,
+// so a reader who clicks lands on the table or the rule (a #:~:text= fragment can point the
+// browser at the exact words).
+function citeHtml(list, lang, where){
+  if(!list || !list.length) return '';
+  for(const s of list){
+    if(!/^https:\/\/[^/]+\/./.test(s.url || '')) problem(`${where}: cite "${s.name}" is not a deep https link (${s.url || 'no url'})`);
+    if(!s.name) problem(`${where}: a cite has no name`);
+  }
+  return `<p class="jx-cite">${T[lang].cite} ${list.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `, ${esc(s.note)}` : ''}`).join('; ')}</p>`;
+}
+
 function exampleHtml(p, ex, c, lang){
   const t = T[lang], cc = p.cc;
   const r = run(cc, ex);
@@ -183,7 +198,7 @@ function exampleHtml(p, ex, c, lang){
         <ol>
           ${rows.join('\n          ')}
         </ol>
-        ${ex.after ? `<div class="jx-prose jx-after">${ex.after}</div>` : ''}
+        ${ex.after ? `<div class="jx-prose jx-after">${ex.after}</div>` : ''}${citeHtml(ex.cite, lang, `${p.slug}.${lang} example ${ex.key}`)}
         <p class="jx-open"><a href="${esc(href)}">${t.openEx} →</a><span class="jx-marg">${marg}</span></p>
       </article>`;
 }
@@ -230,13 +245,14 @@ function page(p, lang){
   });
 
   const law = c.law || {};
-  const lawBlocks = (law.blocks || []).map(b => `
+  const lawBlocks = (law.blocks || []).map((b, bi) => `
       <h3>${b.h3}</h3>
       ${b.html ? `<div class="jx-prose">${b.html}</div>` : ''}${b.table ? `
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr>${b.table.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
         <tbody>${b.table.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(b.table.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n          ')}</tbody>
-      </table></div>` : ''}`).join('\n');
+      </table></div>` : ''}${b.cite ? `
+      ${citeHtml(b.cite, lang, `${p.slug}.${lang} law block ${bi + 1}`)}` : ''}`).join('\n');
   const sources = (law.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `, ${s.note}` : ''}</li>`).join('\n          ');
 
   const others = REGIONS.map(g => {
@@ -356,7 +372,7 @@ ${ld.map(o => `<script type="application/ld+json">\n${JSON.stringify(o, null, 2)
 
     <section class="gd-sec card" id="law" aria-labelledby="law-h">
       <h2 id="law-h">${t.h2[0]}</h2>
-      ${law.intro ? `<div class="jx-prose">${law.intro}</div>` : ''}
+      ${law.intro ? `<div class="jx-prose">${law.intro}</div>` : ''}${citeHtml(law.introCite, lang, `${p.slug}.${lang} law intro`)}
 ${lawBlocks}
       ${sources ? `<div class="jx-sources">
         <h3>${t.sources}</h3>
@@ -383,7 +399,7 @@ ${exs.map(e => exampleHtml(p, e, c, lang)).join('\n')}
       ${c.strategyIntro ? `<div class="jx-prose">${c.strategyIntro}</div>` : ''}
       ${(c.strategies || []).map(s => `<div class="jx-item">
         <h3>${s.h3}</h3>
-        ${s.html}
+        ${s.html}${citeHtml(s.cite, lang, `${p.slug}.${lang} tip "${strip(s.h3)}"`)}
       </div>`).join('\n      ')}
     </section>
 
@@ -400,7 +416,7 @@ ${adMulti}
       <h2 id="faq-h">${t.h2[4]}</h2>
       ${(c.faq || []).map(f => `<div class="jx-item">
         <h3>${f.q}</h3>
-        ${/^\s*</.test(f.a) ? f.a : `<p>${f.a}</p>`}
+        ${/^\s*</.test(f.a) ? f.a : `<p>${f.a}</p>`}${citeHtml(f.cite, lang, `${p.slug}.${lang} question "${strip(f.q)}"`)}
       </div>`).join('\n      ')}
     </section>
 
