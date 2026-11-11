@@ -14,6 +14,13 @@ Regenerate the golden file with `python3 gsc_reference_model.py` in this folder;
 
 Each is checked by `run.mjs` against its own source, not against the v11 golden file:
 
+- **Belgium, expat regime and ONSS**: 35% of gross is free of income tax with no cap (Law of
+  18 December 2025, from income 2025), but social security did not follow: only 30%, at most
+  90,000 a year, is free of ONSS (Deloitte Belgium, 23 Dec 2025). The two golden expat cases
+  above 70,000 are replayed with that split.
+- **Taiwan, employment insurance**: a new field, twEi (default yes, the v11 behaviour). Foreign
+  employees not married to a national and without permanent residence are outside employment
+  insurance and pay labour insurance alone, 11.5% x 20% (BLI; MOL).
 - **Taiwan, national health insurance cap**: NT$313,000 a month (v11: 219,500). The NHIA
   premium table says "自114年1月1日起，投保金額最高一級調整為313,000元" (from 1 Jan 2025 the top
   insured amount is NT$313,000). The four golden cases at NT$6,000,000 are replayed with it.

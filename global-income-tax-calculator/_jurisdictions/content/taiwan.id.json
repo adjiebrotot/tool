@@ -96,6 +96,10 @@
           {
             "name": "NHIA, tabel premi (tarif 5,17%, batas atas NT$313.000)",
             "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf"
+          },
+          {
+            "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+            "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
           }
         ],
         "html": "<p>Karyawan membayar asuransi tenaga kerja (11,5%) dan asuransi kerja (1%), total 12,5% dengan porsi karyawan 20% atas gaji sampai NT$45.800 per bulan, serta asuransi kesehatan nasional (tarif 5,17%, porsi karyawan 30%, atas gaji sampai NT$313.000 per bulan). Pekerja asing baru ikut asuransi kerja kalau menikah dengan warga Taiwan yang punya registrasi rumah tangga atau, sejak 2026, memegang izin tinggal tetap; selain itu hanya 11,5% yang berlaku, sedikit lebih kecil daripada yang dihitung kalkulator. Padanannya di Indonesia kira-kira BPJS Ketenagakerjaan dan BPJS Kesehatan. Iurannya kecil karena ada batas atas, dan pemberi kerja menanggung porsi yang lebih besar di luar potongan dari gajimu.</p>",
@@ -137,6 +141,10 @@
         "name": "NHIA, tabel premi (tarif 5,17%, batas atas NT$313.000)",
         "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf",
         "note": "premi asuransi kesehatan nasional"
+      },
+      {
+        "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+        "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
       }
     ]
   },
@@ -167,10 +175,14 @@
         {
           "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
           "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
         }
       ],
       "title": "Pajak <em>non-resident</em> di Taiwan (Tiongkok): berapa potongan 18% dari gaji NT$600.000?",
-      "intro": "<p>Contoh ini untuk <em>non-resident</em> yang dibayar NT$600.000 setahun dan belum tinggal 183 hari di Taiwan dalam tahun kalender itu. Gaji bulanannya di atas NT$44.250, sehingga gajinya dipotong 18%, yaitu NT$108.000, tanpa potongan apa pun, dan pemotongan itu final kalau kamu tetap <em>non-resident</em>. Asuransi tenaga kerja memotong NT$13.740 dan asuransi kesehatan NT$9.306. Gaji bersihmu menjadi sekitar NT$468.954, atau 78,2% dari gaji kotor.</p>",
+      "intro": "<p>Contoh ini untuk <em>non-resident</em> yang dibayar NT$600.000 setahun dan belum tinggal 183 hari di Taiwan dalam tahun kalender itu. Gaji bulanannya di atas NT$44.250, sehingga gajinya dipotong 18%, yaitu NT$108.000, tanpa potongan apa pun, dan pemotongan itu final kalau kamu tetap <em>non-resident</em>. Sebagai pekerja asing di luar asuransi kerja, asuransi tenaga kerja memotong NT$12.641 dan asuransi kesehatan NT$9.306. Gaji bersihmu menjadi sekitar NT$470.053, atau 78,3% dari gaji kotor.</p>",
       "after": "<p>Kalau kamu melewati 183 hari dalam tahun itu, kamu melapor sebagai penduduk pajak pada Mei dan gaji yang sama dihitung dengan tarif progresif. Kelebihan pemotongan dikembalikan, jadi bagi pendatang yang menetap, potongan 18% pada dasarnya hanya menekan arus kas sementara. Penduduk dengan gaji NT$600.000 yang sama hanya membayar pajak penghasilan sekitar NT$6.800.</p>"
     },
     {
@@ -183,10 +195,14 @@
         {
           "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
           "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
         }
       ],
       "title": "Berapa pajak pemegang Gold Card di Taiwan (Tiongkok) dengan gaji NT$5.000.000?",
-      "intro": "<p>Contoh ini untuk penduduk pajak pemegang Gold Card dengan gaji NT$5.000.000. Setelah potongan khusus gaji, gajinya NT$4.773.000. Separuh dari bagian di atas NT$3.000.000 (NT$886.500) dikecualikan, dan pembebasan serta potongan standar NT$237.000 dikurangkan juga. Penghasilan neto kena pajak sebesar NT$3.649.500 itu dikenai pajak NT$664.750. Asuransi kesehatan memotong NT$58.256 dan asuransi tenaga kerja NT$13.740. Gaji bersihmu menjadi sekitar NT$4.263.254, atau 85,3% dari gaji kotor.</p>",
+      "intro": "<p>Contoh ini untuk penduduk pajak pemegang Gold Card dengan gaji NT$5.000.000. Setelah potongan khusus gaji, gajinya NT$4.773.000. Separuh dari bagian di atas NT$3.000.000 (NT$886.500) dikecualikan, dan pembebasan serta potongan standar NT$237.000 dikurangkan juga. Penghasilan neto kena pajak sebesar NT$3.649.500 itu dikenai pajak NT$664.750. Asuransi kesehatan memotong NT$58.256 dan asuransi tenaga kerja, tanpa asuransi kerja, NT$12.641. Gaji bersihmu menjadi sekitar NT$4.264.354, atau 85,3% dari gaji kotor.</p>",
       "after": "<p>Tanpa pengecualian Gold Card, gaji yang sama akan dikenai pajak NT$930.700, jadi keringanan ini bernilai NT$265.950. Tarif marjinal untuk tambahan gaji adalah 15,0%, separuh dari lapisan 30%.</p>"
     }
   ],
@@ -338,6 +354,7 @@
     "Exemptions and standard deduction": "Pembebasan pribadi dan potongan standar",
     "Individual income tax": "Pajak penghasilan perorangan",
     "Withholding, non-resident (18%, final)": "Pemotongan non-resident (18%, final)",
-    "Withholding, non-resident (6%, final)": "Pemotongan non-resident (6%, final)"
+    "Withholding, non-resident (6%, final)": "Pemotongan non-resident (6%, final)",
+    "Labour insurance only (11.5%, no employment insurance), employee share": "Asuransi tenaga kerja saja (11,5%, tanpa asuransi kerja), porsi karyawan"
   }
 }

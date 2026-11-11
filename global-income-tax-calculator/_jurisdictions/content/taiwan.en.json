@@ -94,6 +94,10 @@
           {
             "name": "NHIA, premium table (rate 5.17%, top insured amount NT$313,000)",
             "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf"
+          },
+          {
+            "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+            "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
           }
         ],
         "html": "<p>Employees pay labour insurance (11.5%) and employment insurance (1%), 12.5% together, with a 20% employee share on pay up to NT$45,800 a month, and national health insurance (5.17% rate, 30% employee share, on pay up to NT$313,000 a month). A foreign employee is in employment insurance only if married to a Taiwanese national with household registration or, from 2026, holding permanent residence; otherwise only the 11.5% applies, slightly less than the calculator takes, so contributions are small and capped. Employers pay the larger shares on top.</p>"
@@ -134,6 +138,10 @@
         "name": "NHIA, premium table (rate 5.17%, top insured amount NT$313,000)",
         "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf",
         "note": "national health insurance premiums"
+      },
+      {
+        "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+        "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
       }
     ]
   },
@@ -164,10 +172,14 @@
         {
           "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
           "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
         }
       ],
       "title": "Taiwan (China) non-resident tax: what NT$600,000 pays under 18% withholding",
-      "intro": "<p>This is a non-resident paid NT$600,000, who has not yet been in Taiwan 183 days in the calendar year. Monthly pay is above NT$44,250, so withholding is 18%, or NT$108,000, with no deductions. Labour insurance is NT$13,740 and health insurance is NT$9,306. You keep about NT$468,954, or 78.2% of gross.</p>",
+      "intro": "<p>This is a non-resident paid NT$600,000, who has not yet been in Taiwan 183 days in the calendar year. Monthly pay is above NT$44,250, so withholding is 18%, or NT$108,000, with no deductions. As a foreign employee outside employment insurance, labour insurance is NT$12,641 and health insurance is NT$9,306. You keep about NT$470,053, or 78.3% of gross.</p>",
       "after": "<p>If you pass 183 days in the year, you file as a resident in May and the same salary is taxed on the progressive scale. The excess withholding is refunded, so for most arrivals who stay, the 18% is a cash-flow cost. A resident on the same NT$600,000 would pay about NT$6,800 in income tax.</p>"
     },
     {
@@ -180,10 +192,14 @@
         {
           "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
           "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
         }
       ],
       "title": "How much tax does a Gold Card holder pay in Taiwan (China) on NT$5,000,000?",
-      "intro": "<p>This is a resident Gold Card holder on NT$5,000,000. After the salary special deduction, salary is NT$4,773,000. Half of the part above NT$3,000,000 (NT$886,500) is excluded, and the NT$237,000 of exemption and standard deduction comes off as well. Net taxable income is NT$3,649,500, taxed at NT$664,750. Health insurance is NT$58,256 and labour insurance is NT$13,740. You keep about NT$4,263,254, or 85.3% of gross.</p>",
+      "intro": "<p>This is a resident Gold Card holder on NT$5,000,000. After the salary special deduction, salary is NT$4,773,000. Half of the part above NT$3,000,000 (NT$886,500) is excluded, and the NT$237,000 of exemption and standard deduction comes off as well. Net taxable income is NT$3,649,500, taxed at NT$664,750. Health insurance is NT$58,256 and labour insurance, without employment insurance, is NT$12,641. You keep about NT$4,264,354, or 85.3% of gross.</p>",
       "after": "<p>Without the Gold Card exclusion the same salary would pay NT$930,700 of income tax, so the relief is worth NT$265,950 here. The marginal rate on extra pay is 15.0%, half of the 30% band.</p>"
     }
   ],

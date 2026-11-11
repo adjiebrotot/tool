@@ -100,11 +100,15 @@
       },
       {
         "h3": "Rezim ekspatriat",
-        "html": "<p>Belgia punya rezim bagi karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia. Sebagian gajimu diperlakukan sebagai penggantian biaya tambahan hidup di luar negeri, dan bagian itu bebas pajak. <em>Tool</em> ini menghitungnya sebagai penggantian bebas pajak dan bebas ONSS sebesar 35% dari gaji kotor, hanya ketika gaji kotor di atas €70.000. Kelayakannya bergantung pada peran, gaji dan tempat kamu tinggal sebelumnya. Pembebasan ONSS punya batas sendiri yang tidak diterapkan <em>tool</em> ini. Rezim ini diajukan bersama pemberi kerja, jadi pastikan syaratnya ke otoritas pajak sebelum mengandalkannya.</p>",
+        "html": "<p>Belgia punya rezim bagi karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia. Sebagian gajimu diperlakukan sebagai penggantian biaya tambahan hidup di luar negeri, dan bagian itu bebas pajak. <em>Tool</em> ini menghitungnya sebagai penggantian bebas pajak penghasilan sebesar 35% dari gaji kotor, hanya ketika gaji kotor di atas €70.000. Jaminan sosial tidak ikut perubahan 2025: hanya 30% dari gaji kotor, maksimum €90.000 setahun, yang bebas ONSS. Kelayakannya bergantung pada peran, gaji dan tempat kamu tinggal sebelumnya. Pembebasan ONSS punya batas sendiri yang tidak diterapkan <em>tool</em> ini. Rezim ini diajukan bersama pemberi kerja, jadi pastikan syaratnya ke otoritas pajak sebelum mengandalkannya.</p>",
         "cite": [
           {
             "name": "FPS Finance, rezim pajak khusus bagi ekspatriat dan peneliti",
             "url": "https://finance.belgium.be/en/node/14642"
+          },
+          {
+            "name": "Deloitte Belgia, rezim ekspatriat: 35% untuk pajak penghasilan, ONSS tetap 30% (maks. €90.000)",
+            "url": "https://www.deloitte.com/be/en/services/tax/blogs/belgian-expat-tax-regime-critical-changes-effective-1-january-2025-for-income-tax-no-adjustment-for-social-security.html#:~:text=maximum%2030%25%20cost%20allowance%20exempt"
           }
         ]
       }
@@ -144,6 +148,10 @@
         "name": "ONSS, bonus kerja (bonus à l'emploi)",
         "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/workers_reductions/workbonus.html",
         "note": "bonus kerja (resmi)"
+      },
+      {
+        "name": "Deloitte Belgia, rezim ekspatriat: 35% untuk pajak penghasilan, ONSS tetap 30% (maks. €90.000)",
+        "url": "https://www.deloitte.com/be/en/services/tax/blogs/belgian-expat-tax-regime-critical-changes-effective-1-january-2025-for-income-tax-no-adjustment-for-social-security.html#:~:text=maximum%2030%25%20cost%20allowance%20exempt"
       }
     ]
   },
@@ -187,8 +195,8 @@
     {
       "key": "expat-regime",
       "title": "Berapa gaji bersih di Belgia dengan gaji €100.000 di bawah rezim ekspatriat?",
-      "intro": "<p>Contoh ini untuk karyawan yang memenuhi syarat dengan gaji kotor €100.000 dan rezim ekspatriat. <em>Tool</em> ini memperlakukan 35% dari gaji kotor, yaitu €35.000, sebagai penggantian bebas pajak dan bebas ONSS. ONSS dihitung atas sisa €65.000 dan hasilnya €8.496. Setelah potongan biaya kerja dan bagian bebas pajak, pajak federalnya €15.825 dan pajak kota €1.108, ditambah CSSS sebesar €731. Gaji bersihmu sekitar €73.841 setahun (€6.153 per bulan), atau 73,8% dari gaji kotor.</p>",
-      "after": "<p>Tanpa rezim ini, gaji yang sama menyisakan sekitar €53.023, jadi manfaatnya sekitar €20.800 setahun menurut hitungan <em>tool</em> ini. Apakah kamu memenuhi syarat adalah urusan hukum antara kamu dan pemberi kerjamu.</p>",
+      "intro": "<p>Contoh ini untuk karyawan yang memenuhi syarat dengan gaji kotor €100.000 dan rezim ekspatriat. <em>Tool</em> ini memperlakukan 35% dari gaji kotor, yaitu €35.000, sebagai penggantian bebas pajak. Hanya 30%, yaitu €30.000, yang juga bebas ONSS, jadi ONSS dihitung atas €70.000 dan hasilnya €9.149. Setelah potongan biaya kerja dan bagian bebas pajak, pajak federalnya €15.530 dan pajak kota €1.087, ditambah CSSS sebesar €731. Gaji bersihmu sekitar €73.502 setahun (€6.125 per bulan), atau 73,5% dari gaji kotor.</p>",
+      "after": "<p>Tanpa rezim ini, gaji yang sama menyisakan sekitar €53.023, jadi manfaatnya sekitar €20.500 setahun menurut hitungan <em>tool</em> ini. Apakah kamu memenuhi syarat adalah urusan hukum antara kamu dan pemberi kerjamu.</p>",
       "cite": [
         {
           "name": "FPS Finance, rezim pajak khusus bagi ekspatriat dan peneliti",
@@ -278,11 +286,15 @@
     },
     {
       "q": "Bagaimana rezim ekspatriat Belgia bekerja?",
-      "a": "<p>Untuk karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia, sebagian gaji diperlakukan sebagai penggantian biaya hidup tambahan dan tidak dipajaki. Kalkulator menghitungnya sebagai 35% dari gaji kotor ketika gaji kotor di atas €70.000, bebas pajak dan bebas ONSS. Pada gaji €100.000, gaji bersihmu naik dari sekitar €53.023 menjadi €73.841. Kamu mengajukannya bersama pemberi kerja, dan kelayakan serta batasnya perlu dipastikan ke otoritas pajak.</p>",
+      "a": "<p>Untuk karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia, sebagian gaji diperlakukan sebagai penggantian biaya hidup tambahan dan tidak dipajaki. Kalkulator menghitungnya sebagai 35% dari gaji kotor ketika gaji kotor di atas €70.000, bebas pajak penghasilan, dan 30% di antaranya (maksimum €90.000) juga bebas ONSS. Pada gaji €100.000, gaji bersihmu naik dari sekitar €53.023 menjadi €73.502. Kamu mengajukannya bersama pemberi kerja, dan kelayakan serta batasnya perlu dipastikan ke otoritas pajak.</p>",
       "cite": [
         {
           "name": "FPS Finance, rezim pajak khusus bagi ekspatriat dan peneliti",
           "url": "https://finance.belgium.be/en/node/14642"
+        },
+        {
+          "name": "Deloitte Belgia, rezim ekspatriat: 35% untuk pajak penghasilan, ONSS tetap 30% (maks. €90.000)",
+          "url": "https://www.deloitte.com/be/en/services/tax/blogs/belgian-expat-tax-regime-critical-changes-effective-1-january-2025-for-income-tax-no-adjustment-for-social-security.html#:~:text=maximum%2030%25%20cost%20allowance%20exempt"
         }
       ]
     },
@@ -333,7 +345,8 @@
     "Marital quotient to your partner (30%, max 11,780)": "Kuosien perkawinan untuk pasangan (30%, maksimum €11.780)",
     "Expat regime, tax and ONSS free reimbursement (35%)": "Rezim ekspatriat, penggantian bebas pajak dan bebas ONSS (35%)",
     "Expat regime needs gross above 70,000": "Rezim ekspatriat butuh gaji kotor di atas €70.000",
-    "Fiscal employment bonus, inside the tax": "Bonus kerja fiskal, sudah termasuk di pajak"
+    "Fiscal employment bonus, inside the tax": "Bonus kerja fiskal, sudah termasuk di pajak",
+    "Expat regime, tax-free reimbursement (35%; 30%, max 90,000, free of ONSS)": "Rezim ekspatriat, penggantian bebas pajak (35%; 30%, maks. 90.000, bebas ONSS)"
   },
   "bmc": "Traktir kopi, atau sepotong cokelat Belgia juga boleh"
 }

@@ -726,10 +726,14 @@ function be(g, k){
   const kids = max(0, floor(+k.beKids || 0));
   const free = (k.beExpat && g > 70000) ? 0.35*g : 0;
   if(k.beExpat && g <= 70000) lines.push(L('beExpNo', 'Expat regime needs gross above 70,000', 0, 'info', 'be', 'secondary', F));
-  if(free) lines.push(minus(L('beExp', 'Expat regime, tax and ONSS free reimbursement (35%)', free, 'deduction', 'be', 'secondary', '2026')));
-  const w = g - free, m = w/12;
+  // Expat regime: since income 2025, 35% of gross is free of income tax with no cap (Law of
+  // 18 Dec 2025), but ONSS did not follow: only 30%, at most 90,000 a year, is free of social
+  // security, as before 2025 (Deloitte Belgium, 23 Dec 2025).
+  const onssFree = free ? min(0.30*g, 90000) : 0;
+  if(free) lines.push(minus(L('beExp', 'Expat regime, tax-free reimbursement (35%; 30%, max 90,000, free of ONSS)', free, 'deduction', 'be', 'secondary', '2026')));
+  const w = g - free, wo = g - onssFree, m = wo/12;
   let [a, bb] = beBonusM(m); a *= 12; bb *= 12;
-  const ss = max(0, 0.1307*w - a - bb);
+  const ss = max(0, 0.1307*wo - a - bb);
   lines.push(minus(L('beOnss', 'Social security (ONSS, 13.07%)' + (a + bb > 0 ? ' after the employment bonus' : ''), ss, 'social', 'onss', 'secondary', '1 Sep 2026')));
   const net = w - ss, pe = min(0.30*net, 6070), ti = net - pe;
   lines.push(minus(L('bePe', 'Lump-sum professional expenses (30%, max 6,070)', pe, 'deduction', 'be', 'secondary', F)));
@@ -1242,7 +1246,11 @@ const TW_BR = [[610000,.05,0],[1380000,.12,42700],[2770000,.20,153100],[5190000,
 function twTax(n){ for(const [up, r, d] of TW_BR) if(up == null || n <= up) return max(0, n*r - d); }
 function tw(g, k){
   const F = '1 Jan 2026', lines = [], m = g/12;
-  lines.push(L('twLi', 'Labour insurance, employee share', 12*0.125*0.20*min(m, 45800), 'social', 'twins', 'secondary', F));
+  // Labour insurance 11.5% plus employment insurance 1% (BLI). Foreign employees are in employment
+  // insurance only when married to a national with household registration or, from 2026, holding
+  // permanent residence; other foreign employees pay the 11.5% alone (twEi = 'no').
+  const ei = k.twEi === 'no' ? 0 : 0.01;
+  lines.push(L('twLi', ei ? 'Labour insurance, employee share' : 'Labour insurance only (11.5%, no employment insurance), employee share', 12*(0.115 + ei)*0.20*min(m, 45800), 'social', 'twins', 'official', F));
   lines.push(L('twNhi', 'National health insurance, employee share', 12*0.0517*0.30*min(m, 313000), 'social', 'twins', 'secondary', F));
   if(k.twRes === 'nonres'){
     const r = m <= 44250 ? 0.06 : 0.18;

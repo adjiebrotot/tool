@@ -750,7 +750,7 @@ function renderLines(results){
 }
 
 /* ───────────────────────── What this assumes ───────────────────────── */
-const SIT_FIELDS = ['auRes','sgRes','usRes','deClass','idRes','myRes','noRes','seRes','fiRes','itImp','frCadre','esRegime','ptRegime','jpRes','krMethod','cnRes','twRes','gulfNat','beStatus','chStatus','usFiling','caProv','usState','ukRegion'];
+const SIT_FIELDS = ['auRes','sgRes','usRes','deClass','idRes','myRes','noRes','seRes','fiRes','itImp','frCadre','esRegime','ptRegime','jpRes','krMethod','cnRes','twRes','twEi','gulfNat','beStatus','chStatus','usFiling','caProv','usState','ukRegion'];
 function optionText(id, v){
   const el = $(id);
   if(!el || el.tagName !== 'SELECT') return '';

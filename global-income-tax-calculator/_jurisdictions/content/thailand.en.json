@@ -83,6 +83,10 @@
           {
             "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
             "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+            "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
           }
         ]
       }
@@ -111,6 +115,10 @@
       {
         "name": "PwC Worldwide Tax Summaries, Thailand: foreign-sourced income",
         "url": "https://taxsummaries.pwc.com/thailand/individual/income-determination#:~:text=remitted"
+      },
+      {
+        "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+        "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
       }
     ],
     "introCite": [
@@ -256,6 +264,10 @@
         {
           "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
           "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+          "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
         }
       ]
     },

@@ -296,6 +296,14 @@ twGold: Gold Card
   Checkbox: true or false. Default false.
   Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
   Tip on the page: A Gold Card holder excludes 50% of salary above 3,000,000 for 5 years.
+twEi: Employment insurance
+  One of: yes (Covered: 11.5% + 1%), no (Foreign employee: 11.5% only). Default yes.
+  Taiwan (China). yes (default: in employment insurance, so 11.5% + 1% labour and employment
+  insurance: citizens, foreigners married to a citizen, permanent residents) or no (other foreign
+  employees on a work permit: labour insurance 11.5% only).
+  Tip on the page: Covered: citizens, foreigners married to a citizen with household registration,
+  and permanent residents. Not covered: other foreign employees on a work permit, who pay labour
+  insurance only.
 gulfNat: Citizenship
   One of: expat (Expatriate), national (National). Default expat.
   UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Oman. expat or national. None of them taxes wages;

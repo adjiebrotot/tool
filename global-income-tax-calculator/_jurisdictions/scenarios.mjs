@@ -115,8 +115,8 @@ export const PAGES = [
   ]},
   { slug: 'taiwan', cc: 'TW', ex: [
     { key: 'resident', amount: 1200000, inputs: { twRes: 'res' } },
-    { key: 'non-resident', amount: 600000, inputs: { twRes: 'nonres' } },
-    { key: 'gold-card', amount: 5000000, inputs: { twRes: 'res', twGold: true } },
+    { key: 'non-resident', amount: 600000, inputs: { twRes: 'nonres', twEi: 'no' } },
+    { key: 'gold-card', amount: 5000000, inputs: { twRes: 'res', twGold: true, twEi: 'no' } },
   ]},
   { slug: 'hong-kong', cc: 'HK', ex: [
     { key: 'single', amount: 600000, inputs: { hkMarried: false } },

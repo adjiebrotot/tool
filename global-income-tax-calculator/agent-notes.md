@@ -60,6 +60,7 @@ Take-home pay after income tax and employee social contributions for one to four
 - cnRes: China. local (standard) or expat (tax-free allowances in cnAllow).
 - twRes: Taiwan (China). res (183 days or more) or nonres.
 - twGold: Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
+- twEi: Taiwan (China). yes (default: in employment insurance, so 11.5% + 1% labour and employment insurance: citizens, foreigners married to a citizen, permanent residents) or no (other foreign employees on a work permit: labour insurance 11.5% only).
 - gulfNat: UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Oman. expat or national. None of them taxes wages; nationals pay pension contributions.
 - saScheme: Saudi nationals. legacy (joined GOSI before 3 Jul 2024) or new (new entrant).
 - usFiling: US residents. S (single) or MFJ (married filing jointly).
