@@ -57,15 +57,18 @@ reader directly where it helps ("you", "kamu"). No em-dashes (—) anywhere.
 
 ## Citing each fact where it is stated
 
-Every rate table, threshold, cap and rule the page states carries its own source, right under
-it, pointing at the official page that states it (the page that, once opened, shows that table
-or that rule), never a home page. A content item takes an optional `cite` list:
+Every rate table, threshold, cap and rule the page states carries its own source, pointing at
+the official page that states it (the page that, once opened, shows that table or that rule),
+never a home page. The page shows it the way the blog's footnotes do: a small superscript
+number at the end of the item's last paragraph, linked to one numbered References list at the
+foot of the page (one number per URL, in reading order; `law.sources` not cited elsewhere are
+listed last). A content item takes an optional `cite` list:
 
 ```json
 "cite": [ { "name": "ATO, Tax rates: Australian residents", "url": "https://www.ato.gov.au/tax-rates-and-codes/tax-rates-australian-residents#:~:text=Resident%20tax%20rates%202026%E2%80%9327", "note": "optional few words" } ]
 ```
 
-- Where: each `law.blocks[]` item (rendered under its table), `law.introCite`, each
+- Where: each `law.blocks[]` item (its number goes on the paragraph above the table), `law.introCite`, each
   `examples[]` item, each `strategies[]` item and each `faq[]` item that states a figure or
   rule. Facts inside prose may also be linked inline (`<a href>` on the words themselves).
 - The URL is the deepest official page that shows the fact (the rates page, the levy page, the
@@ -76,7 +79,8 @@ or that rule), never a home page. A content item takes an optional `cite` list:
   cell), percent-encoded (spaces `%20`, and `-` `,` `&` must be encoded too). Leave it out
   when you could not see the page's text.
 - Open every URL before using it (it must load with the fact on it). Never invent a deep link.
-- `law.sources` lists the same deep pages (no home pages), 3 to 8 of them.
+- `law.sources` lists the main deep pages (no home pages), 3 to 8 of them; they join the
+  References list.
 - English and Indonesian pages cite the same URLs; the Indonesian `name` may be in Indonesian.
 - The page generator flags a cite that is not a deep https link.
 
