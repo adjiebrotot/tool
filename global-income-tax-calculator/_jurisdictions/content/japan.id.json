@@ -7,10 +7,12 @@
   "place": "Tokyo",
   "lede": "<p>Jepang memungut pajak penghasilan nasional 5% sampai 45% dari penduduk pajak (<em>resident</em>, di Indonesia disebut subjek pajak dalam negeri), ditambah pajak penduduk daerah sekitar 10% dan iuran jaminan sosial karyawan yang totalnya sekitar 15% dari gaji. Dengan gaji ¥6.000.000 setahun di Tokyo, pekerja di tahun kedua menerima gaji bersih (<em>take-home pay</em>) sekitar ¥4.662.100, atau 77,7% dari gaji kotor. Di tahun pertama sisanya sekitar ¥4.969.300, karena pajak penduduk belum mulai ditagih.</p>",
   "law": {
+    "introCite": [{"name": "NTA, Tax Answer No.2875: penduduk dan bukan penduduk", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2875.htm#:~:text=%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%A8%E9%9D%9E%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%AE%E5%8C%BA%E5%88%86"}],
     "intro": "<p>Angka di bagian ini memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan di Tokyo. Kamu dianggap penduduk pajak di Jepang kalau sudah tinggal atau berniat tinggal di sana setahun atau lebih. Sebagai penduduk pajak, penghasilanmu dikenai tarif progresif nasional dan dipotong pemberi kerja dari setiap slip gaji, mirip PPh 21 yang dipotong kantor di Indonesia. Bedanya, di Jepang ada dua pajak yang berjalan berdampingan (pajak nasional dan pajak penduduk daerah), dan iuran jaminan sosial yang dipotong dari gaji jauh lebih besar daripada potongan BPJS Kesehatan dan BPJS Ketenagakerjaan di Indonesia.</p>",
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan nasional",
+        "cite": [{"name": "NTA, Tax Answer No.2260: tarif pajak penghasilan", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm#:~:text=%E6%89%80%E5%BE%97%E7%A8%8E%E3%81%AE%E9%80%9F%E7%AE%97%E8%A1%A8"}, {"name": "NTA, Tax Answer No.1199: potongan dasar", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm#:~:text=%E5%9F%BA%E7%A4%8E%E6%8E%A7%E9%99%A4%E3%81%AE%E9%87%91%E9%A1%8D"}],
         "html": "<p>Pajak nasional bersifat progresif, seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi lapisan tertingginya 45%. <em>Tool</em> ini menambahkan pajak tambahan rekonstruksi sebesar 2,1% dari hasil hitungannya. Tarif dikenakan pada penghasilan kena pajak, yaitu gaji setelah dikurangi potongan penghasilan kerja, iuran jaminan sosial dan potongan dasar. Potongan dasar berperan seperti PTKP, hanya saja tanpa tambahan untuk status kawin atau tanggungan (potongan untuk keluarga diatur terpisah dan tidak dihitung <em>tool</em> ini). Nilainya ¥1.040.000 untuk penghasilan di contoh, dan menurun untuk penghasilan yang sangat tinggi.</p>",
         "table": {
           "head": [
@@ -51,6 +53,7 @@
       },
       {
         "h3": "Potongan penghasilan kerja",
+        "cite": [{"name": "NTA, Tax Answer No.1410: potongan penghasilan kerja", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm#:~:text=%E7%B5%A6%E4%B8%8E%E6%89%80%E5%BE%97%E6%8E%A7%E9%99%A4%E9%A1%8D"}],
         "html": "<p>Karyawan tidak dikenai pajak atas seluruh gajinya. Lebih dulu dikurangkan potongan penghasilan kerja, pengganti biaya bekerja yang fungsinya mirip biaya jabatan di Indonesia. Bedanya, biaya jabatan di Indonesia berupa persentase tetap dengan batas atas, sedangkan di Jepang potongannya bertambah seiring gaji naik, dengan tambahan yang makin kecil sampai berhenti di batas atas.</p>",
         "table": {
           "head": [
@@ -83,65 +86,55 @@
       },
       {
         "h3": "Pajak penduduk (<em>juminzei</em>)",
+        "cite": [{"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"}],
         "html": "<p>Pajak ini masuk ke kas prefektur dan kota tempat kamu tinggal. Indonesia tidak punya padanannya, karena PPh orang pribadi di Indonesia hanya dipungut pemerintah pusat. Besarnya 10% dari penghasilan kena pajak (6% untuk kota dan 4% untuk prefektur) ditambah iuran per kepala yang jumlahnya kecil, dengan potongan dasar ¥430.000, bukan potongan dasar pajak nasional.</p><p>Yang paling sering mengejutkan pendatang baru adalah waktunya. Pajak penduduk dihitung dari penghasilan tahun kalender sebelumnya dan ditagih mulai Juni. Karena itu pendatang baru tidak membayarnya di tahun pertama, lalu tagihannya datang di tahun kedua.</p>"
       },
       {
         "h3": "Iuran jaminan sosial",
+        "cite": [{"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf"}, {"name": "MHLW, tarif premi asuransi ketenagakerjaan", "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000108634.html#:~:text=%E9%9B%87%E7%94%A8%E4%BF%9D%E9%99%BA%E6%96%99%E7%8E%87%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6"}],
         "html": "<p>Dari gaji, karyawan membayar tiga iuran: asuransi kesehatan, dana pensiun karyawan (<em>kōsei nenkin</em>) dan asuransi ketenagakerjaan. Padanannya di Indonesia kira-kira BPJS Kesehatan serta JHT dan JP dari BPJS Ketenagakerjaan. <em>Tool</em> memakai tarif Tokyo untuk asuransi kesehatan Kyokai Kenpo, 9,15% untuk dana pensiun dan 0,5% untuk asuransi ketenagakerjaan, dihitung menurut kelompok gaji bulanan. Selain itu, ada iuran dukungan anak yang mulai dipotong dari gaji April 2026. Pemberi kerja menanggung porsi yang sama besar untuk kesehatan dan pensiun, di luar potongan dari gajimu.</p><p>Iuran kesehatan dan pensiun mengurangi penghasilan kena pajak, sehingga menurunkan pajak nasional maupun pajak penduduk. Prinsipnya sama dengan iuran JHT dan pensiun yang dikurangkan dalam hitungan PPh 21.</p>"
       },
       {
         "h3": "Pajak bagi yang bukan penduduk pajak (<em>non-resident</em>)",
+        "cite": [{"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87"}, {"name": "NTA, Tax Answer No.2875: penduduk dan bukan penduduk", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2875.htm#:~:text=%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%A8%E9%9D%9E%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%AE%E5%8C%BA%E5%88%86"}],
         "html": "<p>Orang yang bukan penduduk pajak tetapi dibayar untuk pekerjaan yang dilakukan di Jepang dikenai tarif tetap 20,42% (20% ditambah pajak tambahan rekonstruksi), dipotong langsung dari gaji tanpa potongan apa pun. <em>Tool</em> menerapkan tarif akhir ini pada gaji kotor. Kalau kamu orang Indonesia yang datang untuk bekerja setahun atau lebih, kamu dihitung sebagai penduduk pajak sejak hari pertama, sehingga blok ini jarang berlaku untukmu.</p>"
       }
     ],
     "sources": [
-      {
-        "name": "National Tax Agency (NTA), tarif pajak penghasilan, potongan dan pemotongan oleh pemberi kerja",
-        "url": "https://www.nta.go.jp/"
-      },
-      {
-        "name": "Kyokai Kenpo (Japan Health Insurance Association), tabel iuran kesehatan dan pensiun per wilayah",
-        "url": "https://www.kyoukaikenpo.or.jp/"
-      },
-      {
-        "name": "Japan Pension Service, dana pensiun karyawan dan pembayaran penarikan sekaligus",
-        "url": "https://www.nenkin.go.jp/"
-      },
-      {
-        "name": "Kementerian Kesehatan, Tenaga Kerja dan Kesejahteraan Jepang (MHLW)",
-        "url": "https://www.mhlw.go.jp/"
-      },
-      {
-        "name": "Immigration Services Agency of Japan, visa dan status tinggal termasuk Specified Skilled Worker",
-        "url": "https://www.moj.go.jp/isa/"
-      },
-      {
-        "name": "Direktorat Jenderal Pajak (DJP), status subjek pajak dan perjanjian penghindaran pajak berganda",
-        "url": "https://pajak.go.id/"
-      }
+      {"name": "NTA, Tax Answer No.2260: tarif pajak penghasilan", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm#:~:text=%E6%89%80%E5%BE%97%E7%A8%8E%E3%81%AE%E9%80%9F%E7%AE%97%E8%A1%A8", "note": "tarif pajak penghasilan dan pajak tambahan rekonstruksi"},
+      {"name": "NTA, Tax Answer No.1410: potongan penghasilan kerja", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm#:~:text=%E7%B5%A6%E4%B8%8E%E6%89%80%E5%BE%97%E6%8E%A7%E9%99%A4%E9%A1%8D", "note": "potongan penghasilan kerja"},
+      {"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87", "note": "tarif pemotongan non-resident"},
+      {"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2", "note": "pajak penduduk: 10% dan ditagih atas penghasilan tahun sebelumnya"},
+      {"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf", "note": "tarif kesehatan Tokyo, pensiun dan dukungan anak"},
+      {"name": "Japan Pension Service, meninggalkan Jepang (pembayaran penarikan sekaligus)", "url": "https://www.nenkin.go.jp/international/english/scene/leavejapan/index.html#:~:text=Lump%2Dsum%20Withdrawal", "note": "pembayaran penarikan sekaligus"},
+      {"name": "NTA, Tax Answer No.2665: penyesuaian akhir tahun", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm#:~:text=%E5%B9%B4%E6%9C%AB%E8%AA%BF%E6%95%B4", "note": "penyesuaian akhir tahun"}
     ]
   },
   "examples": [
     {
       "key": "resident-tokyo",
+      "cite": [{"name": "NTA, Tax Answer No.2260: tarif pajak penghasilan", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm#:~:text=%E6%89%80%E5%BE%97%E7%A8%8E%E3%81%AE%E9%80%9F%E7%AE%97%E8%A1%A8"}, {"name": "NTA, Tax Answer No.1410: potongan penghasilan kerja", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm#:~:text=%E7%B5%A6%E4%B8%8E%E6%89%80%E5%BE%97%E6%8E%A7%E9%99%A4%E9%A1%8D"}, {"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"}, {"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf"}],
       "title": "Gaji ¥6.000.000 di Tokyo: berapa gaji bersih setelah pajak dan iuran?",
       "intro": "<p>Contoh ini untuk karyawan di Tokyo yang sudah masuk tahun kedua atau lebih, dengan gaji ¥6.000.000 setahun. Potongan penghasilan kerja sebesar ¥1.640.000 dikurangkan lebih dulu. Setelah itu iuran jaminan sosial ¥881.400 dan potongan dasar ikut menurunkan penghasilan kena pajak, sehingga pajak penghasilan nasionalnya hanya ¥149.300. Pajak penduduk menambah ¥307.200. Total pajaknya ¥456.500, dan gaji bersih yang tersisa sekitar ¥4.662.100, atau 77,7% dari gaji kotor.</p>",
       "after": "<p>Di slip gaji Jepang, potongan terbesar justru iuran jaminan sosial (¥881.400), hampir dua kali lipat pajaknya (¥456.500). Tarif pajak marjinalmu 16,7%.</p>"
     },
     {
       "key": "first-year",
+      "cite": [{"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"}],
       "title": "Gaji bersih tahun pertama di Jepang dengan gaji ¥6.000.000, sebelum ada pajak penduduk",
       "intro": "<p>Gajimu ¥6.000.000, iuran jaminan sosialmu ¥881.400 dan pajak penghasilan nasionalmu ¥149.300 sama persis dengan penduduk tahun kedua. Bedanya, kamu belum dikenai pajak penduduk, yang baru ditagih mulai tahun kedua. Gaji bersihnya menjadi sekitar ¥4.969.300, atau 82,8% dari gaji kotor, lebih besar ¥307.200 daripada penduduk tahun kedua dengan gaji yang sama.</p>",
       "after": "<p>Jangan anggap angka ini gaji bersihmu yang tetap: di tahun kedua tagihan pajak penduduk datang (¥307.200 untuk gaji ini), sehingga gaji bersihmu turun padahal gajinya tidak berubah. Kalau kamu berencana tinggal lebih dari setahun, sisihkan selisih ini sejak awal.</p>"
     },
     {
       "key": "specified-skilled-worker",
+      "cite": [{"name": "NTA, Tax Answer No.1410: potongan penghasilan kerja", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm#:~:text=%E7%B5%A6%E4%B8%8E%E6%89%80%E5%BE%97%E6%8E%A7%E9%99%A4%E9%A1%8D"}, {"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf"}],
       "title": "Berapa gaji bersih <em>Specified Skilled Worker</em> di Jepang dengan gaji ¥3.000.000?",
       "intro": "<p>Contoh ini untuk pekerja berupah lebih rendah, seperti pemegang visa <em>Specified Skilled Worker</em> (tokutei ginō), di tahun kedua atau lebih dengan gaji ¥3.000.000 setahun. Potongan penghasilan kerja ¥980.000 membuat penghasilan kena pajaknya kecil, sehingga pajak nasional hanya ¥26.600 dan pajak penduduk ¥115.600. Iuran jaminan sosial justru lebih besar, ¥457.728, terdiri dari asuransi kesehatan ¥153.660, dana pensiun ¥285.480, asuransi ketenagakerjaan ¥15.000 dan iuran dukungan anak ¥3.588. Gaji bersihnya menjadi sekitar ¥2.400.072, atau 80,0% dari gaji kotor.</p>",
       "after": "<p>Pada gaji ini iuran jaminan sosial sekitar tiga kali lipat pajak nasional dan pajak penduduk digabung (¥457.728 berbanding ¥142.200). Iuran dana pensiun sebagian bisa ditarik kembali setelah kamu meninggalkan Jepang. Tarif marjinalnya 11,1%.</p>"
     },
     {
       "key": "non-resident",
+      "cite": [{"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87"}],
       "title": "Berapa pajak <em>non-resident</em> di Jepang kalau gajinya ¥6.000.000?",
       "intro": "<p>Orang yang bukan penduduk pajak tetapi dibayar untuk pekerjaan di Jepang dikenai tarif tetap 20,42%, yaitu ¥1.225.200 dari gaji ¥6.000.000, tanpa potongan dan tanpa pajak penduduk. <em>Tool</em> tetap memotong iuran jaminan sosial ¥881.400, karena karyawan yang tercakup skemanya memang membayarnya. Gaji bersihmu menjadi sekitar ¥3.893.400, atau 64,9% dari gaji kotor, lebih kecil ¥768.700 daripada penduduk tahun kedua dengan gaji yang sama.</p>",
       "after": "<p>Pastikan dulu statusmu memang <em>non-resident</em>. Orang yang datang untuk tinggal di Jepang setahun atau lebih dianggap penduduk sejak hari pertama, sehingga tarif tetap ini tidak berlaku. Untuk kontrak kerja jangka panjang, kamu biasanya dihitung sebagai penduduk pajak.</p>"
@@ -151,18 +144,22 @@
   "strategies": [
     {
       "h3": "Isi formulir penyesuaian akhir tahun (<em>nenmatsu chōsei</em>)",
+      "cite": [{"name": "NTA, Tax Answer No.2665: penyesuaian akhir tahun", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm#:~:text=%E5%B9%B4%E6%9C%AB%E8%AA%BF%E6%95%B4"}],
       "html": "<p><strong>Cocok untuk:</strong> karyawan dengan satu pemberi kerja. Pada bulan Desember pemberi kerja menghitung ulang pajakmu untuk setahun penuh, mirip perhitungan ulang PPh 21 di masa pajak Desember di Indonesia. Pada tahap ini kamu menyerahkan formulir untuk premi asuransi jiwa, tanggungan dan potongan lain yang berlaku. <em>Tool</em> ini hanya memakai potongan dasar.</p><p><strong>Perlu diingat:</strong> setiap potongan butuh bukti, dan kamu hanya boleh mengklaim yang memang berlaku untukmu. Tanyakan batas waktunya ke bagian <em>payroll</em> kantor.</p>"
     },
     {
       "h3": "Iuran pensiun pribadi lewat iDeCo",
+      "cite": [{"name": "Situs resmi iDeCo, ciri-ciri iDeCo", "url": "https://www.ideco-koushiki.jp/guide/#:~:text=%E6%89%80%E5%BE%97%E6%8E%A7%E9%99%A4"}],
       "html": "<p><strong>Cocok untuk:</strong> penduduk yang akan tinggal di Jepang cukup lama. iDeCo adalah dana pensiun pribadi, mirip DPLK di Indonesia. Iurannya mengurangi penghasilan kena pajak, sehingga menghemat pajak nasional dan pajak penduduk pada tarif marjinalmu. Batas iuran per bulan bergantung pada ada tidaknya program pensiun dari kantor.</p><p><strong>Perlu diingat:</strong> dana baru bisa diambil setelah usia pensiun, jadi kurang cocok kalau kamu berencana pulang dalam waktu dekat. Cek batas terbarunya ke penyedia iDeCo.</p>"
     },
     {
       "h3": "Donasi pajak kampung halaman (<em>furusato nozei</em>)",
+      "cite": [{"name": "NTA, Tax Answer No.1155: furusato nozei", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1155.htm#:~:text=%E3%81%B5%E3%82%8B%E3%81%95%E3%81%A8%E7%B4%8D%E7%A8%8E"}],
       "html": "<p><strong>Cocok untuk:</strong> penduduk yang membayar pajak penduduk dan masih punya ruang di batas donasinya. Donasi ke pemerintah daerah di atas ¥2.000 mengurangi pajak penghasilan dan pajak penduduk sekitar sebesar donasi itu, dan umumnya donatur mendapat hadiah dari daerah tersebut. Batasnya naik mengikuti penghasilan dan situasi keluarga. Indonesia tidak punya skema serupa.</p><p><strong>Perlu diingat:</strong> skema ini memindahkan pajak, bukan menghapusnya, dan hanya berguna kalau ada pajak penduduk yang bisa dikurangi. Di tahun pertama, saat kamu belum membayar pajak penduduk, manfaatnya hampir tidak ada.</p>"
     },
     {
       "h3": "Ajukan penarikan dana pensiun sekaligus setelah pulang",
+      "cite": [{"name": "Japan Pension Service, meninggalkan Jepang (pembayaran penarikan sekaligus)", "url": "https://www.nenkin.go.jp/international/english/scene/leavejapan/index.html#:~:text=Lump%2Dsum%20Withdrawal"}, {"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87"}],
       "html": "<p><strong>Cocok untuk:</strong> pemegang visa <em>Specified Skilled Worker</em>, peserta magang teknis dan pekerja asing lain yang membayar iuran dana pensiun karyawan lalu meninggalkan Jepang. Setelah pulang, kamu bisa mengajukan penarikan sekaligus atas iuran itu, seperti klaim JHT saat berhenti bekerja.</p><p><strong>Perlu diingat:</strong> jumlahnya bergantung pada lama kamu beriuran, dan pajak yang dipotong di muka bisa diminta kembali lewat perwakilan pajak (<em>tax representative</em>). Japan Pension Service menjelaskan syarat dan cara mengajukannya.</p>"
     }
   ],
@@ -178,23 +175,28 @@
   "faq": [
     {
       "q": "Berapa pajak yang saya bayar dengan gaji ¥6.000.000 di Jepang?",
+      "cite": [{"name": "NTA, Tax Answer No.2260: tarif pajak penghasilan", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm#:~:text=%E6%89%80%E5%BE%97%E7%A8%8E%E3%81%AE%E9%80%9F%E7%AE%97%E8%A1%A8"}, {"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"}, {"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf"}],
       "a": "<p>Penduduk tahun kedua di Tokyo membayar sekitar ¥456.500 untuk pajak nasional dan pajak penduduk, ditambah ¥881.400 iuran jaminan sosial, sehingga gaji bersihnya sekitar ¥4.662.100. Di tahun pertama tidak ada pajak penduduk, jadi sisanya sekitar ¥4.969.300. Masukkan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "Kenapa tahun pertama di Jepang tidak kena pajak penduduk, tetapi gaji turun di tahun kedua?",
+      "cite": [{"name": "Biro Pajak Tokyo, pajak penduduk perorangan", "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"}],
       "a": "<p>Pajak penduduk dihitung dari penghasilan tahun kalender sebelumnya dan ditagih ke orang yang tercatat tinggal di Jepang pada 1 Januari. Kalau kamu baru tiba di tengah tahun, belum ada penghasilan Jepang tahun sebelumnya yang bisa dijadikan dasar, jadi tidak ada tagihan. Setahun kemudian pemerintah kota menagih pajak penduduk atas gaji tahun pertamamu, mulai Juni. Kalau pemberi kerja memotongnya dari gaji, gaji bulananmu turun walaupun gaji pokoknya sama.</p><p>Hitungan di <em>tool</em> ini menunjukkan angka setahun penuh untuk tiap kasus, jadi slip gaji tahun kedua tidak akan sama dengan contoh tahun pertama.</p>"
     },
     {
       "q": "Apa itu <em>nenmatsu chōsei</em>, dan apakah saya masih harus lapor pajak sendiri seperti SPT Tahunan?",
+      "cite": [{"name": "NTA, Tax Answer No.2665: penyesuaian akhir tahun", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2665.htm#:~:text=%E5%B9%B4%E6%9C%AB%E8%AA%BF%E6%95%B4"}],
       "a": "<p>Tiap bulan pemberi kerja memotong pajak penghasilanmu memakai tabel standar. Pada Desember (kadang awal tahun berikutnya) ia menghitung ulang pajak setahun penuh dengan potongan yang sudah kamu laporkan, dan kelebihan potongan dikembalikan lewat gaji. Ini mirip perhitungan ulang PPh 21 di masa pajak Desember di Indonesia, dan dokumen hasilnya, <em>gensen chōshūhyō</em>, setara bukti potong 1721-A1. Bedanya, di Jepang kebanyakan karyawan setelah itu tidak perlu melapor sendiri seperti SPT Tahunan.</p><p>Kamu baru wajib melapor sendiri, biasanya pada Februari sampai Maret, kalau berganti pekerjaan di tengah tahun, punya penghasilan lain, atau ingin mengklaim potongan yang tidak bisa diurus kantor. Hitungan di <em>tool</em> ini paling dekat dengan hasil sesudah penyesuaian itu, bukan dengan satu slip gaji bulanan.</p>"
     },
     {
       "q": "Kenapa potongan iuran jaminan sosial di Jepang begitu besar dibanding BPJS?",
+      "cite": [{"name": "Kyokai Kenpo, tabel premi Tokyo tahun fiskal 2026 (PDF)", "url": "https://www.kyoukaikenpo.or.jp/assets/R8_13tokyo.pdf"}],
       "a": "<p>Dana pensiun karyawan (9,15% dari gaji dalam hitungan ini) dan asuransi kesehatan (sekitar 4,9%, lebih tinggi untuk yang berusia 40 tahun ke atas karena asuransi perawatan jangka panjang) wajib bagi kebanyakan karyawan penuh waktu, dan pemberi kerja menanggung porsi yang sama besar di luar potongan itu. Pada gaji ¥6.000.000 totalnya ¥881.400, lebih besar daripada pajak penghasilan. Potongan BPJS Kesehatan dan BPJS Ketenagakerjaan di Indonesia jauh lebih kecil. Berbeda dengan pajak, iuran pensiun dibatasi pada kelompok gaji bulanan tertentu, sehingga yang bergaji sangat tinggi membayar persentase yang lebih kecil.</p>"
     },
     {
       "q": "Bisakah dana pensiun Jepang dicairkan setelah saya pulang ke Indonesia?",
-      "a": "<p>Orang asing yang tidak berhak menerima pensiun Jepang tetapi pernah membayar iuran dana pensiun karyawan sering kali bisa mengajukan pembayaran penarikan sekaligus setelah meninggalkan Jepang, dalam batas waktu tertentu. Jumlahnya bergantung pada lama dan besar iuranmu, dan pajak yang dipotong di muka bisa diminta kembali lewat perwakilan pajak. Cek syarat dan batas bulan iuran terbaru di <a href=\"https://www.nenkin.go.jp/\">situs Japan Pension Service</a>.</p>"
+      "cite": [{"name": "Japan Pension Service, meninggalkan Jepang (pembayaran penarikan sekaligus)", "url": "https://www.nenkin.go.jp/international/english/scene/leavejapan/index.html#:~:text=Lump%2Dsum%20Withdrawal"}, {"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87"}],
+      "a": "<p>Orang asing yang tidak berhak menerima pensiun Jepang tetapi pernah membayar iuran dana pensiun karyawan sering kali bisa mengajukan pembayaran penarikan sekaligus setelah meninggalkan Jepang, dalam batas waktu tertentu. Jumlahnya bergantung pada lama dan besar iuranmu, dan pajak yang dipotong di muka bisa diminta kembali lewat perwakilan pajak. Cek syarat dan batas bulan iuran terbaru di <a href=\"https://www.nenkin.go.jp/international/english/scene/leavejapan/index.html\">situs Japan Pension Service</a>.</p>"
     },
     {
       "q": "Apakah saya masih kena pajak di Indonesia kalau bekerja di Jepang?",
@@ -202,6 +204,7 @@
     },
     {
       "q": "Bagaimana kalau saya tinggal di Jepang kurang dari setahun?",
+      "cite": [{"name": "NTA, Tax Answer No.2884: tarif pemotongan untuk non-resident", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2884.htm#:~:text=%E6%BA%90%E6%B3%89%E5%BE%B4%E5%8F%8E%E3%81%AE%E7%A8%8E%E7%8E%87"}, {"name": "NTA, Tax Answer No.2875: penduduk dan bukan penduduk", "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2875.htm#:~:text=%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%A8%E9%9D%9E%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%AE%E5%8C%BA%E5%88%86"}],
       "a": "<p>Orang yang bukan penduduk pajak dan dibayar untuk pekerjaan di Jepang dikenai tarif tetap yang dipotong langsung dari gaji, tanpa potongan apa pun. Orang yang diperkirakan tinggal setahun atau lebih dianggap penduduk sejak hari kedatangannya. Jadi tarif tetap ini untuk penugasan pendek, bukan untuk masa tinggal panjang yang baru dimulai.</p>"
     },
     {
