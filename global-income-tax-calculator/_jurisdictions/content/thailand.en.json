@@ -12,31 +12,124 @@
         "h3": "Tax rates for residents",
         "html": "<p>Tax is charged on taxable income, which is pay less the employment expense deduction, allowances and social security. Each slice is taxed at the rate for its band.</p>",
         "table": {
-          "head": ["Taxable income", "Rate"],
+          "head": [
+            "Taxable income",
+            "Rate"
+          ],
           "rows": [
-            ["First ฿150,000", "0%"],
-            ["฿150,001 to ฿300,000", "5%"],
-            ["฿300,001 to ฿500,000", "10%"],
-            ["฿500,001 to ฿750,000", "15%"],
-            ["฿750,001 to ฿1,000,000", "20%"],
-            ["฿1,000,001 to ฿2,000,000", "25%"],
-            ["฿2,000,001 to ฿5,000,000", "30%"],
-            ["Over ฿5,000,000", "35%"]
+            [
+              "First ฿150,000",
+              "0%"
+            ],
+            [
+              "฿150,001 to ฿300,000",
+              "5%"
+            ],
+            [
+              "฿300,001 to ฿500,000",
+              "10%"
+            ],
+            [
+              "฿500,001 to ฿750,000",
+              "15%"
+            ],
+            [
+              "฿750,001 to ฿1,000,000",
+              "20%"
+            ],
+            [
+              "฿1,000,001 to ฿2,000,000",
+              "25%"
+            ],
+            [
+              "฿2,000,001 to ฿5,000,000",
+              "30%"
+            ],
+            [
+              "Over ฿5,000,000",
+              "35%"
+            ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+            "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: personal income tax rates",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+          }
+        ]
       },
       {
         "h3": "Employment expense deduction and allowances",
-        "html": "<p>Employees can deduct 50% of employment income, up to ฿100,000, without receipts. The calculator then gives a personal allowance of ฿60,000. It adds ฿60,000 for a spouse with no income, ฿30,000 for each child, and ฿60,000 instead for the second and later children born in 2018 or later. Many other deductions exist, such as insurance premiums, provident fund and retirement fund contributions, and mortgage interest, but the calculator does not model them.</p>"
+        "html": "<p>Employees can deduct 50% of employment income, up to ฿100,000, without receipts. The calculator then gives a personal allowance of ฿60,000. It adds ฿60,000 for a spouse with no income, ฿30,000 for each child, and ฿60,000 instead for the second and later children born in 2018 or later. Many other deductions exist, such as insurance premiums, provident fund and retirement fund contributions, and mortgage interest, but the calculator does not model them.</p>",
+        "cite": [
+          {
+            "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+            "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: deductions",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
+          }
+        ]
       },
       {
         "h3": "Social security",
-        "html": "<p>Employees contribute 5% of monthly pay to the Social Security Fund, on pay up to a ceiling. The calculator uses a ceiling of ฿17,500 a month, so the most you pay is ฿875 a month, or ฿10,500 a year. Contributions are deductible, and your employer pays a matching share. Foreign employees working under a Thai employment contract are generally covered, so check with the Social Security Office.</p>"
+        "html": "<p>Employees contribute 5% of monthly pay to the Social Security Fund, on pay up to a ceiling. The calculator uses a ceiling of ฿17,500 a month, so the most you pay is ฿875 a month, or ฿10,500 a year. Contributions are deductible, and your employer pays a matching share. Foreign employees working under a Thai employment contract are generally covered, so check with the Social Security Office.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+            "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+          }
+        ]
       }
     ],
     "sources": [
-      { "name": "Thai Revenue Department", "url": "https://www.rd.go.th/", "note": "income tax rates, allowances, residency" },
-      { "name": "Social Security Office", "url": "https://www.sso.go.th/", "note": "social security contributions" }
+      {
+        "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+        "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Thailand: personal income tax rates",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Thailand: deductions",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+      },
+      {
+        "name": "Revenue Department, Personal Income Tax: resident and non-resident",
+        "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Thailand: foreign-sourced income",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/income-determination#:~:text=remitted"
+      },
+      {
+        "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+        "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "Revenue Department, Personal Income Tax: resident and non-resident",
+        "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+      },
+      {
+        "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+        "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+      }
     ]
   },
   "examples": [
@@ -44,32 +137,76 @@
       "key": "single",
       "title": "How to calculate personal income tax in Thailand on ฿1,200,000",
       "intro": "<p>A single employee on ฿1,200,000 pays ฿10,500 of social security. The expense deduction is the ฿100,000 cap and the personal allowance is ฿60,000, so taxable income is ฿1,029,500. The brackets give ฿122,375 of income tax. You keep about ฿1,067,125, or 88.9% of gross, and the marginal rate is 25.0%.</p>",
-      "after": "<p>The 50% expense deduction is capped at ฿100,000, so its value shrinks as pay rises. Employers withhold during the year, and the annual return settles the difference.</p>"
+      "after": "<p>The 50% expense deduction is capped at ฿100,000, so its value shrinks as pay rises. Employers withhold during the year, and the annual return settles the difference.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: personal income tax rates",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        }
+      ]
     },
     {
       "key": "married-with-children",
       "title": "How much tax does a married employee with two children pay in Thailand on ฿1,800,000?",
       "intro": "<p>This is a married earner with a spouse who has no income and two children, both born in 2018 or later. Allowances total ฿210,000: ฿60,000 personal, ฿60,000 spouse, ฿30,000 for the first child and ฿60,000 for the second, because the higher amount for a child born in 2018 or later starts from the second child. After ฿10,500 of social security and the ฿100,000 expense deduction, taxable income is ฿1,479,500 and tax is ฿234,875. You keep about ฿1,554,625, or 86.4% of gross.</p>",
-      "after": "<p>The family allowances cut taxable income by ฿150,000 more than in the single example, but the next baht is still taxed at 25%.</p>"
+      "after": "<p>The family allowances cut taxable income by ฿150,000 more than in the single example, but the next baht is still taxed at 25%.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: personal income tax rates",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to reduce Thai tax. Which ones apply depends on your residency and family.</p>",
   "strategies": [
     {
       "h3": "Provident fund contributions",
-      "html": "<p><strong>Suits:</strong> employees whose company runs a registered provident fund. Your contributions are deductible up to a limit set by the Revenue Department, and the employer usually adds its own share.</p><p><strong>Caveat:</strong> the money is for retirement, and leaving early can affect the tax treatment.</p>"
+      "html": "<p><strong>Suits:</strong> employees whose company runs a registered provident fund. Your contributions are deductible up to a limit set by the Revenue Department, and the employer usually adds its own share.</p><p><strong>Caveat:</strong> the money is for retirement, and leaving early can affect the tax treatment.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Retirement mutual funds and other approved funds",
-      "html": "<p><strong>Suits:</strong> tax residents in the higher brackets who want to save for retirement. Contributions to approved retirement funds can be deducted within annual limits, which change from time to time.</p><p><strong>Caveat:</strong> funds must be held for a minimum period, and selling early can mean paying back the tax benefit. Check the current rules before you invest.</p>"
+      "html": "<p><strong>Suits:</strong> tax residents in the higher brackets who want to save for retirement. Contributions to approved retirement funds can be deducted within annual limits, which change from time to time.</p><p><strong>Caveat:</strong> funds must be held for a minimum period, and selling early can mean paying back the tax benefit. Check the current rules before you invest.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Claim allowances and deductions for family, insurance and a home loan",
-      "html": "<p><strong>Suits:</strong> anyone who supports a spouse, children or parents, or pays life or health insurance premiums or mortgage interest. These are standard deductions on the annual return.</p><p><strong>Caveat:</strong> each has a cap and needs documents. The calculator only models the personal, spouse and child allowances.</p>"
+      "html": "<p><strong>Suits:</strong> anyone who supports a spouse, children or parents, or pays life or health insurance premiums or mortgage interest. These are standard deductions on the annual return.</p><p><strong>Caveat:</strong> each has a cap and needs documents. The calculator only models the personal, spouse and child allowances.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Donations to approved bodies",
-      "html": "<p><strong>Suits:</strong> people who already give to charity. Donations to approved organisations are deductible, within a limit based on your income.</p><p><strong>Caveat:</strong> only recognised recipients count, and you need the receipt.</p>"
+      "html": "<p><strong>Suits:</strong> people who already give to charity. Donations to approved organisations are deductible, within a limit based on your income.</p><p><strong>Caveat:</strong> only recognised recipients count, and you need the receipt.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     }
   ],
   "limits": [
@@ -84,27 +221,79 @@
   "faq": [
     {
       "q": "How much tax do I pay on ฿1,200,000 in Thailand?",
-      "a": "<p>A single resident pays about ฿122,375 in income tax and ฿10,500 in social security, and keeps about ฿1,067,125. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A single resident pays about ฿122,375 in income tax and ฿10,500 in social security, and keeps about ฿1,067,125. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: personal income tax rates",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "q": "What is the 180-day rule in Thailand?",
-      "a": "<p>If you stay in Thailand for 180 days or more in a calendar year, you are a tax resident for that year. Residents are taxed on income from work in Thailand at the progressive rates, with the expense deduction and allowances. Count days before a move or departure, since your status can differ from year to year.</p>"
+      "a": "<p>If you stay in Thailand for 180 days or more in a calendar year, you are a tax resident for that year. Residents are taxed on income from work in Thailand at the progressive rates, with the expense deduction and allowances. Count days before a move or departure, since your status can differ from year to year.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, Personal Income Tax: resident and non-resident",
+          "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+        }
+      ]
     },
     {
       "q": "Why is a 50% deduction taken off my salary, and why is it capped at ฿100,000?",
-      "a": "<p>Thai law gives employees a standard deduction for work expenses without receipts: 50% of employment income, up to ฿100,000. On a salary of ฿200,000 or less, half of it is deducted. Above that, the deduction stays at ฿100,000, so its share of pay falls as you earn more. The calculator applies it automatically.</p>"
+      "a": "<p>Thai law gives employees a standard deduction for work expenses without receipts: 50% of employment income, up to ฿100,000. On a salary of ฿200,000 or less, half of it is deducted. Above that, the deduction stays at ฿100,000, so its share of pay falls as you earn more. The calculator applies it automatically.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: deductions",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
+        },
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "q": "Why does the Thai social security contribution stop at ฿875 a month?",
-      "a": "<p>The contribution is 5% of monthly pay, but only pay up to a wage ceiling counts. The calculator uses a ceiling of ฿17,500 a month, so the maximum is ฿875 a month, or ฿10,500 a year. A higher salary pays the same amount, so it is a small share of high pay.</p>"
+      "a": "<p>The contribution is 5% of monthly pay, but only pay up to a wage ceiling counts. The calculator uses a ceiling of ฿17,500 a month, so the maximum is ฿875 a month, or ฿10,500 a year. A higher salary pays the same amount, so it is a small share of high pay.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: social security (5%, up to THB 875 a month)",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "Louis Group, Thai labour law: social security wage ceiling THB 17,500 from January 2026",
+          "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+        }
+      ]
     },
     {
       "q": "Do I pay Thai tax on income from abroad?",
-      "a": "<p>Thailand taxes residents on income from work done in Thailand. Recent rule changes mean that foreign-sourced income a tax resident brings into Thailand can also be taxable, and the details depend on when it was earned and how it arrives. The calculator does not model this, so ask the Revenue Department or a tax adviser if you have foreign income.</p>"
+      "a": "<p>Thailand taxes residents on income from work done in Thailand. Recent rule changes mean that foreign-sourced income a tax resident brings into Thailand can also be taxable, and the details depend on when it was earned and how it arrives. The calculator does not model this, so ask the Revenue Department or a tax adviser if you have foreign income.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: foreign-sourced income",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/income-determination#:~:text=remitted"
+        },
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "q": "Why do I need to file a return if my employer withholds tax?",
-      "a": "<p>Employers withhold tax each month using an estimate that assumes your pay stays the same and ignores deductions you can claim. After the year you file an annual return, early in the following year, to claim allowances such as insurance or a retirement fund and to settle any difference. The calculator shows the full-year tax, so a payslip can differ.</p>"
+      "a": "<p>Employers withhold tax each month using an estimate that assumes your pay stays the same and ignores deductions you can claim. After the year you file an annual return, early in the following year, to claim allowances such as insurance or a retirement fund and to settle any difference. The calculator shows the full-year tax, so a payslip can differ.</p>",
+      "cite": [
+        {
+          "name": "Revenue Department, PND 91 guide (rate table, 50% or 100,000 baht deduction, allowances)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     }
   ],
   "bmc": "Found this useful? Buy me a Thai iced tea."

@@ -117,7 +117,9 @@ const CASES = [
 ];
 // Changed on purpose since v11 (run.mjs replays each): Australia takes no work deduction off a
 // resident's salary, so A$120,000 pays 4,020 + 22,500 resident tax and 2,400 Medicare levy.
-const CHANGED = { 'AU|pr|120000': { incomeTax: 28920, net: 91080 } };
+// Taiwan's NHI cap is NT$313,000 a month (NHIA, from 1 Jan 2025), not v11's 219,500: see run.mjs.
+const CHANGED = { 'AU|pr|120000': { incomeTax: 28920, net: 91080 },
+  'TW|resident_single_goldcard|6000000': { incomeTax: 814750, net: 5113254.44 } };
 {
   const { ctx, page, errs } = await open();
   for(const [key, country, fields, period] of CASES){

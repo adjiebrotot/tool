@@ -6,60 +6,200 @@
   "description": "Taiwan (China) income tax for residents, non-residents and Gold Card holders in 2026: the 183-day rule, rates, 18% withholding and three worked NT$ examples.",
   "lede": "<p>Taiwan (China) taxes residents on salary with progressive rates from 5% to 40%, after deductions, and social insurance is small. A resident on NT$1,200,000 pays NT$45,620 in income tax and keeps about NT$1,122,028 (93.5%). You are a resident once you stay 183 days or more in a calendar year. Before that, a non-resident pays a final withholding of 18% on pay above a low monthly threshold.</p>",
   "law": {
+    "introCite": [
+      {
+        "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+      }
+    ],
     "intro": "<p>The figures below are the 2026 rules as the calculator models them, for an employee. Taiwan (China) decides residency by days, not by visa: if you spend 183 days or more in Taiwan in a calendar year, you are a resident for that year and taxed on your Taiwan-source salary on the progressive scale. If you spend fewer, you are a non-resident taxed on a flat basis. The tax year is the calendar year, and the return is filed in May of the next year.</p>",
     "blocks": [
       {
         "h3": "Tax rates for residents",
+        "cite": [
+          {
+            "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+          },
+          {
+            "name": "MOF eTax Portal, Table of Exemption and Deduction",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+          }
+        ],
         "html": "<p>Rates apply to net taxable income. Net taxable income is your salary less a salary special deduction (up to NT$227,000), a standard deduction (NT$136,000 for a single person and NT$272,000 for a married couple) and personal exemptions (NT$101,000 each in the calculator, with an extra amount for each child that you can enter).</p>",
         "table": {
-          "head": ["Net taxable income", "Rate"],
+          "head": [
+            "Net taxable income",
+            "Rate"
+          ],
           "rows": [
-            ["Up to NT$610,000", "5%"],
-            ["NT$610,001 to NT$1,380,000", "12%"],
-            ["NT$1,380,001 to NT$2,770,000", "20%"],
-            ["NT$2,770,001 to NT$5,190,000", "30%"],
-            ["Over NT$5,190,000", "40%"]
+            [
+              "Up to NT$610,000",
+              "5%"
+            ],
+            [
+              "NT$610,001 to NT$1,380,000",
+              "12%"
+            ],
+            [
+              "NT$1,380,001 to NT$2,770,000",
+              "20%"
+            ],
+            [
+              "NT$2,770,001 to NT$5,190,000",
+              "30%"
+            ],
+            [
+              "Over NT$5,190,000",
+              "40%"
+            ]
           ]
         }
       },
       {
         "h3": "Tax for non-residents",
+        "cite": [
+          {
+            "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+          },
+          {
+            "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+          }
+        ],
         "html": "<p>If you are in Taiwan (China) for fewer than 183 days in the calendar year, your employer withholds a flat rate on salary and the withholding is final. The calculator uses 6% when monthly pay is at or below NT$44,250 and 18% above it, with no deductions. If you cross 183 days later in the same calendar year, you file as a resident in May and the withholding is credited against your tax.</p>"
       },
       {
         "h3": "Gold Card relief",
+        "cite": [
+          {
+            "name": "Laws and Regulations Database, Act for the Recruitment and Employment of Foreign Professionals",
+            "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+          },
+          {
+            "name": "National Taxation Bureau of Taipei, tax reduction for foreign specialist professionals",
+            "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+          }
+        ],
         "html": "<p>Holders of the Employment Gold Card, for foreign professionals, can exclude half of the salary above NT$3,000,000 from taxable income under the Foreign Professionals Act. The calculator applies it to the salary after the special deduction. The relief is limited in time, so check with the National Taxation Bureau how long it lasts for you.</p>"
       },
       {
         "h3": "Social insurance",
-        "html": "<p>Employees pay labour insurance (12.5% rate, 20% employee share, on pay up to NT$45,800 a month) and national health insurance (5.17% rate, 30% employee share, on pay up to NT$219,500 a month), so contributions are small and capped. Employers pay the larger shares on top.</p>"
+        "cite": [
+          {
+            "name": "Bureau of Labor Insurance, premium calculator (labour insurance 11.5%, employment insurance 1%, top grade NT$45,800)",
+            "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+          },
+          {
+            "name": "NHIA, premium table (rate 5.17%, top insured amount NT$313,000)",
+            "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf"
+          },
+          {
+            "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+            "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+          }
+        ],
+        "html": "<p>Employees pay labour insurance (11.5%) and employment insurance (1%), 12.5% together, with a 20% employee share on pay up to NT$45,800 a month, and national health insurance (5.17% rate, 30% employee share, on pay up to NT$313,000 a month). A foreign employee is in employment insurance only if married to a Taiwanese national with household registration or, from 2026, holding permanent residence; otherwise only the 11.5% applies, slightly less than the calculator takes, so contributions are small and capped. Employers pay the larger shares on top.</p>"
       }
     ],
     "sources": [
-      { "name": "Ministry of Finance, Taiwan (China)", "url": "https://www.mof.gov.tw/", "note": "income tax rates, deductions and the 183-day rule" },
-      { "name": "National Taxation Bureau of Taipei", "url": "https://www.ntbt.gov.tw/", "note": "filing, withholding and the May return" },
-      { "name": "Bureau of Labor Insurance", "url": "https://www.bli.gov.tw/", "note": "labour insurance" },
-      { "name": "National Health Insurance Administration", "url": "https://www.nhi.gov.tw/", "note": "national health insurance premiums" },
-      { "name": "National Development Council, Employment Gold Card", "url": "https://www.ndc.gov.tw/", "note": "Gold Card and foreign professionals" }
+      {
+        "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate",
+        "note": "progressive rates 5% to 40%"
+      },
+      {
+        "name": "MOF eTax Portal, Table of Exemption and Deduction",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction",
+        "note": "exemptions and deductions"
+      },
+      {
+        "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25",
+        "note": "withholding for non-residents"
+      },
+      {
+        "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident",
+        "note": "183-day residency rule"
+      },
+      {
+        "name": "Laws and Regulations Database, Act for the Recruitment and Employment of Foreign Professionals",
+        "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars",
+        "note": "Gold Card relief"
+      },
+      {
+        "name": "Bureau of Labor Insurance, premium calculator (labour insurance 11.5%, employment insurance 1%, top grade NT$45,800)",
+        "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1",
+        "note": "labor insurance premiums"
+      },
+      {
+        "name": "NHIA, premium table (rate 5.17%, top insured amount NT$313,000)",
+        "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf",
+        "note": "national health insurance premiums"
+      },
+      {
+        "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+        "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+      }
     ]
   },
   "examples": [
     {
       "key": "resident",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "MOF eTax Portal, Table of Exemption and Deduction",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+        },
+        {
+          "name": "Bureau of Labor Insurance, premium calculator (labour insurance 11.5%, employment insurance 1%, top grade NT$45,800)",
+          "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+        }
+      ],
       "title": "How to calculate income tax in Taiwan (China) on NT$1,200,000 as a resident",
       "intro": "<p>This is a single resident on NT$1,200,000. The salary special deduction is NT$227,000 and the exemption and standard deduction together are NT$237,000, so net taxable income is NT$736,000. That is in the 12% band, giving NT$45,620 of tax. Labour insurance is NT$13,740 and health insurance is NT$18,612. You keep about NT$1,122,028, or 93.5% of gross.</p>",
       "after": "<p>The marginal rate is 13.6%. Social insurance is small because of the caps, and there is no pension contribution deducted from pay in this model.</p>"
     },
     {
       "key": "non-resident",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+        }
+      ],
       "title": "Taiwan (China) non-resident tax: what NT$600,000 pays under 18% withholding",
-      "intro": "<p>This is a non-resident paid NT$600,000, who has not yet been in Taiwan 183 days in the calendar year. Monthly pay is above NT$44,250, so withholding is 18%, or NT$108,000, with no deductions. Labour insurance is NT$13,740 and health insurance is NT$9,306. You keep about NT$468,954, or 78.2% of gross.</p>",
+      "intro": "<p>This is a non-resident paid NT$600,000, who has not yet been in Taiwan 183 days in the calendar year. Monthly pay is above NT$44,250, so withholding is 18%, or NT$108,000, with no deductions. As a foreign employee outside employment insurance, labour insurance is NT$12,641 and health insurance is NT$9,306. You keep about NT$470,053, or 78.3% of gross.</p>",
       "after": "<p>If you pass 183 days in the year, you file as a resident in May and the same salary is taxed on the progressive scale. The excess withholding is refunded, so for most arrivals who stay, the 18% is a cash-flow cost. A resident on the same NT$600,000 would pay about NT$6,800 in income tax.</p>"
     },
     {
       "key": "gold-card",
+      "cite": [
+        {
+          "name": "Laws and Regulations Database, Act for the Recruitment and Employment of Foreign Professionals",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Ministry of Labor, employment insurance coverage of foreign workers",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+        }
+      ],
       "title": "How much tax does a Gold Card holder pay in Taiwan (China) on NT$5,000,000?",
-      "intro": "<p>This is a resident Gold Card holder on NT$5,000,000. After the salary special deduction, salary is NT$4,773,000. Half of the part above NT$3,000,000 (NT$886,500) is excluded, and the NT$237,000 of exemption and standard deduction comes off as well. Net taxable income is NT$3,649,500, taxed at NT$664,750. Health insurance is NT$40,853 and labour insurance is NT$13,740. You keep about NT$4,280,657, or 85.6% of gross.</p>",
+      "intro": "<p>This is a resident Gold Card holder on NT$5,000,000. After the salary special deduction, salary is NT$4,773,000. Half of the part above NT$3,000,000 (NT$886,500) is excluded, and the NT$237,000 of exemption and standard deduction comes off as well. Net taxable income is NT$3,649,500, taxed at NT$664,750. Health insurance is NT$58,256 and labour insurance, without employment insurance, is NT$12,641. You keep about NT$4,264,354, or 85.3% of gross.</p>",
       "after": "<p>Without the Gold Card exclusion the same salary would pay NT$930,700 of income tax, so the relief is worth NT$265,950 here. The marginal rate on extra pay is 15.0%, half of the 30% band.</p>"
     }
   ],
@@ -67,18 +207,54 @@
   "strategies": [
     {
       "h3": "Count your days and file as a resident",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        },
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        }
+      ],
       "html": "<p><strong>Suits:</strong> anyone who arrives, or leaves, part-way through a calendar year. Residency depends on 183 days in the calendar year, not on the date you start work. If you pass 183 days you can file in May as a resident and recover withholding taken at the non-resident rate.</p><p><strong>Caveat:</strong> you need your residence certificate and tax ID to file, and you must keep your entry and exit records. Plan arrival and departure dates with the 183 days in mind.</p>"
     },
     {
       "h3": "Apply for the Employment Gold Card relief",
+      "cite": [
+        {
+          "name": "Laws and Regulations Database, Act for the Recruitment and Employment of Foreign Professionals",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "National Taxation Bureau of Taipei, tax reduction for foreign specialist professionals",
+          "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+        }
+      ],
       "html": "<p><strong>Suits:</strong> foreign professionals paid more than NT$3,000,000. Half of the salary above that figure is excluded from taxable income, as in the NT$5,000,000 example.</p><p><strong>Caveat:</strong> you need a Gold Card and the relief is time-limited. Check the conditions with the National Taxation Bureau.</p>"
     },
     {
       "h3": "Claim itemised deductions in the May return",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (itemized deductions)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=Itemized%20Deductions"
+        },
+        {
+          "name": "MOF eTax Portal, Table of Exemption and Deduction",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+        }
+      ],
       "html": "<p><strong>Suits:</strong> residents whose eligible expenses exceed the standard deduction, such as donations, insurance premiums, medical costs or rent. You can choose itemised deductions instead of the standard one.</p><p><strong>Caveat:</strong> each item has its own cap and receipts are required. The calculator only uses the standard deduction.</p>"
     },
     {
       "h3": "Voluntary labour pension contributions",
+      "cite": [
+        {
+          "name": "Bureau of Labor Insurance, Labor Pension Act (voluntary contribution)",
+          "url": "https://www.bli.gov.tw/en/0010376.html#:~:text=six%20percent"
+        }
+      ],
       "html": "<p><strong>Suits:</strong> employees covered by the labour pension scheme. Voluntary contributions of up to 6% of monthly pay are deductible from income.</p><p><strong>Caveat:</strong> not every foreign employee is covered by the scheme, and the money is for retirement. Ask your employer.</p>"
     }
   ],
@@ -94,22 +270,68 @@
   "faq": [
     {
       "q": "How much tax do I pay on NT$1,200,000 in Taiwan (China)?",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Progressive Tax Rate (residents)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Bureau of Labor Insurance, premium calculator (labour insurance 11.5%, employment insurance 1%, top grade NT$45,800)",
+          "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+        }
+      ],
       "a": "<p>A single resident pays about NT$45,620 in income tax and NT$32,352 in social insurance, keeping about NT$1,122,028. A non-resident on the same salary pays 18% withholding, or NT$216,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "What is the 183-day rule in Taiwan (China)?",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        }
+      ],
       "a": "<p>If you are physically in Taiwan for 183 days or more in a calendar year, you are a resident for that year. The count is by calendar year (1 January to 31 December), not from your arrival date, so a person who arrives in July is often a non-resident in the first year and a resident in the second. Residents are taxed on the progressive scale with deductions, while non-residents face a flat withholding.</p>"
     },
     {
       "q": "Why does my employer withhold 18% if I am about to become a resident?",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (withholding rates)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (183-day rule)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        }
+      ],
       "a": "<p>Your employer cannot know in advance that you will reach 183 days, so until then it withholds at the non-resident rate. Once you pass 183 days, you file as a resident in May of the next year, and the tax is recalculated on the progressive scale. Any excess withholding is refunded, which is why an arrival often gets a large refund in the following May.</p><p>The calculator shows each status as a full-year figure, so your payslips will differ.</p>"
     },
     {
       "q": "When is the tax return due in Taiwan (China)?",
+      "cite": [
+        {
+          "name": "MOF eTax Portal, Instructions for Alien Individual Income Tax (filing period)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=from%20May%201%20to%20May%2031"
+        }
+      ],
       "a": "<p>The filing season is May each year, for the previous calendar year's income. Taxpayers can file online or at the tax bureau. Your employer gives you a withholding statement early in the year. Check the exact dates and the e-filing options on the <a href=\"https://www.ntbt.gov.tw/\">National Taxation Bureau</a> site.</p>"
     },
     {
       "q": "How does the Gold Card tax relief work?",
+      "cite": [
+        {
+          "name": "Laws and Regulations Database, Act for the Recruitment and Employment of Foreign Professionals",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "National Taxation Bureau of Taipei, tax reduction for foreign specialist professionals",
+          "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+        }
+      ],
       "a": "<p>Gold Card holders can exclude 50% of salary above NT$3,000,000 from taxable income, so only half of that slice is taxed. On NT$5,000,000 the calculator excludes NT$886,500, cutting the tax by NT$265,950. It is time-limited, so confirm the conditions and period with the tax authority.</p>"
     },
     {

@@ -341,6 +341,10 @@
         <div class="toggle-label"><span class="tip-wrap">Gold Card <i class="tip-icon" data-tip="A Gold Card holder excludes 50% of salary above 3,000,000 for 5 years.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="twGold"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
+      <div class="field-row" data-show="TW">
+        <div class="field-label"><span class="tip-wrap">Employment insurance <i class="tip-icon" data-tip="" data-tip-options>?</i></span></div>
+        <select class="sel-input" id="twEi"><option value="yes" data-opt-tip="<strong>Covered:</strong> citizens, foreigners married to a citizen with household registration, and permanent residents." selected>Covered: 11.5% + 1%</option><option value="no" data-opt-tip="<strong>Not covered:</strong> other foreign employees on a work permit, who pay labour insurance only.">Foreign employee: 11.5% only</option></select>
+      </div>
       <div class="field-row" data-show="AE QA SA BH KW OM">
         <div class="field-label"><span class="tip-wrap">Citizenship <i class="tip-icon" data-tip="" data-tip-options>?</i></span></div>
         <select class="sel-input" id="gulfNat"><option value="expat" data-opt-tip="<strong>Expatriate:</strong> foreign workers on an employer-sponsored work residence permit." selected>Expatriate</option><option value="national" data-opt-tip="<strong>National:</strong> citizens of the country you work in, covered by its pension scheme.">National</option></select>
@@ -636,7 +640,7 @@
 
   <div class="view-bar card">
     <div class="view-opt">
-      <span class="view-label"><span class="tip-wrap">Show amounts in <i class="tip-icon" data-tip="For reading only: every sum is worked out in the job's own currency. Exchange rates are dated in What this assumes.">?</i></span></span>
+      <span class="view-label">Show amounts in</span>
       <select class="sel-input" id="dispCur" aria-label="Currency to show amounts in">
         <option value="local" selected>Each job's own currency</option>
         <option value="USD">US dollar (USD)</option><option value="EUR">Euro (EUR)</option><option value="GBP">British pound (GBP)</option>

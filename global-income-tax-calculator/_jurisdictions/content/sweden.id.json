@@ -11,37 +11,109 @@
     "blocks": [
       {
         "h3": "Pajak kota dan pengurang dasar (grundavdrag)",
-        "html": "<p>Sebagian besar pajakmu adalah pajak kota dengan tarif seragam atas penghasilan kena pajak, yaitu gaji dikurangi pengurang dasar (<em>grundavdrag</em>). Pengurang ini peranannya mirip gabungan PTKP dan <em>biaya jabatan</em>, tetapi bukan jumlah tetap: nilainya berubah mengikuti gaji dan menyusut di gaji tinggi, sehingga pada gaji SEK 600.000 hanya sekitar SEK 17.400. Di Stockholm tarif pajak kotanya 30,55%.</p>"
+        "html": "<p>Sebagian besar pajakmu adalah pajak kota dengan tarif seragam atas penghasilan kena pajak, yaitu gaji dikurangi pengurang dasar (<em>grundavdrag</em>). Pengurang ini peranannya mirip gabungan PTKP dan <em>biaya jabatan</em>, tetapi bukan jumlah tetap: nilainya berubah mengikuti gaji dan menyusut di gaji tinggi, sehingga pada gaji SEK 600.000 hanya sekitar SEK 17.400. Di Stockholm tarif pajak kotanya 30,55%.</p>",
+        "cite": [
+          {
+            "name": "Skatteverket, jumlah dan persentase 2026 (grundavdrag)",
+            "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html#:~:text=Grundavdrag"
+          },
+          {
+            "name": "Skatteverket, tarif pajak kotamadya 2026",
+            "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+          }
+        ]
       },
       {
         "h3": "Pajak negara (20%)",
-        "html": "<p>Pajak negara besarnya 20% dari penghasilan kena pajak di atas SEK 643.000, dan di bawah ambang itu tidak ada sama sekali. Karena penghasilan kena pajak sudah dikurangi pengurang dasar, gaji kotormu harus sedikit melewati SEK 643.000 dulu sebelum pajak negara mulai berjalan. Ini jauh berbeda dari Pasal 17 di Indonesia, yang tarifnya naik bertahap mulai dari 5%.</p>"
+        "html": "<p>Pajak negara besarnya 20% dari penghasilan kena pajak di atas SEK 643.000, dan di bawah ambang itu tidak ada sama sekali. Karena penghasilan kena pajak sudah dikurangi pengurang dasar, gaji kotormu harus sedikit melewati SEK 643.000 dulu sebelum pajak negara mulai berjalan. Ini jauh berbeda dari Pasal 17 di Indonesia, yang tarifnya naik bertahap mulai dari 5%.</p>",
+        "cite": [
+          {
+            "name": "Skatteverket, jumlah dan persentase 2026 (skiktgräns)",
+            "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html#:~:text=Skiktgr%C3%A4ns"
+          },
+          {
+            "name": "Skatteverket, kapan membayar pajak negara",
+            "url": "https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html"
+          }
+        ]
       },
       {
         "h3": "Iuran, biaya, dan pengurang pajak yang menutupinya",
-        "html": "<p>Selain pajak kota, ada iuran pensiun 7% dari gaji (maksimal SEK 47.100), biaya penguburan yang kecil, dan iuran siaran publik 1% dari penghasilan kena pajak (maksimal SEK 1.184). Hitungan <em>tool</em> lalu menerapkan pengurang pajak atas iuran pensiun, pengurang untuk yang bekerja (<em>jobbskatteavdrag</em>) dan pengurang atas penghasilan kerja. Pengurang ini memotong pajak kota dahulu, baru pajak negara, sehingga pada kebanyakan gaji gabungannya lebih besar daripada iuran pensiun itu. Itu berbeda dari potongan JHT 2% dan JP 1% di slip gaji Indonesia, yang benar-benar mengurangi gaji bersih.</p>"
+        "html": "<p>Selain pajak kota, ada iuran pensiun 7% dari gaji (maksimal SEK 47.100), biaya penguburan yang kecil, dan iuran siaran publik 1% dari penghasilan kena pajak (maksimal SEK 1.184). Hitungan <em>tool</em> lalu menerapkan pengurang pajak atas iuran pensiun, pengurang untuk yang bekerja (<em>jobbskatteavdrag</em>) dan pengurang atas penghasilan kerja. Pengurang ini memotong pajak kota dahulu, baru pajak negara, sehingga pada kebanyakan gaji gabungannya lebih besar daripada iuran pensiun itu. Itu berbeda dari potongan JHT 2% dan JP 1% di slip gaji Indonesia, yang benar-benar mengurangi gaji bersih.</p>",
+        "cite": [
+          {
+            "name": "Skatteverket, jumlah dan persentase 2026 (allmän pensionsavgift)",
+            "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html#:~:text=Allm%C3%A4n%20pensionsavgift"
+          },
+          {
+            "name": "Skatteverket, jobbskatteavdrag",
+            "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/skattereduktioner/jobbskatteavdrag.4.6fdde64a12cc4eee2308000107.html"
+          }
+        ]
       },
       {
         "h3": "SINK untuk bukan penduduk pajak",
-        "html": "<p>Pajak penghasilan khusus bukan penduduk pajak (SINK) adalah 22,5% dari gaji kotor tanpa tunjangan dan tanpa pengurang. Pajak ini ditujukan bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya untuk tinggal singkat. Gagasannya mirip PPh 26 di Indonesia, yaitu pemotongan dengan tarif tunggal atas penghasilan subjek pajak luar negeri. Hitungan <em>tool</em> menyediakannya sebagai pilihan di samping pajak untuk penduduk pajak.</p>"
+        "html": "<p>Pajak penghasilan khusus bukan penduduk pajak (SINK) adalah 22,5% dari gaji kotor tanpa tunjangan dan tanpa pengurang. Pajak ini ditujukan bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya untuk tinggal singkat. Gagasannya mirip PPh 26 di Indonesia, yaitu pemotongan dengan tarif tunggal atas penghasilan subjek pajak luar negeri. Hitungan <em>tool</em> menyediakannya sebagai pilihan di samping pajak untuk penduduk pajak.</p>",
+        "cite": [
+          {
+            "name": "Skatteverket, SINK",
+            "url": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta.4.6fdde64a12cc4eee23080002583.html#:~:text=22%2C5%20procent"
+          }
+        ]
       },
       {
         "h3": "Pemotongan dan deklarasi",
-        "html": "<p>Pemberi kerja memotong pajak yang dipotong di muka (<em>preliminärskatt</em>) dari gajimu tiap bulan, mirip PPh 21 yang dipotong kantor di Indonesia, dan kamu menyelesaikan selisihnya lewat deklarasi pajak tahunan ke Skatteverket, kantor pajak Swedia. Deklarasi itu pada dasarnya serupa SPT Tahunan, dengan data dari pemberi kerja sudah terisi. Agar semuanya berjalan, kamu butuh nomor identitas pribadi Swedia (<em>personnummer</em>), yang fungsinya mirip NIK yang juga menjadi NPWP.</p>"
+        "html": "<p>Pemberi kerja memotong pajak yang dipotong di muka (<em>preliminärskatt</em>) dari gajimu tiap bulan, mirip PPh 21 yang dipotong kantor di Indonesia, dan kamu menyelesaikan selisihnya lewat deklarasi pajak tahunan ke Skatteverket, kantor pajak Swedia. Deklarasi itu pada dasarnya serupa SPT Tahunan, dengan data dari pemberi kerja sudah terisi. Agar semuanya berjalan, kamu butuh nomor identitas pribadi Swedia (<em>personnummer</em>), yang fungsinya mirip NIK yang juga menjadi NPWP.</p>",
+        "cite": [
+          {
+            "name": "Skatteverket, A-skattsedel dan tabel pajak",
+            "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/askattsedelochskattetabeller.4.18e1b10334ebe8bc80005221.html#:~:text=Skattetabell"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Skatteverket, kantor pajak Swedia: tarif, pengurang, SINK dan kependudukan",
-        "url": "https://www.skatteverket.se/"
+        "name": "Skatteverket, jumlah dan persentase tahun pendapatan 2026",
+        "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html"
       },
       {
-        "name": "Migrationsverket, izin kerja dan izin tinggal",
-        "url": "https://www.migrationsverket.se/"
+        "name": "Skatteverket, kapan membayar pajak negara",
+        "url": "https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html"
       },
       {
-        "name": "Försäkringskassan, jaminan sosial",
-        "url": "https://www.forsakringskassan.se/"
+        "name": "Skatteverket, jobbskatteavdrag",
+        "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/skattereduktioner/jobbskatteavdrag.4.6fdde64a12cc4eee2308000107.html"
+      },
+      {
+        "name": "Skatteverket, tarif pajak kotamadya 2026",
+        "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+      },
+      {
+        "name": "Skatteverket, SINK",
+        "url": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta.4.6fdde64a12cc4eee23080002583.html#:~:text=22%2C5%20procent"
+      },
+      {
+        "name": "Skatteverket, A-skattsedel dan tabel pajak",
+        "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/askattsedelochskattetabeller.4.18e1b10334ebe8bc80005221.html#:~:text=Skattetabell"
+      },
+      {
+        "name": "Skatteverket, kewajiban pajak",
+        "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/sabeskattasdinlon/skattskyldighet.4.65fc817e1077c25b8328000206.html#:~:text=Vad%20inneb%C3%A4r%20obegr%C3%A4nsat%20och%20begr%C3%A4nsat%20skattskyldig"
+      },
+      {
+        "name": "Maandag, keringanan pajak tenaga ahli di Swedia: 25% penghasilan bebas pajak",
+        "url": "https://www.maandag.com/en-se/blog/general/expert-tax-relief-in-sweden-keep-25-of-your-income-tax-free"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "Skatteverket, tarif pajak kotamadya 2026",
+        "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+      },
+      {
+        "name": "Skatteverket, kewajiban pajak",
+        "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/sabeskattasdinlon/skattskyldighet.4.65fc817e1077c25b8328000206.html#:~:text=Vad%20inneb%C3%A4r%20obegr%C3%A4nsat%20och%20begr%C3%A4nsat%20skattskyldig"
       }
     ]
   },
@@ -50,32 +122,80 @@
       "key": "resident-stockholm",
       "title": "Berapa gaji bersih di Stockholm dengan gaji SEK 600.000 setahun?",
       "intro": "<p>Contoh ini untuk penduduk pajak Stockholm dengan satu pekerjaan sepanjang tahun. Setelah pengurang dasar SEK 17.400, penghasilan kena pajaknya SEK 582.600, masih di bawah ambang SEK 643.000, sehingga tidak ada pajak negara. Pajak kota 30,55% atas jumlah itu mencapai SEK 177.984 sebelum pengurang, tetapi pengurang pajak sebesar SEK 92.929 menurunkannya menjadi SEK 85.055. Selain itu ada iuran pensiun 7% sebesar SEK 42.000, biaya penguburan sekitar SEK 1.701 dan iuran siaran publik SEK 1.184. Gaji bersihnya sekitar SEK 470.060, atau 78,3% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalmu 30,8%, yaitu tarif pajak kota ditambah biaya penguburan, dan pajak negara 20% baru menambah beban setelah penghasilan kena pajak melewati SEK 643.000.</p>"
+      "after": "<p>Tarif marginalmu 30,8%, yaitu tarif pajak kota ditambah biaya penguburan, dan pajak negara 20% baru menambah beban setelah penghasilan kena pajak melewati SEK 643.000.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, tarif pajak kotamadya 2026",
+          "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+        },
+        {
+          "name": "Skatteverket, kapan membayar pajak negara",
+          "url": "https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html"
+        },
+        {
+          "name": "Skatteverket, jobbskatteavdrag",
+          "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/skattereduktioner/jobbskatteavdrag.4.6fdde64a12cc4eee2308000107.html"
+        }
+      ]
     },
     {
       "key": "sink-non-resident",
       "title": "Cara menghitung pajak SINK di Swedia untuk pekerja bukan penduduk pajak bergaji SEK 600.000",
       "intro": "<p>Contoh ini untuk pekerja yang dikenai SINK karena bukan penduduk pajak. Pajaknya 22,5% dari gaji kotor, yaitu SEK 135.000 dari SEK 600.000, yang menyisakan SEK 465.000 atau 77,5%. Tidak ada pengurang dasar, tidak ada tarif kota yang perlu dipilih dan tidak ada iuran pensiun dalam kasus ini.</p>",
-      "after": "<p>Penduduk Stockholm dengan gaji yang sama memperoleh gaji bersih sekitar SEK 5.060 lebih besar, jadi SINK tidak selalu paling ringan. Meski begitu, rezim yang berlaku ditentukan oleh status penduduk pajakmu, bukan oleh angka mana yang lebih rendah.</p>"
+      "after": "<p>Penduduk Stockholm dengan gaji yang sama memperoleh gaji bersih sekitar SEK 5.060 lebih besar, jadi SINK tidak selalu paling ringan. Meski begitu, rezim yang berlaku ditentukan oleh status penduduk pajakmu, bukan oleh angka mana yang lebih rendah.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, SINK",
+          "url": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta.4.6fdde64a12cc4eee23080002583.html#:~:text=22%2C5%20procent"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Beberapa cara berikut bisa menurunkan pajakmu secara sah, tetapi yang berlaku bergantung pada statusmu.</p>",
   "strategies": [
     {
       "h3": "Tanyakan keringanan pajak untuk tenaga ahli asing",
-      "html": "<p>Kalau kamu tenaga ahli, eksekutif atau personel kunci yang direkrut ke Swedia, keringanan ini membebaskan 25% gajimu dari pajak untuk jangka waktu terbatas, dan pemberi kerjamu yang mengajukannya lewat dewan khusus (<em>expertskattenämnden</em>). Syaratnya termasuk gaji minimum dan batas waktu, dan hitungan <em>tool</em> tidak memuatnya, jadi pajakmu sesungguhnya bisa lebih rendah.</p>"
+      "html": "<p>Kalau kamu tenaga ahli, eksekutif atau personel kunci yang direkrut ke Swedia, keringanan ini membebaskan 25% gajimu dari pajak untuk jangka waktu terbatas, dan pemberi kerjamu yang mengajukannya lewat dewan khusus (<em>expertskattenämnden</em>). Syaratnya termasuk gaji minimum dan batas waktu, dan hitungan <em>tool</em> tidak memuatnya, jadi pajakmu sesungguhnya bisa lebih rendah.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, Forskarskattenämnden (keringanan pajak tenaga ahli)",
+          "url": "https://www.skatteverket.se/sokalias/forskarskattenamnden.4.7856a2b411550b99fb7800086664.html"
+        },
+        {
+          "name": "Maandag, keringanan pajak tenaga ahli di Swedia: 25% penghasilan bebas pajak",
+          "url": "https://www.maandag.com/en-se/blog/general/expert-tax-relief-in-sweden-keep-25-of-your-income-tax-free"
+        }
+      ]
     },
     {
       "h3": "Klaim potongan perjalanan dan biaya kerja",
-      "html": "<p>Kalau kamu penduduk pajak yang menempuh perjalanan ke tempat kerja atau menanggung biaya kerja sendiri, potongan ini mengurangi penghasilan kena pajakmu. Potongan baru berlaku di atas ambang tertentu dan kamu perlu menyimpan bukti karena Skatteverket memeriksa klaim, sedangkan hitungan <em>tool</em> tidak memuatnya.</p>"
+      "html": "<p>Kalau kamu penduduk pajak yang menempuh perjalanan ke tempat kerja atau menanggung biaya kerja sendiri, potongan ini mengurangi penghasilan kena pajakmu. Potongan baru berlaku di atas ambang tertentu dan kamu perlu menyimpan bukti karena Skatteverket memeriksa klaim, sedangkan hitungan <em>tool</em> tidak memuatnya.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, potongan perjalanan ke dan dari tempat kerja",
+          "url": "https://www.skatteverket.se/privat/skatter/bilochtrafik/avdragforresortillochfranarbetet.4.3810a01c150939e893f25603.html"
+        }
+      ]
     },
     {
       "h3": "Pakai rekening investasi ISK untuk tabungan",
-      "html": "<p>Kalau kamu berinvestasi di saham atau reksa dana, rekening ISK dipajaki berdasarkan imbal hasil standar yang ditetapkan negara (<em>schablon</em>), bukan berdasarkan untung dan dividen yang sebenarnya. Karena itu pada tahun untung besar ISK biasanya lebih murah daripada pajak biasa atas untung, dan pada tahun yang buruk lebih mahal. Ini pajak atas rekening, bukan pengurang gaji, jadi angka di halaman ini tidak berubah.</p>"
+      "html": "<p>Kalau kamu berinvestasi di saham atau reksa dana, rekening ISK dipajaki berdasarkan imbal hasil standar yang ditetapkan negara (<em>schablon</em>), bukan berdasarkan untung dan dividen yang sebenarnya. Karena itu pada tahun untung besar ISK biasanya lebih murah daripada pajak biasa atas untung, dan pada tahun yang buruk lebih mahal. Ini pajak atas rekening, bukan pengurang gaji, jadi angka di halaman ini tidak berubah.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, pajak rekening investasi (ISK)",
+          "url": "https://www.skatteverket.se/privat/skatter/vardepapper/investeringssparkontoisk.4.5fc8c94513259a4ba1d800037851.html#:~:text=Schablonint%C3%A4kten%20p%C3%A5verkar%20din%20%C3%A5rliga%20skatt"
+        }
+      ]
     },
     {
       "h3": "Bandingkan kotamadya sebelum memilih tempat tinggal",
-      "html": "<p>Tarif pajak berbeda beberapa poin persentase antardaerah di Swedia, dan itu mengubah gaji bersih dari gaji yang sama. Meski begitu, daerah berpajak paling rendah belum tentu paling murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.</p>"
+      "html": "<p>Tarif pajak berbeda beberapa poin persentase antardaerah di Swedia, dan itu mengubah gaji bersih dari gaji yang sama. Meski begitu, daerah berpajak paling rendah belum tentu paling murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, tarif pajak kotamadya 2026",
+          "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+        }
+      ]
     }
   ],
   "limits": [
@@ -89,23 +209,61 @@
   "faq": [
     {
       "q": "Berapa gaji bersih untuk gaji SEK 600.000 per tahun di Stockholm?",
-      "a": "<p>Penduduk pajak membayar sekitar SEK 129.940 setelah pengurang pajak, sehingga gaji bersihnya sekitar SEK 470.060. Dengan SINK, pajaknya SEK 135.000 dan gaji bersihnya SEK 465.000. Coba gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Penduduk pajak membayar sekitar SEK 129.940 setelah pengurang pajak, sehingga gaji bersihnya sekitar SEK 470.060. Dengan SINK, pajaknya SEK 135.000 dan gaji bersihnya SEK 465.000. Coba gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, tarif pajak kotamadya 2026",
+          "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+        },
+        {
+          "name": "Skatteverket, kapan membayar pajak negara",
+          "url": "https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html"
+        }
+      ]
     },
     {
       "q": "Kapan saya kena pajak negara di Swedia?",
-      "a": "<p>Pajak negara 20% hanya dikenakan pada penghasilan kena pajak di atas SEK 643.000, yaitu gaji setelah pengurang dasar. Karena itu kebanyakan karyawan hanya membayar pajak kota, dan pada gaji SEK 600.000 hitungan <em>tool</em> tidak memuat pajak negara.</p>"
+      "a": "<p>Pajak negara 20% hanya dikenakan pada penghasilan kena pajak di atas SEK 643.000, yaitu gaji setelah pengurang dasar. Karena itu kebanyakan karyawan hanya membayar pajak kota, dan pada gaji SEK 600.000 hitungan <em>tool</em> tidak memuat pajak negara.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, kapan membayar pajak negara",
+          "url": "https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html"
+        }
+      ]
     },
     {
       "q": "Kenapa iuran pensiun 7% di Swedia nyaris tidak mengurangi gaji bersih?",
-      "a": "<p>Karyawan memang membayar iuran pensiun 7% dari gaji, tetapi pengurang pajak atas iuran pensiun, <em>jobbskatteavdrag</em> (pengurang pajak bagi yang bekerja) dan pengurang atas penghasilan kerja memotong pajak kota. Pada contoh SEK 600.000, pengurang gabungan itu SEK 92.929, lebih besar daripada iuran SEK 42.000.</p>"
+      "a": "<p>Karyawan memang membayar iuran pensiun 7% dari gaji, tetapi pengurang pajak atas iuran pensiun, <em>jobbskatteavdrag</em> (pengurang pajak bagi yang bekerja) dan pengurang atas penghasilan kerja memotong pajak kota. Pada contoh SEK 600.000, pengurang gabungan itu SEK 92.929, lebih besar daripada iuran SEK 42.000.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, jumlah dan persentase 2026 (allmän pensionsavgift)",
+          "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html#:~:text=Allm%C3%A4n%20pensionsavgift"
+        },
+        {
+          "name": "Skatteverket, jobbskatteavdrag",
+          "url": "https://www.skatteverket.se/privat/skatter/arbeteochinkomst/skattereduktioner/jobbskatteavdrag.4.6fdde64a12cc4eee2308000107.html"
+        }
+      ]
     },
     {
       "q": "Apa itu SINK dan siapa yang membayarnya?",
-      "a": "<p>SINK adalah pajak final 22,5% atas gaji kotor bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya selama tinggal singkat, tanpa tunjangan atau pengurang. Orang yang tinggal lebih lama, misalnya dengan izin kerja beberapa tahun, pada umumnya diperlakukan sebagai penduduk pajak dan memakai pajak biasa, tetapi Skatteverket yang menentukan statusmu.</p>"
+      "a": "<p>SINK adalah pajak final 22,5% atas gaji kotor bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya selama tinggal singkat, tanpa tunjangan atau pengurang. Orang yang tinggal lebih lama, misalnya dengan izin kerja beberapa tahun, pada umumnya diperlakukan sebagai penduduk pajak dan memakai pajak biasa, tetapi Skatteverket yang menentukan statusmu.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, SINK",
+          "url": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta.4.6fdde64a12cc4eee23080002583.html#:~:text=22%2C5%20procent"
+        }
+      ]
     },
     {
       "q": "Kenapa pajak kota di Swedia berbeda-beda antar tempat?",
-      "a": "<p>Tiap kotamadya dan wilayah menetapkan tarifnya sendiri, sehingga totalnya berbeda beberapa poin persentase. Di Indonesia pajak gaji seragam secara nasional, tetapi di Swedia tempat tinggalmu ikut menentukan pajakmu. Ubah tarif di <em>tool</em> untuk melihat perubahan gaji bersihmu.</p>"
+      "a": "<p>Tiap kotamadya dan wilayah menetapkan tarifnya sendiri, sehingga totalnya berbeda beberapa poin persentase. Di Indonesia pajak gaji seragam secara nasional, tetapi di Swedia tempat tinggalmu ikut menentukan pajakmu. Ubah tarif di <em>tool</em> untuk melihat perubahan gaji bersihmu.</p>",
+      "cite": [
+        {
+          "name": "Skatteverket, tarif pajak kotamadya 2026",
+          "url": "https://skatteverket.se/download/18.1522bf3f19aea8075ba428/1765291540367/skattesatser-kommuner-2026.txt"
+        }
+      ]
     },
     {
       "q": "Apakah iuran pensiun di Swedia bisa dicairkan kalau saya pulang ke Indonesia?",

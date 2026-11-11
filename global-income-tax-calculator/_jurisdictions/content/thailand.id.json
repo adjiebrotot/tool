@@ -50,33 +50,85 @@
               "35%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+            "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: tarif pajak penghasilan orang pribadi",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+          }
+        ]
       },
       {
         "h3": "Potongan biaya kerja dan tunjangan",
-        "html": "<p>Karyawan boleh mengurangkan 50% dari penghasilan kerja, maksimal ฿100.000, tanpa kuitansi. Ini padanan biaya jabatan di Indonesia (5% dengan batas Rp6 juta), hanya saja persentasenya jauh lebih besar. Setelah itu <em>tool</em> memberi tunjangan pribadi ฿60.000, padanan PTKP. Tunjangan bertambah ฿60.000 untuk pasangan yang tidak berpenghasilan dan ฿30.000 untuk tiap anak. Untuk anak kedua dan seterusnya yang lahir pada 2018 atau sesudahnya, tunjangannya ฿60.000. Di Thailand banyak potongan lain, seperti premi asuransi, iuran dana pensiun dan bunga KPR, tetapi <em>tool</em> tidak menghitungnya.</p>"
+        "html": "<p>Karyawan boleh mengurangkan 50% dari penghasilan kerja, maksimal ฿100.000, tanpa kuitansi. Ini padanan biaya jabatan di Indonesia (5% dengan batas Rp6 juta), hanya saja persentasenya jauh lebih besar. Setelah itu <em>tool</em> memberi tunjangan pribadi ฿60.000, padanan PTKP. Tunjangan bertambah ฿60.000 untuk pasangan yang tidak berpenghasilan dan ฿30.000 untuk tiap anak. Untuk anak kedua dan seterusnya yang lahir pada 2018 atau sesudahnya, tunjangannya ฿60.000. Di Thailand banyak potongan lain, seperti premi asuransi, iuran dana pensiun dan bunga KPR, tetapi <em>tool</em> tidak menghitungnya.</p>",
+        "cite": [
+          {
+            "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+            "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: pengurang",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
+          }
+        ]
       },
       {
         "h3": "Jaminan sosial",
-        "html": "<p>Karyawan membayar 5% dari gaji bulanan ke Social Security Fund, dana jaminan sosial yang fungsinya mirip BPJS Ketenagakerjaan. Hanya gaji sampai batas tertentu yang dihitung. <em>Tool</em> memakai batas ฿17.500 sebulan, sehingga iuran tertinggi ฿875 sebulan atau ฿10.500 setahun. Iuran ini mengurangi penghasilan kena pajak, dan pemberi kerja menyetor bagian yang sama. Pekerja asing dengan kontrak kerja Thailand umumnya ikut serta, tetapi pastikan ke Social Security Office.</p>"
+        "html": "<p>Karyawan membayar 5% dari gaji bulanan ke Social Security Fund, dana jaminan sosial yang fungsinya mirip BPJS Ketenagakerjaan. Hanya gaji sampai batas tertentu yang dihitung. <em>Tool</em> memakai batas ฿17.500 sebulan, sehingga iuran tertinggi ฿875 sebulan atau ฿10.500 setahun. Iuran ini mengurangi penghasilan kena pajak, dan pemberi kerja menyetor bagian yang sama. Pekerja asing dengan kontrak kerja Thailand umumnya ikut serta, tetapi pastikan ke Social Security Office.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Thailand: jaminan sosial (5%, maksimum THB 875 sebulan)",
+            "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "Louis Group, hukum ketenagakerjaan Thailand: batas upah jaminan sosial THB 17.500 sejak Januari 2026",
+            "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Revenue Department Thailand, tarif pajak, pengurang dan tunjangan",
-        "url": "https://www.rd.go.th/"
+        "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+        "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
       },
       {
-        "name": "Social Security Office Thailand, iuran dan batas upah",
-        "url": "https://www.sso.go.th/"
+        "name": "PwC Worldwide Tax Summaries, Thailand: tarif pajak penghasilan orang pribadi",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
       },
       {
-        "name": "Immigration Bureau Thailand, visa dan izin tinggal",
-        "url": "https://www.immigration.go.th/"
+        "name": "PwC Worldwide Tax Summaries, Thailand: pengurang",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP), ketentuan subjek pajak luar negeri dan P3B",
-        "url": "https://www.pajak.go.id/"
+        "name": "PwC Worldwide Tax Summaries, Thailand: jaminan sosial (5%, maksimum THB 875 sebulan)",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+      },
+      {
+        "name": "Departemen Pendapatan Thailand, Pajak Penghasilan Orang Pribadi: penduduk dan bukan penduduk",
+        "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Thailand: penghasilan dari luar negeri",
+        "url": "https://taxsummaries.pwc.com/thailand/individual/income-determination#:~:text=remitted"
+      },
+      {
+        "name": "Louis Group, hukum ketenagakerjaan Thailand: batas upah jaminan sosial THB 17.500 sejak Januari 2026",
+        "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "Departemen Pendapatan Thailand, Pajak Penghasilan Orang Pribadi: penduduk dan bukan penduduk",
+        "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+      },
+      {
+        "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+        "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
       }
     ]
   },
@@ -85,32 +137,76 @@
       "key": "single",
       "title": "Cara menghitung pajak penghasilan di Thailand untuk gaji ฿1.200.000 setahun (lajang)",
       "intro": "<p>Contoh ini untuk karyawan lajang dengan gaji ฿1.200.000 setahun, atau ฿100.000 sebulan. Iuran jaminan sosialnya ฿10.500, potongan biaya kerjanya terkena batas ฿100.000, karena 50% dari gaji ini jauh melebihi batas itu, dan tunjangan pribadinya ฿60.000. Penghasilan kena pajaknya ฿1.029.500, dan hanya bagian kecil di atas ฿1.000.000 yang masuk tingkat 25%. Pajak penghasilannya ฿122.375, sehingga gaji bersih yang kamu terima sekitar ฿1.067.125 setahun atau sekitar ฿88.927 sebulan, yaitu 88,9% dari gaji kotor, dan tarif marginalmu 25,0%.</p>",
-      "after": "<p>Pemberi kerja memotong pajak selama tahun berjalan, dan laporan tahunan menyelesaikan selisihnya. Untuk membandingkan daya beli gaji bersih ini dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "after": "<p>Pemberi kerja memotong pajak selama tahun berjalan, dan laporan tahunan menyelesaikan selisihnya. Untuk membandingkan daya beli gaji bersih ini dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: tarif pajak penghasilan orang pribadi",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        }
+      ]
     },
     {
       "key": "married-with-children",
       "title": "Berapa pajak karyawan menikah dengan dua anak di Thailand dengan gaji ฿1.800.000?",
       "intro": "<p>Contoh ini untuk pekerja menikah dengan pasangan yang tidak berpenghasilan dan dua anak yang keduanya lahir pada 2018 atau sesudahnya. Total tunjangannya ฿210.000: ฿60.000 pribadi, ฿60.000 pasangan, ฿30.000 untuk anak pertama dan ฿60.000 untuk anak kedua, karena tunjangan yang lebih besar untuk anak kelahiran 2018 atau sesudahnya baru berlaku mulai anak kedua. Setelah iuran jaminan sosial ฿10.500 dan potongan biaya kerja ฿100.000, penghasilan kena pajaknya ฿1.479.500 dan pajaknya ฿234.875. Gaji bersih yang kamu terima sekitar ฿1.554.625 setahun atau sekitar ฿129.552 sebulan, yaitu 86,4% dari gaji kotor.</p>",
-      "after": "<p>Tunjangan keluarga ini memangkas penghasilan kena pajak ฿150.000 lebih banyak daripada karyawan lajang, tetapi baht berikutnya tetap dikenai 25%. Di Indonesia, status kawin dan jumlah anak juga menaikkan PTKP (K/0 sampai K/3), jadi logikanya mirip meski angkanya berbeda.</p>"
+      "after": "<p>Tunjangan keluarga ini memangkas penghasilan kena pajak ฿150.000 lebih banyak daripada karyawan lajang, tetapi baht berikutnya tetap dikenai 25%. Di Indonesia, status kawin dan jumlah anak juga menaikkan PTKP (K/0 sampai K/3), jadi logikanya mirip meski angkanya berbeda.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: tarif pajak penghasilan orang pribadi",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang lazim dan sah untuk menekan pajak di Thailand. Yang berlaku untukmu bergantung pada status penduduk pajak dan keluargamu.</p>",
   "strategies": [
     {
       "h3": "Setoran dana pensiun perusahaan (<em>provident fund</em>)",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang perusahaannya punya <em>provident fund</em> terdaftar. Iuranmu bisa dikurangkan dari penghasilan sampai batas yang ditetapkan Revenue Department, dan pemberi kerja biasanya menambah bagiannya. Fungsinya mirip DPLK yang dikelola perusahaan di Indonesia.</p><p><strong>Perlu diingat:</strong> uangnya ditujukan untuk pensiun, dan keluar lebih awal dapat memengaruhi perlakuan pajaknya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang perusahaannya punya <em>provident fund</em> terdaftar. Iuranmu bisa dikurangkan dari penghasilan sampai batas yang ditetapkan Revenue Department, dan pemberi kerja biasanya menambah bagiannya. Fungsinya mirip DPLK yang dikelola perusahaan di Indonesia.</p><p><strong>Perlu diingat:</strong> uangnya ditujukan untuk pensiun, dan keluar lebih awal dapat memengaruhi perlakuan pajaknya.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Dana investasi pensiun dan dana lain yang disetujui",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak di tingkat tarif tinggi yang ingin menabung untuk pensiun. Setoran ke dana pensiun yang disetujui bisa dikurangkan dalam batas tahunan yang berubah dari waktu ke waktu.</p><p><strong>Perlu diingat:</strong> dana harus ditahan selama jangka minimum, dan menjual lebih awal bisa berarti mengembalikan manfaat pajaknya. Periksa aturan terbaru sebelum berinvestasi.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak di tingkat tarif tinggi yang ingin menabung untuk pensiun. Setoran ke dana pensiun yang disetujui bisa dikurangkan dalam batas tahunan yang berubah dari waktu ke waktu.</p><p><strong>Perlu diingat:</strong> dana harus ditahan selama jangka minimum, dan menjual lebih awal bisa berarti mengembalikan manfaat pajaknya. Periksa aturan terbaru sebelum berinvestasi.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Klaim tunjangan dan potongan untuk keluarga, asuransi dan KPR",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang menanggung pasangan, anak atau orang tua, atau membayar premi asuransi jiwa dan kesehatan atau bunga KPR. Semua ini potongan standar di laporan tahunan.</p><p><strong>Perlu diingat:</strong> tiap potongan punya batas dan butuh dokumen. <em>Tool</em> hanya menghitung tunjangan pribadi, pasangan dan anak.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang menanggung pasangan, anak atau orang tua, atau membayar premi asuransi jiwa dan kesehatan atau bunga KPR. Semua ini potongan standar di laporan tahunan.</p><p><strong>Perlu diingat:</strong> tiap potongan punya batas dan butuh dokumen. <em>Tool</em> hanya menghitung tunjangan pribadi, pasangan dan anak.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "h3": "Donasi ke lembaga yang disetujui",
-      "html": "<p><strong>Siapa yang cocok:</strong> orang yang memang rutin berdonasi. Donasi ke lembaga yang disetujui bisa dikurangkan dalam batas yang bergantung pada penghasilanmu.</p><p><strong>Perlu diingat:</strong> hanya penerima yang diakui yang dihitung, dan kamu butuh kuitansinya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> orang yang memang rutin berdonasi. Donasi ke lembaga yang disetujui bisa dikurangkan dalam batas yang bergantung pada penghasilanmu.</p><p><strong>Perlu diingat:</strong> hanya penerima yang diakui yang dihitung, dan kamu butuh kuitansinya.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     }
   ],
   "limits": [
@@ -125,27 +221,79 @@
   "faq": [
     {
       "q": "Berapa pajak untuk gaji ฿1.200.000 setahun di Thailand?",
-      "a": "<p>Karyawan lajang yang menjadi penduduk pajak membayar pajak penghasilan sekitar ฿122.375 dan iuran jaminan sosial ฿10.500, lalu menerima sekitar ฿1.067.125. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan lajang yang menjadi penduduk pajak membayar pajak penghasilan sekitar ฿122.375 dan iuran jaminan sosial ฿10.500, lalu menerima sekitar ฿1.067.125. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: tarif pajak penghasilan orang pribadi",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/taxes-on-personal-income#:~:text=current%20PIT%20rates"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: jaminan sosial (5%, maksimum THB 875 sebulan)",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "q": "Apa aturan 180 hari di Thailand?",
-      "a": "<p>Kalau kamu tinggal di Thailand 180 hari atau lebih dalam satu tahun kalender, kamu menjadi penduduk pajak untuk tahun itu. Penduduk pajak dikenai tarif bertingkat atas penghasilan dari pekerjaan di Thailand, dengan potongan biaya kerja dan tunjangan. Hitung hari tinggalmu sebelum pindah atau pulang, karena statusmu bisa berbeda dari tahun ke tahun.</p>"
+      "a": "<p>Kalau kamu tinggal di Thailand 180 hari atau lebih dalam satu tahun kalender, kamu menjadi penduduk pajak untuk tahun itu. Penduduk pajak dikenai tarif bertingkat atas penghasilan dari pekerjaan di Thailand, dengan potongan biaya kerja dan tunjangan. Hitung hari tinggalmu sebelum pindah atau pulang, karena statusmu bisa berbeda dari tahun ke tahun.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, Pajak Penghasilan Orang Pribadi: penduduk dan bukan penduduk",
+          "url": "https://www.rd.go.th/english/6045.html#:~:text=residing%20in%20Thailand"
+        }
+      ]
     },
     {
       "q": "Apa itu potongan biaya kerja 50% dengan batas ฿100.000 di Thailand?",
-      "a": "<p>Aturan pajak Thailand memberi karyawan potongan standar untuk biaya kerja tanpa kuitansi: 50% dari penghasilan kerja, maksimal ฿100.000. Pada gaji ฿200.000 setahun atau kurang, separuhnya bisa dikurangkan. Di atas itu potongannya tetap ฿100.000, sehingga porsinya terhadap gajimu makin kecil bila gajimu naik. Di Indonesia, potongan sejenis adalah biaya jabatan 5% dengan batas Rp6 juta setahun, dan <em>tool</em> menerapkannya otomatis.</p>"
+      "a": "<p>Aturan pajak Thailand memberi karyawan potongan standar untuk biaya kerja tanpa kuitansi: 50% dari penghasilan kerja, maksimal ฿100.000. Pada gaji ฿200.000 setahun atau kurang, separuhnya bisa dikurangkan. Di atas itu potongannya tetap ฿100.000, sehingga porsinya terhadap gajimu makin kecil bila gajimu naik. Di Indonesia, potongan sejenis adalah biaya jabatan 5% dengan batas Rp6 juta setahun, dan <em>tool</em> menerapkannya otomatis.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: pengurang",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/deductions#:~:text=Employment%20expenses"
+        },
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "q": "Kenapa iuran jaminan sosial Thailand berhenti di ฿875 sebulan?",
-      "a": "<p>Iurannya 5% dari gaji bulanan, tetapi hanya gaji sampai batas tertentu yang dihitung. <em>Tool</em> memakai batas ฿17.500 sebulan, sehingga iuran tertingginya ฿875 sebulan atau ฿10.500 setahun. Gaji yang lebih tinggi membayar jumlah yang sama, jadi iuran ini terasa kecil bagi gaji besar. Cara kerjanya mirip batas upah untuk iuran JP dan BPJS Kesehatan di Indonesia.</p>"
+      "a": "<p>Iurannya 5% dari gaji bulanan, tetapi hanya gaji sampai batas tertentu yang dihitung. <em>Tool</em> memakai batas ฿17.500 sebulan, sehingga iuran tertingginya ฿875 sebulan atau ฿10.500 setahun. Gaji yang lebih tinggi membayar jumlah yang sama, jadi iuran ini terasa kecil bagi gaji besar. Cara kerjanya mirip batas upah untuk iuran JP dan BPJS Kesehatan di Indonesia.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: jaminan sosial (5%, maksimum THB 875 sebulan)",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "Louis Group, hukum ketenagakerjaan Thailand: batas upah jaminan sosial THB 17.500 sejak Januari 2026",
+          "url": "https://www.louisgrouplaw.com/en/insight/thailand-labour-law-foreign-employers/#:~:text=wage%20ceiling%20rose%20from%20THB%2015%2C000%20to%2017%2C500"
+        }
+      ]
     },
     {
       "q": "Apakah penghasilan dari luar negeri kena pajak di Thailand?",
-      "a": "<p>Thailand memajaki penduduk pajak atas penghasilan dari pekerjaan di Thailand. Perubahan aturan belakangan ini membuat penghasilan dari luar negeri yang dibawa masuk penduduk pajak ke Thailand juga bisa dikenai pajak, dan rinciannya bergantung pada kapan penghasilan itu diperoleh dan bagaimana uangnya masuk. <em>Tool</em> tidak menghitungnya, jadi tanyakan ke Revenue Department atau konsultan pajak kalau kamu punya penghasilan dari luar negeri.</p>"
+      "a": "<p>Thailand memajaki penduduk pajak atas penghasilan dari pekerjaan di Thailand. Perubahan aturan belakangan ini membuat penghasilan dari luar negeri yang dibawa masuk penduduk pajak ke Thailand juga bisa dikenai pajak, dan rinciannya bergantung pada kapan penghasilan itu diperoleh dan bagaimana uangnya masuk. <em>Tool</em> tidak menghitungnya, jadi tanyakan ke Revenue Department atau konsultan pajak kalau kamu punya penghasilan dari luar negeri.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Thailand: penghasilan dari luar negeri",
+          "url": "https://taxsummaries.pwc.com/thailand/individual/income-determination#:~:text=remitted"
+        },
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "q": "Kenapa saya tetap harus melapor pajak kalau pemberi kerja sudah memotong?",
-      "a": "<p>Pemberi kerja memotong pajak tiap bulan memakai perkiraan yang berasumsi gajimu tetap dan mengabaikan potongan yang bisa kamu klaim. Setelah tahun berakhir kamu melapor di awal tahun berikutnya untuk mengklaim tunjangan seperti asuransi atau dana pensiun, dan untuk menyelesaikan selisihnya. Logikanya sama dengan SPT Tahunan. <em>Tool</em> menampilkan pajak setahun penuh, jadi slip gaji bisa berbeda.</p>"
+      "a": "<p>Pemberi kerja memotong pajak tiap bulan memakai perkiraan yang berasumsi gajimu tetap dan mengabaikan potongan yang bisa kamu klaim. Setelah tahun berakhir kamu melapor di awal tahun berikutnya untuk mengklaim tunjangan seperti asuransi atau dana pensiun, dan untuk menyelesaikan selisihnya. Logikanya sama dengan SPT Tahunan. <em>Tool</em> menampilkan pajak setahun penuh, jadi slip gaji bisa berbeda.</p>",
+      "cite": [
+        {
+          "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
+          "url": "https://rd.go.th/fileadmin/download/english_form/2024/GUIDE_91_67_Complete.pdf"
+        }
+      ]
     },
     {
       "q": "Apakah gaji di Thailand masih kena pajak di Indonesia?",

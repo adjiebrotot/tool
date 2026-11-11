@@ -188,7 +188,7 @@
 <div class="container gd jx">
 
   <nav class="gd-top" aria-label="Site">
-    <a class="btn-theme btn-back" href="../">← Global Income Tax Calculator</a>
+    <a class="btn-theme btn-back" href="../">Back to the text</a>
     <div class="gd-top-r">
       <a class="btn-primary gd-open gd-open-top" href="../#load&amp;v=1&amp;country=US">Open the calculator</a>
       <a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Baca dalam bahasa Indonesia">ID</a>
@@ -206,19 +206,20 @@
     </header>
 
     <nav class="gd-toc jx-toc" aria-label="On this page">
-      <a href="#law">What the law says</a>
+      <a href="#law">Tax rules at a glance</a>
       <a href="#examples">Worked examples</a>
-      <a href="#strategy">Paying less tax, legally</a>
+      <a href="#strategy">Tax tips</a>
       <a href="#limits">What the calculator leaves out</a>
       <a href="#faq">Questions</a>
+      <a href="#references">References</a>
     </nav>
 
     <section class="gd-sec card" id="law" aria-labelledby="law-h">
-      <h2 id="law-h">What the law says</h2>
-      <div class="jx-prose"><p>The US tax year is the calendar year, and the figures below are the 2026 rates as the calculator models them. Your employer withholds federal tax, state tax and FICA from each payslip, and you file a return by 15 April the following year, when the withholding is compared with the tax you actually owe. Which rules apply depends on your tax status: US residents (including green card holders and people who pass the substantial presence test) are taxed on worldwide income, while nonresident aliens are taxed on US income under different rules.</p></div>
+      <h2 id="law-h">Tax rules at a glance</h2>
+      <div class="jx-prose"><p>The US tax year is the calendar year, and the figures below are the 2026 rates as the calculator models them. Your employer withholds federal tax, state tax and FICA from each payslip, and you file a return by 15 April the following year, when the withholding is compared with the tax you actually owe. Which rules apply depends on your tax status: US residents (including green card holders and people who pass the substantial presence test) are taxed on worldwide income, while nonresident aliens are taxed on US income under different rules.<sup class="jx-fn"><a href="#ref-1" id="cite-1-2" role="doc-noteref">1</a>, <a href="#ref-2" id="cite-2-1" role="doc-noteref">2</a></sup></p></div>
 
       <h3>Federal income tax brackets for single filers</h3>
-      <div class="jx-prose"><p>A single resident takes a standard deduction of $16,100, and the brackets apply to the remainder. Married couples filing jointly get a $32,200 deduction and wider brackets. The calculator uses these for the resident cases.</p></div>
+      <div class="jx-prose"><p>A single resident takes a standard deduction of $16,100, and the brackets apply to the remainder. Married couples filing jointly get a $32,200 deduction and wider brackets. The calculator uses these for the resident cases.<sup class="jx-fn"><a href="#ref-3" id="cite-3-1" role="doc-noteref">3</a>, <a href="#ref-4" id="cite-4-1" role="doc-noteref">4</a></sup></p></div>
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr><th scope="col">Taxable income (single)</th><th scope="col">Rate</th></tr></thead>
         <tbody><tr><th scope="row">$0 to $12,400</th><td data-l="Rate">10%</td></tr>
@@ -231,7 +232,7 @@
       </table></div>
 
       <h3>Federal brackets for married couples filing jointly</h3>
-      <div class="jx-prose"><p>A joint return uses wider brackets and the larger standard deduction, taxed on combined income. The calculator treats it as one earner's pay with the joint table.</p></div>
+      <div class="jx-prose"><p>A joint return uses wider brackets and the larger standard deduction, taxed on combined income. The calculator treats it as one earner's pay with the joint table.<sup class="jx-fn"><a href="#ref-5" id="cite-5-1" role="doc-noteref">5</a>, <a href="#ref-4" id="cite-4-2" role="doc-noteref">4</a></sup></p></div>
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr><th scope="col">Taxable income (joint)</th><th scope="col">Rate</th></tr></thead>
         <tbody><tr><th scope="row">$0 to $24,800</th><td data-l="Rate">10%</td></tr>
@@ -244,24 +245,13 @@
       </table></div>
 
       <h3>FICA: Social Security and Medicare</h3>
-      <div class="jx-prose"><p>Employees pay Social Security of 6.2% on wages up to $184,500 and Medicare of 1.45% on all wages. An Additional Medicare tax of 0.9% applies to wages above $200,000 for a single filer ($250,000 jointly). FICA is charged in every state, including those with no income tax, and is not reduced by the standard deduction. Employer FICA is paid on top.</p></div>
+      <div class="jx-prose"><p>Employees pay Social Security of 6.2% on wages up to $184,500 and Medicare of 1.45% on all wages. An Additional Medicare tax of 0.9% applies to wages above $200,000 for a single filer ($250,000 jointly). FICA is charged in every state, including those with no income tax, and is not reduced by the standard deduction. Employer FICA is paid on top.<sup class="jx-fn"><a href="#ref-6" id="cite-6-1" role="doc-noteref">6</a>, <a href="#ref-7" id="cite-7-1" role="doc-noteref">7</a>, <a href="#ref-8" id="cite-8-1" role="doc-noteref">8</a></sup></p></div>
 
       <h3>State income tax: 39 states and DC loaded</h3>
-      <div class="jx-prose"><p>Nine states have no tax on wages: Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator loads their zero. It also loads the rates of 30 other states and DC, including California, New York and Illinois, with New York City's resident tax as an option. California adds a state disability insurance contribution (SDI) of 1.3%, and New York adds Paid Family Leave and disability deductions.</p><p>Eleven states are not loaded, because their deductions phase out on schedules the calculator does not carry: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. Choosing one returns a message instead of a figure.</p></div>
+      <div class="jx-prose"><p>Nine states have no tax on wages: Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator loads their zero. It also loads the rates of 30 other states and DC, including California, New York and Illinois, with New York City's resident tax as an option. California adds a state disability insurance contribution (SDI) of 1.3%, and New York adds Paid Family Leave and disability deductions.</p><p>Eleven states are not loaded, because their deductions phase out on schedules the calculator does not carry: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. Choosing one returns a message instead of a figure.<sup class="jx-fn"><a href="#ref-9" id="cite-9-1" role="doc-noteref">9</a>, <a href="#ref-10" id="cite-10-1" role="doc-noteref">10</a>, <a href="#ref-11" id="cite-11-1" role="doc-noteref">11</a>, <a href="#ref-12" id="cite-12-1" role="doc-noteref">12</a>, <a href="#ref-13" id="cite-13-1" role="doc-noteref">13</a>, <a href="#ref-14" id="cite-14-1" role="doc-noteref">14</a>, <a href="#ref-15" id="cite-15-1" role="doc-noteref">15</a></sup></p></div>
 
       <h3>Nonresident aliens</h3>
-      <div class="jx-prose"><p>A nonresident alien is taxed on US wages at the single-filer rates with no standard deduction, and cannot file jointly. State income tax paid can be deducted as an itemised deduction, which the calculator applies. Whether you are a nonresident alien depends on the substantial presence test, which counts days in the US over three years, and on special rules for students and exchange visitors in their first calendar years. Students and scholars in F, J, M or Q status are exempt from FICA while they are nonresident aliens.</p></div>
-      <div class="jx-sources">
-        <h3>Sources</h3>
-        <ul>
-          <li><a href="https://www.irs.gov/" target="_blank" rel="noopener">IRS</a>, brackets, standard deduction, returns and deadlines</li>
-          <li><a href="https://www.irs.gov/individuals/international-taxpayers/taxation-of-nonresident-aliens" target="_blank" rel="noopener">IRS, Taxation of nonresident aliens</a>, nonresident alien rules</li>
-          <li><a href="https://www.ssa.gov/" target="_blank" rel="noopener">Social Security Administration</a>, wage base and FICA</li>
-          <li><a href="https://taxfoundation.org/data/all/state/state-income-tax-rates/" target="_blank" rel="noopener">Tax Foundation, state income tax rates</a>, state rates</li>
-          <li><a href="https://www.ftb.ca.gov/" target="_blank" rel="noopener">California Franchise Tax Board</a>, California rates</li>
-          <li><a href="https://www.tax.ny.gov/" target="_blank" rel="noopener">New York State Department of Taxation and Finance</a>, New York State and City rates</li>
-        </ul>
-      </div>
+      <div class="jx-prose"><p>A nonresident alien is taxed on US wages at the single-filer rates with no standard deduction, and cannot file jointly. State income tax paid can be deducted as an itemised deduction, which the calculator applies. Whether you are a nonresident alien depends on the substantial presence test, which counts days in the US over three years, and on special rules for students and exchange visitors in their first calendar years. Students and scholars in F, J, M or Q status are exempt from FICA while they are nonresident aliens.<sup class="jx-fn"><a href="#ref-16" id="cite-16-1" role="doc-noteref">16</a>, <a href="#ref-1" id="cite-1-1" role="doc-noteref">1</a>, <a href="#ref-17" id="cite-17-1" role="doc-noteref">17</a>, <a href="#ref-18" id="cite-18-1" role="doc-noteref">18</a></sup></p></div>
     </section>
 
     <!-- In-article 3: between the cards of a reading page (.ad-slot in shared.css) -->
@@ -286,7 +276,7 @@
 
       <article class="gd-calc jx-ex" id="texas" aria-labelledby="texas-h">
         <h3 id="texas-h">How to calculate US income tax on a $120,000 salary in Texas</h3>
-        <div class="jx-prose"><p>This is a single resident on $120,000 in a state with no wage tax. After the $16,100 standard deduction, taxable income is $103,900, and the brackets give federal income tax of $17,570. FICA adds $7,440 of Social Security and $1,740 of Medicare. Texas charges no state tax on wages. You keep about $93,250, or 77.7% of gross.</p></div>
+        <div class="jx-prose"><p>This is a single resident on $120,000 in a state with no wage tax. After the $16,100 standard deduction, taxable income is $103,900, and the brackets give federal income tax of $17,570. FICA adds $7,440 of Social Security and $1,740 of Medicare. Texas charges no state tax on wages. You keep about $93,250, or 77.7% of gross.<sup class="jx-fn"><a href="#ref-4" id="cite-4-3" role="doc-noteref">4</a>, <a href="#ref-3" id="cite-3-2" role="doc-noteref">3</a>, <a href="#ref-7" id="cite-7-2" role="doc-noteref">7</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$120,000</b></li>
           <li class="jx-k-deduction"><span class="gd-calc-l">Federal standard deduction</span><span class="gd-calc-w">lowers the taxable income</span><b>US$16,100</b></li>
@@ -305,7 +295,7 @@
 
       <article class="gd-calc jx-ex" id="california" aria-labelledby="california-h">
         <h3 id="california-h">How much is take-home pay on $120,000 in California?</h3>
-        <div class="jx-prose"><p>The same single resident living in California pays the same $17,570 federal tax and $9,180 FICA, plus $6,771 of California income tax and $1,560 of state disability insurance (1.3% of all wages, no cap). You keep about $84,919, or 70.8% of gross, which is $8,331 less than in Texas.</p></div>
+        <div class="jx-prose"><p>The same single resident living in California pays the same $17,570 federal tax and $9,180 FICA, plus $6,771 of California income tax and $1,560 of state disability insurance (1.3% of all wages, no cap). You keep about $84,919, or 70.8% of gross, which is $8,331 less than in Texas.<sup class="jx-fn"><a href="#ref-10" id="cite-10-2" role="doc-noteref">10</a>, <a href="#ref-11" id="cite-11-2" role="doc-noteref">11</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$120,000</b></li>
           <li class="jx-k-deduction"><span class="gd-calc-l">Federal standard deduction</span><span class="gd-calc-w">lowers the taxable income</span><b>US$16,100</b></li>
@@ -332,7 +322,7 @@
 
       <article class="gd-calc jx-ex" id="new-york-city" aria-labelledby="new-york-city-h">
         <h3 id="new-york-city-h">Take-home pay on $120,000 in New York City after tax</h3>
-        <div class="jx-prose"><p>A New York City resident pays federal tax of $17,570 and FICA of $9,180, plus $6,180 of New York State income tax, $4,216 of New York City resident tax, $412 for Paid Family Leave and $31 for disability insurance. You keep about $82,410, or 68.7% of gross, which is $10,840 less than in Texas.</p></div>
+        <div class="jx-prose"><p>A New York City resident pays federal tax of $17,570 and FICA of $9,180, plus $6,180 of New York State income tax, $4,216 of New York City resident tax, $412 for Paid Family Leave and $31 for disability insurance. You keep about $82,410, or 68.7% of gross, which is $10,840 less than in Texas.<sup class="jx-fn"><a href="#ref-12" id="cite-12-2" role="doc-noteref">12</a>, <a href="#ref-13" id="cite-13-2" role="doc-noteref">13</a>, <a href="#ref-14" id="cite-14-2" role="doc-noteref">14</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$120,000</b></li>
           <li class="jx-k-deduction"><span class="gd-calc-l">Federal standard deduction</span><span class="gd-calc-w">lowers the taxable income</span><b>US$16,100</b></li>
@@ -364,7 +354,7 @@
 
       <article class="gd-calc jx-ex" id="married-filing-jointly" aria-labelledby="married-filing-jointly-h">
         <h3 id="married-filing-jointly-h">How to calculate US tax for a married couple filing jointly</h3>
-        <div class="jx-prose"><p>This is a married couple with $180,000 of pay in total, filing jointly in Washington, which has no wage tax. The $32,200 joint deduction leaves $147,800 taxable and federal income tax of $21,940. FICA is $13,770 (Social Security $11,160 and Medicare $2,610). You keep about $144,290, or 80.2% of gross.</p></div>
+        <div class="jx-prose"><p>This is a married couple with $180,000 of pay in total, filing jointly in Washington, which has no wage tax. The $32,200 joint deduction leaves $147,800 taxable and federal income tax of $21,940. FICA is $13,770 (Social Security $11,160 and Medicare $2,610). You keep about $144,290, or 80.2% of gross.<sup class="jx-fn"><a href="#ref-5" id="cite-5-2" role="doc-noteref">5</a>, <a href="#ref-4" id="cite-4-4" role="doc-noteref">4</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$180,000</b></li>
           <li class="jx-k-deduction"><span class="gd-calc-l">Federal standard deduction</span><span class="gd-calc-w">lowers the taxable income</span><b>US$32,200</b></li>
@@ -383,7 +373,7 @@
 
       <article class="gd-calc jx-ex" id="h1b-nonresident-alien" aria-labelledby="h1b-nonresident-alien-h">
         <h3 id="h1b-nonresident-alien-h">How does a nonresident alien on $120,000 pay US federal tax?</h3>
-        <div class="jx-prose"><p>This shows the nonresident alien rules on $120,000 in Texas: single rates with no standard deduction. Taxable income is the full $120,000, so federal income tax is $21,398 against $17,570 for a resident. FICA is $9,180 because the exemption does not apply. You keep about $89,422, or 74.5% of gross.</p></div>
+        <div class="jx-prose"><p>This shows the nonresident alien rules on $120,000 in Texas: single rates with no standard deduction. Taxable income is the full $120,000, so federal income tax is $21,398 against $17,570 for a resident. FICA is $9,180 because the exemption does not apply. You keep about $89,422, or 74.5% of gross.<sup class="jx-fn"><a href="#ref-19" id="cite-19-1" role="doc-noteref">19</a>, <a href="#ref-1" id="cite-1-3" role="doc-noteref">1</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$120,000</b></li>
           <li class="jx-k-tax"><span class="gd-calc-l">Federal income tax, nonresident alien (no standard deduction)</span><span class="gd-calc-w">tax, taken from pay</span><b>−US$21,398</b></li>
@@ -402,7 +392,7 @@
 
       <article class="gd-calc jx-ex" id="f1-student" aria-labelledby="f1-student-h">
         <h3 id="f1-student-h">How much tax does an F-1 student pay on $30,000 in the US?</h3>
-        <div class="jx-prose"><p>An F-1 student on $30,000 of wages in Massachusetts is a nonresident alien who is exempt from FICA. State income tax is $1,280, which is deducted as an itemised deduction, so taxable income is $28,720. Federal income tax is $3,198 with no standard deduction. You keep about $25,522, or 85.1% of gross.</p></div>
+        <div class="jx-prose"><p>An F-1 student on $30,000 of wages in Massachusetts is a nonresident alien who is exempt from FICA. State income tax is $1,280, which is deducted as an itemised deduction, so taxable income is $28,720. Federal income tax is $3,198 with no standard deduction. You keep about $25,522, or 85.1% of gross.<sup class="jx-fn"><a href="#ref-17" id="cite-17-2" role="doc-noteref">17</a>, <a href="#ref-20" id="cite-20-1" role="doc-noteref">20</a>, <a href="#ref-21" id="cite-21-1" role="doc-noteref">21</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gross pay</span><span class="gd-calc-w">a year, before tax</span><b>US$30,000</b></li>
           <li class="jx-k-tax"><span class="gd-calc-l">Federal income tax, nonresident alien (no standard deduction)</span><span class="gd-calc-w">tax, taken from pay</span><b>−US$3,198</b></li>
@@ -420,23 +410,23 @@
     </section>
 
     <section class="gd-sec card" id="strategy" aria-labelledby="strategy-h">
-      <h2 id="strategy-h">How to pay less tax, legally</h2>
+      <h2 id="strategy-h">Tax tips</h2>
       <div class="jx-prose"><p>These are mainstream, legal ways to reduce US tax. Each one assumes you actually have US wages and a payroll that supports it.</p></div>
       <div class="jx-item">
         <h3>Traditional 401(k) contributions</h3>
-        <p><strong>Suits:</strong> employees whose employer offers a 401(k), especially in the 22% bracket and above or in a high-tax state. Pre-tax contributions lower federal and most state income tax, and many employers match part of them. Nonresident aliens can contribute too.</p><p><strong>Caveat:</strong> contributions do not reduce FICA, withdrawals before retirement age usually carry a penalty, and an annual limit applies (check the current figure with the IRS). Taking the money out when you leave the US has its own tax rules.</p>
+        <p><strong>Suits:</strong> employees whose employer offers a 401(k), especially in the 22% bracket and above or in a high-tax state. Pre-tax contributions lower federal and most state income tax, and many employers match part of them. Nonresident aliens can contribute too.</p><p><strong>Caveat:</strong> contributions do not reduce FICA, withdrawals before retirement age usually carry a penalty, and an annual limit applies (check the current figure with the IRS). Taking the money out when you leave the US has its own tax rules.<sup class="jx-fn"><a href="#ref-22" id="cite-22-1" role="doc-noteref">22</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Health Savings Account (HSA)</h3>
-        <p><strong>Suits:</strong> people on a high-deductible health plan. Payroll contributions are tax-free for income tax, and when made through the employer's plan are usually exempt from FICA too, and spending on qualified medical costs is untaxed.</p><p><strong>Caveat:</strong> you must have an eligible plan, an annual limit applies, and spending on non-medical items is taxed and penalised. Some states tax the contributions.</p>
+        <p><strong>Suits:</strong> people on a high-deductible health plan. Payroll contributions are tax-free for income tax, and when made through the employer's plan are usually exempt from FICA too, and spending on qualified medical costs is untaxed.</p><p><strong>Caveat:</strong> you must have an eligible plan, an annual limit applies, and spending on non-medical items is taxed and penalised. Some states tax the contributions.<sup class="jx-fn"><a href="#ref-23" id="cite-23-1" role="doc-noteref">23</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Set your W-4 to match your real tax</h3>
-        <p><strong>Suits:</strong> anyone starting a job, changing job or moving state. Withholding follows the form you give your employer. If it is too low you owe at the April return, and if it is too high you get a refund later.</p><p><strong>Caveat:</strong> nonresident aliens fill the W-4 under special instructions. Check the IRS guidance for your status.</p>
+        <p><strong>Suits:</strong> anyone starting a job, changing job or moving state. Withholding follows the form you give your employer. If it is too low you owe at the April return, and if it is too high you get a refund later.</p><p><strong>Caveat:</strong> nonresident aliens fill the W-4 under special instructions. Check the IRS guidance for your status.<sup class="jx-fn"><a href="#ref-24" id="cite-24-1" role="doc-noteref">24</a>, <a href="#ref-25" id="cite-25-1" role="doc-noteref">25</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Claim the right status and any treaty or FICA exemption</h3>
-        <p><strong>Suits:</strong> F-1, J-1 and other visa holders, and people on short assignments. Nonresident status, a tax treaty with your home country and the F, J, M and Q exemption from FICA can lower tax. Some countries also have a social security agreement that stops double contributions.</p><p><strong>Caveat:</strong> each one has conditions and forms, such as Form 8233 for a treaty claim on wages. Getting residency wrong can mean back tax. The calculator models only the FICA exemption.</p>
+        <p><strong>Suits:</strong> F-1, J-1 and other visa holders, and people on short assignments. Nonresident status, a tax treaty with your home country and the F, J, M and Q exemption from FICA can lower tax. Some countries also have a social security agreement that stops double contributions.</p><p><strong>Caveat:</strong> each one has conditions and forms, such as Form 8233 for a treaty claim on wages. Getting residency wrong can mean back tax. The calculator models only the FICA exemption.<sup class="jx-fn"><a href="#ref-26" id="cite-26-1" role="doc-noteref">26</a>, <a href="#ref-27" id="cite-27-1" role="doc-noteref">27</a>, <a href="#ref-17" id="cite-17-3" role="doc-noteref">17</a></sup></p>
       </div>
     </section>
 
@@ -464,32 +454,65 @@
       <h2 id="faq-h">Frequently asked questions</h2>
       <div class="jx-item">
         <h3>How much tax do I pay on $120,000 in the US?</h3>
-        <p>It depends on the state. A single resident pays about $26,750 and keeps about $93,250 in Texas, about $84,919 in California and about $82,410 in New York City. A nonresident alien in Texas keeps about $89,422. Try your own figure in the <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/">Global Income Tax Calculator</a>.</p>
+        <p>It depends on the state. A single resident pays about $26,750 and keeps about $93,250 in Texas, about $84,919 in California and about $82,410 in New York City. A nonresident alien in Texas keeps about $89,422. Try your own figure in the <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/">Global Income Tax Calculator</a>.<sup class="jx-fn"><a href="#ref-3" id="cite-3-3" role="doc-noteref">3</a>, <a href="#ref-7" id="cite-7-3" role="doc-noteref">7</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Which US states have no income tax on wages?</h3>
-        <p>Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator shows zero state tax for these. Property, sales and other taxes still apply, and these states can cost more elsewhere, so compare total costs with the <a href="https://tool.adjiebrotots.com/costofliving-comparator/">Cost of Living Comparator</a>.</p>
+        <p>Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington and Wyoming. The calculator shows zero state tax for these. Property, sales and other taxes still apply, and these states can cost more elsewhere, so compare total costs with the <a href="https://tool.adjiebrotots.com/costofliving-comparator/">Cost of Living Comparator</a>.<sup class="jx-fn"><a href="#ref-9" id="cite-9-2" role="doc-noteref">9</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Why do I still pay FICA in a state with no income tax?</h3>
-        <p>FICA is a federal payroll tax, collected for Social Security and Medicare, and has nothing to do with state income tax. Every employee on US payroll pays 6.2% Social Security (up to a wage base of $184,500) and 1.45% Medicare, in all 50 states. A state without income tax removes only the state line. On $120,000 that is $9,180 of FICA in Texas too.</p>
+        <p>FICA is a federal payroll tax, collected for Social Security and Medicare, and has nothing to do with state income tax. Every employee on US payroll pays 6.2% Social Security (up to a wage base of $184,500) and 1.45% Medicare, in all 50 states. A state without income tax removes only the state line. On $120,000 that is $9,180 of FICA in Texas too.<sup class="jx-fn"><a href="#ref-6" id="cite-6-2" role="doc-noteref">6</a>, <a href="#ref-7" id="cite-7-4" role="doc-noteref">7</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Do I pay FICA on an F-1 visa or as an H-1B worker?</h3>
-        <p>F-1, J-1, M and Q students and exchange visitors are exempt from Social Security and Medicare tax while they are nonresident aliens, which is why the F-1 example has no FICA line. H-1B workers are not exempt: they pay FICA from their first paycheck, whether taxed as resident or nonresident aliens.</p>
+        <p>F-1, J-1, M and Q students and exchange visitors are exempt from Social Security and Medicare tax while they are nonresident aliens, which is why the F-1 example has no FICA line. H-1B workers are not exempt: they pay FICA from their first paycheck, whether taxed as resident or nonresident aliens.<sup class="jx-fn"><a href="#ref-17" id="cite-17-4" role="doc-noteref">17</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Why is there no standard deduction for a nonresident alien?</h3>
-        <p>US tax law gives the standard deduction to residents, not to nonresident aliens, with limited exceptions through treaties. A nonresident alien is taxed on US wages from the first dollar at the single rates, and can itemise only certain items, such as state income tax. That is why the $120,000 H-1B example pays $21,398 of federal tax against $17,570 for a resident. The substantial presence test decides whether you are a resident or not, so it matters to check.</p>
+        <p>US tax law gives the standard deduction to residents, not to nonresident aliens, with limited exceptions through treaties. A nonresident alien is taxed on US wages from the first dollar at the single rates, and can itemise only certain items, such as state income tax. That is why the $120,000 H-1B example pays $21,398 of federal tax against $17,570 for a resident. The substantial presence test decides whether you are a resident or not, so it matters to check.<sup class="jx-fn"><a href="#ref-19" id="cite-19-2" role="doc-noteref">19</a>, <a href="#ref-1" id="cite-1-4" role="doc-noteref">1</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Why do I file a US return in April, and why do many people get a refund?</h3>
-        <p>The tax year is the calendar year and the return is due on 15 April (it can be extended). Your employer withholds tax from each payslip using your W-4, which is only an estimate. At the return you add up your actual tax, and if the withholding was higher you get a refund, or you pay the difference if it was lower. Nonresident aliens usually file Form 1040-NR.</p><p>The calculator shows the tax for a full year, which matches the final bill, not a single paycheck. Your payslips and any refund can differ from it.</p>
+        <p>The tax year is the calendar year and the return is due on 15 April (it can be extended). Your employer withholds tax from each payslip using your W-4, which is only an estimate. At the return you add up your actual tax, and if the withholding was higher you get a refund, or you pay the difference if it was lower. Nonresident aliens usually file Form 1040-NR.</p><p>The calculator shows the tax for a full year, which matches the final bill, not a single paycheck. Your payslips and any refund can differ from it.<sup class="jx-fn"><a href="#ref-2" id="cite-2-2" role="doc-noteref">2</a>, <a href="#ref-21" id="cite-21-2" role="doc-noteref">21</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Why does the calculator say my state is not covered?</h3>
-        <p>Eleven states (Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin) reduce deductions or credits as income rises on schedules that are not loaded here. A flat approximation would misstate the tax, so the calculator returns a message instead. The other 39 states and DC are covered.</p>
+        <p>Eleven states (Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin) reduce deductions or credits as income rises on schedules that are not loaded here. A flat approximation would misstate the tax, so the calculator returns a message instead. The other 39 states and DC are covered.<sup class="jx-fn"><a href="#ref-9" id="cite-9-3" role="doc-noteref">9</a></sup></p>
       </div>
+    </section>
+
+    <section class="gd-sec card jx-refs" id="references" aria-labelledby="references-h" role="doc-endnotes">
+      <h2 id="references-h">References</h2>
+      <ol>
+        <li id="ref-1"><a href="https://www.irs.gov/individuals/international-taxpayers/substantial-presence-test#:~:text=183%20days" target="_blank" rel="noopener">IRS, Substantial presence test</a> <a class="jx-back" href="#cite-1-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-1-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-1-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a> <a class="jx-back" href="#cite-1-4" role="doc-backlink" aria-label="Back to the text">↩<sup>4</sup></a></li>
+        <li id="ref-2"><a href="https://www.irs.gov/filing/individuals/when-to-file#:~:text=Calendar%20year%20filers" target="_blank" rel="noopener">IRS, When to file</a> <a class="jx-back" href="#cite-2-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-2-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-3"><a href="https://www.irs.gov/irb/2025-45_IRB#:~:text=Unmarried%20Individuals" target="_blank" rel="noopener">IRS, Rev. Proc. 2025-32 (IRB 2025-45), rate table for unmarried individuals</a> <a class="jx-back" href="#cite-3-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-3-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-3-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a></li>
+        <li id="ref-4"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill#:~:text=the%20standard%20deduction%20rises%20to" target="_blank" rel="noopener">IRS, 2026 inflation adjustments (standard deduction and brackets)</a> <a class="jx-back" href="#cite-4-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-4-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-4-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a> <a class="jx-back" href="#cite-4-4" role="doc-backlink" aria-label="Back to the text">↩<sup>4</sup></a></li>
+        <li id="ref-5"><a href="https://www.irs.gov/irb/2025-45_IRB#:~:text=Married%20Individuals%20Filing%20Joint%20Returns" target="_blank" rel="noopener">IRS, Rev. Proc. 2025-32 (IRB 2025-45), rate table for joint returns</a> <a class="jx-back" href="#cite-5-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-5-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-6"><a href="https://www.ssa.gov/oact/COLA/cbb.html" target="_blank" rel="noopener">Social Security Administration, Contribution and Benefit Base</a> <a class="jx-back" href="#cite-6-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-6-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-7"><a href="https://www.irs.gov/taxtopics/tc751#:~:text=Social%20Security%20and%20Medicare%20withholding%20rates" target="_blank" rel="noopener">IRS, Topic no. 751, Social Security and Medicare withholding rates</a> <a class="jx-back" href="#cite-7-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-7-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-7-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a> <a class="jx-back" href="#cite-7-4" role="doc-backlink" aria-label="Back to the text">↩<sup>4</sup></a></li>
+        <li id="ref-8"><a href="https://www.irs.gov/businesses/small-businesses-self-employed/questions-and-answers-for-the-additional-medicare-tax#:~:text=What%20wages%20are%20subject%20to%20Additional%20Medicare%20Tax" target="_blank" rel="noopener">IRS, Questions and answers for the Additional Medicare Tax</a> <a class="jx-back" href="#cite-8-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-9"><a href="https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax" target="_blank" rel="noopener">Tax Foundation, state individual income tax rates and brackets for 2026</a> <a class="jx-back" href="#cite-9-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-9-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-9-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a></li>
+        <li id="ref-10"><a href="https://www.ftb.ca.gov/forms/2026/2026-540-tax-rate-schedules.pdf" target="_blank" rel="noopener">California FTB, 2026 California tax rate schedules</a> <a class="jx-back" href="#cite-10-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-10-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-11"><a href="https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/#:~:text=SDI%20Rate" target="_blank" rel="noopener">California EDD, payroll tax rates and withholding (SDI)</a> <a class="jx-back" href="#cite-11-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-11-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-12"><a href="https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf" target="_blank" rel="noopener">NY Department of Taxation and Finance, IT-2105-I (2026): New York State and City tax rates</a> <a class="jx-back" href="#cite-12-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-12-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-13"><a href="https://paidfamilyleave.ny.gov/2026#:~:text=employees%20will%20contribute" target="_blank" rel="noopener">New York Paid Family Leave, 2026 updates and employee contribution rate</a> <a class="jx-back" href="#cite-13-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-13-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-14"><a href="https://www.wcb.ny.gov/content/main/DisabilityBenefits/employee-disability-benefits.jsp#:~:text=no%20more%20than%2060%20cents%20a%20week" target="_blank" rel="noopener">NY Workers' Compensation Board, employee disability benefits contribution</a> <a class="jx-back" href="#cite-14-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-14-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-15"><a href="https://tax.illinois.gov/research/taxrates/income.html#:~:text=Individual%20Income%20Tax" target="_blank" rel="noopener">Illinois Department of Revenue, income tax rates</a> <a class="jx-back" href="#cite-15-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-16"><a href="https://www.irs.gov/publications/p519#:~:text=Itemized%20Deductions" target="_blank" rel="noopener">IRS, Publication 519, U.S. Tax Guide for Aliens</a> <a class="jx-back" href="#cite-16-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-17"><a href="https://www.irs.gov/individuals/international-taxpayers/foreign-student-liability-for-social-security-and-medicare-taxes#:~:text=Nonresident%20alien%20student%20under%20F%2D1%2C%20J%2D1%20or%20M%2D1%20visa%20status" target="_blank" rel="noopener">IRS, Foreign student liability for Social Security and Medicare taxes</a> <a class="jx-back" href="#cite-17-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-17-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a> <a class="jx-back" href="#cite-17-3" role="doc-backlink" aria-label="Back to the text">↩<sup>3</sup></a> <a class="jx-back" href="#cite-17-4" role="doc-backlink" aria-label="Back to the text">↩<sup>4</sup></a></li>
+        <li id="ref-18"><a href="https://www.irs.gov/individuals/international-taxpayers/taxation-of-nonresident-aliens#:~:text=When%20and%20where%20to%20file" target="_blank" rel="noopener">IRS, Taxation of nonresident aliens</a> <a class="jx-back" href="#cite-18-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-19"><a href="https://www.irs.gov/publications/p519#:~:text=Standard%20Deduction" target="_blank" rel="noopener">IRS, Publication 519, U.S. Tax Guide for Aliens (standard deduction)</a> <a class="jx-back" href="#cite-19-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-19-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-20"><a href="https://www.irs.gov/forms-pubs/about-form-8843" target="_blank" rel="noopener">IRS, About Form 8843</a> <a class="jx-back" href="#cite-20-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-21"><a href="https://www.irs.gov/forms-pubs/about-form-1040-nr" target="_blank" rel="noopener">IRS, About Form 1040-NR</a> <a class="jx-back" href="#cite-21-1" role="doc-backlink" aria-label="Back to the text">↩<sup>1</sup></a> <a class="jx-back" href="#cite-21-2" role="doc-backlink" aria-label="Back to the text">↩<sup>2</sup></a></li>
+        <li id="ref-22"><a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-401k-and-profit-sharing-plan-contribution-limits#:~:text=Deferral%20limits%20for%20401%28k%29%20plans" target="_blank" rel="noopener">IRS, 401(k) and profit-sharing plan contribution limits</a> <a class="jx-back" href="#cite-22-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-23"><a href="https://www.irs.gov/publications/p969#:~:text=Limit%20on%20Contributions" target="_blank" rel="noopener">IRS, Publication 969, Health Savings Accounts</a> <a class="jx-back" href="#cite-23-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-24"><a href="https://www.irs.gov/individuals/tax-withholding-estimator" target="_blank" rel="noopener">IRS, Tax Withholding Estimator</a> <a class="jx-back" href="#cite-24-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-25"><a href="https://www.irs.gov/forms-pubs/about-form-w-4" target="_blank" rel="noopener">IRS, About Form W-4</a> <a class="jx-back" href="#cite-25-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-26"><a href="https://www.irs.gov/individuals/international-taxpayers/tax-treaty-tables" target="_blank" rel="noopener">IRS, Tax treaty tables</a> <a class="jx-back" href="#cite-26-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+        <li id="ref-27"><a href="https://www.irs.gov/forms-pubs/about-form-8233" target="_blank" rel="noopener">IRS, About Form 8233</a> <a class="jx-back" href="#cite-27-1" role="doc-backlink" aria-label="Back to the text">↩</a></li>
+      </ol>
     </section>
 
     <section class="gd-sec card jx-others" aria-labelledby="others-h">

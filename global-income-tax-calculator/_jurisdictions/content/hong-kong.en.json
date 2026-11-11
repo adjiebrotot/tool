@@ -12,29 +12,100 @@
         "h3": "Progressive rates and the standard rate",
         "html": "<p>Salaries tax is worked out twice and you pay the lower figure. The first uses progressive rates on net chargeable income, which is pay less MPF and allowances. The second is the standard rate on net income before allowances: 15% on the first HK$5 million and 16% above. For most people the progressive method is lower, and the standard rate only wins at high incomes.</p>",
         "table": {
-          "head": ["Net chargeable income (progressive)", "Rate"],
+          "head": [
+            "Net chargeable income (progressive)",
+            "Rate"
+          ],
           "rows": [
-            ["First HK$50,000", "2%"],
-            ["Next HK$50,000", "6%"],
-            ["Next HK$50,000", "10%"],
-            ["Next HK$50,000", "14%"],
-            ["Remainder", "17%"]
+            [
+              "First HK$50,000",
+              "2%"
+            ],
+            [
+              "Next HK$50,000",
+              "6%"
+            ],
+            [
+              "Next HK$50,000",
+              "10%"
+            ],
+            [
+              "Next HK$50,000",
+              "14%"
+            ],
+            [
+              "Remainder",
+              "17%"
+            ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "IRD, Allowances, deductions and tax rate table",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+          },
+          {
+            "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+          }
+        ]
       },
       {
         "h3": "Allowances",
-        "html": "<p>Allowances are subtracted before the progressive rates apply. The calculator uses HK$145,000 for a single person, HK$290,000 for a married person and HK$140,000 for each child. They apply under the progressive method only, not the standard rate. Other allowances, such as for dependent parents, are not modelled.</p>"
+        "html": "<p>Allowances are subtracted before the progressive rates apply. The calculator uses HK$145,000 for a single person, HK$290,000 for a married person and HK$140,000 for each child. They apply under the progressive method only, not the standard rate. Other allowances, such as for dependent parents, are not modelled.</p>",
+        "cite": [
+          {
+            "name": "IRD, Allowances, deductions and tax rate table",
+            "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+          },
+          {
+            "name": "IRD, 2026-27 Budget",
+            "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
+          }
+        ]
       },
       {
         "h3": "MPF contributions",
-        "html": "<p>The Mandatory Provident Fund (MPF) is the compulsory retirement scheme for most employees. You pay 5% of relevant income, but only on monthly income up to HK$30,000, so your share is capped at HK$1,500 a month, or HK$18,000 a year. The calculator also skips MPF for monthly income below HK$7,100, and your employer pays the same share on top. Mandatory contributions are deductible from income up to HK$18,000 a year.</p>"
+        "html": "<p>The Mandatory Provident Fund (MPF) is the compulsory retirement scheme for most employees. You pay 5% of relevant income, but only on monthly income up to HK$30,000, so your share is capped at HK$1,500 a month, or HK$18,000 a year. The calculator also skips MPF for monthly income below HK$7,100, and your employer pays the same share on top. Mandatory contributions are deductible from income up to HK$18,000 a year.</p>",
+        "cite": [
+          {
+            "name": "MPFA, Contributions",
+            "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+          }
+        ]
       }
     ],
     "sources": [
-      { "name": "Inland Revenue Department (IRD)", "url": "https://www.ird.gov.hk/", "note": "salaries tax rates, allowances, provisional tax" },
-      { "name": "Mandatory Provident Fund Schemes Authority (MPFA)", "url": "https://www.mpfa.org.hk/", "note": "MPF contribution rules" },
-      { "name": "GovHK", "url": "https://www.gov.hk/", "note": "government services and tax information" }
+      {
+        "name": "IRD, Allowances, deductions and tax rate table",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+      },
+      {
+        "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+      },
+      {
+        "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
+      },
+      {
+        "name": "IRD, 2026-27 Budget",
+        "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
+      },
+      {
+        "name": "IRD, A brief guide to personal assessment",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam37e.pdf"
+      },
+      {
+        "name": "MPFA, Contributions",
+        "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+        "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
+      }
     ]
   },
   "examples": [
@@ -42,38 +113,84 @@
       "key": "single",
       "title": "How to calculate Hong Kong (China) salaries tax for a single person on HK$600,000",
       "intro": "<p>A single employee on HK$600,000 pays the capped MPF of HK$18,000, so net income is HK$582,000. After the HK$145,000 allowance, net chargeable income is HK$437,000. The progressive rates give HK$56,290, which is lower than the standard-rate figure of HK$87,300, so the progressive tax applies. You keep about HK$525,710, or 87.6% of gross, and the marginal rate is 17.0%.</p>",
-      "after": "<p>MPF is also in your pension, so it is saved rather than lost. Employers do not withhold salaries tax, so the HK$56,290 is paid after the assessment.</p>"
+      "after": "<p>MPF is also in your pension, so it is saved rather than lost. Employers do not withhold salaries tax, so the HK$56,290 is paid after the assessment.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "key": "married-two-children",
       "title": "How much salaries tax does a married person with two children pay in Hong Kong (China) on HK$900,000?",
       "intro": "<p>With HK$18,000 of MPF, net income is HK$882,000. Allowances come to HK$570,000: HK$290,000 for marriage and HK$140,000 for each of two children. Net chargeable income is HK$312,000, and progressive tax is HK$35,040, well below the standard-rate figure of HK$132,300. You keep about HK$846,960, or 94.1% of gross.</p>",
-      "after": "<p>Marriage and child allowances remove a large slice of income from the 17% band, so the effective rate is under 4%. The marginal rate is still 17.0% on the next dollar.</p>"
+      "after": "<p>Marriage and child allowances remove a large slice of income from the 17% band, so the effective rate is under 4%. The marginal rate is still 17.0% on the next dollar.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        },
+        {
+          "name": "IRD, 2026-27 Budget",
+          "url": "https://www.ird.gov.hk/eng/tax/budget.htm"
+        }
+      ]
     },
     {
       "key": "high-earner",
       "title": "Take-home pay on HK$3,000,000 in Hong Kong (China): when the standard rate applies",
       "intro": "<p>On HK$3 million, net income after the HK$18,000 MPF is HK$2,982,000. The progressive method would give far more tax, so the standard rate of 15% applies and tax is HK$447,300. You keep about HK$2,534,700, or 84.5% of gross, and the marginal rate is 15.0%.</p>",
-      "after": "<p>For a single person with no children, the standard rate becomes the lower method at a salary of roughly HK$2.15 million under the calculator's model. Below that level the progressive method is lower, and allowances help.</p>"
+      "after": "<p>For a single person with no children, the standard rate becomes the lower method at a salary of roughly HK$2.15 million under the calculator's model. Below that level the progressive method is lower, and allowances help.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to reduce Hong Kong tax. Which ones apply depends on your family and income.</p>",
   "strategies": [
     {
       "h3": "Tax-deductible voluntary MPF contributions",
-      "html": "<p><strong>Suits:</strong> employees on the progressive method with a spare cash flow. Contributions to a Tax Deductible Voluntary Contribution account, or qualifying deferred annuity premiums, are deductible up to an annual cap on top of the mandatory MPF deduction. Check the current cap with the IRD.</p><p><strong>Caveat:</strong> the money is locked until retirement age, and the deduction does not help once the standard rate is the lower method.</p>"
+      "html": "<p><strong>Suits:</strong> employees on the progressive method with a spare cash flow. Contributions to a Tax Deductible Voluntary Contribution account, or qualifying deferred annuity premiums, are deductible up to an annual cap on top of the mandatory MPF deduction. Check the current cap with the IRD.</p><p><strong>Caveat:</strong> the money is locked until retirement age, and the deduction does not help once the standard rate is the lower method.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "h3": "Claim dependant and other allowances",
-      "html": "<p><strong>Suits:</strong> anyone supporting children, a spouse or dependent parents or siblings. Each allowance removes income from the top tax band.</p><p><strong>Caveat:</strong> each one has qualifying rules and needs documents. The calculator only models the basic, married and child allowances.</p>"
+      "html": "<p><strong>Suits:</strong> anyone supporting children, a spouse or dependent parents or siblings. Each allowance removes income from the top tax band.</p><p><strong>Caveat:</strong> each one has qualifying rules and needs documents. The calculator only models the basic, married and child allowances.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "h3": "Deductions for home loan interest, donations and self-education",
-      "html": "<p><strong>Suits:</strong> homeowners who live in their property, regular donors to approved charities, and employees paying for work-related courses. These are standard deductions in a salaries tax return.</p><p><strong>Caveat:</strong> each has its own cap and conditions, and the calculator does not include them. Keep the receipts.</p>"
+      "html": "<p><strong>Suits:</strong> homeowners who live in their property, regular donors to approved charities, and employees paying for work-related courses. These are standard deductions in a salaries tax return.</p><p><strong>Caveat:</strong> each has its own cap and conditions, and the calculator does not include them. Keep the receipts.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "h3": "Joint assessment or personal assessment for married couples",
-      "html": "<p><strong>Suits:</strong> married couples where one spouse has low income or losses. A couple can elect personal assessment or joint assessment, and the tax office applies whichever gives the lower combined tax.</p><p><strong>Caveat:</strong> the election is made in the return and the calculator models a single person's tax only.</p>"
+      "html": "<p><strong>Suits:</strong> married couples where one spouse has low income or losses. A couple can elect personal assessment or joint assessment, and the tax office applies whichever gives the lower combined tax.</p><p><strong>Caveat:</strong> the election is made in the return and the calculator models a single person's tax only.</p>",
+      "cite": [
+        {
+          "name": "IRD, A brief guide to personal assessment",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam37e.pdf"
+        }
+      ]
     }
   ],
   "limits": [
@@ -88,27 +205,63 @@
   "faq": [
     {
       "q": "How much salaries tax do I pay on HK$600,000 in Hong Kong?",
-      "a": "<p>A single person pays about HK$56,290 after MPF and the basic allowance, and keeps about HK$525,710. A married person with two children on HK$900,000 pays about HK$35,040. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A single person pays about HK$56,290 after MPF and the basic allowance, and keeps about HK$525,710. A married person with two children on HK$900,000 pays about HK$35,040. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "IRD, Allowances, deductions and tax rate table",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam61e.pdf"
+        }
+      ]
     },
     {
       "q": "What is the difference between progressive and standard rate in Hong Kong?",
-      "a": "<p>The IRD works out your salaries tax in two ways and charges the lower figure. Progressive rates run from 2% to 17% on income after allowances. The standard rate is 15% on the first HK$5 million of net income before allowances (16% above that). The progressive method usually wins because allowances and low bands reduce it. On HK$3 million it is the other way round, so the standard rate of HK$447,300 applies.</p><p>The calculator runs both and shows which one it used in the line name.</p>"
+      "a": "<p>The IRD works out your salaries tax in two ways and charges the lower figure. Progressive rates run from 2% to 17% on income after allowances. The standard rate is 15% on the first HK$5 million of net income before allowances (16% above that). The progressive method usually wins because allowances and low bands reduce it. On HK$3 million it is the other way round, so the standard rate of HK$447,300 applies.</p><p>The calculator runs both and shows which one it used in the line name.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "q": "What is provisional tax in Hong Kong and why do I pay two bills at once?",
-      "a": "<p>Hong Kong does not withhold salaries tax from pay. After the tax year ends on 31 March, you file a return and receive an assessment. The assessment includes final tax for the year just ended and also provisional tax for the next year, which the IRD estimates from the same income. You then pay it in two instalments, with the larger share first. That is why the first year's bill can look like paying for two years.</p><p>The provisional amount is adjusted when the next year's actual income is known. The calculator shows only the tax for one full year and not this cash-flow effect.</p>"
+      "a": "<p>Hong Kong does not withhold salaries tax from pay. After the tax year ends on 31 March, you file a return and receive an assessment. The assessment includes final tax for the year just ended and also provisional tax for the next year, which the IRD estimates from the same income. You then pay it in two instalments, with the larger share first. That is why the first year's bill can look like paying for two years.</p><p>The provisional amount is adjusted when the next year's actual income is known. The calculator shows only the tax for one full year and not this cash-flow effect.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     },
     {
       "q": "Why is my MPF contribution capped at HK$1,500 a month?",
-      "a": "<p>The MPF contribution rate is 5% of relevant income, but relevant income above HK$30,000 a month is ignored. So the most an employee pays is HK$1,500 a month, or HK$18,000 a year, and your employer pays the same. A high earner on HK$250,000 a month still pays only HK$1,500, so MPF takes a smaller share of pay as salary rises.</p>"
+      "a": "<p>The MPF contribution rate is 5% of relevant income, but relevant income above HK$30,000 a month is ignored. So the most an employee pays is HK$1,500 a month, or HK$18,000 a year, and your employer pays the same. A high earner on HK$250,000 a month still pays only HK$1,500, so MPF takes a smaller share of pay as salary rises.</p>",
+      "cite": [
+        {
+          "name": "MPFA, Contributions",
+          "url": "https://www.mpfa.org.hk/eng/mpf_system/system_features/contributions/index.jsp"
+        }
+      ]
     },
     {
       "q": "Does Hong Kong tax income I earn overseas?",
-      "a": "<p>Hong Kong taxes income that arises in or is derived from Hong Kong, not worldwide income. Work done in Hong Kong is generally taxable, and short visits of up to 60 days in a tax year can be exempt in some cases. Foreign income rules and your own situation vary, so confirm with the IRD before relying on an exemption.</p>"
+      "a": "<p>Hong Kong taxes income that arises in or is derived from Hong Kong, not worldwide income. Work done in Hong Kong is generally taxable, and short visits of up to 60 days in a tax year can be exempt in some cases. Foreign income rules and your own situation vary, so confirm with the IRD before relying on an exemption.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (2): which income is assessable",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam40e.pdf"
+        }
+      ]
     },
     {
       "q": "When does the tax year start and when do I file?",
-      "a": "<p>The tax year runs from 1 April to 31 March. The IRD usually sends tax returns to employees in early May and expects them back within a month. Your employer also reports your pay to the IRD, so the figures should match.</p>"
+      "a": "<p>The tax year runs from 1 April to 31 March. The IRD usually sends tax returns to employees in early May and expects them back within a month. Your employer also reports your pay to the IRD, so the figures should match.</p>",
+      "cite": [
+        {
+          "name": "IRD, A guide to Salaries Tax (1): how to compute Salaries Tax",
+          "url": "https://www.ird.gov.hk/eng/pdf/pam39e.pdf"
+        }
+      ]
     }
   ],
   "bmc": "Found this useful? Buy me a milk tea."

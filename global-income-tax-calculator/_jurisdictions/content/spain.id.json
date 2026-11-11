@@ -8,6 +8,12 @@
   "lede": "<p>Spanyol memajaki penduduk pajaknya atas penghasilan dari seluruh dunia lewat IRPF (<em>Impuesto sobre la Renta de las Personas Físicas</em>, setara PPh orang pribadi) yang terbagi dua, yaitu skala negara dan skala daerah, dan karyawan juga membayar iuran jaminan sosial sekitar 6,5%. Halaman ini menghitung karyawan yang tinggal di wilayah Madrid. Dari gaji bruto €45.000, penduduk pajak membayar sekitar €11.806 untuk jaminan sosial dan IRPF, sehingga gaji bersih (<em>take-home pay</em>) sekitar €33.194 atau 73,8%. Pekerja yang baru pindah ke Spanyol dan memenuhi syarat <em>Beckham law</em> membayar tarif tunggal 24% atas penghasilan kerja sampai €600.000, dan dari gaji bruto €90.000 gaji bersihnya sekitar €64.421.</p>",
   "law": {
     "intro": "<p>Angka berikut adalah tarif 2026 sebagaimana dihitung <em>tool</em> ini untuk karyawan di wilayah Madrid yang bekerja penuh setahun. IRPF Spanyol punya bagian negara dan bagian daerah, dan setiap daerah menetapkan skala daerahnya sendiri, jadi angka Madrid tidak berlaku untuk Katalonia, Andalusia, atau Valencia. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia. Pada umumnya kamu dihitung sebagai penduduk pajak kalau tinggal di Spanyol lebih dari 183 hari dalam satu tahun kalender, atau kalau pusat kegiatan atau kepentingan ekonomimu ada di sana.</p>",
+    "introCite": [
+      {
+        "name": "Agencia Tributaria, Manual IRPF 2025: tempat tinggal biasa di wilayah Spanyol",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c02-irpf-cuestiones-generales/sujecion-irpf-aspectos-personales/residencia-habitual-territorio-espanol.html#:~:text=m%C3%A1s%20de%20183%20d%C3%ADas"
+      }
+    ],
     "blocks": [
       {
         "h3": "Skala IRPF bagian negara",
@@ -43,7 +49,25 @@
               "24,5%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: tarif negara (skala umum)",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html#:~:text=Gravamen%20estatal"
+          },
+          {
+            "name": "BOE, Ley 13/2023 Comunidad de Madrid: skala regional IRPF",
+            "url": "https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf"
+          },
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: ringkasan minimum pribadi dan keluarga (negara)",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/cuadro-resumen-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente"
+          },
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: Comunidad de Madrid, jumlah minimum pribadi dan keluarga",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/comunidad-madrid-importes-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente"
+          }
+        ]
       },
       {
         "h3": "Skala IRPF bagian Madrid",
@@ -75,15 +99,37 @@
               "20,5%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "BOE, Orden PJC/297/2026 (iuran Jaminan Sosial 2026): tarif ditanggung pekerja",
+            "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-7296#:~:text=el%204%2C70%20por%20ciento"
+          }
+        ]
       },
       {
         "h3": "Jaminan sosial",
-        "html": "<p>Porsi karyawan dihitung 6,50% dari gaji, atau 6,55% untuk kontrak sementara. Iuran dipungut sampai batas dasar iuran €5.101,20 per bulan, sehingga penghasilan di atas sekitar €61.214 setahun tidak dikenai iuran tambahan. Iuran ini membuatmu terdaftar di sistem jaminan sosial Spanyol (pensiun, tunjangan pengangguran, dan layanan kesehatan publik), jadi iuran ini padanan gabungan BPJS Ketenagakerjaan dan BPJS Kesehatan. Pemberi kerja membayar bagiannya sendiri di luar gajimu, dan bagian itu tidak masuk ke gaji bersih.</p>"
+        "html": "<p>Porsi karyawan dihitung 6,50% dari gaji, atau 6,55% untuk kontrak sementara. Iuran dipungut sampai batas dasar iuran €5.101,20 per bulan, sehingga penghasilan di atas sekitar €61.214 setahun tidak dikenai iuran tambahan. Iuran ini membuatmu terdaftar di sistem jaminan sosial Spanyol (pensiun, tunjangan pengangguran, dan layanan kesehatan publik), jadi iuran ini padanan gabungan BPJS Ketenagakerjaan dan BPJS Kesehatan. Pemberi kerja membayar bagiannya sendiri di luar gajimu, dan bagian itu tidak masuk ke gaji bersih.</p>",
+        "cite": [
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/regimen-fiscal-especial-aplicable-trabajadores.html#:~:text=Hasta%20600.000"
+          },
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus bagi pekerja yang dipindahkan ke Spanyol",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c02-irpf-cuestiones-generales/sujecion-irpf-aspectos-personales/regimen-fiscal-especial-aplicable-trabajadores-desplazados.html"
+          }
+        ]
       },
       {
         "h3": "Beckham law",
-        "html": "<p>Rezim khusus bagi pekerja yang pindah ke Spanyol, yang populer disebut <em>Beckham law</em>, membuat pendatang yang memenuhi syarat dipajaki atas penghasilan kerja di Spanyol dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya, sebagai ganti skala negara dan daerah. <em>Tool</em> ini menerapkannya pada gaji bruto dan menambahkan jaminan sosial secara terpisah. Rezim ini umumnya untuk orang yang pada tahun-tahun sebelum kedatangannya bukan penduduk pajak Spanyol, dan berlaku pada tahun kedatangan serta beberapa tahun sesudahnya. Pengajuannya punya batas waktu setelah kamu mulai bekerja, jadi cek syaratnya ke otoritas pajak atau konsultan pajak. <em>Tool</em> ini tidak menguji kelayakan.</p>"
+        "html": "<p>Rezim khusus bagi pekerja yang pindah ke Spanyol, yang populer disebut <em>Beckham law</em>, membuat pendatang yang memenuhi syarat dipajaki atas penghasilan kerja di Spanyol dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya, sebagai ganti skala negara dan daerah. <em>Tool</em> ini menerapkannya pada gaji bruto dan menambahkan jaminan sosial secara terpisah. Rezim ini umumnya untuk orang yang pada tahun-tahun sebelum kedatangannya bukan penduduk pajak Spanyol, dan berlaku pada tahun kedatangan serta beberapa tahun sesudahnya. Pengajuannya punya batas waktu setelah kamu mulai bekerja, jadi cek syaratnya ke otoritas pajak atau konsultan pajak. <em>Tool</em> ini tidak menguji kelayakan.</p>",
+        "cite": [
+          {
+            "name": "Agencia Tributaria, Manual IRPF 2025: kewajiban menyampaikan SPT IRPF",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c01-campana-declaracion-renta/quienes-estan-obligados-presentar-declaracion-irpf/delimitacion-obligacion-declarar-irpf.html#:~:text=22.000%20euros%20anuales"
+          }
+        ]
       },
       {
         "h3": "Pemotongan bulanan dan laporan tahunan",
@@ -92,24 +138,39 @@
     ],
     "sources": [
       {
-        "name": "Agencia Tributaria (AEAT), IRPF dan rezim pekerja pindahan",
-        "url": "https://sede.agenciatributaria.gob.es/"
+        "name": "Agencia Tributaria, Manual IRPF 2025: tarif negara (skala umum)",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html#:~:text=Gravamen%20estatal",
+        "note": "skala IRPF negara"
       },
       {
-        "name": "Seguridad Social, iuran dan batas dasar iuran",
-        "url": "https://www.seg-social.es/"
+        "name": "BOE, Ley 13/2023 Comunidad de Madrid: skala regional IRPF",
+        "url": "https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf",
+        "note": "skala regional Madrid"
       },
       {
-        "name": "Comunidad de Madrid, skala IRPF daerah",
-        "url": "https://www.comunidad.madrid/"
+        "name": "BOE, Orden PJC/297/2026 (iuran Jaminan Sosial 2026): tarif ditanggung pekerja",
+        "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-7296#:~:text=el%204%2C70%20por%20ciento",
+        "note": "tarif jaminan sosial 2026"
       },
       {
-        "name": "Ministerio de Hacienda",
-        "url": "https://www.hacienda.gob.es/"
+        "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/regimen-fiscal-especial-aplicable-trabajadores.html#:~:text=Hasta%20600.000",
+        "note": "skala hukum Beckham"
       },
       {
-        "name": "Boletín Oficial del Estado (BOE), Ley 35/2006 tentang IRPF",
-        "url": "https://www.boe.es/"
+        "name": "Agencia Tributaria, Manual IRPF 2025: tempat tinggal biasa di wilayah Spanyol",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c02-irpf-cuestiones-generales/sujecion-irpf-aspectos-personales/residencia-habitual-territorio-espanol.html#:~:text=m%C3%A1s%20de%20183%20d%C3%ADas",
+        "note": "aturan residensi pajak"
+      },
+      {
+        "name": "Agencia Tributaria, Manual IRPF 2025: kewajiban menyampaikan SPT IRPF",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c01-campana-declaracion-renta/quienes-estan-obligados-presentar-declaracion-irpf/delimitacion-obligacion-declarar-irpf.html#:~:text=22.000%20euros%20anuales",
+        "note": "siapa yang wajib menyampaikan SPT tahunan"
+      },
+      {
+        "name": "Agencia Tributaria, Manual IRPF 2025: ringkasan minimum pribadi dan keluarga (negara)",
+        "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/cuadro-resumen-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente",
+        "note": "minimum pribadi dan keluarga"
       }
     ]
   },
@@ -118,30 +179,68 @@
       "key": "resident-madrid",
       "title": "Berapa gaji bersih dan IRPF untuk gaji €45.000 di Madrid?",
       "intro": "<p>Bayangkan karyawan lajang di Madrid dengan gaji bruto €45.000. Jaminan sosial €2.925 (6,5%) dipotong lebih dulu, sehingga dasar pajaknya €40.075 setelah dikurangi jaminan sosial dan biaya lain €2.000. Bagian negara dari IRPF sebesar €4.737 dan bagian Madrid sebesar €4.144, sehingga IRPF totalnya €8.881. Gaji bersihnya sekitar €33.194, atau 73,8% dari gaji bruto.</p>",
-      "after": "<p>Tarif marginalnya 40,1%, yaitu 18,5% untuk negara dan 17,4% untuk Madrid pada euro berikutnya, ditambah jaminan sosial 6,5%. Karena jaminan sosial itu sekaligus mengurangi dasar pajak, totalnya 40,1%, bukan 42,4%.</p>"
+      "after": "<p>Tarif marginalnya 40,1%, yaitu 18,5% untuk negara dan 17,4% untuk Madrid pada euro berikutnya, ditambah jaminan sosial 6,5%. Karena jaminan sosial itu sekaligus mengurangi dasar pajak, totalnya 40,1%, bukan 42,4%.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: tarif negara (skala umum)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html#:~:text=Gravamen%20estatal"
+        },
+        {
+          "name": "BOE, Ley 13/2023 Comunidad de Madrid: skala regional IRPF",
+          "url": "https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf"
+        }
+      ]
     },
     {
       "key": "beckham-law",
       "title": "Berapa gaji bersih dengan Beckham law di Spanyol pada gaji €90.000?",
       "intro": "<p>Di bawah rezim <em>Beckham</em>, karyawan yang memenuhi syarat dengan gaji €90.000 dikenai tarif tunggal 24%, yaitu €21.600, ditambah jaminan sosial €3.979. Jaminan sosial berhenti di batas dasar iuran, sehingga nilainya di bawah 6,5% dari gaji. Gaji bersihnya sekitar €64.421, atau 71,6% dari gaji bruto, dan tarif marginalnya 24,0%, lebih rendah daripada lapis atas skala penduduk biasa.</p>",
-      "after": "<p>Rezim ini mengganti skala bertingkat dengan satu tarif yang berlaku sejak euro pertama, sehingga pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. Bandingkan keduanya sebelum mengajukan, dan ingat bahwa rezim ini punya syarat dan batas waktu.</p>"
+      "after": "<p>Rezim ini mengganti skala bertingkat dengan satu tarif yang berlaku sejak euro pertama, sehingga pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. Bandingkan keduanya sebelum mengajukan, dan ingat bahwa rezim ini punya syarat dan batas waktu.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/regimen-fiscal-especial-aplicable-trabajadores.html#:~:text=Hasta%20600.000"
+        }
+      ]
     },
     {
       "key": "resident-two-children",
       "title": "Pajak penghasilan di Madrid untuk karyawan dengan dua anak, gaji €45.000",
       "intro": "<p>Ambil contoh karyawan di Madrid bergaji €45.000 dengan dua anak. Jaminan sosialnya €2.925, dan minimum keluarga naik karena dua anak. Pajak atas minimum itu dihitung dengan tarif lapis terbawah lalu dipotongkan dari pajak yang terutang, sehingga IRPF turun menjadi €7.932 (€4.253 bagian negara dan €3.679 bagian Madrid), sekitar €950 lebih rendah. Gaji bersihnya sekitar €34.143, atau 75,9% dari gaji bruto.</p>",
-      "after": "<p>Tarif marginalnya 40,1%, sama seperti karyawan lajang, karena anak mengurangi pajak sebesar jumlah tetap dan tidak mengubah lapis yang kamu masuki. Di Indonesia, padanannya adalah tambahan PTKP Rp4,5 juta untuk setiap tanggungan, sampai tiga orang.</p>"
+      "after": "<p>Tarif marginalnya 40,1%, sama seperti karyawan lajang, karena anak mengurangi pajak sebesar jumlah tetap dan tidak mengubah lapis yang kamu masuki. Di Indonesia, padanannya adalah tambahan PTKP Rp4,5 juta untuk setiap tanggungan, sampai tiga orang.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: ringkasan minimum pribadi dan keluarga (negara)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/cuadro-resumen-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente"
+        },
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: Comunidad de Madrid, jumlah minimum pribadi dan keluarga",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/comunidad-madrid-importes-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang sah dan lazim untuk menekan pajak di Spanyol. Mana yang cocok bergantung pada status tinggal dan kontrak kerjamu.</p>",
   "strategies": [
     {
       "h3": "Cek kelayakan Beckham law sebelum atau sesaat setelah pindah",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama pada gaji tinggi, ketika tarif tunggal 24% lebih murah daripada skala biasa.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama pada gaji tinggi, ketika tarif tunggal 24% lebih murah daripada skala biasa.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/regimen-fiscal-especial-aplicable-trabajadores.html#:~:text=Hasta%20600.000"
+        }
+      ]
     },
     {
       "h3": "Setor iuran ke rencana pensiun (plan de pensiones)",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak pada lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak pada lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: batas dan kelebihan iuran dana pensiun",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c13-determinacion-renta-contribuyente-sujeta-gravamen/reducciones-base-imponible-general/reducciones-aportaciones-contribuciones-sistemas-prevision-social/normas-comunes-aplicables-aportaciones-sistemas-social/limites-exceso-aportaciones.html#:~:text=L%C3%ADmite%20general"
+        }
+      ]
     },
     {
       "h3": "Pakai remunerasi fleksibel lewat pemberi kerja",
@@ -149,7 +248,13 @@
     },
     {
       "h3": "Laporkan situasi keluargamu dengan benar",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang punya anak atau tanggungan. Minimum pribadi dan keluarga menurunkan IRPF dengan jumlah tetap (untuk dua anak, selisihnya sekitar €950 pada gaji €45.000), dan saat melapor kamu bisa mengklaim pengurang daerah.</p><p><strong>Yang perlu diwaspadai:</strong> aturan tentang siapa yang boleh mengklaim anak ketika orang tua melapor terpisah bergantung pada keadaanmu, jadi periksa rinciannya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang punya anak atau tanggungan. Minimum pribadi dan keluarga menurunkan IRPF dengan jumlah tetap (untuk dua anak, selisihnya sekitar €950 pada gaji €45.000), dan saat melapor kamu bisa mengklaim pengurang daerah.</p><p><strong>Yang perlu diwaspadai:</strong> aturan tentang siapa yang boleh mengklaim anak ketika orang tua melapor terpisah bergantung pada keadaanmu, jadi periksa rinciannya.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: ringkasan minimum pribadi dan keluarga (negara)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/cuadro-resumen-minimo-personal-familiar.html#:~:text=M%C3%ADnimo%20del%20contribuyente"
+        }
+      ]
     }
   ],
   "limits": [
@@ -164,27 +269,79 @@
   "faq": [
     {
       "q": "Berapa gaji bersih dari gaji bruto €45.000 di Spanyol?",
-      "a": "<p>Karyawan penduduk pajak di Madrid membayar sekitar €2.925 untuk jaminan sosial dan sekitar €8.881 untuk IRPF, jadi totalnya sekitar €11.806, dan gaji bersihnya sekitar €33.194. Di daerah lain, skala daerahnya berbeda. Kalau ingin tahu seberapa jauh angka itu cukup di Madrid, <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan biaya hidupnya dengan kotamu sendiri, dan angkamu bisa kamu coba di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan penduduk pajak di Madrid membayar sekitar €2.925 untuk jaminan sosial dan sekitar €8.881 untuk IRPF, jadi totalnya sekitar €11.806, dan gaji bersihnya sekitar €33.194. Di daerah lain, skala daerahnya berbeda. Kalau ingin tahu seberapa jauh angka itu cukup di Madrid, <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan biaya hidupnya dengan kotamu sendiri, dan angkamu bisa kamu coba di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: tarif negara (skala umum)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html#:~:text=Gravamen%20estatal"
+        },
+        {
+          "name": "BOE, Ley 13/2023 Comunidad de Madrid: skala regional IRPF",
+          "url": "https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf"
+        },
+        {
+          "name": "BOE, Orden PJC/297/2026 (iuran Jaminan Sosial 2026): tarif ditanggung pekerja",
+          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-7296#:~:text=el%204%2C70%20por%20ciento"
+        }
+      ]
     },
     {
       "q": "Kenapa IRPF punya dua bagian, negara dan daerah?",
-      "a": "<p>IRPF Spanyol dibagi menjadi bagian negara dan bagian daerah. Keduanya dihitung dari dasar pajak yang sama, dan masing-masing punya skalanya sendiri, lalu hasilnya dijumlahkan. <em>Tool</em> ini menampilkan keduanya sebagai baris terpisah.</p>"
+      "a": "<p>IRPF Spanyol dibagi menjadi bagian negara dan bagian daerah. Keduanya dihitung dari dasar pajak yang sama, dan masing-masing punya skalanya sendiri, lalu hasilnya dijumlahkan. <em>Tool</em> ini menampilkan keduanya sebagai baris terpisah.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/regimen-fiscal-especial-aplicable-trabajadores.html#:~:text=Hasta%20600.000"
+        },
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus bagi pekerja yang dipindahkan ke Spanyol",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c02-irpf-cuestiones-generales/sujecion-irpf-aspectos-personales/regimen-fiscal-especial-aplicable-trabajadores-desplazados.html"
+        }
+      ]
     },
     {
       "q": "Apa itu Beckham law dan siapa yang bisa memakainya?",
-      "a": "<p>Ini rezim khusus bagi orang yang pindah ke Spanyol untuk bekerja. Sebagai ganti skala negara dan daerah, penghasilan kerja yang memenuhi syarat dipajaki dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya. <em>Tool</em> ini menghitung tarif itu pada gaji bruto. Syaratnya menyangkut riwayat domisilimu dan alasan kepindahanmu, dan pengajuannya punya batas waktu, jadi baca rinciannya di <a href=\"https://sede.agenciatributaria.gob.es/\">situs AEAT</a>.</p>"
+      "a": "<p>Ini rezim khusus bagi orang yang pindah ke Spanyol untuk bekerja. Sebagai ganti skala negara dan daerah, penghasilan kerja yang memenuhi syarat dipajaki dengan tarif tunggal 24% sampai €600.000 dan 47% di atasnya. <em>Tool</em> ini menghitung tarif itu pada gaji bruto. Syaratnya menyangkut riwayat domisilimu dan alasan kepindahanmu, dan pengajuannya punya batas waktu, jadi baca rinciannya di <a href=\"https://sede.agenciatributaria.gob.es/\">situs AEAT</a>.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: tarif negara (skala umum)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html#:~:text=Gravamen%20estatal"
+        },
+        {
+          "name": "BOE, Ley 13/2023 Comunidad de Madrid: skala regional IRPF",
+          "url": "https://www.boe.es/boe/dias/2024/03/21/pdfs/BOE-A-2024-5610.pdf"
+        }
+      ]
     },
     {
       "q": "Kenapa gaji di Spanyol dibayar 14 kali setahun?",
-      "a": "<p>Banyak kontrak di Spanyol menyebut gaji tahunan lalu membaginya menjadi 14 pembayaran, yaitu dua belas pembayaran bulanan ditambah dua gaji ekstra (<em>pagas extras</em>) yang biasanya cair di musim panas dan Desember, mirip THR. Kontrak lain membagi angka tahunan yang sama menjadi 12. Pajak tahunannya tidak bergantung pada pilihan itu, hanya besar tiap slip gaji yang berbeda. Hitungan <em>tool</em> ini memakai gaji bruto setahun, jadi bagilah dengan 12 atau 14 sesuai kontrakmu.</p>"
+      "a": "<p>Banyak kontrak di Spanyol menyebut gaji tahunan lalu membaginya menjadi 14 pembayaran, yaitu dua belas pembayaran bulanan ditambah dua gaji ekstra (<em>pagas extras</em>) yang biasanya cair di musim panas dan Desember, mirip THR. Kontrak lain membagi angka tahunan yang sama menjadi 12. Pajak tahunannya tidak bergantung pada pilihan itu, hanya besar tiap slip gaji yang berbeda. Hitungan <em>tool</em> ini memakai gaji bruto setahun, jadi bagilah dengan 12 atau 14 sesuai kontrakmu.</p>",
+      "cite": [
+        {
+          "name": "BOE, Undang-Undang Pekerja (Real Decreto Legislativo 2/2015), pasal 31 gratifikasi ekstra",
+          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430#:~:text=gratificaciones%20extraordinarias"
+        }
+      ]
     },
     {
       "q": "Apakah saya masih harus lapor pajak tahunan kalau gaji sudah dipotong IRPF?",
-      "a": "<p>Sering kali kamu tetap melapor, karena pemotongan di slip gaji hanyalah perkiraan dan <em>declaración de la renta</em> mencocokkannya dengan pajak yang benar-benar terutang, dengan memperhitungkan keluarga dan pengurangmu, seperti halnya SPT Tahunan mencocokkan PPh 21 yang sudah dipotong. Apakah kamu wajib melapor bergantung pada besar dan sumber penghasilanmu, jadi periksa aturan terbaru. Hitungan <em>tool</em> ini menunjukkan tagihan setahun penuh.</p>"
+      "a": "<p>Sering kali kamu tetap melapor, karena pemotongan di slip gaji hanyalah perkiraan dan <em>declaración de la renta</em> mencocokkannya dengan pajak yang benar-benar terutang, dengan memperhitungkan keluarga dan pengurangmu, seperti halnya SPT Tahunan mencocokkan PPh 21 yang sudah dipotong. Apakah kamu wajib melapor bergantung pada besar dan sumber penghasilanmu, jadi periksa aturan terbaru. Hitungan <em>tool</em> ini menunjukkan tagihan setahun penuh.</p>",
+      "cite": [
+        {
+          "name": "BOE, Orden PJC/297/2026: batas dasar iuran maksimum 5.101,20 euro per bulan",
+          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-7296#:~:text=5.101%2C20%20euros%20mensuales"
+        }
+      ]
     },
     {
       "q": "Berapa pajak berkurang kalau punya anak di Spanyol?",
-      "a": "<p>Anak menaikkan minimum pribadi dan keluarga, sehingga IRPF turun dengan jumlah tetap. Untuk karyawan bergaji €45.000 di Madrid, dua anak menurunkan IRPF dari €8.881 menjadi €7.932, kira-kira €950 setahun. Anak tidak mengubah tarif marginalnya. Ini mirip tambahan PTKP per tanggungan di Indonesia, tetapi caranya memotong pajak, bukan memotong penghasilan.</p>"
+      "a": "<p>Anak menaikkan minimum pribadi dan keluarga, sehingga IRPF turun dengan jumlah tetap. Untuk karyawan bergaji €45.000 di Madrid, dua anak menurunkan IRPF dari €8.881 menjadi €7.932, kira-kira €950 setahun. Anak tidak mengubah tarif marginalnya. Ini mirip tambahan PTKP per tanggungan di Indonesia, tetapi caranya memotong pajak, bukan memotong penghasilan.</p>",
+      "cite": [
+        {
+          "name": "Agencia Tributaria, Manual IRPF 2025: kewajiban menyampaikan SPT IRPF",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c01-campana-declaracion-renta/quienes-estan-obligados-presentar-declaracion-irpf/delimitacion-obligacion-declarar-irpf.html#:~:text=22.000%20euros%20anuales"
+        }
+      ]
     },
     {
       "q": "Apakah iuran jaminan sosial Spanyol bisa dibawa pulang ke Indonesia?",

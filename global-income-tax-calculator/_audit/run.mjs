@@ -88,7 +88,25 @@ const auRes = (g, pr) => {
   const med = !pr || g <= 28011 ? 0 : g <= 35013 ? 0.10*(g - 28011) : 0.02*g;
   return { incomeTax: Math.max(0, t - lito) + med, social: 0 };
 };
+// Belgium, expat regime, single, 7% municipal: since income 2025, 35% of gross is free of income
+// tax with no cap (Law of 18 Dec 2025), but ONSS stayed at the 2022 rule: only 30% of gross, at
+// most 90,000 a year, is free of social security (Deloitte Belgium, 23 Dec 2025). At these pays
+// the employment bonus is nil and the CSSS is at its 731.28 cap.
+const beExpRe = g => {
+  let t = 0, lo = 0; const prog = x => { t = 0; lo = 0; for(const [up, r] of [[16720,.25],[29510,.40],[51070,.45],[Infinity,.50]]){ if(x > lo) t += (Math.min(x, up) - lo)*r; lo = up; } return t; };
+  const ss = 0.1307*(g - Math.min(0.30*g, 90000)), net = 0.65*g - ss, ti = net - Math.min(0.30*net, 6070);
+  return { incomeTax: 1.07*(prog(ti) - prog(11550)), social: ss + 731.28 };
+};
 const CHANGED = {
+  'BE|expat35|90000': () => beExpRe(90000),
+  'BE|expat35|150000': () => beExpRe(150000),
+  // Taiwan at NT$6,000,000 (NT$500,000 a month): national health insurance is capped at the
+  // NHIA's top insured amount, NT$313,000 a month from 1 Jan 2025 (premium table, note 2), not
+  // v11's 219,500. Labour insurance stays 12.5% x 20% on NT$45,800 (BLI). Income tax unchanged.
+  'TW|resident_single|6000000': () => ({ incomeTax: 1265300.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|resident_married2kids|6000000': () => ({ incomeTax: 1068700.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|nonresident|6000000': () => ({ incomeTax: 1080000.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
+  'TW|resident_single_goldcard|6000000': () => ({ incomeTax: 814750.0, social: 12*0.125*0.20*45800 + 12*0.0517*0.30*313000 }),
   'AU|pr|60000': () => auRes(60000, true),
   'AU|pr|120000': () => auRes(120000, true),
   'AU|pr|300000': () => auRes(300000, true),
@@ -342,7 +360,8 @@ capChk('IT INPS 122,295', g => line('IT', g, {}, 'itInps') <= 0.0919*122295 + 0.
 capChk('CH ALV 148,200 and BVG 64,260', g => line('CH', g, {}, 'chAlv') <= 0.011*148200 + 1e-6 && line('CH', g, {}, 'chBvg') <= 0.05*64260 + 1e-6);
 capChk('BE CSSS 731.28 a year', g => line('BE', g, {}, 'beCsss') <= 731.28 + 1e-6);
 capChk('US PFL 411.91', g => line('US', g, { usState: 'NY' }, 'usNyPfl') <= 411.91 + 1e-6);
-capChk('TW labour insurance and NHI', g => line('TW', g*10, {}, 'twLi') <= 12*0.025*45800 + 1e-6 && line('TW', g*10, {}, 'twNhi') <= 12*0.0517*0.3*219500 + 1e-6);
+capChk('TW labour insurance and NHI', g => line('TW', g*10, {}, 'twLi') <= 12*0.025*45800 + 1e-6 && line('TW', g*10, {}, 'twNhi') <= 12*0.0517*0.3*313000 + 1e-6);
+capChk('TW foreign employee outside employment insurance pays 11.5% x 20% (BLI)', g => Math.abs(line('TW', g*10, { twEi: 'no' }, 'twLi') - 12*0.115*0.20*Math.min(g*10/12, 45800)) < 1e-6);
 capChk('BH 4,000 a month', g => E.compute('BH', g, { gulfNat: 'national' }).social <= 12*0.08*4000 + 1e-6);
 capChk('JP pension 650k a month', g => line('JP', g*100, {}, 'jpPension') <= 12*jpRound(650000*0.0915) + 1e-6);
 function jpRound(x){ const f = Math.floor(x); return x - f > 0.5 ? f + 1 : f; }

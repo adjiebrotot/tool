@@ -52,9 +52,10 @@ const T = {
     open: 'Open the calculator',
     openOwn: 'Work out your own pay',
     langOther: 'Versi Indonesia', langOtherShort: 'ID', langOtherTitle: 'Baca dalam bahasa Indonesia',
-    toc: ['What the law says', 'Worked examples', 'Paying less tax, legally', 'What the calculator leaves out', 'Questions'],
-    h2: ['What the law says', 'Worked examples', 'How to pay less tax, legally', 'What the calculator does not model', 'Frequently asked questions'],
+    toc: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator leaves out', 'Questions'],
+    h2: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator does not model', 'Frequently asked questions'],
     sources: 'Sources',
+    refs: 'References', refsToc: 'References', back: 'Back to the text',
     rulesLine: (year, place) => `Rules for ${year}${place ? ', ' + place : ''}. Every amount below is worked out by the calculator's own engine, the same one the tool runs.`,
     gross: 'Gross pay', grossW: 'a year, before tax',
     net: 'Take-home pay',
@@ -86,9 +87,10 @@ const T = {
     open: 'Buka kalkulatornya',
     openOwn: 'Hitung gajimu sendiri',
     langOther: 'English version', langOtherShort: 'EN', langOtherTitle: 'Read in English',
-    toc: ['Bunyi aturannya', 'Contoh perhitungan', 'Cara legal menghemat pajak', 'Yang tidak dihitung', 'Tanya jawab'],
-    h2: ['Apa kata aturannya', 'Contoh perhitungan', 'Cara legal menghemat pajak', 'Yang tidak dihitung kalkulator ini', 'Pertanyaan yang sering diajukan'],
+    toc: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung', 'Tanya jawab'],
+    h2: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung kalkulator ini', 'Pertanyaan yang sering diajukan'],
     sources: 'Sumber',
+    refs: 'Referensi', refsToc: 'Referensi', back: 'Kembali ke teks',
     rulesLine: (year, place) => `Aturan tahun ${year}${place ? ', ' + place : ''}. Semua angka di bawah ini dihitung oleh mesin hitung yang sama dengan yang dipakai kalkulatornya.`,
     gross: 'Gaji kotor', grossW: 'setahun, sebelum pajak',
     net: 'Gaji bersih',
@@ -137,7 +139,56 @@ function readContent(slug, lang){
 const PROBLEMS = [];
 function problem(msg){ PROBLEMS.push(msg); }
 
-function exampleHtml(p, ex, c, lang){
+// Numbered references, the way the blog's footnotes work: a fact carries a small superscript
+// number linked to one References list at the foot of the page. A content item's `cite` is a
+// list of { name, url, note? }, each naming the page that states the fact, not a home page,
+// so a reader who clicks lands on the table or the rule (a #:~:text= fragment can point the
+// browser at the exact words). One page, one number per URL, numbered in reading order;
+// law.sources not cited anywhere else are listed after them.
+function makeRefs(lang, where){
+  const list = [], byUrl = new Map();
+  const add = (s, w) => {
+    if(!/^https:\/\/[^/]+\/./.test(s.url || '')) problem(`${where} ${w}: cite "${s.name}" is not a deep https link (${s.url || 'no url'})`);
+    if(!s.name) problem(`${where} ${w}: a cite has no name`);
+    if(!byUrl.has(s.url)){ list.push({ ...s, n: list.length + 1, uses: 0 }); byUrl.set(s.url, list[list.length - 1]); }
+    return byUrl.get(s.url);
+  };
+  return {
+    // Register in reading order before anything is drawn, so the numbers run 1, 2, 3 down the page.
+    reg(cites, w){ (cites || []).forEach(s => add(s, w)); },
+    // The superscript for a list of cites: <sup>1, 4</sup>, each linked to its reference.
+    mark(cites){
+      if(!cites || !cites.length) return '';
+      const seen = new Set();
+      const links = cites.map(s => byUrl.get(s.url) || add(s, 'late')).filter(r => !seen.has(r.n) && seen.add(r.n))
+        .map(r => { r.uses++; return `<a href="#ref-${r.n}" id="cite-${r.n}-${r.uses}" role="doc-noteref">${r.n}</a>`; });
+      return `<sup class="jx-fn">${links.join(', ')}</sup>`;
+    },
+    // Put the mark at the end of the item's last paragraph or list item.
+    into(html, cites){
+      const m = this.mark(cites);
+      if(!m) return html || '';
+      if(!html) return m;
+      const i = Math.max(html.lastIndexOf('</p>'), html.lastIndexOf('</li>'));
+      return i < 0 ? html + m : html.slice(0, i) + m + html.slice(i);
+    },
+    get has(){ return list.length > 0; },
+    html(){
+      if(!list.length) return '';
+      const t = T[lang];
+      const back = r => Array.from({ length: r.uses }, (_, k) => ` <a class="jx-back" href="#cite-${r.n}-${k + 1}" role="doc-backlink" aria-label="${t.back}">↩${r.uses > 1 ? `<sup>${k + 1}</sup>` : ''}</a>`).join('');
+      return `
+    <section class="gd-sec card jx-refs" id="references" aria-labelledby="references-h" role="doc-endnotes">
+      <h2 id="references-h">${t.refs}</h2>
+      <ol>
+        ${list.map(r => `<li id="ref-${r.n}"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name)}</a>${r.note ? `, ${r.note}` : ''}${back(r)}</li>`).join('\n        ')}
+      </ol>
+    </section>`;
+    },
+  };
+}
+
+function exampleHtml(p, ex, c, lang, refs){
   const t = T[lang], cc = p.cc;
   const r = run(cc, ex);
   const say = text => {
@@ -179,7 +230,7 @@ function exampleHtml(p, ex, c, lang){
   return `
       <article class="gd-calc jx-ex" id="${ex.key}" aria-labelledby="${ex.key}-h">
         <h3 id="${ex.key}-h">${ex.title}</h3>
-        ${ex.intro ? `<div class="jx-prose">${ex.intro}</div>` : ''}
+        ${ex.intro || ex.cite ? `<div class="jx-prose">${refs.into(ex.intro || '', ex.cite)}</div>` : ''}
         <ol>
           ${rows.join('\n          ')}
         </ol>
@@ -230,14 +281,20 @@ function page(p, lang){
   });
 
   const law = c.law || {};
-  const lawBlocks = (law.blocks || []).map(b => `
-      <h3>${b.h3}</h3>
-      ${b.html ? `<div class="jx-prose">${b.html}</div>` : ''}${b.table ? `
+  const refs = makeRefs(lang, `${p.slug}.${lang}`);
+  refs.reg(law.introCite, 'law intro');
+  (law.blocks || []).forEach((b, i) => refs.reg(b.cite, `law block ${i + 1}`));
+  exs.forEach(e => refs.reg(e.cite, `example ${e.key}`));
+  (c.strategies || []).forEach(x => refs.reg(x.cite, `tip "${strip(x.h3)}"`));
+  (c.faq || []).forEach(x => refs.reg(x.cite, `question "${strip(x.q)}"`));
+  refs.reg(law.sources, 'sources');
+  const lawBlocks = (law.blocks || []).map((b, bi) => `
+      <h3>${b.h3}${b.html ? '' : refs.mark(b.cite)}</h3>
+      ${b.html ? `<div class="jx-prose">${refs.into(b.html, b.cite)}</div>` : ''}${b.table ? `
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr>${b.table.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
         <tbody>${b.table.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(b.table.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n          ')}</tbody>
       </table></div>` : ''}`).join('\n');
-  const sources = (law.sources || []).map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `, ${s.note}` : ''}</li>`).join('\n          ');
 
   const others = REGIONS.map(g => {
     const items = g.cc.filter(x => x !== cc).map(x => PAGES.find(q => q.cc === x)).filter(q => q && readContent(q.slug, lang))
@@ -352,18 +409,13 @@ ${ld.map(o => `<script type="application/ld+json">\n${JSON.stringify(o, null, 2)
       <a href="#strategy">${t.toc[2]}</a>
       <a href="#limits">${t.toc[3]}</a>
       <a href="#faq">${t.toc[4]}</a>
+      ${refs.has ? `<a href="#references">${t.refsToc}</a>` : ''}
     </nav>
 
     <section class="gd-sec card" id="law" aria-labelledby="law-h">
       <h2 id="law-h">${t.h2[0]}</h2>
-      ${law.intro ? `<div class="jx-prose">${law.intro}</div>` : ''}
+      ${law.intro ? `<div class="jx-prose">${refs.into(law.intro, law.introCite)}</div>` : ''}
 ${lawBlocks}
-      ${sources ? `<div class="jx-sources">
-        <h3>${t.sources}</h3>
-        <ul>
-          ${sources}
-        </ul>
-      </div>` : ''}
     </section>
 ${adIn}
 
@@ -375,7 +427,7 @@ ${adIn}
           ${exs.map(e => `<li><a href="#${e.key}">${strip(e.title)}</a></li>`).join('\n          ')}
         </ul>
       </nav>
-${exs.map(e => exampleHtml(p, e, c, lang)).join('\n')}
+${exs.map(e => exampleHtml(p, e, c, lang, refs)).join('\n')}
     </section>
 
     <section class="gd-sec card" id="strategy" aria-labelledby="strategy-h">
@@ -383,7 +435,7 @@ ${exs.map(e => exampleHtml(p, e, c, lang)).join('\n')}
       ${c.strategyIntro ? `<div class="jx-prose">${c.strategyIntro}</div>` : ''}
       ${(c.strategies || []).map(s => `<div class="jx-item">
         <h3>${s.h3}</h3>
-        ${s.html}
+        ${refs.into(s.html, s.cite)}
       </div>`).join('\n      ')}
     </section>
 
@@ -400,9 +452,10 @@ ${adMulti}
       <h2 id="faq-h">${t.h2[4]}</h2>
       ${(c.faq || []).map(f => `<div class="jx-item">
         <h3>${f.q}</h3>
-        ${/^\s*</.test(f.a) ? f.a : `<p>${f.a}</p>`}
+        ${refs.into(/^\s*</.test(f.a) ? f.a : `<p>${f.a}</p>`, f.cite)}
       </div>`).join('\n      ')}
     </section>
+${refs.html()}
 
     <section class="gd-sec card jx-others" aria-labelledby="others-h">
       <h2 id="others-h">${t.others}</h2>

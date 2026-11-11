@@ -196,7 +196,7 @@
 <div class="container gd jx">
 
   <nav class="gd-top" aria-label="Site">
-    <a class="btn-theme btn-back" href="../../">← Global Income Tax Calculator</a>
+    <a class="btn-theme btn-back" href="../../">Kembali ke teks</a>
     <div class="gd-top-r">
       <a class="btn-primary gd-open gd-open-top" href="../../#load&amp;v=1&amp;country=FI">Buka kalkulatornya</a>
       <a id="langToggle" class="btn-theme" href="../" hreflang="en" lang="en" title="Read in English">EN</a>
@@ -214,19 +214,20 @@
     </header>
 
     <nav class="gd-toc jx-toc" aria-label="Di halaman ini">
-      <a href="#law">Bunyi aturannya</a>
+      <a href="#law">Ringkasan aturan pajak</a>
       <a href="#examples">Contoh perhitungan</a>
-      <a href="#strategy">Cara legal menghemat pajak</a>
+      <a href="#strategy">Tips pajak</a>
       <a href="#limits">Yang tidak dihitung</a>
       <a href="#faq">Tanya jawab</a>
+      <a href="#references">Referensi</a>
     </nav>
 
     <section class="gd-sec card" id="law" aria-labelledby="law-h">
-      <h2 id="law-h">Apa kata aturannya</h2>
-      <div class="jx-prose"><p>Angka di bawah adalah tarif 2026 seperti yang dihitung <em>tool</em> ini, dalam euro. Halaman ini memodelkan Helsinki dengan pajak kota 5,30%. Pajak di Finlandia mengikuti status penduduk pajak (<em>tax resident</em>, di Indonesia disebut subjek pajak dalam negeri), bukan jenis visa atau paspor. Kalau kamu terbiasa dengan PPh 21, pajak gaji di Finlandia menumpuk dari beberapa komponen, sedangkan PPh 21 memakai satu skala tarif progresif.</p></div>
+      <h2 id="law-h">Ringkasan aturan pajak</h2>
+      <div class="jx-prose"><p>Angka di bawah adalah tarif 2026 seperti yang dihitung <em>tool</em> ini, dalam euro. Halaman ini memodelkan Helsinki dengan pajak kota 5,30%. Pajak di Finlandia mengikuti status penduduk pajak (<em>tax resident</em>, di Indonesia disebut subjek pajak dalam negeri), bukan jenis visa atau paspor. Kalau kamu terbiasa dengan PPh 21, pajak gaji di Finlandia menumpuk dari beberapa komponen, sedangkan PPh 21 memakai satu skala tarif progresif.<sup class="jx-fn"><a href="#ref-1" id="cite-1-2" role="doc-noteref">1</a></sup></p></div>
 
       <h3>Pajak negara dan pajak kota</h3>
-      <div class="jx-prose"><p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, seperti tarif Pasal 17 di Indonesia (5% sampai 35%), hanya saja tarif lapisan terbawahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan hitungan <em>tool</em> memakai tarif Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip biaya jabatan, tetapi berupa jumlah tetap, dan setelah iuran pensiun dan asuransimu.</p></div>
+      <div class="jx-prose"><p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, seperti tarif Pasal 17 di Indonesia (5% sampai 35%), hanya saja tarif lapisan terbawahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan hitungan <em>tool</em> memakai tarif Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip biaya jabatan, tetapi berupa jumlah tetap, dan setelah iuran pensiun dan asuransimu.<sup class="jx-fn"><a href="#ref-2" id="cite-2-1" role="doc-noteref">2</a>, <a href="#ref-1" id="cite-1-1" role="doc-noteref">1</a>, <a href="#ref-3" id="cite-3-1" role="doc-noteref">3</a></sup></p></div>
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr><th scope="col">Penghasilan kena pajak</th><th scope="col">Tarif pajak negara</th></tr></thead>
         <tbody><tr><th scope="row">€0 sampai €22.000</th><td data-l="Tarif pajak negara">12,64%</td></tr>
@@ -237,24 +238,16 @@
       </table></div>
 
       <h3>Iuran yang dipotong dari gaji</h3>
-      <div class="jx-prose"><p>Karyawan membayar iuran pensiun kerja TyEL 7,30% dari gaji, asuransi pengangguran 0,89%, dan iuran tunjangan sakit harian 0,88% begitu gaji setahun melewati €17.255. Ketiganya dipotong sebelum pajak dihitung, dan yang paling mirip di Indonesia adalah potongan JHT dan JP di slip gaji. Bedanya, asuransi pengangguran tidak ada di slip gaji Indonesia, karena potongan BPJS karyawan hanya JHT, JP dan BPJS Kesehatan.</p></div>
+      <div class="jx-prose"><p>Karyawan membayar iuran pensiun kerja TyEL 7,30% dari gaji, asuransi pengangguran 0,89%, dan iuran tunjangan sakit harian 0,88% begitu gaji setahun melewati €17.255. Ketiganya dipotong sebelum pajak dihitung, dan yang paling mirip di Indonesia adalah potongan JHT dan JP di slip gaji. Bedanya, asuransi pengangguran tidak ada di slip gaji Indonesia, karena potongan BPJS karyawan hanya JHT, JP dan BPJS Kesehatan.<sup class="jx-fn"><a href="#ref-4" id="cite-4-1" role="doc-noteref">4</a>, <a href="#ref-5" id="cite-5-1" role="doc-noteref">5</a></sup></p></div>
 
       <h3>Iuran kesehatan, pajak Yle dan pajak gereja</h3>
-      <div class="jx-prose"><p>Iuran kesehatan 1,10% dari penghasilan kena pajak dipungut bersama pajak penghasilan. Pajak Yle adalah pajak penyiaran publik dengan batas €160 setahun. Pajak gereja hanya berlaku untuk anggota gereja dan ditambahkan dengan persentase yang ditetapkan parokimu. Zakat di Indonesia berbeda, karena tidak dipungut negara dan, bila disalurkan lewat lembaga resmi, dapat mengurangi penghasilan bruto.</p></div>
+      <div class="jx-prose"><p>Iuran kesehatan 1,10% dari penghasilan kena pajak dipungut bersama pajak penghasilan. Pajak Yle adalah pajak penyiaran publik dengan batas €160 setahun. Pajak gereja hanya berlaku untuk anggota gereja dan ditambahkan dengan persentase yang ditetapkan parokimu. Zakat di Indonesia berbeda, karena tidak dipungut negara dan, bila disalurkan lewat lembaga resmi, dapat mengurangi penghasilan bruto.<sup class="jx-fn"><a href="#ref-5" id="cite-5-2" role="doc-noteref">5</a>, <a href="#ref-6" id="cite-6-1" role="doc-noteref">6</a>, <a href="#ref-7" id="cite-7-1" role="doc-noteref">7</a></sup></p></div>
 
       <h3>Kredit pajak penghasilan kerja</h3>
-      <div class="jx-prose"><p>Kredit pajak bagi orang yang bekerja (<em>työtulovähennys</em>) mengurangi pajak di atas. Hitungan <em>tool</em> membaginya secara proporsional ke pajak negara, kota, gereja dan iuran kesehatan, seperti cara otoritas pajak membaginya, dan kredit ini tidak pernah bisa menurunkan total pajak di bawah nol.</p></div>
+      <div class="jx-prose"><p>Kredit pajak bagi orang yang bekerja (<em>työtulovähennys</em>) mengurangi pajak di atas. Hitungan <em>tool</em> membaginya secara proporsional ke pajak negara, kota, gereja dan iuran kesehatan, seperti cara otoritas pajak membaginya, dan kredit ini tidak pernah bisa menurunkan total pajak di bawah nol.<sup class="jx-fn"><a href="#ref-8" id="cite-8-1" role="doc-noteref">8</a></sup></p></div>
 
       <h3>Rezim key employee</h3>
-      <div class="jx-prose"><p>Tenaga ahli asing yang memenuhi syarat dapat dikenai pajak 25% atas gajinya sebagai ganti pajak penghasilan biasa. Hitungan <em>tool</em> memakai syarat gaji bulanan minimal €5.800 (€69.600 setahun) dan tetap menghitung iuran pensiun dan asuransi. Rezim ini mirip pajak final di Indonesia, yaitu tarif tunggal tanpa tarif progresif Pasal 17. Karena tidak memberi potongan atau kredit dan punya batas waktu, tanyakan kelayakan dan pengajuannya ke otoritas pajak Finlandia (Vero).</p></div>
-      <div class="jx-sources">
-        <h3>Sumber</h3>
-        <ul>
-          <li><a href="https://www.vero.fi/" target="_blank" rel="noopener">vero.fi, otoritas pajak Finlandia: tarif pajak, pajak kota dan gereja, key employee</a></li>
-          <li><a href="https://www.kela.fi/" target="_blank" rel="noopener">Kela, jaminan sosial Finlandia</a></li>
-          <li><a href="https://migri.fi/" target="_blank" rel="noopener">Migri, Dinas Imigrasi Finlandia, izin kerja dan izin tinggal</a></li>
-        </ul>
-      </div>
+      <div class="jx-prose"><p>Tenaga ahli asing yang memenuhi syarat dapat dikenai pajak 25% atas gajinya sebagai ganti pajak penghasilan biasa. Hitungan <em>tool</em> memakai syarat gaji bulanan minimal €5.800 (€69.600 setahun) dan tetap menghitung iuran pensiun dan asuransi. Rezim ini mirip pajak final di Indonesia, yaitu tarif tunggal tanpa tarif progresif Pasal 17. Karena tidak memberi potongan atau kredit dan punya batas waktu, tanyakan kelayakan dan pengajuannya ke otoritas pajak Finlandia (Vero).<sup class="jx-fn"><a href="#ref-9" id="cite-9-1" role="doc-noteref">9</a>, <a href="#ref-10" id="cite-10-1" role="doc-noteref">10</a></sup></p></div>
     </section>
 
     <!-- In-article 3: between the cards of a reading page (.ad-slot in shared.css) -->
@@ -275,7 +268,7 @@
 
       <article class="gd-calc jx-ex" id="resident-helsinki" aria-labelledby="resident-helsinki-h">
         <h3 id="resident-helsinki-h">Berapa gaji bersih di Helsinki kalau gaji setahun €55.000?</h3>
-        <div class="jx-prose"><p>Contoh ini untuk penduduk pajak Helsinki dengan gaji kotor €55.000 setahun. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.</p></div>
+        <div class="jx-prose"><p>Contoh ini untuk penduduk pajak Helsinki dengan gaji kotor €55.000 setahun. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.<sup class="jx-fn"><a href="#ref-2" id="cite-2-2" role="doc-noteref">2</a>, <a href="#ref-5" id="cite-5-3" role="doc-noteref">5</a>, <a href="#ref-4" id="cite-4-2" role="doc-noteref">4</a>, <a href="#ref-11" id="cite-11-1" role="doc-noteref">11</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gaji kotor</span><span class="gd-calc-w">setahun, sebelum pajak</span><b>€55.000</b></li>
           <li class="jx-k-social"><span class="gd-calc-l">Iuran pensiun kerja TyEL (7,30%)</span><span class="gd-calc-w">iuran, dipotong dari gaji</span><b>−€4.015</b></li>
@@ -300,7 +293,7 @@
 
       <article class="gd-calc jx-ex" id="key-employee" aria-labelledby="key-employee-h">
         <h3 id="key-employee-h">Berapa gaji bersih key employee di Finlandia dengan gaji €90.000 dan pajak 25%?</h3>
-        <div class="jx-prose"><p>Contoh ini untuk <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600. Pajak tunggal 25% mencapai €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.</p></div>
+        <div class="jx-prose"><p>Contoh ini untuk <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600. Pajak tunggal 25% mencapai €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.<sup class="jx-fn"><a href="#ref-9" id="cite-9-2" role="doc-noteref">9</a></sup></p></div>
         <ol>
           <li><span class="gd-calc-l">Gaji kotor</span><span class="gd-calc-w">setahun, sebelum pajak</span><b>€90.000</b></li>
           <li class="jx-k-social"><span class="gd-calc-l">Iuran pensiun kerja TyEL (7,30%)</span><span class="gd-calc-w">iuran, dipotong dari gaji</span><b>−€6.570</b></li>
@@ -315,19 +308,19 @@
     </section>
 
     <section class="gd-sec card" id="strategy" aria-labelledby="strategy-h">
-      <h2 id="strategy-h">Cara legal menghemat pajak</h2>
+      <h2 id="strategy-h">Tips pajak</h2>
       <div class="jx-prose"><p>Beberapa cara berikut bisa menurunkan pajakmu secara sah, tetapi yang berlaku bergantung pada statusmu.</p></div>
       <div class="jx-item">
         <h3>Atur persentase pemotongan di kartu pajak</h3>
-        <p>Kalau kamu punya beberapa pekerjaan atau penghasilan yang berubah, persentase di kartu pajak menentukan berapa yang dipotong pemberi kerja. Kartu yang terlalu rendah menimbulkan tagihan tahun berikutnya, dan yang terlalu tinggi menghasilkan pengembalian. Mengubah kartu hanya secara administratif menggeser waktu pembayaran, bukan pajak akhirmu.</p>
+        <p>Kalau kamu punya beberapa pekerjaan atau penghasilan yang berubah, persentase di kartu pajak menentukan berapa yang dipotong pemberi kerja. Kartu yang terlalu rendah menimbulkan tagihan tahun berikutnya, dan yang terlalu tinggi menghasilkan pengembalian. Mengubah kartu hanya secara administratif menggeser waktu pembayaran, bukan pajak akhirmu.<sup class="jx-fn"><a href="#ref-12" id="cite-12-1" role="doc-noteref">12</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Klaim potongan perjalanan dan biaya kerja</h3>
-        <p>Kalau perjalanan ke tempat kerjamu jauh atau biaya kerjamu melebihi potongan standar, jumlah yang lebih besar bisa diklaim bila kamu punya bukti, sedangkan hitungan <em>tool</em> memakai potongan tetap €750. Potongan ini berlaku di atas ambang tertentu dan perlu catatan, mirip menyimpan bukti potong dan kuitansi untuk SPT Tahunan.</p>
+        <p>Kalau perjalanan ke tempat kerjamu jauh atau biaya kerjamu melebihi potongan standar, jumlah yang lebih besar bisa diklaim bila kamu punya bukti, sedangkan hitungan <em>tool</em> memakai potongan tetap €750. Potongan ini berlaku di atas ambang tertentu dan perlu catatan, mirip menyimpan bukti potong dan kuitansi untuk SPT Tahunan.<sup class="jx-fn"><a href="#ref-13" id="cite-13-1" role="doc-noteref">13</a>, <a href="#ref-3" id="cite-3-2" role="doc-noteref">3</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Periksa tarif pajak kota sebelum memilih tempat tinggal</h3>
-        <p>Tarif pajak kota berbeda antardaerah di Finlandia dan ikut mengubah gaji bersih dari gaji yang sama. Meski begitu, kota berpajak rendah belum tentu murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.</p>
+        <p>Tarif pajak kota berbeda antardaerah di Finlandia dan ikut mengubah gaji bersih dari gaji yang sama. Meski begitu, kota berpajak rendah belum tentu murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.<sup class="jx-fn"><a href="#ref-1" id="cite-1-3" role="doc-noteref">1</a></sup></p>
       </div>
     </section>
 
@@ -353,27 +346,27 @@
       <h2 id="faq-h">Pertanyaan yang sering diajukan</h2>
       <div class="jx-item">
         <h3>Berapa gaji bersih untuk gaji €55.000 per tahun di Helsinki?</h3>
-        <p>Penduduk pajak membayar sekitar €10.303 untuk pajak negara, pajak kota, iuran kesehatan dan pajak Yle, ditambah sekitar €4.989 untuk iuran pensiun dan asuransi, sehingga gaji bersihnya sekitar €39.708. Coba gajimu sendiri di <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/">Global Income Tax Calculator</a>.</p>
+        <p>Penduduk pajak membayar sekitar €10.303 untuk pajak negara, pajak kota, iuran kesehatan dan pajak Yle, ditambah sekitar €4.989 untuk iuran pensiun dan asuransi, sehingga gaji bersihnya sekitar €39.708. Coba gajimu sendiri di <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/">Global Income Tax Calculator</a>.<sup class="jx-fn"><a href="#ref-2" id="cite-2-3" role="doc-noteref">2</a>, <a href="#ref-5" id="cite-5-4" role="doc-noteref">5</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Apa itu persentase pemotongan di kartu pajak Finlandia (verokortti)?</h3>
-        <p>Kartu pajak memberi pemberi kerja satu persentase untuk dipakai pada tiap pembayaran gaji, ditentukan otoritas pajak dari perkiraan penghasilanmu dan bisa kamu ubah di tengah tahun. Selisihnya diselesaikan setelah penetapan pajak tahun berikutnya, sebagai pengembalian atau tagihan. Di Indonesia polanya memakai tarif efektif rata-rata (TER) bulanan lalu penyesuaian di Desember. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.</p>
+        <p>Kartu pajak memberi pemberi kerja satu persentase untuk dipakai pada tiap pembayaran gaji, ditentukan otoritas pajak dari perkiraan penghasilanmu dan bisa kamu ubah di tengah tahun. Selisihnya diselesaikan setelah penetapan pajak tahun berikutnya, sebagai pengembalian atau tagihan. Di Indonesia polanya memakai tarif efektif rata-rata (TER) bulanan lalu penyesuaian di Desember. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.<sup class="jx-fn"><a href="#ref-12" id="cite-12-2" role="doc-noteref">12</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Apakah saya wajib bayar pajak gereja di Finlandia?</h3>
-        <p>Hanya kalau kamu anggota gereja Lutheran Evangelis atau Ortodoks. Paroki menetapkan tarifnya dan pajak ini dikenakan atas penghasilan kena pajak. Orang yang tidak terdaftar di gereja tidak membayarnya, dan di Indonesia tidak ada pajak keagamaan serupa, sebab zakat tidak dipungut negara. Isian pajak gereja di <em>tool</em> bernilai nol secara bawaan, dan kedua contoh mengasumsikan kamu bukan anggota. Keanggotaan itu juga menyangkut urusan keyakinan dan layanan gereja, jadi pertimbangkan sebelum mengubahnya.</p>
+        <p>Hanya kalau kamu anggota gereja Lutheran Evangelis atau Ortodoks. Paroki menetapkan tarifnya dan pajak ini dikenakan atas penghasilan kena pajak. Orang yang tidak terdaftar di gereja tidak membayarnya, dan di Indonesia tidak ada pajak keagamaan serupa, sebab zakat tidak dipungut negara. Isian pajak gereja di <em>tool</em> bernilai nol secara bawaan, dan kedua contoh mengasumsikan kamu bukan anggota. Keanggotaan itu juga menyangkut urusan keyakinan dan layanan gereja, jadi pertimbangkan sebelum mengubahnya.<sup class="jx-fn"><a href="#ref-7" id="cite-7-2" role="doc-noteref">7</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Apa itu rezim pajak key employee?</h3>
-        <p>Rezim ini mengenakan pajak 25% atas gaji bagi tenaga ahli asing yang memenuhi syarat, sebagai ganti pajak biasa. Pajak itu final dan tanpa potongan, dengan syarat gaji minimal €5.800 sebulan, dan iuran pensiun serta asuransi tetap dibayar.</p>
+        <p>Rezim ini mengenakan pajak 25% atas gaji bagi tenaga ahli asing yang memenuhi syarat, sebagai ganti pajak biasa. Pajak itu final dan tanpa potongan, dengan syarat gaji minimal €5.800 sebulan, dan iuran pensiun serta asuransi tetap dibayar.<sup class="jx-fn"><a href="#ref-9" id="cite-9-3" role="doc-noteref">9</a>, <a href="#ref-10" id="cite-10-2" role="doc-noteref">10</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Kenapa tarif pajak marginal di Finlandia terasa begitu tinggi?</h3>
-        <p>Beberapa lapisan menumpuk sekaligus: lapisan pajak negara, tarif kota, iuran kesehatan, iuran pensiun dan asuransi, serta kredit yang menyusut seiring naiknya gaji. Pada gaji €55.000, <em>tool</em> menunjukkan tarif marginal 45,1%, padahal tarif kota hanya 5,30%. Pajak Yle, sebaliknya, tidak menambah tarif marginal karena sudah mencapai batas €160 setahun.</p>
+        <p>Beberapa lapisan menumpuk sekaligus: lapisan pajak negara, tarif kota, iuran kesehatan, iuran pensiun dan asuransi, serta kredit yang menyusut seiring naiknya gaji. Pada gaji €55.000, <em>tool</em> menunjukkan tarif marginal 45,1%, padahal tarif kota hanya 5,30%. Pajak Yle, sebaliknya, tidak menambah tarif marginal karena sudah mencapai batas €160 setahun.<sup class="jx-fn"><a href="#ref-2" id="cite-2-4" role="doc-noteref">2</a>, <a href="#ref-5" id="cite-5-5" role="doc-noteref">5</a>, <a href="#ref-11" id="cite-11-2" role="doc-noteref">11</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Apakah iuran pensiun TyEL bisa dicairkan kalau saya pulang ke Indonesia?</h3>
-        <p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa kamu cairkan seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun, dan cara klaimnya dari luar negeri tanyakan ke Kela (badan jaminan sosial Finlandia) sebelum kamu pindah.</p>
+        <p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa kamu cairkan seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun, dan cara klaimnya dari luar negeri tanyakan ke Kela (badan jaminan sosial Finlandia) sebelum kamu pindah.<sup class="jx-fn"><a href="#ref-4" id="cite-4-3" role="doc-noteref">4</a></sup></p>
       </div>
       <div class="jx-item">
         <h3>Kalau kerja di Finlandia, apakah saya masih harus lapor SPT di Indonesia?</h3>
@@ -383,6 +376,26 @@
         <h3>Bagaimana Finlandia dibandingkan negara Nordik dan Baltik lain?</h3>
         <p>Lihat halaman <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/">Norwegia</a>, <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/">Swedia</a> dan <a href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/">Estonia</a>. Untuk tahu seberapa jauh gaji bersih itu sampai di kota tujuan, gunakan <a href="https://tool.adjiebrotots.com/costofliving-comparator/">Cost of Living Comparator</a>, lalu baca <a href="https://blog.adjiebrotots.com/id/kabur-aja-dulu/">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>
       </div>
+    </section>
+
+    <section class="gd-sec card jx-refs" id="references" aria-labelledby="references-h" role="doc-endnotes">
+      <h2 id="references-h">Referensi</h2>
+      <ol>
+        <li id="ref-1"><a href="https://www.vero.fi/sv/Detaljerade_skatteanvisningar/beslut/47465/kommunernas-och-forsamlingarnas-inkomstskattesatser-ar-2026/" target="_blank" rel="noopener">Vero.fi, tarif pajak kotamadya dan paroki 2026</a> <a class="jx-back" href="#cite-1-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-1-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a> <a class="jx-back" href="#cite-1-3" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>3</sup></a></li>
+        <li id="ref-2"><a href="https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko" target="_blank" rel="noopener">Vero.fi, Ansiotulot: skala pajak penghasilan negara 2026</a> <a class="jx-back" href="#cite-2-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-2-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a> <a class="jx-back" href="#cite-2-3" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>3</sup></a> <a class="jx-back" href="#cite-2-4" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>4</sup></a></li>
+        <li id="ref-3"><a href="https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Deduction%20for%20the%20production%20of%20income" target="_blank" rel="noopener">Vero.fi, potongan yang dihitung otomatis oleh otoritas pajak</a> <a class="jx-back" href="#cite-3-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-3-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a></li>
+        <li id="ref-4"><a href="https://www.vero.fi/en/businesses-and-corporations/taxes-and-charges/being-an-employer/social-insurance-contributions/" target="_blank" rel="noopener">Vero.fi, iuran asuransi sosial</a> <a class="jx-back" href="#cite-4-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-4-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a> <a class="jx-back" href="#cite-4-3" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>3</sup></a></li>
+        <li id="ref-5"><a href="https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution" target="_blank" rel="noopener">Vero.fi, dasar pajak penghasilan kerja 2026</a> <a class="jx-back" href="#cite-5-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-5-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a> <a class="jx-back" href="#cite-5-3" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>3</sup></a> <a class="jx-back" href="#cite-5-4" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>4</sup></a> <a class="jx-back" href="#cite-5-5" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>5</sup></a></li>
+        <li id="ref-6"><a href="https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Public%20Broadcasting%20Tax" target="_blank" rel="noopener">Vero.fi, dasar pajak 2026: pajak penyiaran publik (Yle)</a> <a class="jx-back" href="#cite-6-1" role="doc-backlink" aria-label="Kembali ke teks">↩</a></li>
+        <li id="ref-7"><a href="https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/#:~:text=municipal%20tax%20and%20church%20tax" target="_blank" rel="noopener">Vero.fi, penghasilan kerja (pajak kota dan gereja)</a> <a class="jx-back" href="#cite-7-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-7-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a></li>
+        <li id="ref-8"><a href="https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Employment%20income%20credit" target="_blank" rel="noopener">Vero.fi, kredit pajak penghasilan kerja (dihitung otomatis)</a> <a class="jx-back" href="#cite-8-1" role="doc-backlink" aria-label="Kembali ke teks">↩</a></li>
+        <li id="ref-9"><a href="https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months" target="_blank" rel="noopener">Vero.fi, key employee dari negara lain</a> <a class="jx-back" href="#cite-9-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-9-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a> <a class="jx-back" href="#cite-9-3" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>3</sup></a></li>
+        <li id="ref-10"><a href="https://www.vero.fi/en/detailed-guidance/guidance/106825/taxation-of-key-employees4/" target="_blank" rel="noopener">Vero.fi, pajak key employee (panduan rinci)</a> <a class="jx-back" href="#cite-10-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-10-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a></li>
+        <li id="ref-11"><a href="https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2023/01/TIES-Finland.pdf.coredownload.inline.pdf" target="_blank" rel="noopener">KPMG, Taxation of international executives: Finlandia (Helsinki 5,30% pada 2026)</a> <a class="jx-back" href="#cite-11-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-11-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a></li>
+        <li id="ref-12"><a href="https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/#:~:text=income%20ceiling" target="_blank" rel="noopener">Vero.fi, persentase pajak dan batas penghasilan (kartu pajak)</a> <a class="jx-back" href="#cite-12-1" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>1</sup></a> <a class="jx-back" href="#cite-12-2" role="doc-backlink" aria-label="Kembali ke teks">↩<sup>2</sup></a></li>
+        <li id="ref-13"><a href="https://www.vero.fi/en/individuals/deductions/travel-expenses/commuting-expenses/" target="_blank" rel="noopener">Vero.fi, biaya perjalanan ke tempat kerja</a> <a class="jx-back" href="#cite-13-1" role="doc-backlink" aria-label="Kembali ke teks">↩</a></li>
+        <li id="ref-14"><a href="https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48391/yleisradiovero5/" target="_blank" rel="noopener">Vero.fi, Yleisradiovero (panduan pajak penyiaran publik)</a></li>
+      </ol>
     </section>
 
     <section class="gd-sec card jx-others" aria-labelledby="others-h">

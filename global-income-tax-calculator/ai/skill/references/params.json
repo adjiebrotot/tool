@@ -870,6 +870,23 @@
      "default": false
     },
     {
+     "key": "twEi",
+     "label": "Employment insurance",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yes",
+       "label": "Covered: 11.5% + 1%"
+      },
+      {
+       "value": "no",
+       "label": "Foreign employee: 11.5% only"
+      }
+     ],
+     "default": "yes"
+    },
+    {
      "key": "gulfNat",
      "label": "Citizenship",
      "group": "Salary: Your status",

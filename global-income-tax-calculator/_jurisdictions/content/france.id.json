@@ -38,55 +38,119 @@
               "45%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, skala pajak penghasilan",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+          },
+          {
+            "name": "service-public.gouv.fr, perhitungan pajak penghasilan (décote)",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34328#:~:text=La%20d%C3%A9cote"
+          },
+          {
+            "name": "service-public.gouv.fr, biaya profesional (potongan 10%)",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1989#:~:text=Frais%20professionnels"
+          },
+          {
+            "name": "service-public.gouv.fr, kontribusi khusus penghasilan tinggi (CEHR)",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130#:~:text=Contribution%20exceptionnelle%20sur%20les%20hauts%20revenus"
+          }
+        ]
       },
       {
         "h3": "Part keluarga (quotient familial)",
-        "html": "<p>Wajib pajak lajang mendapat 1 <em>part</em>, sedangkan pasangan menikah atau pasangan yang terikat PACS (<em>pacte civil de solidarité</em>) mendapat 2 <em>part</em>. Masing-masing dari dua anak pertama menambah 0,5 <em>part</em>, dan anak ketiga dan seterusnya menambah 1 <em>part</em> penuh. Makin banyak <em>part</em>, makin rendah tarif tiap lapisan, tetapi penghematan dari setiap setengah <em>part</em> dibatasi: <em>tool</em> ini memakai batas €1.807 per setengah <em>part</em>. Pasangan dengan dua anak karena itu punya 3 <em>part</em>.</p><p>Ini mirip NPWP gabung di Indonesia, tempat penghasilan suami dan istri dihitung bersama, tetapi di Prancis pembagi <em>part</em> ikut menurunkan tarif, sedangkan di Indonesia tambahan PTKP untuk istri dan tanggungan (K/1, K/2, dan seterusnya) hanya memperbesar bagian penghasilan yang tidak dipajaki. Perbandingan untuk Indonesia ada di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>.</p>"
+        "html": "<p>Wajib pajak lajang mendapat 1 <em>part</em>, sedangkan pasangan menikah atau pasangan yang terikat PACS (<em>pacte civil de solidarité</em>) mendapat 2 <em>part</em>. Masing-masing dari dua anak pertama menambah 0,5 <em>part</em>, dan anak ketiga dan seterusnya menambah 1 <em>part</em> penuh. Makin banyak <em>part</em>, makin rendah tarif tiap lapisan, tetapi penghematan dari setiap setengah <em>part</em> dibatasi: <em>tool</em> ini memakai batas €1.807 per setengah <em>part</em>. Pasangan dengan dua anak karena itu punya 3 <em>part</em>.</p><p>Ini mirip NPWP gabung di Indonesia, tempat penghasilan suami dan istri dihitung bersama, tetapi di Prancis pembagi <em>part</em> ikut menurunkan tarif, sedangkan di Indonesia tambahan PTKP untuk istri dan tanggungan (K/1, K/2, dan seterusnya) hanya memperbesar bagian penghasilan yang tidak dipajaki. Perbandingan untuk Indonesia ada di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>.</p>",
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, quotient familial pasangan menikah atau PACS",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+          },
+          {
+            "name": "service-public.gouv.fr, quotient familial orang lajang",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2702"
+          }
+        ]
       },
       {
         "h3": "Iuran sosial karyawan",
-        "html": "<p>Hitungan ini memakai batas jaminan sosial (<em>plafond de la sécurité sociale</em>) sebesar €48.060 setahun. Karyawan membayar asuransi hari tua 6,90% sampai batas, ditambah 0,40% dari seluruh gaji. Untuk pensiun tambahan AGIRC-ARRCO, iurannya 3,15% sampai batas dan 8,64% untuk gaji antara satu dan delapan kali batas.</p><p>Ada pula iuran keseimbangan umum (CEG) sebesar 0,86% dan 1,08% pada kedua lapisan itu, serta iuran keseimbangan teknis (CET) sebesar 0,14% untuk gaji di atas batas. Kalau kamu memilih status <em>cadre</em>, <em>tool</em> menambahkan iuran APEC 0,024%. Iuran pemberi kerja dibayar di luar gajimu dan tidak termasuk gaji bersih. Secara fungsi, pensiun wajib ini sejajar dengan JHT dan JP di BPJS Ketenagakerjaan.</p>"
+        "html": "<p>Hitungan ini memakai batas jaminan sosial (<em>plafond de la sécurité sociale</em>) sebesar €48.060 setahun. Karyawan membayar asuransi hari tua 6,90% sampai batas, ditambah 0,40% dari seluruh gaji. Untuk pensiun tambahan AGIRC-ARRCO, iurannya 3,15% sampai batas dan 8,64% untuk gaji antara satu dan delapan kali batas.</p><p>Ada pula iuran keseimbangan umum (CEG) sebesar 0,86% dan 1,08% pada kedua lapisan itu, serta iuran keseimbangan teknis (CET) sebesar 0,14% untuk gaji di atas batas. Kalau kamu memilih status <em>cadre</em>, <em>tool</em> menambahkan iuran APEC 0,024%. Iuran pemberi kerja dibayar di luar gajimu dan tidak termasuk gaji bersih. Secara fungsi, pensiun wajib ini sejajar dengan JHT dan JP di BPJS Ketenagakerjaan.</p>",
+        "cite": [
+          {
+            "name": "Urssaf, tarif iuran sektor swasta",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+          },
+          {
+            "name": "Urssaf, plafon Sécurité sociale",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+          }
+        ]
       },
       {
         "h3": "CSG dan CRDS",
-        "html": "<p>Pungutan sosial CSG dan CRDS dihitung dari 98,25% gaji sampai empat kali batas jaminan sosial, dan dari seluruh jumlah di atasnya. Sebesar 6,8% adalah bagian CSG yang boleh dikurangkan dari penghasilan kena pajak, sedangkan 2,9% sisanya (sisa CSG ditambah CRDS) tidak boleh. Karena itu <em>tool</em> ini memisahkannya menjadi dua baris: hanya yang 6,8% yang menurunkan dasar pajak penghasilan.</p>"
+        "html": "<p>Pungutan sosial CSG dan CRDS dihitung dari 98,25% gaji sampai empat kali batas jaminan sosial, dan dari seluruh jumlah di atasnya. Sebesar 6,8% adalah bagian CSG yang boleh dikurangkan dari penghasilan kena pajak, sedangkan 2,9% sisanya (sisa CSG ditambah CRDS) tidak boleh. Karena itu <em>tool</em> ini memisahkannya menjadi dua baris: hanya yang 6,8% yang menurunkan dasar pajak penghasilan.</p>",
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, CSG dan CRDS atas penghasilan kerja",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+          },
+          {
+            "name": "Urssaf, tarif iuran sektor swasta",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+          }
+        ]
       },
       {
         "h3": "Rezim impatriat",
-        "html": "<p>Orang yang direkrut dari luar negeri bisa memenuhi syarat untuk rezim khusus dalam kitab pajak Prancis (<em>Code général des impôts</em>, pasal 155 B) yang membebaskan sebagian gaji yang terkait kepindahan. <em>Tool</em> ini menghitung pilihan <em>forfait</em>, yaitu pembebasan dengan persentase tetap: 30% gaji setelah iuran yang boleh dikurangkan dibebaskan dari pajak penghasilan, tanpa menguji apakah kamu memenuhi syarat. Pada umumnya rezim ini ditujukan bagi orang yang tidak berstatus penduduk pajak Prancis pada tahun-tahun sebelum kedatangannya, jadi pastikan syaratnya kepada pemberi kerja atau konsultan pajak.</p>"
+        "html": "<p>Orang yang direkrut dari luar negeri bisa memenuhi syarat untuk rezim khusus dalam kitab pajak Prancis (<em>Code général des impôts</em>, pasal 155 B) yang membebaskan sebagian gaji yang terkait kepindahan. <em>Tool</em> ini menghitung pilihan <em>forfait</em>, yaitu pembebasan dengan persentase tetap: 30% gaji setelah iuran yang boleh dikurangkan dibebaskan dari pajak penghasilan, tanpa menguji apakah kamu memenuhi syarat. Pada umumnya rezim ini ditujukan bagi orang yang tidak berstatus penduduk pajak Prancis pada tahun-tahun sebelum kedatangannya, jadi pastikan syaratnya kepada pemberi kerja atau konsultan pajak.</p>",
+        "cite": [
+          {
+            "name": "impots.gouv.fr, rezim impatriat",
+            "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+          },
+          {
+            "name": "BOFiP, karyawan impatriat: pembebasan (BOI-RSA-GEO-40-10-20)",
+            "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+          },
+          {
+            "name": "Légifrance, Code général des impôts, pasal 155 B",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "service-public.gouv.fr, cara menghitung pajak penghasilan",
-        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419",
-        "note": "skala pajak dan part keluarga"
+        "name": "service-public.gouv.fr, skala pajak penghasilan",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
       },
       {
-        "name": "URSSAF dan AGIRC-ARRCO, iuran sosial karyawan",
-        "url": "https://www.urssaf.fr/",
-        "note": "iuran karyawan dan pemberi kerja"
+        "name": "service-public.gouv.fr, quotient familial pasangan menikah atau PACS",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
       },
       {
-        "name": "service-public.gouv.fr, <em>contribution exceptionnelle sur les hauts revenus</em> (CEHR)",
-        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130",
-        "note": "iuran penghasilan tinggi"
+        "name": "Urssaf, tarif iuran sektor swasta",
+        "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
       },
       {
-        "name": "Légifrance, <em>Code général des impôts</em>, pasal 155 B (rezim impatriat)",
-        "url": "https://www.legifrance.gouv.fr/",
-        "note": "kitab pajak"
+        "name": "Urssaf, plafon Sécurité sociale",
+        "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
       },
       {
-        "name": "Direction générale des Finances publiques, impots.gouv.fr",
-        "url": "https://www.impots.gouv.fr/",
-        "note": "laporan pajak dan pemotongan di sumber"
+        "name": "service-public.gouv.fr, CSG dan CRDS atas penghasilan kerja",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP), informasi pajak internasional",
-        "url": "https://www.pajak.go.id/",
-        "note": "sisi Indonesia"
+        "name": "service-public.gouv.fr, kontribusi khusus penghasilan tinggi (CEHR)",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130#:~:text=Contribution%20exceptionnelle%20sur%20les%20hauts%20revenus"
+      },
+      {
+        "name": "impots.gouv.fr, rezim impatriat",
+        "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+      },
+      {
+        "name": "Légifrance, Code général des impôts, pasal 155 B",
+        "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
       }
     ]
   },
@@ -95,44 +159,124 @@
       "key": "single-non-cadre",
       "title": "Berapa gaji bersih di Prancis dengan gaji kotor €45.000 (lajang, non-cadre)?",
       "intro": "<p>Misalkan seorang karyawan lajang tanpa anak bergaji kotor €45.000 setahun. Iuran karyawannya sekitar €9.378: €3.285 untuk asuransi hari tua, €1.418 untuk AGIRC-ARRCO, €387 untuk CEG, €3.006 untuk CSG yang boleh dikurangkan, dan €1.282 untuk CSG yang tidak boleh dikurangkan beserta CRDS. Setelah iuran yang menurunkan dasar pajak dan potongan biaya profesi 10% (€3.690), penghasilan kena pajaknya sekitar €33.214. Pajak penghasilan untuk 1 <em>part</em> sebesar €3.068. Gaji bersihnya sekitar €32.554, atau 72,3% dari gaji kotor.</p>",
-      "after": "<p>Tarif marjinalnya 43,0%: lapisan pajak 30%, ditambah iuran dan CSG yang ikut memotong setiap euro tambahan, dikurangi efek potongan. Artinya dari setiap euro tambahan, kira-kira 57 sen yang sampai ke tanganmu.</p>"
+      "after": "<p>Tarif marjinalnya 43,0%: lapisan pajak 30%, ditambah iuran dan CSG yang ikut memotong setiap euro tambahan, dikurangi efek potongan. Artinya dari setiap euro tambahan, kira-kira 57 sen yang sampai ke tanganmu.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, skala pajak penghasilan",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, tarif iuran sektor swasta",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
     },
     {
       "key": "cadre",
       "title": "Berapa pajak dan gaji bersih seorang cadre di Prancis dengan gaji kotor €70.000?",
       "intro": "<p>Seorang <em>cadre</em> lajang dengan gaji €70.000 melewati batas jaminan sosial, sehingga lapisan kedua pensiun dan CET ikut berlaku. Total iurannya sekitar €14.442, termasuk AGIRC-ARRCO €3.410, CET €98, dan APEC €17. Penghasilan kena pajak setelah iuran dan potongan 10% sekitar €51.797, yang sudah masuk lapisan 30%. Pajak penghasilannya €8.643, dan gaji bersihnya sekitar €46.915, atau 67,0% dari gaji kotor.</p>",
-      "after": "<p>Di <em>tool</em> ini, status <em>cadre</em> hanya menambah iuran APEC yang kecil. Lonjakan iuran yang lebih besar datang dari gaji di atas batas jaminan sosial, apa pun statusmu. Tarif marjinalnya 42,2%.</p>"
+      "after": "<p>Di <em>tool</em> ini, status <em>cadre</em> hanya menambah iuran APEC yang kecil. Lonjakan iuran yang lebih besar datang dari gaji di atas batas jaminan sosial, apa pun statusmu. Tarif marjinalnya 42,2%.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, skala pajak penghasilan",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, tarif iuran sektor swasta",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        },
+        {
+          "name": "Urssaf, plafon Sécurité sociale",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+        }
+      ]
     },
     {
       "key": "married-two-children",
       "title": "Gaji bersih €70.000 di Prancis untuk pasangan menikah dengan dua anak",
       "intro": "<p>Misalkan sepasang suami istri dengan dua anak hidup dari satu gaji <em>cadre</em> sebesar €70.000, sehingga iurannya sekitar €14.442. Yang berubah adalah jumlah <em>part</em>: rumah tangga ini punya 3 <em>part</em>. Penghasilan kena pajak per <em>part</em> jauh lebih rendah, sebagian besar jatuh di lapisan 11%, dan <em>décote</em> memangkas tagihannya lagi. Pajak penghasilannya hanya €1.233, padahal wajib pajak lajang dengan gaji yang sama membayar €8.643. Gaji bersihnya sekitar €54.325, atau 77,6% dari gaji kotor.</p>",
-      "after": "<p>Tarif marjinalnya turun menjadi 31,8%. Contoh ini mengandaikan satu pencari nafkah. Kalau pasanganmu juga bekerja, penghasilannya ditambahkan ke rumah tangga sebelum dibagi <em>part</em>, dan <em>tool</em> ini tidak menghitungnya.</p>"
+      "after": "<p>Tarif marjinalnya turun menjadi 31,8%. Contoh ini mengandaikan satu pencari nafkah. Kalau pasanganmu juga bekerja, penghasilannya ditambahkan ke rumah tangga sebelum dibagi <em>part</em>, dan <em>tool</em> ini tidak menghitungnya.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, quotient familial pasangan menikah atau PACS",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        }
+      ]
     },
     {
       "key": "impatriate",
       "title": "Apa pengaruh rezim impatriat Prancis terhadap pajak gaji kotor €90.000?",
       "intro": "<p>Seorang <em>cadre</em> lajang bergaji €90.000 yang memenuhi syarat rezim impatriat mendapat pembebasan 30% dari gaji setelah iuran, sekitar €22.248. Iurannya sekitar €18.405 (termasuk AGIRC-ARRCO €5.138 dan CSG yang boleh dikurangkan €6.013). Potongan 10% diterapkan pada angka yang sudah dikurangi dan besarnya €5.191. Pajak penghasilan untuk 1 <em>part</em> sebesar €7.120, dan gaji bersihnya sekitar €64.475, atau 71,6% dari gaji kotor.</p>",
-      "after": "<p>Pembebasan itu hanya mengurangi pajak penghasilan. Iuran sosial dan CSG tetap dihitung dari seluruh gaji. Tarif marjinalnya 35,5%.</p>"
+      "after": "<p>Pembebasan itu hanya mengurangi pajak penghasilan. Iuran sosial dan CSG tetap dihitung dari seluruh gaji. Tarif marjinalnya 35,5%.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, rezim impatriat",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "BOFiP, karyawan impatriat: pembebasan (BOI-RSA-GEO-40-10-20)",
+          "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara lazim yang sah untuk menurunkan pajak di Prancis atau menambah gaji bersihmu. Mana yang berlaku bergantung pada keadaanmu.</p>",
   "strategies": [
     {
       "h3": "Setoran sukarela ke dana pensiun PER",
-      "html": "<p><strong>Cocok untuk:</strong> wajib pajak di lapisan 30% ke atas.</p><p>Setoran ke rencana tabungan pensiun individual (<em>plan d'épargne retraite</em>, PER), yang kira-kira setara DPLK di Indonesia, biasanya boleh dikurangkan dari penghasilan kena pajak sampai batas yang terkait penghasilanmu, jadi cek batas terbaru di situs pajak.</p><p><strong>Catatan:</strong> dananya umumnya terkunci sampai pensiun, dengan beberapa pengecualian seperti membeli rumah utama, dan modalnya dipajaki saat ditarik.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> wajib pajak di lapisan 30% ke atas.</p><p>Setoran ke rencana tabungan pensiun individual (<em>plan d'épargne retraite</em>, PER), yang kira-kira setara DPLK di Indonesia, biasanya boleh dikurangkan dari penghasilan kena pajak sampai batas yang terkait penghasilanmu, jadi cek batas terbaru di situs pajak.</p><p><strong>Catatan:</strong> dananya umumnya terkunci sampai pensiun, dengan beberapa pengecualian seperti membeli rumah utama, dan modalnya dipajaki saat ditarik.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Plan d'épargne retraite (PER)",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34982"
+        }
+      ]
     },
     {
       "h3": "Rencana tabungan lewat perusahaan",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan di perusahaan yang menawarkan bagi hasil (<em>participation</em>, <em>intéressement</em>) atau rencana tabungan perusahaan (PEE).</p><p>Dana yang masuk ke rencana itu umumnya bebas pajak penghasilan, meski pungutan sosial masih bisa berlaku.</p><p><strong>Catatan:</strong> dana di rencana tabungan perusahaan biasanya terblokir beberapa tahun kecuali kamu memenuhi syarat pencairan.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> karyawan di perusahaan yang menawarkan bagi hasil (<em>participation</em>, <em>intéressement</em>) atau rencana tabungan perusahaan (PEE).</p><p>Dana yang masuk ke rencana itu umumnya bebas pajak penghasilan, meski pungutan sosial masih bisa berlaku.</p><p><strong>Catatan:</strong> dana di rencana tabungan perusahaan biasanya terblokir beberapa tahun kecuali kamu memenuhi syarat pencairan.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Plan d'épargne entreprise (PEE)",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2142"
+        },
+        {
+          "name": "service-public.gouv.fr, intéressement",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2140"
+        },
+        {
+          "name": "service-public.gouv.fr, participation",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2141"
+        }
+      ]
     },
     {
       "h3": "Cek apakah kamu memenuhi syarat rezim impatriat",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang direkrut dari luar negeri (misalnya dengan gaji €90.000).</p><p>Rezim ini bisa menurunkan dasar pajak penghasilan untuk jangka terbatas.</p><p><strong>Catatan:</strong> ada syarat soal tempat tinggal sebelumnya dan sifat kepindahan, dan permohonannya biasanya diurus bersama pemberi kerja. <em>Tool</em> ini hanya menghitung pilihan <em>forfait</em> 30%.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> orang yang direkrut dari luar negeri (misalnya dengan gaji €90.000).</p><p>Rezim ini bisa menurunkan dasar pajak penghasilan untuk jangka terbatas.</p><p><strong>Catatan:</strong> ada syarat soal tempat tinggal sebelumnya dan sifat kepindahan, dan permohonannya biasanya diurus bersama pemberi kerja. <em>Tool</em> ini hanya menghitung pilihan <em>forfait</em> 30%.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, rezim impatriat",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "BOFiP, karyawan impatriat: pembebasan (BOI-RSA-GEO-40-10-20)",
+          "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+        }
+      ]
     },
     {
       "h3": "Perbarui data keluargamu",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menikah, punya anak, atau berpisah.</p><p>Jumlah <em>part</em> langsung memengaruhi pajak, dan kamu bisa memperbarui keadaanmu di akun pajak daring supaya tarif pemotongan di slip gaji ikut berubah.</p><p><strong>Catatan:</strong> manfaat setiap setengah <em>part</em> dibatasi, sehingga tambahan <em>part</em> paling terasa pada penghasilan menengah.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menikah, punya anak, atau berpisah.</p><p>Jumlah <em>part</em> langsung memengaruhi pajak, dan kamu bisa memperbarui keadaanmu di akun pajak daring supaya tarif pemotongan di slip gaji ikut berubah.</p><p><strong>Catatan:</strong> manfaat setiap setengah <em>part</em> dibatasi, sehingga tambahan <em>part</em> paling terasa pada penghasilan menengah.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, quotient familial pasangan menikah atau PACS",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        },
+        {
+          "name": "service-public.gouv.fr, mengubah tarif pemotongan di sumber",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F35894"
+        }
+      ]
     }
   ],
   "limits": [
@@ -147,31 +291,97 @@
   "faq": [
     {
       "q": "Berapa pajak yang saya bayar dari gaji €45.000 di Prancis?",
-      "a": "<p>Karyawan lajang tanpa anak membayar sekitar €3.068 untuk pajak penghasilan dan sekitar €9.378 untuk iuran karyawan, sehingga totalnya sekitar €12.446. Yang tersisa sekitar €32.554. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan lajang tanpa anak membayar sekitar €3.068 untuk pajak penghasilan dan sekitar €9.378 untuk iuran karyawan, sehingga totalnya sekitar €12.446. Yang tersisa sekitar €32.554. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, skala pajak penghasilan",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, tarif iuran sektor swasta",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
     },
     {
       "q": "Apa itu quotient familial, dan berapa part yang saya dapat?",
-      "a": "<p><em>Quotient familial</em> membagi penghasilan kena pajakmu dengan jumlah <em>part</em> rumah tangga sebelum skala diterapkan, lalu pajaknya dikalikan lagi dengan jumlah <em>part</em>. Kamu mendapat 1 <em>part</em> kalau lajang dan 2 kalau menikah atau terikat PACS. Masing-masing dari dua anak pertama menambah 0,5 <em>part</em>, dan setiap anak berikutnya menambah 1 <em>part</em>. Pada gaji €70.000, pasangan menikah dengan dua anak (3 <em>part</em>) membayar pajak €1.233, sedangkan wajib pajak lajang membayar €8.643.</p><p>Penghematan setiap setengah <em>part</em> dibatasi, sehingga manfaatnya mengecil seiring naiknya penghasilan.</p>"
+      "a": "<p><em>Quotient familial</em> membagi penghasilan kena pajakmu dengan jumlah <em>part</em> rumah tangga sebelum skala diterapkan, lalu pajaknya dikalikan lagi dengan jumlah <em>part</em>. Kamu mendapat 1 <em>part</em> kalau lajang dan 2 kalau menikah atau terikat PACS. Masing-masing dari dua anak pertama menambah 0,5 <em>part</em>, dan setiap anak berikutnya menambah 1 <em>part</em>. Pada gaji €70.000, pasangan menikah dengan dua anak (3 <em>part</em>) membayar pajak €1.233, sedangkan wajib pajak lajang membayar €8.643.</p><p>Penghematan setiap setengah <em>part</em> dibatasi, sehingga manfaatnya mengecil seiring naiknya penghasilan.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, quotient familial pasangan menikah atau PACS",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        },
+        {
+          "name": "service-public.gouv.fr, quotient familial orang lajang",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2702"
+        }
+      ]
     },
     {
       "q": "Kenapa sebagian CSG boleh dikurangkan dan sebagian tidak?",
-      "a": "<p>Pungutan CSG dan CRDS tidak diperlakukan sama. Sebesar 6,8% dari dasarnya boleh dikurangkan dari penghasilan yang dipajaki, sehingga menurunkan pajak penghasilanmu. Sisanya, 2,9% (sisa CSG ditambah CRDS), tidak boleh dikurangkan sehingga murni menjadi biaya. Itu sebabnya <em>tool</em> ini menampilkan dua baris CSG, dan penghasilan kena pajakmu lebih rendah daripada gaji kotor dikurangi iuran pensiun saja.</p>"
+      "a": "<p>Pungutan CSG dan CRDS tidak diperlakukan sama. Sebesar 6,8% dari dasarnya boleh dikurangkan dari penghasilan yang dipajaki, sehingga menurunkan pajak penghasilanmu. Sisanya, 2,9% (sisa CSG ditambah CRDS), tidak boleh dikurangkan sehingga murni menjadi biaya. Itu sebabnya <em>tool</em> ini menampilkan dua baris CSG, dan penghasilan kena pajakmu lebih rendah daripada gaji kotor dikurangi iuran pensiun saja.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, CSG dan CRDS atas penghasilan kerja",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+        }
+      ]
     },
     {
       "q": "Apakah pajak di slip gaji sama dengan hasil hitungan ini? (pemotongan di sumber dan tarif personal)",
-      "a": "<p>Prancis memotong pajak penghasilan dari setiap slip gaji lewat <em>prélèvement à la source</em>, mirip PPh 21 yang dipotong pemberi kerja di Indonesia. Kantor pajak memberi tahu pemberi kerja tarif yang harus dipakai. Kalau kamu belum pernah melapor di Prancis, dipakai tarif netral standar sampai kantor pajak punya datamu dan menetapkan tarif personal. Slip gaji juga menampilkan dua angka: gaji bersih sebelum pajak penghasilan, dan gaji bersih yang dibayarkan setelah pajak.</p><p>Kamu tetap melapor setiap tahun. Setelah laporan tahunan pada musim semi berikutnya, selisihnya diselesaikan lewat pengembalian atau tagihan kekurangan, seperti hasil lebih bayar atau kurang bayar pada SPT Tahunan. <em>Tool</em> ini menghitung pajak setahun penuh, sehingga hasilnya mendekati tagihan akhir, belum tentu potongan tiap bulan.</p>"
+      "a": "<p>Prancis memotong pajak penghasilan dari setiap slip gaji lewat <em>prélèvement à la source</em>, mirip PPh 21 yang dipotong pemberi kerja di Indonesia. Kantor pajak memberi tahu pemberi kerja tarif yang harus dipakai. Kalau kamu belum pernah melapor di Prancis, dipakai tarif netral standar sampai kantor pajak punya datamu dan menetapkan tarif personal. Slip gaji juga menampilkan dua angka: gaji bersih sebelum pajak penghasilan, dan gaji bersih yang dibayarkan setelah pajak.</p><p>Kamu tetap melapor setiap tahun. Setelah laporan tahunan pada musim semi berikutnya, selisihnya diselesaikan lewat pengembalian atau tagihan kekurangan, seperti hasil lebih bayar atau kurang bayar pada SPT Tahunan. <em>Tool</em> ini menghitung pajak setahun penuh, sehingga hasilnya mendekati tagihan akhir, belum tentu potongan tiap bulan.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, pemotongan di sumber (prélèvement à la source)",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34009"
+        },
+        {
+          "name": "service-public.gouv.fr, mengubah tarif pemotongan di sumber",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F35894"
+        }
+      ]
     },
     {
       "q": "Apakah cadre membayar pajak lebih besar daripada non-cadre?",
-      "a": "<p>Untuk pajak penghasilan tidak: skalanya sama. Di <em>tool</em> ini, status <em>cadre</em> hanya menambah iuran APEC yang kecil (0,024%). Iuran melonjak karena gaji melewati batas jaminan sosial €48.060, yang memicu lapisan kedua AGIRC-ARRCO dan CET, apa pun statusmu. Dalam praktiknya, status <em>cadre</em> juga membawa dampak lain seperti hak pensiun dan tunjangan, yang tidak dihitung di sini.</p>"
+      "a": "<p>Untuk pajak penghasilan tidak: skalanya sama. Di <em>tool</em> ini, status <em>cadre</em> hanya menambah iuran APEC yang kecil (0,024%). Iuran melonjak karena gaji melewati batas jaminan sosial €48.060, yang memicu lapisan kedua AGIRC-ARRCO dan CET, apa pun statusmu. Dalam praktiknya, status <em>cadre</em> juga membawa dampak lain seperti hak pensiun dan tunjangan, yang tidak dihitung di sini.</p>",
+      "cite": [
+        {
+          "name": "Urssaf, tarif iuran sektor swasta",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        },
+        {
+          "name": "Urssaf, plafon Sécurité sociale",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+        }
+      ]
     },
     {
       "q": "Siapa yang boleh memakai rezim impatriat Prancis?",
-      "a": "<p>Rezim ini ditujukan bagi orang yang direkrut dari luar negeri untuk bekerja di Prancis dan sebelumnya tidak berstatus penduduk pajak Prancis. Di <em>tool</em> ini, 30% gaji setelah iuran dibebaskan dari pajak penghasilan. Rezim yang sebenarnya punya syarat sendiri soal riwayat tempat tinggal dan sifat kepindahan, dan bisa berjalan untuk jumlah tahun yang terbatas, jadi cek rinciannya di <a href=\"https://www.impots.gouv.fr/\">impots.gouv.fr</a> atau tanyakan ke pemberi kerja.</p>"
+      "a": "<p>Rezim ini ditujukan bagi orang yang direkrut dari luar negeri untuk bekerja di Prancis dan sebelumnya tidak berstatus penduduk pajak Prancis. Di <em>tool</em> ini, 30% gaji setelah iuran dibebaskan dari pajak penghasilan. Rezim yang sebenarnya punya syarat sendiri soal riwayat tempat tinggal dan sifat kepindahan, dan bisa berjalan untuk jumlah tahun yang terbatas, jadi cek rinciannya di <a href=\"https://www.impots.gouv.fr/\">impots.gouv.fr</a> atau tanyakan ke pemberi kerja.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, rezim impatriat",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "Légifrance, Code général des impôts, pasal 155 B",
+          "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
+        }
+      ]
     },
     {
       "q": "Kenapa gaji bersih jauh lebih kecil daripada gaji kotor di Prancis?",
-      "a": "<p>Selisih gaji kotor ke gaji bersih di Prancis sebagian besar berasal dari iuran sosial yang dipotong sebelum pajak penghasilan dihitung. Pada gaji €70.000 untuk seorang <em>cadre</em>, iuran dan CSG mengambil sekitar €14.442, dan pajak penghasilan mengambil €8.643 lagi. Iuran pemberi kerja ada di luar gaji kotor dan tidak pernah muncul sebagai potongan di slip gajimu.</p>"
+      "a": "<p>Selisih gaji kotor ke gaji bersih di Prancis sebagian besar berasal dari iuran sosial yang dipotong sebelum pajak penghasilan dihitung. Pada gaji €70.000 untuk seorang <em>cadre</em>, iuran dan CSG mengambil sekitar €14.442, dan pajak penghasilan mengambil €8.643 lagi. Iuran pemberi kerja ada di luar gaji kotor dan tidak pernah muncul sebagai potongan di slip gajimu.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, CSG dan CRDS atas penghasilan kerja",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+        },
+        {
+          "name": "Urssaf, tarif iuran sektor swasta",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
     },
     {
       "q": "Kalau bekerja di Prancis, apakah penghasilan itu tetap dilaporkan di Indonesia?",
