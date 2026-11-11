@@ -1,51 +1,33 @@
 {
   "slug": "sweden",
   "lang": "id",
+  "place": "Stockholm",
   "title": "Cara Menghitung Pajak Gaji di Swedia 2026",
   "h1": "Cara menghitung pajak penghasilan di Swedia (2026)",
-  "description": "Pajak gaji di Swedia 2026: pajak kota Stockholm 30,55%, pajak negara 20%, jobbskatteavdrag, SINK 22,5% dan contoh gaji bersih SEK 600.000 untuk WNI.",
-  "lede": "<p>Swedia memajaki gaji penduduknya terutama lewat pajak kota dan wilayah, yang di Stockholm 30,55% dari penghasilan setelah pengurang dasar (<em>grundavdrag</em>), ditambah pajak negara 20% hanya untuk penghasilan kena pajak di atas SEK 643.000. Pekerja non-residen yang tinggal singkat membayar pajak khusus SINK, yaitu tarif tunggal 22,5% dari gaji. Sebagai gambaran, gaji SEK 600.000 di Stockholm menyisakan gaji bersih (<em>take-home pay</em>) sekitar SEK 470.060, atau 78,3% dari gaji, setelah pajak kota, iuran dan pengurang pajak.</p>",
-  "place": "Stockholm",
+  "description": "Hitung pajak gaji di Swedia 2026 untuk Stockholm: pajak kota 30,55%, pajak negara di atas SEK 643.000, SINK 22,5% dan perbandingannya dengan PPh 21.",
+  "lede": "<p>Swedia memajaki gaji penduduknya terutama lewat pajak kota dan wilayah, sekitar 30,55% di Stockholm, ditambah pajak negara 20% yang hanya mengenai penghasilan kena pajak di atas SEK 643.000. Beberapa pengurang pajak, termasuk pengurang untuk yang bekerja (<em>jobbskatteavdrag</em>) dan pengembalian iuran pensiun 7%, memangkas tagihannya. Dari gaji SEK 600.000 setahun, penduduk Stockholm membayar sekitar SEK 129.940 dan membawa pulang gaji bersih (<em>take-home pay</em>) sekitar SEK 470.060 atau 78,3%. Pekerja non-<em>resident</em> yang memakai SINK dikenai 22,5% tanpa potongan dan tersisa SEK 465.000.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini mengikuti tahun pajak 2026, yang di Swedia sama dengan tahun kalender, dan memakai tarif pajak kota Stockholm. Penduduk pajak Swedia dikenai pajak atas penghasilan dari seluruh dunia. Siapa yang dianggap penduduk ditentukan antara lain oleh pendaftaran kependudukan (<em>folkbokföring</em>), yang umumnya diberikan kalau kamu akan tinggal di Swedia setidaknya satu tahun.</p>",
+    "intro": "<p>Angka di bawah adalah tarif 2026 seperti yang dihitung <em>tool</em> ini, dalam krona Swedia (SEK). Halaman ini memodelkan Stockholm dengan tarif gabungan pajak kota dan wilayah 30,55%. Kotamadya lain memungut tarif berbeda, dan <em>tool</em> membiarkanmu mengubah tarif antara 28% dan 36%. Bagi pembaca dari Indonesia ada satu perbedaan mendasar: PPh 21 seluruhnya pajak pusat, sedangkan di Swedia sebagian besar pajak gaji justru masuk ke kas kota dan wilayah tempat kamu tinggal.</p>",
     "blocks": [
       {
-        "h3": "Pajak kota dan wilayah, setelah pengurang dasar",
-        "html": "<p>Pajak utama di Swedia adalah pajak kota dan wilayah (<em>kommunalskatt</em>), dan tarifnya berbeda di tiap kota. Di Stockholm tarifnya 30,55%, sedangkan rata-rata nasional sekitar 32%. Tarif ini dikenakan pada penghasilan kena pajak, yaitu gaji dikurangi pengurang dasar (<em>grundavdrag</em>). Besarnya pengurang dasar bergantung pada gajimu dan pada angka acuan nasional (<em>prisbasbelopp</em>) yang pada 2026 SEK 59.200. Pengurang ini mencapai puncaknya sekitar SEK 45.600 di penghasilan menengah bawah, lalu mengecil lagi sampai sekitar SEK 17.400 untuk gaji di atas kira-kira SEK 466.000.</p>"
+        "h3": "Pajak kota dan pengurang dasar (grundavdrag)",
+        "html": "<p>Sebagian besar pajakmu adalah pajak kota dengan tarif seragam atas penghasilan kena pajak, yaitu gaji dikurangi pengurang dasar (<em>grundavdrag</em>). Pengurang ini peranannya mirip gabungan PTKP dan <em>biaya jabatan</em>, tetapi bukan jumlah tetap: nilainya berubah mengikuti gaji dan menyusut di gaji tinggi, sehingga pada gaji SEK 600.000 hanya sekitar SEK 17.400. Di Stockholm tarif pajak kotanya 30,55%.</p>"
       },
       {
-        "h3": "Pajak negara 20% di atas SEK 643.000",
-        "html": "<p>Pajak negara hanya dikenakan pada bagian penghasilan kena pajak di atas SEK 643.000. Di bawah batas itu, kamu hanya membayar pajak kota. Karena gaji SEK 600.000 menghasilkan penghasilan kena pajak sekitar SEK 582.600, gaji itu belum terkena pajak negara. Angka 50,55% pada tabel ini belum memperhitungkan pengurang pajak dan biaya penguburan (lihat bagian Iuran pensiun, pengurang pajak dan biaya lain).</p>",
-        "table": {
-          "head": [
-            "Penghasilan kena pajak",
-            "Pajak kota (Stockholm)",
-            "Pajak negara",
-            "Total tarif marginal"
-          ],
-          "rows": [
-            [
-              "Sampai SEK 643.000",
-              "30,55%",
-              "0%",
-              "30,55%"
-            ],
-            [
-              "Di atas SEK 643.000",
-              "30,55%",
-              "20%",
-              "50,55%"
-            ]
-          ]
-        }
+        "h3": "Pajak negara (20%)",
+        "html": "<p>Pajak negara besarnya 20% dari penghasilan kena pajak di atas SEK 643.000, dan di bawah ambang itu tidak ada sama sekali. Karena penghasilan kena pajak sudah dikurangi pengurang dasar, gaji kotormu harus sedikit melewati SEK 643.000 dulu sebelum pajak negara mulai berjalan. Ini jauh berbeda dari Pasal 17 di Indonesia, yang menaikkan tarif secara bertahap mulai dari 5%.</p>"
       },
       {
-        "h3": "Iuran pensiun, pengurang pajak dan biaya lain",
-        "html": "<p>Selain pajak, gaji dikenai iuran pensiun umum 7% (paling banyak SEK 47.100), biaya penguburan rata-rata 0,292% dari penghasilan kena pajak, dan iuran siaran publik (<em>public service</em>) 1% dengan batas SEK 1.184. Anggota Gereja Swedia membayar iuran gereja sebagai ganti biaya penguburan.</p><p>Kabar baiknya, ada pengurang pajak yang besar: pengembalian iuran pensiun 7% itu, pengurang pajak kerja (<em>jobbskatteavdrag</em>) dan pengurang tambahan atas penghasilan kerja. Pengurang ini mengurangi pajak kota sampai paling banyak sebesar pajak kota ditambah pajak negara, dan di kalkulator ini disajikan sebagai satu baris pengurang.</p>"
+        "h3": "Iuran, biaya, dan pengurang pajak yang menutupinya",
+        "html": "<p>Di atas pajak kota, kamu membayar iuran pensiun 7% dari gaji (maksimal SEK 47.100), biaya penguburan yang kecil, dan iuran siaran publik 1% dari penghasilan kena pajak (maksimal SEK 1.184). <em>Tool</em> lalu menerapkan pengurang pajak: pengembalian iuran pensiun, pengurang untuk yang bekerja (<em>jobbskatteavdrag</em>) dan pengurang atas penghasilan kerja. Pengurang ini mengurangi pajak kota dahulu, baru pajak negara, sehingga pada kebanyakan gaji ia kira-kira menutup iuran pensiun dan masih bersisa. Itu berbeda dari potongan JHT 2% dan JP 1% di slip gaji Indonesia, yang benar-benar mengurangi gaji bersih.</p>"
       },
       {
-        "h3": "SINK, pajak khusus untuk non-residen",
-        "html": "<p>Pekerja yang bukan penduduk pajak Swedia, misalnya karena hanya bekerja kurang dari enam bulan, dikenai SINK (<em>särskild inkomstskatt för utomlands bosatta</em>). Tarifnya 22,5% dari gaji kotor, bersifat final, dan tanpa pengurang dasar. Menurut catatan di kalkulator ini, tarifnya turun menjadi 20% mulai 2027. Kamu tidak membayar pajak kota dan pajak negara secara terpisah, tetapi juga tidak mendapat pengurang pajak kerja.</p>"
+        "h3": "SINK untuk non-<em>resident</em>",
+        "html": "<p>Pajak penghasilan khusus non-<em>resident</em> (SINK) adalah 22,5% dari gaji kotor tanpa tunjangan dan tanpa pengurang. Pajak ini ditujukan bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya untuk tinggal singkat. Gagasannya mirip PPh 26 di Indonesia, yaitu pemotongan dengan tarif tunggal atas penghasilan orang yang bukan penduduk pajak. <em>Tool</em> menyediakannya sebagai alternatif pajak <em>resident</em>.</p>"
+      },
+      {
+        "h3": "Pemotongan dan deklarasi",
+        "html": "<p>Pemberi kerja memotong pajak muka (<em>preliminärskatt</em>) dari gajimu tiap bulan, mirip PPh 21 yang dipotong kantor di Indonesia, dan kamu menyelesaikan selisihnya lewat deklarasi pajak tahunan ke Skatteverket, kantor pajak Swedia. Deklarasi itu pada dasarnya serupa SPT Tahunan, dengan data dari pemberi kerja sudah terisi. Agar semuanya berjalan kamu butuh nomor identitas pribadi Swedia (<em>personnummer</em>), yang fungsinya mirip NIK yang juga menjadi NPWP.</p>"
       }
     ],
     "sources": [
@@ -67,82 +49,86 @@
     {
       "key": "resident-stockholm",
       "title": "Berapa gaji bersih di Stockholm dengan gaji SEK 600.000 setahun?",
-      "intro": "<p>Contoh ini untuk penduduk pajak yang bekerja di Stockholm dengan satu pekerjaan sepanjang tahun. Pada gaji SEK 600.000, pengurang dasar mengecil menjadi SEK 17.400, sehingga penghasilan kena pajaknya SEK 582.600 dan belum menyentuh batas pajak negara. Pajak kota 30,55% pada angka itu berjumlah sekitar SEK 177.984, lalu pengurang pajak sebesar SEK 92.929 menurunkannya menjadi SEK 85.055. Pengurang itu sudah mencakup pengembalian iuran pensiun SEK 42.000, dan sisanya sekitar SEK 50.900 adalah pengurang pajak kerja dan pengurang tambahan. Setelah iuran pensiun SEK 42.000, biaya penguburan SEK 1.701 dan iuran siaran publik SEK 1.184, gaji bersihnya sekitar SEK 470.060 (78,3%), dan tarif marginalnya sekitar 30,8%.</p>",
-      "after": "<p>Kalau gajimu naik, pajak negara 20% baru berlaku setelah penghasilan kena pajak melewati SEK 643.000. Pada gaji SEK 800.000, hitungan kalkulator menunjukkan gaji bersih sekitar SEK 580.456 dan tarif marginal sudah 50,8%.</p>"
+      "intro": "<p>Contoh ini untuk penduduk pajak Stockholm dengan satu pekerjaan. Setelah pengurang dasar SEK 17.400, penghasilan kena pajaknya SEK 582.600, masih di bawah ambang SEK 643.000, sehingga tidak ada pajak negara. Pajak kota 30,55% atas jumlah itu mencapai SEK 177.984 sebelum pengurang, tetapi pengurang pajak sebesar SEK 92.929 menurunkannya menjadi SEK 85.055. Lalu datang iuran pensiun 7% sebesar SEK 42.000, biaya penguburan sekitar SEK 1.701 dan iuran siaran publik SEK 1.184. Gaji bersihnya sekitar SEK 470.060, atau 78,3% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalmu 30,8%, yaitu tarif pajak kota ditambah biaya penguburan, dan pajak negara 20% baru menambah beban setelah penghasilan kena pajak melewati SEK 643.000.</p>"
     },
     {
       "key": "sink-non-resident",
-      "title": "Cara menghitung pajak SINK untuk pekerja non-residen di Swedia dengan gaji SEK 600.000",
-      "intro": "<p>Contoh ini untuk pekerja yang tinggal singkat dan bukan penduduk pajak. SINK mengenakan 22,5% pada gaji SEK 600.000, sehingga pajaknya SEK 135.000, dan gaji bersihnya SEK 465.000 (77,5%). Tarif marginalnya juga 22,5%, karena tarifnya tunggal dan tidak ada pengurang tambahan yang menurunkannya.</p>",
-      "after": "<p>Pada gaji yang sama, penduduk pajak di Stockholm menyisakan sekitar SEK 5.060 lebih banyak. Pada gaji SEK 800.000, urutannya terbalik: SINK menyisakan SEK 620.000, sedangkan penduduk pajak sekitar SEK 580.456, selisih sekitar SEK 39.500, karena pajak negara 20% tidak berlaku untuk SINK.</p>"
+      "title": "Cara menghitung pajak SINK di Swedia untuk non-resident bergaji SEK 600.000",
+      "intro": "<p>Contoh ini untuk pekerja yang dikenai SINK sebagai non-<em>resident</em>. Pajaknya 22,5% dari gaji kotor, yaitu SEK 135.000 dari SEK 600.000, sehingga yang tersisa SEK 465.000 atau 77,5%. Tidak ada pengurang dasar, tidak ada tarif kota yang perlu dipilih dan tidak ada iuran pensiun dalam kasus ini.</p>",
+      "after": "<p>Penduduk Stockholm dengan gaji yang sama membawa pulang sekitar SEK 5.060 lebih banyak, jadi SINK tidak selalu paling ringan. Lagi pula, rezim mana yang berlaku ditentukan status <em>resident</em>-mu, bukan pilihan atas angka yang lebih rendah.</p>"
     }
   ],
-  "strategyIntro": "<p>Cara-cara di bawah ini sah dan dijelaskan oleh Skatteverket atau otoritas Swedia lainnya. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategyIntro": "<p>Cara-cara berikut legal dan lazim; mana yang berlaku tergantung statusmu.</p>",
   "strategies": [
     {
-      "h3": "Pajak khusus tenaga ahli asing (<em>expertskatt</em>)",
-      "html": "<p>Tenaga ahli, peneliti dan pekerja kunci yang direkrut dari luar negeri dapat memperoleh pembebasan pajak atas 25% dari gaji untuk jangka waktu terbatas, kalau disetujui oleh badan khusus. Permohonan diajukan oleh pemberi kerja bersama pekerjanya, dengan syarat gaji minimum dan syarat bahwa kamu direkrut dari luar Swedia. Cocok untuk insinyur, peneliti dan pemegang gelar doktor dengan gaji tinggi. Kalkulator ini tidak menghitungnya, jadi tanyakan kepada pemberi kerja sebelum menandatangani kontrak.</p>"
+      "h3": "Tanyakan keringanan pajak untuk tenaga ahli asing",
+      "html": "<p>Cocok untuk tenaga ahli, eksekutif dan personel kunci yang direkrut ke Swedia. Keringanan ini membebaskan seperempat dari gajimu dari pajak untuk jangka waktu terbatas, dan pemberi kerjamu yang mengajukannya lewat dewan khusus (<em>expertskattenämnden</em>). Syaratnya termasuk gaji minimum dan batas waktu, dan <em>tool</em> tidak memodelkannya, jadi pajakmu sesungguhnya bisa lebih rendah.</p>"
     },
     {
-      "h3": "Memilih tempat tinggal berdasarkan tarif pajak kota",
-      "html": "<p>Tarif pajak kota dan wilayah berbeda antarkota, dan kolom tarifnya di kalkulator ini bisa kamu ubah. Selisih beberapa poin persentase pada gaji besar berarti puluhan ribu kroner setahun. Cocok untuk kamu yang bisa memilih kota kerja, misalnya karena kerja jarak jauh atau banyak lokasi kantor. Perhitungkan juga sewa dan ongkos pindah, karena selisih biaya hidup di antara kota sering lebih besar daripada selisih pajaknya.</p>"
+      "h3": "Klaim potongan perjalanan dan biaya kerja",
+      "html": "<p>Cocok untuk <em>resident</em> yang menempuh perjalanan ke tempat kerja atau menanggung biaya kerja sendiri. Potongan ini mengurangi penghasilan kena pajak, tetapi baru berlaku di atas ambang tertentu, dan kamu perlu menyimpan bukti karena Skatteverket memeriksa klaim, sedangkan <em>tool</em> tidak memasukkannya.</p>"
     },
     {
-      "h3": "Potongan biaya kerja di laporan pajak tahunan",
-      "html": "<p>Biaya yang terkait pekerjaan, seperti perjalanan rumah ke tempat kerja di atas jarak tertentu, bisa mengurangi pajak lewat pengurang biaya pekerjaan di laporan pajak tahunan. Kalkulator ini tidak memodelkannya, jadi hasilnya bisa lebih baik di kenyataan. Cocok untuk penduduk pajak dengan biaya perjalanan yang besar. Simpan bukti perjalananmu karena Skatteverket bisa memintanya.</p>"
+      "h3": "Pakai rekening investasi ISK untuk tabungan",
+      "html": "<p>Cocok untuk <em>resident</em> yang berinvestasi di saham atau reksa dana. ISK dipajaki berdasarkan imbal hasil standar yang ditetapkan negara, bukan berdasarkan untung dan dividen yang sebenarnya, sehingga administrasinya sederhana. Ini pajak atas rekening, bukan pengurang gaji, jadi tidak mengubah angka di halaman ini. Pada tahun untung besar ISK bisa lebih mahal daripada pajak biasa, dan pada tahun buruk lebih murah.</p>"
     },
     {
-      "h3": "Rekening investasi ISK untuk tabungan di luar gaji",
-      "html": "<p>ISK (<em>investeringssparkonto</em>) adalah rekening investasi yang dikenai pajak atas hasil standar tahunan, bukan atas untung rugi tiap transaksi. Cocok untuk penduduk pajak yang menabung dan berinvestasi secara teratur, bukan untuk pekerja jangka pendek yang berencana pulang. Aturannya berubah dari waktu ke waktu, jadi cek skema terbaru di Skatteverket.</p>"
+      "h3": "Bandingkan kotamadya sebelum memilih tempat tinggal",
+      "html": "<p>Cocok untuk siapa pun yang memilih kota. Tarif kota berbeda beberapa poin persentase di seluruh Swedia, dan itu mengubah gaji bersih dari gaji yang sama. Meski begitu, daerah berpajak paling rendah belum tentu paling murah untuk ditinggali, jadi timbang juga sewa dan biaya perjalanan.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, keuntungan jual aset, penghasilan sewa atau usaha sendiri.",
-    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang mulai atau berhenti di tengah tahun dan beberapa pemberi kerja tidak dimodelkan, padahal itu sering terjadi pada tahun pertama kerja.",
-    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bonus, opsi saham atau tunjangan dari pemberi kerja.",
-    "<strong>Satu tarif kota dan sebagian pengurang saja.</strong> Hasilnya untuk tarif pajak kota yang kamu isi (Stockholm secara bawaan). Pengurang untuk perjalanan kerja, pajak tenaga ahli asing (<em>expertskatt</em>) dan potongan lain di laporan pajak tahunan tidak dihitung.",
-    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Swedia, kewajiban lapor di Indonesia dan pajak yang sudah dibayar di sana tidak dihitung.",
-    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Skatteverket yang menentukan status dan hasil akhirnya, jadi perlakukan hasil ini sebagai gambaran."
+    "<strong>Hanya Stockholm.</strong> Tarif bawaannya 30,55% untuk pajak kota dan wilayah. Ubah tarif di <em>tool</em> untuk kotamadya lain.",
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Satu gaji selama setahun penuh; penghasilan modal, usaha sendiri dan tahun yang tidak penuh tidak dihitung.",
+    "<strong>Tanpa iuran gereja.</strong> Iuran keanggotaan Gereja Swedia tidak dimodelkan.",
+    "<strong>Tanpa keringanan tenaga ahli asing.</strong> Rezim untuk personel kunci dari luar negeri tidak diterapkan.",
+    "<strong>Kamu yang memilih rezim.</strong> <em>Tool</em> tidak menguji apakah kamu <em>resident</em> pajak Swedia atau masuk SINK.",
+    "<strong>Tanpa bonus, saham dan P3B.</strong> Opsi saham, bonus, kredit pajak luar negeri, perjanjian penghindaran pajak berganda dan pajak Indonesia atas penghasilan di luar negeri tidak dihitung."
   ],
   "faq": [
     {
-      "q": "Berapa gaji bersih dari gaji SEK 600.000 di Stockholm?",
-      "a": "<p>Untuk penduduk pajak dengan tarif Stockholm 30,55%, gaji bersihnya sekitar SEK 470.060 (78,3%). Untuk pekerja non-residen yang memakai SINK, gaji bersihnya SEK 465.000 (77,5%).</p>"
+      "q": "Berapa gaji bersih untuk gaji SEK 600.000 per tahun di Stockholm?",
+      "a": "<p>Penduduk pajak membayar sekitar SEK 129.940 untuk pajak kota, iuran pensiun, biaya penguburan dan iuran siaran publik, setelah pengurang pajak, sehingga gaji bersihnya sekitar SEK 470.060. Pekerja non-<em>resident</em> dengan SINK membayar SEK 135.000 dan membawa pulang SEK 465.000. Coba gajimu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Kenapa ada iuran pensiun 7%, tetapi gaji bersih tidak turun banyak?",
-      "a": "<p>Iuran pensiun umum 7% memang dibayar dari gajimu, tetapi Swedia memberi pengurang pajak yang besarnya mengikuti iuran itu. Pada gaji SEK 600.000, iurannya SEK 42.000, dan pengurang pajak sebesar SEK 92.929 sudah mencakupnya. Jadi iuran itu tidak benar-benar mengurangi gaji bersihmu, dan uangnya tercatat sebagai hak pensiunmu. Pengurang pajak ini dibatasi sebesar jumlah pajak kota dan pajak negara, jadi pada gaji sangat rendah sebagian pengurang tidak terpakai.</p>"
+      "q": "Kapan saya kena pajak negara di Swedia?",
+      "a": "<p>Pajak negara 20% hanya dikenakan pada penghasilan kena pajak di atas SEK 643.000. Penghasilan kena pajak adalah gaji setelah pengurang dasar, sehingga kebanyakan karyawan hanya membayar pajak kota. Pada gaji SEK 600.000, <em>tool</em> tidak memungut pajak negara sama sekali.</p>"
     },
     {
-      "q": "Kapan saya kena pajak negara 20% di Swedia?",
-      "a": "<p>Pajak negara 20% hanya berlaku untuk penghasilan kena pajak di atas SEK 643.000, dan penghasilan kena pajak adalah gaji dikurangi pengurang dasar. Gaji SEK 600.000 menghasilkan penghasilan kena pajak sekitar SEK 582.600, jadi belum terkena. Pekerja yang gajinya jauh di atas itu merasakan lonjakan tarif marginal sampai sekitar 50%, seperti pada gaji SEK 800.000 yang tarif marginalnya 50,8%.</p>"
+      "q": "Kenapa iuran pensiun 7% di Swedia nyaris tidak terasa di gaji bersih?",
+      "a": "<p>Karyawan memang membayar iuran pensiun 7% dari gaji, tetapi pengurang pajak yang disebut pengembalian iuran pensiun mengembalikannya lewat pajak kota. <em>Tool</em> menampilkan iuran itu sebagai satu baris, dan pengembaliannya berada di dalam satu baris pengurang pajak bersama <em>jobbskatteavdrag</em>, yaitu pengurang pajak bagi orang yang bekerja. Pengurang total dibatasi oleh pajak kota dan pajak negara sehingga tidak pernah membuat pajak menjadi negatif. Hasilnya, untuk kebanyakan gaji, iuran pensiun itu sebagian besar tertutupi.</p>"
     },
     {
-      "q": "Apa itu pengurang dasar (<em>grundavdrag</em>), dan kenapa mengecil saat gaji naik?",
-      "a": "<p>Pengurang dasar adalah bagian gaji yang tidak dipajaki kota. Besarnya mengikuti angka acuan nasional (<em>prisbasbelopp</em>, SEK 59.200 pada 2026) dan berubah menurut gajimu: naik di gaji rendah, mencapai puncak di sekitar SEK 45.600, lalu mengecil sampai sekitar SEK 17.400 pada gaji di atas kira-kira SEK 466.000. Itu sebabnya pada gaji SEK 600.000 pengurang dasarnya hanya SEK 17.400. Kalkulator ini menghitungnya otomatis.</p>"
+      "q": "Apa itu SINK dan siapa yang membayarnya?",
+      "a": "<p>SINK adalah pajak 22,5% atas gaji kotor bagi orang yang bekerja di Swedia tanpa menjadi penduduk pajak di sana, misalnya selama tinggal singkat. Tidak ada tunjangan atau pengurang, dan pajaknya final. Orang yang tinggal lebih lama, misalnya dengan izin kerja beberapa tahun, pada umumnya diperlakukan sebagai penduduk pajak dan memakai pajak biasa, tetapi Skatteverket yang menentukan statusmu.</p>"
     },
     {
-      "q": "Kenapa tarif pajak kota berbeda di tiap kota di Swedia?",
-      "a": "<p>Pajak kota dan wilayah ditetapkan oleh pemerintah daerah masing-masing, jadi tarifnya berbeda antarkota. Di Stockholm tarifnya 30,55% dan rata-rata nasional sekitar 32%. Di kalkulator ini kamu bisa mengubah tarif itu, dan biaya penguburan juga bisa disesuaikan, karena anggota Gereja Swedia membayar iuran gereja sebagai ganti biaya penguburan.</p>"
+      "q": "Kenapa pajak kota di Swedia berbeda-beda antar tempat?",
+      "a": "<p>Tiap kotamadya dan wilayah menetapkan tarifnya sendiri, sehingga totalnya berbeda beberapa poin persentase. Di Indonesia pajak gaji seragam secara nasional, tetapi di Swedia tempat tinggalmu ikut menentukan pajakmu. Di <em>tool</em> ini Stockholm memakai 30,55%; ubah tarifnya untuk melihat gajimu bergerak. Biaya penguburan juga sedikit berbeda menurut paroki.</p>"
     },
     {
-      "q": "Siapa yang kena SINK dan siapa yang dianggap penduduk pajak Swedia?",
-      "a": "<p>SINK (tarif tunggal 22,5%, final) berlaku untuk pekerja yang bukan penduduk pajak, umumnya karena tinggal di Swedia kurang dari enam bulan. Kalau kamu pindah untuk bekerja lebih dari setahun dan terdaftar sebagai penduduk (<em>folkbokförd</em>), kamu dihitung sebagai penduduk pajak dan memakai skema biasa. Tanyakan Skatteverket untuk kasusmu, karena status ini menentukan seluruh perhitungan.</p>"
+      "q": "Apakah iuran pensiun di Swedia bisa dicairkan kalau saya pulang ke Indonesia?",
+      "a": "<p>Iuran pensiun 7% di sini adalah pajak yang diimbangi pengurang, bukan saldo yang kamu tabung seperti JHT di BPJS Ketenagakerjaan. Hak pensiun yang terbentuk dari penghasilanmu dicatat di sistem pensiun Swedia dan pada umumnya dibayarkan saat usia pensiun, bukan dicairkan sekaligus ketika kamu pindah. Cara klaimnya dari luar negeri sebaiknya ditanyakan ke Pensionsmyndigheten atau Försäkringskassan.</p>"
     },
     {
-      "q": "Berapa uang yang bisa ditabung kalau bekerja di Swedia dibandingkan dengan Indonesia?",
-      "a": "<p>Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
+      "q": "Kalau kerja di Swedia, apakah saya masih harus lapor SPT di Indonesia?",
+      "a": "<p>Itu tergantung statusmu. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di Indonesia pada umumnya dapat menjadi subjek pajak luar negeri, tetapi penentuannya melihat keadaanmu, termasuk niat tinggal. Sebelum berangkat, bicarakan ke KPP atau DJP agar statusmu jelas dan penghasilan yang sama tidak dipajaki dua kali. Indonesia dan Swedia punya P3B (perjanjian penghindaran pajak berganda), tetapi <em>tool</em> ini tidak menghitungnya dan tidak menghitung pajak Indonesia atas penghasilan di luar negeri. Ini bukan nasihat hukum.</p>"
+    },
+    {
+      "q": "Bagaimana Swedia dibandingkan negara Nordik lain dan biaya hidupnya?",
+      "a": "<p>Lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/\">Norwegia</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/\">Finlandia</a> dan <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/\">Estonia</a>. Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda: bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal.</p>"
     }
   ],
   "lineLabels": {
-    "Tax reductions (pension fee offset, job tax credit, earned income reduction), inside the municipal and state tax above": "Pengurangan pajak (kompensasi iuran pensiun, kredit pajak kerja, pengurangan penghasilan kerja), sudah termasuk di pajak kota dan negara di atas",
-    "Less the tax reductions left after the municipal tax": "Dikurangi sisa pengurangan pajak setelah pajak kota",
+    "Tax reductions (pension fee offset, job tax credit, earned income reduction), inside the municipal and state tax above": "Pengurang pajak (pengembalian iuran pensiun, pengurang untuk yang bekerja, pengurang penghasilan kerja), sudah termasuk di pajak kota dan negara di atas",
+    "Less the tax reductions left after the municipal tax": "Dikurangi sisa pengurang pajak setelah pajak kota",
     "Basic allowance (grundavdrag)": "Pengurang dasar (grundavdrag)",
     "Municipal tax (30.55%) after tax reductions": "Pajak kota dan wilayah (30,55%) setelah pengurang pajak",
     "Pension fee (7%)": "Iuran pensiun (7%)",
     "Burial fee": "Biaya penguburan",
     "Public service fee (1%, max 1,184)": "Iuran siaran publik (1%, maksimal 1.184)",
-    "Tax reductions: pension fee offset, job tax credit, earned income reduction": "Pengurang pajak: pengembalian iuran pensiun, pengurang pajak kerja, pengurang atas penghasilan kerja",
-    "SINK, special income tax for non-residents (22.5%)": "SINK, pajak khusus non-residen (22,5%)"
+    "Tax reductions: pension fee offset, job tax credit, earned income reduction": "Pengurang pajak: pengembalian iuran pensiun, pengurang untuk yang bekerja, pengurang penghasilan kerja",
+    "SINK, special income tax for non-residents (22.5%)": "SINK, pajak khusus non-resident (22,5%)"
   }
 }

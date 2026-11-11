@@ -1,112 +1,137 @@
 {
+  "slug": "oman",
+  "lang": "id",
   "title": "Pajak Gaji di Oman 2026: Gaji Bersih dan Pajak 2028",
-  "h1": "Cara menghitung pajak penghasilan di Oman (2026)",
-  "description": "Oman belum memajaki gaji pada 2026, tetapi pajak penghasilan 5% di atas OMR42.000 direncanakan mulai 2028. Lihat gaji bersih pekerja asing dan warga.",
-  "lede": "<p>Oman tidak memungut pajak penghasilan atas gaji pada 2026, dan pekerja asing tidak membayar iuran jaminan sosial. Perubahannya sudah dijadwalkan: pajak penghasilan perorangan 5% atas penghasilan di atas OMR42.000 mulai berlaku 1 Januari 2028, menurut ketentuan yang dimuat kalkulator. Warga negara membayar iuran Social Protection Fund 8% dari upah. Gaji OMR18.000 setahun tetap OMR18.000 bagi pekerja asing, dan menjadi OMR16.560 bagi warga negara.</p>",
+  "h1": "Cara menghitung pajak gaji di Oman (2026) dan apa yang berubah pada 2028",
+  "description": "Oman belum memajaki gaji pada 2026, tetapi pajak penghasilan 5% direncanakan mulai 2028. Lihat gaji bersih pekerja asing dan warga Oman.",
+  "lede": "<p>Oman tidak memungut pajak penghasilan atas gaji pada 2026, jadi pekerja asing (<em>expat</em>) bergaji OMR 18.000 setahun membawa pulang seluruhnya sebagai gaji bersih (<em>take-home pay</em>). Warga Oman menyetor 8% ke Social Protection Fund, yaitu OMR 1.440, dan membawa pulang OMR 16.560. Pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun direncanakan berlaku mulai 1 Januari 2028.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini mengikuti kalkulator untuk tahun 2026. Di antara enam negara Teluk, hanya Oman yang menurut kalkulator sudah punya jadwal pajak penghasilan perorangan.</p>",
+    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dimodelkan kalkulator. Oman sedang berubah: di antara negara Teluk yang ada di kalkulator ini, hanya Oman yang punya pajak penghasilan perorangan dalam perjalanan. Sampai pajak itu berlaku, satu-satunya potongan dari gaji adalah iuran jaminan sosial untuk warga negaranya.</p>",
     "blocks": [
       {
-        "h3": "Pajak penghasilan perorangan mulai 2028",
-        "html": "<p>Pada 2026 gaji di Oman tidak dikenai pajak penghasilan. Kalkulator memuat ketentuan pajak penghasilan 5% atas penghasilan di atas OMR42.000 yang mulai berlaku 1 Januari 2028. Gaji OMR18.000 pada contoh di bawah jauh di bawah batas itu, jadi ketentuan itu tidak mengubah hasilnya. Cek ketentuan terbaru di sumber resmi, karena aturan pelaksanaan bisa berubah.</p>"
+        "h3": "Tanpa pajak penghasilan pada 2026, pajak baru mulai 2028",
+        "html": "<p>Oman tidak memajaki gaji pada 2026, jadi belum ada PPh 21 versi Oman, PTKP, atau <em>bukti potong</em> yang perlu kamu urus. Kalkulator mencatat pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun yang direncanakan mulai 1 Januari 2028, sehingga hanya penghasilan tinggi yang terkena. Periksa aturan akhirnya sebelum kamu mengandalkan angka ini, karena rinciannya masih bisa berubah. Pajak pertambahan nilai (PPN), di negara yang memungutnya, dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>"
       },
       {
-        "h3": "Social Protection Fund untuk warga negara",
-        "html": "<p>Social Protection Fund (SPF) mengelola jaminan sosial di Oman. Kalkulator menghitung iuran pegawai warga negara 8% dari upah, dengan batas upah OMR3.000 sebulan. Pekerja asing tidak membayar iuran ini dalam kalkulator.</p>",
+        "h3": "Social Protection Fund untuk warga Oman",
+        "html": "<p>Warga Oman membayar 8% dari gaji ke Social Protection Fund, dihitung dari gaji sampai OMR 3.000 sebulan. Lembaga ini perannya kira-kira setara BPJS Ketenagakerjaan di Indonesia. Bagian pemberi kerja dibayar terpisah dan tidak ditampilkan.</p>",
         "table": {
           "head": [
-            "Peserta",
-            "Iuran dari gaji"
+            "Siapa",
+            "Iuran karyawan",
+            "Batas gaji sebulan"
           ],
           "rows": [
             [
-              "Warga negara",
-              "8%"
+              "Warga Oman",
+              "8%",
+              "OMR 3.000"
             ],
             [
               "Pekerja asing",
-              "0%"
+              "Tidak ada",
+              "Tidak berlaku"
             ]
           ]
         }
       },
       {
-        "h3": "Pekerja asing: tanpa iuran dan dengan tunjangan akhir masa kerja",
-        "html": "<p>Pekerja asing tidak membayar iuran jaminan sosial dari gajinya. Aturan ketenagakerjaan Oman mengatur tunjangan akhir masa kerja bagi pekerja, tetapi kalkulator tidak menghitungnya, jadi cek kontrak dan sumber resmi untuk besarnya.</p>"
+        "h3": "Pekerja asing: tanpa jaminan sosial negara",
+        "html": "<p>Pekerja asing tidak membayar apa pun ke Social Protection Fund, jadi tidak ada padanan JHT atau JP yang dipotong dari gajimu. Sebagai gantinya, saat kontrak berakhir pemberi kerja membayar uang akhir masa kerja (<em>end-of-service gratuity</em>) menurut undang-undang ketenagakerjaan. Fungsinya mirip pesangon di Indonesia dan jumlahnya tidak termasuk dalam angka di halaman ini.</p>"
+      },
+      {
+        "h3": "Status pajakmu di Indonesia tidak ikut hilang",
+        "html": "<p>Gaji tanpa pajak di Oman tidak otomatis berarti tanpa kewajiban di Indonesia. Selama statusmu masih subjek pajak dalam negeri, penghasilan dari luar negeri pada dasarnya tetap dilaporkan di SPT Tahunan. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di sini bisa menjadi subjek pajak luar negeri, dan biasanya yang bersangkutan memberi tahu DJP supaya statusnya jelas. Kalkulator ini tidak menghitung pajak Indonesia atas penghasilan luar negeri dan tidak memodelkan perjanjian penghindaran pajak berganda (P3B).</p>"
       }
     ],
     "sources": [
       {
         "name": "Social Protection Fund (SPF), Oman",
-        "url": "https://www.spf.gov.om/"
+        "url": "https://www.spf.gov.om/",
+        "note": "iuran dan rencana pajak penghasilan perorangan"
+      },
+      {
+        "name": "Direktorat Jenderal Pajak (DJP)",
+        "url": "https://www.pajak.go.id/",
+        "note": "status subjek pajak di Indonesia"
       }
     ]
   },
   "examples": [
     {
       "key": "expat",
-      "title": "Berapa gaji bersih pekerja asing di Oman dengan gaji OMR18.000 setahun?",
-      "intro": "<p>Contoh ini untuk pekerja asing, termasuk WNI, dengan gaji OMR18.000 setahun atau OMR1.500 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial pada 2026, sehingga gaji bersihnya tetap OMR18.000 (100%). Pajak 5% mulai 2028 hanya berlaku di atas OMR42.000, jadi tidak menyentuh gaji ini.</p>",
-      "after": "<p>Tunjangan akhir masa kerja dan tunjangan lain di kontrak belum dihitung.</p>"
+      "title": "Apakah gaji OMR 18.000 di Oman kena pajak? Hitungan untuk pekerja asing",
+      "intro": "<p>Contoh ini untuk kamu yang bekerja di Oman dengan gaji OMR 18.000 setahun, atau OMR 1.500 sebulan. Pada 2026 tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya OMR 18.000, atau 100% dari gaji kotor. Pajak 5% yang direncanakan mulai 2028 hanya berlaku di atas OMR 42.000 setahun, jadi gaji ini tidak terkena.</p>",
+      "after": "<p>Uang akhir masa kerja dibayar pemberi kerja secara terpisah dan tidak masuk dalam angka ini. Bandingkan dengan Indonesia, tempat gaji kotor karyawan selalu menyusut karena PPh 21 dan iuran BPJS.</p>"
     },
     {
       "key": "national",
-      "title": "Berapa iuran Social Protection Fund untuk warga Oman bergaji OMR18.000?",
-      "intro": "<p>Contoh ini sebagai pembanding untuk warga negara. Iuran SPF 8% menjadi OMR1.440, sehingga gaji bersihnya OMR16.560 (92,0%) dan 8,0% dari tambahan gaji berikutnya masuk ke iuran.</p>",
-      "after": "<p>Pekerja asing tidak membayar iuran ini, jadi contoh ini menjelaskan kenapa rekan kerja warga negara punya gaji bersih yang berbeda.</p>"
+      "title": "Berapa iuran Social Protection Fund untuk warga Oman bergaji OMR 18.000?",
+      "intro": "<p>Warga Oman dengan gaji OMR 18.000 tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu OMR 1.440 setahun, masuk ke Social Protection Fund. Gaji bersihnya OMR 16.560, atau 92,0% dari gaji kotor. Upahnya OMR 1.500 sebulan, masih di bawah batas OMR 3.000, sehingga seluruh gaji dikenai iuran 8%.</p>",
+      "after": "<p>Iuran ini membangun hak perlindungan sosial dan bukan pajak, mirip JHT dan JP di Indonesia. Mulai 2028 pajak 5% yang direncanakan baru menambah potongan pada penghasilan di atas OMR 42.000 setahun. Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>"
     }
   ],
-  "strategyIntro": "<p>Karena belum ada pajak penghasilan pada 2026, strategi di sini soal kontrak, tabungan dan persiapan menghadapi 2028.</p>",
+  "strategyIntro": "<p>Berikut langkah yang wajar dan legal untuk mengatur gaji dan status pajakmu.</p>",
   "strategies": [
     {
-      "h3": "Pantau aturan pajak penghasilan 2028",
-      "html": "<p>Jika gajimu di atas OMR42.000 setahun, ketentuan 2028 akan memengaruhi gaji bersihmu. Pantau ketentuan resmi menjelang tanggal berlaku, dan masukkan perubahan itu ke rencana tabunganmu. Cara ini cocok untuk pekerja berpenghasilan tinggi yang berencana tinggal sampai 2028 atau sesudahnya.</p>"
+      "h3": "Urus status pajak Indonesiamu sebelum berangkat",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang sudah punya NPWP dan akan bekerja di Oman lebih dari setahun. Nol pajak di Teluk belum tentu berarti nol kewajiban di Indonesia, jadi tanyakan ke kantor pajak (KPP) atau konsultan pajak apakah statusmu berubah menjadi subjek pajak luar negeri.</p><p><strong>Catatan:</strong> aturannya ada di UU PPh dan ketentuan DJP, bukan di Oman. Simpan kontrak kerja serta bukti tanggal berangkat dan pulang.</p>"
     },
     {
-      "h3": "Periksa kontrak dan tunjangan akhir masa kerja",
-      "html": "<p>Karena pekerja asing tidak mendapat pensiun dari SPF dalam kalkulator ini, tunjangan akhir masa kerja jadi bekalmu. Tanyakan dasar hitungannya di kontrak.</p>"
+      "h3": "Siapkan sendiri dana pensiun dan tabunganmu",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji penuh tanpa potongan jaminan sosial. Karena tidak ada iuran pensiun yang dipotong, menabung untuk hari tua menjadi urusanmu sendiri, misalnya lewat DPLK, reksa dana, atau portofolio berbiaya rendah. Berapa yang perlu kamu kumpulkan bisa dihitung dengan <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun, dan tempat kamu menaruh dana menentukan pajak atas imbal hasilnya.</p>"
     },
     {
-      "h3": "Tabung sendiri dan bandingkan biaya hidup",
-      "html": "<p>Hitung tabungan hari tua di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>, lalu bandingkan biaya hidup di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "h3": "Pantau pajak 2028 kalau gajimu di atas OMR 42.000",
+      "html": "<p><strong>Cocok untuk:</strong> penghasilan tinggi yang berencana bekerja di Oman pada 2028 atau sesudahnya. Pajak yang direncanakan sebesar 5% atas penghasilan di atas OMR 42.000 setahun.</p><p><strong>Catatan:</strong> aturan akhir, definisi penghasilan, dan pengecualiannya bisa berbeda dari rencana, jadi ikuti panduan resmi saat diterbitkan.</p>"
+    },
+    {
+      "h3": "Pahami uang akhir masa kerja sebelum meneken kontrak",
+      "html": "<p><strong>Cocok untuk:</strong> kamu yang sedang membandingkan beberapa tawaran. Uang ini adalah manfaat keluar yang dibayar pemberi kerja.</p><p><strong>Catatan:</strong> besarnya bergantung pada gaji, lama bekerja, dan kontrak, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya gaji dari pekerjaan.</strong> Kalkulator ini tidak menghitung penghasilan usaha, sewa atau investasi.",
-    "<strong>Tanpa tunjangan akhir masa kerja, tunjangan dan bonus.</strong> Semua angka dihitung dari satu angka gaji setahun.",
-    "<strong>Pajak 2028 tidak dihitung.</strong> Kalkulator mencatat rencana pajak 5% di atas OMR42.000 tetapi tidak menerapkannya pada tahun 2026.",
-    "<strong>Iuran bergantung pada upah yang diperhitungkan.</strong> Kalkulator punya isian porsi gaji yang menjadi dasar iuran, untuk kasus ketika sebagian gaji tidak ikut dihitung.",
-    "<strong>Kewajiban pajak di Indonesia tidak dihitung.</strong> Status pajakmu di Indonesia bergantung pada tempat tinggal dan lamanya kamu berada di Indonesia (patokannya 183 hari), bukan pada tempat gajimu dibayar. Tanyakan ke DJP atau konsultan pajak sebelum berangkat.",
-    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Aturan bisa berubah, jadi cek ke sumber resmi sebelum memutuskan."
+    "<strong>Hanya penghasilan dari kerja.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
+    "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrak, jadi tidak ditambahkan ke angka di halaman ini.",
+    "<strong>Pajak Indonesia tidak dihitung.</strong> Kalkulator hanya menunjukkan apa yang diambil Oman. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dimodelkan.",
+    "<strong>Statusnya kamu yang memilih.</strong> Kalkulator menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Paket versus tunai.</strong> Yang dihitung adalah gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrakmu tidak dipisahkan.",
+    "<strong>Pajak 2028 tidak diterapkan.</strong> Kalkulator hanya menampilkannya sebagai catatan bernilai nol, karena pajak itu baru mulai setelah 2026."
   ],
   "faq": [
     {
-      "q": "Apakah ada pajak penghasilan untuk gaji di Oman?",
-      "a": "<p>Pada 2026 belum ada. Menurut kalkulator, pajak penghasilan perorangan 5% atas penghasilan di atas OMR42.000 mulai berlaku 1 Januari 2028. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+      "q": "Berapa gaji bersih di Oman dengan gaji OMR 18.000 setahun?",
+      "a": "<p>Pekerja asing tidak membayar pajak penghasilan dan membawa pulang seluruh OMR 18.000. Warga Oman membayar 8% ke Social Protection Fund dan membawa pulang OMR 16.560. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Kenapa Oman berbeda dari negara Teluk lain soal pajak penghasilan?",
-      "a": "<p>Di antara negara Teluk, hanya Oman yang menurut kalkulator sudah punya jadwal pajak penghasilan perorangan, dengan tarif 5% di atas OMR42.000 mulai 2028. Penghasilan sampai batas itu tidak dikenai pajak. Gaji menengah seperti OMR18.000 setahun jauh di bawah batas, sehingga hasilnya tidak berubah.</p>"
+      "q": "Apakah Oman akan menerapkan pajak penghasilan?",
+      "a": "<p>Menurut rencana yang dicatat kalkulator, ya: pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun mulai 1 Januari 2028. Pada 2026 belum ada pajak itu. Yang terkena hanya penghasilan tinggi, dan aturan akhirnya perlu kamu periksa setelah diterbitkan. Kalkulator menampilkannya sebagai catatan bernilai nol.</p>"
     },
     {
-      "q": "Apakah pekerja asing di Oman membayar iuran jaminan sosial?",
-      "a": "<p>Dalam kalkulator ini pekerja asing tidak membayarnya. Iuran Social Protection Fund 8% dari upah dengan batas OMR3.000 sebulan hanya dihitung untuk warga negara. Pekerja asing mendapat tunjangan akhir masa kerja menurut aturan ketenagakerjaan, yang tidak dihitung kalkulator.</p>"
+      "q": "Apa itu uang akhir masa kerja di Oman, dan apakah sama dengan pesangon?",
+      "a": "<p>Pekerja asing berada di luar Social Protection Fund, jadi saat kontrak berakhir pemberi kerja membayar uang akhir masa kerja menurut undang-undang ketenagakerjaan, berdasarkan gaji dan lama bekerja. Fungsinya mirip pesangon di Indonesia: dibayar sekali dan bukan pensiun bulanan. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>"
     },
     {
-      "q": "Berapa iuran Social Protection Fund untuk warga negara Oman?",
-      "a": "<p>Iurannya 8% dari upah dengan batas OMR3.000 sebulan. Pada gaji OMR18.000 setahun, iurannya OMR1.440.</p>"
+      "q": "Kenapa warga Oman dipotong 8% sedangkan pekerja asing tidak?",
+      "a": "<p>Social Protection Fund mencakup warga negara Oman. Karyawan membayar 8% dari gaji sampai OMR 3.000 sebulan, dan pemberi kerja membayar bagiannya di luar itu. Pekerja asing tidak tercakup, sehingga tidak ada potongan.</p>"
     },
     {
-      "q": "Apakah gaji dari Oman masih harus dilaporkan di Indonesia?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang ditentukan oleh tempat tinggal dan lamanya kamu berada di Indonesia, dengan patokan 183 hari. Tanyakan kasusmu ke DJP di <a href=\"https://www.pajak.go.id/\">pajak.go.id</a>.</p>"
+      "q": "Kalau gajiku di atas OMR 42.000, apakah pasti kena pajak mulai 2028?",
+      "a": "<p>Belum bisa dipastikan sekarang. Angka OMR 42.000 dan tarif 5% adalah rencana yang dicatat kalkulator, sedangkan definisi penghasilan dan pengecualiannya bisa berubah saat aturan akhir terbit. Karena itu pajak ini belum dihitung dalam angka mana pun di halaman ini.</p>"
+    },
+    {
+      "q": "Apakah gaji dari Oman harus dilaporkan di SPT Tahunan?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang tidak dimodelkan kalkulator. Selama kamu masih subjek pajak dalam negeri, penghasilan dari luar negeri pada dasarnya dilaporkan di SPT Tahunan. Kalau kamu berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di sini, kamu bisa menjadi subjek pajak luar negeri. Pastikan statusnya dengan DJP atau konsultan pajak.</p>"
+    },
+    {
+      "q": "Apakah gaji di Oman lebih besar daripada gaji di Indonesia?",
+      "a": "<p>Gaji bersih yang lebih besar belum tentu berarti uang sisa yang lebih besar, karena biaya hidup berbeda. Bandingkan memakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
     }
   ],
   "lineLabels": {
     "No personal income tax on employment": "Tidak ada pajak penghasilan atas gaji",
-    "Social Protection Fund (8%, cap 3,000 a month)": "Social Protection Fund (8%, batas upah OMR3.000 sebulan)",
+    "Social Protection Fund (8%, cap 3,000 a month)": "Social Protection Fund (8%, batas upah OMR 3.000 sebulan)",
     "No social insurance for expatriates": "Tanpa jaminan sosial untuk pekerja asing",
     "Personal income tax (5% above 42,000) starts 1 Jan 2028": "Pajak penghasilan perorangan (5% di atas 42.000) mulai 1 Januari 2028"
-  },
-  "slug": "oman",
-  "lang": "id"
+  }
 }
