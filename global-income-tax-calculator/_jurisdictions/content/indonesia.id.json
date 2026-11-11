@@ -1,16 +1,16 @@
 {
   "slug": "indonesia",
   "lang": "id",
-  "title": "Cara Menghitung PPh 21 2026: Gaji, PTKP, dan BPJS",
-  "h1": "Cara menghitung PPh 21 atas gaji (2026)",
-  "description": "Cara menghitung PPh 21 2026: tarif Pasal 17, PTKP, biaya jabatan, BPJS, PPh 26 untuk WNA, plus contoh gaji bersih dan alasan potongan Desember naik.",
-  "lede": "<p>PPh 21 dihitung dari penghasilan bruto setahun, dikurangi biaya jabatan, iuran BPJS yang boleh dikurangkan dan PTKP (Penghasilan Tidak Kena Pajak), lalu hasilnya dikenai tarif bertingkat Pasal 17: 5% sampai Rp60 juta, 15% sampai Rp250 juta, 25% sampai Rp500 juta, 30% sampai Rp5 miliar dan 35% di atasnya. Sebagai gambaran, pegawai lajang (TK/0) dengan gaji Rp120.000.000 setahun membayar PPh 21 Rp3.277.200 dan menerima gaji bersih (<em>take-home pay</em>) sekitar Rp111.922.800 setelah PPh 21 dan iuran BPJS. Orang asing yang bekerja kurang dari 183 hari memakai aturan lain, yaitu PPh 26 sebesar 20% dari penghasilan bruto.</p>",
+  "title": "Cara Menghitung PPh 21 Gaji 2026: PTKP, TER, BPJS",
+  "h1": "Cara menghitung PPh 21 gaji karyawan (2026)",
+  "description": "Cara menghitung PPh 21 gaji 2026: tarif Pasal 17, PTKP, biaya jabatan, BPJS, TER, PPh 26 untuk WNA, plus contoh gaji bersih dari Rp120 juta.",
+  "lede": "<p>PPh 21 atas gaji dihitung dari penghasilan bruto setahun, dikurangi biaya jabatan, iuran JHT dan JP yang kamu bayar sendiri, lalu PTKP. Sisanya, yaitu penghasilan kena pajak (PKP), dikenai tarif Pasal 17 yang bertingkat dari 5% sampai 35%. Karyawan lajang (TK/0) bergaji Rp120.000.000 setahun, misalnya, dipotong PPh 21 Rp3.277.200 dan membawa pulang gaji bersih (<em>take-home pay</em>) Rp111.922.800 setelah iuran BPJS. WNA yang belum berstatus <em>subjek pajak dalam negeri</em> dikenai PPh 26 sebesar 20% dari penghasilan bruto, tanpa PTKP.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini adalah yang dipakai kalkulator untuk tahun pajak 2026. Dasar umumnya adalah tarif Pasal 17 Undang-Undang PPh, sedangkan pemotongan bulanannya mengikuti PP 58/2023 dan PMK 168/2023. Yang menentukan jalur pajakmu adalah status subjek pajak, bukan kewarganegaraan semata: orang yang berstatus penduduk pajak dikenai PPh 21 progresif, sedangkan orang asing yang belum memenuhi syarat itu dikenai PPh 26.</p>",
+    "intro": "<p>Aturan di bawah ini dipakai <em>tool</em> untuk tahun pajak 2026. Dasarnya adalah tarif Pasal 17 Undang-Undang PPh, sedangkan pemotongan bulanan oleh pemberi kerja mengikuti PP 58/2023 dan PMK 168/2023. Yang menentukan jalur pajakmu adalah status sebagai <em>subjek pajak dalam negeri</em> atau <em>subjek pajak luar negeri</em>, bukan paspor yang kamu pegang.</p>",
     "blocks": [
       {
-        "h3": "Tarif PPh 21 menurut Pasal 17",
-        "html": "<p>Tarif ini berlaku untuk penghasilan kena pajak (PKP) setahun, yaitu penghasilan bruto setelah dikurangi biaya jabatan, iuran pensiun dan JHT yang dibayar sendiri, serta PTKP. Seperti tarif bertingkat pada umumnya, tiap tarif hanya dikenakan pada bagian penghasilan yang masuk ke tingkat itu, bukan pada seluruh penghasilan.</p>",
+        "h3": "Dari gaji bruto ke PPh 21: tarif Pasal 17",
+        "html": "<p>Urutan hitungannya sama untuk semua karyawan tetap. Mulai dari penghasilan bruto setahun, lalu kurangi biaya jabatan, iuran JHT dan JP, dan PTKP. Hasilnya PKP, yang dibulatkan ke bawah ke ribuan penuh. Tarif di bawah ini dikenakan per lapisan: 15% hanya berlaku untuk bagian PKP yang melewati Rp60.000.000, bukan untuk seluruh PKP.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak setahun",
@@ -41,8 +41,8 @@
         }
       },
       {
-        "h3": "PTKP: status TK/0, K/0 sampai K/3",
-        "html": "<p>PTKP adalah bagian penghasilan yang tidak dikenai pajak. Besarnya Rp54.000.000 untuk wajib pajak lajang tanpa tanggungan (TK/0), ditambah Rp4.500.000 kalau kamu menikah, dan Rp4.500.000 lagi untuk setiap tanggungan, paling banyak tiga orang. Status ditulis dengan huruf dan angka: TK berarti tidak kawin, K berarti kawin, dan angka di belakangnya adalah jumlah tanggungan.</p>",
+        "h3": "PTKP menurut status: TK/0 sampai K/3",
+        "html": "<p>PTKP (Penghasilan Tidak Kena Pajak) adalah bagian penghasilan setahun yang tidak dipajaki. Dasarnya Rp54.000.000 untuk wajib pajak yang tidak kawin dan tanpa tanggungan (TK/0). Status kawin menambah Rp4.500.000, dan tiap tanggungan menambah Rp4.500.000 lagi, paling banyak tiga orang. Huruf TK berarti tidak kawin, K berarti kawin, dan angka di belakang garis miring adalah jumlah tanggungan. Statusmu per 1 Januari tercatat di bukti potong dan menentukan kategori TER.</p>",
         "table": {
           "head": [
             "Status",
@@ -50,7 +50,7 @@
           ],
           "rows": [
             [
-              "TK/0 (lajang, tanpa tanggungan)",
+              "TK/0 (tidak kawin, tanpa tanggungan)",
               "Rp54.000.000"
             ],
             [
@@ -73,16 +73,36 @@
         }
       },
       {
-        "h3": "Biaya jabatan dan iuran BPJS",
-        "html": "<p>Pegawai tetap mendapat pengurang biaya jabatan sebesar 5% dari penghasilan bruto, paling banyak Rp6.000.000 setahun (Rp500.000 sebulan). Iuran BPJS Ketenagakerjaan yang kamu bayar sendiri, yaitu JHT 2% dan JP 1%, juga mengurangi penghasilan kena pajak. Iuran BPJS Kesehatan 1% tetap dipotong dari gajimu, tetapi tidak dipakai sebagai pengurang pajak dalam hitungan ini.</p><p>Di sisi lain, premi yang dibayar pemberi kerja, yaitu JKK, JKM dan BPJS Kesehatan bagian pemberi kerja, dihitung sebagai tambahan penghasilan bruto. Karena itu penghasilan yang dipajaki sedikit lebih besar daripada angka gaji di kontrak. Kalkulator memakai batas upah Rp12.000.000 sebulan untuk BPJS Kesehatan dan menghitung batas upah JP sebesar Rp10.547.400 untuk Januari dan Februari, lalu Rp11.086.300 mulai Maret. JKK mengikuti tarif risiko pekerjaanmu, yang bisa kamu pilih di kalkulator.</p>"
+        "h3": "Biaya jabatan, BPJS, dan premi yang dibayar pemberi kerja",
+        "html": "<p>Karyawan tetap mendapat pengurang biaya jabatan 5% dari penghasilan bruto, paling banyak Rp6.000.000 setahun (Rp500.000 sebulan). Iuran BPJS Ketenagakerjaan yang kamu bayar sendiri, yaitu JHT 2% dan JP 1%, ikut mengurangi PKP. Iuran BPJS Kesehatan 1% tetap dipotong dari gajimu, tetapi hitungan <em>tool</em> ini tidak memakainya sebagai pengurang pajak.</p><p>Premi yang dibayar pemberi kerja, yaitu JKK, JKM, dan BPJS Kesehatan bagian perusahaan, justru dihitung sebagai tambahan penghasilan bruto. Itu sebabnya penghasilan yang dipajaki sedikit lebih besar daripada gaji di kontrak. <em>Tool</em> ini memakai batas upah Rp12.000.000 sebulan untuk BPJS Kesehatan, serta batas upah JP Rp10.547.400 untuk Januari dan Februari dan Rp11.086.300 mulai Maret. Tarif JKK mengikuti kelas risiko pekerjaanmu dan bisa kamu pilih di <em>tool</em>.</p>"
       },
       {
-        "h3": "Pemotongan bulanan dengan TER dan perhitungan ulang di Desember",
-        "html": "<p>Sejak 2024, pemberi kerja memotong PPh 21 pegawai tetap setiap bulan dengan tarif efektif rata-rata (TER). Tarif ini hanya alat bantu pemotongan: pemberi kerja mengalikan penghasilan bruto bulan itu dengan persentase TER yang sesuai kelompok PTKP-mu, yaitu kategori A, B atau C. Pada Desember (atau pada bulan terakhir kamu bekerja), pemberi kerja menghitung ulang pajak setahun penuh dengan tarif Pasal 17, lalu mengurangkan pajak yang sudah dipotong dari Januari sampai November. Kalkulator ini menghitung angka setahun penuh itu, bukan potongan per bulan.</p>"
+        "h3": "TER kategori A, B, C dan masa pajak Desember",
+        "html": "<p>Sejak 2024, pemberi kerja memotong PPh 21 karyawan tetap setiap bulan dengan tarif efektif rata-rata (TER). Penghasilan bruto bulan itu dikalikan persentase TER sesuai kategori PTKP-mu. Dari Januari sampai November, potongan ini hanya cicilan. Pada masa pajak Desember (atau bulan terakhir kamu bekerja), pemberi kerja menghitung ulang pajak setahun dengan tarif Pasal 17, lalu mengurangi potongan yang sudah berjalan. Selisihnya itulah potongan Desember, yang bisa jauh lebih besar atau lebih kecil daripada potongan bulan-bulan sebelumnya. <em>Tool</em> ini menghitung pajak setahun penuh, bukan potongan per bulan.</p>",
+        "table": {
+          "head": [
+            "Kategori TER",
+            "Status PTKP"
+          ],
+          "rows": [
+            [
+              "A",
+              "TK/0, TK/1, dan K/0"
+            ],
+            [
+              "B",
+              "TK/2, TK/3, K/1, dan K/2"
+            ],
+            [
+              "C",
+              "K/3"
+            ]
+          ]
+        }
       },
       {
-        "h3": "PPh 26 untuk orang asing yang belum menjadi penduduk pajak",
-        "html": "<p>Orang asing yang berada di Indonesia sampai 183 hari dalam 12 bulan dan tidak bermaksud menetap umumnya masih berstatus subjek pajak luar negeri. Kalkulator menghitung PPh 26 sebesar 20% dari penghasilan bruto, bersifat final, tanpa PTKP dan tanpa biaya jabatan. Kalau masa tinggalnya melewati 183 hari, orang itu menjadi subjek pajak dalam negeri dan dikenai PPh 21 progresif seperti pegawai lainnya. Perjanjian penghindaran pajak berganda antara Indonesia dan negara asal bisa mengubah hasilnya, tetapi tidak dimodelkan di sini.</p>"
+        "h3": "PPh 26 untuk WNA yang bukan subjek pajak dalam negeri",
+        "html": "<p>WNA yang berada di Indonesia tidak lebih dari 183 hari dalam 12 bulan dan tidak bermaksud menetap umumnya masih subjek pajak luar negeri. Untuk status ini, <em>tool</em> menghitung PPh 26 sebesar 20% dari penghasilan bruto, bersifat final, tanpa PTKP dan tanpa biaya jabatan. Begitu masa tinggalnya melewati 183 hari, orang itu menjadi subjek pajak dalam negeri dan dipotong PPh 21 progresif seperti karyawan lain. Perjanjian penghindaran pajak berganda (P3B) antara Indonesia dan negara asal bisa mengubah hasilnya, tetapi tidak dimodelkan di sini.</p>"
       }
     ],
     "sources": [
@@ -111,83 +131,87 @@
   "examples": [
     {
       "key": "single-tk0",
-      "title": "Berapa PPh 21 dan gaji bersih untuk gaji Rp120.000.000 setahun (TK/0)?",
-      "intro": "<p>Contoh ini untuk pegawai lajang tanpa tanggungan (TK/0) dengan gaji Rp10.000.000 sebulan atau Rp120.000.000 setahun, dengan tarif JKK 0,24%. Premi pemberi kerja sebesar Rp5.448.000 ditambahkan dulu ke penghasilan, sehingga penghasilan bruto yang dihitung menjadi Rp125.448.000. Dari situ dikurangi biaya jabatan Rp6.000.000 (5% sudah melewati batasnya), JHT Rp2.400.000, JP Rp1.200.000 dan PTKP Rp54.000.000, sehingga penghasilan kena pajaknya Rp61.848.000. Pajaknya 5% dari Rp60.000.000 ditambah 15% dari sisa Rp1.848.000, dan totalnya Rp3.277.200. Setelah PPh 21 dan iuran BPJS (JHT, JP dan Kesehatan), gaji bersihnya sekitar Rp111.922.800 setahun, atau 93,3% dari gaji, dan dari setiap tambahan gaji, 19,2% terpotong untuk pajak dan iuran (tarif marginal).</p>",
-      "after": "<p>Pajak setahun itu setara Rp273.100 sebulan, tetapi potongan di slip gaji tidak persis sebesar itu, karena pemotongan bulanan memakai TER dan baru dikoreksi di Desember.</p>"
+      "title": "Berapa PPh 21 dan gaji bersih karyawan lajang (TK/0) bergaji Rp120.000.000 setahun?",
+      "intro": "<p>Gaji Rp120.000.000 setahun berarti Rp10.000.000 sebulan. Pemberi kerja menambahkan premi JKK, JKM, dan BPJS Kesehatan bagian perusahaan Rp5.448.000 ke penghasilan bruto, lalu hitungan mengurangi biaya jabatan Rp6.000.000 (batas maksimumnya sudah tercapai), JHT Rp2.400.000, JP Rp1.200.000, dan PTKP TK/0 Rp54.000.000. PKP-nya hanya sedikit di atas Rp60.000.000, sehingga hampir seluruh pajak jatuh di lapisan 5% dan hanya sebagian kecil di lapisan 15%. Hasilnya PPh 21 Rp3.277.200 setahun. Setelah iuran BPJS, gaji bersih setahun Rp111.922.800 (93,3% dari gaji bruto), atau sekitar Rp9.326.900 sebulan.</p>",
+      "after": "<p>Angka bulanan di slip gajimu bisa berbeda dari rata-rata ini, karena Januari sampai November dipotong dengan TER kategori A dan Desember menyesuaikan sisanya.</p>"
     },
     {
       "key": "married-two-children",
-      "title": "Cara menghitung PPh 21 pegawai menikah dengan dua anak (K/2) bergaji Rp180.000.000",
-      "intro": "<p>Contoh ini untuk pegawai menikah dengan dua tanggungan (K/2) dan gaji Rp15.000.000 sebulan atau Rp180.000.000 setahun. PTKP-nya Rp67.500.000, yaitu Rp54.000.000 ditambah Rp4.500.000 untuk status kawin dan Rp9.000.000 untuk dua tanggungan. Biaya jabatan tetap di batas Rp6.000.000, sedangkan iuran JP hanya Rp1.319.578 karena upahnya sudah melewati batas upah JP, dan iuran BPJS Kesehatan berhenti di Rp1.440.000 karena batas upahnya Rp12.000.000. Dengan premi pemberi kerja Rp6.732.000, penghasilan kena pajaknya Rp108.312.000, dan PPh 21-nya Rp10.246.800. Gaji bersihnya sekitar Rp163.393.622 (90,8%), dan dari setiap tambahan gaji, 16,8% terpotong untuk pajak dan iuran.</p>",
-      "after": "<p>Kalau istri juga bekerja, cara menggabungkan atau memisahkan penghasilan suami dan istri bisa mengubah pajak keluarga. Hitung dulu lewat <em>tool</em> <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\">Pisah vs Gabung</a>.</p>"
+      "title": "Cara menghitung PPh 21 karyawan kawin dengan dua anak (K/2) bergaji Rp180.000.000",
+      "intro": "<p>Dengan status K/2, PTKP-mu Rp67.500.000, atau Rp13.500.000 lebih besar daripada PTKP TK/0. Gaji Rp180.000.000 ditambah premi pemberi kerja Rp6.732.000, lalu dikurangi biaya jabatan Rp6.000.000, JHT Rp3.600.000, JP Rp1.319.578, dan PTKP. Sisa Rp422 dibuang karena PKP dibulatkan ke bawah ke ribuan penuh, sehingga PKP menjadi Rp108.312.000. Dari situ pajaknya Rp3.000.000 untuk lapisan 5% ditambah 15% dari Rp48.312.000, jadi PPh 21 Rp10.246.800. Gaji bersih setahun Rp163.393.622 (90,8% dari gaji bruto) setelah PPh 21 dan iuran BPJS.</p>",
+      "after": "<p>JP Rp1.319.578 lebih kecil daripada 1% gaji karena iuran JP dihitung dari upah yang dibatasi plafon. Kalau pasanganmu juga bekerja, hasilnya bergantung pada pilihan gabung atau pisah, yang bisa kamu bandingkan di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>.</p>"
     },
     {
       "key": "non-resident",
       "title": "Berapa PPh 26 untuk WNA yang bekerja di Indonesia kurang dari 183 hari dengan gaji Rp600.000.000?",
-      "intro": "<p>Contoh ini untuk orang asing dengan penghasilan Rp600.000.000 setahun yang belum berstatus penduduk pajak, misalnya karena berada di Indonesia kurang dari 183 hari. PPh 26 dihitung 20% dari penghasilan bruto, jadi Rp120.000.000, dan tidak ada PTKP, biaya jabatan maupun tarif bertingkat. Kalkulator juga memasukkan iuran BPJS seperti yang dibayar penduduk pajak (JHT Rp12.000.000, JP Rp1.319.578 dan Kesehatan Rp1.440.000), karena pilihan itu aktif sejak awal di kalkulator. Gaji bersihnya sekitar Rp465.240.422 (77,5%), dan dari setiap tambahan gaji, 22,0% terpotong untuk pajak dan iuran.</p>",
-      "after": "<p>Pilihan iuran BPJS bisa dimatikan di kalkulator kalau kamu memang tidak membayarnya. Perjanjian pajak berganda tidak dihitung.</p>"
+      "intro": "<p>Untuk WNA yang belum menjadi subjek pajak dalam negeri, PPh 26 dihitung langsung 20% dari penghasilan bruto: Rp120.000.000 dari gaji Rp600.000.000. Pajak ini final dan tidak ada PTKP maupun biaya jabatan yang bisa dikurangkan. Selain itu, contoh ini tetap memasukkan iuran BPJS: JHT Rp12.000.000 (2% dari seluruh gaji), JP Rp1.319.578, dan BPJS Kesehatan Rp1.440.000. Gaji bersih setahun menjadi Rp465.240.422, atau 77,5% dari gaji bruto.</p>",
+      "after": "<p>Apakah WNA wajib ikut BPJS bergantung pada jenis izin kerja dan kontraknya, jadi tanyakan ke bagian SDM. Kalau P3B dengan negara asalmu berlaku, pajak yang sebenarnya bisa lebih rendah dari angka di atas.</p>"
     }
   ],
-  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di aturan pajak Indonesia. Kalkulator ini tidak memodelkannya, jadi hitung sendiri dampaknya di SPT Tahunan.</p>",
+  "strategyIntro": "<p>Cara-cara di bawah ini legal dan umum dipakai karyawan. <em>Tool</em> ini belum memodelkannya, jadi hitung sendiri dampaknya dan simpan buktinya.</p>",
   "strategies": [
     {
       "h3": "Zakat lewat BAZNAS atau LAZ resmi",
-      "html": "<p>Zakat penghasilan yang dibayar ke badan amil zakat resmi, yaitu BAZNAS atau lembaga amil zakat (LAZ) yang disahkan pemerintah, boleh dikurangkan dari penghasilan bruto. Pengurang ini berlaku untuk wajib pajak beragama Islam, dan nilainya sebesar zakat yang sungguh-sungguh kamu bayar. Simpan bukti setor zakat dari lembaganya, lalu laporkan di SPT Tahunan. Zakat yang diberikan langsung ke perorangan tidak memenuhi syarat.</p>"
+      "html": "<p>Zakat penghasilan yang dibayarkan ke BAZNAS atau lembaga amil zakat (LAZ) resmi dan diakui pemerintah boleh dikurangkan dari penghasilan bruto. Cocok untuk karyawan Muslim yang memang berzakat, karena pajaknya turun tanpa mengubah niat berzakat. Syaratnya, simpan bukti setor zakat dan serahkan ke bagian HRD agar masuk ke perhitungan di bukti potong, atau laporkan di SPT Tahunan. Zakat yang disetor ke pihak yang tidak resmi tidak bisa dipakai sebagai pengurang.</p>"
     },
     {
       "h3": "Iuran dana pensiun (DPLK)",
-      "html": "<p>Iuran ke dana pensiun yang pendiriannya disahkan Menteri Keuangan, termasuk DPLK (Dana Pensiun Lembaga Keuangan), bisa mengurangi penghasilan kena pajak asalkan iurannya memenuhi syarat dalam aturan pajak. Cocok untuk pegawai atau pekerja lepas yang ingin menyiapkan pensiun sekaligus menekan pajak. Uangnya baru bisa diambil secara utuh setelah usia pensiun, jadi jangan menyetor dana yang mungkin kamu butuhkan dalam beberapa tahun ke depan. Cara menyiapkan pensiun tanpa menjadi PNS dibahas di <a href=\"https://blog.adjiebrotots.com/id/pensiun-tanpa-jadi-pns/\">tulisan pensiun tanpa jadi PNS</a>.</p>"
+      "html": "<p>Iuran yang kamu setor sendiri ke dana pensiun yang pendiriannya disahkan Menteri Keuangan, misalnya DPLK (Dana Pensiun Lembaga Keuangan), bisa mengurangi penghasilan kena pajak, dengan batas yang ditetapkan peraturan. Cocok untuk kamu yang ingin menyiapkan masa pensiun sambil menekan pajak. Dananya terkunci sampai masa pensiun, dan manfaat yang dibayarkan nanti tetap punya ketentuan pajaknya sendiri. Cek batas terbaru di DJP sebelum menyetor.</p>"
     },
     {
-      "h3": "Pastikan status PTKP-mu benar",
-      "html": "<p>PTKP ditentukan oleh status kawin dan jumlah tanggunganmu, dan selisihnya nyata: satu tanggungan menambah Rp4.500.000 penghasilan yang bebas pajak. Laporkan perubahan keluarga ke bagian HRD secepatnya, dan cek apakah statusmu sudah terdaftar dengan benar di sistem pajak. Status yang terlalu rendah membuat potonganmu kelebihan, yang baru kembali setelah kamu lapor SPT Tahunan. Cocok untuk siapa saja yang baru menikah, punya anak atau menanggung orang tua.</p>"
+      "h3": "Pastikan status PTKP dan kategori TER-mu benar",
+      "html": "<p>Status PTKP dicatat per 1 Januari. Kalau kamu menikah atau punya anak baru, laporkan ke pemberi kerja dan perbarui status di Coretax supaya PTKP dan kategori TER ikut naik. Kalau terlambat, kelebihan pajaknya baru bisa diperbaiki lewat penghitungan Desember atau SPT Tahunan. Batas tanggungan tiga orang, jadi tambahan anak keempat tidak menaikkan PTKP.</p>"
     },
     {
       "h3": "Suami istri yang sama-sama bekerja: gabung atau pisah",
-      "html": "<p>Pasangan yang sama-sama berpenghasilan bisa memilih menggabungkan atau memisahkan penghasilan dalam SPT, dan pilihan terbaik bergantung pada selisih gaji keduanya. Coba dengan angkamu sendiri di <em>tool</em> <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\">Pisah vs Gabung</a>, lalu baca penjelasannya di <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">tulisan pajak suami istri</a>. Pilihan ini punya syarat administrasi, jadi pastikan kamu memenuhinya sebelum melapor.</p>"
+      "html": "<p>Secara umum, penghasilan istri digabung dengan suami, kecuali ada perjanjian pisah harta (PH) atau istri memilih menjalankan hak dan kewajiban pajaknya sendiri (MT). Mana yang lebih ringan bergantung pada selisih penghasilan kalian berdua, dan hasilnya bisa lebih hemat atau justru lebih mahal. Bandingkan dulu di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>, atau baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">penjelasan gabung atau pisah untuk suami istri</a>.</p>"
     },
     {
       "h3": "Cocokkan bukti potong dengan hitunganmu",
-      "html": "<p>Pajak yang dipotong pemberi kerja selama setahun hanyalah perkiraan, dan hitungan akhirnya ada di bukti potong 1721-A1 serta SPT Tahunan. Cek apakah PTKP, penghasilan bruto dan iuran BPJS di bukti potong sudah sesuai. Kalau pajak yang dipotong lebih besar daripada pajak sebenarnya, kamu bisa meminta kelebihannya kembali lewat SPT Tahunan. Cocok untuk semua pegawai, terutama yang berganti pekerjaan di tengah tahun.</p>"
+      "html": "<p>Setiap tahun, pemberi kerja menerbitkan bukti potong 1721-A1 yang memuat penghasilan bruto, pengurang, PKP, dan PPh 21 yang sudah dipotong. Bandingkan angkanya dengan hitungan di <em>tool</em> ini dan slip gajimu. Kalau ada yang janggal, misalnya status PTKP atau penghasilan yang tidak tercatat, minta HRD memperbaikinya sebelum kamu melapor, karena SPT Tahunan akan mengacu pada angka tersebut.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari satu pekerjaan.</strong> Kalkulator menghitung gaji dari satu pemberi kerja sepanjang satu tahun penuh, tanpa penghasilan sampingan, usaha, sewa atau bunga.",
-    "<strong>Tanpa bonus, THR, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun. Bonus dan THR yang dipotong dengan cara tersendiri tidak dimodelkan.",
-    "<strong>Tanpa zakat, iuran dana pensiun dan pengurang lain.</strong> Semuanya tidak dimasukkan ke angka, jadi hasilnya bisa lebih tinggi daripada pajak yang sebenarnya kamu bayar.",
-    "<strong>Status kawin tanpa penggabungan penghasilan istri.</strong> Kalkulator menambah PTKP untuk status kawin dan tanggungan, tetapi tidak menghitung kasus istri yang penghasilannya digabung.",
-    "<strong>Potongan bulanan tidak dihitung.</strong> TER dan perhitungan ulang Desember tidak dimodelkan, jadi hasilnya adalah pajak setahun penuh dan bukan angka di slip gaji bulan tertentu.",
-    "<strong>Tanpa perjanjian penghindaran pajak berganda.</strong> Hasil PPh 26 tidak memperhitungkan perjanjian antara Indonesia dan negara asal.",
-    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Hasil akhir ditentukan oleh DJP dan pemberi kerjamu, jadi perlakukan angkanya sebagai gambaran."
+    "<strong>Hanya penghasilan dari satu pekerjaan setahun penuh.</strong> Penghasilan dari beberapa pemberi kerja, kerja paruh waktu, atau usaha sampingan tidak dihitung.",
+    "<strong>THR dan bonus tidak dimodelkan.</strong> Keduanya ikut dipotong PPh 21 di bulan diterimanya dan menaikkan penghasilan bruto bulan itu, jadi potongan bulan tersebut bisa lebih besar dari angka di sini.",
+    "<strong>Zakat dan DPLK belum dihitung.</strong> Keduanya bisa menurunkan PKP, tetapi tidak ada kolomnya di hitungan ini.",
+    "<strong>Potongan bulanan tidak dihitung.</strong> <em>Tool</em> ini mengeluarkan angka setahun penuh, jadi slip gaji per bulan dengan TER bisa berbeda.",
+    "<strong>P3B tidak dimodelkan.</strong> Pajak WNA bisa berubah menurut perjanjian penghindaran pajak berganda antara Indonesia dan negara asalnya.",
+    "<strong>Penghasilan dari luar negeri dan perubahan status tidak dihitung.</strong> Kalau kamu pindah kerja ke luar negeri, status pajakmu bisa berubah menjadi subjek pajak luar negeri, dan itu perlu kamu urus sendiri di DJP. Untuk gambaran pajak di negara tujuan, lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/australia/id/\">Australia</a> atau <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/id/\">Singapura</a>.",
+    "<strong>Hasil ini estimasi.</strong> Aturan bisa berubah, jadi cek bukti potong dan DJP untuk angka resminya."
   ],
   "faq": [
     {
-      "q": "Bagaimana cara menghitung PPh 21 atas gaji?",
-      "a": "<p>Perhitungannya ada lima langkah. Pertama, jumlahkan gaji setahun dengan premi yang dibayar pemberi kerja (JKK, JKM dan BPJS Kesehatan). Kedua, kurangi biaya jabatan 5% (maksimum Rp6.000.000 setahun), iuran JHT dan JP yang kamu bayar sendiri, lalu PTKP sesuai statusmu. Ketiga, bulatkan hasilnya ke bawah ke ribuan penuh, yang menjadi penghasilan kena pajak. Keempat, terapkan tarif bertingkat Pasal 17 (5%, 15%, 25%, 30% dan 35%). Kelima, hasilnya adalah PPh 21 setahun. Contohnya ada di bagian contoh perhitungan, dan kamu bisa mencoba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+      "q": "Bagaimana cara menghitung PPh 21 atas gaji karyawan tetap?",
+      "a": "<p>Hitung penghasilan bruto setahun, kurangi biaya jabatan (5%, maksimum Rp6.000.000), iuran JHT dan JP yang kamu bayar sendiri, lalu PTKP sesuai statusmu. Hasilnya PKP, yang dibulatkan ke bawah ke ribuan penuh, lalu dikenai tarif Pasal 17: 5% sampai Rp60.000.000, 15% sampai Rp250.000.000, 25% sampai Rp500.000.000, 30% sampai Rp5.000.000.000, dan 35% di atasnya. Isi gajimu di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a> untuk melihat semua barisnya.</p>"
     },
     {
       "q": "Kenapa potongan PPh 21 di bulan Desember lebih besar?",
-      "a": "<p>Dari Januari sampai November, pemberi kerja memotong pajak dengan tarif efektif rata-rata (TER) bulanan, yaitu persentase tetap menurut kategori PTKP-mu yang dikalikan dengan penghasilan bruto bulan itu (PP 58/2023 dan PMK 168/2023). Tarif ini praktis dan sengaja dibuat sederhana, tetapi tidak memperhitungkan PTKP dan tarif bertingkat secara tepat. Pada Desember (atau bulan terakhir kamu bekerja), pemberi kerja menghitung ulang pajak setahun penuh dengan tarif Pasal 17, lalu mengurangkan pajak yang sudah dipotong dari Januari sampai November. Kalau pajak setahun lebih besar daripada total potongan bulanan, selisihnya dipotong sekaligus di Desember, dan itulah sebabnya potongan bulan itu terasa melonjak. Total pajak setahunnya tetap sama dengan hitungan Pasal 17. Kalkulator ini menghitung angka setahun penuh itu, jadi potongan di slip gaji bulananmu bisa berbeda dari angka di sini.</p>"
+      "a": "<p>Dari Januari sampai November, pemberi kerja memotong dengan tarif efektif rata-rata (TER), yaitu persentase tetap dari penghasilan bruto bulanan menurut kategori A, B, atau C. TER hanya alat bantu, jadi di masa pajak Desember pemberi kerja menghitung ulang pajak setahun dengan tarif Pasal 17 dan mengurangi potongan Januari sampai November. Kalau gajimu naik, ada bonus, atau penghasilannya tidak merata, selisihnya terkumpul di Desember. <em>Tool</em> ini menghitung angka setahun penuh, bukan potongan bulanan.</p>"
     },
     {
-      "q": "Apa itu bukti potong 1721-A1 dan apa hubungannya dengan SPT Tahunan?",
-      "a": "<p>Bukti potong 1721-A1 adalah bukti pemotongan PPh 21 untuk pegawai tetap, yang diberikan pemberi kerja setelah tahun pajak berakhir. Isinya penghasilan bruto, pengurang, PTKP dan total pajak yang sudah dipotong selama setahun. Kamu memakai angka-angka itu untuk mengisi SPT Tahunan orang pribadi, yang paling lambat dilaporkan pada 31 Maret tahun berikutnya. Kalau pajak yang dipotong sama dengan pajak yang seharusnya, tidak ada yang perlu dibayar lagi. Kalau lebih besar, kamu bisa meminta kelebihannya kembali, dan kalau lebih kecil, kamu membayar kekurangannya.</p>"
+      "q": "Apa itu TER kategori A, B, dan C?",
+      "a": "<p>Kategori TER ditentukan oleh status PTKP: kategori A untuk TK/0, TK/1, dan K/0, kategori B untuk TK/2, TK/3, K/1, dan K/2, serta kategori C untuk K/3. Tiap kategori punya tabel persentase sendiri menurut besar penghasilan bruto bulanan. Pemberi kerja memakai tabel ini untuk Januari sampai November, dan perhitungan akhir tetap mengikuti tarif Pasal 17.</p>"
     },
     {
       "q": "Berapa PTKP 2026 untuk TK/0 dan K/2?",
-      "a": "<p>PTKP untuk TK/0 adalah Rp54.000.000 setahun, dan untuk K/2 sebesar Rp67.500.000, yaitu Rp54.000.000 ditambah Rp4.500.000 untuk status kawin dan Rp9.000.000 untuk dua tanggungan. Tanggungan yang dihitung paling banyak tiga orang. Tabel lengkapnya ada di bagian aturan di atas.</p>"
+      "a": "<p>PTKP TK/0 adalah Rp54.000.000 setahun dan PTKP K/2 adalah Rp67.500.000, yaitu Rp54.000.000 ditambah Rp4.500.000 untuk status kawin dan Rp9.000.000 untuk dua tanggungan.</p>"
     },
     {
-      "q": "Apakah iuran BPJS mengurangi PPh 21?",
-      "a": "<p>Hanya sebagian yang mengurangi. Iuran JHT 2% dan JP 1% yang dibayar pegawai mengurangi penghasilan kena pajak, sedangkan iuran BPJS Kesehatan 1% tidak dikurangkan dalam hitungan kalkulator ini. Kebalikannya terjadi pada premi pemberi kerja: JKK, JKM dan bagian BPJS Kesehatan yang dibayar pemberi kerja justru ditambahkan ke penghasilan bruto. Karena itu BPJS memengaruhi gaji bersih dalam dua arah, lewat iuran yang dipotong dari gaji dan lewat pajak.</p>"
+      "q": "Apakah iuran BPJS mengurangi PPh 21, dan kenapa penghasilan kena pajak lebih besar dari gaji di kontrak?",
+      "a": "<p>Iuran JHT 2% dan JP 1% yang kamu bayar sendiri mengurangi PKP. Iuran BPJS Kesehatan 1% tidak dipakai sebagai pengurang di hitungan ini. Sebaliknya, premi JKK, JKM, dan BPJS Kesehatan yang dibayar perusahaan dihitung sebagai tambahan penghasilan bruto, sehingga dasar pajaknya sedikit di atas gaji di kontrak. Pada contoh Rp120.000.000, tambahan itu Rp5.448.000.</p>"
     },
     {
-      "q": "Apakah orang asing yang bekerja di Indonesia membayar PPh 26?",
-      "a": "<p>Orang asing yang berada di Indonesia sampai 183 hari dalam 12 bulan umumnya berstatus subjek pajak luar negeri, dan penghasilannya dikenai PPh 26 sebesar 20% dari penghasilan bruto, bersifat final. Begitu masa tinggalnya melewati 183 hari, orang itu menjadi subjek pajak dalam negeri dan dikenai PPh 21 progresif dengan PTKP. Kalkulator menghitung kedua jalur ini, dengan pilihan terpisah untuk iuran BPJS. Perjanjian pajak berganda tidak dimodelkan.</p>"
+      "q": "Apa itu bukti potong 1721-A1 dan apa hubungannya dengan SPT Tahunan?",
+      "a": "<p>Bukti potong 1721-A1 adalah bukti dari pemberi kerja yang memuat penghasilan bruto, pengurang, PKP, dan PPh 21 yang sudah dipotong selama setahun. Angka ini dipakai untuk mengisi SPT Tahunan orang pribadi, yang kini dilaporkan lewat Coretax. Kamu perlu NPWP (yang sekarang memakai NIK untuk WNI) agar pemotongan dan pelaporan berjalan.</p>"
+    },
+    {
+      "q": "Apakah WNA yang bekerja di Indonesia membayar PPh 26?",
+      "a": "<p>Itu bergantung pada status pajaknya. WNA yang berada di Indonesia lebih dari 183 hari dalam 12 bulan menjadi subjek pajak dalam negeri dan dipotong PPh 21 progresif. Yang kurang dari itu umumnya subjek pajak luar negeri dan dikenai PPh 26 sebesar 20% dari penghasilan bruto. P3B antara Indonesia dan negara asalnya bisa mengubah hasilnya, tetapi tidak dimodelkan di <em>tool</em> ini.</p>"
     },
     {
       "q": "Suami istri sama-sama bekerja, lebih baik pajaknya digabung atau dipisah?",
-      "a": "<p>Hasilnya bergantung pada selisih gaji suami dan istri, dan tidak ada jawaban yang berlaku untuk semua pasangan. Hitung dengan angkamu di <em>tool</em> <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\">Pisah vs Gabung</a>, dan baca penjelasan lengkapnya di <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">tulisan pajak suami istri</a>. Untuk membandingkan gaji bersih dengan biaya hidup di kota lain, pakai juga <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>"
+      "a": "<p>Tidak ada jawaban yang berlaku untuk semua pasangan, karena hasilnya bergantung pada penghasilan masing-masing. Bandingkan di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a> dan baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">penjelasan gabung atau pisah untuk suami istri</a>.</p>"
     }
   ],
   "lineLabels": {
