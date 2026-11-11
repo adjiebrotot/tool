@@ -157,6 +157,12 @@
     }
   ],
   "lineLabels": {
+    "Child deduction": "Potongan anak",
+    "Insurance premium deduction": "Potongan premi asuransi",
+    "Less 263 a child": "Dikurangi 263 per anak",
+    "Professional expenses (3%, 2,000 to 4,000)": "Biaya profesi (3%, 2.000 sampai 4.000)",
+    "Rounding, and no federal tax below 25": "Pembulatan, dan tidak ada pajak federal di bawah 25",
+    "Rounding": "Pembulatan",
     "AHV/IV/EO (5.30%)": "Iuran pensiun dasar AHV/IV/EO (5,30%)",
     "Unemployment insurance ALV (1.10%)": "Iuran pengangguran ALV (1,10%)",
     "Non-occupational accident insurance NBU": "Asuransi kecelakaan di luar pekerjaan (NBU)",

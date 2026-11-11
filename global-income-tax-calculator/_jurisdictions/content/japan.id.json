@@ -182,6 +182,9 @@
     }
   ],
   "lineLabels": {
+    "Basic deduction, national tax": "Potongan dasar, pajak nasional",
+    "Plus the reconstruction surtax (2.1%)": "Ditambah pajak tambahan rekonstruksi (2,1%)",
+    "Rounding (income to 1,000, tax down to 100)": "Pembulatan (penghasilan ke 1.000, pajak ke bawah ke 100)",
     "Health insurance": "Asuransi kesehatan",
     "Health insurance with long-term care": "Asuransi kesehatan dengan perawatan jangka panjang",
     "Child-support levy (from April 2026 wages)": "Iuran dukungan anak (dari gaji April 2026)",

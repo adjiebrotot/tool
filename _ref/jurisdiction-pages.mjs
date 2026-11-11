@@ -59,6 +59,8 @@ const T = {
     gross: 'Gross pay', grossW: 'a year, before tax',
     net: 'Take-home pay',
     netW: (pct, month) => `${pct} of gross, ${month} a month`,
+    band: (lo, hi, rate) => `${lo} to ${hi} at ${rate}`, rising: (a, b) => `${a} rising to ${b}`,
+    bandW: 'bracket, part of the tax above', adjW: 'part of the tax above',
     kind: { tax: 'tax, taken from pay', social: 'contribution, taken from pay', other: 'taken from pay', benefit: 'added to pay', deduction: 'lowers the taxable income', credit: 'credit, already inside the tax', employer: 'paid by the employer, on top', info: 'for information' },
     openEx: 'Open this example in the calculator',
     marginal: m => `The next 1% of pay loses ${m} to tax and contributions.`,
@@ -91,6 +93,8 @@ const T = {
     gross: 'Gaji kotor', grossW: 'setahun, sebelum pajak',
     net: 'Gaji bersih',
     netW: (pct, month) => `${pct} dari gaji kotor, ${month} sebulan`,
+    band: (lo, hi, rate) => `${lo} sampai ${hi}, tarif ${rate}`, rising: (a, b) => `${a} naik ke ${b}`,
+    bandW: 'lapisan tarif, bagian dari pajak di atas', adjW: 'bagian dari pajak di atas',
     kind: { tax: 'pajak, dipotong dari gaji', social: 'iuran, dipotong dari gaji', other: 'dipotong dari gaji', benefit: 'menambah gaji', deduction: 'mengurangi penghasilan kena pajak', credit: 'kredit pajak, sudah masuk di pajaknya', employer: 'dibayar pemberi kerja, di luar gaji', info: 'keterangan' },
     openEx: 'Buka contoh ini di kalkulator',
     marginal: m => `Dari setiap tambahan 1% gaji, ${m} habis untuk pajak dan iuran.`,
@@ -136,11 +140,24 @@ function problem(msg){ PROBLEMS.push(msg); }
 function exampleHtml(p, ex, c, lang){
   const t = T[lang], cc = p.cc;
   const r = run(cc, ex);
-  const label = l => {
-    if(lang === 'en') return l.label;
-    const m = c.lineLabels && c.lineLabels[l.label];
-    if(!m) problem(`${p.slug}.${lang}: no Indonesian for line "${l.label}"`);
-    return m || l.label;
+  const say = text => {
+    if(lang === 'en') return text;
+    const m = c.lineLabels && c.lineLabels[text];
+    if(!m) problem(`${p.slug}.${lang}: no Indonesian for line "${text}"`);
+    return m || text;
+  };
+  const label = l => say(l.label);
+  const rate = v => Array.isArray(v) ? t.rising(rate(v[0]), rate(v[1])) : (lang === 'id' ? String(+(v*100).toFixed(4)).replace('.', ',') : String(+(v*100).toFixed(4))) + '%';
+  // A tax line worked out on marginal brackets, bracket by bracket (the engine's l.brackets, as the
+  // calculator's breakdown shows it): each bracket the base reaches, then what turns their sum into
+  // the line (credits, surcharges), then any rounding the rules make.
+  const bandRows = l => {
+    const b = l.brackets;
+    if(!b || !(b.base > 0)) return [];
+    const li = (text, w, v) => `<li class="jx-k-band"><span class="gd-calc-l">${esc(text)}</span><span class="gd-calc-w">${w}</span><b>${v}</b></li>`;
+    return b.rows.map(x => li(t.band(money(x.lo, cc, lang), money(x.hi, cc, lang), rate(x.rate)), t.bandW, money(x.amount, cc, lang)))
+      .concat(b.adj.map(a => li(say(a.label), t.adjW, money(Math.abs(a.amount), cc, lang))))
+      .concat(b.rest ? [li(say(b.restLabel), t.adjW, money(b.rest, cc, lang))] : []);
   };
   const amt = l => {
     if(['tax', 'social', 'other'].includes(l.kind)) return l.amount ? money(-l.amount, cc, lang) : money(0, cc, lang);
@@ -149,8 +166,10 @@ function exampleHtml(p, ex, c, lang){
   };
   const rows = [`<li><span class="gd-calc-l">${t.gross}</span><span class="gd-calc-w">${t.grossW}</span><b>${money(ex.amount, cc, lang)}</b></li>`];
   for(const l of r.lines){
+    if(l.inBrackets) continue;     // already a row under its tax line's brackets
     // An info line with nothing to add is said in its label alone.
     rows.push(`<li class="jx-k-${l.kind}"><span class="gd-calc-l">${esc(label(l))}</span><span class="gd-calc-w">${t.kind[l.kind] || ''}</span><b>${amt(l)}</b></li>`);
+    rows.push(...bandRows(l));
   }
   // The engine's net can include a holiday allowance added on top (the Netherlands).
   rows.push(`<li class="gd-calc-total"><span class="gd-calc-l">${t.net}</span><span class="gd-calc-w">${t.netW(pct(r.net / ex.amount, lang), money(r.net / 12, cc, lang))}</span><b>${money(r.net, cc, lang)}</b></li>`);

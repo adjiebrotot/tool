@@ -219,6 +219,8 @@
     }
   ],
   "lineLabels": {
+    "Income tax, resident rates": "Pajak penghasilan, tarif penduduk",
+    "Less the rebate (chargeable income 35,000 or less)": "Dikurangi rebate (penghasilan kena pajak 35.000 atau kurang)",
     "EPF (11%)": "EPF (11%)",
     "EPF (2% for expats)": "EPF (2% untuk ekspat)",
     "SOCSO and EIS (0.5% + 0.2%, wage cap 6,000)": "SOCSO dan EIS (0,5% + 0,2%, batas gaji RM6.000)",

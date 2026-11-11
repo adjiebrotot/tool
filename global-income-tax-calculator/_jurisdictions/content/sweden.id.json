@@ -135,6 +135,8 @@
     }
   ],
   "lineLabels": {
+    "Tax reductions (pension fee offset, job tax credit, earned income reduction), inside the municipal and state tax above": "Pengurangan pajak (kompensasi iuran pensiun, kredit pajak kerja, pengurangan penghasilan kerja), sudah termasuk di pajak kota dan negara di atas",
+    "Less the tax reductions left after the municipal tax": "Dikurangi sisa pengurangan pajak setelah pajak kota",
     "Basic allowance (grundavdrag)": "Pengurang dasar (grundavdrag)",
     "Municipal tax (30.55%) after tax reductions": "Pajak kota dan wilayah (30,55%) setelah pengurang pajak",
     "Pension fee (7%)": "Iuran pensiun (7%)",

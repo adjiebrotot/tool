@@ -167,6 +167,8 @@
     }
   ],
   "lineLabels": {
+    "Basic deduction (1.5 million a person)": "Potongan dasar (1,5 juta per orang)",
+    "Less the earned income tax credit": "Dikurangi kredit pajak penghasilan kerja",
     "National pension (4.75%, cap rises 1 Jul)": "Dana pensiun nasional (4,75%, batas naik 1 Juli)",
     "Health insurance (3.595%)": "Asuransi kesehatan (3,595%)",
     "Long-term care (13.14% of health)": "Perawatan jangka panjang (13,14% dari asuransi kesehatan)",

@@ -239,6 +239,8 @@
     "Income tax, working holiday maker rates": "Pajak penghasilan, tarif working holiday maker",
     "Income tax, foreign resident rates": "Pajak penghasilan, tarif penduduk asing",
     "Employer super guarantee, paid on top (12%)": "Super guarantee dari pemberi kerja, dibayar di luar gaji (12%)",
-    "Super guarantee, paid into your fund (12%)": "Super guarantee, disetor ke dana pensiunmu (12%)"
+    "Super guarantee, paid into your fund (12%)": "Super guarantee, disetor ke dana pensiunmu (12%)",
+    "Income tax, resident rates": "Pajak penghasilan, tarif penduduk",
+    "Less the low income tax offset (LITO)": "Dikurangi low income tax offset (LITO)"
   }
 }

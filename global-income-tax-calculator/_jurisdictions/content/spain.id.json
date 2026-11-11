@@ -158,6 +158,8 @@
     }
   ],
   "lineLabels": {
+    "Less the tax on the personal and family minimum": "Dikurangi pajak atas minimum pribadi dan keluarga",
+    "Less the minimum wage deduction (SMI)": "Dikurangi potongan upah minimum (SMI)",
     "Social security (6.50%, base cap 5,101.20 a month)": "Jaminan sosial (6,50%, batas dasar iuran €5.101,20 per bulan)",
     "Social security (6.55%, base cap 5,101.20 a month)": "Jaminan sosial (6,55%, batas dasar iuran €5.101,20 per bulan)",
     "Other expenses (2,000)": "Biaya lain (€2.000)",

@@ -936,7 +936,7 @@ function es(g, k){
   const ss = rate*min(g, 12*5101.20);
   lines.push(L('esSs', 'Social security (' + (rate*100).toFixed(2) + '%, base cap 5,101.20 a month)', ss, 'social', 'segsoc', 'official', F));
   if(k.esRegime === 'beckham'){
-    lines.push(L('esBeck', 'Beckham regime (24% to 600,000, 47% above)', 0.24*min(g, 600000) + 0.47*max(0, g - 600000), 'tax', 'aeat', 'secondary', F));
+    lines.push(bands(L('esBeck', 'Beckham regime (24% to 600,000, 47% above)', 0.24*min(g, 600000) + 0.47*max(0, g - 600000), 'tax', 'aeat', 'secondary', F), g, [[600000,.24],[null,.47]]));
     return finish(g, lines, { taxable: g });
   }
   lines[0].base = -1;   // social security comes off the work income
@@ -1207,7 +1207,7 @@ function hk(g, k){
   const std = 0.15*min(net, 5e6) + 0.16*max(0, net - 5e6);
   const stdWins = progt > std;
   const hl = L('hkTax', stdWins ? 'Salaries tax, standard rate on net income (15%, 16% above 5M)' : 'Salaries tax, progressive rates', min(progt, std), 'tax', 'ird', 'secondary', F);
-  lines.push(stdWins ? hl : bands(hl, max(0, net - allow), HK_BR));
+  lines.push(stdWins ? bands(hl, net, [[5e6,.15],[null,.16]]) : bands(hl, max(0, net - allow), HK_BR));
   const al = L('hkAllow', stdWins ? 'Allowances (basic, married, children), not used at the standard rate' : 'Allowances (basic, married, children)', allow, 'deduction', 'ird', 'official', F);
   lines.push(stdWins ? al : minus(al));
   return finish(g, lines, stdWins ? { taxable: net, taxableLabel: 'Net income, standard rate' } : { taxable: max(0, net - allow), taxableLabel: 'Net chargeable income' });
