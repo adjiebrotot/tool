@@ -3,14 +3,14 @@
   "lang": "id",
   "title": "Pajak Penghasilan Estonia 2026: Cara Hitung Gaji Bersih",
   "h1": "Cara menghitung pajak penghasilan di Estonia (2026)",
-  "description": "Hitung pajak penghasilan Estonia 2026: tarif tunggal 22% setelah tunjangan €700 per bulan, asuransi pengangguran 1,6%, pilar pensiun kedua, dua contoh.",
-  "lede": "<p>Estonia memajaki penghasilan dengan satu tarif tunggal 22% setelah tunjangan bebas pajak €700 per bulan, berbeda dengan tarif bertingkat Pasal 17 di Indonesia. Karyawan juga membayar asuransi pengangguran 1,6% dan, secara bawaan, 2% ke pilar pensiun kedua. Dari gaji bruto €36.000 setahun, karyawan membayar pajak penghasilan sekitar €5.787, sehingga gaji bersih (<em>take-home pay</em>) sekitar €28.917 atau 80,3%. Tanpa iuran pilar kedua, gaji bersihnya sekitar €29.479 (81,9%).</p>",
+  "description": "Hitung pajak penghasilan Estonia 2026: tarif tunggal 22% setelah batas bebas pajak €700 per bulan, asuransi pengangguran, pilar pensiun kedua, dua contoh.",
+  "lede": "<p>Estonia memajaki penghasilan dengan tarif tunggal 22% setelah penghasilan bebas pajak €700 per bulan, berbeda dengan tarif bertingkat Pasal 17 di Indonesia. Karyawan juga membayar asuransi pengangguran 1,6% dan, secara bawaan, 2% ke pilar pensiun kedua. Dari gaji bruto €36.000 setahun, karyawan membayar pajak penghasilan sekitar €5.787, sehingga gaji bersih (<em>take-home pay</em>) sekitar €28.917 atau 80,3%. Tanpa iuran pilar kedua, gaji bersihnya sekitar €29.479 (81,9%).</p>",
   "law": {
-    "intro": "<p>Angka berikut adalah tarif 2026 sebagaimana dihitung <em>tool</em> ini, dalam euro, untuk karyawan dengan satu gaji penuh setahun. Estonia hanya punya satu tarif pajak penghasilan nasional, jadi tidak ada kota yang perlu kamu pilih, meskipun pemerintah daerah mendapat bagian dari penerimaannya. Penduduk pajak Estonia dipajaki atas penghasilan dari seluruh dunia, dan kamu umumnya dihitung sebagai penduduk pajak kalau punya tempat tinggal tetap di sana atau berada di Estonia 183 hari atau lebih dalam dua belas bulan berturut-turut.</p>",
+    "intro": "<p>Angka berikut adalah tarif 2026 sebagaimana dihitung <em>tool</em> ini, dalam euro, untuk karyawan dengan satu gaji penuh setahun. Estonia hanya punya satu tarif pajak penghasilan nasional, jadi tidak ada tarif daerah yang perlu kamu hitung, meskipun pemerintah daerah mendapat bagian dari penerimaannya. Penduduk pajak Estonia dipajaki atas penghasilan dari seluruh dunia, dan kamu umumnya dihitung sebagai penduduk pajak kalau punya tempat tinggal tetap di sana atau berada di Estonia 183 hari atau lebih dalam dua belas bulan berturut-turut.</p>",
     "blocks": [
       {
-        "h3": "Tarif tunggal 22% dan tunjangan bebas pajak",
-        "html": "<p>Penghasilan dipajaki dengan tarif tunggal 22%. Setiap bulan kamu bisa memakai tunjangan bebas pajak €700 (€8.400 setahun), dan <em>tool</em> ini juga menyediakan pilihan tunjangan yang lebih tinggi, yaitu €776. Fungsinya seperti PTKP, tetapi <em>tool</em> ini hanya memakai tunjangan dasar tanpa tambahan untuk status kawin atau tanggungan seperti K/1 dan K/2 di Indonesia. Penghasilan kena pajak adalah gaji dikurangi asuransi pengangguran, iuran pilar pensiun kedua, dan tunjangan itu.</p>"
+        "h3": "Tarif tunggal 22% dan penghasilan bebas pajak",
+        "html": "<p>Penghasilan dipajaki dengan tarif tunggal 22%. Setiap bulan kamu bisa memakai penghasilan bebas pajak €700 (€8.400 setahun), dan <em>tool</em> ini juga menyediakan pilihan batas yang lebih tinggi, yaitu €776. Fungsinya seperti PTKP, tetapi <em>tool</em> ini hanya memakai batas bebas pajak dasar tanpa tambahan untuk status kawin atau tanggungan seperti K/1 dan K/2 di Indonesia. Penghasilan kena pajak adalah gaji dikurangi asuransi pengangguran, iuran pilar pensiun kedua, dan penghasilan bebas pajak itu.</p>"
       },
       {
         "h3": "Iuran karyawan",
@@ -19,46 +19,50 @@
       {
         "h3": "Yang dibayar pemberi kerja di luar gajimu",
         "html": "<p>Pemberi kerja membayar pajak sosial (<em>social tax</em>) 33% di atas gaji brutomu, yang membiayai pensiun negara dan asuransi kesehatan. Karena itu tidak ada potongan khusus untuk layanan kesehatan dari gajimu, berbeda dengan 1% BPJS Kesehatan yang ikut dibayar karyawan di Indonesia. Pajak sosial adalah bagian dari biaya mempekerjakanmu, bukan bagian gaji bersihmu, dan <em>tool</em> ini hanya menampilkan yang kamu bayar sendiri.</p>"
-      },
-      {
-        "h3": "Laporan tahunan lewat EMTA",
-        "html": "<p>Pemberi kerja memotong pajak penghasilan dari gajimu setiap bulan. Setelah tahun berakhir, otoritas pajak (EMTA) biasanya menyiapkan laporan pajak tahunan yang sudah terisi, dan kamu memeriksa serta mengirimkannya secara daring paling lambat akhir April tahun berikutnya. Selisihnya dikembalikan atau ditagih, sama seperti SPT Tahunan, hanya saja bentuknya sudah terisi lebih dulu.</p>"
       }
     ],
     "sources": [
-      { "name": "EMTA, otoritas pajak dan bea cukai Estonia: tarif, tunjangan bebas pajak, dan laporan tahunan", "url": "https://www.emta.ee/" },
-      { "name": "Pensionikeskus, pilar pensiun kedua dan ketiga", "url": "https://www.pensionikeskus.ee/" },
-      { "name": "Eesti.ee, portal layanan pemerintah Estonia", "url": "https://www.eesti.ee/" },
-      { "name": "Politsei- ja Piirivalveamet, izin tinggal dan izin kerja", "url": "https://www.politsei.ee/" }
+      {
+        "name": "EMTA, otoritas pajak dan bea cukai Estonia: tarif, batas bebas pajak, dan laporan tahunan",
+        "url": "https://www.emta.ee/"
+      },
+      {
+        "name": "Pensionikeskus, pilar pensiun kedua dan ketiga",
+        "url": "https://www.pensionikeskus.ee/"
+      },
+      {
+        "name": "Eesti.ee, portal layanan pemerintah Estonia",
+        "url": "https://www.eesti.ee/"
+      },
+      {
+        "name": "Politsei- ja Piirivalveamet, izin tinggal dan izin kerja",
+        "url": "https://www.politsei.ee/"
+      }
     ]
   },
   "examples": [
     {
       "key": "employee",
       "title": "Cara menghitung pajak penghasilan Estonia untuk gaji €36.000 setahun",
-      "intro": "<p>Contoh ini karyawan bergaji €36.000 dengan iuran pilar II bawaan 2%. Asuransi pengangguran memotong €576 dan pilar II €720, lalu tunjangan €8.400 dikurangkan, sehingga penghasilan kena pajak tinggal €26.304. Pada tarif 22%, pajak penghasilannya €5.787. Gaji bersihnya sekitar €28.917, atau 80,3% dari gaji bruto.</p>",
+      "intro": "<p>Ambil contoh karyawan bergaji €36.000 dengan iuran pilar II bawaan 2%. Iuran asuransi pengangguran €576 dan iuran pilar II €720 dipotong dari gaji, lalu penghasilan bebas pajak €8.400 dikurangkan, sehingga penghasilan kena pajak tinggal €26.304. Pada tarif 22%, pajak penghasilannya €5.787. Gaji bersihnya sekitar €28.917, atau 80,3% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 24,8%: pajak 22% ditambah asuransi pengangguran 1,6% dan iuran pilar II 2%, dikurangi pajak yang dihemat oleh kedua iuran itu karena dipotong sebelum pajak dihitung.</p>"
     },
     {
       "key": "no-second-pillar",
       "title": "Berapa gaji bersih di Estonia tanpa pilar pensiun kedua pada gaji €36.000?",
-      "intro": "<p>Ini karyawan yang sama, tetapi memilih 0% untuk pilar II. Tanpa iuran €720, penghasilan kena pajaknya €27.024 dan pajak penghasilannya €5.945, sekitar €158 lebih besar. Asuransi pengangguran €576 tetap dipotong. Gaji bersihnya sekitar €29.479, atau 81,9% dari gaji bruto, sekitar €562 lebih tinggi daripada dengan pilar II.</p>",
-      "after": "<p>Tambahan gaji bersih itu bukan gratis, karena uang pilar II masuk ke rekening pensiun atas namamu, jadi kamu memilih antara uang tunai sekarang dan tabungan pensiun nanti. Kalau rencanamu bekerja beberapa tahun lalu pulang ke Indonesia, ingat bahwa uang itu pada dasarnya terkunci sampai masa pensiun. Aturan pencairan lebih awal sudah beberapa kali berubah, jadi tanyakan dulu ke Pensionikeskus.</p>"
+      "intro": "<p>Ambil contoh karyawan bergaji €36.000 yang memilih 0% untuk pilar II. Tanpa iuran €720, penghasilan kena pajaknya €27.024 dan pajak penghasilannya €5.945, sekitar €158 lebih besar daripada kalau ia ikut pilar II 2%. Iuran asuransi pengangguran €576 tetap dipotong. Gaji bersihnya sekitar €29.479, atau 81,9% dari gaji bruto, sekitar €562 lebih tinggi daripada kalau ia ikut pilar II.</p>",
+      "after": "<p>Tambahan gaji bersih itu tidak gratis, karena uang pilar II masuk ke rekening pensiun atas namamu, jadi kamu memilih antara uang tunai sekarang dan tabungan pensiun nanti.</p>"
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang sah dan lazim untuk mengelola pajak di Estonia. Mana yang cocok bergantung pada statusmu.</p>",
   "strategies": [
     {
       "h3": "Putuskan soal pilar pensiun kedua",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang boleh memilih. Iuran pilar II menurunkan penghasilan kena pajak, sehingga sekitar 22% darinya kembali sebagai pajak yang lebih rendah, dan ia membangun pensiun atas namamu.</p><p><strong>Yang perlu diwaspadai:</strong> boleh tidaknya kamu ikut, mengubah, atau berhenti bergantung pada usia dan riwayatmu, jadi cek pilihanmu di Pensionikeskus.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang boleh memilih. Iuran pilar II menurunkan penghasilan kena pajak, sehingga sekitar 22% darinya kembali sebagai pajak yang lebih rendah, dan iuran ini mengumpulkan dana pensiun atas namamu.</p><p><strong>Yang perlu diwaspadai:</strong> boleh tidaknya kamu ikut, mengubah, atau berhenti bergantung pada usia dan riwayatmu, jadi cek pilihanmu di Pensionikeskus.</p>"
     },
     {
       "h3": "Manfaatkan pilar pensiun ketiga",
       "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang ingin menabung lebih banyak untuk pensiun. Iuran sukarela ke pilar ketiga, yang fungsinya mirip DPLK, bisa mengurangi penghasilan kena pajak dalam batas yang ditetapkan undang-undang.</p><p><strong>Yang perlu diwaspadai:</strong> batas dan syaratnya berubah, dan uangnya terkunci sampai usia pensiun. Lihat aturan terbaru di EMTA.</p>"
-    },
-    {
-      "h3": "Pakai tunjangan di satu pemberi kerja saja",
-      "html": "<p><strong>Siapa yang cocok:</strong> orang yang punya lebih dari satu pekerjaan. Tunjangan bulanan €700 hanya bisa dipakai satu pembayar dalam satu waktu, jadi minta pemberi kerja utamamu yang memakainya.</p><p><strong>Yang perlu diwaspadai:</strong> kalau dua pembayar sama-sama memakainya, kamu bisa kurang bayar saat menyampaikan laporan tahunan.</p>"
     },
     {
       "h3": "Klaim pengurang di laporan tahunan",
@@ -67,50 +71,46 @@
   ],
   "limits": [
     "<strong>Hanya penghasilan kerja.</strong> Hitungannya satu gaji penuh setahun. Penghasilan usaha, dividen, dan tahun yang tidak penuh tidak dihitung.",
-    "<strong>Tunjangan tetap.</strong> <em>Tool</em> ini memakai €700 per bulan, atau €776 kalau kotaknya dicentang, dan tidak ada yang lain yang bergantung pada penghasilan.",
+    "<strong>Batas bebas pajak tetap.</strong> <em>Tool</em> ini memakai €700 per bulan, atau €776 kalau kotaknya dicentang, dan tidak ada komponen lain yang bergantung pada penghasilan.",
     "<strong>Tanpa pengurang lain.</strong> Bunga kredit rumah, biaya pelatihan, dan pengurang serupa tidak dihitung.",
-    "<strong>Tanpa biaya pemberi kerja.</strong> Pajak sosial 33% tidak muncul di gaji bersih.",
-    "<strong>Tarif bisa berubah.</strong> Tarif dan tunjangan Estonia sudah beberapa kali direvisi dalam beberapa tahun terakhir, jadi konfirmasikan angka terbarunya ke EMTA.",
+    "<strong>Tanpa biaya pemberi kerja.</strong> Pajak sosial yang dibayar pemberi kerja tidak muncul di gaji bersih.",
+    "<strong>Tarif bisa berubah.</strong> Tarif dan batas bebas pajak Estonia sudah beberapa kali direvisi dalam beberapa tahun terakhir, jadi konfirmasikan angka terbarunya ke EMTA.",
     "<strong>Tanpa bonus, saham, P3B, dan pajak Indonesia.</strong> Opsi saham tidak dihitung, begitu pula perjanjian penghindaran pajak berganda (P3B) dan pajak yang mungkin masih terutang di Indonesia, sehingga penghasilan yang sudah dipajaki di sini tidak dikreditkan di sana."
   ],
   "faq": [
     {
       "q": "Berapa pajak untuk gaji €36.000 di Estonia?",
-      "a": "<p>Karyawan membayar pajak penghasilan sekitar €5.787, ditambah asuransi pengangguran €576 dan iuran pilar II €720, dan gaji bersihnya sekitar €28.917. Untuk melihat seberapa jauh angka itu cukup di Estonia, bandingkan biaya hidupnya di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, atau coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan membayar pajak penghasilan sekitar €5.787, ditambah asuransi pengangguran €576 dan iuran pilar II €720, dan gaji bersihnya sekitar €28.917. Gaji bersih ini baru bermakna kalau dibandingkan dengan biaya hidup, yang bisa kamu cek di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>. Angkamu sendiri bisa kamu coba di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Apakah tunjangan bebas pajak €700 benar-benar per bulan?",
-      "a": "<p>Ya, tunjangan itu berlaku tiap bulan, yaitu €8.400 setahun di <em>tool</em> ini. Kamu memakainya lewat satu pembayar dalam satu waktu. Kalau punya dua pekerjaan, tunjangan sebaiknya dipakai pemberi kerja utama, dan pemberi kerja kedua memotong pajak tanpa tunjangan. Selisihnya dibereskan di laporan pajak tahunanmu.</p>"
+      "q": "Apakah penghasilan bebas pajak €700 benar-benar per bulan?",
+      "a": "<p>Ya, batas itu berlaku tiap bulan, yaitu €8.400 setahun di <em>tool</em> ini. Kamu memakainya lewat satu pembayar dalam satu waktu. Kalau punya dua pekerjaan, batas itu sebaiknya dipakai pemberi kerja utama, dan pemberi kerja kedua memotong pajak tanpa batas itu. Selisihnya dibereskan di laporan pajak tahunanmu.</p>"
     },
     {
       "q": "Apakah saya wajib ikut pilar pensiun kedua di Estonia?",
-      "a": "<p>Bagi banyak orang itu pilihan, dan inilah yang tidak lazim dari Estonia. <em>Tool</em> ini memakai 2% secara bawaan dan membolehkan 0%, 2%, 4%, atau 6%. Iuran menurunkan penghasilan kena pajak karena dipotong sebelum tarif 22% berlaku, dan membangun pensiun atas namamu: pada contoh bergaji €36.000, iuran €720 menurunkan pajak sekitar €158, jadi biaya sebenarnya bagimu sekitar €562. Cek pilihanmu sendiri di Pensionikeskus.</p>"
+      "a": "<p>Tidak selalu: bagi banyak orang ini pilihan, dan inilah yang membedakan Estonia dari Indonesia, tempat iuran JHT dan JP wajib. <em>Tool</em> ini memakai 2% secara bawaan dan membolehkan 0%, 2%, 4%, atau 6%. Iuran menurunkan penghasilan kena pajak karena dipotong sebelum tarif 22% berlaku, dan mengumpulkan dana pensiun atas namamu: pada contoh bergaji €36.000, iuran €720 menurunkan pajak sekitar €158, jadi biaya sebenarnya bagimu sekitar €562. Cek pilihanmu sendiri di Pensionikeskus.</p>"
     },
     {
       "q": "Izin apa yang dibutuhkan orang Indonesia untuk bekerja di Estonia?",
       "a": "<p>Orang Indonesia umumnya membutuhkan visa dan izin tinggal sementara untuk bekerja. Syarat, batas gaji minimum, dan prosedurnya diatur Politsei- ja Piirivalveamet dan berubah dari waktu ke waktu, jadi cek situsnya dan kedutaan Estonia yang melayani Indonesia. Jenis izin tidak mengubah hitungan di halaman ini, karena yang menentukan adalah status penduduk pajakmu.</p>"
     },
     {
-      "q": "Siapa yang membayar pajak sosial 33% di Estonia?",
-      "a": "<p>Pemberi kerjamu membayarnya di atas gaji bruto. Pajak itu tidak dipotong dari gajimu dan tidak muncul di gaji bersih pada <em>tool</em> ini, tetapi ia bagian dari biaya mempekerjakanmu, dan dari situlah pensiun negara dan asuransi kesehatan dibiayai.</p>"
-    },
-    {
       "q": "Apakah uang pensiun pilar II bisa dibawa pulang ke Indonesia?",
-      "a": "<p>Uang pilar II pada dasarnya untuk masa pensiun, dan aturan pencairan sebelum usia pensiun sudah beberapa kali berubah, jadi tanyakan ke Pensionikeskus sebelum kamu meninggalkan Estonia. Kalau kamu berencana pulang dalam beberapa tahun, pertimbangkan itu saat memutuskan berapa persen yang kamu setor. Untuk membandingkan rencana tabungan jangka panjangmu, kamu bisa memakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+      "a": "<p>Uang pilar II pada dasarnya untuk masa pensiun, dan aturan pencairan sebelum usia pensiun sudah beberapa kali berubah, jadi tanyakan ke Pensionikeskus sebelum kamu meninggalkan Estonia. Kalau kamu berencana pulang dalam beberapa tahun, pertimbangkan itu saat memutuskan berapa persen yang kamu setor.</p>"
     },
     {
       "q": "Apakah saya harus mengisi laporan pajak tahunan sendiri di Estonia?",
-      "a": "<p>EMTA biasanya menyiapkan laporan yang sudah terisi dari data pemberi kerja dan pihak lain, dan tugasmu memeriksa serta mengirimkannya secara daring sampai akhir April tahun berikutnya. Itulah bedanya dengan SPT Tahunan di Indonesia, yang kamu isi dari bukti potong sendiri. Kalau ada pengurang yang bisa diklaim atau tunjangan yang terpakai ganda, di sinilah selisihnya dibereskan.</p>"
+      "a": "<p>EMTA biasanya menyiapkan laporan yang sudah terisi dari data pemberi kerja dan pihak lain, dan tugasmu memeriksa serta mengirimkannya secara daring sampai akhir April tahun berikutnya. Itulah bedanya dengan SPT Tahunan di Indonesia, yang kamu isi dari bukti potong sendiri. Kalau ada pengurang yang bisa diklaim atau batas bebas pajak yang terpakai ganda, di sinilah selisihnya dibereskan.</p>"
     },
     {
       "q": "Kalau bekerja di Estonia, apakah saya masih kena pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan tidak lagi berdomisili di Indonesia dapat menjadi subjek pajak luar negeri, dan penghasilan dari pekerjaan di Estonia pada umumnya tidak lagi menjadi urusan PPh 21 di sini. Langkah yang lazim adalah memberi tahu DJP dan merapikan statusmu supaya tidak dipajaki dua kali. Apakah ada perjanjian penghindaran pajak berganda (P3B) antara Indonesia dan Estonia perlu kamu cek di situs DJP. Hitungan di halaman ini tidak memasukkan P3B maupun pajak Indonesia, dan jawaban ini bukan nasihat hukum, sehingga konsultasikan kasusmu ke KPP atau konsultan pajak.</p>"
+      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut PMK 18/2021 (setelah UU HPP), WNI yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan memenuhi syarat lain dapat menjadi subjek pajak luar negeri, sehingga gaji dari Estonia pada umumnya tidak lagi dipajaki di Indonesia. Kalau kamu masih subjek pajak dalam negeri, gaji itu dilaporkan di SPT Tahunan dan pajak yang sudah dibayar di sana umumnya dapat dikreditkan. Tanyakan prosedurnya ke KPP tempat NPWP-mu terdaftar. Apakah ada persetujuan penghindaran pajak berganda (P3B) antara Indonesia dan Estonia, tanyakan ke DJP.</p>"
     }
   ],
   "lineLabels": {
     "Unemployment insurance (1.6%)": "Asuransi pengangguran (1,6%)",
     "Pension pillar II (2%)": "Pilar pensiun kedua (2%)",
-    "Tax-free allowance (700 a month)": "Tunjangan bebas pajak (700 per bulan)",
+    "Tax-free allowance (700 a month)": "Penghasilan bebas pajak (700 per bulan)",
     "Income tax (22%)": "Pajak penghasilan (22%)"
   }
 }

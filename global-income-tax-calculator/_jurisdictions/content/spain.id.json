@@ -5,42 +5,81 @@
   "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Spanyol (2026, Madrid)",
   "description": "Hitung IRPF Spanyol 2026 untuk karyawan di Madrid: skala negara dan daerah, jaminan sosial, Beckham law 24%, dan tiga contoh gaji bersih.",
   "place": "Madrid",
-  "lede": "<p>Spanyol memajaki penduduk pajaknya atas penghasilan dari seluruh dunia lewat IRPF (<em>Impuesto sobre la Renta de las Personas Físicas</em>, setara PPh orang pribadi) yang terbagi dua, yaitu skala negara dan skala daerah, dan karyawan juga membayar iuran jaminan sosial sekitar 6,5%. Halaman ini menghitung karyawan yang tinggal di wilayah Madrid. Dari gaji bruto €45.000, penduduk pajak membayar sekitar €11.806 untuk jaminan sosial dan IRPF, sehingga gaji bersih (<em>take-home pay</em>) sekitar €33.194 atau 73,8%. Pekerja pindahan yang memenuhi syarat <em>Beckham law</em> membayar tarif tunggal 24% atas penghasilan kerja sampai €600.000, dan dari gaji bruto €90.000 gaji bersihnya sekitar €64.421.</p>",
+  "lede": "<p>Spanyol memajaki penduduk pajaknya atas penghasilan dari seluruh dunia lewat IRPF (<em>Impuesto sobre la Renta de las Personas Físicas</em>, setara PPh orang pribadi) yang terbagi dua, yaitu skala negara dan skala daerah, dan karyawan juga membayar iuran jaminan sosial sekitar 6,5%. Halaman ini menghitung karyawan yang tinggal di wilayah Madrid. Dari gaji bruto €45.000, penduduk pajak membayar sekitar €11.806 untuk jaminan sosial dan IRPF, sehingga gaji bersih (<em>take-home pay</em>) sekitar €33.194 atau 73,8%. Pekerja yang baru pindah ke Spanyol dan memenuhi syarat <em>Beckham law</em> membayar tarif tunggal 24% atas penghasilan kerja sampai €600.000, dan dari gaji bruto €90.000 gaji bersihnya sekitar €64.421.</p>",
   "law": {
     "intro": "<p>Angka berikut adalah tarif 2026 sebagaimana dihitung <em>tool</em> ini untuk karyawan di wilayah Madrid yang bekerja penuh setahun. IRPF Spanyol punya bagian negara dan bagian daerah, dan setiap daerah menetapkan skala daerahnya sendiri, jadi angka Madrid tidak berlaku untuk Katalonia, Andalusia, atau Valencia. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia. Pada umumnya kamu dihitung sebagai penduduk pajak kalau tinggal di Spanyol lebih dari 183 hari dalam satu tahun kalender, atau kalau pusat kegiatan atau kepentingan ekonomimu ada di sana.</p>",
     "blocks": [
       {
         "h3": "Skala IRPF bagian negara",
-        "html": "<p>Skala negara dan skala Madrid dikenakan pada dasar pajak yang sama, yaitu gaji setelah dipotong iuran jaminan sosial, biaya lain yang dipatok €2.000 setahun, dan pengurang penghasilan kerja yang hanya berlaku di penghasilan rendah. Biaya lain itu padanan biaya jabatan di Indonesia, hanya saja nilainya tetap, bukan 5% dari gaji. Tiap skala kemudian dikurangi pajak atas minimum pribadi dan keluarga (<em>mínimo personal y familiar</em>), yang di <em>tool</em> ini €5.550 untuk skala negara dan €5.956,65 untuk Madrid, dan naik untuk setiap anak. Fungsinya mirip PTKP, tetapi caranya berbeda: minimum itu tidak dikurangkan dari penghasilan, melainkan pajak atas jumlah minimum itu dipotong dari pajak yang terutang. Untuk penghasilan rendah ada pula pengurang tambahan terkait upah minimum (SMI) yang habis di sekitar €20.000.</p>",
+        "html": "<p>Skala negara dan skala Madrid dikenakan pada dasar pajak yang sama, yaitu gaji setelah dipotong iuran jaminan sosial, biaya lain yang dipatok €2.000 setahun, dan pengurang penghasilan kerja yang hanya berlaku pada penghasilan rendah. Biaya lain itu padanan biaya jabatan di Indonesia, hanya saja nilainya tetap, bukan 5% dari gaji. Tiap skala kemudian dikurangi pajak atas minimum pribadi dan keluarga (<em>mínimo personal y familiar</em>), yang di <em>tool</em> ini €5.550 untuk skala negara dan €5.956,65 untuk Madrid, dan naik untuk setiap anak. Fungsinya mirip PTKP, tetapi caranya berbeda: minimum itu tidak dikurangkan dari penghasilan, melainkan pajak atas jumlah minimum itu dipotong dari pajak yang terutang. Untuk penghasilan rendah ada pula pengurang tambahan terkait upah minimum (<em>salario mínimo interprofesional</em>, SMI) yang habis di sekitar €20.000.</p>",
         "table": {
-          "head": ["Dasar pajak", "Tarif negara"],
+          "head": [
+            "Dasar pajak",
+            "Tarif negara"
+          ],
           "rows": [
-            ["€0 sampai €12.450", "9,5%"],
-            ["€12.451 sampai €20.200", "12%"],
-            ["€20.201 sampai €35.200", "15%"],
-            ["€35.201 sampai €60.000", "18,5%"],
-            ["€60.001 sampai €300.000", "22,5%"],
-            ["Di atas €300.000", "24,5%"]
+            [
+              "€0 sampai €12.450",
+              "9,5%"
+            ],
+            [
+              "€12.451 sampai €20.200",
+              "12%"
+            ],
+            [
+              "€20.201 sampai €35.200",
+              "15%"
+            ],
+            [
+              "€35.201 sampai €60.000",
+              "18,5%"
+            ],
+            [
+              "€60.001 sampai €300.000",
+              "22,5%"
+            ],
+            [
+              "Di atas €300.000",
+              "24,5%"
+            ]
           ]
         }
       },
       {
         "h3": "Skala IRPF bagian Madrid",
-        "html": "<p>Bagian daerah dihitung dengan skala yang ditetapkan Comunidad de Madrid. Tarif Madrid di setiap lapis lebih rendah daripada tarif negara, dan inilah yang membuat Madrid sering dianggap lebih murah daripada daerah yang menetapkan tarif lebih tinggi. Di Indonesia tidak ada pembagian seperti ini, karena PPh 21 sepenuhnya pajak pusat.</p>",
+        "html": "<p>Bagian daerah dihitung dengan skala yang ditetapkan Comunidad de Madrid. Di Indonesia tidak ada pembagian seperti ini, karena PPh 21 sepenuhnya pajak pusat.</p>",
         "table": {
-          "head": ["Dasar pajak", "Tarif Madrid"],
+          "head": [
+            "Dasar pajak",
+            "Tarif Madrid"
+          ],
           "rows": [
-            ["€0 sampai €13.362,22", "8,5%"],
-            ["€13.362,23 sampai €19.004,63", "10,7%"],
-            ["€19.004,64 sampai €35.425,68", "12,8%"],
-            ["€35.425,69 sampai €57.320,40", "17,4%"],
-            ["Di atas €57.320,40", "20,5%"]
+            [
+              "€0 sampai €13.362,22",
+              "8,5%"
+            ],
+            [
+              "€13.362,23 sampai €19.004,63",
+              "10,7%"
+            ],
+            [
+              "€19.004,64 sampai €35.425,68",
+              "12,8%"
+            ],
+            [
+              "€35.425,69 sampai €57.320,40",
+              "17,4%"
+            ],
+            [
+              "Di atas €57.320,40",
+              "20,5%"
+            ]
           ]
         }
       },
       {
         "h3": "Jaminan sosial",
-        "html": "<p>Porsi karyawan dihitung 6,50% dari gaji, atau 6,55% untuk kontrak sementara. Iuran dipungut sampai batas dasar iuran €5.101,20 per bulan, sehingga penghasilan di atas sekitar €61.214 setahun tidak dikenai iuran tambahan. Iuran ini membuatmu terdaftar di sistem jaminan sosial Spanyol (pensiun, tunjangan pengangguran, dan layanan kesehatan publik), jadi ia padanan gabungan BPJS Ketenagakerjaan dan BPJS Kesehatan. Pemberi kerja membayar bagiannya sendiri di luar gajimu, dan bagian itu tidak masuk ke gaji bersih.</p>"
+        "html": "<p>Porsi karyawan dihitung 6,50% dari gaji, atau 6,55% untuk kontrak sementara. Iuran dipungut sampai batas dasar iuran €5.101,20 per bulan, sehingga penghasilan di atas sekitar €61.214 setahun tidak dikenai iuran tambahan. Iuran ini membuatmu terdaftar di sistem jaminan sosial Spanyol (pensiun, tunjangan pengangguran, dan layanan kesehatan publik), jadi iuran ini padanan gabungan BPJS Ketenagakerjaan dan BPJS Kesehatan. Pemberi kerja membayar bagiannya sendiri di luar gajimu, dan bagian itu tidak masuk ke gaji bersih.</p>"
       },
       {
         "h3": "Beckham law",
@@ -48,46 +87,61 @@
       },
       {
         "h3": "Pemotongan bulanan dan laporan tahunan",
-        "html": "<p>Pemberi kerja memotong IRPF (<em>retención</em>) dari setiap slip gaji, seperti PPh 21 di Indonesia. Setelah tahun berakhir, kamu menyampaikan laporan tahunan (<em>declaración de la renta</em>) yang biasanya dibuka dari April sampai akhir Juni, dan selisihnya dikembalikan atau ditagih, mirip SPT Tahunan. Untuk bekerja dan membayar pajak, kamu butuh <em>NIE</em> (<em>Número de Identidad de Extranjero</em>), nomor identitas orang asing yang juga berfungsi sebagai nomor pajak, seperti NPWP di Indonesia. Hitungan <em>tool</em> ini adalah pajak setahun penuh pada satu gaji.</p>"
+        "html": "<p>Pemberi kerja memotong IRPF (<em>retención</em>) dari setiap slip gaji, seperti PPh 21 di Indonesia. Setelah tahun berakhir, kamu menyampaikan laporan tahunan (<em>declaración de la renta</em>), dan periode pelaporannya biasanya dibuka dari April sampai akhir Juni. Selisihnya dikembalikan atau ditagih, mirip SPT Tahunan. Untuk bekerja dan membayar pajak, kamu butuh <em>NIE</em> (<em>Número de Identidad de Extranjero</em>), nomor identitas orang asing yang juga berfungsi sebagai nomor pajak, seperti NPWP di Indonesia. Hitungan <em>tool</em> ini adalah pajak setahun penuh pada satu gaji.</p>"
       }
     ],
     "sources": [
-      { "name": "Agencia Tributaria (AEAT), IRPF dan rezim pekerja pindahan", "url": "https://sede.agenciatributaria.gob.es/" },
-      { "name": "Seguridad Social, iuran dan batas dasar iuran", "url": "https://www.seg-social.es/" },
-      { "name": "Comunidad de Madrid, skala IRPF daerah", "url": "https://www.comunidad.madrid/" },
-      { "name": "Ministerio de Hacienda", "url": "https://www.hacienda.gob.es/" },
-      { "name": "Boletín Oficial del Estado (BOE), Ley 35/2006 tentang IRPF", "url": "https://www.boe.es/" }
+      {
+        "name": "Agencia Tributaria (AEAT), IRPF dan rezim pekerja pindahan",
+        "url": "https://sede.agenciatributaria.gob.es/"
+      },
+      {
+        "name": "Seguridad Social, iuran dan batas dasar iuran",
+        "url": "https://www.seg-social.es/"
+      },
+      {
+        "name": "Comunidad de Madrid, skala IRPF daerah",
+        "url": "https://www.comunidad.madrid/"
+      },
+      {
+        "name": "Ministerio de Hacienda",
+        "url": "https://www.hacienda.gob.es/"
+      },
+      {
+        "name": "Boletín Oficial del Estado (BOE), Ley 35/2006 tentang IRPF",
+        "url": "https://www.boe.es/"
+      }
     ]
   },
   "examples": [
     {
       "key": "resident-madrid",
       "title": "Berapa gaji bersih dan IRPF untuk gaji €45.000 di Madrid?",
-      "intro": "<p>Contoh ini karyawan lajang di Madrid dengan gaji bruto €45.000. Jaminan sosial €2.925 (6,5%) dipotong lebih dulu, sehingga dasar pajaknya €40.075 setelah dikurangi jaminan sosial dan biaya lain €2.000. Bagian negara dari IRPF €4.737 dan bagian Madrid €4.144, jadi IRPF totalnya €8.881. Gaji bersihnya sekitar €33.194, atau 73,8% dari gaji bruto.</p>",
-      "after": "<p>Tarif marginalnya 40,1%: 18,5% untuk negara ditambah 17,4% untuk Madrid pada euro berikutnya, lalu jaminan sosial di atasnya.</p>"
+      "intro": "<p>Bayangkan karyawan lajang di Madrid dengan gaji bruto €45.000. Jaminan sosial €2.925 (6,5%) dipotong lebih dulu, sehingga dasar pajaknya €40.075 setelah dikurangi jaminan sosial dan biaya lain €2.000. Bagian negara dari IRPF sebesar €4.737 dan bagian Madrid sebesar €4.144, sehingga IRPF totalnya €8.881. Gaji bersihnya sekitar €33.194, atau 73,8% dari gaji bruto.</p>",
+      "after": "<p>Tarif marginalnya 40,1%, yaitu 18,5% untuk negara dan 17,4% untuk Madrid pada euro berikutnya, ditambah jaminan sosial 6,5%. Karena jaminan sosial itu sekaligus mengurangi dasar pajak, totalnya 40,1%, bukan 42,4%.</p>"
     },
     {
       "key": "beckham-law",
       "title": "Berapa gaji bersih dengan Beckham law di Spanyol pada gaji €90.000?",
-      "intro": "<p>Di bawah rezim Beckham, karyawan yang memenuhi syarat dengan gaji €90.000 dikenai tarif tunggal 24%, yaitu €21.600, ditambah jaminan sosial €3.979. Jaminan sosial berhenti di batas dasar iuran, sehingga nilainya di bawah 6,5% dari gaji. Gaji bersihnya sekitar €64.421, atau 71,6% dari gaji bruto, dan tarif marginalnya 24,0%, lebih rendah daripada lapis atas skala penduduk biasa.</p>",
-      "after": "<p>Rezim ini mengganti skala bertingkat dengan satu tarif yang berlaku sejak euro pertama, sehingga pada penghasilan rendah ia bisa lebih mahal daripada skala biasa. Bandingkan keduanya sebelum mengajukan, dan ingat bahwa rezim ini punya syarat dan batas waktu.</p>"
+      "intro": "<p>Di bawah rezim <em>Beckham</em>, karyawan yang memenuhi syarat dengan gaji €90.000 dikenai tarif tunggal 24%, yaitu €21.600, ditambah jaminan sosial €3.979. Jaminan sosial berhenti di batas dasar iuran, sehingga nilainya di bawah 6,5% dari gaji. Gaji bersihnya sekitar €64.421, atau 71,6% dari gaji bruto, dan tarif marginalnya 24,0%, lebih rendah daripada lapis atas skala penduduk biasa.</p>",
+      "after": "<p>Rezim ini mengganti skala bertingkat dengan satu tarif yang berlaku sejak euro pertama, sehingga pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. Bandingkan keduanya sebelum mengajukan, dan ingat bahwa rezim ini punya syarat dan batas waktu.</p>"
     },
     {
       "key": "resident-two-children",
       "title": "Pajak penghasilan di Madrid untuk karyawan dengan dua anak, gaji €45.000",
-      "intro": "<p>Gaji dan jaminan sosial (€2.925) sama seperti karyawan lajang bergaji €45.000. Bedanya, minimum keluarga naik karena dua anak. Pajak atas minimum itu dihitung dengan tarif lapis terbawah lalu dipotongkan dari pajak yang terutang, sehingga IRPF turun menjadi €7.932 (€4.253 bagian negara dan €3.679 bagian Madrid), sekitar €950 lebih rendah. Gaji bersihnya sekitar €34.143, atau 75,9% dari gaji bruto.</p>",
-      "after": "<p>Tarif marginalnya tetap 40,1%, karena anak mengurangi pajak sebesar jumlah tetap dan tidak mengubah lapis yang kamu masuki. Di Indonesia, padanannya adalah tambahan PTKP Rp4,5 juta untuk setiap tanggungan, sampai tiga orang.</p>"
+      "intro": "<p>Ambil contoh karyawan di Madrid bergaji €45.000 dengan dua anak. Jaminan sosialnya €2.925, dan minimum keluarga naik karena dua anak. Pajak atas minimum itu dihitung dengan tarif lapis terbawah lalu dipotongkan dari pajak yang terutang, sehingga IRPF turun menjadi €7.932 (€4.253 bagian negara dan €3.679 bagian Madrid), sekitar €950 lebih rendah. Gaji bersihnya sekitar €34.143, atau 75,9% dari gaji bruto.</p>",
+      "after": "<p>Tarif marginalnya 40,1%, sama seperti karyawan lajang, karena anak mengurangi pajak sebesar jumlah tetap dan tidak mengubah lapis yang kamu masuki. Di Indonesia, padanannya adalah tambahan PTKP Rp4,5 juta untuk setiap tanggungan, sampai tiga orang.</p>"
     }
   ],
   "strategyIntro": "<p>Berikut cara-cara yang sah dan lazim untuk menekan pajak di Spanyol. Mana yang cocok bergantung pada status tinggal dan kontrak kerjamu.</p>",
   "strategies": [
     {
       "h3": "Cek kelayakan Beckham law sebelum atau sesaat setelah pindah",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama di gaji tinggi, ketika tarif tunggal 24% mengalahkan skala biasa.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah ia bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama pada gaji tinggi, ketika tarif tunggal 24% lebih murah daripada skala biasa.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>"
     },
     {
       "h3": "Setor iuran ke rencana pensiun (plan de pensiones)",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak di lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak pada lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>"
     },
     {
       "h3": "Pakai remunerasi fleksibel lewat pemberi kerja",
@@ -102,7 +156,7 @@
     "<strong>Hanya Madrid.</strong> Bagian daerah memakai skala Madrid, sedangkan setiap daerah lain menetapkan skalanya sendiri.",
     "<strong>Hanya penghasilan kerja.</strong> Hitungannya satu gaji penuh setahun. Penghasilan tabungan, sewa properti, pekerjaan mandiri, dan tahun yang tidak penuh tidak dihitung.",
     "<strong>Tanpa bonus dan saham.</strong> Keduanya tidak dihitung terpisah.",
-    "<strong>Tanpa uji kelayakan Beckham law.</strong> Kamu sendiri yang memilih rezimnya. <em>Tool</em> ini tidak memeriksa riwayat domisili atau isi kontrak kerjamu.",
+    "<strong>Tanpa uji kelayakan <em>Beckham law</em>.</strong> Kamu sendiri yang memilih rezimnya. <em>Tool</em> ini tidak memeriksa riwayat domisili atau isi kontrak kerjamu.",
     "<strong>Situasi keluarga disederhanakan.</strong> Hanya jumlah anak yang mengubah minimum. Orang tua yang ditanggung, disabilitas, dan pelaporan bersama tidak dihitung.",
     "<strong>Angka tahunan.</strong> Yang ditampilkan adalah pajak setahun penuh, bukan potongan tiap slip gaji bulanan.",
     "<strong>Tanpa P3B dan tanpa pajak Indonesia.</strong> <em>Tool</em> ini tidak menghitung perjanjian penghindaran pajak berganda (P3B), dan tidak menghitung pajak yang mungkin masih terutang di Indonesia, sehingga penghasilan yang sudah dipajaki di sini tidak dikreditkan di sana."
@@ -110,11 +164,11 @@
   "faq": [
     {
       "q": "Berapa gaji bersih dari gaji bruto €45.000 di Spanyol?",
-      "a": "<p>Karyawan penduduk pajak di Madrid membayar sekitar €2.925 untuk jaminan sosial dan sekitar €8.881 untuk IRPF, jadi totalnya sekitar €11.806, dan gaji bersihnya sekitar €33.194. Di daerah lain, skala daerahnya berbeda. Untuk melihat seberapa jauh angka itu cukup di Madrid, bandingkan biaya hidupnya di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, atau coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Karyawan penduduk pajak di Madrid membayar sekitar €2.925 untuk jaminan sosial dan sekitar €8.881 untuk IRPF, jadi totalnya sekitar €11.806, dan gaji bersihnya sekitar €33.194. Di daerah lain, skala daerahnya berbeda. Kalau ingin tahu seberapa jauh angka itu cukup di Madrid, <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan biaya hidupnya dengan kotamu sendiri, dan angkamu bisa kamu coba di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "Kenapa IRPF punya dua bagian, negara dan daerah?",
-      "a": "<p>IRPF Spanyol dibagi menjadi bagian negara dan bagian daerah. Keduanya dihitung dari dasar pajak yang sama, dan masing-masing punya skalanya sendiri, lalu hasilnya dijumlahkan. Tarif Madrid di tiap lapis lebih rendah daripada tarif negara, itulah sebabnya Madrid sering lebih murah daripada daerah yang menetapkan tarif lebih tinggi. <em>Tool</em> ini menampilkan keduanya sebagai baris terpisah.</p>"
+      "a": "<p>IRPF Spanyol dibagi menjadi bagian negara dan bagian daerah. Keduanya dihitung dari dasar pajak yang sama, dan masing-masing punya skalanya sendiri, lalu hasilnya dijumlahkan. <em>Tool</em> ini menampilkan keduanya sebagai baris terpisah.</p>"
     },
     {
       "q": "Apa itu Beckham law dan siapa yang bisa memakainya?",
@@ -122,7 +176,7 @@
     },
     {
       "q": "Kenapa gaji di Spanyol dibayar 14 kali setahun?",
-      "a": "<p>Banyak kontrak di Spanyol menyebut gaji tahunan lalu membaginya menjadi 14 pembayaran, yaitu dua belas bulanan ditambah dua gaji ekstra (<em>pagas extras</em>) yang biasanya cair di musim panas dan Desember, mirip THR. Kontrak lain membagi angka tahunan yang sama menjadi 12. Pajak tahunannya tidak bergantung pada pilihan itu, hanya besar tiap slip gaji yang berbeda. Hitungan <em>tool</em> ini memakai gaji bruto setahun, jadi bagilah dengan 12 atau 14 sesuai kontrakmu.</p>"
+      "a": "<p>Banyak kontrak di Spanyol menyebut gaji tahunan lalu membaginya menjadi 14 pembayaran, yaitu dua belas pembayaran bulanan ditambah dua gaji ekstra (<em>pagas extras</em>) yang biasanya cair di musim panas dan Desember, mirip THR. Kontrak lain membagi angka tahunan yang sama menjadi 12. Pajak tahunannya tidak bergantung pada pilihan itu, hanya besar tiap slip gaji yang berbeda. Hitungan <em>tool</em> ini memakai gaji bruto setahun, jadi bagilah dengan 12 atau 14 sesuai kontrakmu.</p>"
     },
     {
       "q": "Apakah saya masih harus lapor pajak tahunan kalau gaji sudah dipotong IRPF?",
@@ -138,7 +192,7 @@
     },
     {
       "q": "Kalau bekerja di Spanyol, apakah saya masih kena pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan tidak lagi berdomisili di Indonesia dapat menjadi subjek pajak luar negeri, dan penghasilan dari pekerjaan di Spanyol pada umumnya tidak lagi menjadi urusan PPh 21 di sini. Langkah yang lazim adalah memberi tahu DJP dan merapikan statusmu supaya tidak dipajaki dua kali, dan Indonesia punya perjanjian penghindaran pajak berganda (P3B) dengan banyak negara, jadi periksa di situs DJP apakah ada yang berlaku untuk Spanyol. Hitungan di halaman ini tidak memasukkan P3B maupun pajak Indonesia, dan jawaban ini bukan nasihat hukum, sehingga konsultasikan kasusmu ke KPP atau konsultan pajak. Untuk bekerja di Spanyol, orang Indonesia umumnya juga membutuhkan izin tinggal dan kerja yang diajukan bersama pemberi kerja.</p>"
+      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut PMK 18/2021 (setelah UU HPP), WNI yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan memenuhi syarat lain dapat menjadi subjek pajak luar negeri, sehingga gaji dari Spanyol pada umumnya tidak lagi dipajaki di Indonesia. Kalau kamu masih subjek pajak dalam negeri, gaji itu dilaporkan di SPT Tahunan dan pajak yang sudah dibayar di sana umumnya dapat dikreditkan. Tanyakan prosedurnya ke KPP tempat NPWP-mu terdaftar. Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Spanyol, yang membagi hak memajaki penghasilan antara kedua negara.</p>"
     }
   ],
   "lineLabels": {
