@@ -142,6 +142,8 @@
     }
   ],
   "lineLabels": {
+    "Deduction for income-earning expenses": "Potongan biaya memperoleh penghasilan",
+    "Less its share of the earned income tax credit": "Dikurangi bagiannya dari kredit pajak penghasilan kerja",
     "TyEL pension (7.30%)": "Iuran pensiun kerja TyEL (7,30%)",
     "Unemployment insurance (0.89%)": "Asuransi pengangguran (0,89%)",
     "Sickness daily allowance (0.88%)": "Tunjangan sakit harian (0,88%)",

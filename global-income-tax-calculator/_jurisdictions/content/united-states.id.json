@@ -187,6 +187,9 @@
     }
   ],
   "lineLabels": {
+    "Less the personal exemption credit": "Dikurangi kredit pembebasan pribadi",
+    "Less the personal credit": "Dikurangi kredit pribadi",
+    "Plus the benefit recapture (supplemental tax)": "Ditambah benefit recapture (pajak tambahan)",
     "Federal standard deduction": "Potongan standar federal",
     "Federal income tax": "Pajak penghasilan federal",
     "Texas has no state tax on wages": "Texas tidak memajaki gaji",

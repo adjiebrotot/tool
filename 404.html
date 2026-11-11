@@ -8,6 +8,18 @@
   <link rel="icon" type="image/svg+xml" href="/logos/logo.svg">
   <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png">
   <script>
+    /* Tools that moved: their old folders are gone, so an old address lands here and goes on to
+       the new one, query and hash along (a Share link, an AI link or an embed carries its
+       scenario there), before anything is drawn. */
+    (function () {
+      var moved = { '/global-salary-calculator/': '/global-income-tax-calculator/' };
+      for (var from in moved) {
+        if (location.pathname.indexOf(from) === 0) {
+          location.replace(moved[from] + location.pathname.slice(from.length) + location.search + location.hash);
+          return;
+        }
+      }
+    })();
     (function () {
       /* The reader's pick (the abt-theme cookie shared with www and the blog), else the device's setting through the CSS below. GitHub Pages serves this page at any depth, so every path here starts with /. */
       var m = /(?:^|;\s*)abt-theme=(light|dark)/.exec(document.cookie), t = m && m[1];

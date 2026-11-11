@@ -6,6 +6,7 @@
 //   node _ref/faq-bake.mjs --check   # change nothing; fail when a page is stale or a rule is broken
 //
 // Source: <page dir>/faq.json, { "en": [{ "q": "...", "a": ["paragraph", ...] }], "id": [...] }.
+// An optional "title": { "en": "...", "id": "..." } names the card instead of "Questions".
 // An /id/ page reads its parent's faq.json, the "id" list. Plain text only: the script
 // escapes it. Edit the JSON and re-run, never the HTML between the faq markers.
 //
@@ -55,17 +56,19 @@ export function sourceFor(page) {
 function load(page) {
   const src = sourceFor(page);
   if (!existsSync(src.file)) return null;
-  const items = JSON.parse(readFileSync(src.file, 'utf8'))[src.lang];
-  return items && items.length ? { ...src, items } : null;
+  const json = JSON.parse(readFileSync(src.file, 'utf8'));
+  const items = json[src.lang];
+  const title = (json.title && json.title[src.lang]) || TITLE[src.lang];
+  return items && items.length ? { ...src, items, title } : null;
 }
 
-function card(items, lang) {
+function card(items, title) {
   const rows = items.map((it) =>
     `      <div class="faq-item">\n        <h3>${esc(it.q)}</h3>\n` +
     it.a.map((p) => `        <p>${esc(p)}</p>\n`).join('') +
     `      </div>`).join('\n');
   return `  ${START}\n  <section class="faq-card card" aria-labelledby="faqTitle">\n` +
-    `    <h2 id="faqTitle">${TITLE[lang]}</h2>\n    <div class="faq-list">\n${rows}\n    </div>\n  </section>\n  ${END}\n`;
+    `    <h2 id="faqTitle">${esc(title)}</h2>\n    <div class="faq-list">\n${rows}\n    </div>\n  </section>\n  ${END}\n`;
 }
 
 function ld(items, lang, page) {
@@ -89,7 +92,7 @@ const isFaqLd = (body) => { try { return JSON.parse(body)['@type'] === 'FAQPage'
 export function applyFaq(html, page) {
   const f = load(page);
   if (!f) return html;
-  const block = card(f.items, f.lang);
+  const block = card(f.items, f.title);
   if (BLOCK_RE.test(html)) html = html.replace(BLOCK_RE, () => block);
   else {
     const m = html.match(/<section class="assumes-card\b[\s\S]*?<\/section>\n/);

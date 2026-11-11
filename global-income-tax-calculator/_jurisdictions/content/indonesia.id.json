@@ -191,6 +191,7 @@
     }
   ],
   "lineLabels": {
+    "Rounded down to the nearest 1,000": "Dibulatkan ke bawah ke ribuan penuh",
     "BPJS old-age savings (JHT, 2%)": "BPJS Jaminan Hari Tua (JHT, 2%)",
     "BPJS pension (JP, 1%, cap rises 1 Mar)": "BPJS Jaminan Pensiun (JP, 1%, batas upah naik 1 Maret)",
     "BPJS Kesehatan (1%, wage cap 12M)": "BPJS Kesehatan (1%, batas upah Rp12 juta)",

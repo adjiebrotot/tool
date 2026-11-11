@@ -139,6 +139,10 @@ th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-r
 .lines-table tr.sec:hover td{background:none;}
 .lines-table tr.start td,.lines-table tr.group td{font-weight:700;}
 .lines-table tr.part td.lbl,.lines-table tr.aside td.lbl{padding-left:28px;}
+/* A tax line's brackets, its credits and rounding: under the line, smaller and quieter. */
+.lines-table tr.band td{font-size:.86rem;color:var(--muted);padding-top:4px;padding-bottom:4px;}
+.lines-table tr.band td.lbl{padding-left:46px;}
+.lines-table tr.band td{border-bottom-style:dotted;}
 .lines-table tr.part td{border-bottom-style:dashed;}
 .lines-table tr.aside td{color:var(--muted);font-size:.8rem;border-bottom-style:dashed;}
 .lines-table tr.aside td.amt::before{content:'(';}

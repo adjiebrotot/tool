@@ -159,6 +159,11 @@
     }
   ],
   "lineLabels": {
+    "Employee lump sum for work expenses": "Potongan tetap biaya kerja karyawan",
+    "Income tax, class I": "Pajak penghasilan, kelas I",
+    "Lump sum for special expenses": "Potongan tetap biaya khusus",
+    "Pension, health and care contributions, deductible part": "Iuran pensiun, kesehatan dan perawatan, bagian yang bisa dikurangkan",
+    "Rounding (income and tax to whole euros)": "Pembulatan (penghasilan dan pajak ke euro penuh)",
     "Income tax": "Pajak penghasilan",
     "Income tax, class III (splitting)": "Pajak penghasilan, kelas III (pembagian penghasilan pasangan)",
     "Solidarity surcharge": "Solidaritätszuschlag (Soli)",

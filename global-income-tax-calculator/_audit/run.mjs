@@ -4,7 +4,7 @@
 //    (golden-v11.json, written by gsc_reference_model.py in this folder) is
 //    replayed through engine.js: income tax, employee contributions and net,
 //    to ±1 unit of local currency. The few cases this tool changes on purpose
-//    (Illinois loaded, France above RFR 250,000) are checked against an
+//    (Illinois loaded, France above RFR 250,000, no Australian work deduction) are checked against an
 //    independent replay of the new rule instead, and listed as such.
 // 2. Layer A anchors from spec §5.1, through the engine's own pieces.
 // 3. Lines add up: tax, contribution, other and benefit lines sum to the
@@ -79,7 +79,22 @@ const MAP = {
 const usFedS = g => { const t = g - 16100, br = [[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]];
   let s = 0, lo = 0; for(const [up, r] of br){ if(t > lo) s += (Math.min(t, up) - lo)*r; lo = up; } return s; };
 const fica = g => 0.062*Math.min(g, 184500) + 0.0145*g + 0.009*Math.max(0, g - 200000);
+// Australia, residents: no standard deduction for work expenses (claimed at tax time, and
+// different for everyone), so the tax is on the salary as paid. Resident rates, LITO, and for a
+// citizen or permanent resident the 2% Medicare levy with its low-income phase-in (ATO).
+const auRes = (g, pr) => {
+  let t = 0, lo = 0; for(const [up, r] of [[18200,0],[45000,.15],[135000,.30],[190000,.37],[Infinity,.45]]){ if(g > lo) t += (Math.min(g, up) - lo)*r; lo = up; }
+  const lito = g <= 37500 ? 700 : g <= 45000 ? 700 - 0.05*(g - 37500) : g <= 66667 ? Math.max(0, 325 - 0.015*(g - 45000)) : 0;
+  const med = !pr || g <= 28011 ? 0 : g <= 35013 ? 0.10*(g - 28011) : 0.02*g;
+  return { incomeTax: Math.max(0, t - lito) + med, social: 0 };
+};
 const CHANGED = {
+  'AU|pr|60000': () => auRes(60000, true),
+  'AU|pr|120000': () => auRes(120000, true),
+  'AU|pr|300000': () => auRes(300000, true),
+  'AU|temp|60000': () => auRes(60000, false),
+  'AU|temp|120000': () => auRes(120000, false),
+  'AU|temp|300000': () => auRes(300000, false),
   // Illinois: 4.95% on wages less a 2,925 exemption (IDOR Q&A 851; IL Comptroller bulletin 1-26).
   'US-states (v11)|IL_S_gated|80000': () => ({ incomeTax: usFedS(80000) + 0.0495*(80000 - 2925), social: fica(80000) }),
   // France at gross 320,000 (single cadre): CEHR 3% on RFR above 250,000, written out from service-public's table.
@@ -243,6 +258,29 @@ console.log(`  lines: ${SAMPLE.length - lineIssues}/${SAMPLE.length} sample case
   }
   check('taxable income: gross and the base lines land on r.taxable (' + n + ' cases)', bad === 0, misses.join(' | '));
   console.log(`  taxable income: ${n - bad}/${n} cases add up from gross`); }
+
+/* ── 3c. Tax by bracket adds up: a tax line's brackets (each the slice of the
+   base between its edges at its rate), its credits and surcharges, and the
+   rounding left over make the line. The brackets run from 0 to the base
+   without a gap, and only rounding is left: at most 1 unit, 3 in Germany
+   (income and tax to whole euros), 100 in Japan (tax down to 100 yen).
+   Every sample case, at the same seven pay levels. ───────────────────────── */
+{ let bad = 0, n = 0; const misses = [];
+  const REST = { DE: 3, JP: 100 };
+  for(const [c, g0, k] of SAMPLE) for(const f of [0.2, 0.5, 0.8, 1, 1.5, 2.5, 5]){
+    const r = E.compute(c, g0*f, k);
+    if(r.notSupported) continue;
+    for(const l of r.lines.filter(l => l.brackets)){
+      n++;
+      const b = l.brackets, sum = b.rows.reduce((a, x) => a + x.amount, 0) + b.adj.reduce((a, x) => a + x.amount, 0) + b.rest;
+      let lo = 0, gap = false;
+      for(const x of b.rows){ if(!near(x.lo, lo, 1e-6) || x.hi < x.lo || x.amount < -1e-9) gap = true; lo = x.hi; }
+      const ok = near(sum, l.amount, 1e-6) && !gap && near(lo, b.base, 1e-6) && Math.abs(b.rest) <= (REST[c] || 1);
+      if(!ok){ bad++; if(misses.length < 4) misses.push(c + ' ' + l.id + ' ' + Math.round(g0*f) + ' rest ' + b.rest.toFixed(2)); }
+    }
+  }
+  check('tax by bracket: brackets, credits and rounding make each line (' + n + ' lines)', bad === 0 && n > 0, misses.join(' | '));
+  console.log(`  tax by bracket: ${n - bad}/${n} lines add up from their brackets`); }
 
 /* ── 4. Layer D: round trips, non-negativity, caps ───────────────────────── */
 let seed = 12345;

@@ -178,6 +178,9 @@
     }
   ],
   "lineLabels": {
+    "Deductions from tax (family expenses), inside the tax above": "Pengurang pajak (biaya keluarga), sudah termasuk di pajak di atas",
+    "Less the deductions from tax": "Dikurangi pengurang pajak",
+    "Less the deductions from tax left over": "Dikurangi sisa pengurang pajak",
     "Social security (11%)": "Jaminan sosial karyawan (11%)",
     "Employer social security (23.75%), on top": "Jaminan sosial pemberi kerja (23,75%), dibayar di luar gaji",
     "Specific deduction": "Pengurang spesifik",
