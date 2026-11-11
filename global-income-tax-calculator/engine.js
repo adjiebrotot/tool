@@ -21,7 +21,10 @@
    (held by _audit/run.mjs). r.taxableLabel names which taxable income that
    is where a country has more than one (federal, cantonal, national).
    group: where an info line reads in the breakdown ('gross', 'tax',
-   'social' or 'note', the default).
+   'social' or 'note', the default). inBrackets: an info line the breakdown
+   table leaves out because a tax line's brackets (below) already show it.
+   brackets: on a tax line worked out on marginal brackets, the tax bracket
+   by bracket (see bands()).
    status: 'official' (a government page), 'secondary' (Big-4, law firm,
    payroll vendor, a calculator citing the official rule) or 'assumption' (a
    modelling choice the spec discloses).
@@ -58,6 +61,46 @@ function L(id, label, amount, kind, src, status, from){ return { id, label, amou
 const minus = l => (l.base = -1, l), plus = l => (l.base = 1, l);
 const inGroup = (l, g) => (l.group = g, l);
 function NS(reason){ return { notSupported: true, reason }; }
+/* The brackets of a marginal schedule, laid on a tax line so the breakdown can show the tax
+   bracket by bracket. br is the prog() table ([upper edge or null, rate], a third entry such
+   as a quick deduction is ignored). o.scale multiplies the edges and the amounts (income
+   splitting, a quotient), o.mult the rate and the amounts (a surtax worked out as a share of a
+   simple tax). o.adj is what turns the brackets' sum into the line: [label, signed amount]
+   pairs taken in order, with the running total kept at 0 or more, as the rules apply them.
+   What is left after that (rounding to the unit the rules set) is l.brackets.rest.
+     l.brackets = { base, rows: [{ lo, hi, rate, amount }], adj: [{ label, amount }], rest } */
+function bands(l, x, br, o){
+  o = o || {};
+  const s = o.scale || 1, m = o.mult == null ? 1 : o.mult, rows = [];
+  let lo = 0;
+  x = max(0, x);
+  for(const [up, r] of br){
+    const hi = up == null ? Infinity : up*s;
+    rows.push({ lo, hi: min(x, hi), rate: r*m, amount: max(0, min(x, hi) - lo)*r*m });
+    lo = hi;
+    if(x <= hi) break;
+  }
+  return bandRows(l, x, rows, o);
+}
+// The same, from rows worked out by the caller (a rate that rises across a zone is [from, to]).
+function bandRows(l, x, rows, o){
+  o = o || {};
+  let run = rows.reduce((a, r) => a + r.amount, 0);
+  const adj = [];
+  for(const [label, v] of (o.adj || [])){
+    if(!v) continue;
+    const a = v < 0 ? -min(run, -v) : v;
+    if(Math.abs(a) < 0.005) continue;
+    adj.push({ label, amount: a }); run += a;
+  }
+  const rest = l.amount - run;
+  l.brackets = { base: x, rows, adj, rest: Math.abs(rest) < 0.005 ? 0 : rest, restLabel: o.restLabel || 'Rounding' };
+  return l;
+}
+// A quick-deduction table ([edge, rate, deduction]) as a plain bracket table.
+const plainBr = br => br.map(([up, r]) => [up, r]);
+// A per-100 points table ([from, tax at from, rate per 100]) as a bracket table, 0% below the first point.
+const ptsBr = pts => [[pts[0][0], 0]].concat(pts.map((p, i) => [i + 1 < pts.length ? pts[i + 1][0] : null, p[2]/100]));
 
 function finish(gross, lines, o){
   const sum = kind => lines.reduce((a, l) => a + (l.kind === kind ? l.amount : 0), 0);
@@ -166,13 +209,16 @@ function au(g, k){
   let taxable;
   if(p === 'foreign' || p === 'whm'){
     taxable = salary;
-    lines.push(L('auTax', p === 'whm' ? 'Income tax, working holiday maker rates' : 'Income tax, foreign resident rates',
-      prog(salary, p === 'whm' ? AU_WHM : AU_FOR), 'tax', 'ato', 'official', F));
+    const br = p === 'whm' ? AU_WHM : AU_FOR;
+    lines.push(bands(L('auTax', p === 'whm' ? 'Income tax, working holiday maker rates' : 'Income tax, foreign resident rates',
+      prog(salary, br), 'tax', 'ato', 'official', F), salary, br));
   } else {
-    taxable = salary - min(1000, salary);
-    lines.push(minus(L('auStd', 'Standard deduction for work expenses', min(1000, salary), 'deduction', 'ato', 'official', F)));
+    // Work-related expenses are claimed on the return at tax time and differ from person to
+    // person, so none come off here: the tax is on the salary as paid.
+    taxable = salary;
     const gross = prog(taxable, AU_RES), lito = auLito(taxable);
-    lines.push(L('auTax', 'Income tax, resident rates', max(0, gross - lito), 'tax', 'ato', 'official', F));
+    lines.push(bands(L('auTax', 'Income tax, resident rates', max(0, gross - lito), 'tax', 'ato', 'official', F), taxable, AU_RES,
+      { adj: [['Less the low income tax offset (LITO)', -lito]] }));
     if(lito > 0) lines.push(L('auLito', 'Low income tax offset (LITO), inside the tax above', min(lito, gross), 'credit', 'ato', 'secondary', F));
     if(p === 'pr'){
       lines.push(L('auMed', 'Medicare levy (2%)', auMedicare(taxable), 'tax', 'ato', 'official', '2025-26 thresholds'));
@@ -191,8 +237,9 @@ function sg(g, k){
   const F = 'YA2027', lines = [];
   if(k.sgRes === 'nonres'){
     const flat = 0.15*g, resRates = prog(g, SG);
-    lines.push(L('sgTax', flat >= resRates ? 'Income tax, non-resident (15% of gross)' : 'Income tax, non-resident (resident rates, no reliefs)',
-      max(flat, resRates), 'tax', 'iras', 'secondary', F));
+    const nrl = L('sgTax', flat >= resRates ? 'Income tax, non-resident (15% of gross)' : 'Income tax, non-resident (resident rates, no reliefs)',
+      max(flat, resRates), 'tax', 'iras', 'secondary', F);
+    lines.push(flat >= resRates ? nrl : bands(nrl, g, SG));
     return finish(g, lines, { taxable: g });
   }
   const rate = k.sgRes === 'citizen' ? SG_CPF_AGE[k.sgAge] || .20 : k.sgRes === 'pr1' ? .05 : k.sgRes === 'pr2' ? .15 : 0;
@@ -201,7 +248,7 @@ function sg(g, k){
   const relief = min(80000, 1000 + cpf);
   lines.push(minus(L('sgRelief', 'Earned income relief and CPF relief', relief, 'deduction', 'iras', 'official', F)));
   const taxable = max(0, g - relief);
-  lines.push(L('sgTax', 'Income tax', prog(taxable, SG), 'tax', 'iras', 'official', F));
+  lines.push(bands(L('sgTax', 'Income tax', prog(taxable, SG), 'tax', 'iras', 'official', F), taxable, SG));
   return finish(g, lines, { taxable });
 }
 
@@ -213,7 +260,8 @@ function uk(g, k){
   const F = '6 Apr 2026', lines = [];
   const pa = max(0, 12570 - max(0, (g - 100000)/2)), taxable = max(0, g - pa);
   lines.push(minus(L('ukPa', g > 100000 ? 'Personal allowance, tapered away above 100,000' : 'Personal allowance', min(pa, g), 'deduction', 'hmrc', 'official', F)));
-  lines.push(L('ukTax', k.ukRegion === 'sco' ? 'Income tax, Scottish rates' : 'Income tax', prog(taxable, k.ukRegion === 'sco' ? UK_SCO : UK_RUK), 'tax', 'hmrc', 'official', F));
+  const ukBr = k.ukRegion === 'sco' ? UK_SCO : UK_RUK;
+  lines.push(bands(L('ukTax', k.ukRegion === 'sco' ? 'Income tax, Scottish rates' : 'Income tax', prog(taxable, ukBr), 'tax', 'hmrc', 'official', F), taxable, ukBr));
   lines.push(L('ukNi', 'National Insurance, Class 1', 0.08*max(0, min(g, 50270) - 12570) + 0.02*max(0, g - 50270), 'social', 'hmrc', 'official', F));
   if(UK_LOAN[k.ukLoan]) lines.push(L('ukSl', 'Student loan (' + k.ukLoan.replace('plan', 'Plan ') + ', 9% above ' + UK_LOAN[k.ukLoan].toLocaleString('en') + ')',
     0.09*max(0, g - UK_LOAN[k.ukLoan]), 'other', 'slc', 'secondary', F));
@@ -231,6 +279,26 @@ function deEst(x){
   else t = 0.45*x - 19470.38;
   return floor(t);
 }
+// §32a by zone, unrounded: where the rate rises across a zone, the row gives its first and last rate.
+const DE_ZONES = [[12348, 0], [17799, [.14, .2397]], [69878, [.2397, .42]], [277825, .42], [null, .45]];
+function deT(x){
+  if(x <= 12348) return 0;
+  if(x <= 17799){ const y = (x - 12348)/10000; return (914.51*y + 1400)*y; }
+  if(x <= 69878){ const z = (x - 17799)/10000; return (173.10*z + 2397)*z + 1034.87; }
+  if(x <= 277825) return 0.42*x - 11135.63;
+  return 0.45*x - 19470.38;
+}
+function deBands(l, zve, joint){
+  const s = joint ? 2 : 1, x = max(0, zve), rows = [];
+  let lo = 0;
+  for(const [up, r] of DE_ZONES){
+    const hi = up == null ? Infinity : up*s, top = min(x, hi);
+    rows.push({ lo, hi: top, rate: r, amount: s*(deT(top/s) - deT(lo/s)) });
+    lo = hi;
+    if(x <= hi) break;
+  }
+  return bandRows(l, x, rows, { restLabel: 'Rounding (income and tax to whole euros)' });
+}
 function deSoli(est, joint){ const fg = joint ? 40700 : 20350; return est <= fg ? 0 : min(0.055*est, 0.119*(est - fg)); }
 function de(g, k){
   const F = '1 Jan 2026', lines = [];
@@ -243,7 +311,7 @@ function de(g, k){
   lines.push(minus(L('deVp', 'Pension, health and care contributions, deductible part', vp, 'base', 'bmf', 'secondary', F)));
   const joint = k.deClass === 'III';
   const est = joint ? 2*deEst(zve/2) : deEst(zve), soli = deSoli(est, joint), church = (+k.deChurch || 0)/100*est;
-  lines.push(L('deEst', joint ? 'Income tax, class III (splitting)' : 'Income tax, class I', est, 'tax', 'bmf', 'official', F));
+  lines.push(deBands(L('deEst', joint ? 'Income tax, class III (splitting)' : 'Income tax, class I', est, 'tax', 'bmf', 'official', F), zve, joint));
   if(soli) lines.push(L('deSoli', 'Solidarity surcharge', soli, 'tax', 'bmf', 'secondary', F));
   if(church) lines.push(L('deKiSt', 'Church tax (' + k.deChurch + '%)', church, 'tax', 'bmf', 'official', F));
   lines.push(L('deRv', 'Pension insurance (9.3%)', rv, 'social', 'desv', 'official', F));
@@ -354,17 +422,24 @@ function usStateLines(g, st, fs, k, lines){
   if(st === 'CA'){
     const [sd, br, cred] = fs === 'S' ? [5900, CA_S, 158] : [11800, CA_MFJ, 316];
     const base = max(0, prog(max(0, g - sd), br) - cred), bhst = 0.01*max(0, g - sd - 1e6);
-    lines.push(L('usState', 'California income tax', base, 'tax', 'ftb', fs === 'MFJ' ? 'official' : 'secondary', F));
+    lines.push(bands(L('usState', 'California income tax', base, 'tax', 'ftb', fs === 'MFJ' ? 'official' : 'secondary', F), max(0, g - sd), br,
+      { adj: [['Less the personal exemption credit', -cred]] }));
     if(bhst) lines.push(L('usCaBhst', 'California behavioral health services tax (1% above 1M)', bhst, 'tax', 'ftb', 'secondary', F));
     lines.push(L('usCaSdi', 'California SDI (1.3%, no cap)', 0.013*g, 'social', 'edd', 'secondary', F));
     total = base + bhst;
   } else if(st === 'NY'){
     const [sd, br, cbr, top, rate] = NY_P[fs];
     const ti = max(0, g - sd), sched = prog(ti, br), stx = nyRecaptureTax(g, ti, br, top, rate);
-    lines.push(L('usState', 'New York State income tax', stx, 'tax', 'nydtf', 'secondary', F));
-    if(stx - sched > 0.005) lines.push(inGroup(L('usNyRecap', 'of which benefit recapture (supplemental tax)', stx - sched, 'info', 'nydtf', 'secondary', F), 'tax'));
+    lines.push(bands(L('usState', 'New York State income tax', stx, 'tax', 'nydtf', 'secondary', F), ti, br,
+      { adj: [['Plus the benefit recapture (supplemental tax)', stx - sched]] }));
+    // The same amount as a note, for a reader of the lines alone; the breakdown table shows it in the brackets instead.
+    if(stx - sched > 0.005){
+      const rl = inGroup(L('usNyRecap', 'of which benefit recapture (supplemental tax)', stx - sched, 'info', 'nydtf', 'secondary', F), 'tax');
+      rl.inBrackets = true;
+      lines.push(rl);
+    }
     total = stx;
-    if(k.usNyc){ const city = prog(ti, cbr); lines.push(L('usNyc', 'New York City resident tax', city, 'tax', 'nydtf', 'secondary', F)); total += city; }
+    if(k.usNyc){ const city = prog(ti, cbr); lines.push(bands(L('usNyc', 'New York City resident tax', city, 'tax', 'nydtf', 'secondary', F), ti, cbr)); total += city; }
     lines.push(L('usNyPfl', 'NY Paid Family Leave (0.432%, max 411.91)', min(0.00432*g, 411.91), 'social', 'nypfl', 'official', F));
     if(k.usNyDbl !== false) lines.push(L('usNyDbl', 'NY disability (DBL, 0.5%, max 0.60 a week)', 52*min(0.005*g/52, 0.60), 'social', 'nysif', 'official', F));
   } else if(st === 'IL'){
@@ -374,8 +449,10 @@ function usStateLines(g, st, fs, k, lines){
     total = t;
   } else {
     const [bs, bm, sd, ex, cr] = US_ST[st], i = fs === 'S' ? 0 : 1;
-    const t = max(0, prog(max(0, g - sd[i] - ex[i]), i ? bm : bs) - cr[i]);
-    lines.push(L('usState', US_STATES[st] + ' income tax', t, 'tax', 'states', 'secondary', F));
+    const sb = max(0, g - sd[i] - ex[i]), sbr = i ? bm : bs, t = max(0, prog(sb, sbr) - cr[i]);
+    const sl = L('usState', US_STATES[st] + ' income tax', t, 'tax', 'states', 'secondary', F);
+    // A flat-rate state has one rate, not brackets, so its line stands alone.
+    lines.push(sbr.length > 1 ? bands(sl, sb, sbr, { adj: [['Less the personal credit', -cr[i]]] }) : sl);
     total = t;
   }
   const loc = (+k.usLocal || 0)/100;
@@ -392,7 +469,7 @@ function us(g, k){
   if(nra){
     // Wages taxed at single rates with no standard deduction; state income tax paid is itemised.
     const ded = stTax;
-    lines.push(L('usFed', 'Federal income tax, nonresident alien (no standard deduction)', prog(max(0, g - ded), USF.S[1]), 'tax', 'irsnra', 'official', F));
+    lines.push(bands(L('usFed', 'Federal income tax, nonresident alien (no standard deduction)', prog(max(0, g - ded), USF.S[1]), 'tax', 'irsnra', 'official', F), max(0, g - ded), USF.S[1]));
     if(ded > 0) lines.push(minus(L('usNraDed', 'State income tax itemised as a deduction', ded, 'deduction', 'irsnra', 'secondary', F)));
     lines.push(...stLines);
     if(k.usFicaExempt) lines.push(inGroup(L('usFicaEx', 'FICA exempt (F, J, M or Q status)', 0, 'info', 'irsnra', 'secondary', F), 'social'));
@@ -400,7 +477,7 @@ function us(g, k){
     notes.push('Tax treaty exemptions are not modelled.');
   } else {
     lines.push(minus(L('usStd', 'Federal standard deduction', min(USF[fs][0], g), 'deduction', 'irs', 'official', F)));
-    lines.push(L('usFed', 'Federal income tax', usFed(g, fs), 'tax', 'irs', 'official', F));
+    lines.push(bands(L('usFed', 'Federal income tax', usFed(g, fs), 'tax', 'irs', 'official', F), max(0, g - USF[fs][0]), USF[fs][1]));
     lines.push(...stLines);
     usFicaLines(g, fs, lines);
   }
@@ -441,7 +518,7 @@ function idn(g, k){
   lines.push(minus(L('idJab', 'Job expense deduction (5%, max 6M)', jab, 'deduction', 'djp', 'secondary', F)));
   lines.push(minus(L('idPtkp', 'Non-taxable allowance (PTKP ' + (k.idMarried ? 'K' : 'TK') + '/' + deps + ')', ptkp, 'deduction', 'djp', 'secondary', F)));
   if(raw > pkp) lines.push(minus(L('idRound', 'Rounded down to the nearest 1,000', raw - pkp, 'base', 'djp', 'official', F)));
-  lines.push(L('idPph21', 'PPh 21 income tax', prog(pkp, ID_BR), 'tax', 'djp', 'secondary', F));
+  lines.push(bands(L('idPph21', 'PPh 21 income tax', prog(pkp, ID_BR), 'tax', 'djp', 'secondary', F), pkp, ID_BR));
   return finish(g, lines, { taxable: pkp });
 }
 
@@ -455,7 +532,7 @@ function th(g, k){
   lines.push(minus(L('thSso', 'Social security (5%, wage ceiling 17,500 a month)', sso, 'social', 'sso', 'secondary', F)));
   lines.push(minus(L('thExp', 'Employment expense deduction (50%, max 100k)', exp, 'deduction', 'rdth', 'secondary', F)));
   lines.push(minus(L('thAllow', 'Personal, spouse and child allowances', allow, 'deduction', 'rdth', 'secondary', F)));
-  lines.push(L('thTax', 'Personal income tax', prog(taxable, TH_BR), 'tax', 'rdth', 'secondary', F));
+  lines.push(bands(L('thTax', 'Personal income tax', prog(taxable, TH_BR), 'tax', 'rdth', 'secondary', F), taxable, TH_BR));
   return finish(g, lines, { taxable });
 }
 
@@ -481,7 +558,8 @@ function my(g, k){
   lines.push(minus(L('myRelief', 'Reliefs (self, EPF, SOCSO, spouse, children)', relief, 'deduction', 'lhdn', 'secondary', F)));
   const rebate = ci <= 35000 && t > 0 ? min(400, t) : 0;
   if(ci <= 35000) t = max(0, t - 400);
-  lines.push(L('myTax', 'Income tax, resident rates', t, 'tax', 'lhdn', 'secondary', F));
+  lines.push(bands(L('myTax', 'Income tax, resident rates', t, 'tax', 'lhdn', 'secondary', F), ci, MY_BR,
+    { adj: [['Less the rebate (chargeable income 35,000 or less)', ci <= 35000 ? -400 : 0]] }));
   if(rebate) lines.push(L('myRebate', 'Rebate (400 when chargeable income is 35,000 or less), inside the tax above', rebate, 'credit', 'lhdn', 'secondary', F));
   return finish(g, lines, { taxable: ci });
 }
@@ -497,7 +575,7 @@ function nl(g0, k){
   const free = k.nlRuling ? max(0, min(0.30*g, g - norm, 78600)) : 0;
   if(k.nlRuling) lines.push(minus(L('nlFree', '30% ruling, tax-free allowance', free, 'deduction', 'nl', 'official', F)));
   const x = g - free - pension;
-  const box1 = prog(x, [[38883,.3575],[78426,.3756],[null,.495]]);
+  const NL_BR = [[38883,.3575],[78426,.3756],[null,.495]], box1 = prog(x, NL_BR);
   const ahk = x <= 29736 ? 3115 : (x < 78426 ? max(0, 3115 - 0.06398*(x - 29736)) : 0);
   let ak;
   if(x < 11965) ak = 0.08324*x;
@@ -505,7 +583,8 @@ function nl(g0, k){
   else if(x < 45592) ak = 5300 + 0.01950*(x - 25845);
   else if(x < 132920) ak = max(0, 5685 - 0.06510*(x - 45592));
   else ak = 0;
-  lines.push(L('nlBox1', 'Box 1 income tax and national insurance', max(0, box1 - ahk - ak), 'tax', 'nl', 'official', F));
+  lines.push(bands(L('nlBox1', 'Box 1 income tax and national insurance', max(0, box1 - ahk - ak), 'tax', 'nl', 'official', F), x, NL_BR,
+    { adj: [['Less the general tax credit', -ahk], ['Less the labour tax credit', -ak]] }));
   if(ahk) lines.push(L('nlAhk', 'General tax credit, inside the tax above', ahk, 'credit', 'nl', 'official', F));
   if(ak) lines.push(L('nlAk', 'Labour tax credit, inside the tax above', ak, 'credit', 'nl', 'official', F));
   return finish(g, lines, { taxable: x, entered: g0 });
@@ -523,7 +602,8 @@ function no(g, k){
   const msd = min(0.46*g, 95700), ti = max(0, g - msd - 114540);
   lines.push(minus(L('noMsd', 'Minimum standard deduction and personal allowance', msd + 114540, 'deduction', 'no', 'official', F)));
   lines.push(L('noIt', 'Tax on ordinary income (22%)', 0.22*ti, 'tax', 'no', 'official', F));
-  lines.push(L('noTrinn', 'Bracket tax (trinnskatt)', prog(g, [[226100,0],[318300,.017],[725050,.04],[980100,.137],[1467200,.168],[null,.178]]), 'tax', 'no', 'official', F));
+  const NO_TRINN = [[226100,0],[318300,.017],[725050,.04],[980100,.137],[1467200,.168],[null,.178]];
+  lines.push(bands(L('noTrinn', 'Bracket tax (trinnskatt)', prog(g, NO_TRINN), 'tax', 'no', 'official', F), g, NO_TRINN));
   lines.push(L('noTr', 'National insurance (7.6%)', g <= 99650 ? 0 : min(0.076*g, 0.25*(g - 99650)), 'social', 'no', 'official', F));
   return finish(g, lines, { taxable: ti, taxableLabel: 'Taxable ordinary income' });
 }
@@ -560,7 +640,8 @@ function se(g, k){
   // The reductions come off municipal tax first, then state tax: that is where the cap sits.
   const offMun = min(red, mun), offState = red - offMun;
   lines.push(L('seMun', 'Municipal tax (' + (ki*100).toFixed(2) + '%) after tax reductions', mun - offMun, 'tax', 'se', 'secondary', F));
-  if(state) lines.push(L('seState', 'State tax (20% above 643,000)', state - offState, 'tax', 'se', 'official', F));
+  if(state) lines.push(bands(L('seState', 'State tax (20% above 643,000)', state - offState, 'tax', 'se', 'official', F), ti, [[643000,0],[null,.20]],
+    { adj: [['Less the tax reductions left after the municipal tax', -offState]] }));
   lines.push(L('sePens', 'Pension fee (7%)', pens, 'tax', 'se', 'official', F));
   lines.push(L('seBur', 'Burial fee', bur, 'tax', 'se', 'secondary', F));
   lines.push(L('sePs', 'Public service fee (1%, max 1,184)', ps, 'tax', 'se', 'secondary', F));
@@ -609,7 +690,8 @@ function fi(g, k){
   const total = max(0, state + munt + ch + shm - ttv);
   // The earned income credit comes off the taxes in proportion, as vero.fi spreads it.
   const pre = state + munt + ch + shm, f = pre > 0 ? total/pre : 0;
-  lines.push(L('fiState', 'State income tax', state*f, 'tax', 'vero', 'official', F));
+  lines.push(bands(L('fiState', 'State income tax', state*f, 'tax', 'vero', 'official', F), ti, FI_STATE,
+    { adj: [['Less its share of the earned income tax credit', -(state - state*f)]] }));
   lines.push(L('fiMun', 'Municipal tax (' + (mun*100).toFixed(2) + '%)', munt*f, 'tax', 'vero', 'official', F));
   if(ch) lines.push(L('fiChurch', 'Church tax (' + (church*100).toFixed(2) + '%)', ch*f, 'tax', 'vero', 'official', F));
   lines.push(L('fiShm', 'Health care contribution (1.10%)', shm*f, 'tax', 'vero', 'official', F));
@@ -660,7 +742,9 @@ function be(g, k){
     fed = max(0, beFedTax(ti - q, quota) - bonus) + beFedTax(q);
   } else fed = max(0, beFedTax(ti, quota) - bonus);
   // The federal tax first, then what works inside it.
-  lines.push(L('beFed', 'Federal income tax', fed, 'tax', 'be', 'official', F));
+  lines.push(bands(L('beFed', 'Federal income tax', fed, 'tax', 'be', 'official', F), married ? ti - q : ti, BE_BR,
+    { adj: [['Less the tax on the tax-free amount', -prog(quota, BE_BR)], ['Less the fiscal employment bonus', -bonus],
+      ['Plus the tax on the marital quotient', married ? beFedTax(q) : 0]] }));
   if(married) lines.push(L('beQc', 'Marital quotient to your partner (30%, max 11,780), inside the tax above', q, 'deduction', 'be', 'secondary', F));
   lines.push(L('beQuota', 'Tax-free amount' + (kids || sp ? ' with child supplements' : '') + ', inside the tax above', quota, 'deduction', 'be', kids || sp ? 'secondary' : 'official', F));
   if(bonus > 0) lines.push(L('beFb', 'Fiscal employment bonus, inside the tax above', bonus, 'credit', 'onss', 'secondary', '1 Sep 2026'));
@@ -691,16 +775,18 @@ function it(g, k){
     r = full - excl;
     lines.push(minus(L('itImpEx', 'Impatriate regime, excluded share (' + imp*100 + '%)', excl, 'deduction', 'it', 'secondary', F)));
   }
-  const irpef = prog(r, [[28000,.23],[50000,.33],[null,.43]]);
+  const IRPEF = [[28000,.23],[50000,.33],[null,.43]], REG_LO = [[15000,.0123],[28000,.0158],[50000,.0172],[null,.0173]];
+  const irpef = prog(r, IRPEF);
   const cuneoDet = (r > 20000 && r <= 32000) ? 1000 : (r > 32000 && r < 40000 ? 1000*(40000 - r)/8000 : 0);
   const cuneoBonus = r <= 20000 ? r*(r <= 8500 ? 0.071 : r <= 15000 ? 0.053 : 0.048) : 0;
   const detr = itDetr(r);
   const irpefNet = max(0, irpef - detr - cuneoDet);
-  const reg = prog(r, [[15000,.0123],[28000,.0158],[50000,.0172],[null,.0173]]);
+  const reg = prog(r, REG_LO);
   const com = r > 23000 ? r*0.008 : 0;
-  lines.push(L('itIrpef', 'IRPEF, after the employment credit' + (cuneoDet ? ' and cuneo credit' : ''), irpefNet, 'tax', 'it', 'official', F));
+  lines.push(bands(L('itIrpef', 'IRPEF, after the employment credit' + (cuneoDet ? ' and cuneo credit' : ''), irpefNet, 'tax', 'it', 'official', F), r, IRPEF,
+    { adj: [['Less the employment credit', -detr], ['Less the cuneo credit', -cuneoDet]] }));
   if(detr + cuneoDet > 0) lines.push(L('itDetr', 'Employment credit' + (cuneoDet ? ' and cuneo credit' : '') + ', inside IRPEF', min(irpef, detr + cuneoDet), 'credit', 'it', imp ? 'assumption' : 'secondary', F));
-  lines.push(L('itReg', 'Lombardy regional surtax', reg, 'tax', 'it', 'official', F));
+  lines.push(bands(L('itReg', 'Lombardy regional surtax', reg, 'tax', 'it', 'official', F), r, REG_LO));
   lines.push(L('itCom', 'Milan municipal surtax (0.8% above 23,000)', com, 'tax', 'it', 'official', F));
   if(cuneoBonus) lines.push(L('itBonus', 'Cuneo fiscale bonus, tax-free cash', cuneoBonus, 'benefit', 'it', 'secondary', F));
   const notes = imp ? ['Tax credits are worked out on the reduced income. Confirm with your payroll provider.'] : [];
@@ -708,10 +794,13 @@ function it(g, k){
 }
 
 /* ════════════════════════════ CH-ZH 2026 ════════════════════════════════ */
+const CH_DBST_S = [[15200,0,0.77],[33200,138.60,0.88],[43500,229.20,2.64],[58000,612.00,2.97],[76200,1152.50,5.94],
+  [82100,1502.95,6.60],[108900,3271.75,8.80],[141500,6140.55,11.00],[185100,10936.55,13.20]];
+const CH_DBST_M = [[29700,0,1],[53400,237,2],[61300,395,3],[79100,929,4],[94900,1561,5],[108700,2251,6],[120600,2965,7],
+  [130500,3658,8],[138400,4290,9],[144300,4821,10],[148300,5221,11],[150400,5452,12],[152400,5692,13]];
 function chDbstSingle(x){
   x = floor(x/100)*100;
-  const pts = [[15200,0,0.77],[33200,138.60,0.88],[43500,229.20,2.64],[58000,612.00,2.97],[76200,1152.50,5.94],
-    [82100,1502.95,6.60],[108900,3271.75,8.80],[141500,6140.55,11.00],[185100,10936.55,13.20]];
+  const pts = CH_DBST_S;
   if(x <= 15200) return 0;
   if(x >= 794000) return 0.115*x;
   let p = pts[0]; for(const q of pts) if(q[0] <= x) p = q;
@@ -719,8 +808,7 @@ function chDbstSingle(x){
 }
 function chDbstMarried(x){
   x = floor(x/100)*100;
-  const pts = [[29700,0,1],[53400,237,2],[61300,395,3],[79100,929,4],[94900,1561,5],[108700,2251,6],[120600,2965,7],
-    [130500,3658,8],[138400,4290,9],[144300,4821,10],[148300,5221,11],[150400,5452,12],[152400,5692,13]];
+  const pts = CH_DBST_M;
   if(x < 29700) return 0;
   if(x >= 941400) return 0.115*x;
   let p = pts[0]; for(const q of pts) if(q[0] <= x) p = q;
@@ -759,11 +847,19 @@ function ch(g, k){
   lines.push(minus(L('chBeruf', 'Professional expenses (3%, 2,000 to 4,000)', beruf, 'base', 'zh', 'secondary', F)));
   lines.push(minus(L('chIns', 'Insurance premium deduction', married ? 5800 + 1300*kids : 2900, 'base', 'zh', 'secondary', F)));
   if(kids) lines.push(minus(L('chKidDed', 'Child deduction', 9400*kids, 'base', 'zh', 'secondary', F)));
-  lines.push(L('chKant', 'Canton of Zurich tax (95% of the simple tax)', e*0.95, 'tax', 'zh', 'official', F));
-  lines.push(L('chGem', 'Communal tax (' + (gem*100).toFixed(0) + '% of the simple tax)', e*gem, 'tax', 'zh', 'official', F));
-  if(church) lines.push(L('chKirche', 'Church tax (10% of the simple tax)', e*church, 'tax', 'zh', 'secondary', F));
+  // The cantonal, communal and church taxes are each a share of one simple tax: each line's
+  // brackets are the simple tax's, at the rate times that share.
+  const zhX = married ? floor(max(0, tiK)/100)*100 : floor(tiK/100)*100, zhBr = married ? ZH_VERH : ZH_GRUND;
+  const zh = (l, mult) => bands(l, zhX, zhBr, { mult, restLabel: 'Rounding' });
+  lines.push(zh(L('chKant', 'Canton of Zurich tax (95% of the simple tax)', e*0.95, 'tax', 'zh', 'official', F), 0.95));
+  lines.push(zh(L('chGem', 'Communal tax (' + (gem*100).toFixed(0) + '% of the simple tax)', e*gem, 'tax', 'zh', 'official', F), gem));
+  if(church) lines.push(zh(L('chKirche', 'Church tax (10% of the simple tax)', e*church, 'tax', 'zh', 'secondary', F), church));
   lines.push(L('chPers', 'Personal tax', personal, 'tax', 'zh', 'secondary', F));
-  lines.push(L('chBund', 'Federal tax (DBST)' + (kids ? ', after 263 a child' : ''), fed, 'tax', 'estv', 'official', F));
+  const fedL = L('chBund', 'Federal tax (DBST)' + (kids ? ', after 263 a child' : ''), fed, 'tax', 'estv', 'official', F);
+  const fedX = floor(max(0, tiB)/100)*100;
+  // Above the top point the federal tax is 11.5% of all the income, not a bracket: that line stands alone.
+  lines.push(fedX >= (married ? 941400 : 794000) ? fedL : bands(fedL, fedX, ptsBr(married ? CH_DBST_M : CH_DBST_S),
+    { adj: [['Less 263 a child', -263*kids]], restLabel: 'Rounding, and no federal tax below 25' }));
   lines.push(inGroup(L('chKvg', 'Health insurance (KVG) is a private premium, not included', 0, 'info', 'estv', 'official', F), 'social'));
   const notes = [];
   if(!married && g > 110000 && g < 130000) notes.push('One cantonal comparison read about 1.6% less tax near 120,000. Not yet resolved against the Kanton Zürich calculator.');
@@ -773,14 +869,15 @@ function ch(g, k){
 /* ════════════════════════════ FR 2026 ═══════════════════════════════════ */
 const PASS_FR = 48060;
 const FR_BR = [[11600,0],[29579,.11],[84577,.30],[181917,.41],[null,.45]];
-function frTax(nt, parts, baseParts){
-  let t = prog(nt/parts, FR_BR)*parts;
+function frSteps(nt, parts, baseParts){
+  const tq = prog(nt/parts, FR_BR)*parts;
   const tBase = prog(nt/baseParts, FR_BR)*baseParts;
-  t = max(t, tBase - 1807*2*(parts - baseParts));
+  const capped = max(tq, tBase - 1807*2*(parts - baseParts));
   const [decLim, decK] = baseParts === 1 ? [897, 1982] : [1483, 3277];
-  if(t < decK) t = max(0, t - (decLim - 0.4525*t));
-  return t;
+  const t = capped < decK ? max(0, capped - (decLim - 0.4525*capped)) : capped;
+  return { tq, capped, t };
 }
+function frTax(nt, parts, baseParts){ return frSteps(nt, parts, baseParts).t; }
 function fr(g, k){
   const F = '1 Jan 2026', lines = [];
   const cadre = k.frCadre === 'cadre', married = !!k.frMarried, kids = max(0, floor(+k.frKids || 0));
@@ -808,8 +905,10 @@ function fr(g, k){
   }
   const abat = min(max(0.10*ni, 509), 14555), nt = ni - abat;
   lines.push(minus(L('frAbat', 'Professional expenses deduction (10%)', abat, 'deduction', 'frsp', 'official', F)));
-  const ir = frTax(nt, parts, baseParts);
-  lines.push(L('frIr', 'Income tax (' + parts + ' part' + (parts > 1 ? 's' : '') + ')', ir, 'tax', 'frsp', 'official', F));
+  const frs = frSteps(nt, parts, baseParts), ir = frs.t;
+  // The scale applies per part: its brackets, times the number of parts, on the whole income.
+  lines.push(bands(L('frIr', 'Income tax (' + parts + ' part' + (parts > 1 ? 's' : '') + ')', ir, 'tax', 'frsp', 'official', F), nt, FR_BR,
+    { scale: parts, adj: [['Plus the cap on what the extra parts save', frs.capped - frs.tq], ['Less the décote (low-tax relief)', frs.t - frs.capped]] }));
   // CEHR above RFR 250,000 (single) / 500,000 (joint): 3% then 4%.
   const [c1, c2] = married ? [500000, 1000000] : [250000, 500000];
   const cehr = 0.03*max(0, min(rfr, c2) - c1) + 0.04*max(0, rfr - c2);
@@ -853,8 +952,10 @@ function es(g, k){
   if(a20) lines.push(minus(L('esArt20', 'Reduction for work income (Art. 20)', a20, 'deduction', 'aeat', 'official', F)));
   // The SMI deduction comes off the state share first, then Madrid's.
   const offSt = min(st, smi), offMd = smi - offSt;
-  lines.push(L('esState', 'IRPF, state share', st - offSt, 'tax', 'aeat', 'secondary', F));
-  lines.push(L('esMad', 'IRPF, Madrid share', md - offMd, 'tax', 'madrid', 'secondary', F));
+  lines.push(bands(L('esState', 'IRPF, state share', st - offSt, 'tax', 'aeat', 'secondary', F), base, ES_STATE,
+    { adj: [['Less the tax on the personal and family minimum', -prog(stMin, ES_STATE)], ['Less the minimum wage deduction (SMI)', -offSt]] }));
+  lines.push(bands(L('esMad', 'IRPF, Madrid share', md - offMd, 'tax', 'madrid', 'secondary', F), base, ES_MAD,
+    { adj: [['Less the tax on the personal and family minimum', -prog(mdMin, ES_MAD)], ['Less the minimum wage deduction (SMI)', -offMd]] }));
   if(smi) lines.push(L('esSmi', 'Minimum wage deduction (SMI), inside the IRPF', smi, 'credit', 'aeat', 'official', F));
   return finish(g, lines, { taxable: base });
 }
@@ -916,8 +1017,10 @@ function pt(g, k){
   const credits = coleta + deps + exps;
   const t = max(0, scale + solid - credits);
   const offScale = min(scale, credits);
-  lines.push(L('ptIrs', 'IRS, after deductions from tax', scale - offScale, 'tax', 'ptat', 'official', F));
-  if(solid) lines.push(L('ptSolid', 'Solidarity surcharge (2.5% above 80,000, 5% above 250,000)', max(0, solid - (credits - offScale)), 'tax', 'ptat', 'official', F));
+  lines.push(bands(L('ptIrs', 'IRS, after deductions from tax', scale - offScale, 'tax', 'ptat', 'official', F), col, PT_BR,
+    { adj: [['Less the deductions from tax', -offScale]] }));
+  if(solid) lines.push(bands(L('ptSolid', 'Solidarity surcharge (2.5% above 80,000, 5% above 250,000)', max(0, solid - (credits - offScale)), 'tax', 'ptat', 'official', F),
+    col, [[80000,0],[250000,.025],[null,.05]], { adj: [['Less the deductions from tax left over', -(credits - offScale)]] }));
   if(credits && t + credits > 0) lines.push(L('ptCred', 'Deductions from tax (family expenses' + (deps ? ', dependants' : '') + (exps ? ', health, education, rent' : '') + '), inside the tax above', min(credits, scale + solid), 'credit', 'ptded', 'secondary', F));
   return finish(g, lines, { taxable: col });
 }
@@ -957,8 +1060,9 @@ function jp(g, k){
   lines.forEach(l => { if(l.kind === 'social') l.base = -1; });   // social insurance comes off the taxable pay
   lines.push(minus(L('jpEmpDed', 'Employment income deduction', jpEmpDed(g), 'deduction', 'nta', 'official', F)));
   lines.push(minus(L('jpBasic', 'Basic deduction, national tax', jpBasic(kyuyo), 'base', 'nta', 'official', F)));
-  const itx = floor(jpNat(kyuyo - soc - jpBasic(kyuyo))*1.021/100)*100;
-  lines.push(L('jpIt', 'National income tax with reconstruction surtax', itx, 'tax', 'nta', 'official', F));
+  const jti = floor(max(0, kyuyo - soc - jpBasic(kyuyo))/1000)*1000, itx = floor(jpNat(jti)*1.021/100)*100;
+  lines.push(bands(L('jpIt', 'National income tax with reconstruction surtax', itx, 'tax', 'nta', 'official', F), jti, plainBr(JP_BR),
+    { adj: [['Plus the reconstruction surtax (2.1%)', 0.021*jpNat(jti)]], restLabel: 'Rounding (income to 1,000, tax down to 100)' }));
   if(k.jpRes !== 'y1'){
     const ti = floor(max(0, kyuyo - soc - 430000)/1000)*1000;
     const rt = floor(max(0, ti*0.06 - 1500)/100)*100 + floor(max(0, ti*0.04 - 1000)/100)*100 + 5000;
@@ -1008,7 +1112,8 @@ function kr(g, k){
     t = max(0, raw - cr);
     if(cr > 0) lines.push(L('krCr', 'Earned income tax credit, inside the tax', min(cr, raw), 'credit', 'nts', 'secondary', F));
   }
-  lines.push(L('krTax', k.krMethod === 'flat' ? 'National income tax, 19% flat election' : 'National income tax', t, 'tax', 'nts', 'secondary', F));
+  const krL = L('krTax', k.krMethod === 'flat' ? 'National income tax, 19% flat election' : 'National income tax', t, 'tax', 'nts', 'secondary', F);
+  lines.push(k.krMethod === 'flat' ? krL : bands(krL, taxable, plainBr(KR_BR), { adj: [['Less the earned income tax credit', -krCredit(krTax(taxable), g)]] }));
   lines.push(L('krLocal', 'Local income tax (10% of national)', t*0.1, 'tax', 'nts', 'secondary', F));
   return finish(g, lines, { taxable });
 }
@@ -1028,7 +1133,9 @@ function caOhp(ti){
   return min(900, 750 + 0.25*(ti - 200000));
 }
 const caFedBpa = ti => ti <= 181440 ? 16452 : max(14829, 16452 - (ti - 181440)*(16452 - 14829)/(258482 - 181440));
-function caFed(g, ti, base, ei, extra){ return max(0, prog(ti, FED_CA) - 0.14*(caFedBpa(ti) + min(1501, g) + base + ei + (extra || 0))); }
+const caFedCr = (g, ti, base, ei, extra) => 0.14*(caFedBpa(ti) + min(1501, g) + base + ei + (extra || 0));
+function caFed(g, ti, base, ei, extra){ return max(0, prog(ti, FED_CA) - caFedCr(g, ti, base, ei, extra)); }
+const CA_FED_CR = 'Less the federal credits at 14% (basic personal amount, CPP, EI, Canada employment)';
 function ca(g, k){
   const F = '1 Jan 2026', lines = [], prov = k.caProv || 'ON';
   if(prov === 'QC'){
@@ -1042,8 +1149,11 @@ function ca(g, k){
     if(qpp2) lines.push(minus(L('caQpp2', 'QPP2 (4%)', qpp2, 'social', 'rq', 'official', F)));
     lines.push(L('caEi', 'EI, Quebec rate (1.30%)', ei, 'social', 'cra', 'official', F));
     lines.push(L('caQpip', 'QPIP (0.430%)', qpip, 'social', 'rq', 'official', F));
-    lines.push(L('caFed', 'Federal tax, after the 16.5% Quebec abatement', fed, 'tax', 'cra', 'secondary', F));
-    lines.push(L('caQc', 'Quebec income tax', qc, 'tax', 'rq', 'official', F));
+    const fed0 = caFed(g, ti, base, ei, qpip);
+    lines.push(bands(L('caFed', 'Federal tax, after the 16.5% Quebec abatement', fed, 'tax', 'cra', 'secondary', F), ti, FED_CA,
+      { adj: [['Less the federal credits at 14% (basic personal amount, QPP, EI, QPIP, Canada employment)', -caFedCr(g, ti, base, ei, qpip)], ['Less the Quebec abatement (16.5%)', -0.165*fed0]] }));
+    lines.push(bands(L('caQc', 'Quebec income tax', qc, 'tax', 'rq', 'official', F), ti - wd, QC_BR,
+      { adj: [['Less the basic personal credit (14% of 18,952)', -0.14*18952]] }));
     lines.push(L('caQcWd', 'Deduction for workers (6%, max 1,450), inside the Quebec tax above', wd, 'deduction', 'rq', 'official', F));
     return finish(g, lines, { taxable: ti, taxableLabel: 'Taxable income, federal', notes: ['The Quebec work premium, solidarity credit and RAMQ drug insurance premium are not included.'] });
   }
@@ -1054,27 +1164,33 @@ function ca(g, k){
   if(cpp2) lines.push(minus(L('caCpp2', 'CPP2 (4%)', cpp2, 'social', 'cra', 'secondary', F)));
   lines.push(L('caEi', 'EI (1.63%)', ei, 'social', 'cra', 'secondary', F));
   const fed = caFed(g, ti, base, ei);
-  lines.push(L('caFed', 'Federal income tax', fed, 'tax', 'cra', 'official', F));
+  lines.push(bands(L('caFed', 'Federal income tax', fed, 'tax', 'cra', 'official', F), ti, FED_CA, { adj: [[CA_FED_CR, -caFedCr(g, ti, base, ei)]] }));
   if(prov === 'ON'){
     const kids = max(0, floor(+k.caKids || 0));
-    let on = max(0, prog(ti, ON_BR) - 0.0505*(12989 + base + ei));
+    const onCr = 0.0505*(12989 + base + ei);
+    let on = max(0, prog(ti, ON_BR) - onCr);
     const sur = 0.20*max(0, on - 5818) + 0.36*max(0, on - 7446);
     on += sur;
     const otr = min(on, max(0, 2*(300 + 554*kids) - on));
     on -= otr;
     const lift = max(0, min(0.0505*g, 875) - 0.05*max(0, ti - 32500));
     const afterLift = max(0, on - lift);
-    lines.push(L('caOn', 'Ontario income tax' + (sur ? ' with surtax' : ''), afterLift, 'tax', 'cra', 'official', F));
+    lines.push(bands(L('caOn', 'Ontario income tax' + (sur ? ' with surtax' : ''), afterLift, 'tax', 'cra', 'official', F), ti, ON_BR,
+      { adj: [['Less the Ontario credits at 5.05% (basic personal amount, CPP, EI)', -onCr], ['Plus the Ontario surtax', sur],
+        ['Less the Ontario Tax Reduction', -otr], ['Less the LIFT credit', -(on - afterLift)]] }));
     if(otr > 0) lines.push(L('caOtr', 'Ontario Tax Reduction, inside the Ontario tax', otr, 'credit', 'eyon', 'secondary', F));
     if(on - afterLift > 0) lines.push(L('caLift', 'LIFT credit, inside the Ontario tax', on - afterLift, 'credit', 'ontario', 'official', F));
     lines.push(L('caOhp', 'Ontario Health Premium', caOhp(ti), 'tax', 'ontario', 'official', F));
   } else if(prov === 'BC'){
-    let bc = max(0, prog(ti, BC_BR) - 0.056*(13216 + base + ei));
+    const bcCr = 0.056*(13216 + base + ei);
+    let bc = max(0, prog(ti, BC_BR) - bcCr);
     const red = max(0, 690 - 0.0356*max(0, ti - 25570));
-    lines.push(L('caBc', 'British Columbia income tax', max(0, bc - red), 'tax', 'bc', 'official', F));
+    lines.push(bands(L('caBc', 'British Columbia income tax', max(0, bc - red), 'tax', 'bc', 'official', F), ti, BC_BR,
+      { adj: [['Less the BC credits at 5.6% (basic personal amount, CPP, EI)', -bcCr], ['Less the BC tax reduction', -red]] }));
     if(red > 0 && bc > 0) lines.push(L('caBcRed', 'BC tax reduction credit, inside the tax', min(red, bc), 'credit', 'bc', 'official', F));
   } else {
-    lines.push(L('caAb', 'Alberta income tax', max(0, prog(ti, AB_BR) - 0.08*(22769 + base + ei)), 'tax', 'cra', 'official', F));
+    lines.push(bands(L('caAb', 'Alberta income tax', max(0, prog(ti, AB_BR) - 0.08*(22769 + base + ei)), 'tax', 'cra', 'official', F), ti, AB_BR,
+      { adj: [['Less the Alberta credits at 8% (basic personal amount, CPP, EI)', -0.08*(22769 + base + ei)]] }));
   }
   return finish(g, lines, { taxable: ti });
 }
@@ -1087,10 +1203,11 @@ function hk(g, k){
   if(mpfOn) lines.push(minus(L('hkMpf', 'MPF, employee share (5%, max 1,500 a month)', mpf, 'social', 'mpfa', 'official', F)));
   const net = g - min(mpf, 18000);
   const allow = (k.hkMarried ? 290000 : 145000) + 140000*max(0, floor(+k.hkKids || 0));
-  const progt = prog(max(0, net - allow), [[50000,.02],[100000,.06],[150000,.10],[200000,.14],[null,.17]]);
+  const HK_BR = [[50000,.02],[100000,.06],[150000,.10],[200000,.14],[null,.17]], progt = prog(max(0, net - allow), HK_BR);
   const std = 0.15*min(net, 5e6) + 0.16*max(0, net - 5e6);
   const stdWins = progt > std;
-  lines.push(L('hkTax', stdWins ? 'Salaries tax, standard rate on net income (15%, 16% above 5M)' : 'Salaries tax, progressive rates', min(progt, std), 'tax', 'ird', 'secondary', F));
+  const hl = L('hkTax', stdWins ? 'Salaries tax, standard rate on net income (15%, 16% above 5M)' : 'Salaries tax, progressive rates', min(progt, std), 'tax', 'ird', 'secondary', F);
+  lines.push(stdWins ? hl : bands(hl, max(0, net - allow), HK_BR));
   const al = L('hkAllow', stdWins ? 'Allowances (basic, married, children), not used at the standard rate' : 'Allowances (basic, married, children)', allow, 'deduction', 'ird', 'official', F);
   lines.push(stdWins ? al : minus(al));
   return finish(g, lines, stdWins ? { taxable: net, taxableLabel: 'Net income, standard rate' } : { taxable: max(0, net - allow), taxableLabel: 'Net chargeable income' });
@@ -1116,7 +1233,7 @@ function cn(g, k){
   if(allow) lines.push(minus(L('cnAllow', 'Tax-free expat allowances', allow, 'deduction', 'cn', 'official', F)));
   if(special) lines.push(minus(L('cnSpecial', 'Special additional deductions', special, 'deduction', 'cn', 'secondary', F)));
   const ti = max(0, g - 60000 - soc - house - allow - special);
-  lines.push(L('cnIit', 'Individual income tax', cnIit(ti), 'tax', 'cn', 'secondary', F));
+  lines.push(bands(L('cnIit', 'Individual income tax', cnIit(ti), 'tax', 'cn', 'secondary', F), ti, plainBr(CN_BR)));
   return finish(g, lines, { taxable: ti });
 }
 
@@ -1139,7 +1256,7 @@ function tw(g, k){
   lines.push(minus(L('twSal', 'Salary special deduction', min(g, 227000), 'deduction', 'mof', 'official', F)));
   if(excl) lines.push(minus(L('twGold', 'Gold Card exclusion (50% above 3M)', excl, 'deduction', 'mof', 'official', F)));
   lines.push(minus(L('twEx', 'Exemptions and standard deduction', ex + std, 'deduction', 'mof', 'official', F)));
-  lines.push(L('twTax', 'Individual income tax', twTax(nti), 'tax', 'mof', 'secondary', F));
+  lines.push(bands(L('twTax', 'Individual income tax', twTax(nti), 'tax', 'mof', 'secondary', F), nti, plainBr(TW_BR)));
   return finish(g, lines, { taxable: nti, taxableLabel: 'Net taxable income' });
 }
 

@@ -115,10 +115,13 @@ const CASES = [
   ['Gulf|SA_national_new_2026|600000', 'SA', { gulfNat: 'national', saScheme: 'new' }], ['Gulf|BH_expat|240000', 'BH', { gulfNat: 'expat' }],
   ['ID (gross/month)|K2|40000000', 'ID', { idMarried: true, idDeps: '2' }, 'monthly']
 ];
+// Changed on purpose since v11 (run.mjs replays each): Australia takes no work deduction off a
+// resident's salary, so A$120,000 pays 4,020 + 22,500 resident tax and 2,400 Medicare levy.
+const CHANGED = { 'AU|pr|120000': { incomeTax: 28920, net: 91080 } };
 {
   const { ctx, page, errs } = await open();
   for(const [key, country, fields, period] of CASES){
-    const want = GOLD[key];
+    const want = CHANGED[key] || GOLD[key];
     const gross = +key.split('|')[2];
     await setJob(page, country, fields, gross, period || 'yearly');
     const s = await shown(page);

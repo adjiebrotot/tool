@@ -4,7 +4,7 @@
   "title": "Australian Income Tax 2026-27: How to Calculate It",
   "h1": "How to calculate income tax in Australia (2026-27)",
   "description": "Australian income tax for residents, foreign residents and working holiday makers in 2026-27: rates, Medicare levy, super, and five worked take-home examples.",
-  "lede": "<p>Australia taxes residents on worldwide income with progressive rates from 0% to 45%, plus a 2% Medicare levy for most residents. Employers pay a 12% super guarantee on top of your salary, so it does not reduce your take-home pay. On A$100,000 a resident pays about A$22,200 in income tax and Medicare levy and keeps about A$77,800, while a foreign resident on the same salary pays A$30,000 and keeps A$70,000.</p>",
+  "lede": "<p>Australia taxes residents on worldwide income with progressive rates from 0% to 45%, plus a 2% Medicare levy for most residents. Employers pay a 12% super guarantee on top of your salary, so it does not reduce your take-home pay. On A$100,000 a resident pays about A$22,520 in income tax and Medicare levy and keeps about A$77,480, while a foreign resident on the same salary pays A$30,000 and keeps A$70,000.</p>",
   "law": {
     "intro": "<p>The Australian tax year runs from 1 July to 30 June, and the figures below are the 2026-27 rates as the calculator models them. Which table applies depends on your tax residency, not on your visa or citizenship. Residency is decided by tests the ATO applies, such as whether you live in Australia, whether you have been here more than half the year, and whether your usual home is overseas. Many people on a temporary visa who live here for a full year are still tax residents.</p>",
     "blocks": [
@@ -128,13 +128,13 @@
     {
       "key": "resident",
       "title": "How to calculate income tax as an Australian resident on A$100,000",
-      "intro": "<p>This is a citizen or permanent resident on a A$100,000 salary. The calculator allows a A$1,000 standard deduction for work expenses, so taxable income is A$99,000. That lands in the 30% band, giving A$20,220 of income tax. LITO is nil at this income. The 2% Medicare levy adds A$1,980, and you keep about A$77,800, or 77.8% of gross.</p>",
+      "intro": "<p>This is a citizen or permanent resident on a A$100,000 salary. The calculator takes no work deductions off the salary, so taxable income is the full A$100,000. That lands in the 30% band, giving A$20,520 of income tax. LITO is nil at this income. The 2% Medicare levy adds A$2,000, and you keep about A$77,480, or 77.5% of gross.</p>",
       "after": "<p>The 12% employer super (A$12,000) is paid on top and is not part of the take-home figure. Your marginal rate is 32%: 30% income tax plus the Medicare levy.</p>"
     },
     {
       "key": "temporary-resident",
       "title": "How much tax does a temporary resident pay in Australia on A$100,000?",
-      "intro": "<p>This is a skilled worker on a temporary visa who counts as a tax resident. The same resident rates and A$1,000 deduction apply, so income tax is the same A$20,220. The difference is that the calculator charges no Medicare levy, so you keep about A$79,780, or 79.8% of gross.</p>",
+      "intro": "<p>This is a skilled worker on a temporary visa who counts as a tax resident. The same resident rates apply, so income tax is the same A$20,520. The difference is that the calculator charges no Medicare levy, so you keep about A$79,480, or 79.5% of gross.</p>",
       "after": "<p>Check your own Medicare position. Some temporary visa holders do pay the levy, for example those covered by a reciprocal health care agreement, so confirm with the ATO before relying on the saving.</p>"
     },
     {
@@ -152,7 +152,7 @@
     {
       "key": "no-private-health-cover",
       "title": "Take-home pay on A$150,000 in Australia without private health cover",
-      "intro": "<p>A permanent resident on A$150,000 has taxable income of A$149,000. Income tax is A$36,200, because the slice above A$135,000 is taxed at 37%. Medicare levy adds A$2,980. With no private hospital cover, the surcharge adds 1.25% of income, or A$1,862.50. You keep about A$108,958, or 72.6% of gross, and the marginal rate is 40.3%.</p>",
+      "intro": "<p>A permanent resident on A$150,000 has taxable income of A$150,000. Income tax is A$36,570, because the slice above A$135,000 is taxed at 37%. Medicare levy adds A$3,000. With no private hospital cover, the surcharge adds 1.25% of income, or A$1,875. You keep about A$108,555, or 72.4% of gross, and the marginal rate is 40.3%.</p>",
       "after": "<p>Taking out appropriate private hospital cover would remove the surcharge line, though you would pay the premium. Compare the two before deciding.</p>"
     }
   ],
@@ -168,7 +168,7 @@
     },
     {
       "h3": "Claim work-related deductions with records",
-      "html": "<p><strong>Suits:</strong> any resident who pays work costs personally, such as tools, required training, a home office or union fees. A deduction lowers taxable income and so saves tax at your marginal rate.</p><p><strong>Caveat:</strong> you need a record for each claim, the expense must relate to earning your income, and the ATO checks claims. The calculator only assumes a flat A$1,000.</p>"
+      "html": "<p><strong>Suits:</strong> any resident who pays work costs personally, such as tools, required training, a home office or union fees. A deduction lowers taxable income and so saves tax at your marginal rate.</p><p><strong>Caveat:</strong> you need a record for each claim, the expense must relate to earning your income, and the ATO checks claims. The calculator takes none off your pay, since claims are made at tax time and differ from person to person, so a claim lowers your tax below the figure it shows.</p>"
     },
     {
       "h3": "Plan for DASP before you leave, if you are a temporary resident",
@@ -180,14 +180,14 @@
     "<strong>No bonuses or equity.</strong> Share options, bonuses and allowances are not modelled separately.",
     "<strong>Simplified residency.</strong> You choose the status. The calculator does not test whether you qualify as a resident, foreign resident or working holiday maker.",
     "<strong>Single person.</strong> The Medicare levy surcharge uses single thresholds. Family and dependants, and the Medicare levy family reduction, are not included.",
-    "<strong>Flat work deduction.</strong> Residents get a A$1,000 standard deduction. Your real deductions will differ.",
+    "<strong>Work deductions.</strong> None are taken off the salary. Claims for work costs are made at tax time and differ from person to person, so your tax can end up lower.",
     "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here.",
     "<strong>Other levies and offsets.</strong> HELP debt repayments, state payroll items and other offsets are not included."
   ],
   "faq": [
     {
       "q": "How much tax do I pay on A$100,000 in Australia?",
-      "a": "<p>A resident pays about A$22,200 in income tax and Medicare levy and keeps about A$77,800. A foreign resident pays A$30,000 and keeps A$70,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A resident pays about A$22,520 in income tax and Medicare levy and keeps about A$77,480. A foreign resident pays A$30,000 and keeps A$70,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "Do I pay tax on super if I leave Australia?",

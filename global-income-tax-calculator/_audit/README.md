@@ -36,6 +36,14 @@ Each is checked by `run.mjs` against its own source, not against the v11 golden 
 - **Spain, 4 or more children**: the minimums for the 4th child onward (4,500 state, 4,950
   Madrid) from the spec's table, which the v11 model capped at 3 children.
 - **Italy, impatriate**: the excluded income is capped at 600,000, as the spec states.
+- **Australia, no work deduction** (v11 took a flat A$1,000 off a resident's salary). Work-related
+  expenses are claimed on the return at tax time and differ a lot between people, so they no
+  longer lower the take-home pay shown. The six resident golden cases (`AU|pr|*`, `AU|temp|*`)
+  are replayed on the full salary: resident rates, LITO and, for `pr`, the 2% Medicare levy.
+- **Tax by bracket.** Each tax line worked out on marginal brackets carries them
+  (`line.brackets`), and the breakdown table lists them under the line. `run.mjs` checks that
+  the brackets run from 0 to the base without a gap and that they, the credits and surcharges
+  listed with them, and the rounding left over make the line.
 
 ## Still open
 

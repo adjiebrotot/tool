@@ -645,6 +645,7 @@ function badge(l){
 }
 // Where a line reads in the take-home block (null: only in the taxable income block).
 function placeOf(l){
+  if(l.inBrackets) return null;          // already a row under its tax line's brackets
   if(l.group) return l.group;
   if(l.base && !SUMMED.includes(l.kind)) return null;
   return { tax: 'tax', credit: 'tax', deduction: 'tax', social: 'social', other: 'other', benefit: 'benefit', employer: 'employer' }[l.kind] || 'note';
@@ -652,16 +653,30 @@ function placeOf(l){
 const SUMMED = ['tax', 'social', 'other', 'benefit'];
 /* The rows of one job's breakdown, for the table and its CSV alike. A row is
    { sec } (a block's title) or { sec, op, label, amount, line, cls }, where op is
-   '+', '−', '=' or '' and cls is 'start', 'group', 'part', 'aside' or 'total'. */
+   '+', '−', '=' or '' and cls is 'start', 'group', 'part', 'aside', 'band' or 'total'.
+   A tax line worked out on marginal brackets is followed by its 'band' rows: each
+   bracket the base reaches, with the slice of income in it, its rate and its tax,
+   then the credits or surcharges that turn their sum into the line, then any
+   rounding the rules make. */
+const rateText = v => Array.isArray(v) ? rateText(v[0]) + ' rising to ' + rateText(v[1]) : +(v*100).toFixed(4) + '%';
+function bracketRows(sec, l, cur){
+  const b = l.brackets, out = [];
+  if(!b || !(b.base > 0)) return out;   // nothing taxable: no bracket is reached
+  b.rows.forEach(x => out.push({ sec, op: '', label: money(x.lo, cur) + ' to ' + money(x.hi, cur) + ' at ' + rateText(x.rate), amount: x.amount, cls: 'band' }));
+  b.adj.forEach(a => out.push({ sec, op: '', label: a.label, amount: Math.abs(a.amount), cls: 'band' }));
+  if(b.rest) out.push({ sec, op: '', label: b.restLabel, amount: b.rest, cls: 'band' });
+  return out;
+}
 function breakdownRows(r){
   const rows = [], ls = r.lines;
+  const push = row => { rows.push(row); if(row.line) rows.push(...bracketRows(row.sec, row.line, r.cur)); };
   // A sum of several lines reads as one signed row with its parts under it; a single line is its own row.
   const group = (sec, op, title, summed, asides) => {
     if(!summed.length && !asides.length) return;
-    if(summed.length === 1 && !asides.length){ rows.push({ sec, op, label: summed[0].label, amount: summed[0].amount, line: summed[0] }); return; }
+    if(summed.length === 1 && !asides.length){ push({ sec, op, label: summed[0].label, amount: summed[0].amount, line: summed[0] }); return; }
     rows.push({ sec, op, label: title, amount: summed.reduce((a, l) => a + l.amount, 0), cls: 'group' });
     ls.filter(l => summed.includes(l) || asides.includes(l)).forEach(l =>
-      rows.push({ sec, op: '', label: l.label, amount: (l.kind === 'info' && !l.amount) ? null : l.amount, line: l, cls: summed.includes(l) ? 'part' : 'aside' }));
+      push({ sec, op: '', label: l.label, amount: (l.kind === 'info' && !l.amount) ? null : l.amount, line: l, cls: summed.includes(l) ? 'part' : 'aside' }));
   };
   const base = ls.filter(l => l.base);
   if(r.taxable != null && base.length){
@@ -807,7 +822,7 @@ function exportCsv(){
 function exportLinesCsv(){
   if(!last) return;
   const ROLE = { '+': 'added', '−': 'taken off', '=': 'result' };
-  const role = row => row.cls === 'start' ? 'start' : row.cls === 'part' ? 'part of the line above' : row.cls === 'aside' ? 'for reference, already counted' : ROLE[row.op] || 'for reference';
+  const role = row => row.cls === 'start' ? 'start' : row.cls === 'part' ? 'part of the line above' : row.cls === 'band' ? 'by bracket, makes the tax line above' : row.cls === 'aside' ? 'for reference, already counted' : ROLE[row.op] || 'for reference';
   const rows = [[q('Job'), q('Country'), q('Section'), q('Role'), q('Line'), q('Amount a year'), q('Currency'), q('Status'), q('Source'), q('Source URL'), q('Effective from')].join(',')];
   last.results.forEach((r, i) => {
     if(r.notSupported){ rows.push([q(i + 1), q(E.C[JOBS[i].country].name), q(''), q(''), q('Not worked out: ' + r.reason)].join(',')); return; }

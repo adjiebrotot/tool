@@ -1,4 +1,7 @@
 {
+  "title": {
+    "en": "Frequent Questions"
+  },
   "en": [
     {
       "q": "Which tax year and rules does it use for each country?",
@@ -10,12 +13,6 @@
       "q": "How does it find the gross pay for a take-home amount I want?",
       "a": [
         "With I know my set to Take-home pay, it searches for the lowest gross whose net reaches your target. It scans 400 steps up the pay range to the first step that reaches it, then narrows by bisection to within 0.5 of a currency unit. The scan matters because net pay does not always rise with gross, as with the New York recapture tax."
-      ]
-    },
-    {
-      "q": "Why do some US states say they are not loaded?",
-      "a": [
-        "Eleven states are left out because their tax has income-dependent deductions, exemptions or credits the tool does not model: Alabama, Connecticut, Maine, Minnesota, New Mexico, Ohio, Oregon, Rhode Island, South Carolina, Utah and Wisconsin. A flat deduction would misstate the tax, so it shows a message instead of a figure. Nine states with no tax on wages are loaded, and the rest are modelled."
       ]
     },
     {

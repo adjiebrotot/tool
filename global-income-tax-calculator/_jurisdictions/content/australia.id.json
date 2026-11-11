@@ -4,7 +4,7 @@
   "title": "Cara Menghitung Pajak Penghasilan di Australia 2026-27",
   "h1": "Cara menghitung pajak penghasilan di Australia (2026-27)",
   "description": "Pajak gaji di Australia 2026-27: tarif penduduk pajak, working holiday maker, Medicare levy dan super, plus contoh gaji bersih untuk WNI.",
-  "lede": "<p>Australia memajaki penduduk pajaknya dengan tarif progresif: 0% untuk A$18.200 pertama, 15% sampai A$45.000, 30% sampai A$135.000, 37% sampai A$190.000, dan 45% di atasnya. Pemegang visa <em>working holiday</em> (subclass 462) memakai tarif sendiri, yaitu 15% dari dolar pertama sampai A$45.000. Sebagai gambaran, gaji A$100.000 bagi penduduk tetap menyisakan gaji bersih (<em>take-home pay</em>) sekitar A$77.800 setelah pajak penghasilan dan <em>Medicare levy</em>, belum termasuk dana pensiun wajib 12% yang dibayar pemberi kerja di atas gaji itu.</p>",
+  "lede": "<p>Australia memajaki penduduk pajaknya dengan tarif progresif: 0% untuk A$18.200 pertama, 15% sampai A$45.000, 30% sampai A$135.000, 37% sampai A$190.000, dan 45% di atasnya. Pemegang visa <em>working holiday</em> (subclass 462) memakai tarif sendiri, yaitu 15% dari dolar pertama sampai A$45.000. Sebagai gambaran, gaji A$100.000 bagi penduduk tetap menyisakan gaji bersih (<em>take-home pay</em>) sekitar A$77.480 setelah pajak penghasilan dan <em>Medicare levy</em>, belum termasuk dana pensiun wajib 12% yang dibayar pemberi kerja di atas gaji itu.</p>",
   "law": {
     "intro": "<p>Aturan di bawah ini mengikuti tahun pajak Australia 2026-27, yang berjalan dari 1 Juli 2026 sampai 30 Juni 2027. Yang menentukan tarifmu bukan kewarganegaraan, melainkan status pajakmu: penduduk pajak (<em>tax resident</em>), penduduk asing (<em>foreign resident</em>), atau pemegang visa <em>working holiday</em>. Karena itu, pemegang visa kerja terampil sementara pun sering memakai tarif yang sama dengan warga Australia.</p>",
     "blocks": [
@@ -137,14 +137,14 @@
     {
       "key": "resident",
       "title": "Berapa gaji bersih penduduk tetap di Australia dengan gaji A$100.000?",
-      "intro": "<p>Contoh ini untuk warga atau penduduk tetap (<em>permanent resident</em>, PR) dengan satu pekerjaan sepanjang tahun. Kalkulator mengurangi dulu potongan standar A$1.000 untuk biaya kerja, sehingga penghasilan kena pajaknya A$99.000. Dari situ pajak penghasilan menjadi A$20.220, karena bagian di atas A$45.000 sudah masuk tarif 30% dan LITO sudah habis. <em>Medicare levy</em> 2% dari A$99.000 menambah A$1.980. Gaji bersihnya sekitar A$77.800, atau 77,8% dari gaji, dan tarif marginal (pajak atas setiap tambahan dolar penghasilan) sebesar 32%, yaitu 30% pajak ditambah 2% <em>Medicare levy</em>.</p>",
+      "intro": "<p>Contoh ini untuk warga atau penduduk tetap (<em>permanent resident</em>, PR) dengan satu pekerjaan sepanjang tahun. Kalkulator tidak mengurangi biaya kerja dari gaji, sehingga penghasilan kena pajaknya tetap A$100.000. Dari situ pajak penghasilan menjadi A$20.520, karena bagian di atas A$45.000 sudah masuk tarif 30% dan LITO sudah habis. <em>Medicare levy</em> 2% dari A$100.000 menambah A$2.000. Gaji bersihnya sekitar A$77.480, atau 77,5% dari gaji, dan tarif marginal (pajak atas setiap tambahan dolar penghasilan) sebesar 32%, yaitu 30% pajak ditambah 2% <em>Medicare levy</em>.</p>",
       "after": "<p>Di luar angka itu, pemberi kerja menyetor <em>super</em> A$12.000 (12% dari gaji) ke dana pensiunmu.</p>"
     },
     {
       "key": "temporary-resident",
       "title": "Berapa pajak pemegang visa kerja sementara di Australia dengan gaji A$100.000?",
-      "intro": "<p>Contoh ini untuk pekerja terampil dengan visa sementara yang dianggap penduduk pajak. Tarif pajaknya sama dengan penduduk tetap, sehingga pajak penghasilannya juga A$20.220, tetapi kalkulator tidak menghitung <em>Medicare levy</em> untuk status ini. Karena itu, gaji bersihnya sekitar A$79.780 (79,8%), lebih tinggi A$1.980 daripada contoh penduduk tetap, dengan tarif marginal 30%.</p>",
-      "after": "<p>Selisih A$1.980 itu bisa hilang kalau ternyata kamu tetap harus membayar <em>Medicare levy</em>, jadi cek hakmu atas Medicare dan kemungkinan pembebasannya di situs Services Australia dan ATO.</p>"
+      "intro": "<p>Contoh ini untuk pekerja terampil dengan visa sementara yang dianggap penduduk pajak. Tarif pajaknya sama dengan penduduk tetap, sehingga pajak penghasilannya juga A$20.520, tetapi kalkulator tidak menghitung <em>Medicare levy</em> untuk status ini. Karena itu, gaji bersihnya sekitar A$79.480 (79,5%), lebih tinggi A$2.000 daripada contoh penduduk tetap, dengan tarif marginal 30%.</p>",
+      "after": "<p>Selisih A$2.000 itu bisa hilang kalau ternyata kamu tetap harus membayar <em>Medicare levy</em>, jadi cek hakmu atas Medicare dan kemungkinan pembebasannya di situs Services Australia dan ATO.</p>"
     },
     {
       "key": "working-holiday-maker",
@@ -161,7 +161,7 @@
     {
       "key": "no-private-health-cover",
       "title": "Berapa <em>Medicare levy surcharge</em> kalau gaji A$150.000 tanpa asuransi rumah sakit swasta?",
-      "intro": "<p>Contoh ini untuk penduduk tetap lajang dengan gaji A$150.000 yang tidak punya asuransi rumah sakit swasta. Setelah potongan standar A$1.000, penghasilan kena pajaknya A$149.000, dengan pajak penghasilan A$36.200 dan <em>Medicare levy</em> A$2.980. Karena penghasilan itu masuk tingkat 1,25% (di atas A$123.000), <em>Medicare levy surcharge</em> menambah sekitar A$1.863. Gaji bersihnya sekitar A$108.958 (72,6%), dengan tarif marginalnya 40,3% (37% ditambah 2% <em>Medicare levy</em> dan 1,25% <em>surcharge</em>).</p>",
+      "intro": "<p>Contoh ini untuk penduduk tetap lajang dengan gaji A$150.000 yang tidak punya asuransi rumah sakit swasta. Penghasilan kena pajaknya A$150.000, dengan pajak penghasilan A$36.570 dan <em>Medicare levy</em> A$3.000. Karena penghasilan itu masuk tingkat 1,25% (di atas A$123.000), <em>Medicare levy surcharge</em> menambah A$1.875. Gaji bersihnya sekitar A$108.555 (72,4%), dengan tarif marginalnya 40,3% (37% ditambah 2% <em>Medicare levy</em> dan 1,25% <em>surcharge</em>).</p>",
       "after": "<p>Kalau kamu punya asuransi rumah sakit swasta yang memenuhi syarat, baris <em>surcharge</em> ini hilang. Bandingkan dengan premi asuransinya sebelum memutuskan.</p>"
     }
   ],
@@ -177,7 +177,7 @@
     },
     {
       "h3": "Potongan biaya kerja dengan bukti",
-      "html": "<p>Biaya yang langsung terkait pekerjaan dan tidak diganti pemberi kerja, seperti seragam khusus, alat kerja atau sebagian biaya kursus yang berkaitan dengan pekerjaanmu, bisa mengurangi penghasilan kena pajak. Kalkulator memakai potongan standar A$1.000 untuk penduduk pajak, jadi klaim sendiri baru berarti kalau biaya nyatamu lebih dari itu. Simpan struk dan catatan, karena ATO bisa memintanya.</p>"
+      "html": "<p>Biaya yang langsung terkait pekerjaan dan tidak diganti pemberi kerja, seperti seragam khusus, alat kerja atau sebagian biaya kursus yang berkaitan dengan pekerjaanmu, bisa mengurangi penghasilan kena pajak. Kalkulator tidak mengurangi biaya kerja dari gaji, karena klaimnya baru diajukan saat lapor pajak dan berbeda untuk tiap orang, jadi klaim yang sah membuat pajakmu lebih rendah dari angka kalkulator. Simpan struk dan catatan, karena ATO bisa memintanya.</p>"
     },
     {
       "h3": "Peringatan: <em>super</em> pemegang visa sementara dipajaki berat saat ditarik",
@@ -204,7 +204,7 @@
     },
     {
       "q": "Berapa gaji bersih dari gaji A$100.000 di Australia?",
-      "a": "<p>Untuk penduduk tetap, gaji bersihnya sekitar A$77.800 setelah pajak penghasilan A$20.220 dan <em>Medicare levy</em> A$1.980. Pemegang visa sementara yang dianggap penduduk pajak menerima sekitar A$79.780, dan penduduk asing sekitar A$70.000.</p>"
+      "a": "<p>Untuk penduduk tetap, gaji bersihnya sekitar A$77.480 setelah pajak penghasilan A$20.520 dan <em>Medicare levy</em> A$2.000. Pemegang visa sementara yang dianggap penduduk pajak menerima sekitar A$79.480, dan penduduk asing sekitar A$70.000.</p>"
     },
     {
       "q": "Apakah <em>super</em> bisa diambil kalau saya pulang ke Indonesia?",
@@ -232,7 +232,6 @@
     }
   ],
   "lineLabels": {
-    "Standard deduction for work expenses": "Potongan standar biaya kerja",
     "Income tax": "Pajak penghasilan",
     "Low income tax offset (LITO), inside the tax above": "Low income tax offset (LITO), sudah termasuk di pajak di atas",
     "Medicare levy (2%)": "Medicare levy (2%)",
