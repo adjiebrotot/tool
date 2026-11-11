@@ -10,7 +10,17 @@
     "blocks": [
       {
         "h3": "No personal income tax on salary",
-        "html": "<p>The UAE does not tax salary, so there are no brackets, no personal allowance and no withholding on your payslip. This applies to nationals and expats alike. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+        "html": "<p>The UAE does not tax salary, so there are no brackets, no personal allowance and no withholding on your payslip. This applies to nationals and expats alike. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>",
+        "cite": [
+          {
+            "name": "UAE Government portal, Taxation: no income tax on individuals",
+            "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, UAE: no personal income tax",
+            "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income#:~:text=Absence%20of%20taxation"
+          }
+        ]
       },
       {
         "h3": "GPSSA pension for UAE nationals",
@@ -38,23 +48,49 @@
               "AED 70,000 a month"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
+            "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+          }
+        ]
       },
       {
         "h3": "Expats: gratuity instead of a pension",
-        "html": "<p>Expatriates do not contribute to GPSSA. Instead the employer owes an end-of-service gratuity when the contract ends, calculated from basic pay and years of service under UAE labour law. Some free zones, such as DIFC, also let employers use a workplace savings scheme in place of the gratuity. Check your contract for which applies.</p>"
+        "html": "<p>Expatriates do not contribute to GPSSA. Instead the employer owes an end-of-service gratuity when the contract ends, calculated from basic pay and years of service under UAE labour law. Some free zones, such as DIFC, also let employers use a workplace savings scheme in place of the gratuity. Check your contract for which applies.</p>",
+        "cite": [
+          {
+            "name": "UAE Government portal, End of service benefits for private sector workers",
+            "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=21%20days"
+          },
+          {
+            "name": "UAE Government portal, the voluntary Savings Scheme (alternative to gratuity)",
+            "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=The%20Savings%20Scheme"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "General Pension and Social Security Authority (GPSSA)",
-        "url": "https://gpssa.gov.ae/",
-        "note": "national pension contributions"
+        "name": "UAE Government portal, Taxation: no income tax on individuals",
+        "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
       },
       {
-        "name": "Federal Tax Authority",
-        "url": "https://tax.gov.ae/",
-        "note": "federal taxes, including VAT"
+        "name": "PwC Worldwide Tax Summaries, UAE: no personal income tax",
+        "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income#:~:text=Absence%20of%20taxation"
+      },
+      {
+        "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
+        "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+      },
+      {
+        "name": "UAE Government portal, End of service benefits for private sector workers",
+        "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=21%20days"
+      },
+      {
+        "name": "UAE Government portal, the voluntary Savings Scheme (alternative to gratuity)",
+        "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=The%20Savings%20Scheme"
       }
     ]
   },
@@ -63,13 +99,25 @@
       "key": "expat",
       "title": "How much tax does an expat pay in the UAE on AED 300,000?",
       "intro": "<p>An expat on a salary of AED 300,000 pays no income tax and no pension contribution, so the take-home pay is AED 300,000, or 100% of gross. The marginal rate is 0%, so a raise is kept in full.</p>",
-      "after": "<p>The cost is that you build no state pension. Your gratuity is paid by the employer at the end of the contract and is not in this figure.</p>"
+      "after": "<p>The cost is that you build no state pension. Your gratuity is paid by the employer at the end of the contract and is not in this figure.</p>",
+      "cite": [
+        {
+          "name": "UAE Government portal, Taxation: no income tax on individuals",
+          "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "Take-home pay for an Emirati national on AED 300,000, after GPSSA",
       "intro": "<p>A UAE national on the same AED 300,000 has no income tax either, but pays 11% into GPSSA: AED 33,000 a year. You keep AED 267,000, or 89.0% of gross. The employer also pays 12.5% and the government 2.5% on top, AED 45,000 in total, which goes into your pension and does not come from your pay.</p>",
-      "after": "<p>The 11% is a pension contribution that builds a benefit, not a tax. The marginal rate is 11% until pay passes the monthly cap.</p>"
+      "after": "<p>The 11% is a pension contribution that builds a benefit, not a tax. The marginal rate is 11% until pay passes the monthly cap.</p>",
+      "cite": [
+        {
+          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
@@ -84,7 +132,17 @@
     },
     {
       "h3": "Read your contract: gratuity, free-zone scheme and allowances",
-      "html": "<p><strong>Suits:</strong> new arrivals comparing offers. The gratuity rules, any free-zone savings scheme and the split between basic pay and allowances all change what you receive when you leave.</p><p><strong>Caveat:</strong> gratuity is usually based on basic pay, so a package with a low basic salary and large allowances can pay less at the end. Ask for the figures in writing.</p>"
+      "html": "<p><strong>Suits:</strong> new arrivals comparing offers. The gratuity rules, any free-zone savings scheme and the split between basic pay and allowances all change what you receive when you leave.</p><p><strong>Caveat:</strong> gratuity is usually based on basic pay, so a package with a low basic salary and large allowances can pay less at the end. Ask for the figures in writing.</p>",
+      "cite": [
+        {
+          "name": "UAE Government portal, End of service benefits for private sector workers",
+          "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=21%20days"
+        },
+        {
+          "name": "UAE Government portal, the voluntary Savings Scheme (alternative to gratuity)",
+          "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=The%20Savings%20Scheme"
+        }
+      ]
     }
   ],
   "limits": [
@@ -98,19 +156,51 @@
   "faq": [
     {
       "q": "How much tax do I pay on AED 300,000 in the UAE?",
-      "a": "<p>An expat pays no income tax and keeps AED 300,000. A national pays 11% into GPSSA and keeps AED 267,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>An expat pays no income tax and keeps AED 300,000. A national pays 11% into GPSSA and keeps AED 267,000. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "UAE Government portal, Taxation: no income tax on individuals",
+          "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
+        },
+        {
+          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+        }
+      ]
     },
     {
       "q": "What is end-of-service gratuity and why do expats get it instead of a pension?",
-      "a": "<p>Expatriates are not part of the GPSSA pension system. Instead, UAE labour law makes the employer pay a lump sum when your contract ends, based on your basic pay and how long you worked there. It works as a one-off payout rather than a monthly pension, so the money arrives only when you leave. Some free zones let employers offer a savings scheme in its place.</p><p>The calculator does not include the gratuity, because it depends on your contract. It shows only what leaves your pay.</p>"
+      "a": "<p>Expatriates are not part of the GPSSA pension system. Instead, UAE labour law makes the employer pay a lump sum when your contract ends, based on your basic pay and how long you worked there. It works as a one-off payout rather than a monthly pension, so the money arrives only when you leave. Some free zones let employers offer a savings scheme in its place.</p><p>The calculator does not include the gratuity, because it depends on your contract. It shows only what leaves your pay.</p>",
+      "cite": [
+        {
+          "name": "UAE Government portal, End of service benefits for private sector workers",
+          "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/end-of-service-benefits-for-employees-in-the-private-sector#:~:text=21%20days"
+        }
+      ]
     },
     {
       "q": "Why do UAE nationals pay 11% when expats pay nothing?",
-      "a": "<p>Nationals are covered by the federal pension fund, GPSSA, and it is funded by contributions from the worker, the employer (12.5%) and the government (2.5%). Expats are outside that scheme, so there is nothing to deduct. The 11% is a pension saving that comes back as a benefit, but it does reduce your take-home pay.</p>"
+      "a": "<p>Nationals are covered by the federal pension fund, GPSSA, and it is funded by contributions from the worker, the employer (12.5%) and the government (2.5%). Expats are outside that scheme, so there is nothing to deduct. The 11% is a pension saving that comes back as a benefit, but it does reduce your take-home pay.</p>",
+      "cite": [
+        {
+          "name": "GPSSA, contribution rates under Federal Law No. 57 of 2023 and the AED 70,000 salary cap",
+          "url": "https://gpssa.gov.ae/pages/en/media-center/news/gpssa-insureds-contribution-payment-may-be-extended-15th-day-each-month#:~:text=contribution%20account%20salary"
+        }
+      ]
     },
     {
       "q": "Is there really no income tax in the UAE?",
-      "a": "<p>There is no personal income tax on salary and no tax return for employment income. The country has other taxes, such as VAT, which is paid when you buy goods and services, not taken from your pay. Your home country may still want tax from you.</p>"
+      "a": "<p>There is no personal income tax on salary and no tax return for employment income. The country has other taxes, such as VAT, which is paid when you buy goods and services, not taken from your pay. Your home country may still want tax from you.</p>",
+      "cite": [
+        {
+          "name": "UAE Government portal, Taxation: no income tax on individuals",
+          "url": "https://u.ae/en/information-and-services/finance-and-investment/taxation#:~:text=does%20not%20levy%20income%20tax"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, UAE: no personal income tax",
+          "url": "https://taxsummaries.pwc.com/united-arab-emirates/individual/taxes-on-personal-income#:~:text=Absence%20of%20taxation"
+        }
+      ]
     },
     {
       "q": "Do I need to keep paying tax at home if I live in the UAE?",

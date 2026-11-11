@@ -38,7 +38,17 @@
               "35%"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "DJP, PPh individual rate layers under the HPP Law (5% to 35%)",
+            "url": "https://pajak.go.id/en/node/90251#:~:text=Lapisan%20Tarif"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+            "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
+          }
+        ]
       },
       {
         "h3": "PTKP: the non-taxable allowance and its status codes",
@@ -74,41 +84,95 @@
               "Rp72,000,000"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+            "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
+          }
+        ]
       },
       {
         "h3": "Job expense deduction and employer premiums",
-        "html": "<p>Employees get a job expense deduction (biaya jabatan) of 5% of gross income, capped at Rp6,000,000 a year. Your own BPJS old-age (JHT) and pension (JP) contributions are also deducted from the tax base.</p><p>One rule surprises newcomers: the premiums your employer pays for work accident (JKK), death (JKM) and BPJS Kesehatan health cover are counted as extra income for tax. They are not paid to you, but they raise your taxable income. The calculator adds them for the tax calculation and shows them as an information line.</p>"
+        "html": "<p>Employees get a job expense deduction (biaya jabatan) of 5% of gross income, capped at Rp6,000,000 a year. Your own BPJS old-age (JHT) and pension (JP) contributions are also deducted from the tax base.</p><p>One rule surprises newcomers: the premiums your employer pays for work accident (JKK), death (JKM) and BPJS Kesehatan health cover are counted as extra income for tax. They are not paid to you, but they raise your taxable income. The calculator adds them for the tax calculation and shows them as an information line.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Indonesia: deductions (job expense, JHT, JP cap, PTKP)",
+            "url": "https://taxsummaries.pwc.com/indonesia/individual/deductions#:~:text=Occupational%20expenses"
+          }
+        ]
       },
       {
         "h3": "BPJS social security contributions",
-        "html": "<p>The calculator deducts three employee contributions: 2% of salary for old-age savings (JHT), 1% for the pension programme (JP) on wages up to a cap that rises on 1 March, and 1% for BPJS Kesehatan health insurance on wages up to Rp12,000,000 a month. The employer pays its own larger share on top, which does not reduce your pay.</p><p>Whether a particular foreign employee must join each programme depends on their status and contract. The calculator applies BPJS to residents by default and lets you turn it off for non-residents.</p>"
+        "html": "<p>The calculator deducts three employee contributions: 2% of salary for old-age savings (JHT), 1% for the pension programme (JP) on wages up to a cap that rises on 1 March, and 1% for BPJS Kesehatan health insurance on wages up to Rp12,000,000 a month. The employer pays its own larger share on top, which does not reduce your pay.</p><p>Whether a particular foreign employee must join each programme depends on their status and contract. The calculator applies BPJS to residents by default and lets you turn it off for non-residents.</p>",
+        "cite": [
+          {
+            "name": "BPJS Ketenagakerjaan, JHT, JKK, JKM, JP and JKP contribution rates",
+            "url": "https://www.bpjsketenagakerjaan.go.id/artikel/18913/artikel-berapa-besaran-iuran-jht%2C-jkk%2C-jkm%2C-jp-dan-jkp"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Indonesia: BPJS contributions and calculation base",
+            "url": "https://taxsummaries.pwc.com/indonesia/individual/other-taxes#:~:text=Maximum%20calculation%20base"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Indonesia: JP contribution and wage cap",
+            "url": "https://taxsummaries.pwc.com/indonesia/individual/deductions#:~:text=Pension%20contribution"
+          }
+        ]
       },
       {
         "h3": "How tax is withheld during the year (TER)",
-        "html": "<p>Your employer withholds PPh 21 each month. Under the rules in force from 2024 (PP 58/2023 and PMK 168/2023), January to November use a flat monthly rate from an official table (TER, tarif efektif rata-rata) applied to your gross monthly pay. In December the employer works out your tax for the whole year with the progressive rates above and withholds the difference. The calculator shows that full-year result.</p>"
+        "html": "<p>Your employer withholds PPh 21 each month. Under the rules in force from 2024 (PP 58/2023 and PMK 168/2023), January to November use a flat monthly rate from an official table (TER, tarif efektif rata-rata) applied to your gross monthly pay. In December the employer works out your tax for the whole year with the progressive rates above and withholds the difference. The calculator shows that full-year result.</p>",
+        "cite": [
+          {
+            "name": "DJP, PMK 168/2023: monthly TER and the final-period rule",
+            "url": "https://pajak.go.id/en/node/104139#:~:text=tarif%20efektif%20bulanan"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Directorate General of Taxes (DJP)",
-        "url": "https://www.pajak.go.id/",
-        "note": "PPh 21 and PPh 26 rules, PTKP, SPT"
+        "name": "DJP, PPh individual rate layers under the HPP Law (5% to 35%)",
+        "url": "https://pajak.go.id/en/node/90251#:~:text=Lapisan%20Tarif"
       },
       {
-        "name": "BPJS Ketenagakerjaan",
-        "url": "https://www.bpjsketenagakerjaan.go.id/",
-        "note": "JHT, JP, JKK and JKM"
+        "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+        "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
       },
       {
-        "name": "BPJS Kesehatan",
-        "url": "https://www.bpjs-kesehatan.go.id/",
-        "note": "health insurance contributions"
+        "name": "DJP, PMK 168/2023: monthly TER and the final-period rule",
+        "url": "https://pajak.go.id/en/node/104139#:~:text=tarif%20efektif%20bulanan"
       },
       {
-        "name": "Ministry of Finance of Indonesia",
-        "url": "https://www.kemenkeu.go.id/",
-        "note": "regulations such as PMK 168/2023"
+        "name": "BPJS Ketenagakerjaan, JHT, JKK, JKM, JP and JKP contribution rates",
+        "url": "https://www.bpjsketenagakerjaan.go.id/artikel/18913/artikel-berapa-besaran-iuran-jht%2C-jkk%2C-jkm%2C-jp-dan-jkp"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: BPJS contributions and calculation base",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/other-taxes#:~:text=Maximum%20calculation%20base"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: deductions (job expense, JHT, JP cap, PTKP)",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/deductions#:~:text=Occupational%20expenses"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: individual residence (183 days)",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/residence#:~:text=183%20days"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: individual residence (183 days)",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/residence#:~:text=183%20days"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+        "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
       }
     ]
   },
@@ -117,30 +181,68 @@
       "key": "single-tk0",
       "title": "How to calculate PPh 21 for a single employee (TK/0) earning Rp120 million a year",
       "intro": "<p>This is a resident employee with no spouse or dependants, so status TK/0, on Rp120,000,000 a year. Your employer's premiums of Rp5,448,000 are added for tax, giving Rp125,448,000. The job expense deduction takes Rp6,000,000, your JHT and JP contributions take Rp3,600,000, and the PTKP takes Rp54,000,000. Taxable income is Rp61,848,000: the first Rp60,000,000 at 5% (Rp3,000,000) and the remaining Rp1,848,000 at 15% (Rp277,200). PPh 21 is Rp3,277,200. With BPJS of Rp4,800,000, you keep about Rp111,922,800, or 93.3% of gross.</p>",
-      "after": "<p>Because PKP lands only just above the 5% band, most of the salary is taxed lightly. A raise is taxed at 15% from here.</p>"
+      "after": "<p>Because PKP lands only just above the 5% band, most of the salary is taxed lightly. A raise is taxed at 15% from here.</p>",
+      "cite": [
+        {
+          "name": "DJP, PPh individual rate layers under the HPP Law (5% to 35%)",
+          "url": "https://pajak.go.id/en/node/90251#:~:text=Lapisan%20Tarif"
+        },
+        {
+          "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+          "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
+        }
+      ]
     },
     {
       "key": "married-two-children",
       "title": "Take-home pay in Indonesia for a married employee with two children (K/2) on Rp180 million",
       "intro": "<p>A married employee with two dependent children has status K/2, so the PTKP is Rp67,500,000. On Rp180,000,000 a year, employer premiums add Rp6,732,000 to the tax base. After the Rp6,000,000 job expense deduction, JHT and JP of Rp4,919,578 and the PTKP, taxable income is Rp108,312,000. PPh 21 is Rp10,246,800. BPJS contributions total Rp6,359,578 because the pension and health contributions hit their wage caps. You keep about Rp163,393,622, or 90.8% of gross.</p>",
-      "after": "<p>Family status counts as it stands on the tax form, so check that your employer has your spouse and children recorded correctly. If your spouse also works, see the <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/\">Pisah vs Gabung calculator</a> for how married couples' PPh 21 changes when filing jointly or separately.</p>"
+      "after": "<p>Family status counts as it stands on the tax form, so check that your employer has your spouse and children recorded correctly. If your spouse also works, see the <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/\">Pisah vs Gabung calculator</a> for how married couples' PPh 21 changes when filing jointly or separately.</p>",
+      "cite": [
+        {
+          "name": "DJP, PPh individual rate layers under the HPP Law (5% to 35%)",
+          "url": "https://pajak.go.id/en/node/90251#:~:text=Lapisan%20Tarif"
+        },
+        {
+          "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+          "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
+        }
+      ]
     },
     {
       "key": "non-resident",
       "title": "How much tax does a non-resident pay in Indonesia on Rp600 million? (PPh 26)",
       "intro": "<p>This is a foreign worker who is not an Indonesian tax resident, for example someone present for 183 days or fewer in a 12-month period. Salary of Rp600,000,000 is taxed by PPh 26 at a flat 20% of gross, a final tax of Rp120,000,000. There is no PTKP, no job expense deduction and no progressive band. The calculator also includes BPJS contributions of Rp14,759,578 by default, so you keep about Rp465,240,422, or 77.5% of gross.</p>",
-      "after": "<p>A tax treaty between Indonesia and your home country may reduce or remove this tax on short assignments. The calculator does not model treaty relief, so confirm it with the tax authority or your employer.</p>"
+      "after": "<p>A tax treaty between Indonesia and your home country may reduce or remove this tax on short assignments. The calculator does not model treaty relief, so confirm it with the tax authority or your employer.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to manage PPh 21. Which ones apply depends on your status and income.</p>",
   "strategies": [
     {
       "h3": "Keep your PTKP status correct",
-      "html": "<p><strong>Suits:</strong> anyone who marries or has a child during the year. A higher PTKP lowers taxable income, and each dependant adds Rp4,500,000 up to three. Tell your employer so the status on your tax records is right.</p><p><strong>Caveat:</strong> only real dependants count, and the code is the one in force at the start of the tax year, so a change may only apply from the next one.</p>"
+      "html": "<p><strong>Suits:</strong> anyone who marries or has a child during the year. A higher PTKP lowers taxable income, and each dependant adds Rp4,500,000 up to three. Tell your employer so the status on your tax records is right.</p><p><strong>Caveat:</strong> only real dependants count, and the code is the one in force at the start of the tax year, so a change may only apply from the next one.</p>",
+      "cite": [
+        {
+          "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+          "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
+        }
+      ]
     },
     {
       "h3": "Pay zakat through an official body",
-      "html": "<p><strong>Suits:</strong> Muslim employees who already give zakat on income. Zakat paid to an official body (BAZNAS or an authorised amil zakat institution) is deductible from taxable income, so it reduces PPh 21 as well as being an act of giving.</p><p><strong>Caveat:</strong> keep the receipt the body issues, and give only through bodies the government recognises. The calculator does not model it.</p>"
+      "html": "<p><strong>Suits:</strong> Muslim employees who already give zakat on income. Zakat paid to an official body (BAZNAS or an authorised amil zakat institution) is deductible from taxable income, so it reduces PPh 21 as well as being an act of giving.</p><p><strong>Caveat:</strong> keep the receipt the body issues, and give only through bodies the government recognises. The calculator does not model it.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: deductible zakat",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/deductions#:~:text=zakat"
+        }
+      ]
     },
     {
       "h3": "Pension contributions to a DPLK",
@@ -148,7 +250,17 @@
     },
     {
       "h3": "Expats: check your residency status and treaty",
-      "html": "<p><strong>Suits:</strong> foreign workers on short or part-year assignments. Residency depends on your days in Indonesia and your intentions, and it decides between progressive PPh 21 and flat 20% PPh 26. A certificate of domicile from your home tax authority can support treaty relief.</p><p><strong>Caveat:</strong> do not plan your days only to change the tax. Residency is judged on facts, and the rules can be applied differently to your case.</p>"
+      "html": "<p><strong>Suits:</strong> foreign workers on short or part-year assignments. Residency depends on your days in Indonesia and your intentions, and it decides between progressive PPh 21 and flat 20% PPh 26. A certificate of domicile from your home tax authority can support treaty relief.</p><p><strong>Caveat:</strong> do not plan your days only to change the tax. Residency is judged on facts, and the rules can be applied differently to your case.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: individual residence (183 days)",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/residence#:~:text=183%20days"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
+        }
+      ]
     }
   ],
   "limits": [
@@ -162,19 +274,47 @@
   "faq": [
     {
       "q": "How much tax do I pay on Rp120 million a year in Indonesia?",
-      "a": "<p>A single resident (TK/0) pays about Rp3,277,200 in PPh 21 and Rp4,800,000 in BPJS, and keeps about Rp111,922,800. Try your own salary and status in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>A single resident (TK/0) pays about Rp3,277,200 in PPh 21 and Rp4,800,000 in BPJS, and keeps about Rp111,922,800. Try your own salary and status in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "DJP, PPh individual rate layers under the HPP Law (5% to 35%)",
+          "url": "https://pajak.go.id/en/node/90251#:~:text=Lapisan%20Tarif"
+        },
+        {
+          "name": "BPJS Ketenagakerjaan, JHT, JKK, JKM, JP and JKP contribution rates",
+          "url": "https://www.bpjsketenagakerjaan.go.id/artikel/18913/artikel-berapa-besaran-iuran-jht%2C-jkk%2C-jkm%2C-jp-dan-jkp"
+        }
+      ]
     },
     {
       "q": "Why is my PPh 21 so much higher in December?",
-      "a": "<p>From January to November, your employer withholds tax by applying a monthly rate from the official TER table (PP 58/2023, PMK 168/2023) to your gross pay. Those rates are simple averages. In December the employer recalculates your tax for the whole year with the progressive rates (5% to 35%), subtracts everything withheld from January to November, and withholds the rest. If the averages were too low for your income, the December deduction is larger. If you leave during the year, the same full-year true-up happens in your last month.</p><p>The calculator shows the full-year figure, so a monthly payslip can differ from it. The yearly total should match.</p>"
+      "a": "<p>From January to November, your employer withholds tax by applying a monthly rate from the official TER table (PP 58/2023, PMK 168/2023) to your gross pay. Those rates are simple averages. In December the employer recalculates your tax for the whole year with the progressive rates (5% to 35%), subtracts everything withheld from January to November, and withholds the rest. If the averages were too low for your income, the December deduction is larger. If you leave during the year, the same full-year true-up happens in your last month.</p><p>The calculator shows the full-year figure, so a monthly payslip can differ from it. The yearly total should match.</p>",
+      "cite": [
+        {
+          "name": "DJP, PMK 168/2023: monthly TER and the final-period rule",
+          "url": "https://pajak.go.id/en/node/104139#:~:text=tarif%20efektif%20bulanan"
+        }
+      ]
     },
     {
       "q": "What are the annual SPT and the 1721-A1 form?",
-      "a": "<p>The SPT Tahunan is your annual individual tax return, which you file with the tax office after the year ends (the deadline for individuals is 31 March). Your employer gives you a 1721-A1 withholding slip, which records your income, deductions, PTKP and the PPh 21 already withheld. You use it to fill in the SPT. If the tax withheld is higher than what you owe, you can ask for a refund, and if it is lower, you pay the difference.</p>"
+      "a": "<p>The SPT Tahunan is your annual individual tax return, which you file with the tax office after the year ends (the deadline for individuals is 31 March). Your employer gives you a 1721-A1 withholding slip, which records your income, deductions, PTKP and the PPh 21 already withheld. You use it to fill in the SPT. If the tax withheld is higher than what you owe, you can ask for a refund, and if it is lower, you pay the difference.</p>",
+      "cite": [
+        {
+          "name": "DJP, deadlines for filing returns (SPT Tahunan, 31 March)",
+          "url": "https://www.pajak.go.id/en/node/35019#:~:text=Batas%20Waktu%20Lapor"
+        }
+      ]
     },
     {
       "q": "What do TK/0, K/1 and K/2 mean?",
-      "a": "<p>They are PTKP status codes. TK means single (tidak kawin) and K means married (kawin). The number is your dependants, from 0 to 3. TK/0 has a PTKP of Rp54,000,000, and each marriage or dependant adds Rp4,500,000, so K/2 is Rp67,500,000. A higher code lowers your taxable income.</p>"
+      "a": "<p>They are PTKP status codes. TK means single (tidak kawin) and K means married (kawin). The number is your dependants, from 0 to 3. TK/0 has a PTKP of Rp54,000,000, and each marriage or dependant adds Rp4,500,000, so K/2 is Rp67,500,000. A higher code lowers your taxable income.</p>",
+      "cite": [
+        {
+          "name": "DJP, PER-16/PJ/2016 Article 11 (annual PTKP amounts)",
+          "url": "https://pajak.go.id/index.php/en/node/62542#:~:text=Besarnya%20PTKP%20per%20tahun"
+        }
+      ]
     },
     {
       "q": "Why does my employer's BPJS premium count as my income?",
@@ -182,7 +322,17 @@
     },
     {
       "q": "Do foreigners pay PPh 21 or PPh 26?",
-      "a": "<p>It depends on tax residency. A foreign employee who is resident (generally more than 183 days in a 12-month period, or living in Indonesia) pays PPh 21 like an Indonesian. A non-resident pays a final 20% PPh 26 on gross pay. On Rp600,000,000 that is Rp120,000,000. Treaty relief may apply and is not modelled.</p>"
+      "a": "<p>It depends on tax residency. A foreign employee who is resident (generally more than 183 days in a 12-month period, or living in Indonesia) pays PPh 21 like an Indonesian. A non-resident pays a final 20% PPh 26 on gross pay. On Rp600,000,000 that is Rp120,000,000. Treaty relief may apply and is not modelled.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: individual residence (183 days)",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/residence#:~:text=183%20days"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Indonesia: non-resident individuals, 20% withholding",
+          "url": "https://taxsummaries.pwc.com/indonesia/individual/taxes-on-personal-income#:~:text=Non%2Dresident%20individuals%20are%20subject"
+        }
+      ]
     },
     {
       "q": "How is PPh 21 worked out for a married couple?",
