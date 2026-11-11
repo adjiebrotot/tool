@@ -1,0 +1,1189 @@
+[
+ {
+  "name": "stl-ascii",
+  "files": [
+   "stl/box-ascii.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "up": "z",
+   "units": null,
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "stl-ascii-crlf",
+  "files": [
+   "stl/box-crlf.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "stl-binary-solid-header",
+  "files": [
+   "stl/box-binary.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "stl-binary-colour",
+  "files": [
+   "stl/box-colour.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "stl-ascii-two-solids",
+  "files": [
+   "stl/two-solids.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 24,
+   "vertices": 16,
+   "parts": 2,
+   "size": [
+    70,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "stl-zero-normals",
+  "files": [
+   "stl/zero-normals.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "normalsOk": true
+  }
+ },
+ {
+  "name": "stl-binary-truncated",
+  "files": [
+   "stl/truncated.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 10,
+   "parts": 1,
+   "warning": {
+    "re": "shorter than its header"
+   }
+  }
+ },
+ {
+  "name": "stl-binary-trailing-bytes",
+  "files": [
+   "stl/trailing.stl"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "stl-uppercase-name",
+  "files": [
+   "stl/BOX.STL"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "obj-mtl-texture",
+  "files": [
+   "obj/box.obj",
+   "obj/box.mtl",
+   "obj/textures/checker.png"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "up": "y",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 2,
+   "textures": 1,
+   "noWarnings": true
+  }
+ },
+ {
+  "name": "obj-in-a-zip",
+  "files": [
+   "zip/box-model.zip"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 2,
+   "textures": 1,
+   "noWarnings": true
+  }
+ },
+ {
+  "name": "obj-missing-mtl",
+  "files": [
+   "obj-alone/box.obj"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "box\\.mtl"
+   }
+  }
+ },
+ {
+  "name": "obj-missing-texture",
+  "files": [
+   "obj-notex/box.obj",
+   "obj-notex/box.mtl"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "checker\\.png"
+   }
+  }
+ },
+ {
+  "name": "obj-negative-indices-colours-crlf",
+  "files": [
+   "obj-neg/box.obj"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "obj-lines-points",
+  "files": [
+   "obj-lp/mixed.obj"
+  ],
+  "expect": {
+   "formats": [
+    "OBJ"
+   ],
+   "triangles": 1,
+   "parts": 1,
+   "segments": 3,
+   "points": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "ply-ascii",
+  "files": [
+   "ply/box-ascii.ply"
+  ],
+  "expect": {
+   "formats": [
+    "PLY"
+   ],
+   "up": "y",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "ply-binary-little-endian",
+  "files": [
+   "ply/box-le.ply"
+  ],
+  "expect": {
+   "formats": [
+    "PLY"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "ply-binary-big-endian",
+  "files": [
+   "ply/box-be.ply"
+  ],
+  "expect": {
+   "formats": [
+    "PLY"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "ply-point-cloud",
+  "files": [
+   "ply/helix-points.ply"
+  ],
+  "expect": {
+   "formats": [
+    "PLY"
+   ],
+   "points": 500,
+   "parts": 0,
+   "triangles": 0
+  }
+ },
+ {
+  "name": "no-extension-sniffed-as-ply",
+  "files": [
+   "misc/scan"
+  ],
+  "expect": {
+   "formats": [
+    "PLY"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "off",
+  "files": [
+   "off/box.off"
+  ],
+  "expect": {
+   "formats": [
+    "OFF"
+   ],
+   "up": "y",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "off-face-colours-counts-on-header",
+  "files": [
+   "off/box-colour.off"
+  ],
+  "expect": {
+   "formats": [
+    "OFF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "coff-vertex-colours",
+  "files": [
+   "off/box.coff.off"
+  ],
+  "expect": {
+   "formats": [
+    "OFF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "vertexColors": true
+  }
+ },
+ {
+  "name": "off-cut-short",
+  "files": [
+   "off/short.off"
+  ],
+  "expect": {
+   "error": {
+    "re": "cut short"
+   }
+  }
+ },
+ {
+  "name": "3mf-millimetre",
+  "files": [
+   "3mf/box.3mf"
+  ],
+  "expect": {
+   "formats": [
+    "3MF"
+   ],
+   "up": "z",
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "3mf-inch",
+  "files": [
+   "3mf/box-inch.3mf"
+  ],
+  "expect": {
+   "formats": [
+    "3MF"
+   ],
+   "units": "in",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "3mf-not-a-zip",
+  "files": [
+   "3mf/broken.3mf"
+  ],
+  "expect": {
+   "error": {
+    "re": "zip"
+   }
+  }
+ },
+ {
+  "name": "amf",
+  "files": [
+   "amf/box.amf"
+  ],
+  "expect": {
+   "formats": [
+    "AMF"
+   ],
+   "up": "z",
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "amf-zipped-inch",
+  "files": [
+   "amf/box-zip.amf"
+  ],
+  "expect": {
+   "formats": [
+    "AMF"
+   ],
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    762,
+    508,
+    254
+   ]
+  }
+ },
+ {
+  "name": "gltf-embedded",
+  "files": [
+   "gltf/embedded.gltf"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "up": "y",
+   "units": "m",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 1
+  }
+ },
+ {
+  "name": "gltf-separate-bin-texture",
+  "files": [
+   "gltf-sep/box.gltf",
+   "gltf-sep/box.bin",
+   "gltf-sep/textures/checker map.png"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "textures": 1,
+   "noWarnings": true
+  }
+ },
+ {
+  "name": "gltf-missing-bin",
+  "files": [
+   "gltf-nobin/box.gltf"
+  ],
+  "expect": {
+   "error": {
+    "re": "box\\.bin"
+   }
+  }
+ },
+ {
+  "name": "gltf-missing-texture",
+  "files": [
+   "gltf-notex/box.gltf",
+   "gltf-notex/box.bin"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "checker map\\.png"
+   }
+  }
+ },
+ {
+  "name": "glb-embedded-texture",
+  "files": [
+   "glb/box.glb"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "units": "m",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "textures": 1
+  }
+ },
+ {
+  "name": "glb-misnamed-as-stl",
+  "files": [
+   "misc/actually-a-glb.stl"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "holds glTF"
+   }
+  }
+ },
+ {
+  "name": "glb-truncated",
+  "files": [
+   "glb/truncated.glb"
+  ],
+  "expect": {
+   "error": {
+    "re": "glTF|GLB"
+   }
+  }
+ },
+ {
+  "name": "glb-ktx2-texture",
+  "files": [
+   "glb/box-ktx2.glb"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "textures": 1
+  }
+ },
+ {
+  "name": "glb-animated",
+  "files": [
+   "glb/box-animated.glb"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "animations": 1
+  }
+ },
+ {
+  "name": "glb-draco",
+  "files": [
+   "glb/box-draco.glb"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "tol": 0.01
+  }
+ },
+ {
+  "name": "glb-meshopt",
+  "files": [
+   "glb/box-meshopt.glb"
+  ],
+  "expect": {
+   "formats": [
+    "glTF"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "tol": 0.01
+  }
+ },
+ {
+  "name": "gltf-version-1",
+  "files": [
+   "gltf/old.gltf"
+  ],
+  "expect": {
+   "error": {
+    "re": "glTF 1\\.0"
+   }
+  }
+ },
+ {
+  "name": "gltf-not-json",
+  "files": [
+   "gltf/broken.gltf"
+  ],
+  "expect": {
+   "error": {
+    "re": "not valid JSON"
+   }
+  }
+ },
+ {
+  "name": "fbx-ascii",
+  "files": [
+   "fbx/box-ascii.fbx"
+  ],
+  "expect": {
+   "formats": [
+    "FBX"
+   ],
+   "up": "y",
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 1
+  }
+ },
+ {
+  "name": "fbx-binary",
+  "files": [
+   "fbx/box-binary.fbx"
+  ],
+  "expect": {
+   "formats": [
+    "FBX"
+   ],
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 1
+  }
+ },
+ {
+  "name": "fbx-version-6",
+  "files": [
+   "fbx/old.fbx"
+  ],
+  "expect": {
+   "error": {
+    "re": "FBX 6\\.1"
+   }
+  }
+ },
+ {
+  "name": "dae-millimetre-z-up",
+  "files": [
+   "dae/box.dae"
+  ],
+  "expect": {
+   "formats": [
+    "COLLADA"
+   ],
+   "up": "y",
+   "units": "m",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    0.03,
+    0.01,
+    0.02
+   ],
+   "tol": 0.000001
+  }
+ },
+ {
+  "name": "dae-not-collada",
+  "files": [
+   "dae/not.dae"
+  ],
+  "expect": {
+   "error": {
+    "re": "not a COLLADA"
+   }
+  }
+ },
+ {
+  "name": "3ds",
+  "files": [
+   "3ds/box.3ds"
+  ],
+  "expect": {
+   "formats": [
+    "3DS"
+   ],
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "materials": 1
+  }
+ },
+ {
+  "name": "3ds-truncated",
+  "files": [
+   "3ds/truncated.3ds"
+  ],
+  "expect": {
+   "anyOutcome": true
+  }
+ },
+ {
+  "name": "vrml-with-background",
+  "files": [
+   "vrml/box.wrl"
+  ],
+  "expect": {
+   "formats": [
+    "VRML"
+   ],
+   "up": "y",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "vrml-1",
+  "files": [
+   "vrml/old.wrl"
+  ],
+  "expect": {
+   "error": {
+    "re": "VRML 1\\.0"
+   }
+  }
+ },
+ {
+  "name": "usda",
+  "files": [
+   "usd/box.usda"
+  ],
+  "expect": {
+   "formats": [
+    "USD"
+   ],
+   "up": "y",
+   "units": "m",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    0.03,
+    0.01,
+    0.02
+   ],
+   "tol": 0.000001
+  }
+ },
+ {
+  "name": "usdz",
+  "files": [
+   "usd/box.usdz"
+  ],
+  "expect": {
+   "formats": [
+    "USD"
+   ],
+   "up": "y",
+   "units": "m",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    0.03,
+    0.01,
+    0.02
+   ],
+   "tol": 0.000001
+  }
+ },
+ {
+  "name": "step-ap214-box",
+  "files": [
+   "step/box.stp"
+  ],
+  "expect": {
+   "formats": [
+    "STEP"
+   ],
+   "up": "z",
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "colour": [
+    0.8,
+    0.1,
+    0.1
+   ],
+   "tol": 0.0001
+  }
+ },
+ {
+  "name": "step-xml",
+  "files": [
+   "step/box-xml.stp"
+  ],
+  "expect": {
+   "error": {
+    "re": "XML"
+   }
+  }
+ },
+ {
+  "name": "step-garbage",
+  "files": [
+   "step/garbage.step"
+  ],
+  "expect": {
+   "error": {
+    "re": "STEP"
+   }
+  }
+ },
+ {
+  "name": "iges-surfaces-box",
+  "files": [
+   "iges/box.igs"
+  ],
+  "expect": {
+   "formats": [
+    "IGES"
+   ],
+   "up": "z",
+   "units": "mm",
+   "minTriangles": 12,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "tol": 0.001
+  }
+ },
+ {
+  "name": "iges-not-iges",
+  "files": [
+   "iges/not.iges"
+  ],
+  "expect": {
+   "error": {
+    "re": "not an IGES"
+   }
+  }
+ },
+ {
+  "name": "3dm-mesh-line-point",
+  "files": [
+   "3dm/box.3dm"
+  ],
+  "expect": {
+   "formats": [
+    "Rhino 3DM"
+   ],
+   "up": "z",
+   "units": "mm",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "minSegments": 1,
+   "points": 1
+  }
+ },
+ {
+  "name": "3dm-not-3dm",
+  "files": [
+   "3dm/not.3dm"
+  ],
+  "expect": {
+   "error": {
+    "re": "not a Rhino"
+   }
+  }
+ },
+ {
+  "name": "empty-file",
+  "files": [
+   "misc/empty.stl"
+  ],
+  "expect": {
+   "error": {
+    "re": "empty"
+   }
+  }
+ },
+ {
+  "name": "garbage-bytes-as-stl",
+  "files": [
+   "misc/garbage.stl"
+  ],
+  "expect": {
+   "error": {
+    "re": "STL"
+   }
+  }
+ },
+ {
+  "name": "unknown-file",
+  "files": [
+   "misc/notes.txt"
+  ],
+  "expect": {
+   "error": {
+    "re": "not a 3D model"
+   }
+  }
+ },
+ {
+  "name": "only-a-material-file",
+  "files": [
+   "misc/box.mtl"
+  ],
+  "expect": {
+   "error": {
+    "re": "model file"
+   }
+  }
+ },
+ {
+  "name": "two-models-at-once",
+  "files": [
+   "multi/a.stl",
+   "multi/b.ply"
+  ],
+  "expect": {
+   "formats": [
+    "STL",
+    "PLY"
+   ],
+   "triangles": 24,
+   "vertices": 16,
+   "parts": 2
+  }
+ },
+ {
+  "name": "model-and-junk-file",
+  "files": [
+   "mixed/box.stl",
+   "mixed/readme.txt"
+  ],
+  "expect": {
+   "formats": [
+    "STL"
+   ],
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "readme\\.txt"
+   }
+  }
+ }
+]

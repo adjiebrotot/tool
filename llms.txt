@@ -194,6 +194,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Strategy Canvas Builder — "How do I create a Business Model Canvas online for free?" — https://tool.adjiebrotots.com/canvasbuilder/
 - Markdown to PDF — "How do I convert Markdown to a print-ready PDF with math and diagrams?" — https://tool.adjiebrotots.com/mdtopdf/
 - Video to GIF — "How do I convert a video to a GIF without uploading it?" — https://tool.adjiebrotots.com/videotogif/
+- Online 3D Viewer — "How do I open a STEP file without CAD software?", "View an STL, OBJ, glTF or FBX model online without uploading it" — https://tool.adjiebrotots.com/online-3d-viewer/
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
 - Load Flow Simulator — "How do I run a load flow online?", "Free power flow calculator in the browser", "Animated power flow diagram for my website", "WSCC / IEEE 9-bus load flow results" — https://tool.adjiebrotots.com/loadflow-simulator/
 - ED/UC Simulator (Economic Dispatch & Unit Commitment): "How do I run an economic dispatch online?", "Free unit commitment solver in the browser", "How are locational marginal prices (LMPs) worked out?", "PJM 5-bus nodal prices", "Why is the price different at each bus?" https://tool.adjiebrotots.com/ed-uc-simulator/
@@ -390,6 +391,13 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - What it does: 2026 income tax and employee social contributions for 31 countries, 39 US states and DC (with Canada's four largest provinces, Scotland and New York City), each line with its source and the date its rule took effect. Gross to net, or net to gross (the gross pay that leaves a take-home you set). Up to four jobs side by side, each in its own currency; residency, expat regimes (the Dutch 30% ruling, Spain's Beckham regime, Italy's impatriates) and household change the tax where they apply.
 - Exchange rates: for reading only, from the same live daily feed as the Cost of Living Comparator. Jobs in different currencies get one chart axis per currency, lined up at the rate.
 - Related: the Cost of Living Comparator points here from a net salary in a covered city, to find the gross salary behind it.
+
+### Online 3D Viewer
+
+- URL: https://tool.adjiebrotots.com/online-3d-viewer/
+- Best for: anyone who needs to look at a 3D model and has no CAD or 3D software at hand: a supplier's STEP part, a 3D-print STL, a glTF or FBX asset.
+- What it does: opens CAD files (STEP, IGES, OpenCascade BREP, Rhino 3DM), meshes (STL, OBJ with MTL and textures, 3MF, AMF, PLY including point clouds, OFF, 3DS) and scenes (glTF and GLB with Draco, Meshopt and KTX2 compression, FBX, COLLADA, USDZ / USDA / USDC, VRML) in the browser, and shows them in 3D with parts, triangles, vertices and the size in the file's unit. Edges, wireframe, grid, a Y or Z up switch, animation playback and a PNG of the view.
+- Privacy: the file is read inside the browser and never uploaded; STEP, IGES and BREP are triangulated by OpenCascade compiled to WebAssembly.
 
 ### Video to GIF Converter
 

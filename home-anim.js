@@ -347,7 +347,21 @@
       '<g class="sg t" fill="var(--gold)" fill-opacity=".3">' +
         '<circle cx="47" cy="93" r="6"/><circle cx="60" cy="93" r="6"/><circle cx="73" cy="93" r="6"/>' +
         '<circle cx="53.5" cy="81.5" r="6"/><circle cx="66.5" cy="81.5" r="6"/><circle cx="60" cy="70" r="6"/></g>' +
-      '<rect class="fm sm" x="38" y="42" width="44" height="9" rx="3"/>'
+      '<rect class="fm sm" x="38" y="42" width="44" height="9" rx="3"/>',
+
+    // An STP file drops onto a floor grid, sinks into it and rises as a cube that makes a quarter turn. The turn is
+    // projected: each side face is a unit square placed by translate / scale / skewY (a face going edge-on swaps
+    // to the far side), the top a square turning in a squashed group; outlines are non-scaling strokes.
+    'online-3d-viewer':
+      '<path class="sq" stroke-width="2" d="M72 46.7L24 74.4M48 46.7L96 74.4M84 53.6L36 81.4M36 53.6L84 81.4M96 60.6L48 88.3M24 60.6L72 88.3"/>' +
+      '<path class="sq" d="M60 39.8L108 67.5L60 95.2L12 67.5Z"/>' +
+      '<g class="fl ob"><path class="w" d="M43 30H67L77 40V74H43Z"/><path class="sb t" d="M67 30V40H77"/>' +
+        '<path class="sq t" d="M50 40H60M50 46H69"/><rect class="fB" x="36" y="52" width="28" height="14" rx="3"/>' +
+        '<text class="mono fw" x="50" y="62.8" font-size="10.5">STP</text></g><g class="cb">' +
+        '<g class="fx"><path class="w n" d="M0 0H1V1H0Z"/><path class="tx fb" opacity=".01" d="M0 0H1V1H0Z"/></g>' +
+        '<g class="fy"><path class="w n" d="M0 0H1V1H0Z"/><path class="ty fb" opacity=".31" d="M0 0H1V1H0Z"/></g>' +
+        '<g transform="translate(60 38.5) scale(1 .5774)"><g class="tp"><path class="fw" d="M25.11 0L0 25.11L-25.11 0L0-25.11Z"/>' +
+        '<path class="fm sb n" fill-opacity=".35" d="M25.11 0L0 25.11L-25.11 0L0-25.11Z"/></g></g></g>'
   };
 
   var CSS = {
@@ -467,7 +481,22 @@
 
     superdasp: '&{--d:8s}&.pl{animation-name:taSd1}&.cn{animation-name:taSd2}' +
       '@keyframes taSd1{0%{transform:translate(-36px,6px);opacity:0}16%,84%{opacity:1}100%{transform:translate(36px,-4px);opacity:0}}' +
-      '@keyframes taSd2{0%,30%{transform:none;opacity:1}56%{transform:translateY(-20px);opacity:1}68%,100%{transform:translateY(-24px);opacity:0}}'
+      '@keyframes taSd2{0%,30%{transform:none;opacity:1}56%{transform:translateY(-20px);opacity:1}68%,100%{transform:translateY(-24px);opacity:0}}',
+
+    // The turn (40-70%): ease-in, linear, ease-out to a 5deg overshoot and back, posed every 22.5deg; faces
+    // reset while the cube is hidden. Non-scaling strokes are screen pixels: 3.2px / 2.3px match 3 units per layout.
+    'online-3d-viewer': '&{--d:7s}&.n{vector-effect:non-scaling-stroke;stroke-width:3.2px}@media (max-width:640px){&.n{stroke-width:2.3px}}' +
+      '&.fl{opacity:0;animation-name:taO3f}&.cb{transform-box:view-box;transform-origin:60px 67.5px;animation-name:taO3g}' +
+      '&.fx,&.fy,&.tp{transform-box:view-box;transform-origin:0 0}&.fx,&.fy,&.tx,&.ty,&.tp{animation-timing-function:linear}&.tx{animation-name:taO3c}&.ty{animation-name:taO3d}&.tp{animation-name:taO3e}' +
+      '&.fx{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg);animation-name:taO3a}' +
+      '&.fy{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg);animation-name:taO3b}' +
+      '@keyframes taO3a{0%,40%{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg);animation-timing-function:ease-in}50%{transform:translate(36.8px,44px) scale(32.8,29) skewY(15.1deg)}55%{transform:translate(42.2px,48.8px) scale(35.5,29) skewY(0deg)}60%{transform:translate(50.4px,51.9px) scale(32.8,29) skewY(-15.1deg);animation-timing-function:ease-out}70%{transform:translate(62.2px,52.9px) scale(22.8,29) skewY(-28.4deg);animation-timing-function:ease-in-out}75%,100%{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg)}}' +
+      '@keyframes taO3b{0%,40%{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg);animation-timing-function:ease-in}50%{transform:translate(69.6px,51.9px) scale(13.6,29) skewY(-33.2deg)}55%{transform:translate(77.8px,48.8px) scale(0,29) skewY(-35.3deg);animation-timing-function:step-end}55.01%{transform:translate(42.2px,28.2px) scale(0,29) skewY(35.3deg)}60%{transform:translate(36.8px,33px) scale(13.6,29) skewY(33.2deg);animation-timing-function:ease-out}70%{transform:translate(35px,39.8px) scale(27.2,29) skewY(24.4deg);animation-timing-function:ease-in-out}75%,100%{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg)}}' +
+      '@keyframes taO3c{0%,40%{opacity:.01;animation-timing-function:ease-in}55%{opacity:.12}70%{opacity:.34;animation-timing-function:ease-in-out}75%,100%{opacity:.31}}@keyframes taO3d{0%,40%{opacity:.31;animation-timing-function:ease-in}55%{opacity:.47;animation-timing-function:step-end}55.01%{opacity:.03}70%{opacity:.02;animation-timing-function:ease-in-out}75%,100%{opacity:.01}}' +
+      '@keyframes taO3e{0%,40%{transform:none;animation-timing-function:ease-in}50%{transform:rotate(-22.5deg)}60%{transform:rotate(-67.5deg);animation-timing-function:ease-out}70%{transform:rotate(-95deg);animation-timing-function:ease-in-out}75%,100%{transform:rotate(-90deg)}}' +
+      '@keyframes taO3f{0%{transform:translateY(-26px);opacity:0;animation-timing-function:cubic-bezier(.5,0,1,1)}5%{opacity:1}12%{transform:scale(1.08,.9)}' +
+        '16%{transform:scale(.97,1.04)}20%,27%{transform:none;opacity:1}32%,100%{transform:scale(1.1,0);opacity:0}}' +
+      '@keyframes taO3g{0%,28%{transform:scaleY(0);opacity:0}30%{opacity:1}34%{transform:scaleY(1.08)}37%,86%{transform:none;opacity:1}94%,100%{transform:scaleY(0);opacity:0}}'
   };
 
   var SVG_OPEN = '" viewBox="0 0 120 120" fill="none" stroke-width="3" stroke-linecap="round" ' +

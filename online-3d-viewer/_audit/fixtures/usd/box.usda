@@ -1,0 +1,17 @@
+#usda 1.0
+(
+    defaultPrim = "Box"
+    metersPerUnit = 0.001
+    upAxis = "Z"
+)
+
+def Xform "Box"
+{
+    def Mesh "BoxMesh"
+    {
+        int[] faceVertexCounts = [4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [0, 3, 2, 1, 4, 5, 6, 7, 0, 1, 5, 4, 2, 3, 7, 6, 3, 0, 4, 7, 1, 2, 6, 5]
+        point3f[] points = [(0, 0, 0), (30, 0, 0), (30, 20, 0), (0, 20, 0), (0, 0, 10), (30, 0, 10), (30, 20, 10), (0, 20, 10)]
+        color3f[] primvars:displayColor = [(0.8, 0.1, 0.1)]
+    }
+}

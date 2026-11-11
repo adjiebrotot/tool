@@ -40,6 +40,7 @@ export const CARDS = [
   ['jsonvisualiser', 'jsonvisualiser/'],
   ['loadflow-simulator', 'loadflow-simulator/'],
   ['mdtopdf', 'mdtopdf/'],
+  ['online-3d-viewer', 'online-3d-viewer/'],
   ['pisahvsgabung', 'pisahvsgabung/'],
   ['pisahvsgabung-id', 'pisahvsgabung/id/'],
   ['powerfactory-scripter', 'powerfactory-scripter/'],
