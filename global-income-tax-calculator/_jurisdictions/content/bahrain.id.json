@@ -10,7 +10,13 @@
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
-        "html": "<p>Bahrain tidak memajaki penghasilan orang pribadi, baik gaji, tunjangan, maupun bonus. Artinya tidak ada tarif bertingkat (seperti di Pasal 17 UU PPh, 5% sampai 35%), tidak ada PTKP yang perlu dihitung, dan tidak ada pemotongan oleh pemberi kerja yang kelak harus kamu cocokkan dengan bukti potong. Pajak pertambahan nilai (PPN) memang ada, tetapi dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>"
+        "html": "<p>Bahrain tidak memajaki penghasilan orang pribadi, baik gaji, tunjangan, maupun bonus. Artinya tidak ada tarif bertingkat (seperti di Pasal 17 UU PPh, 5% sampai 35%), tidak ada PTKP yang perlu dihitung, dan tidak ada pemotongan oleh pemberi kerja yang kelak harus kamu cocokkan dengan bukti potong. Pajak pertambahan nilai (PPN) memang ada, tetapi dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
+            "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+          }
+        ]
       },
       {
         "h3": "Iuran SIO untuk pekerja asing dan warga Bahrain",
@@ -36,11 +42,27 @@
               "BHD 4.000"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+            "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+          },
+          {
+            "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+            "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+          }
+        ]
       },
       {
         "h3": "Uang akhir masa kerja untuk pekerja asing",
-        "html": "<p>Pekerja asing tidak ikut skema pensiun negara di Bahrain. Sebagai gantinya, undang-undang ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service indemnity</em>) ketika kontrak berakhir, dengan besar yang bergantung pada gaji dan lama bekerja. Jumlahnya tidak termasuk dalam angka di halaman ini.</p>"
+        "html": "<p>Pekerja asing tidak ikut skema pensiun negara di Bahrain. Sebagai gantinya, undang-undang ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service indemnity</em>) ketika kontrak berakhir, dengan besar yang bergantung pada gaji dan lama bekerja. Jumlahnya tidak termasuk dalam angka di halaman ini.</p>",
+        "cite": [
+          {
+            "name": "Social Insurance Organization (SIO) Bahrain, pesangon akhir masa kerja untuk non-Bahrain",
+            "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+          }
+        ]
       },
       {
         "h3": "Status pajakmu di Indonesia tidak ikut hilang",
@@ -49,19 +71,26 @@
     ],
     "sources": [
       {
-        "name": "Social Insurance Organization (SIO), Bahrain",
-        "url": "https://www.sio.gov.bh/",
-        "note": "tarif iuran"
+        "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income"
       },
       {
-        "name": "National Bureau for Revenue, Bahrain",
-        "url": "https://www.nbr.gov.bh/",
-        "note": "perpajakan di Bahrain"
+        "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP)",
-        "url": "https://www.pajak.go.id/",
-        "note": "status subjek pajak di Indonesia"
+        "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+        "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+      },
+      {
+        "name": "Social Insurance Organization (SIO) Bahrain, pesangon akhir masa kerja untuk non-Bahrain",
+        "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
       }
     ]
   },
@@ -70,13 +99,33 @@
       "key": "expat",
       "title": "Berapa gaji bersih pekerja asing di Bahrain dengan gaji BHD 24.000?",
       "intro": "<p>Contoh ini untuk kamu yang bekerja di Bahrain dengan gaji BHD 24.000 setahun, atau BHD 2.000 sebulan. Tidak ada potongan setara PPh 21. Satu-satunya yang berkurang adalah iuran asuransi pengangguran SIO sebesar 1%, yaitu BHD 240 setahun, sehingga gaji bersihnya BHD 23.760 atau 99,0% dari gaji kotor. Gaji sebulan masih jauh di bawah batas BHD 4.000, jadi setiap tambahan gaji juga dipotong 1,0%.</p>",
-      "after": "<p>Potongan sekecil ini hanya memberi perlindungan kalau kamu kehilangan pekerjaan, bukan dana pensiun. Tabungan hari tua tetap harus kamu siapkan sendiri, termasuk untuk saat kontrakmu selesai dan kamu pulang ke Indonesia.</p>"
+      "after": "<p>Potongan sekecil ini hanya memberi perlindungan kalau kamu kehilangan pekerjaan, bukan dana pensiun. Tabungan hari tua tetap harus kamu siapkan sendiri, termasuk untuk saat kontrakmu selesai dan kamu pulang ke Indonesia.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "Gaji bersih warga Bahrain dengan gaji BHD 24.000 setelah iuran SIO",
       "intro": "<p>Warga Bahrain dengan gaji yang sama tetap tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu BHD 1.920 setahun, masuk ke SIO untuk pensiun dan asuransi pengangguran. Gaji bersihnya BHD 22.080, atau 92,0% dari gaji kotor. Potongan ini mirip JHT dan JP di BPJS Ketenagakerjaan: bukan pajak, melainkan tabungan jaminan hari tua, hanya saja persentasenya jauh lebih besar.</p>",
-      "after": "<p>Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>"
+      "after": "<p>Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Ada empat hal praktis yang bisa kamu lakukan untuk mengatur gaji dan status pajakmu.</p>",
@@ -91,7 +140,13 @@
     },
     {
       "h3": "Pahami uang akhir masa kerja sebelum meneken kontrak",
-      "html": "<p><strong>Siapa yang cocok:</strong> kamu yang sedang membandingkan tawaran kerja. Uang akhir masa kerja adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja dan bergantung pada gaji pokok serta lama bekerja.</p><p><strong>Catatan:</strong> besarnya ditentukan kontrak dan undang-undang ketenagakerjaan, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> kamu yang sedang membandingkan tawaran kerja. Uang akhir masa kerja adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja dan bergantung pada gaji pokok serta lama bekerja.</p><p><strong>Catatan:</strong> besarnya ditentukan kontrak dan undang-undang ketenagakerjaan, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>",
+      "cite": [
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, pesangon akhir masa kerja untuk non-Bahrain",
+          "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+        }
+      ]
     },
     {
       "h3": "Kirim uang pulang lewat jalur resmi dan simpan buktinya",
@@ -109,23 +164,69 @@
   "faq": [
     {
       "q": "Berapa gaji bersih di Bahrain dengan gaji BHD 24.000 setahun?",
-      "a": "<p>Pekerja asing tidak membayar pajak penghasilan dan hanya dipotong iuran asuransi pengangguran BHD 240, sehingga gaji bersihnya BHD 23.760. Warga Bahrain membayar 8% ke SIO dan menerima gaji bersih BHD 22.080. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Pekerja asing tidak membayar pajak penghasilan dan hanya dipotong iuran asuransi pengangguran BHD 240, sehingga gaji bersihnya BHD 23.760. Warga Bahrain membayar 8% ke SIO dan menerima gaji bersih BHD 22.080. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
     },
     {
       "q": "Kenapa pekerja asing di Bahrain tetap dipotong 1% untuk asuransi pengangguran?",
-      "a": "<p>Berbeda dengan sebagian besar negara Teluk, Bahrain mewajibkan pekerja asing ikut asuransi pengangguran lewat SIO. Iurannya 1% dari gaji sampai BHD 4.000 sebulan dan dipotong dari gaji karyawan. Ini bukan pajak penghasilan, tetapi tetap mengurangi gaji bersihmu, dan imbalannya adalah perlindungan kalau kamu kehilangan pekerjaan menurut aturan skema tersebut. Warga Bahrain membayar 8% karena iurannya juga mencakup pensiun.</p>"
+      "a": "<p>Berbeda dengan sebagian besar negara Teluk, Bahrain mewajibkan pekerja asing ikut asuransi pengangguran lewat SIO. Iurannya 1% dari gaji sampai BHD 4.000 sebulan dan dipotong dari gaji karyawan. Ini bukan pajak penghasilan, tetapi tetap mengurangi gaji bersihmu, dan imbalannya adalah perlindungan kalau kamu kehilangan pekerjaan menurut aturan skema tersebut. Warga Bahrain membayar 8% karena iurannya juga mencakup pensiun.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
     },
     {
       "q": "Apa itu uang akhir masa kerja di Bahrain, dan apakah sama dengan pesangon?",
-      "a": "<p>Pekerja asing tidak masuk skema pensiun, jadi undang-undang ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja saat kontrak berakhir, berdasarkan gaji dan lama bekerja. Fungsinya mirip pesangon di Indonesia, tetapi dibayar sekali dan aturan hitungnya berbeda. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>"
+      "a": "<p>Pekerja asing tidak masuk skema pensiun, jadi undang-undang ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja saat kontrak berakhir, berdasarkan gaji dan lama bekerja. Fungsinya mirip pesangon di Indonesia, tetapi dibayar sekali dan aturan hitungnya berbeda. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
+      "cite": [
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, pesangon akhir masa kerja untuk non-Bahrain",
+          "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+        }
+      ]
     },
     {
       "q": "Berapa iuran SIO kalau gajimu di atas BHD 4.000 sebulan?",
-      "a": "<p>Iuran dihitung hanya dari gaji sampai BHD 4.000 sebulan. Gaji yang lebih tinggi tidak menambah iuran, sehingga persentase potonganmu terhadap seluruh gaji justru mengecil.</p>"
+      "a": "<p>Iuran dihitung hanya dari gaji sampai BHD 4.000 sebulan. Gaji yang lebih tinggi tidak menambah iuran, sehingga persentase potonganmu terhadap seluruh gaji justru mengecil.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, UU No. 24 Tahun 1976 (asuransi sosial)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
     },
     {
       "q": "Benarkah tidak ada pajak penghasilan di Bahrain?",
-      "a": "<p>Benar, tidak ada pajak penghasilan perorangan atas gaji. PPN ada pada pembelian, tetapi tidak dipotong dari gajimu. Kewajiban pajakmu di Indonesia dihitung terpisah dan perlu kamu cek sendiri.</p>"
+      "a": "<p>Benar, tidak ada pajak penghasilan perorangan atas gaji. PPN ada pada pembelian, tetapi tidak dipotong dari gajimu. Kewajiban pajakmu di Indonesia dihitung terpisah dan perlu kamu cek sendiri.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
     },
     {
       "q": "Apakah gaji dari Bahrain harus dilaporkan di SPT Tahunan?",

@@ -10,7 +10,13 @@
     "blocks": [
       {
         "h3": "No personal income tax on salary",
-        "html": "<p>Qatar does not tax wages, allowances or bonuses for an individual, so there is no tax bracket and no tax withheld from your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+        "html": "<p>Qatar does not tax wages, allowances or bonuses for an individual, so there is no tax bracket and no tax withheld from your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+            "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income#:~:text=Income%20tax%20is%20not%20imposed"
+          }
+        ]
       },
       {
         "h3": "GRSIA pension for Qatari nationals",
@@ -33,23 +39,47 @@
               "QAR 100,000 a month"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Al Meezan, Qatar Social Insurance Law No. 1 of 2022 (GRSIA contributions, 7% employee, cap 100,000 a month)",
+            "url": "https://www.almeezan.qa/LawView.aspx?LawID=8932&language=en"
+          }
+        ]
       },
       {
         "h3": "Expats: no pension, an end-of-service gratuity",
-        "html": "<p>Expatriates do not contribute to GRSIA. The employer owes an end-of-service gratuity at the end of the contract, based on basic pay and years of service under the labour law. It is paid once, when you leave.</p>"
+        "html": "<p>Expatriates do not contribute to GRSIA. The employer owes an end-of-service gratuity at the end of the contract, based on basic pay and years of service under the labour law. It is paid once, when you leave.</p>",
+        "cite": [
+          {
+            "name": "Al Meezan, Qatar Labour Law No. 14 of 2004 (end-of-service gratuity)",
+            "url": "https://www.almeezan.qa/LawView.aspx?LawID=3961&language=en"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "General Retirement and Social Insurance Authority (GRSIA)",
-        "url": "https://www.grsia.gov.qa/",
-        "note": "pension contributions for nationals"
+        "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income"
       },
       {
-        "name": "General Tax Authority, Qatar",
-        "url": "https://www.gta.gov.qa/",
-        "note": "taxes in Qatar"
+        "name": "Al Meezan, Qatar Social Insurance Law No. 1 of 2022 (GRSIA contributions, 7% employee, cap 100,000 a month)",
+        "url": "https://www.almeezan.qa/LawView.aspx?LawID=8932&language=en"
+      },
+      {
+        "name": "Al Meezan, Qatar Labour Law No. 14 of 2004 (end-of-service gratuity)",
+        "url": "https://www.almeezan.qa/LawView.aspx?LawID=3961&language=en"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Qatar: other taxes, social security contributions",
+        "url": "https://taxsummaries.pwc.com/qatar/individual/other-taxes"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income#:~:text=Income%20tax%20is%20not%20imposed"
       }
     ]
   },
@@ -58,13 +88,25 @@
       "key": "expat",
       "title": "How much income tax does an expat pay in Qatar on QAR 240,000?",
       "intro": "<p>An expat on QAR 240,000 pays no income tax and no pension contribution, so take-home pay is QAR 240,000, or 100% of gross. A raise is kept in full because the marginal rate is 0%.</p>",
-      "after": "<p>The gratuity arrives from the employer when the contract ends and is not part of this figure.</p>"
+      "after": "<p>The gratuity arrives from the employer when the contract ends and is not part of this figure.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income#:~:text=Income%20tax%20is%20not%20imposed"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "Take-home pay for a Qatari national on QAR 240,000 after GRSIA",
       "intro": "<p>A Qatari national on QAR 240,000 pays no income tax but 7% into the GRSIA pension, QAR 16,800 a year. You keep QAR 223,200, or 93.0% of gross. The employer pays a further 14%, QAR 33,600, on top, which goes into the pension and does not come out of your pay.</p>",
-      "after": "<p>The 7% is a pension contribution rather than a tax. It applies up to the cap of QAR 100,000 a month.</p>"
+      "after": "<p>The 7% is a pension contribution rather than a tax. It applies up to the cap of QAR 100,000 a month.</p>",
+      "cite": [
+        {
+          "name": "Al Meezan, Qatar Social Insurance Law No. 1 of 2022 (GRSIA contributions, 7% employee, cap 100,000 a month)",
+          "url": "https://www.almeezan.qa/LawView.aspx?LawID=8932&language=en"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
@@ -79,7 +121,13 @@
     },
     {
       "h3": "Understand your gratuity before you sign",
-      "html": "<p><strong>Suits:</strong> expats comparing offers. The gratuity is your only employer-funded exit benefit, and it depends on basic pay and length of service.</p><p><strong>Caveat:</strong> a contract with a low basic salary and large allowances can produce a smaller gratuity, so ask how it is calculated.</p>"
+      "html": "<p><strong>Suits:</strong> expats comparing offers. The gratuity is your only employer-funded exit benefit, and it depends on basic pay and length of service.</p><p><strong>Caveat:</strong> a contract with a low basic salary and large allowances can produce a smaller gratuity, so ask how it is calculated.</p>",
+      "cite": [
+        {
+          "name": "Al Meezan, Qatar Labour Law No. 14 of 2004 (end-of-service gratuity)",
+          "url": "https://www.almeezan.qa/LawView.aspx?LawID=3961&language=en"
+        }
+      ]
     }
   ],
   "limits": [
@@ -92,19 +140,47 @@
   "faq": [
     {
       "q": "How much tax do I pay on QAR 240,000 in Qatar?",
-      "a": "<p>An expat pays no income tax and keeps QAR 240,000. A Qatari national pays 7% into GRSIA and keeps QAR 223,200. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>An expat pays no income tax and keeps QAR 240,000. A Qatari national pays 7% into GRSIA and keeps QAR 223,200. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income#:~:text=Income%20tax%20is%20not%20imposed"
+        },
+        {
+          "name": "Al Meezan, Qatar Social Insurance Law No. 1 of 2022 (GRSIA contributions, 7% employee, cap 100,000 a month)",
+          "url": "https://www.almeezan.qa/LawView.aspx?LawID=8932&language=en"
+        }
+      ]
     },
     {
       "q": "What is end-of-service gratuity in Qatar and does it replace a pension?",
-      "a": "<p>For expats, yes in practice. They are not in the GRSIA pension scheme, so the employer instead pays a lump sum at the end of the contract, based on basic pay and years of service under the labour law. The money is paid once when you leave, not monthly after retirement. The calculator does not include it, since it depends on your contract.</p>"
+      "a": "<p>For expats, yes in practice. They are not in the GRSIA pension scheme, so the employer instead pays a lump sum at the end of the contract, based on basic pay and years of service under the labour law. The money is paid once when you leave, not monthly after retirement. The calculator does not include it, since it depends on your contract.</p>",
+      "cite": [
+        {
+          "name": "Al Meezan, Qatar Labour Law No. 14 of 2004 (end-of-service gratuity)",
+          "url": "https://www.almeezan.qa/LawView.aspx?LawID=3961&language=en"
+        }
+      ]
     },
     {
       "q": "Why do Qataris pay 7% while the employer pays 14%?",
-      "a": "<p>For nationals, GRSIA is funded by shared contributions. The employee pays 7% and the employer 14%, both on pay up to QAR 100,000 a month. Only the 7% reduces your take-home pay. The 14% is paid on top of your salary and is shown separately.</p>"
+      "a": "<p>For nationals, GRSIA is funded by shared contributions. The employee pays 7% and the employer 14%, both on pay up to QAR 100,000 a month. Only the 7% reduces your take-home pay. The 14% is paid on top of your salary and is shown separately.</p>",
+      "cite": [
+        {
+          "name": "Al Meezan, Qatar Social Insurance Law No. 1 of 2022 (GRSIA contributions, 7% employee, cap 100,000 a month)",
+          "url": "https://www.almeezan.qa/LawView.aspx?LawID=8932&language=en"
+        }
+      ]
     },
     {
       "q": "Is there really no income tax in Qatar?",
-      "a": "<p>Not on salary. The state does not tax employment income for individuals and there is no personal tax return for wages. Your home country may still tax you under its own rules.</p>"
+      "a": "<p>Not on salary. The state does not tax employment income for individuals and there is no personal tax return for wages. Your home country may still tax you under its own rules.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Qatar: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/qatar/individual/taxes-on-personal-income#:~:text=Income%20tax%20is%20not%20imposed"
+        }
+      ]
     },
     {
       "q": "Do I need to pay tax at home if I work in Qatar?",

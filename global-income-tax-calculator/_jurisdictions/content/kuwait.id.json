@@ -10,7 +10,13 @@
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
-        "html": "<p>Kuwait tidak memajaki gaji, tunjangan, maupun bonus perorangan, sehingga tidak ada pemotongan di slip gaji. Tidak ada PTKP, tidak ada tarif bertingkat seperti Pasal 17 UU PPh di Indonesia (5% sampai 35%), dan tidak ada bukti potong untuk gaji. </p>"
+        "html": "<p>Kuwait tidak memajaki gaji, tunjangan, maupun bonus perorangan, sehingga tidak ada pemotongan di slip gaji. Tidak ada PTKP, tidak ada tarif bertingkat seperti Pasal 17 UU PPh di Indonesia (5% sampai 35%), dan tidak ada bukti potong untuk gaji. </p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+          }
+        ]
       },
       {
         "h3": "Iuran PIFSS untuk warga Kuwait",
@@ -33,11 +39,35 @@
               "KWD 1.500"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          }
+        ]
       },
       {
         "h3": "Pekerja asing: tanpa jaminan sosial negara",
-        "html": "<p>Pekerja asing tidak tercakup PIFSS dan tidak membayar apa pun ke sana, jadi tidak ada padanan JHT dan JP yang dipotong dari gajimu. Ketika kontrak berakhir, pemberi kerja wajib membayar uang akhir masa kerja (<em>end-of-service indemnity</em>) menurut undang-undang ketenagakerjaan, yang dihitung dari gaji dan lama bekerja.</p>"
+        "html": "<p>Pekerja asing tidak tercakup PIFSS dan tidak membayar apa pun ke sana, jadi tidak ada padanan JHT dan JP yang dipotong dari gajimu. Ketika kontrak berakhir, pemberi kerja wajib membayar uang akhir masa kerja (<em>end-of-service indemnity</em>) menurut undang-undang ketenagakerjaan, yang dihitung dari gaji dan lama bekerja.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, indemnitas akhir masa kerja bagi ekspatriat",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+          }
+        ]
       },
       {
         "h3": "Status pajakmu di Indonesia tidak ikut hilang",
@@ -46,19 +76,22 @@
     ],
     "sources": [
       {
-        "name": "Public Institution for Social Security (PIFSS), Kuwait",
-        "url": "https://www.pifss.gov.kw/",
-        "note": "jaminan sosial untuk warga negara"
+        "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income"
       },
       {
-        "name": "Ministry of Finance, Kuwait",
-        "url": "https://www.mof.gov.kw/",
-        "note": "perpajakan di Kuwait"
+        "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes"
       },
       {
-        "name": "Direktorat Jenderal Pajak (DJP)",
-        "url": "https://www.pajak.go.id/",
-        "note": "status subjek pajak di Indonesia"
+        "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+        "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
       }
     ]
   },
@@ -67,13 +100,29 @@
       "key": "expat",
       "title": "Apakah gaji KWD 18.000 di Kuwait kena pajak? Hitungan untuk pekerja asing",
       "intro": "<p>Contoh ini untuk kamu yang bekerja di Kuwait dengan gaji KWD 18.000 setahun, atau KWD 1.500 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya tetap KWD 18.000, atau 100% dari gaji kotor. Karena tarif marjinalnya 0%, setiap kenaikan gaji juga kamu bawa pulang utuh.</p>",
-      "after": "<p>Uang akhir masa kerja dibayar pemberi kerja secara terpisah dan tidak termasuk dalam angka ini. Di Indonesia, gaji kotor seorang karyawan biasanya menyusut karena PPh 21, JHT, JP, dan BPJS Kesehatan, sedangkan di Kuwait tidak ada potongan sama sekali.</p>"
+      "after": "<p>Uang akhir masa kerja dibayar pemberi kerja secara terpisah dan tidak termasuk dalam angka ini. Di Indonesia, gaji kotor seorang karyawan biasanya menyusut karena PPh 21, JHT, JP, dan BPJS Kesehatan, sedangkan di Kuwait tidak ada potongan sama sekali.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "Berapa iuran PIFSS warga Kuwait dengan gaji KWD 18.000 setahun?",
       "intro": "<p>Warga Kuwait dengan gaji yang sama tidak membayar pajak penghasilan, tetapi KWD 1.890 setahun mengalir ke PIFSS: 8% dari KWD 1.500 sebulan ditambah 2,5% dari KWD 1.500 yang sama. Gaji bersihnya KWD 16.110, atau 89,5% dari gaji kotor. Setiap tambahan gaji dipotong 8% sampai gaji sebulan mencapai KWD 2.750.</p>",
-      "after": "<p>Iuran ini bukan pajak, melainkan pembayaran untuk hak jaminan sosial, mirip JHT dan JP di Indonesia. Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>"
+      "after": "<p>Iuran ini bukan pajak, melainkan pembayaran untuk hak jaminan sosial, mirip JHT dan JP di Indonesia. Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>Ada empat hal praktis yang bisa kamu lakukan untuk mengatur gaji dan status pajakmu.</p>",
@@ -88,7 +137,13 @@
     },
     {
       "h3": "Pahami uang akhir masa kerja sebelum meneken kontrak",
-      "html": "<p><strong>Siapa yang cocok:</strong> kamu yang sedang membandingkan beberapa tawaran. Uang akhir masa kerja adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja.</p><p><strong>Catatan:</strong> besarnya bergantung pada gaji, lama bekerja, dan kontrak, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> kamu yang sedang membandingkan beberapa tawaran. Uang akhir masa kerja adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja.</p><p><strong>Catatan:</strong> besarnya bergantung pada gaji, lama bekerja, dan kontrak, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, indemnitas akhir masa kerja bagi ekspatriat",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+        }
+      ]
     },
     {
       "h3": "Kirim uang pulang lewat jalur resmi dan simpan buktinya",
@@ -106,23 +161,69 @@
   "faq": [
     {
       "q": "Berapa gaji bersih di Kuwait dengan gaji KWD 18.000 setahun?",
-      "a": "<p>Pekerja asing tidak membayar pajak penghasilan dan menerima gaji bersih KWD 18.000 penuh. Warga Kuwait membayar KWD 1.890 ke PIFSS dan menerima gaji bersih KWD 16.110. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Pekerja asing tidak membayar pajak penghasilan dan menerima gaji bersih KWD 18.000 penuh. Warga Kuwait membayar KWD 1.890 ke PIFSS dan menerima gaji bersih KWD 16.110. Coba dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     },
     {
       "q": "Apakah pekerja asing di Kuwait tidak punya jaminan sosial seperti BPJS?",
-      "a": "<p>Pekerja asing berada di luar PIFSS, jadi tidak ada iuran jaminan sosial negara yang dipotong dari gajimu. Gantinya adalah uang akhir masa kerja dari pemberi kerja, yang dibayar sekali saat kontrak berakhir, bukan bulanan seperti pensiun. Perlindungan lain, misalnya asuransi kesehatan, bergantung pada kontrak, jadi periksa isinya sebelum kamu menandatangani.</p>"
+      "a": "<p>Pekerja asing berada di luar PIFSS, jadi tidak ada iuran jaminan sosial negara yang dipotong dari gajimu. Gantinya adalah uang akhir masa kerja dari pemberi kerja, yang dibayar sekali saat kontrak berakhir, bukan bulanan seperti pensiun. Perlindungan lain, misalnya asuransi kesehatan, bergantung pada kontrak, jadi periksa isinya sebelum kamu menandatangani.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     },
     {
       "q": "Apa itu uang akhir masa kerja di Kuwait, dan apakah sama dengan pesangon?",
-      "a": "<p>Itu uang yang dibayar pemberi kerja kepada pekerja asing ketika kontrak berakhir, dihitung dari gaji dan lama bekerja menurut undang-undang ketenagakerjaan. Fungsinya mirip pesangon di Indonesia, tetapi aturan hitungnya berbeda. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>"
+      "a": "<p>Itu uang yang dibayar pemberi kerja kepada pekerja asing ketika kontrak berakhir, dihitung dari gaji dan lama bekerja menurut undang-undang ketenagakerjaan. Fungsinya mirip pesangon di Indonesia, tetapi aturan hitungnya berbeda. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, indemnitas akhir masa kerja bagi ekspatriat",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+        }
+      ]
     },
     {
       "q": "Berapa total iuran PIFSS untuk warga Kuwait?",
-      "a": "<p>Warga Kuwait membayar 8% dari gaji sebulan sampai KWD 2.750, ditambah 2,5% atas KWD 1.500 pertama. Pada gaji sebulan KWD 1.500 atau kurang, potongan totalnya 10,5%, sehingga yang bergaji lebih rendah menanggung persentase lebih besar.</p>"
+      "a": "<p>Warga Kuwait membayar 8% dari gaji sebulan sampai KWD 2.750, ditambah 2,5% atas KWD 1.500 pertama. Pada gaji sebulan KWD 1.500 atau kurang, potongan totalnya 10,5%, sehingga yang bergaji lebih rendah menanggung persentase lebih besar.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, iuran jaminan sosial",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: rasio iuran bulanan bagi tertanggung dan pemberi kerja",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     },
     {
       "q": "Benarkah tidak ada pajak penghasilan di Kuwait?",
-      "a": "<p>Benar, tidak ada pajak penghasilan perorangan atas gaji. Kewajiban pajakmu di Indonesia dihitung terpisah dan perlu kamu cek sendiri.</p>"
+      "a": "<p>Benar, tidak ada pajak penghasilan perorangan atas gaji. Kewajiban pajakmu di Indonesia dihitung terpisah dan perlu kamu cek sendiri.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: pajak penghasilan pribadi",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
     },
     {
       "q": "Apakah gaji dari Kuwait harus dilaporkan di SPT Tahunan?",

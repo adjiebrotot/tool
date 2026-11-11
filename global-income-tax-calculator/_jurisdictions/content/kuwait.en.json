@@ -10,7 +10,13 @@
     "blocks": [
       {
         "h3": "No personal income tax on salary",
-        "html": "<p>Kuwait does not tax wages, allowances or bonuses for an individual, so there is no withholding on your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+        "html": "<p>Kuwait does not tax wages, allowances or bonuses for an individual, so there is no withholding on your payslip. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+          }
+        ]
       },
       {
         "h3": "PIFSS contributions for Kuwaiti nationals",
@@ -33,23 +39,55 @@
               "KWD 1,500"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          }
+        ]
       },
       {
         "h3": "Expats: no social insurance",
-        "html": "<p>Expatriates are not covered by PIFSS and pay nothing into it. When the contract ends, the employer owes an end-of-service indemnity under the labour law, calculated from pay and years of service.</p>"
+        "html": "<p>Expatriates are not covered by PIFSS and pay nothing into it. When the contract ends, the employer owes an end-of-service indemnity under the labour law, calculated from pay and years of service.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+          },
+          {
+            "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+            "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, terminal indemnity for expatriates",
+            "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Public Institution for Social Security (PIFSS)",
-        "url": "https://www.pifss.gov.kw/",
-        "note": "social security for nationals"
+        "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income"
       },
       {
-        "name": "Ministry of Finance, Kuwait",
-        "url": "https://www.mof.gov.kw/",
-        "note": "taxes in Kuwait"
+        "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes"
+      },
+      {
+        "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+        "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
       }
     ]
   },
@@ -58,13 +96,29 @@
       "key": "expat",
       "title": "Take-home pay for an expat in Kuwait on KWD 18,000",
       "intro": "<p>An expat on KWD 18,000 pays no income tax and no social insurance, so take-home pay is KWD 18,000, or 100% of gross. A raise is kept in full because the marginal rate is 0%.</p>",
-      "after": "<p>The end-of-service indemnity is paid separately by the employer and is not in the figure.</p>"
+      "after": "<p>The end-of-service indemnity is paid separately by the employer and is not in the figure.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "How much do Kuwaiti nationals pay to PIFSS on KWD 18,000?",
       "intro": "<p>A Kuwaiti national on KWD 18,000 pays no income tax but KWD 1,890 a year to PIFSS: 8% of KWD 1,500 a month plus 2.5% of the same KWD 1,500. You keep KWD 16,110, or 89.5% of gross, and the marginal rate is 8% on extra pay up to the KWD 2,750 monthly cap.</p>",
-      "after": "<p>The contribution builds social security rights and is not a tax. The employer's share is not shown.</p>"
+      "after": "<p>The contribution builds social security rights and is not a tax. The employer's share is not shown.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
@@ -79,7 +133,13 @@
     },
     {
       "h3": "Understand your indemnity before you sign",
-      "html": "<p><strong>Suits:</strong> expats comparing offers. The end-of-service indemnity is your employer-funded exit benefit.</p><p><strong>Caveat:</strong> the amount depends on pay, years of service and the contract, so ask how it is worked out.</p>"
+      "html": "<p><strong>Suits:</strong> expats comparing offers. The end-of-service indemnity is your employer-funded exit benefit.</p><p><strong>Caveat:</strong> the amount depends on pay, years of service and the contract, so ask how it is worked out.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, terminal indemnity for expatriates",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+        }
+      ]
     }
   ],
   "limits": [
@@ -93,19 +153,55 @@
   "faq": [
     {
       "q": "How much tax do I pay on KWD 18,000 in Kuwait?",
-      "a": "<p>An expat pays no income tax and keeps KWD 18,000. A Kuwaiti national pays KWD 1,890 to PIFSS and keeps KWD 16,110. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>An expat pays no income tax and keeps KWD 18,000. A Kuwaiti national pays KWD 1,890 to PIFSS and keeps KWD 16,110. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     },
     {
       "q": "What is the end-of-service indemnity in Kuwait, and is it a pension?",
-      "a": "<p>It is a lump sum the employer pays an expat at the end of the contract, based on pay and years of service under the labour law. Because expats are outside PIFSS, this is their replacement for a pension, but it is paid once, not monthly. The calculator leaves it out because it depends on your contract.</p>"
+      "a": "<p>It is a lump sum the employer pays an expat at the end of the contract, based on pay and years of service under the labour law. Because expats are outside PIFSS, this is their replacement for a pension, but it is paid once, not monthly. The calculator leaves it out because it depends on your contract.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, terminal indemnity for expatriates",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=terminal%20indemnity%20payments"
+        }
+      ]
     },
     {
       "q": "Why do Kuwaitis pay two PIFSS rates?",
-      "a": "<p>As the calculator models it, nationals pay 8% on monthly pay up to KWD 2,750 and an extra 2.5% on the first KWD 1,500 of monthly pay. The second rate means lower-paid nationals pay a higher share of pay overall than the 8% headline.</p>"
+      "a": "<p>As the calculator models it, nationals pay 8% on monthly pay up to KWD 2,750 and an extra 2.5% on the first KWD 1,500 of monthly pay. The second rate means lower-paid nationals pay a higher share of pay overall than the 8% headline.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: other taxes, social security contributions",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/other-taxes#:~:text=Social%20security%20contributions"
+        },
+        {
+          "name": "PIFSS, FAQ: monthly contribution ratios for the insured and employers",
+          "url": "https://www.pifss.gov.kw/sites/En/Pages/PensionSocialSecuritySector/FAQ.aspx"
+        }
+      ]
     },
     {
       "q": "Is there really no income tax in Kuwait?",
-      "a": "<p>There is no personal income tax on salary. Your home country may still tax you under its own rules.</p>"
+      "a": "<p>There is no personal income tax on salary. Your home country may still tax you under its own rules.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Kuwait: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/kuwait/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
     },
     {
       "q": "Do I need to pay tax at home if I work in Kuwait?",

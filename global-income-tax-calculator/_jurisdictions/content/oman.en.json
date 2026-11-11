@@ -10,7 +10,13 @@
     "blocks": [
       {
         "h3": "No personal income tax in 2026, a new tax from 2028",
-        "html": "<p>Oman does not tax salary in 2026. The calculator records a personal income tax of 5% on income above OMR 42,000 a year starting 1 January 2028, so it would affect only high earners. Check the final rules before relying on this, since details can change. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>"
+        "html": "<p>Oman does not tax salary in 2026. The calculator records a personal income tax of 5% on income above OMR 42,000 a year starting 1 January 2028, so it would affect only high earners. Check the final rules before relying on this, since details can change. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income (5% above OMR 42,000 from 2028)",
+            "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
+          }
+        ]
       },
       {
         "h3": "Social Protection Fund for Omani nationals",
@@ -33,18 +39,51 @@
               "Not applicable"
             ]
           ]
-        }
+        },
+        "cite": [
+          {
+            "name": "Royal Decree 52/2023, Social Protection Law (Articles 52 and 70: 7.5% insured share, OMR 3,000 ceiling)",
+            "url": "https://decree.om/2023/rd20230052/#:~:text=The%20contribution%20wage%20ceiling"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Oman: other taxes, social security contributions (8% employee in total)",
+            "url": "https://taxsummaries.pwc.com/oman/individual/other-taxes#:~:text=Social%20security%20contributions"
+          }
+        ]
       },
       {
         "h3": "Expats: no social insurance",
-        "html": "<p>Expatriates pay nothing into the Social Protection Fund. The employer owes an end-of-service gratuity under the labour law when the contract ends. It is not part of the figures.</p>"
+        "html": "<p>Expatriates pay nothing into the Social Protection Fund. The employer owes an end-of-service gratuity under the labour law when the contract ends. It is not part of the figures.</p>",
+        "cite": [
+          {
+            "name": "Royal Decree 53/2023, Labour Law (end-of-service gratuity)",
+            "url": "https://decree.om/2023/rd20230053/#:~:text=not%20less%20than%20the%20basic%20wage"
+          }
+        ]
       }
     ],
     "sources": [
       {
-        "name": "Social Protection Fund, Oman",
-        "url": "https://www.spf.gov.om/",
-        "note": "contributions and the planned personal income tax"
+        "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income"
+      },
+      {
+        "name": "Royal Decree 52/2023, Social Protection Law (Articles 52 and 70: 7.5% insured share, OMR 3,000 ceiling)",
+        "url": "https://decree.om/2023/rd20230052/"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Oman: other taxes, social security contributions (8% employee in total)",
+        "url": "https://taxsummaries.pwc.com/oman/individual/other-taxes"
+      },
+      {
+        "name": "Royal Decree 53/2023, Labour Law (end-of-service gratuity)",
+        "url": "https://decree.om/2023/rd20230053/"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income (5% above OMR 42,000 from 2028)",
+        "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
       }
     ]
   },
@@ -53,13 +92,29 @@
       "key": "expat",
       "title": "Take-home pay for an expat in Oman on OMR 18,000",
       "intro": "<p>An expat on OMR 18,000 pays no income tax and no social insurance in 2026, so take-home pay is OMR 18,000, or 100% of gross. The planned 5% tax from 2028 applies only above OMR 42,000 a year, so this salary would not be affected.</p>",
-      "after": "<p>The end-of-service gratuity is paid by the employer and is not in this figure.</p>"
+      "after": "<p>The end-of-service gratuity is paid by the employer and is not in this figure.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
+        }
+      ]
     },
     {
       "key": "national",
       "title": "How much do Omani nationals pay to the Social Protection Fund on OMR 18,000?",
       "intro": "<p>An Omani national on OMR 18,000 pays no income tax but 8% to the Social Protection Fund, OMR 1,440 a year. You keep OMR 16,560, or 92.0% of gross. Pay is OMR 1,500 a month, below the OMR 3,000 monthly cap, so the full 8% applies.</p>",
-      "after": "<p>The contribution builds social protection rights. From 2028 the planned 5% tax would add to it only on income above OMR 42,000 a year.</p>"
+      "after": "<p>The contribution builds social protection rights. From 2028 the planned 5% tax would add to it only on income above OMR 42,000 a year.</p>",
+      "cite": [
+        {
+          "name": "Royal Decree 52/2023, Social Protection Law (Articles 52 and 70: 7.5% insured share, OMR 3,000 ceiling)",
+          "url": "https://decree.om/2023/rd20230052/#:~:text=The%20contribution%20wage%20ceiling"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: other taxes, social security contributions (8% employee in total)",
+          "url": "https://taxsummaries.pwc.com/oman/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     }
   ],
   "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
@@ -74,7 +129,13 @@
     },
     {
       "h3": "Watch the 2028 income tax if you earn above OMR 42,000",
-      "html": "<p><strong>Suits:</strong> high earners planning a move for 2028 or later. The planned 5% applies above OMR 42,000 a year.</p><p><strong>Caveat:</strong> final rules, definitions of income and exemptions may differ from the plan, so check the official guidance as it is published.</p>"
+      "html": "<p><strong>Suits:</strong> high earners planning a move for 2028 or later. The planned 5% applies above OMR 42,000 a year.</p><p><strong>Caveat:</strong> final rules, definitions of income and exemptions may differ from the plan, so check the official guidance as it is published.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income (5% above OMR 42,000 from 2028)",
+          "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
+        }
+      ]
     }
   ],
   "limits": [
@@ -88,19 +149,55 @@
   "faq": [
     {
       "q": "How much tax do I pay on OMR 18,000 in Oman?",
-      "a": "<p>An expat pays no income tax and keeps OMR 18,000. An Omani national pays 8% to the Social Protection Fund and keeps OMR 16,560. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>An expat pays no income tax and keeps OMR 18,000. An Omani national pays 8% to the Social Protection Fund and keeps OMR 16,560. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
+        },
+        {
+          "name": "Royal Decree 52/2023, Social Protection Law (Articles 52 and 70: 7.5% insured share, OMR 3,000 ceiling)",
+          "url": "https://decree.om/2023/rd20230052/#:~:text=The%20contribution%20wage%20ceiling"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: other taxes, social security contributions (8% employee in total)",
+          "url": "https://taxsummaries.pwc.com/oman/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "q": "Is Oman introducing an income tax?",
-      "a": "<p>As the calculator models it, yes: a personal income tax of 5% on income above OMR 42,000 a year is planned from 1 January 2028. In 2026 there is none. It would reach only high earners, and the final rules should be checked when published. The calculator shows it as a note with zero amount.</p>"
+      "a": "<p>As the calculator models it, yes: a personal income tax of 5% on income above OMR 42,000 a year is planned from 1 January 2028. In 2026 there is none. It would reach only high earners, and the final rules should be checked when published. The calculator shows it as a note with zero amount.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: taxes on personal income (5% above OMR 42,000 from 2028)",
+          "url": "https://taxsummaries.pwc.com/oman/individual/taxes-on-personal-income#:~:text=annual%20income%20threshold%20of%2042%2C000"
+        }
+      ]
     },
     {
       "q": "What is end-of-service gratuity in Oman and does it replace a pension?",
-      "a": "<p>For expats, in practice yes. They are outside the Social Protection Fund, so the employer pays a gratuity at the end of the contract under the labour law, based on pay and years of service. It is paid once. The calculator leaves it out because it depends on your contract.</p>"
+      "a": "<p>For expats, in practice yes. They are outside the Social Protection Fund, so the employer pays a gratuity at the end of the contract under the labour law, based on pay and years of service. It is paid once. The calculator leaves it out because it depends on your contract.</p>",
+      "cite": [
+        {
+          "name": "Royal Decree 53/2023, Labour Law (end-of-service gratuity)",
+          "url": "https://decree.om/2023/rd20230053/#:~:text=not%20less%20than%20the%20basic%20wage"
+        }
+      ]
     },
     {
       "q": "Why do Omanis pay 8% and expats nothing?",
-      "a": "<p>The Social Protection Fund covers nationals. The employee pays 8% of pay up to OMR 3,000 a month, and the employer pays a share on top. Expats are not covered, so no deduction applies.</p>"
+      "a": "<p>The Social Protection Fund covers nationals. The employee pays 8% of pay up to OMR 3,000 a month, and the employer pays a share on top. Expats are not covered, so no deduction applies.</p>",
+      "cite": [
+        {
+          "name": "Royal Decree 52/2023, Social Protection Law (Articles 52 and 70: 7.5% insured share, OMR 3,000 ceiling)",
+          "url": "https://decree.om/2023/rd20230052/#:~:text=The%20contribution%20wage%20ceiling"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Oman: other taxes, social security contributions (8% employee in total)",
+          "url": "https://taxsummaries.pwc.com/oman/individual/other-taxes#:~:text=Social%20security%20contributions"
+        }
+      ]
     },
     {
       "q": "Do I need to pay tax at home if I work in Oman?",
