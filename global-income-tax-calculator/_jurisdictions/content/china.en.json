@@ -28,7 +28,7 @@
       },
       {
         "h3": "Social insurance and the housing fund",
-        "cite": [{"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}, {"name": "Shanghai HRSS, 2025 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html"}, {"name": "Shanghai HRSS, 2026 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}, {"name": "Shanghai government, housing fund base adjustment notice", "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"}],
+        "cite": [{"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}, {"name": "Shanghai HRSS, 2025 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html"}, {"name": "Shanghai HRSS, 2026 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}, {"name": "Shanghai government, housing fund base adjustment notice", "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"}],
         "html": "<p>The employee's share in Shanghai is 8% for pension, 2% for medical and 0.5% for unemployment insurance, a total of 10.5%. The calculator applies them to monthly pay between a floor and a ceiling (about CN¥37,300 to CN¥37,700 a month at the top), so very high earners stop paying more. The housing fund is a savings scheme where you and your employer each contribute, and the calculator assumes 7% on the same ceiling, which you can change. Check with your employer whether the housing fund applies to you. These contributions come off taxable income.</p>"
       },
       {
@@ -49,13 +49,13 @@
       {"name": "STA, Administrative Measures for Individual Income Tax Withholding (cumulative method)", "url": "https://fgk.chinatax.gov.cn/zcfgk/c100015/c5200946/content.html#:~:text=%E7%B4%AF%E8%AE%A1%E9%A2%84%E6%89%A3%E6%B3%95", "note": "cumulative withholding method"},
       {"name": "Shanghai HRSS, 2026 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html", "note": "Shanghai social insurance base limits, July 2026"},
       {"name": "Shanghai HRSS, 2025 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html", "note": "Shanghai social insurance base limits, July 2025"},
-      {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25", "note": "employee rates for pension, medical and unemployment"}
+      {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai", "note": "employee rates for pension, medical and unemployment"}
     ]
   },
   "examples": [
     {
       "key": "local-shanghai",
-      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}, {"name": "Shanghai HRSS, 2026 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}],
+      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}, {"name": "Shanghai HRSS, 2026 social insurance base limits", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}],
       "title": "How to calculate income tax in Shanghai on CN¥360,000 a year",
       "intro": "<p>This is a local employee in Shanghai on CN¥360,000. Social insurance at 10.5% is CN¥37,800 and the housing fund at 7% is CN¥25,200. Taxable income is CN¥360,000 less the CN¥60,000 basic deduction and these two, so CN¥237,000. That is in the 20% band, giving CN¥30,480 of tax. You keep about CN¥266,520, or 74.0% of gross.</p>",
       "after": "<p>The contributions lower your taxable income, so each extra yuan of pay costs about 34%, not 20%: you pay 17.5% more in contributions, and 20% tax on the remaining 82.5%. The calculator assumes no special additional deductions, so a parent or a renter would pay less.</p>"
@@ -103,7 +103,7 @@
   "faq": [
     {
       "q": "How much tax do I pay on CN¥360,000 in Shanghai?",
-      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>A local employee pays about CN¥30,480 in income tax, plus CN¥37,800 of social insurance and CN¥25,200 for the housing fund, and keeps about CN¥266,520. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
@@ -123,12 +123,12 @@
     },
     {
       "q": "Do foreigners pay Chinese social insurance?",
-      "cite": [{"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>Foreign employees who work in China under a contract are generally required to join social insurance, with employer and employee shares, and the calculator includes it. Some countries have agreements that exempt their citizens for a period. Check with your employer and with the local social insurance bureau.</p>"
     },
     {
       "q": "Why is my marginal rate on CN¥360,000 higher than 20%?",
-      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "Shanghai STA, IIT rate table for comprehensive income (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, China: social insurance rates (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>The pension, medical and housing fund contributions grow with pay until the ceiling, so an extra yuan of salary also adds contributions. In the calculator, 17.5% goes to contributions and 20% tax applies to the remaining 82.5%, which gives about 34%. Above the ceiling, as for the expat example, contributions stop rising and the marginal rate falls back to the tax rate alone (25%).</p>"
     }
   ],

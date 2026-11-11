@@ -53,7 +53,7 @@
       },
       {
         "h3": "Jaminan sosial dan dana perumahan",
-        "cite": [{"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2025", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2026", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}, {"name": "Pemerintah Shanghai, pemberitahuan penyesuaian dasar dana perumahan", "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"}],
+        "cite": [{"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2025", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2026", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}, {"name": "Pemerintah Shanghai, pemberitahuan penyesuaian dasar dana perumahan", "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"}],
         "html": "<p>Porsi karyawan di Shanghai adalah 8% untuk pensiun, 2% untuk kesehatan dan 0,5% untuk pengangguran, jadi totalnya 10,5%. <em>Tool</em> menerapkannya pada gaji bulanan sampai batas atas, yang berada di kisaran CN¥37.300 sampai CN¥37.700 per bulan, sehingga yang bergaji sangat tinggi berhenti membayar lebih. Dana perumahan (<em>housing fund</em>) adalah tabungan wajib tempat kamu dan pemberi kerja sama-sama menyetor, gagasannya mirip Tapera di Indonesia. <em>Tool</em> memakai 7% pada batas atas yang sama, dan angkanya bisa kamu ubah. Tanyakan ke pemberi kerja apakah dana perumahan berlaku untukmu. Semua iuran ini mengurangi penghasilan kena pajak.</p>",
         "table": null
       },
@@ -77,13 +77,13 @@
       {"name": "STA, Tata Cara Pemotongan PPh Perorangan (metode kumulatif)", "url": "https://fgk.chinatax.gov.cn/zcfgk/c100015/c5200946/content.html#:~:text=%E7%B4%AF%E8%AE%A1%E9%A2%84%E6%89%A3%E6%B3%95", "note": "metode pemotongan kumulatif"},
       {"name": "Shanghai HRSS, batas dasar iuran sosial 2026", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html", "note": "batas dasar iuran sosial Shanghai, Juli 2026"},
       {"name": "Shanghai HRSS, batas dasar iuran sosial 2025", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html", "note": "batas dasar iuran sosial Shanghai, Juli 2025"},
-      {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25", "note": "tarif karyawan untuk pensiun, medis dan pengangguran"}
+      {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai", "note": "tarif karyawan untuk pensiun, medis dan pengangguran"}
     ]
   },
   "examples": [
     {
       "key": "local-shanghai",
-      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2026", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}],
+      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}, {"name": "Shanghai HRSS, batas dasar iuran sosial 2026", "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"}],
       "title": "Gaji CN¥360.000 di Shanghai: berapa pajak dan gaji bersihnya?",
       "intro": "<p>Contoh ini untuk karyawan lokal di Shanghai dengan gaji CN¥360.000 setahun. Iuran jaminan sosial 10,5% sebesar CN¥37.800 dan dana perumahan 7% sebesar CN¥25.200 dikurangkan lebih dulu. Penghasilan kena pajaknya adalah gaji dikurangi potongan dasar CN¥60.000 dan kedua iuran itu, yaitu CN¥237.000. Angka tersebut masuk lapisan 20%, sehingga pajaknya menjadi CN¥30.480. Gaji bersihmu menjadi sekitar CN¥266.520, atau 74,0% dari gaji kotor.</p>",
       "after": "<p>Iuran memang mengurangi penghasilan kena pajak, tetapi tiap yuan tambahan gaji ikut menambah iuran juga. Karena itu tarif marjinalmu 34,0%, bukan 20%. Hitungan ini tanpa pengurang tambahan khusus, jadi yang punya anak sekolah atau menyewa rumah membayar lebih sedikit.</p>"
@@ -131,7 +131,7 @@
   "faq": [
     {
       "q": "Berapa pajak yang saya bayar dengan gaji CN¥360.000 di Shanghai?",
-      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>Karyawan lokal membayar sekitar CN¥30.480 untuk pajak penghasilan, ditambah CN¥37.800 iuran jaminan sosial dan CN¥25.200 untuk dana perumahan, sehingga gaji bersihnya sekitar CN¥266.520. Masukkan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
@@ -151,12 +151,12 @@
     },
     {
       "q": "Apakah orang asing wajib ikut jaminan sosial Tiongkok?",
-      "cite": [{"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>Karyawan asing yang bekerja di Tiongkok dengan kontrak umumnya wajib ikut jaminan sosial, dengan porsi pemberi kerja dan porsi karyawan, dan <em>tool</em> ini memasukkannya. Sebagian negara punya perjanjian yang membebaskan warganya untuk jangka waktu tertentu. Tanyakan ke pemberi kerja dan ke kantor jaminan sosial setempat bagaimana ketentuannya untuk warga negara Indonesia.</p>"
     },
     {
       "q": "Kenapa tarif marjinal saya pada gaji CN¥360.000 lebih tinggi dari 20%?",
-      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=Pension%208%25%2016%25"}],
+      "cite": [{"name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)", "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"}, {"name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)", "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"}],
       "a": "<p>Iuran pensiun, kesehatan dan dana perumahan naik seiring gaji sampai batas atas, jadi tiap yuan tambahan gaji ikut menambah iuran. Dalam hitungan ini, 17,5% menjadi iuran dan pajak 20% dikenakan pada 82,5% sisanya, sehingga totalnya sekitar 34%. Di atas batas atas, seperti pada contoh ekspat, iuran berhenti naik dan tarif marjinal kembali ke tarif pajak saja (25%).</p>"
     },
     {
