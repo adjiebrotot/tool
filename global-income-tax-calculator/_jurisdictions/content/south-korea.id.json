@@ -4,9 +4,9 @@
   "title": "Cara Menghitung Pajak Penghasilan di Korea Selatan 2026",
   "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Korea Selatan (2026)",
   "description": "Hitung pajak penghasilan, pajak daerah, tarif tunggal 19% dan iuran sosial di Korea Selatan 2026, dengan tiga contoh gaji bersih dalam won.",
-  "lede": "<p>Korea Selatan memungut pajak penghasilan nasional progresif 6% sampai 45% dari penduduk pajak, ditambah pajak daerah sebesar 10% dari pajak nasional dan iuran jaminan sosial sekitar 10% dari gaji. Dengan gaji ₩60.000.000 setahun, karyawan yang memakai tarif standar membawa pulang gaji bersih (<em>take-home pay</em>) sekitar ₩49.694.841, atau 82,8%. Pekerja asing boleh memilih tarif tunggal 19% sebagai gantinya, tetapi dalam hitungan <em>tool</em> ini pilihan itu baru lebih murah di atas gaji sekitar ₩162.000.000.</p>",
+  "lede": "<p>Korea Selatan memungut pajak penghasilan nasional progresif 6% sampai 45% dari penduduk pajak, ditambah pajak daerah sebesar 10% dari pajak nasional dan iuran jaminan sosial sekitar 10% dari gaji. Dengan gaji ₩60.000.000 setahun, karyawan yang memakai tarif standar menerima gaji bersih (<em>take-home pay</em>) sekitar ₩49.694.841, atau 82,8%. Pekerja asing boleh memilih tarif tunggal 19% sebagai gantinya, tetapi dalam hitungan <em>tool</em> ini pilihan itu baru lebih murah di atas gaji sekitar ₩162.000.000.</p>",
   "law": {
-    "intro": "<p>Angka di bawah memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan. Korea menganggapmu penduduk pajak (<em>resident</em>) kalau kamu punya domisili di sana atau tinggal 183 hari atau lebih, patokan yang mirip dengan aturan 183 hari di UU PPh Indonesia. Pemberi kerja memotong pajak dari setiap slip gaji memakai tabel standar, lalu menyelesaikan angka finalnya pada Februari lewat penyesuaian pajak akhir tahun (<em>yeonmal jeongsan</em>), seperti PPh 21 yang dipotong tiap bulan dan dihitung ulang di Desember. Iuran jaminan sosial ikut dipotong dari gaji, dan boleh dikurangkan dari penghasilan kena pajak.</p>",
+    "intro": "<p>Angka di bagian ini memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan. Korea menganggapmu penduduk pajak (<em>resident</em>) kalau kamu punya domisili di sana atau tinggal 183 hari atau lebih, patokan yang mirip dengan aturan 183 hari di UU PPh Indonesia. Pemberi kerja memotong pajak dari setiap slip gaji memakai tabel standar, lalu menyelesaikan angka finalnya pada Februari lewat penyesuaian pajak akhir tahun (<em>yeonmal jeongsan</em>), seperti PPh 21 yang dipotong tiap bulan dan dihitung ulang di Desember. Iuran jaminan sosial ikut dipotong dari gaji, dan boleh dikurangkan dari penghasilan kena pajak.</p>",
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan nasional",
@@ -54,7 +54,7 @@
       },
       {
         "h3": "Potongan penghasilan kerja",
-        "html": "<p>Karyawan mendapat potongan pengganti biaya bekerja, fungsinya mirip <em>biaya jabatan</em> di Indonesia. Bedanya, biaya jabatan di Indonesia berupa persentase tetap dengan batas atas, sedangkan di Korea potongannya makin kecil sebagai persentase gaji ketika gaji naik, dan berhenti di batas ₩20.000.000.</p>",
+        "html": "<p>Karyawan mendapat potongan pengganti biaya bekerja, fungsinya mirip biaya jabatan di Indonesia. Bedanya, biaya jabatan di Indonesia berupa persentase tetap dengan batas atas, sedangkan di Korea potongannya makin kecil sebagai persentase gaji ketika gaji naik, dan berhenti di batas ₩20.000.000.</p>",
         "table": {
           "head": [
             "Gaji setahun",
@@ -144,25 +144,25 @@
   "strategies": [
     {
       "h3": "Manfaatkan penyesuaian pajak akhir tahun untuk klaim potongan",
-      "html": "<p><strong>Cocok untuk:</strong> semua karyawan. Pada Januari kamu mengumpulkan dokumen untuk potongan seperti biaya kesehatan, pendidikan, asuransi dan belanja kartu kredit dari Hometax, lalu menyerahkannya ke pemberi kerja, yang menyelesaikan pajakmu lewat gaji Februari. Prosesnya mirip menyiapkan bukti potong dan lampiran untuk SPT Tahunan, hanya saja kantor yang mengurusnya. <em>Tool</em> ini hanya memakai potongan standar.</p><p><strong>Catatan:</strong> tiap potongan punya aturan dan batas sendiri, jadi cek ke bagian <em>payroll</em> mana yang berlaku untukmu.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> semua karyawan. Pada Januari kamu mengumpulkan dokumen untuk potongan seperti biaya kesehatan, pendidikan, asuransi dan belanja kartu kredit dari Hometax, lalu menyerahkannya ke pemberi kerja, yang menyelesaikan pajakmu lewat gaji Februari. Prosesnya mirip menyiapkan bukti potong dan lampiran untuk SPT Tahunan, hanya saja kantor yang mengurusnya. <em>Tool</em> ini hanya memakai potongan standar.</p><p><strong>Perlu diingat:</strong> tiap potongan punya aturan dan batas sendiri, jadi cek ke bagian <em>payroll</em> mana yang berlaku untukmu.</p>"
     },
     {
       "h3": "Bandingkan tarif tunggal 19% dengan tarif standar",
-      "html": "<p><strong>Cocok untuk:</strong> pekerja asing bergaji tinggi dengan sedikit potongan. Dalam hitungan <em>tool</em> ini, orang lajang mulai untung dari gaji sekitar ₩162.000.000, sedangkan di bawah itu tarif standar lebih baik.</p><p><strong>Catatan:</strong> tarif tunggal adalah keringanan berjangka waktu, dan aturan kapan serta bagaimana kamu boleh memilih atau kembali ke tarif standar ditentukan National Tax Service. Pastikan dulu sebelum memutuskan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja asing bergaji tinggi dengan sedikit potongan. Dalam hitungan <em>tool</em> ini, orang lajang mulai untung dari gaji sekitar ₩162.000.000, sedangkan di bawah itu tarif standar lebih baik.</p><p><strong>Perlu diingat:</strong> tarif tunggal adalah keringanan berjangka waktu, dan aturan kapan serta bagaimana kamu boleh memilih atau kembali ke tarif standar ditentukan National Tax Service. Pastikan dulu sebelum memutuskan.</p>"
     },
     {
       "h3": "Klaim tanggungan dan potongan keluarga",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang punya pasangan, anak atau orang tua yang memenuhi syarat penghasilan dan tempat tinggal. Tiap tanggungan menambah potongan pribadi (₩1.500.000 dalam hitungan ini), seperti tambahan PTKP untuk tanggungan, dan ada potongan lain untuk situasi tertentu.</p><p><strong>Catatan:</strong> tanggungan harus memenuhi syarat, dan anggota keluarga pekerja asing yang berada di luar Korea punya aturan sendiri. Potongan ini juga tidak berlaku kalau kamu memilih tarif tunggal.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang punya pasangan, anak atau orang tua yang memenuhi syarat penghasilan dan tempat tinggal. Tiap tanggungan menambah potongan pribadi (₩1.500.000 dalam hitungan ini), seperti tambahan PTKP untuk tanggungan, dan ada potongan lain untuk situasi tertentu.</p><p><strong>Perlu diingat:</strong> tanggungan harus memenuhi syarat, dan anggota keluarga pekerja asing yang berada di luar Korea punya aturan sendiri. Potongan ini juga tidak berlaku kalau kamu memilih tarif tunggal.</p>"
     },
     {
       "h3": "Cek pengembalian dana pensiun saat pulang",
-      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang meninggalkan Korea untuk seterusnya. Warga negara dari sebagian negara bisa mengajukan pengembalian iuran dana pensiun nasional sekaligus saat pergi, bergantung pada perjanjian negaranya dengan Korea. Fungsinya mirip klaim JHT saat berhenti bekerja.</p><p><strong>Catatan:</strong> hak ini bergantung pada kewarganegaraan, jadi tanyakan ke National Pension Service apakah warga negara Indonesia memenuhi syarat sebelum kamu menjadikannya bagian dari rencana.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja asing yang meninggalkan Korea untuk seterusnya. Warga negara dari sebagian negara bisa mengajukan pengembalian iuran dana pensiun nasional sekaligus saat pergi, bergantung pada perjanjian negaranya dengan Korea. Fungsinya mirip klaim JHT saat berhenti bekerja.</p><p><strong>Perlu diingat:</strong> hak ini bergantung pada kewarganegaraan, jadi tanyakan ke National Pension Service apakah warga negara Indonesia memenuhi syarat sebelum kamu menjadikannya bagian dari rencana.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari gaji.</strong> Hitungannya satu gaji selama setahun penuh, tanpa penghasilan investasi, usaha sendiri atau tahun yang tidak penuh.",
     "<strong>Tanpa bonus dan saham.</strong> Bonus, opsi saham dan tunjangan tidak dihitung terpisah.",
-    "<strong>Potongan standar saja.</strong> Yang dipakai hanya potongan penghasilan kerja, potongan pribadi per orang dan iuran jaminan sosial. Potongan dari penyesuaian akhir tahun, seperti belanja kartu, biaya berobat, pendidikan, asuransi dan perumahan, tidak ikut dihitung.",
+    "<strong>Potongan standar saja.</strong> Yang dipakai hanya potongan penghasilan kerja, potongan pribadi per orang dan iuran jaminan sosial. Potongan dari penyesuaian akhir tahun, seperti belanja kartu, biaya berobat, pendidikan, asuransi dan perumahan, tidak dihitung.",
     "<strong>Lajang secara bawaan.</strong> Tanggungan hanya menambah potongan pribadi, dan kredit pajak untuk pasangan serta anak tidak dihitung.",
     "<strong>Status dipilih sendiri.</strong> Kamu yang menentukan metodenya. <em>Tool</em> tidak menguji apakah kamu penduduk pajak atau apakah tarif tunggal terbuka untukmu.",
     "<strong>Iuran jaminan sosial disederhanakan.</strong> Batas iuran dana pensiun dan kesehatan serta pengecualian bagi warga negara asing mengikuti tarif di atas, bukan kontrak kerjamu.",

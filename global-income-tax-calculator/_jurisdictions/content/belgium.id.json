@@ -1,129 +1,133 @@
 {
   "slug": "belgium",
   "lang": "id",
-  "title": "Cara Menghitung Pajak Gaji di Belgia 2026 dan Rezim Ekspat",
-  "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Belgia (2026)",
-  "description": "Pajak gaji di Belgia 2026: tarif federal, ONSS 13,07%, pajak tambahan kota dan rezim ekspatriat 35%, plus contoh gaji bersih untuk lajang dan keluarga.",
-  "lede": "<p>Belgia memajaki gaji dengan tarif federal progresif 25%, 40%, 45% dan 50%, ditambah pajak tambahan kota sekitar 7% dari pajak federal dan iuran jaminan sosial (ONSS) 13,07% dari gaji kotor. Potongan atas gaji di sini lebih besar daripada di banyak negara Eropa lain: lajang dengan gaji €55.000 menyisakan gaji bersih (<em>take-home pay</em>) sekitar €34.526 setahun, atau 62,8%. Pekerja yang pindah dari luar negeri dengan gaji kotor di atas €70.000 bisa memakai rezim ekspatriat, yang menjadikan 35% gaji sebagai penggantian biaya bebas pajak.</p>",
+  "title": "Cara Menghitung Pajak Gaji di Belgia 2026 (Gaji Bersih)",
+  "h1": "Cara menghitung pajak penghasilan di Belgia (penghasilan 2026)",
+  "description": "Hitung pajak dan gaji bersih di Belgia 2026: tarif federal 25% sampai 50%, ONSS 13,07%, pajak kota, kuosien perkawinan, dan rezim ekspatriat 35%.",
+  "lede": "<p>Gaji di Belgia dipotong tiga kali: iuran jaminan sosial ONSS sebesar 13,07% dari gaji kotor, pajak penghasilan federal dengan tarif 25% sampai 50%, dan pajak tambahan dari kota tempat kamu tinggal. Untuk gaji €55.000, lajang membayar €11.913 pajak federal, €834 pajak kota dan €7.189 ONSS, sehingga gaji bersih (<em>take-home pay</em>) tinggal sekitar €34.526 setahun, atau €2.877 per bulan. Pasangan menikah dengan satu pencari nafkah dan dua anak, bergaji €70.000, menyisakan sekitar €48.105 berkat kuosien perkawinan dan tambahan bebas pajak untuk anak.</p>",
   "law": {
-    "intro": "<p>Aturan di bawah ini mengikuti tahun penghasilan 2026. Penduduk pajak Belgia dikenai pajak atas penghasilan dari seluruh dunia, dan pemberi kerja memotong pajak dari gajimu setiap bulan lewat pemotongan di muka (<em>précompte professionnel</em>). Pajak akhir ditentukan lewat laporan pajak tahunan yang diisi tahun berikutnya. Pembayar pajak yang sudah dipotong di muka bisa mendapat pengembalian atau diminta membayar kekurangannya.</p>",
+    "intro": "<p>Pajak Belgia dihitung dari penghasilan tahun kalender dan dilaporkan pada tahun berikutnya, sehingga halaman ini membahas penghasilan 2026. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia tanpa melihat visa atau kewarganegaraan. Pemberi kerja memotong pajak gaji (<em>bedrijfsvoorheffing</em>, setara PPh 21 yang dipotong kantor) dari setiap slip gaji, dan laporan pajak tahunan, yang setara SPT Tahunan, menentukan tagihan yang sebenarnya.</p><p><em>Tool</em> ini menghitung hasil setahun penuh sekaligus. Kalkulatornya hanya berjalan untuk gaji kotor sedikitnya sekitar €26.803, yaitu dua belas kali upah minimum penuh waktu, karena di bawah angka itu aturan bonus kerja berubah.</p>",
     "blocks": [
       {
-        "h3": "Tarif pajak federal",
-        "html": "<p>Pajak federal dihitung dari penghasilan kena pajak, yaitu gaji kotor dikurangi iuran sosial ONSS dan potongan biaya kerja. Kalkulator memakai potongan standar 30% dari sisa gaji, dengan batas €6.070. Setiap orang juga mendapat jumlah bebas pajak sebesar €11.550: pajak pada jumlah itu dihapus dari tagihanmu, dengan tambahan untuk tiap anak (€2.130 untuk satu anak, €5.130 untuk dua anak, €11.440 untuk tiga anak, €18.510 untuk empat anak, dan €7.070 untuk tiap anak berikutnya) dan €1.980 untuk orang tua tunggal.</p>",
+        "h3": "Tarif pajak penghasilan federal",
+        "html": "<p>Pajak federal berjenjang atas penghasilan kena pajak, yaitu gaji setelah ONSS dan potongan tetap biaya kerja. Setiap orang juga mendapat bagian bebas pajak €11.550, mirip PTKP di Indonesia. <em>Tool</em> ini menerapkannya dengan mengurangkan pajak yang jatuh pada irisan pertama itu, senilai sekitar €2.888 setahun pada tarif 25%. Setiap anak menambah jumlah bebas pajak. Jenjangnya seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi tarif tertinggi Belgia 50%.</p>",
         "table": {
-          "head": [
-            "Penghasilan kena pajak",
-            "Tarif federal"
-          ],
+          "head": ["Penghasilan kena pajak", "Tarif"],
           "rows": [
-            ["Sampai €16.720", "25%"],
-            ["€16.721 sampai €29.510", "40%"],
-            ["€29.511 sampai €51.070", "45%"],
+            ["€0 sampai €16.720", "25%"],
+            ["€16.720 sampai €29.510", "40%"],
+            ["€29.510 sampai €51.070", "45%"],
             ["Di atas €51.070", "50%"]
           ]
         }
       },
       {
-        "h3": "Pajak tambahan kota (<em>taxe communale</em>)",
-        "html": "<p>Selain pajak federal, kota tempat tinggalmu mengenakan pajak tambahan berupa persentase dari pajak federal itu, bukan dari gajimu. Tiap kota menetapkan persentasenya sendiri, dan kalkulator memakai 7% sebagai nilai bawaan yang bisa kamu ubah. Pada gaji €55.000, setiap satu poin persentase pajak tambahan menambah sekitar €119 setahun.</p>"
+        "h3": "Jaminan sosial (ONSS) dan potongan biaya kerja",
+        "html": "<p>Karyawan membayar 13,07% dari gaji kotor ke kantor jaminan sosial (ONSS), dipotong oleh pemberi kerja, mirip BPJS Ketenagakerjaan di Indonesia tetapi jauh lebih besar. ONSS membuka hakmu atas jaminan kesehatan, tetapi kamu masih harus mendaftar ke dana asuransi kesehatan (<em>mutualité</em>) untuk mendapat penggantian biaya berobat. Pekerja bergaji rendah mendapat bonus kerja yang mengurangi ONSS dan pajak, dan bonus itu menghilang jauh di bawah gaji pada contoh.</p><p>Potongan tetap biaya kerja sebesar 30% dari gaji setelah ONSS, maksimum €6.070 setahun, juga berlaku. Mirip biaya jabatan di Indonesia, tetapi persentase dan batasnya berbeda. Iuran sosial khusus (CSSS) adalah potongan bulanan tambahan yang naik seiring gaji dan berhenti di batas sekitar €731 setahun pada penghasilan lebih tinggi.</p>"
       },
       {
-        "h3": "ONSS dan iuran sosial khusus",
-        "html": "<p>Iuran jaminan sosial karyawan (ONSS) adalah 13,07% dari gaji kotor, dan pemberi kerja menanggung bagiannya sendiri di luar gaji. Untuk gaji yang rendah, ada potongan iuran lewat bonus kerja, yang tidak berlaku untuk gaji menengah ke atas. Selain itu ada iuran sosial khusus (<em>cotisation spéciale de sécurité sociale</em>, CSSS) yang naik bertahap sampai maksimum €183 per kuartal pada gaji tinggi.</p><p>ONSS ikut membiayai sistem kesehatan, tetapi kamu tetap perlu menjadi anggota dana kesehatan (<em>mutualité</em>) agar biaya berobatmu diganti, jadi urus keanggotaan itu setelah mulai bekerja.</p>"
+        "h3": "Pajak tambahan kota",
+        "html": "<p>Selain pajak federal, kota tempat tinggalmu memungut pajak tambahan berupa persentase dari pajak federal. Kebanyakan kota menetapkannya antara 6% dan 8%, dan <em>tool</em> ini memakai 7%. Besarnya mengikuti tempat tinggalmu pada 1 Januari, jadi kamu bisa mengubah angkanya di kalkulator sesuai kotamu. Indonesia tidak punya lapisan pajak penghasilan di tingkat kota, jadi ini komponen yang mungkin baru bagimu.</p>"
       },
       {
-        "h3": "Kuosien pernikahan dan rezim ekspatriat",
-        "html": "<p>Pasangan menikah dengan satu pencari nafkah bisa mengalihkan sebagian penghasilan ke pasangan yang tidak bekerja lewat kuosien pernikahan: 30% dari penghasilan kena pajak, maksimum €11.780, dipajaki terpisah dengan tarif yang lebih ringan. Kalkulator memakainya untuk status menikah.</p><p>Rezim ekspatriat adalah fasilitas untuk pekerja yang pindah dari luar negeri. Kalkulator memakai 35% dari gaji kotor sebagai penggantian biaya yang bebas pajak dan bebas ONSS, dengan syarat gaji kotor di atas €70.000. Rezim ini punya syarat lain dan batas atas untuk pembebasan ONSS-nya sendiri, yang tidak dihitung oleh kalkulator, jadi cek ke SPF Finances sebelum mengandalkannya.</p>"
+        "h3": "Pasangan menikah dan kuosien perkawinan",
+        "html": "<p>Untuk pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, kuosien perkawinan (<em>marital quotient</em>) memungkinkan pencari nafkah utama memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari jenjang terendah dan dengan bagian bebas pajaknya sendiri. Logikanya berbeda dari pilihan NPWP gabung atau pisah di Indonesia, yang dibahas di <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">artikel pajak suami-istri</a>. <em>Tool</em> ini memperlakukan contoh €70.000 sebagai rumah tangga dengan satu pencari nafkah dan menerapkan kuosien. Tambahan anak menaikkan jumlah bebas pajak: €2.130 untuk satu anak, €5.130 untuk dua, €11.440 untuk tiga, €18.510 untuk empat, dan €7.070 untuk tiap anak berikutnya.</p>"
+      },
+      {
+        "h3": "Rezim ekspatriat",
+        "html": "<p>Belgia punya rezim bagi karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia. Sebagian gajimu diperlakukan sebagai penggantian biaya tambahan hidup di luar negeri, dan bagian itu bebas pajak. <em>Tool</em> ini menghitungnya sebagai penggantian bebas pajak dan bebas ONSS sebesar 35% dari gaji kotor, hanya ketika gaji kotor di atas €70.000. Kelayakannya bergantung pada peran, gaji dan tempat kamu tinggal sebelumnya. Pembebasan ONSS punya batas sendiri yang tidak diterapkan <em>tool</em> ini. Rezim ini diajukan bersama pemberi kerja, jadi pastikan syaratnya ke otoritas pajak sebelum mengandalkannya.</p>"
       }
     ],
     "sources": [
-      {
-        "name": "SPF Finances, pajak penghasilan dan rezim ekspatriat",
-        "url": "https://finances.belgium.be/"
-      },
-      {
-        "name": "ONSS (jaminan sosial), iuran karyawan dan bonus kerja",
-        "url": "https://www.socialsecurity.be/"
-      },
-      {
-        "name": "Belgium.be, informasi resmi pemerintah federal",
-        "url": "https://www.belgium.be/"
-      }
+      { "name": "SPF Finances, pajak penghasilan dan rezim ekspatriat", "url": "https://finances.belgium.be/" },
+      { "name": "ONSS (jaminan sosial), iuran karyawan dan bonus kerja", "url": "https://www.socialsecurity.be/" },
+      { "name": "Belgium.be, informasi resmi pemerintah federal", "url": "https://www.belgium.be/" }
     ]
   },
   "examples": [
     {
       "key": "single",
-      "title": "Berapa gaji bersih lajang di Belgia dengan gaji kotor €55.000 setahun?",
-      "intro": "<p>Contoh ini untuk lajang tanpa anak dengan satu pekerjaan sepanjang tahun dan pajak tambahan kota 7%. ONSS 13,07% memotong €7.189, sehingga sisa gaji €47.812. Potongan standar 30% dibatasi €6.070, jadi penghasilan kena pajak €41.742. Pajak federal setelah jumlah bebas pajak €11.550 adalah €11.913, pajak tambahan kota 7% menambah €834, dan iuran sosial khusus €539. Gaji bersihnya sekitar €34.526, atau 62,8% dari gaji kotor, dan tarif marginalnya 56,0%.</p>",
-      "after": "<p>Tarif marginal 56,0% itu muncul karena setiap euro tambahan sudah masuk tarif federal 45% (48,15% dengan pajak tambahan kota), lalu ONSS 13,07% dan iuran sosial khusus ikut bertambah.</p>"
+      "title": "Cara menghitung pajak gaji €55.000 di Belgia untuk lajang",
+      "intro": "<p>Contoh ini untuk karyawan lajang bergaji kotor €55.000, tanpa anak, dengan pajak kota 7%. ONSS 13,07% sebesar €7.189. Potongan biaya kerja 30% terkena batas €6.070, sehingga penghasilan kena pajaknya sekitar €41.742. Pajak federal €11.913 setelah bagian bebas pajak €11.550, dan pajak kota menambah €834. Iuran sosial khusus (CSSS) sebesar €539. Gaji bersihmu sekitar €34.526 setahun (€2.877 per bulan), atau 62,8% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalmu 56,0%, karena euro terakhir dikenai pajak 45%, ditambah pajak kota, ditambah ONSS atas setiap euro tambahan gaji.</p>"
     },
     {
       "key": "married-two-children",
-      "title": "Berapa pajak di Belgia untuk pasangan menikah dengan dua anak dan gaji €70.000?",
-      "intro": "<p>Contoh ini untuk pasangan menikah dengan dua anak dan satu pencari nafkah bergaji kotor €70.000. ONSS €9.149 dan potongan standar €6.070 membuat penghasilan kena pajak €54.781. Kuosien pernikahan memindahkan €11.780 ke pasangan yang tidak bekerja, dan jumlah bebas pajak naik menjadi €16.680 karena dua anak. Pajak federalnya €11.254, pajak tambahan kota €788 dan iuran sosial khusus €704. Gaji bersihnya sekitar €48.105, atau 68,7% dari gaji kotor, dan tarif marginalnya tetap 56,0%.</p>",
-      "after": "<p>Kalau pasanganmu juga bekerja, kuosien pernikahan tidak berlaku dan hasilnya berbeda. Kalkulator ini hanya menghitung satu pencari nafkah.</p>"
+      "title": "Berapa pajak keluarga menikah dengan satu pencari nafkah di Belgia dengan gaji €70.000?",
+      "intro": "<p>Contoh ini untuk karyawan menikah, pasangan tidak bekerja dan punya dua anak, dengan gaji kotor €70.000. ONSS sebesar €9.149. Setelah potongan biaya kerja €6.070, kuosien perkawinan memindahkan €11.780 ke pasangan, dan jumlah bebas pajak naik menjadi €16.680 karena tambahan untuk anak. Pajak federalnya €11.254, pajak kota €788 dan CSSS €704. Gaji bersih keluargamu sekitar €48.105 setahun (€4.009 per bulan), atau 68,7% dari gaji kotor.</p>",
+      "after": "<p>Kuosien dan tambahan anak bersama-sama membuat pajak federalmu lebih rendah daripada contoh lajang, padahal gajinya lebih tinggi. Kalau pasanganmu juga bekerja, kuosien menjadi lebih kecil atau tidak berlaku.</p>"
     },
     {
       "key": "expat-regime",
-      "title": "Cara menghitung gaji bersih di Belgia dengan rezim ekspatriat untuk gaji €100.000",
-      "intro": "<p>Contoh ini untuk pekerja yang pindah dari luar negeri dengan gaji kotor €100.000 dan memakai rezim ekspatriat. Karena gaji di atas €70.000, kalkulator menjadikan 35% gaji, yaitu €35.000, sebagai penggantian biaya bebas pajak dan bebas ONSS. Pajak dan ONSS dihitung dari sisa €65.000: ONSS €8.496, potongan standar €6.070, pajak federal €15.825 dan pajak tambahan kota €1.108. Iuran sosial khusus €731 tetap dihitung dari gaji kotor penuh. Gaji bersihnya sekitar €73.841, atau 73,8% dari gaji kotor, dan tarif marginalnya 35,7%.</p>",
-      "after": "<p>Tanpa rezim ini, gaji kotor yang sama menyisakan sekitar €53.023, jadi rezim ini menambah sekitar €20.818 setahun. Cek syarat dan batasnya sebelum kamu mengandalkannya.</p>"
+      "title": "Berapa gaji bersih di Belgia dengan gaji €100.000 di bawah rezim ekspatriat?",
+      "intro": "<p>Contoh ini untuk karyawan yang memenuhi syarat dengan gaji kotor €100.000 dan rezim ekspatriat. <em>Tool</em> ini memperlakukan 35% dari gaji kotor, yaitu €35.000, sebagai penggantian bebas pajak dan bebas ONSS. ONSS dihitung atas sisa €65.000 dan hasilnya €8.496. Setelah potongan biaya kerja dan bagian bebas pajak, pajak federalnya €15.825 dan pajak kota €1.108, ditambah CSSS sebesar €731. Gaji bersihmu sekitar €73.841 setahun (€6.153 per bulan), atau 73,8% dari gaji kotor.</p>",
+      "after": "<p>Tanpa rezim ini, gaji yang sama menyisakan sekitar €53.023, jadi manfaatnya sekitar €20.800 setahun menurut model ini. Apakah kamu memenuhi syarat adalah urusan hukum antara kamu dan pemberi kerjamu.</p>"
     }
   ],
-  "strategyIntro": "<p>Semua cara di bawah ini sah dan dijelaskan di situs pemerintah Belgia. Cocok tidaknya bergantung pada statusmu.</p>",
+  "strategyIntro": "<p>Berikut cara-cara sah dan lazim untuk menekan pajak di Belgia. Mana yang berlaku bergantung pada rumah tanggamu dan cara kamu direkrut.</p>",
   "strategies": [
     {
-      "h3": "Rezim ekspatriat",
-      "html": "<p>Kalau kamu direkrut atau dipindahkan dari luar negeri dan gajimu melewati batas yang berlaku, rezim ini mengubah sebagian gaji menjadi penggantian biaya bebas pajak: pada gaji €100.000, rezim ini menaikkan gaji bersih dari sekitar €53.023 menjadi €73.841. Cocok untuk pekerja terampil bergaji tinggi dengan pemberi kerja yang bersedia mengajukannya. Syarat lain dan batas atas pembebasan ONSS-nya tidak dihitung kalkulator, jadi minta pemberi kerja memastikannya sebelum kamu menandatangani kontrak.</p>"
+      "h3": "Cek apakah kamu memenuhi syarat rezim ekspatriat",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang direkrut dari luar negeri atau ditugaskan ke Belgia dan memenuhi syarat soal peran, gaji serta tempat tinggal sebelumnya. Rezim ini bisa menurunkan pajak sekaligus ONSS.</p><p><strong>Catatan:</strong> rezim ini diajukan bersama pemberi kerja, pembebasan ONSS punya batas sendiri, dan tidak semua orang memenuhi syarat. Pastikan syaratnya sebelum mengandalkannya.</p>"
     },
     {
-      "h3": "Kuosien pernikahan untuk pasangan satu penghasilan",
-      "html": "<p>Kalau pasanganmu tidak bekerja, pengalihan 30% penghasilan kena pajak (maksimum €11.780) ke pasangan menurunkan pajak federal. Cocok untuk pasangan menikah dengan satu penghasilan. Keuntungannya mengecil kalau pasangan juga berpenghasilan, jadi hitung ulang kalau situasi berubah.</p>"
+      "h3": "Manfaatkan kuosien perkawinan",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> pasangan menikah yang salah satunya berpenghasilan jauh lebih besar. Memindahkan sampai 30% penghasilan, maksimum €11.780, ke pasangan yang berpenghasilan lebih kecil menggeser penghasilan itu ke jenjang yang lebih rendah.</p><p><strong>Catatan:</strong> manfaatnya terbesar ketika pasanganmu hanya punya sedikit atau tanpa penghasilan. Kalau gaji kalian berdua kurang lebih sama, hasilnya kecil.</p>"
     },
     {
-      "h3": "Memilih kota tempat tinggal dengan pajak tambahan lebih rendah",
-      "html": "<p>Pajak tambahan kota berbeda-beda antar kota, dan pada gaji €55.000 setiap satu poin persentase bernilai sekitar €119 setahun. Selisih itu kecil dibanding sewa dan jarak ke tempat kerja, jadi anggap sebagai pertimbangan tambahan, bukan alasan utama memilih kota. Cocok untuk yang masih bebas memilih tempat tinggal.</p>"
+      "h3": "Tanyakan tunjangan yang diperlakukan ramah pajak",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menawarkan tambahan seperti kupon makan, kupon ramah lingkungan (<em>eco vouchers</em>) atau asuransi pensiun kelompok. Dalam batas hukum, nilainya bisa lebih besar daripada jumlah yang sama dibayar sebagai gaji, setelah pajak dan ONSS.</p><p><strong>Catatan:</strong> batas dan perlakuan pajaknya berbeda untuk tiap tunjangan, dan kalkulator ini tidak menghitungnya.</p>"
     },
     {
-      "h3": "Laporan pajak tahunan dan pengurang yang berhak",
-      "html": "<p>Pemotongan di muka hanya perkiraan. Lewat laporan pajak tahunan, pengurang yang berhak, seperti tunjangan anak dalam jumlah bebas pajak, dihitung dengan benar dan kelebihan potongan dikembalikan. Cocok untuk semua penduduk pajak, terutama yang baru pindah atau berubah status keluarga di tengah tahun, dan simpan bukti pengeluaranmu.</p>"
+      "h3": "Tabungan pensiun pribadi",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> orang yang ingin menabung untuk pensiun dan mendapat pengurangan pajak atas setoran. Tarif pengurangan dan batas setorannya bergantung pada jumlah yang ditabung.</p><p><strong>Catatan:</strong> uangnya terkunci sampai pensiun dan aturannya bisa berubah, jadi cek angka terbarunya di otoritas pajak. Kalau kamu berencana pulang ke Indonesia, pikirkan juga apa yang terjadi pada tabungan itu.</p>"
+    },
+    {
+      "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belgia lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP dan menyelesaikan SPT Tahunan terakhirmu agar penghasilan yang sama tidak dipajaki dua kali.</p><p><strong>Catatan:</strong> Indonesia punya P3B dengan Belgia, tetapi <em>tool</em> ini tidak menghitungnya. Tanyakan kasusmu ke DJP atau konsultan pajak, karena ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari pekerjaan.</strong> Kalkulator ini tidak menghitung bunga, dividen, sewa, atau penghasilan usaha sendiri.",
-    "<strong>Satu pekerjaan sepanjang satu tahun penuh.</strong> Pekerjaan yang dimulai di tengah tahun dan beberapa pemberi kerja tidak dimodelkan, dan gaji di bawah 12 kali upah minimum bulanan penuh (€26.803 setahun) tidak dihitung.",
-    "<strong>Tanpa bonus, saham, dan tunjangan.</strong> Semua angka dihitung dari satu angka gaji setahun, tanpa bulan ke-13, uang liburan ganda atau tunjangan lain.",
-    "<strong>Pajak tambahan kota memakai 7% kecuali kamu mengubahnya.</strong> Kota tempat tinggalmu menentukan persentase yang sebenarnya.",
-    "<strong>Rezim ekspatriat tidak diperiksa syaratnya.</strong> Kalkulator hanya memeriksa gaji di atas €70.000 dan tidak menerapkan batas atas pembebasan ONSS.",
-    "<strong>Tanpa perjanjian pajak.</strong> Perjanjian penghindaran pajak berganda antara Indonesia dan Belgia, serta kewajiban lapor di Indonesia, tidak dihitung.",
-    "<strong>Angka perkiraan, bukan nasihat pajak.</strong> Hasil akhirnya ditentukan SPF Finances, jadi perlakukan hasilnya sebagai gambaran."
+    "<strong>Hanya penghasilan dari gaji.</strong> Hitungan ini mengasumsikan satu gaji untuk satu tahun penuh. Penghasilan investasi, sewa properti, usaha, dan tahun yang tidak penuh tidak masuk.",
+    "<strong>Tanpa bonus atau tambahan.</strong> Gaji ke-13 (mirip THR), uang liburan ganda, mobil dinas, kupon makan dan tambahan serupa tidak dihitung terpisah.",
+    "<strong>Gaji minimum.</strong> Kalkulator tidak berjalan di bawah sekitar €26.803 gaji kotor setahun, karena aturan bonus kerja berubah di titik itu.",
+    "<strong>Satu tarif pajak kota.</strong> Kamu mengisi sendiri tarif pajak kotamu. Bawaannya 7%, dan kalkulator tidak mencari kotamu.",
+    "<strong>Rumah tangga disederhanakan.</strong> Kuosien perkawinan mengasumsikan pasanganmu tidak punya penghasilan sendiri. Anak hanya berupa angka yang menaikkan jumlah bebas pajak, dan keringanan keluarga lain tidak dihitung.",
+    "<strong>Rezim ekspatriat tidak diuji.</strong> Kamu yang memilih apakah rezim ini berlaku. Kalkulator tidak memeriksa kelayakan, batas atau syarat pada perananmu.",
+    "<strong>Tanpa P3B dan pajak di Indonesia.</strong> Hitungan ini tidak memperhitungkan P3B Indonesia dan Belgia, juga tidak menghitung pajak Indonesia atas penghasilan dari luar negeri."
   ],
   "faq": [
     {
-      "q": "Kenapa tarif marginal di Belgia bisa mencapai 56% pada gaji menengah?",
-      "a": "<p>Tarif federal Belgia naik cepat: 40% mulai dari €16.721 dan 45% dari €29.511 penghasilan kena pajak. Pada euro tambahan, tarif itu ditambah pajak tambahan kota 7% dari pajak federal (sehingga 40% menjadi 42,8% dan 45% menjadi 48,15%) dan ONSS 13,07% dari gaji kotor. Pada gaji €55.000, gabungan itu menghasilkan tarif marginal 56,0%. Kalkulator ini menghitung pajak setahun penuh dengan tarif itu, jadi angkanya bisa berbeda dari slip gaji bulananmu.</p>"
+      "q": "Berapa gaji bersih dari gaji kotor €55.000 di Belgia?",
+      "a": "<p>Karyawan lajang membayar €11.913 pajak federal, €834 pajak kota, €7.189 ONSS dan €539 iuran sosial khusus, sehingga gaji bersihnya sekitar €34.526 setahun. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\"><em>tool</em> Global Income Tax Calculator</a>.</p>"
     },
     {
-      "q": "Kenapa pajak tambahan kota di Belgia berbeda-beda antar kota?",
-      "a": "<p>Pajak tambahan kota (<em>taxe communale</em>) adalah persentase dari pajak federalmu, bukan dari gaji, dan tiap kota menetapkannya sendiri. Kota tempat tinggalmu pada awal tahun menentukan persentase yang berlaku. Kalkulator memakai 7% sebagai nilai bawaan dan kamu bisa menggantinya dengan persentase kotamu. Pada gaji €55.000, setiap satu poin persentase bernilai sekitar €119 setahun.</p>"
+      "q": "Apa itu kuosien perkawinan di Belgia dan bagaimana cara kerjanya?",
+      "a": "<p>Pada pasangan menikah yang salah satunya berpenghasilan jauh lebih besar, pencari nafkah utama bisa memindahkan sampai 30% penghasilan kerjanya, maksimum €11.780, ke pasangan. Bagian itu dipajaki sebagai penghasilan pasangan, dari dasar jenjang dan dengan bagian bebas pajaknya sendiri, bukan pada tarif tertinggi pencari nafkah utama. Pada contoh €70.000, €11.780 berpindah ke pasangan. Kalkulator hanya menerapkannya untuk rumah tangga menikah.</p>"
     },
     {
-      "q": "Apa itu rezim ekspatriat di Belgia dan siapa yang berhak?",
-      "a": "<p>Rezim ekspatriat membolehkan pemberi kerja membayar sebagian gaji sebagai penggantian biaya bebas pajak untuk pekerja yang pindah dari luar negeri. Kalkulator memakai 35% dari gaji kotor dan mensyaratkan gaji di atas €70.000. Pada gaji €100.000, rezim ini menaikkan gaji bersih dari sekitar €53.023 menjadi €73.841. Rezim ini punya syarat lain dan batas atas untuk pembebasan ONSS-nya, yang tidak dihitung kalkulator, jadi pastikan ke pemberi kerja dan SPF Finances.</p>"
+      "q": "Apa itu pajak tambahan kota di Belgia, dan kenapa beda tiap kota?",
+      "a": "<p>Setiap kota di Belgia menambahkan pajaknya sendiri, dinyatakan sebagai persentase dari pajak penghasilan federalmu. Besarnya mengikuti tempat tinggalmu pada 1 Januari, dan kebanyakan kota menetapkannya antara 6% dan 8%. Kalkulator memakai 7% dan membiarkanmu mengubahnya. Pada contoh lajang €55.000, pajak kotanya €834. Indonesia tidak punya pajak penghasilan lapisan kota seperti ini.</p>"
     },
     {
-      "q": "Kalau ONSS sudah dipotong, apakah saya otomatis tertanggung asuransi kesehatan di Belgia?",
-      "a": "<p>ONSS ikut membiayai sistem kesehatan, tetapi untuk mendapat penggantian biaya berobat kamu tetap harus menjadi anggota dana kesehatan (<em>mutualité</em>). Pilih salah satu dana setelah mulai bekerja. Kalkulator hanya menghitung ONSS sebagai potongan dan tidak menghitung iuran tambahan atau biaya yang tidak diganti.</p>"
+      "q": "Bagaimana rezim ekspatriat Belgia bekerja?",
+      "a": "<p>Untuk karyawan yang memenuhi syarat dan direkrut dari luar negeri atau ditugaskan ke Belgia, sebagian gaji diperlakukan sebagai penggantian biaya hidup tambahan dan tidak dipajaki. Kalkulator menghitungnya sebagai 35% dari gaji kotor ketika gaji kotor di atas €70.000, bebas pajak dan bebas ONSS. Pada gaji €100.000, gaji bersihmu naik dari sekitar €53.023 menjadi €73.841. Kamu mengajukannya bersama pemberi kerja, dan kelayakan serta batasnya perlu dipastikan ke otoritas pajak.</p>"
     },
     {
-      "q": "Apa itu kuosien pernikahan di Belgia?",
-      "a": "<p>Pada pasangan menikah dengan satu pencari nafkah, sebagian penghasilan kena pajak, 30% dengan maksimum €11.780, dipajaki atas nama pasangan yang tidak bekerja dengan tarif yang lebih ringan. Pada contoh gaji €70.000 dengan dua anak, kuosien itu memindahkan €11.780. Kalkulator hanya menghitung kasus satu pencari nafkah.</p>"
+      "q": "Apa itu iuran sosial khusus (CSSS) di slip gaji Belgia?",
+      "a": "<p>CSSS adalah iuran jaminan sosial tambahan di atas ONSS 13,07%. Nilainya nol pada penghasilan rendah, lalu naik bertahap dan berhenti di batas sekitar €731 setahun. Pada contoh, CSSS sebesar €539 untuk gaji €55.000 dan €731 untuk gaji €100.000.</p>"
     },
     {
-      "q": "Berapa gaji bersih lajang di Belgia dengan gaji kotor €55.000?",
-      "a": "<p>Sekitar €34.526 setahun, atau 62,8% dari gaji kotor, setelah ONSS €7.189, pajak federal €11.913, pajak tambahan kota €834 dan iuran sosial khusus €539. Gaji bersih hanya separuh cerita, karena biaya hidup juga berbeda. Bandingkan lewat <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, lalu baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat kota mana yang tabungan akhir bulannya lebih tebal. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">kalkulator pajak penghasilan global</a>.</p>"
+      "q": "Kenapa gaji bersih di slip gaji Belgia berbeda dengan angka setahun?",
+      "a": "<p>Pemberi kerja memotong pajak gaji tiap bulan dengan rumus tetap, lalu laporan pajak tahunan menyelesaikan tagihan sebenarnya, sehingga kamu bisa menerima pengembalian atau kurang bayar. Kalkulator ini menampilkan satu tahun penuh dengan satu gaji, jadi hasilnya cocok dengan tagihan akhir dan bukan dengan tiap slip gaji. Tambahan seperti gaji ke-13, yang mirip THR, dan uang liburan ganda, yang dibayar banyak pekerjaan di Belgia, juga dipajaki dan belum masuk model.</p>"
+    },
+    {
+      "q": "Apakah saya perlu ikut asuransi kesehatan sendiri di Belgia?",
+      "a": "<p>ONSS membuka hakmu atas jaminan kesehatan, tetapi untuk mendapat penggantian biaya berobat kamu harus mendaftar ke dana asuransi kesehatan (<em>mutualité</em>). Anggap itu langkah tambahan yang tidak ada di BPJS Kesehatan, yang terhubung ke NIK. Untuk membayangkan apa yang bisa dibeli dengan gaji bersihmu di tiap kota, buka <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "q": "Kalau bekerja di Belgia, apakah saya masih harus bayar pajak di Indonesia?",
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang berubah menjadi subjek pajak luar negeri kalau kamu lama berada di luar negeri dan tidak lagi tinggal di Indonesia (aturan umumnya dijelaskan di bagian strategi). Memberi tahu DJP adalah langkah yang lazim. Indonesia dan Belgia juga punya P3B. Kalkulator ini hanya menghitung pajak di Belgia dan tidak menghitung P3B maupun pajak Indonesia atas penghasilan dari luar negeri, jadi konfirmasikan kasusmu ke DJP atau konsultan pajak.</p>"
     }
   ],
   "lineLabels": {
@@ -135,13 +139,13 @@
     "Less the fiscal employment bonus": "Dikurangi bonus kerja fiskal",
     "Social security (ONSS, 13.07%)": "Jaminan sosial (ONSS, 13,07%)",
     "Social security (ONSS, 13.07%) after the employment bonus": "Jaminan sosial (ONSS, 13,07%) setelah bonus kerja",
-    "Lump-sum professional expenses (30%, max 6,070)": "Potongan standar biaya kerja (30%, maksimum €6.070)",
+    "Lump-sum professional expenses (30%, max 6,070)": "Potongan tetap biaya kerja (30%, maksimum €6.070)",
     "Tax-free amount": "Jumlah bebas pajak",
     "Tax-free amount with child supplements": "Jumlah bebas pajak dengan tambahan untuk anak",
     "Federal income tax": "Pajak penghasilan federal",
     "Municipal surcharge (7%)": "Pajak tambahan kota (7%)",
     "Special social security contribution (CSSS)": "Iuran sosial khusus (CSSS)",
-    "Marital quotient to your partner (30%, max 11,780)": "Kuosien pernikahan untuk pasangan (30%, maksimum €11.780)",
+    "Marital quotient to your partner (30%, max 11,780)": "Kuosien perkawinan untuk pasangan (30%, maksimum €11.780)",
     "Expat regime, tax and ONSS free reimbursement (35%)": "Rezim ekspatriat, penggantian bebas pajak dan bebas ONSS (35%)",
     "Expat regime needs gross above 70,000": "Rezim ekspatriat butuh gaji kotor di atas €70.000",
     "Fiscal employment bonus, inside the tax": "Bonus kerja fiskal, sudah termasuk di pajak"

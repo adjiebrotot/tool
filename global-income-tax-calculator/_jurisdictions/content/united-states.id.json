@@ -26,7 +26,7 @@
       },
       {
         "h3": "Tarif federal untuk pasangan menikah yang mengajukan bersama",
-        "html": "<p>Pasangan menikah yang mengajukan pajak bersama (<em>married filing jointly</em>) mendapat <em>standard deduction</em> US$32.200 dan lapisan tarif yang lebih lebar, lalu pajaknya dihitung dari penghasilan gabungan. Konsepnya serupa NPWP gabung di Indonesia, tempat penghasilan istri digabung dengan suami, tetapi di Amerika Serikat lapisan tarifnya ikut melebar, sedangkan jenjang Pasal 17 di Indonesia tidak berubah. Perbandingan untuk Indonesia ada di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>. Hitungan di halaman ini memperlakukan kasus gabungan sebagai gaji satu orang yang memakai tabel di bawah.</p>",
+        "html": "<p>Pasangan menikah yang mengajukan pajak bersama (<em>married filing jointly</em>) mendapat <em>standard deduction</em> US$32.200 dan lapisan tarif yang lebih lebar, lalu pajaknya dihitung dari penghasilan gabungan. Konsepnya serupa NPWP gabung di Indonesia, tempat penghasilan istri digabung dengan suami, tetapi di Amerika Serikat lapisan tarifnya ikut melebar, sedangkan jenjang Pasal 17 di Indonesia tidak berubah. Perbandingan untuk Indonesia ada di <a href=\"https://tool.adjiebrotots.com/pisahvsgabung/id/\"><em>tool</em> Pisah vs Gabung</a>. Hitungan di halaman ini memperlakukan kasus gabungan sebagai gaji satu orang yang memakai tabel gabungan.</p>",
         "table": {
           "head": ["Penghasilan kena pajak (gabungan)", "Tarif"],
           "rows": [
@@ -91,7 +91,7 @@
       "key": "h1b-nonresident-alien",
       "title": "Berapa pajak federal pemegang H-1B yang berstatus nonresident alien dengan gaji US$120.000?",
       "intro": "<p>Contoh ini memperlihatkan aturan <em>nonresident alien</em> untuk gaji US$120.000 di Texas, yaitu tarif wajib pajak lajang tanpa <em>standard deduction</em>. Seluruh US$120.000 menjadi penghasilan kena pajak, sehingga pajak federalnya US$21.398, padahal <em>resident</em> dengan gaji sama membayar US$17.570. FICA tetap US$9.180 karena pemegang H-1B tidak termasuk kelompok yang dibebaskan. Gaji bersihnya sekitar US$89.422, atau 74,5% dari gaji kotor.</p>",
-      "after": "<p>Tarif marjinalnya 31,7%. Banyak pemegang H-1B yang tinggal sebagian besar tahun di Amerika Serikat lolos <em>substantial presence test</em> dan dipajaki sebagai <em>resident</em> dengan potongan standar. Aturan <em>nonresident</em> lebih cocok untuk masa tinggal singkat atau sebagian tahun kedatangan, jadi pastikan statusmu sendiri. P3B antara Indonesia dan Amerika Serikat tidak dimodelkan.</p>"
+      "after": "<p>Tarif marjinalnya 31,7%. Banyak pemegang H-1B yang tinggal sebagian besar tahun di Amerika Serikat lolos <em>substantial presence test</em> dan dipajaki sebagai <em>resident</em> dengan potongan standar. Aturan <em>nonresident</em> lebih cocok untuk masa tinggal singkat atau sebagian tahun kedatangan, jadi pastikan statusmu sendiri. P3B antara Indonesia dan Amerika Serikat tidak dihitung.</p>"
     },
     {
       "key": "f1-student",
@@ -104,38 +104,38 @@
   "strategies": [
     {
       "h3": "Iuran 401(k) tradisional",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menyediakan 401(k), terutama pada lapisan 22% ke atas atau di negara bagian berpajak tinggi. Program ini kira-kira setara DPLK atau dana pensiun perusahaan di Indonesia. Iuran sebelum pajak (<em>pre-tax</em>) menurunkan pajak federal dan sebagian besar pajak negara bagian, dan banyak pemberi kerja menambahkan dana pendamping (<em>match</em>). <em>Nonresident alien</em> juga boleh ikut.</p><p><strong>Catatan:</strong> iuran tidak mengurangi FICA, penarikan sebelum usia pensiun biasanya kena denda, dan ada batas iuran tahunan (cek angka terbarunya di IRS). Mencairkan dana itu ketika kamu pulang ke Indonesia punya aturan pajaknya sendiri.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang pemberi kerjanya menyediakan 401(k), terutama pada lapisan 22% ke atas atau di negara bagian berpajak tinggi. Program ini kira-kira setara DPLK atau dana pensiun perusahaan di Indonesia. Iuran sebelum pajak (<em>pre-tax</em>) menurunkan pajak federal dan sebagian besar pajak negara bagian, dan banyak pemberi kerja menambahkan dana pendamping (<em>match</em>). <em>Nonresident alien</em> juga boleh ikut.</p><p><strong>Catatan:</strong> iuran tidak mengurangi FICA, penarikan sebelum usia pensiun biasanya kena denda, dan ada batas iuran tahunan (cek angka terbarunya di IRS). Mencairkan dana itu ketika kamu pulang ke Indonesia punya aturan pajaknya sendiri.</p>"
     },
     {
       "h3": "Health Savings Account (HSA)",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang memakai asuransi kesehatan dengan biaya tanggungan sendiri (<em>deductible</em>) tinggi. Setoran gaji ke HSA bebas pajak penghasilan, dan kalau lewat program pemberi kerja biasanya bebas FICA juga, sedangkan pemakaiannya untuk biaya medis yang memenuhi syarat tidak dipajaki.</p><p><strong>Catatan:</strong> kamu harus punya polis yang memenuhi syarat, ada batas setoran tahunan, dan pemakaian untuk hal non-medis dipajaki serta didenda. Beberapa negara bagian tetap memajaki setorannya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> orang yang memakai asuransi kesehatan dengan biaya tanggungan sendiri (<em>deductible</em>) tinggi. Setoran gaji ke HSA bebas pajak penghasilan, dan kalau lewat program pemberi kerja biasanya bebas FICA juga, sedangkan pemakaiannya untuk biaya medis yang memenuhi syarat tidak dipajaki.</p><p><strong>Catatan:</strong> kamu harus punya polis yang memenuhi syarat, ada batas setoran tahunan, dan pemakaian untuk hal non-medis dipajaki serta didenda. Beberapa negara bagian tetap memajaki setorannya.</p>"
     },
     {
       "h3": "Isi Form W-4 sesuai pajak yang sebenarnya",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang baru mulai bekerja, pindah kerja, atau pindah negara bagian. Besar potongan di slip gaji mengikuti formulir yang kamu serahkan ke pemberi kerja: kalau terlalu kecil, kamu menunggak di bulan April, dan kalau terlalu besar, kamu menerima <em>refund</em> belakangan.</p><p><strong>Catatan:</strong> <em>nonresident alien</em> mengisi W-4 dengan petunjuk khusus. Baca panduan IRS untuk statusmu.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang baru mulai bekerja, pindah kerja, atau pindah negara bagian. Besar potongan di slip gaji mengikuti formulir yang kamu serahkan ke pemberi kerja: kalau terlalu kecil, kamu menunggak di bulan April, dan kalau terlalu besar, kamu menerima <em>refund</em> belakangan.</p><p><strong>Catatan:</strong> <em>nonresident alien</em> mengisi W-4 dengan petunjuk khusus. Baca panduan IRS untuk statusmu.</p>"
     },
     {
       "h3": "Klaim status yang tepat, dan P3B atau pembebasan FICA jika berhak",
-      "html": "<p><strong>Cocok untuk:</strong> pemegang visa F-1, J-1, dan visa lain, serta orang yang ditugaskan sementara. Status <em>nonresident</em>, P3B antara Indonesia dan Amerika Serikat, serta pembebasan FICA bagi status F, J, M, dan Q bisa menurunkan pajak. Sebagian negara juga punya perjanjian jaminan sosial yang mencegah iuran ganda.</p><p><strong>Catatan:</strong> masing-masing ada syarat dan formulirnya, misalnya Form 8233 untuk klaim P3B atas gaji. Salah menentukan status bisa berujung tagihan pajak susulan. <em>Tool</em> ini hanya memodelkan pembebasan FICA.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pemegang visa F-1, J-1, dan visa lain, serta orang yang ditugaskan sementara. Status <em>nonresident</em>, P3B antara Indonesia dan Amerika Serikat, serta pembebasan FICA bagi status F, J, M, dan Q bisa menurunkan pajak. Sebagian negara juga punya perjanjian jaminan sosial yang mencegah iuran ganda.</p><p><strong>Catatan:</strong> masing-masing ada syarat dan formulirnya, misalnya Form 8233 untuk klaim P3B atas gaji. Salah menentukan status bisa berujung tagihan pajak susulan. <em>Tool</em> ini hanya menghitung pembebasan FICA.</p>"
     },
     {
       "h3": "Bandingkan negara bagian sebelum menerima tawaran",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang punya tawaran kerja di beberapa tempat. Pada gaji US$120.000, selisih antara Texas dan kota New York mencapai lebih dari US$10.000 setahun, hanya dari pajak.</p><p><strong>Catatan:</strong> negara bagian tanpa pajak penghasilan sering menutupnya dengan pajak properti dan pajak penjualan, dan biaya hidupnya berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> sebelum memutuskan.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> orang yang punya tawaran kerja di beberapa tempat. Pada gaji US$120.000, selisih antara Texas dan kota New York mencapai lebih dari US$10.000 setahun, hanya dari pajak.</p><p><strong>Catatan:</strong> negara bagian tanpa pajak penghasilan sering menutupnya dengan pajak properti dan pajak penjualan, dan biaya hidupnya berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> sebelum memutuskan.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungan memakai satu gaji selama setahun penuh. Wirausaha, penghasilan investasi, <em>capital gains</em>, dan tahun kedatangan yang tidak penuh tidak dihitung.",
-    "<strong>Tanpa bonus dan saham.</strong> Bonus, saham perusahaan, dan tunjangan tidak dimodelkan terpisah.",
+    "<strong>Tanpa bonus dan saham.</strong> Bonus, saham perusahaan, dan tunjangan tidak dihitung terpisah.",
     "<strong>Hanya <em>standard deduction</em>.</strong> <em>Resident</em> memakai potongan standar. Potongan terperinci, <em>child tax credit</em>, dan kredit pajak lain tidak dihitung. Hanya pajak negara bagian milik <em>nonresident alien</em> yang dikurangkan secara terperinci.",
-    "<strong>P3B tidak dimodelkan.</strong> Pembebasan dalam P3B antara Indonesia dan Amerika Serikat tidak diterapkan, begitu pula perjanjian jaminan sosial. Pajak Indonesia atas penghasilan luar negeri dan kewajiban lapor di Indonesia juga tidak dihitung.",
+    "<strong>P3B tidak dihitung.</strong> Pembebasan dalam P3B antara Indonesia dan Amerika Serikat tidak diterapkan, begitu pula perjanjian jaminan sosial. Pajak Indonesia atas penghasilan luar negeri dan kewajiban lapor di Indonesia juga tidak dihitung.",
     "<strong>39 negara bagian dan DC.</strong> Sebelas negara bagian belum dimuat dan hanya menampilkan pesan. Beberapa negara bagian memakai angka tahun sebelumnya, dan hasilnya mencatat hal itu.",
-    "<strong>Pajak lokal hanya jika kamu mengisinya.</strong> Pajak kota atau county di negara bagian seperti Maryland, Ohio, Pennsylvania, dan Indiana baru masuk kalau kamu memasukkan tarifnya. Program iuran di negara bagian lain tidak dimodelkan.",
+    "<strong>Pajak lokal hanya jika kamu mengisinya.</strong> Pajak kota atau county di negara bagian seperti Maryland, Ohio, Pennsylvania, dan Indiana baru masuk kalau kamu memasukkan tarifnya. Program iuran di negara bagian lain tidak dihitung.",
     "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini tidak menguji apakah kamu <em>resident</em> atau <em>nonresident alien</em>."
   ],
   "faq": [
     {
       "q": "Berapa gaji bersih dari gaji US$120.000 di Amerika Serikat?",
-      "a": "<p>Hasilnya bergantung pada negara bagian. Pekerja lajang berstatus <em>resident</em> membayar sekitar US$26.750 dan menerima sekitar US$93.250 di Texas, sekitar US$84.919 di California, dan sekitar US$82.410 di kota New York. <em>Nonresident alien</em> di Texas menerima sekitar US$89.422. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+      "a": "<p>Besarnya bergantung pada negara bagian. Pekerja lajang berstatus <em>resident</em> membayar sekitar US$26.750 dan menerima sekitar US$93.250 di Texas, sekitar US$84.919 di California, dan sekitar US$82.410 di kota New York. <em>Nonresident alien</em> di Texas menerima sekitar US$89.422. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
     },
     {
       "q": "Negara bagian mana saja yang tidak memajaki gaji?",
@@ -159,7 +159,7 @@
     },
     {
       "q": "Kalau bekerja di Amerika Serikat, apakah saya masih wajib pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada statusmu di Indonesia, dan hitungan di halaman ini tidak mencakupnya. Secara umum, menurut aturan PPh Indonesia, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di sini bisa menjadi <em>subjek pajak luar negeri</em>. Langkah yang lazim adalah menyelesaikan status itu dengan DJP supaya penghasilan yang sama tidak dipajaki dua kali. Indonesia dan Amerika Serikat juga punya P3B (<em>Persetujuan Penghindaran Pajak Berganda</em>) yang membagi hak memajaki kedua negara, tetapi <em>tool</em> ini tidak memodelkannya. Tanyakan ke KPP atau konsultan pajak untuk keadaanmu.</p>"
+      "a": "<p>Itu bergantung pada statusmu di Indonesia, dan hitungan di halaman ini tidak mencakupnya. Secara umum, menurut aturan PPh Indonesia, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di sini bisa menjadi subjek pajak luar negeri. Langkah yang lazim adalah menyelesaikan status itu dengan DJP supaya penghasilan yang sama tidak dipajaki dua kali. Indonesia dan Amerika Serikat juga punya P3B (Persetujuan Penghindaran Pajak Berganda) yang membagi hak memajaki kedua negara, tetapi <em>tool</em> ini tidak menghitungnya. Tanyakan ke KPP atau konsultan pajak untuk keadaanmu.</p>"
     },
     {
       "q": "Kenapa negara bagian saya tidak bisa dihitung?",

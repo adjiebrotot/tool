@@ -3,14 +3,14 @@
   "lang": "id",
   "title": "Cara Menghitung Pajak Gaji di Belanda 2026 (Aturan 30%)",
   "h1": "Cara menghitung pajak penghasilan di Belanda (2026)",
-  "description": "Hitung pajak dan gaji bersih di Belanda 2026: tarif Box 1 yang sudah termasuk jaminan sosial, keringanan pajak, uang liburan 8%, dan aturan 30% untuk pendatang.",
+  "description": "Hitung pajak dan gaji bersih di Belanda 2026: tarif Box 1 yang sudah termasuk jaminan sosial, keringanan pajak, uang liburan 8%, dan aturan 30%.",
   "lede": "<p>Di Belanda, gaji dipajaki lewat Box 1, yaitu satu tarif gabungan pajak penghasilan dan iuran jaminan sosial nasional sebesar 35,75%, 37,56% atau 49,5%, lalu dikurangi dua keringanan pajak. Karyawan juga menerima uang liburan 8% di atas gaji, mirip THR yang datang setahun sekali. Untuk gaji €60.000, penduduk biasa menyisakan sekitar €46.471 setahun (€3.873 per bulan) termasuk uang liburan, sedangkan dengan aturan 30% yang berlaku bagi sebagian pendatang, gaji €75.000 menyisakan sekitar €66.759.</p>",
   "law": {
     "intro": "<p>Tahun pajak Belanda sama dengan tahun kalender, dan angka di sini mengikuti aturan 2026 seperti yang dipakai <em>tool</em>. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia, dan pendatang baru memakai sistem Box 1 yang sama, dengan aturan 30% sebagai tambahan bagi sebagian dari mereka. Pemberi kerja memotong pajak dari slip gaji, seperti PPh 21 yang dipotong kantor, dan kamu bisa mengajukan laporan pajak tahunan ke <em>Belastingdienst</em>, kantor pajak Belanda. Laporan itu setara dengan SPT Tahunan di Indonesia.</p>",
     "blocks": [
       {
         "h3": "Tarif Box 1 dan jaminan sosial nasional",
-        "html": "<p>Gaji masuk ke Box 1. Untuk orang yang belum mencapai usia pensiun negara, tarif di dua tingkat pertama sudah mencakup iuran jaminan sosial nasional (pensiun dasar, tunjangan ahli waris dan perawatan jangka panjang). Karena itu slip gaji Belanda tidak punya baris iuran sendiri seperti BPJS Ketenagakerjaan di Indonesia. Dua keringanan pajak di bawah ini baru dikurangkan dari hasilnya. Strukturnya berjenjang seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi angkanya jauh lebih tinggi karena sudah memuat iuran sosial.</p>",
+        "html": "<p>Gaji masuk ke Box 1. Untuk orang yang belum mencapai usia pensiun negara, tarif di dua tingkat pertama sudah mencakup iuran jaminan sosial nasional (pensiun dasar, tunjangan ahli waris dan perawatan jangka panjang). Karena itu slip gaji Belanda tidak punya baris iuran sendiri seperti BPJS Ketenagakerjaan di Indonesia. Dua keringanan pajak (dibahas di bagian berikutnya) baru dikurangkan dari hasilnya. Strukturnya berjenjang seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi angkanya jauh lebih tinggi karena sudah memuat iuran sosial.</p>",
         "table": {
           "head": ["Penghasilan kena pajak", "Tarif"],
           "rows": [
@@ -30,7 +30,7 @@
       },
       {
         "h3": "Aturan 30% (<em>30% ruling</em>)",
-        "html": "<p>Aturan 30% memungkinkan pemberi kerja membayar sampai 30% dari gajimu sebagai tunjangan bebas pajak untuk biaya tambahan bekerja di luar negeri. Aturan ini ditujukan bagi orang yang direkrut dari luar Belanda karena keahlian yang langka di pasar kerja Belanda. Syarat utamanya:</p><ul><li>Kamu direkrut dari luar negeri, atau dikirim oleh pemberi kerja asing, dan sebelum mulai bekerja kamu tinggal lebih dari 150 km dari perbatasan Belanda selama lebih dari 16 dari 24 bulan terakhir.</li><li>Gaji kena pajakmu, di luar tunjangan, memenuhi norma gaji. <em>Tool</em> ini memakai €48.013, atau €36.497 untuk orang di bawah 30 tahun yang bergelar master.</li><li>Kamu dan pemberi kerja mengajukan bersama-sama, dan aturan ini berlaku paling lama lima tahun.</li></ul><p>Sebagaimana dimodelkan, tunjangan bebas pajak adalah yang terkecil dari tiga angka: 30% dari seluruh penghasilanmu, penghasilan dikurangi norma gaji, dan €78.600. Tarif 30% berlaku untuk 2026 dan dijadwalkan turun menjadi 27% mulai 1 Januari 2027, jadi pastikan syarat terbaru dan aturan peralihannya ke <em>Belastingdienst</em>.</p>"
+        "html": "<p>Aturan 30% memungkinkan pemberi kerja membayar sampai 30% dari gajimu sebagai tunjangan bebas pajak untuk biaya tambahan bekerja di luar negeri. Aturan ini ditujukan bagi orang yang direkrut dari luar Belanda karena keahlian yang langka di pasar kerja Belanda. Syarat utamanya:</p><ul><li>Kamu direkrut dari luar negeri, atau dikirim oleh pemberi kerja asing, dan sebelum mulai bekerja kamu tinggal lebih dari 150 km dari perbatasan Belanda selama lebih dari 16 dari 24 bulan terakhir.</li><li>Gaji kena pajakmu, di luar tunjangan, memenuhi norma gaji. <em>Tool</em> ini memakai €48.013, atau €36.497 untuk orang di bawah 30 tahun yang bergelar master.</li><li>Kamu dan pemberi kerja mengajukan bersama-sama, dan aturan ini berlaku paling lama lima tahun.</li></ul><p>Menurut <em>tool</em> ini, tunjangan bebas pajak adalah yang terkecil dari tiga angka: 30% dari seluruh penghasilanmu, penghasilan dikurangi norma gaji, dan €78.600. Tarif 30% berlaku untuk 2026 dan dijadwalkan turun menjadi 27% mulai 1 Januari 2027, jadi pastikan syarat terbaru dan aturan peralihannya ke <em>Belastingdienst</em>.</p>"
       }
     ],
     "sources": [
@@ -50,13 +50,13 @@
     {
       "key": "30-percent-ruling",
       "title": "Berapa gaji bersih di Belanda dengan gaji €75.000 dan aturan 30%?",
-      "intro": "<p>Contoh ini untuk tenaga terampil asing dengan aturan 30% yang bergaji €75.000, misalnya pemegang izin <em>kennismigrant</em> (pekerja terampil) yang direkrut dari luar negeri. Dengan uang liburan, penghasilannya €81.000, dan tunjangan bebas pajak sebesar 30% darinya, yaitu €24.300. Penghasilan kena pajak jadi €56.700, masih di atas norma gaji €48.013, sehingga 30% penuh berlaku. Pajak Box 1 sebesar €14.241 setelah keringanan €1.390 dan €4.962. Gaji bersihmu sekitar €66.759 setahun (€5.563 per bulan), atau 89,0% dari gaji.</p>",
+      "intro": "<p>Contoh ini untuk tenaga terampil asing dengan aturan 30% yang bergaji €75.000, misalnya pemegang izin <em>kennismigrant</em> (pekerja terampil) yang direkrut dari luar negeri. Setelah ditambah uang liburan, penghasilannya €81.000, dan tunjangan bebas pajak sebesar 30% darinya, yaitu €24.300. Penghasilan kena pajak jadi €56.700, masih di atas norma gaji €48.013, sehingga 30% penuh berlaku. Pajak Box 1 sebesar €14.241 setelah keringanan €1.390 dan €4.962. Gaji bersihmu sekitar €66.759 setahun (€5.563 per bulan), atau 89,0% dari gaji.</p>",
       "after": "<p>Tanpa aturan ini, gaji yang sama menyisakan sekitar €54.353, jadi manfaatnya sekitar €12.400 setahun. Aturan ini tidak otomatis: kamu butuh pemberi kerja yang memenuhi syarat dan pengajuan yang disetujui.</p>"
     },
     {
       "key": "30-percent-ruling-under-30",
       "title": "Cara menghitung pajak aturan 30% di Belanda untuk lulusan master di bawah 30 tahun",
-      "intro": "<p>Contoh ini untuk orang di bawah 30 tahun bergelar master, bergaji €50.000, yang memenuhi norma gaji lebih rendah €36.497. Dengan uang liburan, penghasilannya €54.000. Tunjangan bebas pajak 30%, yaitu €16.200, membuat penghasilan kena pajak €37.800, yang masih di dalam tingkat terendah 35,75%. Pajak Box 1 sebesar €5.381 setelah keringanan €2.599 dan €5.533. Gaji bersihmu sekitar €48.619 setahun (€4.052 per bulan), atau 97,2% dari gaji.</p>",
+      "intro": "<p>Contoh ini untuk orang di bawah 30 tahun bergelar master, bergaji €50.000, yang memenuhi norma gaji lebih rendah €36.497. Setelah ditambah uang liburan, penghasilannya €54.000. Tunjangan bebas pajak 30%, yaitu €16.200, membuat penghasilan kena pajak €37.800, yang masih di dalam tingkat terendah 35,75%. Pajak Box 1 sebesar €5.381 setelah keringanan €2.599 dan €5.533. Gaji bersihmu sekitar €48.619 setahun (€4.052 per bulan), atau 97,2% dari gaji.</p>",
       "after": "<p>Persentasenya melewati 95% karena gaji bersih sudah memuat uang liburan €4.000 dan tunjangan itu menghapus banyak pajak. Tanpa aturan ini, gaji yang sama menyisakan sekitar €41.122. Norma yang lebih rendah itulah yang membuat gaji sekecil ini masih memenuhi syarat.</p>"
     }
   ],
@@ -64,19 +64,19 @@
   "strategies": [
     {
       "h3": "Ajukan aturan 30% bersama pemberi kerja",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang direkrut dari luar negeri dan memenuhi syarat 150 km, 16 dari 24 bulan, serta norma gaji. Pengajuan dilakukan olehmu dan pemberi kerja bersama-sama. Kalau diajukan dalam empat bulan sejak tanggal mulai kerja, aturan ini berlaku mundur sejak hari pertama kamu bekerja.</p><p><strong>Catatan:</strong> masa berlakunya paling lama lima tahun, tarifnya dijadwalkan turun menjadi 27% mulai 2027, dan syaratnya bisa berubah. Cek aturan terbaru di <em>Belastingdienst</em> sebelum menghitung aturan ini ke dalam penawaran kerja.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> orang yang direkrut dari luar negeri dan memenuhi syarat 150 km, 16 dari 24 bulan, serta norma gaji. Pengajuan dilakukan olehmu dan pemberi kerja bersama-sama. Kalau diajukan dalam empat bulan sejak tanggal mulai kerja, aturan ini berlaku mundur sejak hari pertama kamu bekerja.</p><p><strong>Catatan:</strong> masa berlakunya paling lama lima tahun, tarifnya dijadwalkan turun menjadi 27% mulai 2027, dan syaratnya bisa berubah. Cek aturan terbaru di <em>Belastingdienst</em> sebelum mengandalkan aturan ini saat menilai penawaran kerja.</p>"
     },
     {
       "h3": "Periksa norma gaji untuk lulusan master di bawah 30 tahun",
-      "html": "<p><strong>Cocok untuk:</strong> lulusan master di bawah 30 tahun yang gajinya di bawah norma standar. Mereka bisa memenuhi syarat dengan norma yang lebih rendah, €36.497, seperti pada contoh terakhir.</p><p><strong>Catatan:</strong> gelar dan jenjangnya harus memenuhi syarat hukum. Pastikan dulu bahwa ijazahmu diakui sebelum kamu menerima gaji yang dihitung berdasarkan norma itu.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> lulusan master di bawah 30 tahun yang gajinya di bawah norma standar. Mereka bisa memenuhi syarat dengan norma yang lebih rendah, €36.497, seperti pada contoh terakhir.</p><p><strong>Catatan:</strong> gelar dan jenjangnya harus memenuhi syarat hukum. Pastikan dulu bahwa ijazahmu diakui sebelum kamu menerima gaji yang dihitung berdasarkan norma itu.</p>"
     },
     {
       "h3": "Ikut skema pensiun dari pemberi kerja",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menjalankan skema pensiun. Iuran milikmu dipotong sebelum pajak, jadi kamu menghemat pajak pada tarif tertinggimu. Kalkulator ini punya <em>input</em> untuk persentase iuran pensiunmu.</p><p><strong>Catatan:</strong> iuran pensiun mengurangi gaji bersih sekarang dan merupakan tabungan jangka panjang. Skema yang dimulai di atas ambang tertentu memotong lebih sedikit daripada persentase yang kamu masukkan. Kalau kamu berencana pulang ke Indonesia, tanyakan ke penyelenggara apa yang terjadi pada dana itu.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menjalankan skema pensiun. Iuran milikmu dipotong sebelum pajak, jadi kamu menghemat pajak pada tarif tertinggimu. Kalkulator ini punya <em>input</em> untuk persentase iuran pensiunmu.</p><p><strong>Catatan:</strong> iuran pensiun mengurangi gaji bersih sekarang dan merupakan tabungan jangka panjang. Skema yang dimulai di atas ambang tertentu memotong lebih sedikit daripada persentase yang kamu masukkan. Kalau kamu berencana pulang ke Indonesia, tanyakan ke penyelenggara apa yang terjadi pada dana itu.</p>"
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang akan bekerja di Belanda lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP dan menyelesaikan SPT Tahunan terakhirmu agar penghasilan yang sama tidak dipajaki dua kali.</p><p><strong>Catatan:</strong> Indonesia punya P3B dengan Belanda, tetapi <em>tool</em> ini tidak menghitungnya. Tanyakan kasusmu ke DJP atau konsultan pajak, karena ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belanda lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Langkah yang lazim adalah memberi tahu DJP dan menyelesaikan SPT Tahunan terakhirmu agar penghasilan yang sama tidak dipajaki dua kali.</p><p><strong>Catatan:</strong> Indonesia punya P3B dengan Belanda, tetapi <em>tool</em> ini tidak menghitungnya. Tanyakan kasusmu ke DJP atau konsultan pajak, karena ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
@@ -84,7 +84,7 @@
     "<strong>Tanpa bonus atau saham.</strong> Bonus, bulan ke-13, opsi saham dan tunjangan lain tidak dihitung terpisah.",
     "<strong>Asuransi kesehatan tidak masuk.</strong> Semua penduduk Belanda wajib memiliki asuransi kesehatan dasar dari perusahaan swasta dan membayar premi bulanan. Premi itu tidak dihitung di sini, begitu juga tunjangan perawatan kesehatan (<em>zorgtoeslag</em>).",
     "<strong>Syarat aturan 30% tidak diuji.</strong> Kamu yang memilih apakah aturan ini berlaku. Kalkulator tidak memeriksa aturan 150 km, aturan 16 dari 24 bulan, atau apakah pekerjaanmu memenuhi syarat.",
-    "<strong>Keringanan disederhanakan.</strong> Pasangan, anak dan keringanan lain tidak dimodelkan, dan potongan bunga KPR juga tidak masuk.",
+    "<strong>Keringanan disederhanakan.</strong> Pasangan, anak dan keringanan lain tidak dihitung, dan potongan bunga KPR juga tidak masuk.",
     "<strong>Di bawah usia pensiun negara.</strong> Tarifnya mengasumsikan kamu belum mencapai usia pensiun negara.",
     "<strong>Tanpa P3B dan pajak di Indonesia.</strong> Hitungan ini tidak memperhitungkan P3B Indonesia dan Belanda, juga tidak menghitung pajak Indonesia atas penghasilan dari luar negeri."
   ],
@@ -115,11 +115,11 @@
     },
     {
       "q": "Apakah premi asuransi kesehatan di Belanda sudah dipotong dalam gaji bersih?",
-      "a": "<p>Belum. Semua penduduk Belanda wajib mengambil asuransi kesehatan dasar dari perusahaan asuransi swasta dan membayar premi bulanannya sendiri, jadi beda dengan BPJS Kesehatan yang dipotong dari gaji. Premi itu serta tunjangan perawatan kesehatan (<em>zorgtoeslag</em>) tidak masuk hitungan <em>tool</em> ini. Kurangi dari gaji bersihmu sendiri saat menyusun anggaran, dan bandingkan biaya hidup tiap kota di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
+      "a": "<p>Belum, karena semua penduduk Belanda wajib mengambil asuransi kesehatan dasar dari perusahaan asuransi swasta dan membayar premi bulanannya sendiri, tidak seperti BPJS Kesehatan yang iurannya dipotong dari gaji. Premi itu serta tunjangan perawatan kesehatan (<em>zorgtoeslag</em>) tidak masuk hitungan <em>tool</em> ini. Kurangi dari gaji bersihmu sendiri saat menyusun anggaran, dan bandingkan biaya hidup tiap kota di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
     },
     {
       "q": "Kalau bekerja di Belanda, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada status pajakmu di Indonesia. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri, dan langkah yang lazim adalah memberi tahu DJP agar tidak dipajaki dua kali. Indonesia dan Belanda juga punya P3B. Kalkulator ini hanya menghitung pajak di Belanda dan tidak memodelkan P3B maupun pajak Indonesia atas penghasilan dari luar negeri, jadi konfirmasikan kasusmu ke DJP atau konsultan pajak.</p>"
+      "a": "<p>Itu bergantung pada status pajakmu di Indonesia, yang berubah menjadi subjek pajak luar negeri kalau kamu lama berada di luar negeri dan tidak lagi tinggal di Indonesia (aturan umumnya dijelaskan di bagian strategi). Memberi tahu DJP adalah langkah yang lazim. Indonesia dan Belanda juga punya P3B. Kalkulator ini hanya menghitung pajak di Belanda dan tidak menghitung P3B maupun pajak Indonesia atas penghasilan dari luar negeri, jadi konfirmasikan kasusmu ke DJP atau konsultan pajak.</p>"
     }
   ],
   "lineLabels": {

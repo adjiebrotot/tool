@@ -6,25 +6,43 @@
   "description": "Pajak gaji Hong Kong (Tiongkok) 2026/27: tarif progresif atau standar, tunjangan, iuran MPF, dan tiga contoh hitungan dari HK$600.000 sampai HK$3 juta.",
   "lede": "<p>Hong Kong (Tiongkok) menghitung pajak gaji (<em>salaries tax</em>) dengan dua cara dan menagih yang lebih kecil: tarif progresif 2% sampai 17% atas penghasilan setelah tunjangan, atau tarif standar 15% atas penghasilan sebelum tunjangan. Pajaknya tidak dipotong dari slip gaji seperti PPh 21, dan keuntungan menjual aset (<em>capital gains</em>) tidak dipajaki. Untuk pekerja lajang bergaji HK$600.000 setahun, pajaknya sekitar HK$56.290 sehingga gaji bersih (<em>take-home pay</em>) tinggal HK$525.710. Pada gaji HK$3.000.000, tarif standar yang berlaku dan pajaknya HK$447.300.</p>",
   "law": {
-    "intro": "<p>Tahun pajak Hong Kong berjalan dari 1 April sampai 31 Maret, dan angka di halaman ini adalah tahun 2026/27 seperti yang dimodelkan <em>tool</em> ini. Indonesia memajaki penduduknya atas penghasilan dari seluruh dunia, sedangkan Hong Kong hanya memajaki penghasilan yang timbul atau berasal dari Hong Kong. Karena itu gaji untuk pekerjaan yang kamu lakukan di sana pada umumnya kena pajak, apa pun paspor dan visamu. Pengunjung yang bekerja di Hong Kong tidak lebih dari 60 hari dalam satu tahun pajak dapat dibebaskan, dengan syarat tambahan.</p>",
+    "intro": "<p>Tahun pajak Hong Kong berjalan dari 1 April sampai 31 Maret, dan angka di halaman ini adalah tahun 2026/27 seperti yang dihitung <em>tool</em> ini. Indonesia memajaki penduduknya atas penghasilan dari seluruh dunia, sedangkan Hong Kong hanya memajaki penghasilan yang timbul atau berasal dari Hong Kong. Karena itu gaji untuk pekerjaan yang kamu lakukan di sana pada umumnya kena pajak, apa pun paspor dan visamu. Pengunjung yang bekerja di Hong Kong tidak lebih dari 60 hari dalam satu tahun pajak dapat dibebaskan, dengan syarat tambahan.</p>",
     "blocks": [
       {
         "h3": "Tarif progresif dan tarif standar",
         "html": "<p>Pajak gaji dihitung dua kali, lalu kamu membayar angka yang lebih kecil. Hitungan pertama memakai tarif progresif atas penghasilan kena pajak bersih, yaitu gaji setelah dikurangi iuran MPF dan tunjangan. Hitungan kedua memakai tarif standar atas penghasilan bersih sebelum tunjangan: 15% untuk HK$5 juta pertama dan 16% di atasnya. Bagi kebanyakan orang tarif progresif lebih murah, dan tarif standar baru menang pada penghasilan yang sangat tinggi.</p><p>Indonesia hanya punya satu tabel tarif untuk gaji, yaitu tarif Pasal 17 UU PPh yang naik dari 5% sampai 35%. Tarif tertinggi progresif Hong Kong hanya 17%, tetapi tiap lapisannya sempit, hanya HK$50.000.</p>",
         "table": {
-          "head": ["Penghasilan kena pajak bersih (progresif)", "Tarif"],
+          "head": [
+            "Penghasilan kena pajak bersih (progresif)",
+            "Tarif"
+          ],
           "rows": [
-            ["HK$50.000 pertama", "2%"],
-            ["HK$50.000 berikutnya", "6%"],
-            ["HK$50.000 berikutnya", "10%"],
-            ["HK$50.000 berikutnya", "14%"],
-            ["Sisanya", "17%"]
+            [
+              "HK$50.000 pertama",
+              "2%"
+            ],
+            [
+              "HK$50.000 berikutnya",
+              "6%"
+            ],
+            [
+              "HK$50.000 berikutnya",
+              "10%"
+            ],
+            [
+              "HK$50.000 berikutnya",
+              "14%"
+            ],
+            [
+              "Sisanya",
+              "17%"
+            ]
           ]
         }
       },
       {
         "h3": "Tunjangan pribadi, padanan PTKP",
-        "html": "<p>Tunjangan (<em>allowance</em>) memainkan peran yang mirip PTKP: bagian penghasilan yang tidak dikenai pajak. <em>Tool</em> ini memakai HK$145.000 untuk orang lajang, HK$290.000 untuk yang menikah, dan HK$140.000 untuk setiap anak. Tunjangan hanya dipakai pada tarif progresif, bukan pada tarif standar. Tunjangan lain, misalnya untuk orang tua yang ditanggung, tidak dimodelkan.</p><p>Sebagai pembanding, PTKP TK/0 di Indonesia Rp54 juta, dan tambahan untuk pasangan serta tiap anak masing-masing Rp4,5 juta. Tunjangan menikah di Hong Kong dua kali tunjangan dasar, sementara di Indonesia tambahannya jauh lebih kecil.</p>"
+        "html": "<p>Tunjangan (<em>allowance</em>) memainkan peran yang mirip PTKP: bagian penghasilan yang tidak dikenai pajak. <em>Tool</em> ini memakai HK$145.000 untuk orang lajang, HK$290.000 untuk yang menikah, dan HK$140.000 untuk setiap anak. Tunjangan hanya dipakai pada tarif progresif, bukan pada tarif standar. Tunjangan lain, misalnya untuk orang tua yang ditanggung, tidak dihitung.</p><p>Sebagai pembanding, PTKP TK/0 di Indonesia Rp54 juta, dan tambahan untuk pasangan serta tiap anak masing-masing Rp4,5 juta. Tunjangan menikah di Hong Kong dua kali tunjangan dasar, sementara di Indonesia tambahannya jauh lebih kecil.</p>"
       },
       {
         "h3": "Iuran MPF, padanan JHT",
@@ -32,15 +50,30 @@
       },
       {
         "h3": "Tidak ada pemotongan di slip gaji",
-        "html": "<p>Di Indonesia, pemberi kerja memotong PPh 21 tiap bulan lalu memberimu <em>bukti potong</em> 1721-A1 untuk SPT Tahunan. Di Hong Kong tidak ada potongan bulanan. Pemberi kerja melaporkan gajimu setahun ke Inland Revenue Department (IRD), lalu kamu menerima formulir pajak (<em>tax return</em>) sekitar Mei dan mengisinya. Setelah itu IRD mengirim tagihan (<em>assessment</em>) berisi pajak tahun yang baru berakhir ditambah <em>provisional tax</em>, yaitu pajak muka untuk tahun berikutnya.</p>"
+        "html": "<p>Di Indonesia, pemberi kerja memotong PPh 21 tiap bulan lalu memberimu bukti potong 1721-A1 untuk SPT Tahunan. Di Hong Kong tidak ada potongan bulanan. Pemberi kerja melaporkan gajimu setahun ke Inland Revenue Department (IRD), lalu kamu menerima formulir pajak (<em>tax return</em>) sekitar Mei dan mengisinya. Setelah itu IRD mengirim tagihan (<em>assessment</em>) berisi pajak tahun yang baru berakhir ditambah <em>provisional tax</em>, yaitu pajak muka untuk tahun berikutnya.</p>"
       }
     ],
     "sources": [
-      { "name": "Inland Revenue Department (IRD), pajak gaji, tunjangan dan pajak sementara", "url": "https://www.ird.gov.hk/" },
-      { "name": "Mandatory Provident Fund Schemes Authority (MPFA), iuran dan penarikan MPF", "url": "https://www.mpfa.org.hk/" },
-      { "name": "Immigration Department, visa dan izin kerja", "url": "https://www.immd.gov.hk/" },
-      { "name": "Labour Department, hak pekerja dan pekerja rumah tangga migran", "url": "https://www.labour.gov.hk/" },
-      { "name": "Direktorat Jenderal Pajak (DJP), status subjek pajak dan SPT", "url": "https://pajak.go.id/" }
+      {
+        "name": "Inland Revenue Department (IRD), pajak gaji, tunjangan dan pajak sementara",
+        "url": "https://www.ird.gov.hk/"
+      },
+      {
+        "name": "Mandatory Provident Fund Schemes Authority (MPFA), iuran dan penarikan MPF",
+        "url": "https://www.mpfa.org.hk/"
+      },
+      {
+        "name": "Immigration Department, visa dan izin kerja",
+        "url": "https://www.immd.gov.hk/"
+      },
+      {
+        "name": "Labour Department, hak pekerja dan pekerja rumah tangga migran",
+        "url": "https://www.labour.gov.hk/"
+      },
+      {
+        "name": "Direktorat Jenderal Pajak (DJP), status subjek pajak dan SPT",
+        "url": "https://pajak.go.id/"
+      }
     ]
   },
   "examples": [
@@ -60,26 +93,26 @@
       "key": "high-earner",
       "title": "Gaji HK$3.000.000 di Hong Kong: kapan tarif standar 15% lebih murah?",
       "intro": "<p>Pada gaji HK$3.000.000, penghasilan bersih setelah iuran MPF HK$18.000 adalah HK$2.982.000. Hitungan progresif akan menghasilkan pajak yang jauh lebih besar, sehingga yang berlaku adalah tarif standar 15% dengan pajak HK$447.300. Gaji bersihmu sekitar HK$2.534.700 (84,5% dari gaji kotor), dan tarif marginalnya 15,0%. Pada tarif standar tunjangan tidak dipakai, jadi tunjangan HK$145.000 tidak mengurangi pajak.</p>",
-      "after": "<p>Untuk lajang tanpa anak, tarif standar mulai lebih murah di gaji sekitar HK$2,15 juta menurut model <em>tool</em> ini. Di bawah angka itu tarif progresif lebih kecil, dan tunjangan membantu. Indonesia tidak punya pilihan dua cara seperti ini untuk gaji, hanya satu tabel tarif Pasal 17.</p>"
+      "after": "<p>Untuk lajang tanpa anak, tarif standar mulai lebih murah di gaji sekitar HK$2,15 juta menurut hitungan <em>tool</em> ini. Di bawah angka itu tarif progresif lebih kecil, dan tunjangan membantu. Indonesia tidak punya pilihan dua cara seperti ini untuk gaji, hanya satu tabel tarif Pasal 17.</p>"
     }
   ],
   "strategyIntro": "<p>Cara-cara berikut sah dan lazim dipakai di Hong Kong. Mana yang cocok bergantung pada keluarga dan penghasilanmu.</p>",
   "strategies": [
     {
       "h3": "Iuran sukarela MPF yang bisa dikurangkan",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memakai tarif progresif dan punya arus kas longgar. Iuran ke akun sukarela yang bisa dikurangkan (<em>Tax Deductible Voluntary Contribution</em>), atau premi anuitas tertentu, dapat dikurangkan dari penghasilan sampai batas tahunan di luar potongan MPF wajib. Ide dasarnya mirip menabung di DPLK di Indonesia. Tanyakan batas terbarunya ke IRD.</p><p><strong>Catatan:</strong> uangnya terkunci sampai usia pensiun, dan pengurangan ini tidak berguna kalau ternyata tarif standar yang lebih murah.</p>"
+      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk karyawan yang memakai tarif progresif dan punya arus kas longgar. Iuran ke akun sukarela yang bisa dikurangkan (<em>Tax Deductible Voluntary Contribution</em>), atau premi anuitas tertentu, dapat dikurangkan dari penghasilan sampai batas tahunan di luar potongan MPF wajib. Ide dasarnya mirip menabung di DPLK di Indonesia. Tanyakan batas terbarunya ke IRD.</p><p><strong>Catatan:</strong> uangnya terkunci sampai usia pensiun, dan pengurangan ini tidak berguna kalau ternyata tarif standar yang lebih murah.</p>"
     },
     {
       "h3": "Klaim tunjangan tanggungan",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menanggung anak, pasangan, atau orang tua dan saudara yang memenuhi syarat. Tiap tunjangan mengeluarkan penghasilan dari lapisan tarif tertinggi, mirip tambahan PTKP untuk tanggungan di Indonesia.</p><p><strong>Catatan:</strong> setiap tunjangan punya syarat dan butuh dokumen. <em>Tool</em> ini hanya memodelkan tunjangan dasar, menikah, dan anak.</p>"
+      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk siapa pun yang menanggung anak, pasangan, atau orang tua dan saudara yang memenuhi syarat. Tiap tunjangan mengeluarkan penghasilan dari lapisan tarif tertinggi, mirip tambahan PTKP untuk tanggungan di Indonesia.</p><p><strong>Catatan:</strong> setiap tunjangan punya syarat dan butuh dokumen. <em>Tool</em> ini hanya menghitung tunjangan dasar, menikah, dan anak.</p>"
     },
     {
       "h3": "Pengurang bunga KPR, donasi, dan biaya pendidikan",
-      "html": "<p><strong>Cocok untuk:</strong> pemilik rumah yang menempatinya sendiri, donatur tetap lembaga amal yang diakui, dan karyawan yang membayar kursus terkait pekerjaan. Donasi ke lembaga amal yang diakui kira-kira seperti zakat lewat lembaga resmi di Indonesia: bisa dikurangkan, asalkan penerimanya diakui otoritas pajak.</p><p><strong>Catatan:</strong> masing-masing punya batas dan syarat sendiri, dan <em>tool</em> ini tidak menghitungnya, jadi simpan semua kwitansinya.</p>"
+      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pemilik rumah yang menempatinya sendiri, donatur tetap lembaga amal yang diakui, dan karyawan yang membayar kursus terkait pekerjaan. Donasi ke lembaga amal yang diakui kira-kira seperti zakat lewat lembaga resmi di Indonesia: bisa dikurangkan, asalkan penerimanya diakui otoritas pajak.</p><p><strong>Catatan:</strong> masing-masing punya batas dan syarat sendiri, dan <em>tool</em> ini tidak menghitungnya, jadi simpan semua kwitansinya.</p>"
     },
     {
       "h3": "Penilaian bersama atau pribadi untuk pasangan menikah",
-      "html": "<p><strong>Cocok untuk:</strong> pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia; untuk logikanya, baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>"
+      "html": "<p><strong>Siapa yang cocok.</strong> Strategi ini cocok untuk pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia; untuk logikanya, baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>"
     }
   ],
   "limits": [
@@ -87,8 +120,8 @@
     "<strong>Tanpa bonus dan tunjangan.</strong> Bonus, tunjangan perumahan, dan saham karyawan tidak dihitung terpisah.",
     "<strong>Tunjangan dasar saja.</strong> Tunjangan dasar, menikah, dan anak ikut dihitung, tetapi tunjangan orang tua, disabilitas, dan pengurang lain tidak.",
     "<strong>MPF disederhanakan.</strong> <em>Tool</em> ini memakai 5% dari gaji sampai HK$30.000 sebulan dan membatasi pengurangannya HK$18.000. Iuran sukarela dan iuran pemberi kerja tidak dihitung.",
-    "<strong>Satu pelapor.</strong> Tunjangan menikah dipasang pada satu pencari nafkah. Penilaian bersama dan pribadi tidak dimodelkan.",
-    "<strong>Tanpa P3B dan pajak Indonesia.</strong> <em>Tool</em> ini tidak memodelkan perjanjian penghindaran pajak berganda (P3B) maupun pajak Indonesia atas penghasilan dari luar negeri, dan pajak yang kamu bayar di Indonesia tidak ikut dikurangkan.",
+    "<strong>Satu pelapor.</strong> Tunjangan menikah dipasang pada satu pencari nafkah. Penilaian bersama dan pribadi tidak dihitung.",
+    "<strong>Tanpa P3B dan pajak Indonesia.</strong> <em>Tool</em> ini tidak menghitung perjanjian penghindaran pajak berganda (P3B) maupun pajak Indonesia atas penghasilan dari luar negeri, dan pajak yang kamu bayar di Indonesia tidak ikut dikurangkan.",
     "<strong>Bukan slip gaji.</strong> Hong Kong tidak memotong pajak gaji dari slip, dan <em>provisional tax</em> mengubah arus kas, jadi hasilnya angka setahun penuh."
   ],
   "faq": [
