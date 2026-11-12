@@ -239,7 +239,7 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   // Reset view: turn the model, then reset puts the camera back.
   const camAt = () => page.evaluate(() => window.__o3v.viewer.camera.position.toArray().map(v => +v.toFixed(5)));
   const start = await camAt();
-  const box = await page.locator('#stage canvas').boundingBox();
+  const box = await page.locator('#stage .viewer-canvas').boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width / 2 + 200, box.y + box.height / 2 + 60, { steps: 8 });
@@ -249,6 +249,48 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   check('page: dragging turns the view', JSON.stringify(start) !== JSON.stringify(turned));
   await page.click('#resetViewBtn');
   check('page: ⟳ puts the view back', JSON.stringify(await camAt()) === JSON.stringify(start), JSON.stringify(await camAt()) + ' vs ' + JSON.stringify(start));
+
+  // The ruler. Each click lands 5 px off a corner, toward the box's middle:
+  // snapping must pull it onto the corner, so the figures come out exact.
+  const corner = (x, y, z) => page.evaluate(([x, y, z]) => {
+    const v = window.__o3v.viewer, r = v.renderer.domElement.getBoundingClientRect();
+    const scr = (a, b, c) => { const p = v.orient.localToWorld(v.orient.position.clone().set(a, b, c)).project(v.camera); return [(p.x + 1) / 2 * r.width, (1 - p.y) / 2 * r.height]; };
+    const [sx, sy] = scr(x, y, z), [mx, my] = scr(15, 10, 5), d = Math.hypot(mx - sx, my - sy);
+    return [r.left + sx + (mx - sx) / d * 5, r.top + sy + (my - sy) / d * 5];
+  }, [x, y, z]);
+  const tap = async c => { const [x, y] = await corner(...c); await page.mouse.click(x, y); await page.waitForTimeout(60); };
+  const measured = () => page.evaluate(() => JSON.stringify(window.__o3v.measured || []));
+  await page.click('#measureBtn');
+  check('page: Measure opens the ruler', await page.evaluate(() => !document.getElementById('measurePanel').hidden && document.getElementById('measureBtn').getAttribute('aria-pressed') === 'true' && window.__o3v.measure.active));
+  await tap([0, 0, 10]);
+  await tap([30, 0, 10]);
+  check('page: a distance snaps to the corners (30, ΔX 30)', (await measured()) === JSON.stringify([{ kind: 'distance', value: 30, delta: [30, 0, 0] }]), await measured());
+  check('page: the panel lists it', await page.evaluate(() => /Distance\s*30/.test(document.getElementById('measureList').textContent)));
+  await page.mouse.move(640, 420); await page.mouse.down(); await page.mouse.move(760, 460, { steps: 6 }); await page.mouse.up();
+  await page.waitForTimeout(300);
+  await page.click('#resetViewBtn');
+  check('page: a drag while measuring turns the view, places nothing', await page.evaluate(() => window.__o3v.measure.draft.length === 0 && window.__o3v.measured.length === 1));
+  await page.click('[data-measure="area"]');
+  for (const c of [[0, 0, 10], [30, 0, 10], [30, 20, 10], [0, 20, 10]]) await tap(c);
+  await page.keyboard.press('Enter');
+  const top = JSON.parse(await measured())[1] || {};
+  check('page: Enter closes an area: the top face is 600, perimeter 100', top.kind === 'area' && top.value === 600 && top.perimeter === 100 && top.planar, JSON.stringify(top));
+  for (const c of [[0, 0, 10], [30, 0, 10], [30, 0, 0], [0, 0, 0], [0, 0, 10]]) await tap(c);
+  const side = JSON.parse(await measured())[2] || {};
+  check('page: clicking the first corner closes an area: the front face is 300', side.kind === 'area' && side.value === 300 && side.perimeter === 80, JSON.stringify(side));
+  await page.click('[data-up="y"]');
+  check('page: flipping Up keeps the measurements on the model', await page.evaluate(() => window.__o3v.measured.map(f => f.value).join() === '30,600,300'));
+  await page.click('[data-up="z"]');
+  await page.click('#measureUndo');
+  check('page: Undo takes back the last measurement', await page.evaluate(() => window.__o3v.measured.length === 2));
+  await page.click('[data-measure="distance"]');
+  await tap([0, 0, 10]);
+  await page.keyboard.press('Escape');
+  check('page: Esc cancels the point being placed, keeps the rest', await page.evaluate(() => window.__o3v.measure.draft.length === 0 && window.__o3v.measured.length === 2));
+  await page.click('#measureList [data-del="0"]');
+  check('page: the bin removes one measurement', await page.evaluate(() => window.__o3v.measured.length === 1 && window.__o3v.measured[0].kind === 'area'));
+  await page.keyboard.press('Escape');
+  check('page: Esc again closes the ruler, the measurement stays drawn', await page.evaluate(() => document.getElementById('measurePanel').hidden && !window.__o3v.measure.active && window.__o3v.measure.items.length === 1));
 
   // PNG download.
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#pngBtn')]);
@@ -275,6 +317,7 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   });
   await settled(page, 3);
   check('page: dropping OBJ + MTL + PNG together opens the textured model', await page.evaluate(() => { const m = window.__o3v.model; return window.__o3v.state === 'ready' && m.formats[0] === 'OBJ' && m.stats.textures === 1 && m.warnings.length === 0; }));
+  check('page: a new model starts with no measurements', await page.evaluate(() => window.__o3v.measure.items.length === 0));
 
   // A folder (paths as a folder drop gives them): glTF in model/, texture in model/textures/.
   await page.evaluate(async () => {

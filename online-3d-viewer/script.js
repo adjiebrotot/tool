@@ -21,7 +21,10 @@ const dom = {
   playBtn: $('playBtn'), resetViewBtn: $('resetViewBtn'), pngBtn: $('pngBtn'), openBtn: $('openBtn'),
   infoFormat: $('infoFormat'), infoParts: $('infoParts'), infoTris: $('infoTris'), infoVerts: $('infoVerts'),
   infoPoints: $('infoPoints'), infoPointsRow: $('infoPointsRow'), infoLines: $('infoLines'), infoLinesRow: $('infoLinesRow'),
-  infoSize: $('infoSize'), sizeTip: $('sizeTip'), themeToggle: $('themeToggle'), header: document.querySelector('.header'),
+  infoSize: $('infoSize'), sizeTip: $('sizeTip'),
+  measureBtn: $('measureBtn'), measurePanel: $('measurePanel'), measureMode: $('measureMode'), measureClose: $('measureClose'),
+  measureHint: $('measureHint'), measureList: $('measureList'), measureFoot: $('measureFoot'),
+  measureUndo: $('measureUndo'), measureClear: $('measureClear'), measureTip: $('measureTip'), themeToggle: $('themeToggle'), header: document.querySelector('.header'),
 };
 
 const hook = window.__o3v = { state: 'idle', model: null, error: null, viewer: null, loads: 0 };
@@ -34,8 +37,8 @@ function report(state, extra) {
 let corePromise = null;
 function core() {
   if (!corePromise) {
-    corePromise = Promise.all([import('./viewer.js'), import('./model.js'), import('./engines/index.js')])
-      .then(([v, m, e]) => ({ Viewer: v.Viewer, buildModel: m.buildModel, loadFiles: e.loadFiles }))
+    corePromise = Promise.all([import('./viewer.js'), import('./model.js'), import('./engines/index.js'), import('./measure.js')])
+      .then(([v, m, e, r]) => ({ Viewer: v.Viewer, buildModel: m.buildModel, loadFiles: e.loadFiles, Measure: r.Measure }))
       .catch(err => { corePromise = null; throw err; });
   }
   return corePromise;
@@ -46,6 +49,7 @@ if ('requestIdleCallback' in window) window.addEventListener('load', () => reque
 else window.addEventListener('load', () => setTimeout(warm, 1500));
 
 let viewer = null;
+let ruler = null;        // the measure tool, made with the viewer
 let current = null;      // the model on screen
 let currentFiles = null; // its files (blob URLs live until the next model)
 let busy = false;
@@ -69,6 +73,8 @@ async function open(list) {
       viewer.setGrid(dom.grid.checked);
       viewer.setWireframe(dom.wire.checked);
       viewer.opts.edges = dom.edges.checked;
+      ruler = hook.measure = new c.Measure(viewer, { format: fmtMeasure, onChange: showMeasure, onExit: () => setMeasuring(false) });
+      applyTheme();
     }
     const loaded = await c.loadFiles(list, { renderer: viewer.renderer, progress: setBusyMsg });
     setBusyMsg('Preparing the view…');
@@ -82,6 +88,7 @@ async function open(list) {
     if (currentFiles && currentFiles !== loaded.files) currentFiles.dispose();
     currentFiles = loaded.files;
     current = model;
+    if (ruler) { ruler.clear(); ruler.setUnit(model.units); }
 
     showInfo(model);
     showNote(model.warnings, false);
@@ -129,6 +136,17 @@ function fmtLen(v) {
   if (a === 0) return '0';
   if (a >= 10000) return NUM.format(Math.round(v));
   return String(parseFloat(v.toPrecision(4)));
+}
+
+/* Measurements: five significant figures (a 30 mm edge reads 30, not 29.9999),
+   whole numbers grouped once they are large. */
+function fmtMeasure(v) {
+  if (!Number.isFinite(v)) return '–';
+  const a = Math.abs(v);
+  if (a === 0) return '0';
+  if (a >= 100000) return NUM.format(Math.round(v));
+  const t = parseFloat(v.toPrecision(5));
+  return Math.abs(t) >= 1000 ? NUM.format(t) : String(t);
 }
 
 function showInfo(model) {
@@ -313,6 +331,78 @@ dom.playBtn.addEventListener('click', () => {
   setPlayLabel(viewer.playing);
 });
 
+// ── Measure (the ruler) ──────────────────────────────────────────────────
+function setMeasuring(on) {
+  if (!ruler) return;
+  on = !!on && !!current;
+  ruler.setActive(on);
+  dom.measureBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  dom.measureBtn.classList.toggle('active', on);
+  dom.measurePanel.hidden = !on;
+  if (on) hideHint();
+}
+dom.measureBtn.addEventListener('click', () => setMeasuring(!(ruler && ruler.active)));
+dom.measureClose.addEventListener('click', () => setMeasuring(false));
+dom.measureMode.addEventListener('click', e => {
+  const b = e.target.closest('[data-measure]');
+  if (b && ruler) ruler.setMode(b.dataset.measure);
+});
+dom.measureUndo.addEventListener('click', () => { if (ruler) ruler.undo(); });
+dom.measureClear.addEventListener('click', () => { if (ruler) ruler.clear(); });
+dom.measureList.addEventListener('click', e => {
+  const b = e.target.closest('[data-del]');
+  if (b && ruler) ruler.remove(+b.dataset.del);
+});
+
+const AXES = ['X', 'Y', 'Z'];
+function showMeasure(st) {
+  dom.measureMode.querySelectorAll('[data-measure]').forEach(b => {
+    const on = b.dataset.measure === st.mode;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const u = st.unit ? ' ' + st.unit : '', u2 = st.unit ? ' ' + st.unit + '²' : '';
+  const n = st.draft.count;
+  dom.measureHint.textContent = st.mode === 'distance'
+    ? (n ? 'Click the second point. Esc cancels.' : 'Click two points on the model.')
+    : n >= 3 ? 'Click the first corner, double-click or press Enter to close the area (' + n + ' corners).'
+      : n ? 'Click the next corner (' + n + ' so far).' : 'Click the corners of the area, in order.';
+  dom.measureTip.setAttribute('data-tip', 'Points land on the model\'s surface and snap to a corner within a few pixels. '
+    + (st.unit ? 'Figures are along the file\'s own axes, in ' + UNIT_NAMES[st.unit] + '.' : 'Figures are along the file\'s own axes, in its own unit (the file names none).'));
+  const rows = st.items.map((f, i) => {
+    const li = document.createElement('li');
+    const main = document.createElement('div');
+    main.className = 'mp-row';
+    const name = document.createElement('span');
+    name.className = 'mp-name';
+    name.textContent = (i + 1) + '. ' + (f.kind === 'area' ? 'Area' : 'Distance');
+    const val = document.createElement('span');
+    val.className = 'mp-val';
+    val.textContent = fmtMeasure(f.value) + (f.kind === 'area' ? u2 : u);
+    main.append(name, val);
+    main.insertAdjacentHTML('beforeend', SharedIcon.button('trash', 'Remove this measurement', 'mp-del', 'data-del="' + i + '"'));
+    const sub = document.createElement('div');
+    sub.className = 'mp-sub';
+    sub.textContent = f.kind === 'area'
+      ? 'Perimeter ' + fmtMeasure(f.perimeter) + u + ' · ' + f.corners + ' corners' + (f.planar ? '' : ' · not flat: area of the best-fit plane')
+      : f.delta.map((d, k) => 'Δ' + AXES[k] + ' ' + fmtMeasure(Math.abs(d))).join(' · ');
+    li.append(main, sub);
+    return li;
+  });
+  const dists = st.items.filter(f => f.kind === 'distance');
+  if (dists.length > 1) {
+    const li = document.createElement('li');
+    li.className = 'mp-total';
+    li.innerHTML = '<div class="mp-row"><span class="mp-name">Total distance</span><span class="mp-val"></span></div>';
+    li.querySelector('.mp-val').textContent = fmtMeasure(dists.reduce((a, f) => a + f.value, 0)) + u;
+    rows.push(li);
+  }
+  dom.measureList.replaceChildren(...rows);
+  dom.measureFoot.hidden = !st.items.length && !n;
+  dom.measureUndo.disabled = !st.items.length && !n;
+  hook.measured = st.items;
+}
+
 dom.pngBtn.addEventListener('click', async () => {
   if (!viewer || !current) return;
   const blob = await viewer.snapshot();
@@ -340,6 +430,7 @@ function applyTheme() {
     bg: token('--o3v-stage'), bg2: token('--o3v-stage2'), model: token('--o3v-model'), grid: token('--o3v-grid'), grid2: token('--o3v-grid2'),
     line: token('--text'), edge: token('--o3v-edge'),
   });
+  if (ruler) ruler.setColours({ line: token('--o3v-measure'), halo: token('--panel'), text: token('--text'), panel: token('--panel') });
 }
 new MutationObserver(applyTheme).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 dom.themeToggle.addEventListener('click', () => {

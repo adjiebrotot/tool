@@ -396,7 +396,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 
 - URL: https://tool.adjiebrotots.com/online-3d-viewer/
 - Best for: anyone who needs to look at a 3D model and has no CAD or 3D software at hand: a supplier's STEP part, a 3D-print STL, a glTF or FBX asset.
-- What it does: opens CAD files (STEP, IGES, OpenCascade BREP, Rhino 3DM), meshes (STL, OBJ with MTL and textures, 3MF, AMF, PLY including point clouds, OFF, 3DS) and scenes (glTF and GLB with Draco, Meshopt and KTX2 compression, FBX, COLLADA, USDZ / USDA / USDC, VRML) in the browser, and shows them in 3D with parts, triangles, vertices and the size in the file's unit. Edges, wireframe, grid, a Y or Z up switch, animation playback and a PNG of the view.
+- What it does: opens CAD files (STEP, IGES, OpenCascade BREP, Rhino 3DM), meshes (STL, OBJ with MTL and textures, 3MF, AMF, PLY including point clouds, OFF, 3DS) and scenes (glTF and GLB with Draco, Meshopt and KTX2 compression, FBX, COLLADA, USDZ / USDA / USDC, VRML) in the browser, and shows them in 3D with parts, triangles, vertices and the size in the file's unit. Edges, wireframe, grid, a Y or Z up switch, animation playback, a ruler that measures distances (with ΔX, ΔY, ΔZ) and areas (with the perimeter) by clicking points that snap to corners, and a PNG of the view with the measurements on it.
 - Privacy: the file is read inside the browser and never uploaded; STEP, IGES and BREP are triangulated by OpenCascade compiled to WebAssembly.
 
 ### Video to GIF Converter
