@@ -193,6 +193,109 @@ for (const c of cases) {
 }
 
 // ══════════════════════════ 2. The page ══════════════════════════════════
+/* The ruler's snapping. A plate 60 × 40 × 10 (file Z up) with a round hole
+   (centre 15, 20, radius 8), a square hole (30–40 × 15–25) and a slot (ends
+   centred on 51, 10 and 51, 30, radius 3), cut through it: an STL, so its
+   edges, arcs and faces are read from bare triangles. Then the STEP box, whose
+   edges come from its CAD faces. Each pick lands a few pixels off the target. */
+async function snapChecks() {
+  const THREE = await import(path.join(DEPS, 'node_modules', 'three', 'build', 'three.module.js'));
+  const shape = new THREE.Shape([[0, 0], [60, 0], [60, 40], [0, 40]].map(([x, y]) => new THREE.Vector2(x, y)));
+  const round = new THREE.Path(); round.absarc(15, 20, 8, 0, Math.PI * 2, true); shape.holes.push(round);
+  shape.holes.push(new THREE.Path([[30, 15], [30, 25], [40, 25], [40, 15], [30, 15]].map(([x, y]) => new THREE.Vector2(x, y))));
+  const slot = new THREE.Path(); slot.moveTo(48, 10); slot.lineTo(48, 30); slot.absarc(51, 30, 3, Math.PI, 0, true); slot.lineTo(54, 10); slot.absarc(51, 10, 3, 0, Math.PI, true); shape.holes.push(slot);
+  const g = new THREE.ExtrudeGeometry(shape, { depth: 10, bevelEnabled: false, curveSegments: 32 });
+  const pos = g.getAttribute('position');
+  let stl = 'solid plate\n';
+  for (let i = 0; i < pos.count; i += 3) {
+    stl += ' facet normal 0 0 0\n  outer loop\n';
+    for (let k = 0; k < 3; k++) stl += '   vertex ' + pos.getX(i + k) + ' ' + pos.getY(i + k) + ' ' + pos.getZ(i + k) + '\n';
+    stl += '  endloop\n endfacet\n';
+  }
+  const plate = path.join(TMP, 'plate.stl');
+  fs.writeFileSync(plate, stl + 'endsolid plate\n');
+
+  const { page, context, errors } = await freshPage();
+  await armCounter(page);
+  await page.setInputFiles('#fileInput', [plate]);
+  await settled(page, 1);
+  // What the ruler takes for a pointer `off` pixels from a point in the file's axes.
+  const pickAt = (pt, off = [4, -3], opts = {}) => page.evaluate(([pt, off, opts]) => {
+    const v = window.__o3v.viewer, m = window.__o3v.measure, r = v.renderer.domElement.getBoundingClientRect();
+    const s = v.orient.localToWorld(v.orient.position.clone().set(...pt)).project(v.camera);
+    const h = m.pick(r.left + (s.x + 1) / 2 * r.width + off[0], r.top + (1 - s.y) / 2 * r.height + off[1], opts);
+    return h && { kind: h.kind, p: h.p.toArray().map(x => +x.toFixed(3) + 0), tag: m.tag(h) };
+  }, [pt, off, opts]);
+  const is = (h, kind, p) => !!h && h.kind === kind && (!p || p.every((x, i) => Math.abs(h.p[i] - x) < 1e-3));
+  const say = h => JSON.stringify(h);
+  const setFrom = pt => page.evaluate(pt => { const m = window.__o3v.measure; m.draft = pt ? [window.__o3v.viewer.orient.position.clone().set(...pt)] : []; }, pt);
+
+  let h = await pickAt([15, 20, 10]);
+  check('snap: a round hole\'s centre, with its diameter', is(h, 'centre', [15, 20, 10]) && h.tag === 'Centre · ⌀ 16', say(h));
+  h = await pickAt([51, 30, 10]);
+  check('snap: a slot end\'s centre, with its radius', is(h, 'centre', [51, 30, 10]) && h.tag === 'Centre · R 3', say(h));
+  h = await pickAt([35, 20, 10]);
+  check('snap: a square hole\'s centre', is(h, 'centre', [35, 20, 10]) && h.tag === 'Centre', say(h));
+  h = await pickAt([30, 0, 10]);
+  check('snap: an edge\'s midpoint', is(h, 'mid', [30, 0, 10]) && h.tag === 'Midpoint', say(h));
+  h = await pickAt([60, 0, 10]);
+  check('snap: a corner', is(h, 'corner', [60, 0, 10]), say(h));
+  h = await pickAt([8, 0, 10], [0, 4]);
+  check('snap: a point along an edge lands on it', !!h && h.kind === 'edge' && h.p[1] === 0 && h.p[2] === 10 && Math.abs(h.p[0] - 8) < 0.6, say(h));
+  h = await pickAt([30, 0, 5]);
+  check('snap: a flat face\'s centre', is(h, 'face', [30, 0, 5]) && h.tag === 'Face centre', say(h));
+  await setFrom([15, 20, 10]);
+  h = await pickAt([15, 0, 10]);
+  check('snap: perpendicular from the last point to an edge', is(h, 'perp', [15, 0, 10]), say(h));
+  await setFrom([20, 12, 4]);
+  h = await pickAt([60, 12, 4]);
+  check('snap: perpendicular from the last point to a face', is(h, 'perp', [60, 12, 4]), say(h));
+  await setFrom(null);
+  h = await pickAt([30, 0, 10], [4, -3], { free: true });
+  check('snap: free (Shift) stays on the surface', !!h && h.kind === 'surface' && !is(h, 'surface', [30, 0, 10]), say(h));
+  h = await pickAt([0, 40, 0], [0, 0]);
+  check('snap: a corner hidden behind the model is not taken', !!h && !is(h, h.kind, [0, 40, 0]), say(h));
+  // Within a few pixels of a circle's centre but on its edge: the curve, not the chord.
+  h = await pickAt([15, 12, 10], [0, 0]);
+  check('snap: a point on a round edge lies on the circle', !!h && h.kind === 'edge' && h.tag === 'On arc' && Math.abs(Math.hypot(h.p[0] - 15, h.p[1] - 20) - 8) < 1e-3, say(h));
+
+  // Hover shows it, clicks measure it.
+  await page.click('#measureBtn');
+  const client = (pt, off = [4, -3]) => page.evaluate(([pt, off]) => {
+    const v = window.__o3v.viewer, r = v.renderer.domElement.getBoundingClientRect();
+    const s = v.orient.localToWorld(v.orient.position.clone().set(...pt)).project(v.camera);
+    return [r.left + (s.x + 1) / 2 * r.width + off[0], r.top + (1 - s.y) / 2 * r.height + off[1]];
+  }, [pt, off]);
+  let [x, y] = await client([15, 20, 10]);
+  await page.mouse.move(x, y);
+  await page.waitForTimeout(150);
+  check('snap: hovering a hole shows its centre marker', await page.evaluate(() => { const hv = window.__o3v.measure.hover; return !!hv && hv.kind === 'centre' && hv.path.length >= 32; }));
+  await page.keyboard.down('Shift');
+  await page.waitForTimeout(150);
+  check('snap: holding Shift drops the snap', await page.evaluate(() => { const hv = window.__o3v.measure.hover; return !!hv && hv.kind === 'surface'; }));
+  await page.keyboard.up('Shift');
+  await page.mouse.click(x, y);
+  [x, y] = await client([30, 0, 10]);
+  await page.mouse.click(x, y);
+  // (The centre is worked out from the file's single-precision corners: right to 7 figures.)
+  const m = await page.evaluate(() => window.__o3v.measured);
+  check('snap: hole centre to edge midpoint measures 25 (ΔX 15, ΔY 20)', m.length === 1 && near(m[0].value, 25, 1e-7) && [15, -20, 0].every((d, i) => Math.abs(m[0].delta[i] - d) < 1e-5), JSON.stringify(m));
+
+  // The STEP box: edges from its CAD faces, so a face's inner diagonal is not one.
+  await page.setInputFiles('#fileInput', [path.join(FIX, 'step/box.stp')]);
+  await settled(page, 2);
+  h = await pickAt([30, 0, 10]);
+  check('snap (STEP): a corner', is(h, 'corner', [30, 0, 10]), say(h));
+  h = await pickAt([30, 10, 10]);
+  check('snap (STEP): an edge\'s midpoint', is(h, 'mid', [30, 10, 10]), say(h));
+  h = await pickAt([15, 10, 10]);
+  check('snap (STEP): the top face\'s centre', is(h, 'face', [15, 10, 10]), say(h));
+  const inner = [await pickAt([24, 16, 10], [0, 0]), await pickAt([24, 4, 10], [0, 0])];
+  check('snap (STEP): a triangle edge inside a CAD face is not an edge', inner.every(q => q && q.kind === 'surface'), say(inner));
+  check('snap: no uncaught errors', errors.length === 0, errors.join(' | '));
+  await context.close();
+}
+
 if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   console.log('\n── The page: drop, folders, toolbar, sample, phone ──');
   const fx = p => path.join(FIX, p);
@@ -363,6 +466,8 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   }));
   check('page: no uncaught errors through all of it', errors.length === 0, errors.join(' | '));
   await context.close();
+
+  await snapChecks();
 
   // A phone: no sideways scroll, the toolbar wraps, the stage has room.
   const phone = await freshPage({ width: 390, height: 844 });

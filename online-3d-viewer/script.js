@@ -355,6 +355,7 @@ dom.measureList.addEventListener('click', e => {
 });
 
 const AXES = ['X', 'Y', 'Z'];
+const SNAP_TIP = 'Snaps to corners, midpoints, centres of holes, arcs and faces, perpendiculars and edges. Shift: no snap. ';
 function showMeasure(st) {
   dom.measureMode.querySelectorAll('[data-measure]').forEach(b => {
     const on = b.dataset.measure === st.mode;
@@ -367,7 +368,7 @@ function showMeasure(st) {
     ? (n ? 'Click the second point. Esc cancels.' : 'Click two points on the model.')
     : n >= 3 ? 'Click the first corner, double-click or press Enter to close the area (' + n + ' corners).'
       : n ? 'Click the next corner (' + n + ' so far).' : 'Click the corners of the area, in order.';
-  dom.measureTip.setAttribute('data-tip', 'Points land on the model\'s surface and snap to a corner within a few pixels. '
+  dom.measureTip.setAttribute('data-tip', SNAP_TIP
     + (st.unit ? 'Figures are along the file\'s own axes, in ' + UNIT_NAMES[st.unit] + '.' : 'Figures are along the file\'s own axes, in its own unit (the file names none).'));
   const rows = st.items.map((f, i) => {
     const li = document.createElement('li');
@@ -430,7 +431,7 @@ function applyTheme() {
     bg: token('--o3v-stage'), bg2: token('--o3v-stage2'), model: token('--o3v-model'), grid: token('--o3v-grid'), grid2: token('--o3v-grid2'),
     line: token('--text'), edge: token('--o3v-edge'),
   });
-  if (ruler) ruler.setColours({ line: token('--o3v-measure'), halo: token('--panel'), text: token('--text'), panel: token('--panel') });
+  if (ruler) ruler.setColours({ line: token('--o3v-measure'), halo: token('--panel'), text: token('--text'), panel: token('--panel'), border: token('--border') });
 }
 new MutationObserver(applyTheme).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 dom.themeToggle.addEventListener('click', () => {

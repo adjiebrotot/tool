@@ -95,6 +95,13 @@ function buildMesh(m, i) {
 
   // Faces coloured on their own: one draw group per run of equal colour.
   const faces = m.faces || [];
+  // Which triangles make each CAD face, for the ruler: it snaps to the
+  // edges between faces (even smooth ones) and to a flat face's centre.
+  if (faces.length) {
+    const ranges = new Int32Array(faces.length * 2);
+    faces.forEach((f, k) => { ranges[k * 2] = f.first; ranges[k * 2 + 1] = f.last; });
+    g.userData.o3vFaces = ranges;
+  }
   if (faces.some(f => f.color)) {
     const mats = [partMat];
     const keyOf = c => c ? c.map(v => v.toFixed(4)).join(',') : '';
