@@ -6,8 +6,8 @@
 //
 // The Indonesian home lists every tool, not only the ones with an Indonesian page: a reader
 // who arrives in Indonesian still sees the whole site. A card whose tool has an Indonesian
-// page links there (hreflang="id") and is tagged "Bahasa Indonesia"; every other card links
-// to the English tool (hreflang="en") and is tagged "Bahasa Inggris". The cards' data-*
+// page links there (hreflang="id") and has no language mark; every other card links
+// to the English tool (hreflang="en") and gets a small EN beside its open button. The cards' data-*
 // values stay English, so the filters and the typewriter read them as on the English home;
 // the words the page shows come from LABELS, through window.HOME_I18N.
 //
@@ -161,14 +161,6 @@ const TEXT = [
    'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.'],
 ];
 
-// The line under the hero. The English home lists the Indonesian pages there; here it says
-// which tools are still in English, so a reader knows every card is open to them.
-const STRIP = `<!-- lang-strip:start (written by _ref/bake-home-id.mjs; the English home, ../, lists the Indonesian pages here) -->
-    <section class="container lang-strip" aria-label="Bahasa">
-      <p>Semua <em>tool</em> di sini gratis dan berjalan di <em>browser</em>-mu. <em>Tool</em> yang bertanda <strong>Bahasa Indonesia</strong> sudah tersedia dalam bahasa Indonesia, sedangkan yang lain masih berbahasa Inggris, tetapi tetap bisa kamu pakai sepenuhnya.</p>
-    </section>
-    <!-- lang-strip:end -->`;
-
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const plain = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&');
 
@@ -203,18 +195,20 @@ function card(html){
     const w = LABELS[t]; if(!w) PROBLEMS.push(`status "${t}": no Indonesian label`);
     return `<span class="status-badge ${cls}" title="${w || t}"><span class="visually-hidden">${w || t}</span></span>`;
   });
-  // Tags, then the card's language.
+  // Tags.
   html = html.replace(/<ul class="tool-tags" aria-label="Categories">([\s\S]*?)(\n\s*)<\/ul>/, (m, lis, end) => {
     const out = lis.replace(/<li>([^<]+)<\/li>/g, (x, t) => {
       if(!LABELS[t]) PROBLEMS.push(`tag "${t}" (card ${key}): no Indonesian label`);
       return `<li>${LABELS[t] || t}</li>`;
     });
-    const tag = lang === 'id' ? '<li class="tag-lang">Bahasa Indonesia</li>' : '<li>Bahasa Inggris</li>';
-    return `<ul class="tool-tags" aria-label="Kategori">${out}${end}  ${tag}${end}</ul>`;
+    return `<ul class="tool-tags" aria-label="Kategori">${out}${end}</ul>`;
   });
   // The open button (and a split button's own menu).
   html = html.replace(/(<a class="tool-link" href=")([^"]+)("[^>]*>)Open tool<\/a>/, (m, a, h, b) =>
     `${a}${h === enUrl && c.id ? c.id : h}" hreflang="${lang}${b}Buka tool</a>`);
+  // A tool with no Indonesian page is marked EN beside its open button.
+  if(lang === 'en' && /class="tool-link"/.test(html))
+    html = html.replace(/(\n\s*)<\/div>(\n\s*<\/div>\n\s*<\/article>)/, (m, a, b) => `${a}  <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>${a}</div>${b}`);
   html = html.replace(/>Coming soon<\/span>/, '>Segera hadir</span>');
   html = html.replace(/aria-label="Choose which (.+?) tool to open"/, (m, n) => `aria-label="Pilih halaman ${esc(c.name || n)} yang ingin dibuka"`);
   html = html.replace(/<a class="combo-opt" role="menuitem" href="([^"]+)"([^>]*)><span class="combo-text"><span class="combo-main">([^<]+)<\/span><span class="combo-sub">([^<]+)<\/span>/g, (m, h, rest, main, sub) => {
@@ -238,9 +232,6 @@ function build(){
   // The cards. (The grid's comment names "<article class=...>" on one line; the cards break
   // the tag over lines, so the comment is never taken for one.)
   html = html.replace(/<article\s*\n\s*class="tool-card"[\s\S]*?<\/article>/g, card);
-
-  // The line under the hero.
-  html = html.replace(/<!-- lang-strip:start[\s\S]*?<!-- lang-strip:end -->/, () => STRIP);
 
   // Structured data: this page as an Indonesian collection of every tool. The site and its
   // maker are described once, on the English home, and named here by their @id.

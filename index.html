@@ -282,20 +282,9 @@
     .family-nav a.family-lang:active { transform: translate(1px, 1px); box-shadow: 0 0 0 var(--ink-line); }
     .family-lang svg { width: 15px; height: 15px; }
 
-    /* The page in the other language, in a line under the hero: on the English home the
-       tools that have an Indonesian version (in Indonesian), on the Indonesian home a
-       note on which tools are still in English. */
-    .lang-strip { margin-top: -0.5rem; margin-bottom: 1.5rem; color: var(--muted); font-size: var(--fs-sm); line-height: 1.55; }
-    .lang-strip h2 { display: inline; margin: 0 0.4rem 0 0; font-size: inherit; line-height: inherit; color: var(--text); }
-    .lang-strip p { display: inline; margin: 0; }
-    .lang-strip ul { display: inline; margin: 0; padding: 0; list-style: none; }
-    .lang-strip li { display: inline; white-space: nowrap; }
-    .lang-strip li:not(:last-child)::after { content: '\2022'; content: '\2022' / ''; margin: 0 0.15em 0 0.5em; opacity: 0.7; }
-    .lang-strip a { color: var(--accent-strong); font-weight: 700; }
-    .lang-strip a:hover { text-decoration: underline; }
-
-    /* The card's language, the last tag (on the Indonesian home only). */
-    .tool-tags .tag-lang { color: var(--accent-strong); font-weight: 700; }
+    /* A tool with no Indonesian page is marked EN beside its open button (on the
+       Indonesian home only). */
+    .tool-lang { color: var(--muted); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.04em; }
 
 
     .eyebrow {
@@ -1726,18 +1715,6 @@
   </div>
 
   <main>
-    <!-- lang-strip:start (the Indonesian home, id/, swaps this for its own: _ref/bake-home-id.mjs) -->
-    <section class="container lang-strip" lang="id" aria-labelledby="langStripHeading">
-      <h2 id="langStripHeading">Tersedia dalam bahasa Indonesia:</h2>
-      <ul>
-        <li><a href="id/" hreflang="id">Beranda Adjie Brotools</a></li>
-        <li><a href="pisahvsgabung/id/" hreflang="id">PPh 21 pisah vs gabung harta</a></li>
-        <li><a href="rentvsownhouse/id/" hreflang="id">Sewa vs beli rumah</a></li>
-        <li><a href="global-income-tax-calculator/indonesia/id/" hreflang="id">Cara menghitung PPh 21 gaji</a></li>
-        <li><a href="global-income-tax-calculator/id/" hreflang="id">Pajak penghasilan di 31 negara</a></li>
-      </ul>
-    </section>
-    <!-- lang-strip:end -->
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
       <div class="section-heading">
         <div>
