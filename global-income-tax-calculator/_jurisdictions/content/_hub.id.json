@@ -1,23 +1,23 @@
 {
   "_note": "The Indonesian hub, global-income-tax-calculator/id/. Written for an Indonesian reader, not translated from the English tool page. _ref/jurisdiction-pages.mjs reads it; run that after an edit. The underscore keeps it from ever meeting a country slug.",
   "title": "Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara",
-  "description": "Hitung gaji bersih setelah pajak dan iuran jaminan sosial di 31 negara, dengan penjelasan aturan pajak tiap negara dalam bahasa Indonesia. Gratis, di browser.",
+  "description": "Hitung gaji bersih setelah pajak dan iuran jaminan sosial di 31 negara, lengkap dengan aturan pajak tiap negara dalam bahasa Indonesia. Gratis, berjalan di browser.",
   "h1": "Hitung gaji bersih setelah pajak di 31 negara",
-  "lede": "<p>Tawaran kerja, apalagi dari luar negeri, hampir selalu menyebut gaji kotor, padahal yang sampai ke rekeningmu adalah gaji setelah dipotong pajak penghasilan dan iuran jaminan sosial. Global Income Tax Calculator menghitung potongan itu untuk 31 negara, 39 negara bagian Amerika Serikat, dan Washington DC dengan aturan tahun 2026, sehingga kamu bisa membandingkan beberapa tawaran secara <em>apple to apple</em>.</p>",
+  "lede": "<p>Tawaran kerja, apalagi dari luar negeri, hampir selalu menyebut gaji kotor, padahal yang sampai ke rekeningmu adalah gaji setelah dipotong pajak penghasilan dan iuran jaminan sosial. Global Income Tax Calculator menghitung potongan itu untuk 31 negara berdasarkan aturan tahun 2026, dan untuk Amerika Serikat sampai ke tingkat 39 negara bagian serta Washington DC, sehingga kamu bisa membandingkan beberapa tawaran secara <em>apple to apple</em>.</p>",
   "whatH2": "Yang bisa kamu hitung",
   "what": [
-    "<strong>Gaji kotor ke gaji bersih, atau sebaliknya.</strong> Kalau kamu sudah tahu gaji bersih yang kamu inginkan, kalkulator ini mencari gaji kotor yang perlu kamu minta saat bernegosiasi.",
+    "<strong>Gaji kotor ke gaji bersih, atau sebaliknya.</strong> Kalau kamu sudah tahu gaji bersih yang kamu inginkan, kalkulator ini menghitung balik gaji kotor yang perlu kamu minta saat bernegosiasi.",
     "<strong>Hingga empat pekerjaan berdampingan.</strong> Setiap pekerjaan punya negara dan mata uangnya sendiri, jadi tawaran di Singapura, Dubai, dan Sydney bisa dibandingkan dalam satu layar.",
-    "<strong>Skema khusus pekerja asing.</strong> Status penduduk pajak ikut diperhitungkan, begitu pula keringanan pajak bagi pekerja yang pindah dari luar negeri, seperti <em>30% ruling</em> di Belanda dan rezim Beckham di Spanyol, serta Employment Pass di Singapura yang tidak dikenai iuran CPF.",
-    "<strong>Setiap potongan ada sumbernya.</strong> Tiap baris pajak dan iuran diberi nama, tanggal berlaku, dan tautan ke sumber resminya, sehingga angkanya bisa kamu cek sendiri.",
+    "<strong>Skema khusus pekerja asing.</strong> Status penduduk pajak ikut diperhitungkan, begitu pula keringanan pajak bagi pekerja yang pindah dari luar negeri, seperti <em>30% ruling</em> di Belanda dan Beckham Law di Spanyol. Untuk Singapura, pemegang Employment Pass (izin kerja) dihitung tanpa iuran CPF (Central Provident Fund, tabungan pensiun wajib).",
+    "<strong>Setiap potongan ada sumbernya.</strong> Tiap baris pajak dan iuran dilengkapi nama, tanggal berlaku, dan tautan ke sumber resminya, sehingga angkanya bisa kamu cek sendiri.",
     "<strong>Data gajimu tetap di perangkatmu.</strong> Semua hitungan berjalan di <em>browser</em>, tanpa akun dan tanpa mengunggah data."
   ],
   "countriesH2": "Aturan pajak per negara, dalam bahasa Indonesia",
   "countriesIntro": "Untuk setiap negara ada halaman berbahasa Indonesia yang merangkum aturan pajak penghasilannya, memberi contoh perhitungan untuk beberapa tingkat gaji, dan menjawab pertanyaan yang sering muncul. Setiap contoh bisa dibuka langsung di kalkulator.",
   "uiH2": "Tampilan kalkulatornya berbahasa Inggris",
-  "ui": "Tampilan kalkulatornya masih berbahasa Inggris, tetapi cara memakainya sederhana: pilih negara di <strong>Country</strong>, masukkan gaji kotor setahun atau sebulan, lalu baca gaji bersih dan rincian potongannya. Tombol <strong>Hitung PPh 21 gajimu di Indonesia</strong> membuka kalkulator dengan Indonesia sudah terpilih, sedangkan tombol di setiap halaman negara membuka negara itu.",
+  "ui": "Tampilan kalkulatornya masih berbahasa Inggris, tetapi cara memakainya sederhana: pilih negara di kolom <strong>Country</strong>, masukkan gaji kotor setahun atau sebulan, lalu baca gaji bersih dan rincian potongannya. Tombol <strong>Hitung PPh 21 gajimu di Indonesia</strong> membuka kalkulator dalam keadaan Indonesia sudah terpilih, sedangkan tombol di setiap halaman negara melakukan hal yang sama untuk negara itu.",
   "openId": "Hitung PPh 21 gajimu di Indonesia",
   "open": "Buka kalkulatornya",
   "end": "Mau langsung membandingkan tawaran kerja di beberapa negara?",
-  "endMore": "Lalu bandingkan daya belinya dengan Cost of Living Comparator"
+  "endMore": "Bandingkan daya beli gaji bersihmu di tool Cost of Living Comparator"
 }
