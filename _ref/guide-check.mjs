@@ -17,6 +17,9 @@
 
    The screen's still scene must outline every part it names.
 
+   A tool whose guide has an Indonesian twin (<tool>/guides/id/scenes.js, the same scenes
+   played against the tool's id/ pages through guide-id.js) is checked in both languages.
+
    Run: node _ref/guide-check.mjs [tool ...]   (REAL=1: at a reader's pace, not at once)
 */
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
@@ -49,8 +52,18 @@ const browser = await chromium.launch();
 let failed = 0, passed = 0;
 const fail = (msg) => { console.log('FAIL ' + msg); failed++; };
 
+// Each guide of a tool: the English one, and its Indonesian twin when it has one.
+const GUIDES = [];
 for (const tool of TOOLS) {
   if (!existsSync(join(ROOT, tool, 'guides', 'scenes.js'))) { fail(tool + ': no guides/scenes.js'); continue; }
+  GUIDES.push({ tool, dir: tool + '/guides/', name: tool });
+  if (existsSync(join(ROOT, tool, 'guides', 'id', 'index.html'))) {
+    if (!existsSync(join(ROOT, tool, 'guides', 'id', 'scenes.js'))) fail(tool + ': guides/id/ has no scenes.js');
+    else GUIDES.push({ tool, dir: tool + '/guides/id/', name: tool + ' [id]' });
+  }
+}
+
+for (const { dir, name: tool } of GUIDES) {
   for (const theme of ['light', 'dark']) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     // The libraries from cdnjs load as for a reader; analytics and the rest of the web do not.
@@ -64,7 +77,7 @@ for (const tool of TOOLS) {
     page.on('request', r => { if (/highs\.wasm/.test(r.url())) solver.push(r.frame().name() || r.url()); });
     const pageErrors = [];
     page.on('pageerror', e => pageErrors.push(e.message));
-    await page.goto(base + tool + '/guides/');
+    await page.goto(base + dir);
     const scenes = await page.evaluate(() => GuideLive.ready.then(() => GuideLive.scenes.SCENES.map(s => ({ name: s.name, still: !!s.still }))));
     const onPage = await page.evaluate(() => GuideLive.demos.map(d => d.name));
     for (const n of onPage) if (!scenes.some(s => s.name === n)) fail(`${tool} (${theme}): the page has a demo "${n}" with no scene`);

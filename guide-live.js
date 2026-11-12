@@ -30,6 +30,10 @@
    to the guide, and may carry a query or a hash) opens that page instead of TOOL.path, with
    its own `ready(win)` when the page differs, and `seen` keys added to TOOL.seen.
 
+   A guide in Indonesian (<tool>/guides/id/, <html lang="id">) plays the same scenes against the
+   tool's Indonesian page (its scenes.js goes through guide-id.js), and the words drawn here
+   (Play, Full screen, Live demo ...) are Indonesian there (W below).
+
    _ref/guide-check.mjs plays every scene of a guide and fails on a broken one, and
    _ref/presolve.mjs solves ahead whatever a scene runs, so a demo never fetches the solver.
    Both drive the page through window.GuideLive. */
@@ -47,6 +51,16 @@
   var ABORT = { abort: true };
   var reduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   var theme = function () { return body.classList.contains('light') ? 'light' : 'dark'; };
+  // The words a reader sees: Indonesian on a guide whose <html lang> is id (<tool>/guides/id/).
+  var W = /^id\b/i.test(document.documentElement.lang || '') ? {
+    play: 'Putar', pause: 'Jeda', playTitle: 'Putar atau jeda demo', full: 'Layar penuh', fullTitle: 'Tampilkan demo di layar penuh',
+    exitFull: 'Keluar dari layar penuh', live: 'Demo langsung', trying: 'Dijeda: coba tool-nya di sini, atau tekan Putar',
+    tool: 'Tool-nya', step: 'Menuju langkah ', loading: 'Memuat tool…', failed: 'Demo tidak bisa dimuat. Buka tool-nya untuk mencobanya.'
+  } : {
+    play: 'Play', pause: 'Pause', playTitle: 'Play or pause the demo', full: 'Full screen', fullTitle: 'Show the demo full screen',
+    exitFull: 'Exit full screen', live: 'Live demo', trying: 'Paused: try the tool here, or press Play',
+    tool: 'The tool', step: 'Going to step ', loading: 'Loading the tool…', failed: 'The demo could not load. Open the tool to try it.'
+  };
   var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
   var frame1 = function () { return new Promise(function (r) { requestAnimationFrame(function () { r(); }); }); };
 
@@ -80,8 +94,8 @@
       var label = document.createElement('span');
       label.className = 'gd-cap';
       label.textContent = cap;
-      play = button('Play', 'Play or pause the demo');
-      var full = button('Full screen', 'Show the demo full screen');
+      play = button(W.play, W.playTitle);
+      var full = button(W.full, W.fullTitle);
       bar.appendChild(label); bar.appendChild(play); bar.appendChild(full);
       fig.appendChild(view); fig.appendChild(bar);
       // The whole figure goes full screen, so its bar (Pause, Exit full screen) comes along.
@@ -99,7 +113,7 @@
       });
       d.fullLabel = function () {
         var on = (document.fullscreenElement || document.webkitFullscreenElement) === fig;
-        full.textContent = on ? 'Exit full screen' : 'Full screen';
+        full.textContent = on ? W.exitFull : W.full;
       };
       full.addEventListener('click', function () {
         if ((document.fullscreenElement || document.webkitFullscreenElement) === fig) {
@@ -124,7 +138,7 @@
     }
     veil = document.createElement('div');
     veil.className = 'gd-veil';
-    veil.textContent = still ? '' : 'Live demo';
+    veil.textContent = still ? '' : W.live;
     view.appendChild(veil);
 
     function button(text, title) {
@@ -140,11 +154,11 @@
     function setLabel() {
       if (!play) return;
       var r = d.run, going = r && r.begun && !r.paused && !r.fast;
-      play.textContent = going ? 'Pause' : 'Play';
+      play.textContent = going ? W.pause : W.play;
       var trying = !!(r && r.begun && r.paused && d.userPaused);
       guard.hidden = !(going || (r && r.fast));
       root.classList.toggle('is-trying', trying);
-      label.textContent = trying ? 'Paused: try the tool here, or press Play' : cap;
+      label.textContent = trying ? W.trying : cap;
     }
     d.lit = function (k) {
       steps.forEach(function (li, i) {
@@ -206,7 +220,7 @@
       var st = sc.storage || mod.TOOL.storage || {};
       Object.keys(st).forEach(function (k) { seed[k] = st[k]; });
       var f = document.createElement('iframe');
-      f.title = still ? 'The tool' : 'Live demo: ' + cap;
+      f.title = still ? W.tool : W.live + ': ' + cap;
       f.setAttribute('aria-hidden', 'true');
       f.tabIndex = -1;
       f.setAttribute('data-storage', JSON.stringify(seed));
@@ -218,7 +232,7 @@
         wake: null, cur: { x: w / 2, y: h / 2 }, over: null, down: null, marks: [], errors: [], t0: Date.now(), done: null };
       r.finished = new Promise(function (res) { r.done = res; });
       d.state = 'loading';
-      setVeil(true, still ? '' : upTo >= 0 ? 'Going to step ' + (Math.min(upTo, steps.length - 1) + 1) + '…' : 'Loading the tool…');
+      setVeil(true, still ? '' : upTo >= 0 ? W.step + (Math.min(upTo, steps.length - 1) + 1) + '…' : W.loading);
       fit(); setLabel(); d.lit(-1);
       f.addEventListener('load', function () { if (d.run === r) go(r, sc); }, { once: true });
       return r.finished;
@@ -230,7 +244,7 @@
       unqueue(d);
       if (d.state === 'loading') turnSoon();
       d.frame = null; d.run = null; d.state = 'idle';
-      setVeil(true, still ? '' : 'Live demo');
+      setVeil(true, still ? '' : W.live);
       setLabel();
     };
 
@@ -866,7 +880,7 @@
     if (document.readyState === 'complete') watch(); else window.addEventListener('load', watch, { once: true });
   }).catch(function (e) {
     if (window.console) console.warn('Guide demos: the scenes did not load (' + (e && e.message) + ')');
-    demos.forEach(function (d) { var v = d.root.querySelector('.gd-veil'); if (v) v.textContent = 'The demo could not load. Open the tool to try it.'; });
+    demos.forEach(function (d) { var v = d.root.querySelector('.gd-veil'); if (v) v.textContent = W.failed; });
   });
   function watch() {
     if ('IntersectionObserver' in window) {
