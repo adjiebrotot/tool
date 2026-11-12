@@ -69,6 +69,8 @@ export class Viewer {
     this.playing = false;
     this._raf = 0;
     this._tick = this._tick.bind(this);
+    this.onFrame = null;    // called after each frame (the ruler draws its overlay)
+    this.decorate = null;   // (ctx, w, h, scale): draws over the PNG (the ruler's lines and labels)
 
     this._ro = new ResizeObserver(() => this.resize());
     this._ro.observe(host);
@@ -86,6 +88,7 @@ export class Viewer {
     this._clip();
     if (this.mixer && this.playing) this.mixer.update(dt);
     this.renderer.render(this.scene, this.camera);
+    if (this.onFrame) this.onFrame();
     if (moved || (this.mixer && this.playing)) this.request();
   }
 
@@ -321,14 +324,24 @@ export class Viewer {
   }
 
   // ── Picture ──
-  /** A PNG of the current view, at twice the screen's pixels where it is lower. */
+  /** A PNG of the current view, at twice the screen's pixels where it is lower,
+      with the ruler's measurements drawn over it. */
   snapshot() {
     const r = this.renderer;
     const ratio = r.getPixelRatio();
     const want = Math.max(ratio, 2);
     if (want !== ratio) { r.setPixelRatio(want); r.setSize(this.host.clientWidth, this.host.clientHeight, false); }
     r.render(this.scene, this.camera);
-    return new Promise(res => r.domElement.toBlob(b => {
+    let out = r.domElement;
+    if (this.decorate) {
+      // Copied while the frame just drawn is still there, then drawn over.
+      out = document.createElement('canvas');
+      out.width = r.domElement.width; out.height = r.domElement.height;
+      const g = out.getContext('2d');
+      g.drawImage(r.domElement, 0, 0);
+      this.decorate(g, out.width, out.height, out.width / Math.max(1, this.host.clientWidth));
+    }
+    return new Promise(res => out.toBlob(b => {
       if (want !== ratio) { r.setPixelRatio(ratio); r.setSize(this.host.clientWidth, this.host.clientHeight, false); this.request(); }
       res(b);
     }, 'image/png'));

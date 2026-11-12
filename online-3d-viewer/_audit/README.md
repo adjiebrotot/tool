@@ -52,7 +52,11 @@ Wireframe and Grid; a drag turns the view and ⟳ puts it back exactly; ⬇ PNG
 (a PNG named after the model, at twice the screen's pixels); the night theme
 repainting the stage; a real drop of OBJ + MTL + PNG; a folder (paths like
 `textures/x.png`); a bad file over an open model (the model stays, a note
-explains, ✕ closes it); the display switches remembered after a reload; the
+explains, ✕ closes it); the ruler (a distance and two areas, each click 5 px
+off a corner so snapping must land it exactly: 30 with ΔX 30, the top face 600
+with perimeter 100 closed by Enter, the front face 300 closed on its first
+corner; a drag places nothing; Up flipped keeps them; Undo, Esc, the bin; a new
+model starts empty); the display switches remembered after a reload; the
 sample model and its animation, paused by ❚❚; and a phone width with no
 sideways scroll.
 
