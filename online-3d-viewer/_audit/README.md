@@ -60,7 +60,19 @@ model starts empty); the display switches remembered after a reload; the
 sample model and its animation, paused by ❚❚; and a phone width with no
 sideways scroll.
 
-The last run: 419 checks passed, 0 failed.
+Then the ruler's snapping, on a plate 60 × 40 × 10 written as an STL in the
+run (a round hole of radius 8, a square hole and a slot cut through it), each
+pick a few pixels off its target: the round hole's centre tagged ⌀ 16, a slot
+end's centre tagged R 3, the square hole's centre, an edge's midpoint, a
+corner, a point along an edge (on the edge), a point on the round edge (on the
+circle, not its chord), a flat face's centre, the perpendicular foot from the
+last point to an edge and to a face, Shift placing on the bare surface, and a
+corner hidden behind the plate never taken; hovering shows the centre marker
+and Shift drops it; hole centre to edge midpoint measures 25. On the STEP box,
+whose edges come from its CAD faces: a corner, a midpoint, the top face's
+centre, and the triangle diagonal inside a face snapping to nothing.
+
+The last run: 439 checks passed, 0 failed.
 
 ## 3. Real-world models (`--real`)
 
