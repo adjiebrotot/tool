@@ -104,8 +104,8 @@
           {
             "@type": "ListItem",
             "position": 8,
-            "name": "Skill Global Income Tax Calculator",
-            "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"
+            "name": "Skill Kalkulator Gaji Bersih dan Pajak Penghasilan",
+            "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/"
           },
           {
             "@type": "ListItem",
@@ -217,7 +217,7 @@
 
   <main>
     <header class="gd-hero">
-      <h1>Pakai Adjie Brotools di AI-mu</h1>
+      <h1>Pakai Adjie Brotools di <span style="white-space:nowrap">AI-mu</span></h1>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open" href="#tools">Lihat 14 skill</a>
         <a class="gd-skip" href="#install">Cara memasang</a>
@@ -257,9 +257,9 @@
 
     <section class="gd-sec card" id="use" aria-labelledby="use-h">
       <h2 id="use-h">Cara memakainya</h2>
-      <p class="gd-sub">Bertanyalah seperti kamu bertanya kepada teman. Dengan skill ini, AI memakai angka darimu apa adanya, mencari sendiri sisanya, lalu memberimu tautan. AI tidak menjawab sendiri, karena jawabannya baru dihitung oleh <em>tool</em> begitu tautan itu kamu buka.</p>
+      <p class="gd-sub">Bertanyalah seperti kamu bertanya kepada teman. Begitu skill ini terpasang, AI memakai angka darimu apa adanya, mencari sendiri sisanya, lalu memberimu tautan. AI tidak menjawab sendiri, karena jawabannya baru dihitung oleh <em>tool</em> begitu tautan itu kamu buka.</p>
       <div class="ai-ex-pick"><label for="aiExample">Contoh dengan</label>
-        <select id="aiExample"><optgroup label="Keuangan"><option value="pisahvsgabung">Pisah vs Gabung Harta</option><option value="rentvsownhouse" selected>Sewa vs Beli Rumah</option></optgroup></select></div>
+        <select id="aiExample"><optgroup label="Keuangan"><option value="global-income-tax-calculator">Kalkulator Gaji Bersih dan Pajak Penghasilan</option><option value="pisahvsgabung">Pisah vs Gabung Harta</option><option value="rentvsownhouse" selected>Sewa vs Beli Rumah</option></optgroup></select></div>
       <div class="ai-chat" aria-label="Contoh percakapan" data-tool="rentvsownhouse">
         <div class="ai-msg ai-user"><p>Saya sedang menimbang beli rumah tapak di Jakarta Timur seharga Rp 1,5 miliar, atau tetap ngontrak Rp 45 juta setahun. Mana yang lebih masuk akal?</p></div>
         <div class="ai-work">
@@ -299,9 +299,28 @@
         </div>
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Putar ulang</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/pisahvsgabung/id/#load&amp;v=1&amp;qs=double&amp;husbandSalaryInput=300000000&amp;wifeSalaryInput=216000000&amp;dependents=2&amp;why.dependents=Dua%20anak,%20sesuai%20yang%20kamu%20sebutkan&amp;note=Suami%20dan%20istri%20sama-sama%20bergaji,%202%20anak,%20November%202026" target="_blank" rel="noopener">Buka skenario ini</a></div>
       </div>
+      <div class="ai-chat" aria-label="Contoh percakapan" data-tool="global-income-tax-calculator" hidden>
+        <div class="ai-msg ai-user"><p>Saya dapat dua tawaran kerja: S$120.000 setahun di Singapura dengan Employment Pass, atau Rp 900 juta setahun di Jakarta. Saya sudah menikah dan punya satu anak. Setelah pajak, mana yang sisanya lebih besar?</p></div>
+        <div class="ai-work">
+          <span class="ai-chip">Memakai skill <strong>brotools-global-income-tax-calculator</strong></span>
+          <span class="ai-chip">Mencari: Tarif pajak penghasilan Singapura untuk pemegang Employment Pass, YA2027</span>
+          <span class="ai-chip">Mencari: PPh 21 dan iuran BPJS bagian karyawan, 2026</span>
+          <span class="ai-chip">Menjalankan <code>scripts/build_link.py</code>: tautan sudah dicek</span>
+        </div>
+        <div class="ai-msg ai-bot">
+          
+          <h3>Asumsi</h3>
+          <ol><li>Singapura: sebagai pemegang Employment Pass, kamu tidak membayar iuran CPF, dan saya anggap kamu tinggal di sana sepanjang tahun sehingga dikenai pajak sebagai penduduk pajak (resident).</li><li>Jakarta: penduduk pajak Indonesia yang menikah dengan satu tanggungan (PTKP K/1), dengan PPh 21 dan iuran BPJS bagian karyawan dipotong dari gaji kotor. THR dan bonus saya anggap sudah termasuk dalam Rp900 juta itu.</li><li>Mata uang: kedua gaji ditampilkan dalam rupiah dengan kurs yang tercantum di halaman, hanya untuk perbandingan.</li></ol>
+          <h3>Skenariomu</h3>
+          <p><a class="ai-link" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/#load&amp;v=1&amp;dispCur=IDR&amp;why.dispCur=Kedua%20gaji%20dibaca%20dalam%20rupiah%20supaya%20mudah%20dibandingkan&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:120000%7D,%7B%22country%22:%22ID%22,%22idMarried%22:true,%22idDeps%22:1,%22amount%22:900000000%7D%5D%7D&amp;note=Singapura%20dan%20Jakarta,%20November%202026" target="_blank" rel="noopener">Buka Kalkulator Gaji Bersih dan Pajak Penghasilan dengan skenario ini</a></p>
+          <pre class="ai-code"><code>https://tool.adjiebrotots.com/global-income-tax-calculator/id/#load&amp;v=1&amp;dispCur=IDR&amp;why.dispCur=Kedua%20gaji%20dibaca%20dalam%20rupiah%20supaya%20mudah%20dibandingkan&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:120000%7D,%7B%22country%22:%22ID%22,%22idMarried%22:true,%22idDeps%22:1,%22amount%22:900000000%7D%5D%7D&amp;note=Singapura%20dan%20Jakarta,%20November%202026</code></pre>
+          <p><strong>Buka tautannya untuk melihat hasilnya.</strong></p>
+        </div>
+        <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Putar ulang</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/#load&amp;v=1&amp;dispCur=IDR&amp;why.dispCur=Kedua%20gaji%20dibaca%20dalam%20rupiah%20supaya%20mudah%20dibandingkan&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:120000%7D,%7B%22country%22:%22ID%22,%22idMarried%22:true,%22idDeps%22:1,%22amount%22:900000000%7D%5D%7D&amp;note=Singapura%20dan%20Jakarta,%20November%202026" target="_blank" rel="noopener">Buka skenario ini</a></div>
+      </div>
       <ul class="gd-facts">
-        <li><strong>Angkamu tetap angkamu.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.</li>
-        <li><strong>Dicek sebelum sampai ke kamu.</strong> Skrip di dalam skill mengecek nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautannya, sehingga yang terbuka memang skenario yang tertulis.</li>
+        <li><strong>Angka darimu tidak diubah.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.</li>
+        <li><strong>Dicek sebelum sampai kepadamu.</strong> Skrip di dalam skill mengecek nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautannya, sehingga yang terbuka memang skenario yang tertulis.</li>
         <li><strong><em>Tool</em> menunjukkan pilihan AI.</strong> Begitu tautan dibuka, sebuah <em>banner</em> mencantumkan setiap nilai yang diisi AI beserta alasannya, lengkap dengan tombol untuk kembali ke <em>input</em>-mu sendiri.</li>
       </ul>
     </section>
@@ -420,13 +439,12 @@
           </div>
         </li>
         <li class="ai-tool card" data-domain="Finance">
-          <h3 lang="en"><svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="10" cy="10" r="7"/> <path stroke="var(--accent)" d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/> <path stroke="var(--accent2)" d="M15.5 16.5h6M15.5 19.5h6M18.5 13.5v9"/> </svg>Global Income Tax Calculator</h3>
+          <h3><svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="10" cy="10" r="7"/> <path stroke="var(--accent)" d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/> <path stroke="var(--accent2)" d="M15.5 16.5h6M15.5 19.5h6M18.5 13.5v9"/> </svg>Kalkulator Gaji Bersih dan Pajak Penghasilan</h3>
           <p>Berapa sisa gaji setelah pajak penghasilan di 31 negara, termasuk 39 negara bagian AS dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, lalu baca penjelasan aturan pajak tiap negara dalam bahasa Indonesia.</p>
           <p class="ai-tool-skill"><code>brotools-global-income-tax-calculator</code></p>
           <div class="ai-tool-btns">
-            <a class="btn-sm btn-primary" href="../../global-income-tax-calculator/ai/" hreflang="en">Ambil skill-nya</a>
-            <a class="btn-sm btn-theme" href="../../global-income-tax-calculator/" hreflang="en">Buka tool-nya</a>
-            <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
+            <a class="btn-sm btn-primary" href="../../global-income-tax-calculator/ai/id/">Ambil skill-nya</a>
+            <a class="btn-sm btn-theme" href="../../global-income-tax-calculator/id/">Buka tool-nya</a>
           </div>
         </li>
         <li class="ai-tool card" data-domain="Finance">

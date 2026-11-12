@@ -72,6 +72,7 @@ The same skills explained for people in Indonesian, every tool listed: https://t
 AI pages in Indonesian (each links the tool's Indonesian page; the skill is the same):
 - Sewa vs Beli Rumah (Rent vs Own): https://tool.adjiebrotots.com/rentvsownhouse/ai/id/
 - Pisah vs Gabung Harta (Pisah vs Gabung Harta): https://tool.adjiebrotots.com/pisahvsgabung/ai/id/
+- Kalkulator Gaji Bersih dan Pajak Penghasilan (Global Income Tax Calculator): https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/
 <!-- agent:end -->
 
 ## Why these tools stand out

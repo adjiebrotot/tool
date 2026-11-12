@@ -11,6 +11,8 @@ Global Income Tax Calculator is a free calculator that runs in the user's browse
 
 - **Global Income Tax Calculator** (`global-income-tax-calculator`): Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.
 
+Indonesian versions take the same keys and Quick Starts. Use them when the user writes in Indonesian: `global-income-tax-calculator/id` (https://tool.adjiebrotots.com/global-income-tax-calculator/id/).
+
 ## Workflow
 
 1. **Pick the page.** Read the user's request and choose the page above that answers it. Open its reference (`references/<page>.md`, listed under Files) and read the LINK FORMAT, the most important keys and the Quick Starts. The reference is long: read the parts you need.
@@ -101,6 +103,7 @@ Open the link to see the result.
 ## Files
 
 - `references/global-income-tax-calculator.md`: Global Income Tax Calculator. Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
+- `references/global-income-tax-calculator-id.md`: Kalkulator Gaji Bersih dan Pajak Penghasilan (Indonesian page). Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
 - `references/params.json`: the same keys as data (what the script checks against).
 - `scripts/build_link.py`: builds and checks the link. `python3 scripts/build_link.py --help` explains it.
 
