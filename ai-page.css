@@ -203,6 +203,8 @@
 .ai-tool-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
 .ai-tool-btns .btn-sm { padding: 6px 14px; font-size: .82rem; text-decoration: none; }
 /* The Indonesian hub (/ai/id/): a tool with no Indonesian page, marked EN as on the Indonesian home */
+.ai .gd-top .btn-back { min-width: 0; overflow: hidden; white-space: nowrap; }
+.ai .gd-top-r { flex: none; }
 .ai-tool-btns .tool-lang { align-self: center; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .04em; }
 
 /* The "Effective <date>" line under the install demo: a footnote */

@@ -70,6 +70,7 @@ await page.evaluate(() => localStorage.clear());
 await go(EN);
 await page.evaluate(() => {
   const G = window.__GSC, set = (id, v) => { const el = document.getElementById(id); if(el.type === 'checkbox') el.checked = !!v; else el.value = String(v); el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
+  while(document.querySelectorAll('.job-del').length) document.querySelector('.job-del').click();
   set('country', 'PT'); set('ptRegime', 'jovem'); set('ptJovemYear', '3'); set('ptHealth', '2,345.67'); set('amount', '123,456.78');
   G.addJob(); set('country', 'DE'); set('deAddOn', '3.125'); set('deChurch', '9'); set('amount', '98,765'); set('period', 'monthly');
   G.addJob(); set('country', 'US'); set('usState', 'NY'); set('usNyc', true); set('dir', 'net'); set('amount', '150,000');
@@ -81,7 +82,8 @@ const savedEn = await state();
 await go(ID);
 const onId = await state();
 check('work saved on the English page opens on id/ unchanged (fields, jobs, figures, chart)', same(savedEn, onId), firstDiff(savedEn, onId));
-check('a number typed on the English page reads the same on id/ (amount 123,456.78)', onId.jobs[0].amount === '123,456.78' && onId.figures[0][0] === savedEn.figures[0][0], onId.jobs[0].amount);
+const pt = onId.jobs.findIndex(j => j.country === 'PT');
+check('a number typed on the English page reads the same on id/ (amount 123,456.78, health 2,345.67)', pt >= 0 && onId.jobs[pt].amount === '123,456.78' && onId.jobs[pt].ptHealth === '2,345.67' && onId.figures[pt][0] === 123456.78, JSON.stringify(onId.jobs.map(j => [j.country, j.amount])));
 await page.evaluate(() => { const el = document.getElementById('amount'); el.value = '87,654.32'; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); });
 await page.waitForTimeout(1200);
 const savedId = await state();

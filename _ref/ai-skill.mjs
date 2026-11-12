@@ -33,7 +33,7 @@ import { ROOT, SITE, AI_RULES, WHY_MAX, buildLink } from './agent-lib.mjs';
    main    the page whose title, glyph and example the AI page shows
    name    the tool's name for people
    nameId  its name on the Indonesian AI page, when the tool has an Indonesian page and a
-           name of its own there (default: name)
+           name of its own there (default: name); backId, a shorter one for its back button
    use     when an assistant should reach for the skill (the YAML description's trigger) */
 export const TOOLS = [
   { tool: 'rentvsownhouse', research: 'mortgage and loan rates, rents and prices, tax, duty and fee schedules, inflation, salaries and fees for the user\'s place and date (central banks, tax offices, statistics agencies, lenders)', main: 'rentvsownhouse', name: 'Rent vs Own', nameId: 'Sewa vs Beli Rumah',
@@ -50,7 +50,7 @@ export const TOOLS = [
     use: 'whether an asking price is fair: a used car, a house, a hotel night or any item, fitted against comparable listings (price against year, mileage, size and other features).' },
   { tool: 'costofliving-comparator', research: 'take-home pay after tax, rents, groceries and other costs in each city (statistics agencies, payroll calculators, cost of living surveys), and exchange rates', main: 'costofliving-comparator', name: 'Cost of Living Comparator',
     use: 'moving between cities: how far a salary goes elsewhere, the salary needed in another city to live and save the same, comparing cost of living across many cities or on a world map.' },
-  { tool: 'global-income-tax-calculator', research: 'the job\'s pay as the user gave it, and anything the user did not say that the tool asks (residency status, state or province, family); the tool holds the 2026 tax and contribution rules itself, never type them in', main: 'global-income-tax-calculator', name: 'Global Income Tax Calculator', nameId: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
+  { tool: 'global-income-tax-calculator', research: 'the job\'s pay as the user gave it, and anything the user did not say that the tool asks (residency status, state or province, family); the tool holds the 2026 tax and contribution rules itself, never type them in', main: 'global-income-tax-calculator', name: 'Global Income Tax Calculator', nameId: 'Kalkulator Gaji Bersih dan Pajak Penghasilan', backId: 'Kalkulator Gaji Bersih',
     use: 'take-home pay after income tax and social contributions for a job in one of 31 countries or any US state (gross to net, or the gross needed for a take-home amount), and comparing up to four job offers or cities side by side.' },
   { tool: 'dcasimulator', research: 'the exact ticker symbols (exchange suffixes such as .JK or .AX), fees and the date range the user means; prices load in the tool, never type them in', main: 'dcasimulator', name: 'DCA Scenario Explorer',
     use: 'backtesting regular investing (dollar cost averaging) into stocks, ETFs or crypto on past prices, comparing tickers, schedules and buying rules, and multi-ticker portfolios with rebalancing.' },
@@ -666,7 +666,7 @@ export function aiPage(T, models, demo, lang = 'en') {
     ],
   } }) + `
   <nav class="gd-top" aria-label="${W.site}">
-    <a class="btn-theme btn-back" href="${attr(toolHref)}">← ${esc(toolName)}</a>
+    <a class="btn-theme btn-back" href="${attr(toolHref)}">← ${esc(ID && T.backId || toolName)}</a>
     <div class="gd-top-r">
       <a class="btn-primary gd-open gd-open-top" href="${attr(zipHref)}" download>${W.dlSkill}</a>${alts ? `
       ${W.toggle}` : ''}
