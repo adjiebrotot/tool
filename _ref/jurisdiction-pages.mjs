@@ -2,13 +2,15 @@
 // Writes the Global Income Tax Calculator's jurisdiction pages, one per country in two
 // languages: global-income-tax-calculator/<slug>/ (English) and <slug>/id/ (Indonesian).
 //
-//   node _ref/jurisdiction-pages.mjs            write every page, the guide's list and the sitemap
+//   node _ref/jurisdiction-pages.mjs            write every page, the Indonesian hub, the guide's list and the sitemap
 //   node _ref/jurisdiction-pages.mjs --check    write nothing; fail if a page is out of date
 //
 // What each page holds comes from three places, so no figure is typed by hand:
 //   global-income-tax-calculator/_jurisdictions/scenarios.mjs   the worked examples' inputs
 //   global-income-tax-calculator/engine.js                       every amount on the page
 //   global-income-tax-calculator/_jurisdictions/content/<slug>.<lang>.json   the prose
+// The Indonesian hub (global-income-tax-calculator/id/, the tool's page for Indonesian readers:
+// what it does and every country's id/ page) takes its prose from content/_hub.id.json.
 // The content files are written per language from one brief (never translated), and
 // name their examples by the keys in scenarios.mjs. An example key, a slug and the
 // folder names are a page's address and anchors: once published, keep them.
@@ -20,6 +22,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PAGES } from '../global-income-tax-calculator/_jurisdictions/scenarios.mjs';
 import { run, loadLink, E } from '../global-income-tax-calculator/_jurisdictions/compute.mjs';
+import { xhtmlLinks } from './hreflang.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOOL = 'global-income-tax-calculator';
@@ -55,7 +58,7 @@ const T = {
     toc: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator leaves out', 'Questions'],
     h2: ['Tax rules at a glance', 'Worked examples', 'Tax tips', 'What the calculator does not model', 'Frequently asked questions'],
     sources: 'Sources',
-    refs: 'References', refsToc: 'References', back: 'Back to the text',
+    refs: 'References', refsToc: 'References', refBack: 'Back to the text',
     rulesLine: (year, place) => `Rules for ${year}${place ? ', ' + place : ''}. Every amount below is worked out by the calculator's own engine, the same one the tool runs.`,
     gross: 'Gross pay', grossW: 'a year, before tax',
     net: 'Take-home pay',
@@ -83,14 +86,15 @@ const T = {
   },
   id: {
     tool: 'Global Income Tax Calculator',
-    back: '← Global Income Tax Calculator',
+    back: '← Pajak di 31 negara',
+    hub: 'Pajak penghasilan di 31 negara',
     open: 'Buka kalkulatornya',
     openOwn: 'Hitung gajimu sendiri',
     langOther: 'English version', langOtherShort: 'EN', langOtherTitle: 'Read in English',
     toc: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung', 'Tanya jawab'],
     h2: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung kalkulator ini', 'Pertanyaan yang sering diajukan'],
     sources: 'Sumber',
-    refs: 'Referensi', refsToc: 'Referensi', back: 'Kembali ke teks',
+    refs: 'Referensi', refsToc: 'Referensi', refBack: 'Kembali ke teks',
     rulesLine: (year, place) => `Aturan tahun ${year}${place ? ', ' + place : ''}. Semua angka di bawah ini dihitung oleh mesin hitung yang sama dengan yang dipakai kalkulatornya.`,
     gross: 'Gaji kotor', grossW: 'setahun, sebelum pajak',
     net: 'Gaji bersih',
@@ -176,7 +180,7 @@ function makeRefs(lang, where){
     html(){
       if(!list.length) return '';
       const t = T[lang];
-      const back = r => Array.from({ length: r.uses }, (_, k) => ` <a class="jx-back" href="#cite-${r.n}-${k + 1}" role="doc-backlink" aria-label="${t.back}">↩${r.uses > 1 ? `<sup>${k + 1}</sup>` : ''}</a>`).join('');
+      const back = r => Array.from({ length: r.uses }, (_, k) => ` <a class="jx-back" href="#cite-${r.n}-${k + 1}" role="doc-backlink" aria-label="${t.refBack}">↩${r.uses > 1 ? `<sup>${k + 1}</sup>` : ''}</a>`).join('');
       return `
     <section class="gd-sec card jx-refs" id="references" aria-labelledby="references-h" role="doc-endnotes">
       <h2 id="references-h">${t.refs}</h2>
@@ -269,8 +273,8 @@ function page(p, lang){
     {
       '@context': 'https://schema.org', '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: t.crumbs, item: `${SITE}/` },
-        { '@type': 'ListItem', position: 2, name: t.tool, item: BASE },
+        { '@type': 'ListItem', position: 1, name: t.crumbs, item: lang === 'id' ? `${SITE}/id/` : `${SITE}/` },
+        { '@type': 'ListItem', position: 2, name: lang === 'id' ? t.hub : t.tool, item: lang === 'id' ? `${BASE}id/` : BASE },
         { '@type': 'ListItem', position: 3, name: strip(c.h1), item: url },
       ],
     },
@@ -361,7 +365,8 @@ ${readContent(p.slug, 'id') ? `<link rel="alternate" hreflang="id" href="${urlId
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(t.ogAlt)}">
 <meta property="og:locale" content="${t.locale}">
-
+${hasOther ? `<meta property="og:locale:alternate" content="${T[lang === 'id' ? 'en' : 'id'].locale}">
+` : ''}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(strip(c.h1))}">
 <meta name="twitter:description" content="${esc(strip(c.description))}">
@@ -386,7 +391,7 @@ ${ld.map(o => `<script type="application/ld+json">\n${JSON.stringify(o, null, 2)
 <div class="container gd jx">
 
   <nav class="gd-top" aria-label="Site">
-    <a class="btn-theme btn-back" href="${toolRel}">${t.back}</a>
+    <a class="btn-theme btn-back" href="${lang === 'id' ? '../../id/' : toolRel}">${t.back}</a>
     <div class="gd-top-r">
       <a class="btn-primary gd-open gd-open-top" href="${esc(ownLink)}">${t.open}</a>
       ${hasOther ? `<a id="langToggle" class="btn-theme" href="${lang === 'id' ? '../' : 'id/'}" hreflang="${lang === 'id' ? 'en' : 'id'}" lang="${lang === 'id' ? 'en' : 'id'}" title="${t.langOtherTitle}">${t.langOtherShort}</a>` : ''}
@@ -473,7 +478,7 @@ ${refs.html()}
 
   <footer>
     <p class="footer-collab">${t.collab}</p>
-    <p class="footer-links"><a href="${up}disclaimer/${lang === 'id' ? 'id/' : ''}">${t.links[0]}</a> · <a href="${up}privacy/${lang === 'id' ? 'id/' : ''}">${t.links[1]}</a> · <a href="https://blog.adjiebrotots.com/">${t.links[2]}</a> · <span class="footer-updated">${updated}</span></p>
+    <p class="footer-links"><a href="${up}disclaimer/${lang === 'id' ? 'id/' : ''}">${t.links[0]}</a> · <a href="${up}privacy/${lang === 'id' ? 'id/' : ''}">${t.links[1]}</a> · <a href="https://blog.adjiebrotots.com/${lang === 'id' ? 'id/' : ''}"${lang === 'id' ? ' hreflang="id"' : ''}>${t.links[2]}</a> · <span class="footer-updated">${updated}</span></p>
     <div class="gd-made">
       <img loading="lazy" src="${up}logos/australian.png" alt="${t.flagAlt[0]}" class="gd-flag">
       <div><img loading="lazy" src="${up}logos/gpl.png" alt="GNU GPL"><span>${t.gpl}</span></div>
@@ -507,14 +512,188 @@ function guideList(){
       <!-- jurisdictions:end -->`;
 }
 
+// ---- The Indonesian hub: the tool's own page for an Indonesian reader. The calculator itself
+// is English only, so this page says what it does, opens it (with Indonesia picked, or plain)
+// and lists every country's Indonesian page. It is the English tool page's hreflang="id" twin.
+function hubPage(){
+  const c = readContent('_hub', 'id');
+  if(!c) return null;
+  const t = T.id, up = '../../', toolRel = '../', url = `${BASE}id/`;
+  for(const [k, n] of [['title', 70], ['description', 165]]) if(strip(c[k] || '').length > n) problem(`_hub.id: ${k} is ${strip(c[k]).length} characters (aim ${n} or fewer)`);
+  if(/—/.test(JSON.stringify(c))) problem('_hub.id: an em-dash in the text');
+  const pages = PAGES.map(q => ({ q, c: readContent(q.slug, 'id') })).filter(x => x.c);
+  const ld = [
+    {
+      '@context': 'https://schema.org', '@type': 'CollectionPage',
+      name: strip(c.title), description: strip(c.description), url, inLanguage: 'id',
+      about: { '@type': 'WebApplication', name: t.tool, url: BASE },
+      isPartOf: { '@id': `${SITE}/#website` },
+      hasPart: pages.map(x => ({ '@type': 'Article', headline: strip(x.c.h1), url: `${BASE}${x.q.slug}/id/`, inLanguage: 'id' })),
+      author: AUTHOR, publisher: { '@id': AUTHOR['@id'] },
+    },
+    {
+      '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: t.crumbs, item: `${SITE}/id/` },
+        { '@type': 'ListItem', position: 2, name: t.hub, item: url },
+      ],
+    },
+  ];
+  const regions = REGIONS.map(g => {
+    const li = g.cc.map(x => pages.find(y => y.q.cc === x)).filter(Boolean)
+      .map(y => `<li><a href="../${y.q.slug}/id/">${NAMES.id[y.q.cc]}</a></li>`);
+    return li.length ? `<div class="jx-region"><h3>${g.id}</h3><ul>${li.join('')}</ul></div>` : '';
+  }).join('\n        ');
+  const updated = (() => { const [y, m, d] = DATE.split('-').map(Number); return `${t.updated} <time datetime="${DATE}">${d} ${t.months[m - 1]} ${y}</time>`; })();
+  const glyph = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle stroke="var(--accent)" cx="10" cy="10" r="7"/><path stroke="var(--accent)" d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/><path stroke="var(--accent2)" d="M15.5 16.5h6M15.5 19.5h6M18.5 13.5v9"/></svg>`;
+  const openId = `${toolRel}#load&v=1&country=ID`;
+
+  return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <!-- Generated by _ref/jurisdiction-pages.mjs from ${TOOL}/_jurisdictions/content/_hub.id.json and the id/ country pages: edit those, then run it. -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="${up}consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${esc(strip(c.title))} | Adjie Brotools</title>
+<meta name="description" content="${esc(strip(c.description))}">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="${url}">
+<link rel="alternate" hreflang="en" href="${BASE}">
+<link rel="alternate" hreflang="id" href="${url}">
+<link rel="alternate" hreflang="x-default" href="${BASE}">
+<link rel="sitemap" type="application/xml" href="${SITE}/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="${esc(strip(c.title))}">
+<meta property="og:description" content="${esc(strip(c.description))}">
+<meta property="og:url" content="${url}">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="${SITE}/og/${TOOL}.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(t.ogAlt)}">
+<meta property="og:locale" content="${t.locale}">
+<meta property="og:locale:alternate" content="${T.en.locale}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(strip(c.title))}">
+<meta name="twitter:description" content="${esc(strip(c.description))}">
+<meta name="twitter:image" content="${SITE}/og/${TOOL}.jpg">
+
+${ld.map(o => `<script type="application/ld+json">\n${JSON.stringify(o, null, 2)}\n</script>`).join('\n')}
+<link rel="icon" type="image/svg+xml" href="${up}logos/logo.svg">
+<link rel="manifest" href="${up}manifest.webmanifest">
+<link rel="apple-touch-icon" href="${up}logos/apple-touch-icon.png">
+<script src="${up}pwa.js" defer></script>
+<link rel="preload" href="${up}assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="${up}fonts.css">
+<link rel="stylesheet" href="${up}dark.css">
+<link rel="stylesheet" href="${up}light.css">
+<link rel="stylesheet" href="${up}shared.css">
+<link rel="stylesheet" href="${up}guide-shared.css">
+<link rel="stylesheet" href="${toolRel}jurisdiction.css">
+</head>
+<body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="${up}theme.js"></script>
+<div class="container gd jx">
+
+  <nav class="gd-top" aria-label="Situs">
+    <a class="btn-theme btn-back" href="${up}id/">← Tool lainnya</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="${toolRel}">${c.open}</a>
+      <a id="langToggle" class="btn-theme" href="${toolRel}" hreflang="en" lang="en" title="${t.langOtherTitle}">${t.langOtherShort}</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1>${glyph}${c.h1}</h1>
+      <div class="jx-lede">${c.lede}</div>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="${esc(openId)}">${c.openId}</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="what" aria-labelledby="what-h">
+      <h2 id="what-h">${c.whatH2}</h2>
+      <ul class="gd-facts">
+        ${c.what.map(x => `<li>${x}</li>`).join('\n        ')}
+      </ul>
+    </section>
+
+    <section class="gd-sec card jx-others" id="countries" aria-labelledby="countries-h">
+      <h2 id="countries-h">${c.countriesH2}</h2>
+      <p class="gd-sub">${c.countriesIntro}</p>
+      <div class="jx-regions">
+        ${regions}
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="ui" aria-labelledby="ui-h">
+      <h2 id="ui-h">${c.uiH2}</h2>
+      <div class="jx-prose"><p>${c.ui}</p></div>
+      <p class="gd-note">${t.disclaimer}</p>
+    </section>
+
+    <section class="gd-end">
+      <p>${c.end}</p>
+      <a class="btn-primary gd-open" href="${toolRel}">${c.open}</a>
+      <a class="gd-more" href="${up}costofliving-comparator/">${c.endMore}</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab">${t.collab}</p>
+    <p class="footer-links"><a href="${up}disclaimer/id/">${t.links[0]}</a> · <a href="${up}privacy/id/">${t.links[1]}</a> · <a href="https://blog.adjiebrotots.com/id/" hreflang="id">${t.links[2]}</a> · <span class="footer-updated">${updated}</span></p>
+    <div class="gd-made">
+      <img loading="lazy" src="${up}logos/australian.png" alt="${t.flagAlt[0]}" class="gd-flag">
+      <div><img loading="lazy" src="${up}logos/gpl.png" alt="GNU GPL"><span>${t.gpl}</span></div>
+      <div><img loading="lazy" src="${up}logos/indonesian.png" alt="${t.flagAlt[1]}"><span>${t.made}</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips and flip the theme. -->
+<script src="${up}shared.js" defer></script>
+<script src="${toolRel}abbr.js" defer></script>
+<script src="${toolRel}jurisdiction.js" defer></script>
+<!--/email_off-->
+</body>
+</html>
+`;
+}
+
 // ---- Run
 const outputs = [];
 for(const p of PAGES){
   for(const lang of ['en', 'id']){
     const html = page(p, lang);
-    if(html) outputs.push([join(ROOT, TOOL, p.slug, ...(lang === 'id' ? ['id'] : []), 'index.html'), html, `${BASE}${p.slug}/${lang === 'id' ? 'id/' : ''}`]);
+    const both = readContent(p.slug, 'en') && readContent(p.slug, 'id');
+    if(html) outputs.push([join(ROOT, TOOL, p.slug, ...(lang === 'id' ? ['id'] : []), 'index.html'), html, `${BASE}${p.slug}/${lang === 'id' ? 'id/' : ''}`,
+      both ? { en: `${BASE}${p.slug}/`, id: `${BASE}${p.slug}/id/`, 'x-default': `${BASE}${p.slug}/` } : null]);
   }
 }
+const hub = hubPage();
+if(hub) outputs.push([join(ROOT, TOOL, 'id', 'index.html'), hub, `${BASE}id/`, { en: BASE, id: `${BASE}id/`, 'x-default': BASE }]);
 // The guide.
 const guidePath = join(ROOT, TOOL, 'guides', 'index.html');
 let guide = readFileSync(guidePath, 'utf8');
@@ -523,12 +702,12 @@ const guideNew = guide.replace(/<!-- jurisdictions:start[\s\S]*?<!-- jurisdictio
 const smPath = join(ROOT, 'sitemap.xml');
 let sm = readFileSync(smPath, 'utf8');
 sm = sm.replace(new RegExp(`\\s*<url>\\s*<loc>${BASE.replace(/[.]/g, '\\.')}(?!guides/|ai/)[a-z0-9-]+/(?:id/)?</loc>[\\s\\S]*?</url>`, 'g'), '');
-const entries = outputs.map(([, , u]) => u).sort().map(u => `
+const entries = outputs.slice().sort((a, b) => a[2] < b[2] ? -1 : 1).map(([, , u, alts]) => `
   <url>
     <loc>${u}</loc>
     <lastmod>${DATE}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>${u === `${BASE}id/` ? '0.8' : '0.6'}</priority>${alts ? xhtmlLinks(alts) : ''}
   </url>`).join('');
 sm = sm.replace(new RegExp(`(<url>\\s*<loc>${BASE.replace(/[.]/g, '\\.')}ai/</loc>[\\s\\S]*?</url>)`), `$1${entries}`);
 

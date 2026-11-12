@@ -28,6 +28,9 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
   <link rel="canonical" href="https://tool.adjiebrotots.com/">
+  <link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/">
+  <link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/id/">
+  <link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/">
   <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
   <link rel="alternate" type="text/markdown" href="https://tool.adjiebrotots.com/llms.txt" title="LLM-readable guide to Adjie Brotot Tools">
   <link rel="icon" type="image/svg+xml" href="logos/logo.svg">
@@ -46,6 +49,8 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Adjie Brotools, a free tool on Adjie Brotools">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:locale:alternate" content="id_ID">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Adjie Brotools">
@@ -265,6 +270,32 @@
     .family-theme svg { width: 18px; height: 18px; }
     html[data-abt-theme="light"] .family-theme .ico-moon,
     html[data-abt-theme="dark"] .family-theme .ico-sun { display: none; }
+    /* The other language's home, a sticker pill beside the theme toggle (the blog's
+       language button: a globe and the language's two letters). */
+    .family-nav a.family-lang {
+      box-sizing: border-box; height: 36px; margin-left: 0.4rem; padding: 0 0.7rem; gap: 0.35rem;
+      border-radius: var(--radius-pill); border: 1.5px solid var(--ink-line);
+      background: var(--panel); box-shadow: var(--sticker);
+      transition: box-shadow var(--motion-fast);
+    }
+    .family-nav a.family-lang:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink-line); }
+    .family-nav a.family-lang:active { transform: translate(1px, 1px); box-shadow: 0 0 0 var(--ink-line); }
+    .family-lang svg { width: 15px; height: 15px; }
+
+    /* The page in the other language, in a line under the hero: on the English home the
+       tools that have an Indonesian version (in Indonesian), on the Indonesian home a
+       note on which tools are still in English. */
+    .lang-strip { margin-top: -0.5rem; margin-bottom: 1.5rem; color: var(--muted); font-size: var(--fs-sm); line-height: 1.55; }
+    .lang-strip h2 { display: inline; margin: 0 0.4rem 0 0; font-size: inherit; line-height: inherit; color: var(--text); }
+    .lang-strip p { display: inline; margin: 0; }
+    .lang-strip ul { display: inline; margin: 0; padding: 0; list-style: none; }
+    .lang-strip li { display: inline; white-space: nowrap; }
+    .lang-strip li:not(:last-child)::after { content: '\2022'; content: '\2022' / ''; margin: 0 0.15em 0 0.5em; opacity: 0.7; }
+    .lang-strip a { color: var(--accent-strong); font-weight: 700; }
+    .lang-strip a:hover { text-decoration: underline; }
+
+    /* The card's language, the last tag (on the Indonesian home only). */
+    .tool-tags .tag-lang { color: var(--accent-strong); font-weight: 700; }
 
 
     .eyebrow {
@@ -985,8 +1016,8 @@
       }
 
       /* On a phone the bar keeps the name, as the blog's does, and leaves the
-         links to the footer. */
-      .family-nav a { display: none; }
+         links to the footer. The language button stays, as on the blog. */
+      .family-nav a:not(.family-lang) { display: none; }
 
 
       /* On a phone the keyword search stays; the three selects and the reset
@@ -1675,6 +1706,7 @@
         <a href="https://www.adjiebrotots.com/">Home</a>
         <a href="https://blog.adjiebrotots.com/">Blog</a>
         <a href="./" aria-current="page">Tools</a>
+        <a class="family-lang" href="id/" hreflang="id" lang="id" title="Baca dalam Bahasa Indonesia"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>ID</a>
         <button class="family-theme" id="themeToggle" type="button" aria-label="Switch between day and night"></button>
       </nav>
     </div>
@@ -1694,6 +1726,18 @@
   </div>
 
   <main>
+    <!-- lang-strip:start (the Indonesian home, id/, swaps this for its own: _ref/bake-home-id.mjs) -->
+    <section class="container lang-strip" lang="id" aria-labelledby="langStripHeading">
+      <h2 id="langStripHeading">Tersedia dalam bahasa Indonesia:</h2>
+      <ul>
+        <li><a href="id/" hreflang="id">Beranda Adjie Brotools</a></li>
+        <li><a href="pisahvsgabung/id/" hreflang="id">PPh 21 pisah vs gabung harta</a></li>
+        <li><a href="rentvsownhouse/id/" hreflang="id">Sewa vs beli rumah</a></li>
+        <li><a href="global-income-tax-calculator/indonesia/id/" hreflang="id">Cara menghitung PPh 21 gaji</a></li>
+        <li><a href="global-income-tax-calculator/id/" hreflang="id">Pajak penghasilan di 31 negara</a></li>
+      </ul>
+    </section>
+    <!-- lang-strip:end -->
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
       <div class="section-heading">
         <div>
@@ -2564,6 +2608,13 @@
   </footer>
 
   <script>
+    // The words this script writes. The Indonesian home (id/) sets window.HOME_I18N before
+    // this script (_ref/bake-home-id.mjs); the English home leaves it unset. A card's data-*
+    // values stay English on both, so filters and the typewriter read them the same way.
+    const HOME_I18N = window.HOME_I18N || {};
+    const homeLabel = s => (HOME_I18N.labels && HOME_I18N.labels[s]) || s;
+    const homeText = (key, english) => HOME_I18N[key] || english;
+
     (function () {
       const el = document.getElementById('typeText');
       if (!el) return;
@@ -2576,7 +2627,7 @@
       document.querySelectorAll('.tool-card').forEach(card => {
         const raw = [card.dataset.domain || '', card.dataset.tags || ''].join(',');
         raw.split(',').forEach(part => {
-          const label = part.trim();
+          const label = homeLabel(part.trim());
           const key = label.toLowerCase();
           if (!label || EXCLUDE.has(key) || seen.has(key)) return;
           seen.add(key);
@@ -2584,7 +2635,8 @@
         });
       });
       // "everyday work" always present, styled to stand out.
-      words.push({ text: 'everyday work', highlight: true });
+      const everyday = homeText('everydayWork', 'everyday work');
+      words.push({ text: everyday, highlight: true });
 
       function shuffle(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
@@ -2596,7 +2648,7 @@
 
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReduced) {
-        el.textContent = 'everyday work';
+        el.textContent = everyday;
         el.classList.add('is-highlight');
       } else {
         let wi = 0, ci = 0, deleting = false;
@@ -2646,21 +2698,21 @@
       uniqueStatuses.forEach(status => {
         const option = document.createElement('option');
         option.value = status.toLowerCase();
-        option.textContent = status;
+        option.textContent = homeLabel(status);
         statusFilter.appendChild(option);
       });
 
       uniqueDomains.forEach(domain => {
         const option = document.createElement('option');
         option.value = domain.toLowerCase();
-        option.textContent = domain;
+        option.textContent = homeLabel(domain);
         domainFilter.appendChild(option);
       });
 
       uniqueGeographies.forEach(geography => {
         const option = document.createElement('option');
         option.value = geography.toLowerCase();
-        option.textContent = geography;
+        option.textContent = homeLabel(geography);
         geographyFilter.appendChild(option);
       });
 
@@ -2701,7 +2753,7 @@
           const heading = document.createElement('h3');
           heading.className = 'domain-group-heading';
           heading.dataset.domainHeading = domain.toLowerCase();
-          heading.textContent = domain;
+          heading.textContent = homeLabel(domain);
           toolGrid.insertBefore(heading, card);
           lastDomain = domain;
         }
@@ -2732,10 +2784,10 @@
       function makeAdTile(unit) {
         const tile = document.createElement('aside');
         tile.className = 'ad-tile is-hidden';
-        tile.setAttribute('aria-label', 'Advertisement');
+        tile.setAttribute('aria-label', homeText('advertisement', 'Advertisement'));
         const label = document.createElement('p');
         label.className = 'ad-tile-label';
-        label.textContent = 'Advertisement';
+        label.textContent = homeText('advertisement', 'Advertisement');
         const ins = document.createElement('ins');
         ins.className = 'adsbygoogle';
         ins.style.display = 'block';
@@ -2835,8 +2887,8 @@
         });
 
         resultsSummary.textContent = visibleCount === 1
-          ? 'Showing 1 tool.'
-          : `Showing ${visibleCount} tools.`;
+          ? homeText('showingOne', 'Showing 1 tool.')
+          : homeText('showingMany', 'Showing {n} tools.').replace('{n}', visibleCount);
 
         emptyState.classList.toggle('is-visible', visibleCount === 0);
         updateDomainHeadingsVisibility();
@@ -2971,7 +3023,7 @@
       btn.addEventListener('click', () => {
         const open = panel.classList.toggle('is-open');
         btn.setAttribute('aria-expanded', String(open));
-        btn.textContent = open ? 'Fewer filters' : 'More filters';
+        btn.textContent = open ? homeText('fewerFilters', 'Fewer filters') : homeText('moreFilters', 'More filters');
       });
     })();
   </script>

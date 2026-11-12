@@ -22,6 +22,7 @@ const BASE = process.env.BASE || 'http://localhost:8412';
 // nearest ancestor (or itself), so a new tool needs one line here.
 export const CARDS = [
   ['home', ''],
+  ['home-id', 'id/'],
   ['borrowingcapacity', 'borrowingcapacity/'],
   ['canvasbuilder', 'canvasbuilder/'],
   ['capacity-expansion-planner', 'capacity-expansion-planner/'],
@@ -97,7 +98,7 @@ async function draw(only) {
       };
     });
     const png = (await shot.screenshot({ type: 'png' })).toString('base64');
-    const home = name === 'home';
+    const home = name === 'home' || name === 'home-id';
     await card.goto(`${BASE}/404.html`);
     await card.setContent(`<!DOCTYPE html><html lang="${esc(info.lang)}"><head>
 <link rel="stylesheet" href="${BASE}/fonts.css"><link rel="stylesheet" href="${BASE}/light.css">
@@ -117,7 +118,7 @@ async function draw(only) {
   <div class="txt">
     ${home ? "" : `<div class="glyph">${info.glyph}</div>`}
     <h1>${esc(home ? 'Adjie Brotools' : info.title)}</h1>
-    <p>${esc(home ? 'Free calculators and tools for money, tax, property and power system engineering. Everything runs in your browser.' : tagline(info.desc))}</p>
+    <p>${esc(home ? (info.lang === 'id' ? 'Kalkulator dan tool gratis untuk keuangan, pajak, properti, dan teknik sistem tenaga listrik. Semua berjalan di browser-mu.' : 'Free calculators and tools for money, tax, property and power system engineering. Everything runs in your browser.') : tagline(info.desc))}</p>
     <div class="brand"><img src="${BASE}/logos/logo.svg" alt="">Adjie Brotools <span>tool.adjiebrotots.com</span></div>
   </div>
   <div class="shot"><img src="data:image/png;base64,${png}"></div>
