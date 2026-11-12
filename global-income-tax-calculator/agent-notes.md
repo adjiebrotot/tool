@@ -177,6 +177,25 @@ Assumptions:
 2. Hong Kong: single, with MPF at 5% capped at HK$1,500 a month.
 3. Currency: shown in US dollars at the rates the page dates, for reading only.
 
+## AI page example (id)
+
+Request: Saya dapat dua tawaran kerja: S$120.000 setahun di Singapura dengan Employment Pass, atau Rp 900 juta setahun di Jakarta. Saya sudah menikah dan punya satu anak. Setelah pajak, mana yang sisanya lebih besar?
+
+Searches:
+- Tarif pajak penghasilan Singapura untuk pemegang Employment Pass, YA2027
+- PPh 21 dan iuran BPJS bagian karyawan, 2026
+
+Link:
+- json={"jobs":[{"country":"SG","sgRes":"ep","amount":120000},{"country":"ID","idMarried":true,"idDeps":1,"amount":900000000}]}
+- dispCur=IDR
+- why.dispCur=Kedua gaji dibaca dalam rupiah supaya mudah dibandingkan
+- note=Singapura dan Jakarta, November 2026
+
+Assumptions:
+1. Singapura: sebagai pemegang Employment Pass, kamu tidak membayar iuran CPF, dan saya anggap kamu tinggal di sana sepanjang tahun sehingga dikenai pajak sebagai penduduk pajak (resident).
+2. Jakarta: penduduk pajak Indonesia yang menikah dengan satu tanggungan (PTKP K/1), dengan PPh 21 dan iuran BPJS bagian karyawan dipotong dari gaji kotor. THR dan bonus saya anggap sudah termasuk dalam Rp900 juta itu.
+3. Mata uang: kedua gaji ditampilkan dalam rupiah dengan kurs yang tercantum di halaman, hanya untuk perbandingan.
+
 ## Compact lists
 
 ## Json

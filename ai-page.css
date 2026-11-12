@@ -202,6 +202,8 @@
 .ai-tool .ai-tool-skill { font-size: .78rem; overflow-wrap: anywhere; }
 .ai-tool-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
 .ai-tool-btns .btn-sm { padding: 6px 14px; font-size: .82rem; text-decoration: none; }
+/* The Indonesian hub (/ai/id/): a tool with no Indonesian page, marked EN as on the Indonesian home */
+.ai-tool-btns .tool-lang { align-self: center; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .04em; }
 
 /* The "Effective <date>" line under the install demo: a footnote */
 .ai-asof { margin: 10px 2px 0; font-size: .72rem; line-height: 1.45; color: var(--muted); }

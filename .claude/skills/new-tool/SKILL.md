@@ -342,6 +342,23 @@ For a multi-language tool (an `en` page and an `id/` page sharing one `script.js
 per-origin, so both pages then share one cache and a user's work follows them across a language
 switch instead of resetting.
 
+A tool with an Indonesian page gets the whole experience in Indonesian, each page paired with
+its English twin by `hreflang` and an EN/ID `#langToggle` in its header:
+
+- **AI page.** Once the `id/` page is in `PAGES` with `lang: 'id'`, `agent-doc` also writes
+  `<tool>/ai/id/` (the same skill download and install animation, every word for people in
+  Indonesian, links to the Indonesian tool page, guide, `/ai/id/` hub and footer pages) and lists
+  the tool in Indonesian on `/ai/id/`; the `id/` page's hidden pointer sends its ✨ Use in AI
+  button there. Give it an Indonesian conversation: a `## AI page example (id)` in the notes
+  (saya and kamu, per the blog's `bahasa-indonesia` skill), checked like the English one, its
+  link on the `id/` page.
+- **Guide.** `<tool>/guides/id/index.html` is the guide in Indonesian (`<html lang="id">`,
+  `data-guide-live="scenes.js"`), and its `scenes.js` is a few lines that replay the English
+  scenes on the Indonesian pages through `guide-id.js` (paths, storage keys and the words a scene
+  finds by text). `guide-live.js` speaks Indonesian on it, `node _ref/guide-check.mjs <tool>`
+  plays both, and the `id/` tour's `guide` points at `../guides/id/`.
+- **Sitemap.** Each new page goes right after its English twin, then `node _ref/hreflang.mjs`.
+
 ## Two agents
 
 For a genuinely independent audit, keep building and checking separate:

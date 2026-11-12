@@ -14,13 +14,19 @@
 //                        same files unzipped under skill/) and the AI page people see. The
 //                        skill's references/<page>.md is each page's full reference, plain
 //                        text (what <page>/agent.txt used to be);
+//   <tool>/ai/id/        a tool with an Indonesian page (a PAGES entry with lang: 'id'): the
+//                        same AI page in Indonesian, paired with <tool>/ai/ by hreflang, its
+//                        conversation from the notes' "## AI page example (id)" (checked like
+//                        the others, its link on the id page), else the English one;
 //   ai/index.html        the hub: install a skill, how to use one, and every tool in TOOLS
 //                        with links to open it and to its AI page (aiHub in ai-skill.mjs);
+//   ai/id/index.html     its Indonesian twin (every tool, the Indonesian pages where they exist);
 //   <page>/index.html    a hidden pointer to the AI page and SKILL.md (never shown to
 //                        people) between <!-- agent:start --> and <!-- agent:end -->, which
-//                        also tells the header where its "Use in AI" button goes;
+//                        also tells the header where its "Use in AI" button goes (data-ai:
+//                        /<tool>/ai/, or /<tool>/ai/id/ on an Indonesian page);
 //   llms.txt             the site-wide section between the same markers: the #load protocol,
-//                        the rules, one line per tool.
+//                        the rules, one line per tool, then the Indonesian AI pages.
 // Each page reference and llms.txt carry AI_RULES verbatim. Old <page>/agent.txt and
 // agent.html files are removed.
 //
@@ -35,7 +41,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { rmSync } from 'node:fs';
-import { TOOLS, toolOf, skillFiles, aiPage, aiHub, aiUrl, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
+import { TOOLS, toolOf, skillFiles, aiPage, aiHub, aiUrl, idMainOf, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
 import {
   AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE, LIST_KEY_RE,
   buildLink, serve, launch, openPage, readFields, parseNotes, defaultQuickStarts
@@ -54,9 +60,9 @@ const PEOPLE = {
       'The rest of this file is written for the assistant.',
   },
   id: {
-    summary: 'Pakai alat ini dengan asisten AI',
-    lead: 'Pasang skill alat ini di asisten AI Anda (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan pertanyaan Anda. ' +
-      'Asisten akan membalas dengan tautan yang membuka alat ini pada skenario Anda, lengkap dengan daftar asumsinya, lalu alat inilah yang menghitung hasilnya. ' +
+    summary: 'Pakai tool ini dengan asisten AI',
+    lead: 'Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan pertanyaanmu. ' +
+      'Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. ' +
       'Bagian di bawah ini ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.',
   },
 };
@@ -94,10 +100,13 @@ function model(P, read, qs, notes) {
   const M = { P, base, fields, byKey, compact, hide, important, notes, qs, qsKeys, qsItems, qsAlias, example,
     title: read.h1, source: read.source };
   checkExample(M);
-  // The conversation the tool's AI page plays: its own section when the notes have one.
-  if (S['ai page example']) {
-    const D = { ...M, example: parseExample(S['ai page example']) };
-    checkExample(D);
+  // The conversation the tool's AI page plays: its own section when the notes have one. An
+  // Indonesian page's (for <tool>/ai/id/) is "AI page example (id)", its {key} values written
+  // the Indonesian way (300.000.000), else the English one; either way its link opens this page.
+  const own = P.lang === 'id' && S['ai page example (id)'] ? 'ai page example (id)' : S['ai page example'] ? 'ai page example' : '';
+  if (own) {
+    const D = { ...M, example: parseExample(S[own]) };
+    checkExample(D, own.endsWith('(id)') ? 'id' : 'en');
     M.demo = { ...D.example, link: D.link, state: D.exampleState };
   } else M.demo = { ...M.example, link: M.link, state: M.exampleState };
   return M;
@@ -151,7 +160,7 @@ function valueProblem(f, v) {
 
 // A key in one of the page's families (PAGES.families: el.<name>.<param>), which its adapter reads.
 const inFamily = (M, k) => (M.P.families || []).some(pre => k.length > pre.length && k.startsWith(pre));
-function checkExample(M) {
+function checkExample(M, lang = 'en') {
   const { P, example: ex, byKey } = M;
   if (!ex.request) problem(P.page, 'Example has no Request line');
   if (!ex.pairs.length) problem(P.page, 'Example has no Link pairs');
@@ -192,18 +201,18 @@ function checkExample(M) {
   ex.assumptions = ex.assumptions.map(a => a.replace(/\{([A-Za-z_][\w]*)\}/g, (m, k) => {
     if (!(k in state)) { problem(P.page, `example assumption names {${k}}, which is not a field`); return m; }
     if (M.qsNoValues && !ex.pairs.some(([x]) => x === k)) problem(P.page, `example assumption {${k}} needs the Quick Start's values, which its reader does not give`);
-    return show(state[k]);
+    return show(state[k], lang);
   }));
   M.link = buildLink(M.base, [['v', '1'], ...ex.pairs.filter(([k]) => k !== 'v')]);
 }
 
-// A value as a person reads it: 850000 as 850,000.
-function show(v) {
-  if (typeof v === 'boolean') return v ? 'on' : 'off';
+// A value as a person reads it: 850000 as 850,000 (lang 'id': 850.000, and on/off as aktif/nonaktif).
+function show(v, lang = 'en') {
+  if (typeof v === 'boolean') return lang === 'id' ? (v ? 'aktif' : 'nonaktif') : v ? 'on' : 'off';
   const n = toNumber(v);
   if (/^(1[89]|2[0-2])\d\d$/.test(String(v))) return String(v);   // a year reads 2030, not 2,030
   if (typeof v === 'number' || (Number.isFinite(n) && /^[\d.,$\s-]+$/.test(String(v)))) {
-    return Number.isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
+    return Number.isFinite(n) ? n.toLocaleString(lang === 'id' ? 'id-ID' : 'en-US', { maximumFractionDigits: 4 }) : String(v);
   }
   return String(v);
 }
@@ -399,7 +408,8 @@ const attr = s => esc(s).replace(/"/g, '&quot;');
 // The tool page carries no visible AI text: people never see it. Only a hidden pointer to the
 // tool's AI page and its SKILL.md, in the HTML the server sends, so an assistant that reads the
 // page finds them (llms.txt lists the same). data-ai is where the header's "Use in AI" button
-// goes (tour-shared.js).
+// goes (tour-shared.js): the Indonesian AI page on an Indonesian page. The links themselves are
+// for the assistant, so they stay on the English AI page and its SKILL.md.
 function section(M) {
   const { P } = M;
   const T = TOOLS.find(T => T.tool === toolOf(P.page));
@@ -408,7 +418,7 @@ function section(M) {
   return [
     MARK_START,
     `<!-- Generated by _ref/agent-doc.mjs from ${P.notes} and the page itself: edit those, then run it. -->`,
-    `<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en" data-ai="/${T.tool}/ai/">For AI assistants: this tool has a skill that opens it on your user's scenario with one link: <a href="${attr(ai)}">${esc(ai)}</a> (instructions: <a href="${attr(md)}">${esc(md)}</a>)</div>`,
+    `<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en" data-ai="/${T.tool}/ai/${P.lang === 'id' ? 'id/' : ''}">For AI assistants: this tool has a skill that opens it on your user's scenario with one link: <a href="${attr(ai)}">${esc(ai)}</a> (instructions: <a href="${attr(md)}">${esc(md)}</a>)</div>`,
     MARK_END,
   ].join('\n');
 }
@@ -422,7 +432,7 @@ function withSection(html, M) {
 }
 
 /* ── llms.txt ────────────────────────────────────────────────────────────── */
-function llmsSection() {
+function llmsSection(models) {
   const L = [MARK_START, '## Use a tool through an AI assistant (skills and the #load link)', ''];
   L.push(
     'Each tool below has a skill (a .zip with SKILL.md, a reference per page and a script that builds the link) that people install in Claude, ChatGPT, Grok and other assistants. With it, the assistant opens the tool on the user\'s own scenario with one link, and the tool computes the answer in the user\'s browser. The skill\'s files are also published unzipped, so an assistant that browses can read SKILL.md and its references directly.',
@@ -440,14 +450,14 @@ function llmsSection() {
     'All the skills on one page: ' + SITE + '/ai/',
     '',
     'Tools with a skill (AI page, then the skill):',
-    ...llmsLines(),
+    ...llmsLines(models),
   );
   L.push(MARK_END);
   return L.join('\n');
 }
 
-function withLlms(text) {
-  const sec = llmsSection();
+function withLlms(text, models) {
+  const sec = llmsSection(models);
   if (SECTION_RE.test(text)) return text.replace(SECTION_RE, () => sec);
   // First time: right after the disambiguation note, before the long tool descriptions.
   const at = text.indexOf('## Why these tools stand out');
@@ -496,11 +506,15 @@ for (const T of TOOLS) {
   for (const [rel, body] of sk.files) outputs.push([join(T.tool, 'ai', 'skill', rel), body]);
   outputs.push([join(T.tool, 'ai', sk.name + '.zip'), sk.zip]);
   outputs.push([join(T.tool, 'ai', 'index.html'), aiPage(T, ms, main.demo)]);
-  hub.push({ T, models: ms, demo: main.demo });
+  // A tool with an Indonesian page: its AI page in Indonesian too, on the id page's example.
+  const idMain = idMainOf(T, ms);
+  if (idMain) outputs.push([join(T.tool, 'ai', 'id', 'index.html'), aiPage(T, ms, idMain.demo, 'id')]);
+  hub.push({ T, models: ms, demo: main.demo, demoId: idMain && idMain.demo });
 }
 if (hub.length) outputs.push([join('ai', 'index.html'), aiHub(hub)]);
+if (hub.some(x => x.demoId)) outputs.push([join('ai', 'id', 'index.html'), aiHub(hub, 'id')]);
 for (const M of models) if (!TOOLS.some(T => T.tool === toolOf(M.P.page))) problem(M.P.page, 'its tool is not in TOOLS (_ref/ai-skill.mjs)');
-outputs.push(['llms.txt', withLlms(readFileSync(join(ROOT, 'llms.txt'), 'utf8'))]);
+outputs.push(['llms.txt', withLlms(readFileSync(join(ROOT, 'llms.txt'), 'utf8'), models)]);
 // The old per-page reference files, replaced by the skills.
 const retired = PAGES.flatMap(P => ['agent.txt', 'agent.html'].map(f => join(P.page, f))).filter(rel => existsSync(join(ROOT, rel)));
 

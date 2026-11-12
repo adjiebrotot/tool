@@ -32,6 +32,28 @@ const AUTHOR = {
   publisher: { '@id': 'https://www.adjiebrotots.com/#person' },
 };
 
+// Global Income Tax Calculator: what the markers above have no attribute for, worded from its
+// LANG.id (each option's own tip, data-i18n-otip, and the country picker's groups,
+// data-i18n-label), and its card of country pages, whose Indonesian list
+// _ref/jurisdiction-pages.mjs writes into the id/ page and this keeps (either order is stable).
+function gitcExtras() {
+  const dir = join(ROOT, 'global-income-tax-calculator');
+  const id = extractLang(readFileSync(join(dir, 'script.js'), 'utf8')).id;
+  const html = readFileSync(join(dir, 'index.html'), 'utf8');
+  const attr = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const out = [];
+  for (const [, mark, name] of [[0, 'data-i18n-otip', 'data-opt-tip'], [0, 'data-i18n-label', 'label']]) {
+    for (const m of html.matchAll(new RegExp(`${mark}="([^"]+)" ${name}="[^"]*"`, 'g'))) {
+      if (typeof id[m[1]] === 'string') out.push([m[0], `${mark}="${m[1]}" ${name}="${attr(id[m[1]])}"`]);
+    }
+  }
+  const LIST = /<!-- jurisdictions:start[\s\S]*?<!-- jurisdictions:end -->/;
+  const page = join(dir, 'id', 'index.html');
+  const en = html.match(LIST), kept = existsSync(page) ? readFileSync(page, 'utf8').match(LIST) : null;
+  if (en && kept) out.push([en[0], kept[0]]);
+  return out;
+}
+
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
@@ -274,6 +296,74 @@ const TOOLS = [
       },
     ],
     htmlSpecials: [{ id: 'qaIntro', key: 'introHtml' }, { id: 'glanceNote', key: 'glanceNoteHtml' }, { id: 'qaNoscript', key: 'noscriptHtml' }],
+  },
+  {
+    // Was the Indonesian hub of country pages (until Nov 2026); now the calculator itself. Its card
+    // of country pages keeps that crawl path (gitcExtras). The engine's own text (line labels,
+    // notes) is worded by labels-id.js, which only this page loads.
+    dir: 'global-income-tax-calculator',
+    title: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara | Adjie Brotools',
+    description: 'Hitung gaji bersih setelah pajak penghasilan dan iuran jaminan sosial di 31 negara dan 39 negara bagian AS, lalu bandingkan hingga empat tawaran kerja.',
+    ogTitle: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara',
+    ogDescription: 'Berapa gaji bersihmu setelah pajak dan iuran jaminan sosial di 31 negara? Bandingkan hingga empat tawaran kerja, lengkap dengan sumber setiap potongan.',
+    sameDirAssets: ['script.js', 'style.css', 'abbr.js', 'engine.js'],
+    extraReplacements: [
+      ['<script src="../engine.js"></script>', '<script src="../engine.js"></script>\n<script src="../labels-id.js"></script>'],
+      // The English page says en_AU and names its toggle in Indonesian, so the generic swaps above miss both.
+      ['<meta property="og:locale" content="en_AU">', '<meta property="og:locale" content="id_ID">'],
+      ['<meta property="og:locale:alternate" content="en_US">', '<meta property="og:locale:alternate" content="en_AU">'],
+      ['<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Baca dalam bahasa Indonesia">ID</a>',
+       '<a id="langToggle" class="btn-theme" href="../" hreflang="en" lang="en" title="Read in English">EN</a>'],
+      ['<p class="footer-note">Estimate only, not tax advice. Rules effective as of 10 November 2026.</p>',
+       '<p class="footer-note">Hanya perkiraan, bukan nasihat pajak. Aturan yang dipakai berlaku per 10 November 2026.</p>'],
+      ['<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>',
+       '<p class="footer-collab"><strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'],
+      ['alt="Australian flag"', 'alt="Bendera Australia"'],
+      ['alt="Indonesian badge"', 'alt="Lencana Indonesia"'],
+      ['Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.',
+       'Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'],
+      ['Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.',
+       'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.'],
+      ['data-description="Support me on Buy me a coffee!" data-message="Whatever your take-home pay, a coffee is tax-free from here!"',
+       'data-description="Dukung saya di Buy me a coffee!" data-message="Berapa pun gaji bersihmu, secangkir kopi dari sini bebas pajak!"'],
+      ...gitcExtras(),
+    ],
+    ldJson: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
+        url: 'https://tool.adjiebrotots.com/global-income-tax-calculator/id/',
+        hasPart: [
+          { '@type': 'WebPage', name: 'Cara memakai Kalkulator Gaji Bersih dan Pajak Penghasilan', url: 'https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/' },
+        ],
+        description: 'Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan berdampingan.',
+        applicationCategory: 'FinanceApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        inLanguage: 'id',
+        alternateName: [
+          'Global Income Tax Calculator',
+          'Kalkulator Gaji Bersih',
+          'Kalkulator Pajak Penghasilan Luar Negeri',
+          'Kalkulator Take Home Pay',
+          'Kalkulator Gaji Kotor ke Gaji Bersih',
+          'Perbandingan Gaji Antarnegara',
+        ],
+        keywords: 'kalkulator gaji bersih, kalkulator pajak penghasilan luar negeri, gaji bersih di luar negeri, take home pay, hitung gaji bersih, gaji kotor ke gaji bersih, pajak gaji di luar negeri, perbandingan gaji antarnegara, kerja di luar negeri, pajak penghasilan 2026',
+        featureList: [
+          'Pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, berdasarkan aturan tahun 2026',
+          'Hitung dari gaji kotor ke gaji bersih, atau hitung balik gaji kotor yang dibutuhkan untuk gaji bersih tertentu',
+          'Hingga empat tawaran kerja berdampingan, masing-masing dengan negara dan mata uangnya sendiri',
+          'Setiap potongan dilengkapi sumber, tanggal berlaku, dan status Resmi, Sekunder, atau Asumsi',
+          'Tersedia dalam bahasa Indonesia dan Inggris',
+          'Semua perhitungan berjalan lokal di browser, jadi data gajimu tidak pernah keluar dari perangkat',
+        ],
+        ...AUTHOR,
+      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
+    ],
+    htmlSpecials: [{ id: 'mapLinkDiv', key: 'mapLinkHtml' }],
   },
 ];
 

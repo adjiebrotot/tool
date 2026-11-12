@@ -189,3 +189,12 @@ th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-r
   .lines-table col.c-amt{width:118px;}
   .lines-table col.c-status{width:100px;}
 }
+
+/* Every country's own page, by region (the list is written by _ref/jurisdiction-pages.mjs) */
+.countries-card h2{margin:0 0 6px;font-size:1.1rem;}
+.countries-card .countries-sub{margin:0 0 12px;color:var(--muted);font-size:.88rem;line-height:1.5;}
+.countries-card .jx-regions{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px 24px;}
+.countries-card .jx-region h3{margin:6px 0;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+.countries-card .jx-region ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:.9rem;}
+.countries-card .jx-region a{color:var(--accent-strong);text-decoration:none;}
+.countries-card .jx-region a:hover{text-decoration:underline;}

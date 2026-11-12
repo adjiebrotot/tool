@@ -37,6 +37,7 @@ export const CARDS = [
   ['financingvscash', 'financingvscash/'],
   ['financingvscash-loan-types', 'financingvscash/loan-types/'],
   ['global-income-tax-calculator', 'global-income-tax-calculator/'],
+  ['global-income-tax-calculator-id', 'global-income-tax-calculator/id/'],
   ['graphvisualiser', 'graphvisualiser/'],
   ['jsonvisualiser', 'jsonvisualiser/'],
   ['loadflow-simulator', 'loadflow-simulator/'],
