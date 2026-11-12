@@ -60,7 +60,7 @@ model starts empty); the display switches remembered after a reload; the
 sample model and its animation, paused by ❚❚; and a phone width with no
 sideways scroll.
 
-The last run: 407 checks passed, 0 failed.
+The last run: 419 checks passed, 0 failed.
 
 ## 3. Real-world models (`--real`)
 
