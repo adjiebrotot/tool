@@ -43,7 +43,7 @@
       ? '<a href="' + rootPath + 'disclaimer/id/">Penafian</a> · <a href="' + rootPath + 'privacy/id/">Kebijakan Privasi</a>'
       : '<a href="' + rootPath + 'disclaimer/">Disclaimer</a> · <a href="' + rootPath + 'privacy/">Privacy Policy</a>';
     el.innerHTML = '<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'
-      + '<p class="footer-links">' + legal + ' · <a href="https://blog.adjiebrotots.com/">Blog</a>' + updated(el, isId) + '</p>'
+      + '<p class="footer-links">' + legal + ' · ' + (isId ? '<a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a>' : '<a href="https://blog.adjiebrotots.com/">Blog</a>') + updated(el, isId) + '</p>'
       + '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">'
       +   '<img src="' + logosPath + 'australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
       +   '<div style="display:flex;align-items:center;gap:10px">'

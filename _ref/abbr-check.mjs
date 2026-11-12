@@ -31,14 +31,15 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
 
 /* Every tool page, i.e. every index.html below the root except the landing
-   page (which carries its own inline styles and no shared layer). */
+   pages, English and Indonesian (id/, generated from it), which carry their own
+   inline styles and no shared layer. */
 function pages(dir, out = []) {
   for (const name of readdirSync(dir)) {
     if (name.startsWith('.') || name === 'node_modules' || name === '_ref' ||
         name === 'logos' || name === 'assets' || name === '_audit' || name === 'audit') continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) pages(p, out);
-    else if (name === 'index.html' && dir !== ROOT) out.push(p);
+    else if (name === 'index.html' && dir !== ROOT && dir !== join(ROOT, 'id')) out.push(p);
   }
   return out;
 }

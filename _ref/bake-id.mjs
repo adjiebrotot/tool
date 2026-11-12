@@ -309,6 +309,11 @@ function bake(tool) {
   html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
     '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
 
+  /* ── an Indonesian reader stays in Indonesian: the back link goes to the Indonesian home
+        (which lists every tool, Indonesian or not), the footer's Blog to the Indonesian blog ── */
+  html = html.replace('<a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">', '<a href="https://tool.adjiebrotots.com/id/" class="btn-theme btn-back">');
+  html = html.replace('<a href="https://blog.adjiebrotots.com/">Blog</a>', '<a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a>');
+
   /* ── language toggle points back to the English page ── */
   html = html.replace(
     '<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>',
@@ -355,6 +360,10 @@ function bake(tool) {
   const out = join(toolDir, 'id', 'index.html');
   const kept = existsSync(out) ? (readFileSync(out, 'utf8').match(SECTION_RE) || [])[0] : null;
   if (kept && SECTION_RE.test(html)) html = html.replace(SECTION_RE, () => kept);
+  // So does its own Buy Me a Coffee note (written in Indonesian on the id/ page, new-tool skill).
+  const BMC_RE = /(<script data-name="BMC-Widget"[^>]*?data-message=")([^"]*)(")/;
+  const keptNote = existsSync(out) ? (readFileSync(out, 'utf8').match(BMC_RE) || [])[2] : null;
+  if (keptNote) html = html.replace(BMC_RE, (m, a, b, c) => a + keptNote + c);
   // The Questions card and its FAQPage block, in Indonesian, from the tool's faq.json.
   html = applyFaq(html, `${tool.dir}/id/`);
   // Its dateModified, offers and footer date, as _ref/updated.mjs gives every tool page.

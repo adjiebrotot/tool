@@ -219,7 +219,10 @@ unless the user explicitly asks.** Build the tool in its own folder and stop the
 When the user does ask, copy a card in `index.html` (the comment above the grid lists what
 to change). Its description is one or two short sentences in the words people search for,
 and its `data-anim` key needs a drawing in `home-anim.js`: hand that to the `tool-animator`
-agent (`.claude/agents/tool-animator.md`) rather than drawing it inline.
+agent (`.claude/agents/tool-animator.md`) rather than drawing it inline. The Indonesian home
+(`id/index.html`) is generated from `index.html`: add the card's Indonesian description (and
+any new tag) to `CARDS` and `LABELS` in `_ref/bake-home-id.mjs`, run it, then
+`node _ref/hreflang.mjs`. It stops on a card it has no Indonesian for.
 
 ## 5. Testing
 

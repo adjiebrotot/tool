@@ -1,11 +1,24 @@
 # Adjie Brotools
 
 Static, client-side tools at tool.adjiebrotots.com, one folder per tool, named as one simple
-word or as hyphen-separated words (`capacity-expansion-planner`, never `capacityexpansion-planner`). Building a tool:
+word or as hyphen-separated words (`capacity-expansion-planner`, never `capacityexpansion-planner`), and never `id`,
+which is the Indonesian home and every page's Indonesian twin. Building a tool:
 `.claude/skills/new-tool/SKILL.md`. Design system: `_ref/design-reference.md`.
 A tax or social security rule in the Global Income Tax Calculator changed (a rate, a cap, a
 reform): `.claude/skills/tax-rule-update/SKILL.md`, which starts from
 `node global-income-tax-calculator/_jurisdictions/rules.mjs <country> <figure>`.
+
+## Indonesian pages
+
+Search engines learn the site is also in Indonesian from its pairs: a page and its `id/` twin
+name each other with `hreflang`, and the sitemap repeats it. The Indonesian home `id/` is
+generated from `index.html` by `node _ref/bake-home-id.mjs` and lists every tool, Indonesian or
+not: after changing a card on the home page, give it its Indonesian words there and run it.
+`node _ref/hreflang.mjs` checks every pair and writes the sitemap's `xhtml:link` lines; run it
+after any generator that writes a paired page or the sitemap (`bake-id.mjs`, `bake-home-id.mjs`,
+`jurisdiction-pages.mjs`), and `--check` before shipping. An Indonesian page links back to
+Indonesian pages (the home `id/`, the blog's `id/`) where one exists, and to the English tool
+where none does. Indonesian copy follows the blog's `bahasa-indonesia` skill (saya and kamu).
 
 ## Change an existing tool with the least damage
 
