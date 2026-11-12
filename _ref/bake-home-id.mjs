@@ -45,14 +45,14 @@ const LABELS = {
 // `menu` gives a split button's entries, by their English href.
 const T = 'https://tool.adjiebrotots.com/';
 const CARDS = {
-  'mdtopdf': { desc: 'AI-mu menulis dalam Markdown, sementara atasanmu maunya PDF. Ubah tulisannya menjadi PDF siap cetak, lengkap dengan rumus matematika dan diagramnya.' },
+  'mdtopdf': { desc: 'AI-mu menulis dalam Markdown, sementara atasanmu maunya PDF. Ubah tulisan itu menjadi PDF siap cetak, lengkap dengan rumus matematika dan diagram.' },
   'powerfactory-scripter': { desc: 'Susun skrip Python untuk DIgSILENT PowerFactory dalam hitungan menit, bukan berhari-hari, karena sebagian besar studi hanyalah urutan <em>input</em>, simulasi, dan <em>output</em>.' },
-  'pscad-scripter': { desc: 'Susun skrip Python otomasi PSCAD dalam hitungan menit dengan merangkai blok <em>build</em>, <em>run</em>, dan pengecekan EMT menjadi satu berkas yang siap dijalankan.' },
+  'pscad-scripter': { desc: 'Susun skrip Python untuk mengotomatiskan PSCAD dalam hitungan menit dengan merangkai blok <em>build</em>, <em>run</em>, dan pengecekan EMT menjadi satu berkas yang siap dijalankan.' },
   'loadflow-simulator': { desc: 'Gambar diagram segaris lalu jalankan analisis aliran daya langsung di <em>browser</em>. Tegangan setiap bus dan animasi aliran dayanya bisa kamu ekspor atau sematkan.' },
   'ed-uc-simulator': { desc: 'Simulasikan <em>economic dispatch</em> dan <em>unit commitment</em> di <em>browser</em>: gambar jaringannya, lihat pembangkit mana yang menyala setiap jam beserta biayanya, lalu baca harga di tiap simpul.' },
   'capacity-expansion-planner': { desc: 'Pembangkit apa yang perlu dibangun, dan kapan? Cari bauran surya, angin, gas, dan baterai dengan biaya termurah untuk beban yang terus tumbuh, tahun demi tahun.' },
-  'pisahvsgabung': { id: `${T}pisahvsgabung/id/`, desc: 'Pisah harta atau gabung harta? Bandingkan PPh 21 suami istri dengan kedua cara itu, karena urusan pajak sebaiknya diputuskan oleh hitungan, bukan oleh perasaan.' },
-  'financingvscash': { desc: 'Bayar tunai, atau ambil pembiayaan lalu investasikan uang yang tidak jadi dibayarkan? Pilih utang yang bekerja untukmu, bukan untuk bank.' },
+  'pisahvsgabung': { id: `${T}pisahvsgabung/id/`, desc: 'Pisah harta atau gabung harta? Bandingkan PPh 21 suami istri untuk kedua cara itu, karena urusan pajak sebaiknya diserahkan pada hitungan, bukan pada perasaan.' },
+  'financingvscash': { desc: 'Bayar tunai, atau ambil pembiayaan lalu investasikan uang yang tidak jadi keluar itu? Hitung apakah utang itu benar-benar bekerja untukmu, bukan untuk bank.' },
   'rentvsownhouse': {
     id: `${T}rentvsownhouse/id/`, name: 'Sewa vs Beli Rumah',
     desc: 'Benarkah membeli rumah selalu lebih baik daripada menyewa? Simulasikan keduanya selama bertahun-tahun dan lihat mana yang membuat kekayaan bersihmu lebih besar.',
@@ -62,33 +62,33 @@ const CARDS = {
     },
   },
   'dcasimulator': {
-    desc: 'Gejolak pasar terasa tidak terlalu menakutkan kalau kamu membeli rutin setiap bulan. Uji strategi <em>dollar-cost averaging</em> dengan data pasar sungguhan.',
+    desc: 'Gejolak pasar terasa tidak terlalu menakutkan kalau kamu rutin membeli setiap bulan. Uji strategi <em>dollar-cost averaging</em> dengan data pasar sungguhan.',
     menu: {
       [`${T}dcasimulator/`]: { sub: 'Bandingkan aset satu per satu' },
       [`${T}dcasimulator/portfolio/`]: { sub: 'Bandingkan portofolio secara utuh' },
     },
   },
-  'financialfreedom': { desc: 'Berapa dana yang cukup, dan di usia berapa kamu mencapainya? Hitung angka dan usia kebebasan finansialmu, lalu uji ketahanannya di ribuan kemungkinan masa depan.' },
-  'graphvisualiser': { desc: 'Masukkan berkas CSV atau Excel, dapatkan grafik interaktif, dan tampil meyakinkan di rapat yang mendadak.' },
-  'sankeycreator': { desc: 'Diagram aliran keren yang menunjukkan ke mana saja sesuatu mengalir. Susun diagram Sankey secara langsung, lalu ekspor sebagai SVG atau PNG.' },
-  'jsonvisualiser': { desc: 'Tampilkan JSON sebagai pohon yang mudah dibaca manusia. Berkat pemuatan bertahap (<em>lazy loading</em>), jutaan <em>key</em> pun tetap lancar dibuka.' },
-  'canvasbuilder': { desc: 'Perkakas ala CEO dan <em>founder</em> di web. Susun Business Model Canvas yang siap dipresentasikan, satu catatan demi satu catatan.' },
+  'financialfreedom': { desc: 'Berapa dana yang cukup, dan di usia berapa kamu mencapainya? Hitung angka dan usia kebebasan finansialmu, lalu uji ketahanannya di ribuan skenario masa depan.' },
+  'graphvisualiser': { desc: 'Masukkan berkas CSV atau Excel, lalu dapatkan grafik interaktif yang membuatmu tampil meyakinkan di rapat dadakan.' },
+  'sankeycreator': { desc: 'Lihat ke mana saja uang, energi, atau barang mengalir lewat diagram Sankey. Susun diagramnya langsung di <em>browser</em>, lalu ekspor sebagai SVG atau PNG.' },
+  'jsonvisualiser': { desc: 'Tampilkan JSON sebagai pohon yang enak dibaca. Berkat pemuatan bertahap (<em>lazy loading</em>), jutaan <em>key</em> pun tetap lancar dibuka.' },
+  'canvasbuilder': { desc: 'Susun Business Model Canvas ala CEO dan <em>founder</em> langsung di <em>browser</em>, satu catatan tempel demi satu, sampai siap dipresentasikan.' },
   'online-3d-viewer': { desc: 'Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di <em>browser</em>.' },
   'costofliving-comparator': {
     desc: 'Gaji yang lebih tinggi di kota baru belum tentu berarti uang yang lebih banyak. Lihat daya beli penghasilanmu yang sebenarnya di kota tujuan.',
     menu: {
       [`${T}costofliving-comparator/`]: { sub: 'Beberapa kota berdampingan' },
-      [`${T}costofliving-comparator/map/`]: { sub: 'Kotamu dibandingkan dengan 500+ kota di peta' },
+      [`${T}costofliving-comparator/map/`]: { sub: 'Kotamu dibandingkan dengan lebih dari 500 kota di peta' },
     },
   },
-  'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, 39 negara bagian AS, dan DC? Bandingkan beberapa tawaran kerja secara berdampingan, dengan penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
-  'videotogif': { desc: 'Saya enggan berlangganan aplikasi hanya untuk ini, jadi saya membuatnya sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.' },
-  'randompicker': { desc: 'Obat untuk lelah mengambil keputusan: putar roda, lempar dadu, tarik mesin slot, atau jatuhkan bola untuk memilih satu.' },
-  'worldclock': { desc: 'Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia yang menampilkan waktu setempat secara langsung, lengkap dengan <em>daylight saving</em>.' },
-  'eggprice': { desc: 'Bayarlah proteinnya, bukan kalsium cangkangnya. Lihat harga sebenarnya dari setiap kemasan telur per gram isi telur, tanpa cangkang.' },
-  'borrowingcapacity': { desc: 'Berapa pinjaman yang mau diberikan bank di Australia, dan batas mana yang menahan plafonmu? Hitung dengan rumus yang dipakai bank itu sendiri.' },
+  'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, 39 negara bagian AS, dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, dengan penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
+  'videotogif': { desc: 'Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat <em>tool</em> ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.' },
+  'randompicker': { desc: 'Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.' },
+  'worldclock': { desc: 'Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat secara langsung, lengkap dengan <em>daylight saving</em>.' },
+  'eggprice': { desc: 'Yang seharusnya kamu bayar adalah proteinnya, bukan kalsium cangkangnya, jadi lihat harga sebenarnya setiap kemasan telur per gram isi telur.' },
+  'borrowingcapacity': { desc: 'Berapa pinjaman yang bersedia diberikan bank di Australia, dan syarat mana yang membatasi plafonmu? Hitung dengan rumus yang dipakai bank-bank di sana.' },
   'valuateeverything': { desc: 'Setiap penjual mengaku harganya sudah pas. Susun model harga dari iklan yang sudah kamu lihat, lalu temukan harga wajarnya.' },
-  'superdasp': { desc: 'Suatu hari akan meninggalkan Australia? Cek apakah <em>salary sacrifice</em> ke <em>super</em> masih menguntungkan setelah pajak DASP diperhitungkan.' },
+  'superdasp': { desc: 'Berencana meninggalkan Australia suatu hari nanti? Cek apakah <em>salary sacrifice</em> ke <em>super</em> masih menguntungkan setelah pajak DASP diperhitungkan.' },
 };
 
 // ---- What the script on the page writes (read by index.html's own script).
@@ -102,7 +102,7 @@ const HOME_I18N = {
   fewerFilters: 'Sembunyikan filter',
 };
 
-const OG_DESC = 'Kumpulan tool yang membantu saya mengambil keputusan sehari-hari (juga urusan pekerjaan) dengan hitungan yang matang, lalu saya bagikan supaya kamu juga bisa memakainya, gratis.';
+const OG_DESC = 'Kumpulan tool yang membantu saya mengambil keputusan sehari-hari, termasuk urusan pekerjaan, dengan perhitungan yang matang. Saya bagikan secara gratis supaya kamu juga bisa memakainya.';
 
 // ---- Fixed text: [English as it stands in index.html, Indonesian]. Each must occur exactly
 // once, so a change to the English page is noticed here.
@@ -111,7 +111,7 @@ const TEXT = [
   ['<html lang="en">', '<html lang="id">'],
   ['<title>Adjie Brotools</title>', '<title>Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik</title>'],
   ['<meta name="description" content="Free calculators and tools by Adjie Brotosukmono for tax, loans, property, power system engineering and data visualisation. Everything runs in your browser.">',
-   '<meta name="description" content="Kalkulator dan tool gratis dari Adjie Brotosukmono untuk pajak, pinjaman, properti, teknik sistem tenaga listrik, dan visualisasi data. Semua hitungannya berjalan di browser-mu.">'],
+   '<meta name="description" content="Tool gratis dari Adjie Brotosukmono untuk pajak, pinjaman, properti, teknik sistem tenaga listrik, dan visualisasi data. Semua hitungannya berjalan di browser-mu.">'],
   [`<link rel="canonical" href="${SITE}">`, `<link rel="canonical" href="${SITE}id/">`],
   ['<meta property="og:title" content="Adjie Brotools">', '<meta property="og:title" content="Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik">'],
   ['<meta property="og:description" content="Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.">',
@@ -123,7 +123,7 @@ const TEXT = [
   ['<meta property="og:locale:alternate" content="id_ID">', '<meta property="og:locale:alternate" content="en_AU">'],
   ['<meta name="twitter:title" content="Adjie Brotools">', '<meta name="twitter:title" content="Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik">'],
   ['<meta name="twitter:description" content="Free browser-based tools for finance, tax, property, and engineering decisions. All calculations run locally: no uploads, no paywall.">',
-   '<meta name="twitter:description" content="Tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, dan teknik. Semua hitungan berjalan di perangkatmu, tanpa unggah data dan tanpa biaya.">'],
+   '<meta name="twitter:description" content="Tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, dan teknik. Semua hitungan berjalan di perangkatmu tanpa mengunggah data apa pun.">'],
   [`<meta name="twitter:image" content="${SITE}og/home.jpg">`, `<meta name="twitter:image" content="${SITE}og/home-id.jpg">`],
   ['<a class="skip-link" href="#tool-directory">Skip to tool directory</a>', '<a class="skip-link" href="#tool-directory">Langsung ke daftar tool</a>'],
   ['<nav class="family-nav" aria-label="Adjie\'s sites">', '<nav class="family-nav" aria-label="Situs Adjie">'],
@@ -150,12 +150,12 @@ const TEXT = [
   ['aria-live="polite">Showing 5 tools.</p>', 'aria-live="polite">Menampilkan semua tool.</p>'],
   ['        No tools match your current filters. Try clearing one or more filters.\n', '        Tidak ada tool yang cocok dengan filter yang kamu pilih. Coba kosongkan satu atau beberapa filter.\n'],
   ['<p class="footer-collab"><strong>A hobby project by <a href="https://www.adjiebrotots.com/about/">Adjie</a>, open to collaboration.</strong> These tools are free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>; I’m based in Perth and occasionally visit Jakarta. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>',
-   '<p class="footer-collab"><strong>Proyek hobi <a href="https://www.adjiebrotots.com/about/">Adjie</a>, terbuka untuk kolaborasi.</strong> Semua tool di sini gratis. Kalau organisasimu butuh tool khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>; saya tinggal di Perth dan sesekali pulang ke Jakarta. Ada galat atau pertanyaan? <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'],
+   '<p class="footer-collab"><strong>Ini proyek hobi saya, <a href="https://www.adjiebrotots.com/about/">Adjie</a>, dan terbuka untuk kolaborasi.</strong> Semua <em>tool</em> di sini gratis. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>; saya tinggal di Perth dan sesekali pulang ke Jakarta. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'],
   ['<p class="footer-links"><a href="disclaimer/">Disclaimer</a> · <a href="privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>',
    '<p class="footer-links"><a href="disclaimer/id/">Penafian</a> · <a href="privacy/id/">Kebijakan Privasi</a> · <a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a></p>'],
   ['alt="Australian flag"', 'alt="Bendera Australia"'],
   ['Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.',
-   'Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, bebas dipakai, diubah, dan dibagikan dengan kode sumber yang terbuka.'],
+   'Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'],
   ['alt="Indonesian badge"', 'alt="Lencana Indonesia"'],
   ['Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.',
    'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.'],
@@ -165,7 +165,7 @@ const TEXT = [
 // which tools are still in English, so a reader knows every card is open to them.
 const STRIP = `<!-- lang-strip:start (written by _ref/bake-home-id.mjs; the English home, ../, lists the Indonesian pages here) -->
     <section class="container lang-strip" aria-label="Bahasa">
-      <p>Semua <em>tool</em> di bawah ini gratis dan berjalan di <em>browser</em>-mu. Yang bertanda <strong>Bahasa Indonesia</strong> sudah punya versi bahasa Indonesia, sementara yang lain masih berbahasa Inggris, tetapi tetap bisa kamu pakai sepenuhnya.</p>
+      <p>Semua <em>tool</em> di sini gratis dan berjalan di <em>browser</em>-mu. <em>Tool</em> yang bertanda <strong>Bahasa Indonesia</strong> sudah tersedia dalam bahasa Indonesia, sedangkan yang lain masih berbahasa Inggris, tetapi tetap bisa kamu pakai sepenuhnya.</p>
     </section>
     <!-- lang-strip:end -->`;
 
