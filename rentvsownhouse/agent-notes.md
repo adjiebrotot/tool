@@ -157,7 +157,7 @@ Assumptions:
 1. Rumah: rumah tapak 2 kamar tidur di Jakarta Timur, jadi tautannya dimulai dari Quick Start Jakarta untuk rumah tapak 2 kamar tidur (qs=jakarta/house-2br) dan memakai angka lokalnya: DP {downPaymentPct}% dan KPR {mortgageTerm} tahun, dengan bunga fixed 8,5% selama 5 tahun pertama lalu floating 11% sampai 13%.
 2. Biaya awal: {setupCost}% dari harga rumah, untuk BPHTB 5% atas harga di atas Rp250 juta (fasilitas rumah pertama), akta PPAT dan balik nama sekitar 1%, provisi bank 1% dari pinjaman, serta biaya appraisal dan akta KPR.
 3. Biaya kepemilikan: Rp{ownOngoingCost} setahun untuk PBB, perawatan, dan asuransi kebakaran.
-4. Kontrak: sewanya naik {rentInflation}% setahun, ditambah biaya penyewa Rp{rentOngoingCost} setahun dari Quick Start.
+4. Sewa: naik {rentInflation}% setahun, ditambah biaya menyewa Rp{rentOngoingCost} setahun dari Quick Start.
 5. Pertumbuhan dan imbal hasil, dari Quick Start: harga rumah naik {houseGrowth}% setahun, uang yang tidak terpakai mendapat Suku Bunga Bebas Risiko {riskFreeRate}% setahun, biaya menjual rumah {sellingCostPct}%, dan perbandingannya dihitung selama {horizon} tahun.
 
 ## Compact lists

@@ -72,7 +72,7 @@ const LANG_QA = {
     formAll: 'Semua hunian', formApt: 'Apartemen', formHouse: 'Rumah tapak',
     glanceTitle: 'Ringkasan',
     csvTitle: 'Unduh nilai input setiap skenario sebagai CSV',
-    glanceNoteHtml: 'Harga tipikal dalam mata uang setempat, dengan <em>rental yield</em> kotor (sewa setahun dibagi harga) di bawahnya. Klik sebuah angka untuk melihat rinciannya.',
+    glanceNoteHtml: 'Harga yang lazim dalam mata uang setempat, dengan <em>rental yield</em> kotor (sewa setahun dibagi harga) di bawahnya. Klik sebuah angka untuk melihat rinciannya.',
     noResults: 'Tidak ada kota yang cocok dengan pencarianmu.',
     noscriptHtml: 'Tabel di halaman ini disusun langsung dari data Quick Start yang dipakai <em>tool</em>-nya, jadi JavaScript di <em>browser</em>-mu harus aktif.',
     /* ── drawn by the script ── */

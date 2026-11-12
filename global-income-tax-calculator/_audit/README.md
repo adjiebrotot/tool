@@ -7,6 +7,13 @@ Two harnesses, both run from the repository root.
 | `node global-income-tax-calculator/_audit/run.mjs` | The engine (`engine.js`) against the spec. Replays all 422 golden cases (`golden-v11.json`, written by `gsc_reference_model.py`, spec v11) to ±1 unit of local currency: income tax, employee contributions and net. Then the Layer A anchors (spec §5.1), the line items adding up to the totals with a known source and status, the taxable income the breakdown builds from gross pay (the lines marked `base`) landing on the engine's own, 50 net-to-gross round trips for each of 33 presets, the caps of Layer D and the guards. |
 | `node global-income-tax-calculator/_audit/page.mjs` | The page. Types 47 golden cases into the real form (country, every field, a monthly amount) and reads the figures the page shows, then net to gross, the display currency and per-month views, a period switch that must not move the answer, three jobs kept over a reload, the eleven states not loaded left out of the state list, and a job saved with one of them showing its reason instead of a figure. Needs Chart.js cached in `_ref/.libcache/` (run `node _ref/chart-check.mjs` once). |
 
+The Indonesian page (`id/`, baked from `index.html` by `_ref/bake-id.mjs`) has two more:
+
+| Run | What it holds |
+| --- | --- |
+| `node global-income-tax-calculator/_audit/labels-id.mjs` | Every text the engine writes (line labels, bracket adjustments, notes, reasons, the tax year and place), collected by running each country through every option of the form alone and in pairs at 80 pay levels and net to gross (`engine-strings.mjs`), has its Indonesian in `labels-id.js`, keeps every figure of the English, and `labels-id.js` matches the content files' `lineLabels` it is made from (`_jurisdictions/labels.mjs`). A new engine label fails here until its Indonesian is in that country's `content/<slug>.id.json`. |
+| `node global-income-tax-calculator/_audit/lang-parity.mjs` | The two pages are one tool: every Quick Start gives the same jobs, figures and chart on both; work saved on one opens unchanged on the other, both ways (numbers such as 123,456.78 included); a Share link and an AI `#load` link open the same on both, including a select named by its English words on `id/`. Needs Chart.js cached like `page.mjs`. |
+
 Regenerate the golden file with `python3 gsc_reference_model.py` in this folder; it writes
 `golden.json`. Rename it over `golden-v11.json` only when the spec moves to a new version.
 

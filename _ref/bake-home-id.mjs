@@ -49,7 +49,7 @@ const CARDS = {
   'powerfactory-scripter': { desc: 'Susun skrip Python untuk DIgSILENT PowerFactory dalam hitungan menit, bukan berhari-hari, karena sebagian besar studi hanyalah urutan <em>input</em>, simulasi, dan <em>output</em>.' },
   'pscad-scripter': { desc: 'Susun skrip Python untuk mengotomatiskan PSCAD dalam hitungan menit dengan merangkai blok <em>build</em>, <em>run</em>, dan pengecekan EMT menjadi satu berkas yang siap dijalankan.' },
   'loadflow-simulator': { desc: 'Gambar diagram segaris lalu jalankan analisis aliran daya langsung di <em>browser</em>. Tegangan setiap bus dan animasi aliran dayanya bisa kamu ekspor atau sematkan.' },
-  'ed-uc-simulator': { desc: 'Simulasikan <em>economic dispatch</em> dan <em>unit commitment</em> di <em>browser</em>: gambar jaringannya, lihat pembangkit mana yang menyala setiap jam beserta biayanya, lalu baca harga di tiap simpul.' },
+  'ed-uc-simulator': { desc: 'Simulasikan <em>economic dispatch</em> dan <em>unit commitment</em> di <em>browser</em>: gambar jaringannya, lihat pembangkit mana yang beroperasi setiap jam beserta biayanya, lalu baca harga di tiap simpul.' },
   'capacity-expansion-planner': { desc: 'Pembangkit apa yang perlu dibangun, dan kapan? Cari bauran surya, angin, gas, dan baterai dengan biaya termurah untuk beban yang terus tumbuh, tahun demi tahun.' },
   'pisahvsgabung': { id: `${T}pisahvsgabung/id/`, desc: 'Pisah harta atau gabung harta? Bandingkan PPh 21 suami istri untuk kedua cara itu, karena urusan pajak sebaiknya diserahkan pada hitungan, bukan pada perasaan.' },
   'financingvscash': { desc: 'Bayar tunai, atau ambil pembiayaan lalu investasikan uang yang tidak jadi keluar itu? Hitung apakah utang itu benar-benar bekerja untukmu, bukan untuk bank.' },

@@ -67,7 +67,7 @@
     {
       "@type": "HowToStep",
       "name": "Ajukan pertanyaanmu",
-      "text": "Ajukan pertanyaanmu. AI akan menuliskan input darimu dan asumsi yang dipakainya, lalu mengirim tautan yang membuka Kalkulator Gaji Bersih dan Pajak Penghasilan dengan skenariomu."
+      "text": "Tanyakan dengan kata-katamu sendiri. AI akan menuliskan input yang kamu sebutkan beserta asumsi yang dipakainya, lalu mengirim tautan yang membuka Kalkulator Gaji Bersih dan Pajak Penghasilan dengan skenariomu."
     }
   ]
 }
@@ -93,7 +93,7 @@
     <a class="btn-theme btn-back" href="../../id/">← Kalkulator Gaji Bersih</a>
     <div class="gd-top-r">
       <a class="btn-primary gd-open gd-open-top" href="../brotools-global-income-tax-calculator.zip" download>Unduh skill</a>
-      <a class="btn-theme" id="langToggle" href="../" hreflang="en" lang="en" title="Read in English">EN</a>
+      <a class="btn-theme" id="langToggle" href="../" hreflang="en" lang="en" title="Baca dalam bahasa Inggris">EN</a>
       <button class="btn-theme" id="themeToggle" type="button">🌙 Gelap</button>
     </div>
   </nav>
@@ -105,7 +105,7 @@
         <a class="btn-primary gd-open ai-dl" href="../brotools-global-income-tax-calculator.zip" download><span aria-hidden="true">⬇</span>&nbsp;Unduh brotools-global-income-tax-calculator.zip</a>
         <a class="gd-skip" href="../../id/">Buka tool-nya</a>
       </div>
-      <p class="ai-files">Skill ini berupa berkas .zip: <code>SKILL.md</code> (cara menjawab), <code>references/</code> (setiap <em>input</em>, rentang nilainya, dan Quick Start) dan <code>scripts/build_link.py</code> (menyusun dan mengecek tautan).</p>
+      <p class="ai-files"><em>Skill</em> ini berupa berkas .zip: <code>SKILL.md</code> (cara menjawab), <code>references/</code> (setiap <em>input</em>, rentang nilainya, dan Quick Start) dan <code>scripts/build_link.py</code> (menyusun dan mengecek tautan).</p>
     </header>
 
     <section class="gd-sec card" id="install" aria-labelledby="install-h">
@@ -128,7 +128,7 @@
           <ol class="gd-steps ai-steps"></ol>
         </div>
       </div>
-      <p class="gd-note">Letak menu bisa berpindah setiap kali aplikasinya diperbarui, jadi carilah <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT dan Grok: Plugins; Gemini: Customise; Copilot: di dalam sebuah <em>agent</em>). Gemini menerima folder hasil ekstrak, sementara yang lain menerima berkas zip apa adanya. Paket langgananmu belum mendukung skill? Lampirkan <code>brotools-global-income-tax-calculator.zip</code> atau <code>SKILL.md</code>-nya ke <em>chat</em>, lalu tulis "pakai skill ini".</p>
+      <p class="gd-note">Letak menu bisa berpindah setiap kali aplikasinya diperbarui, jadi carilah <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT dan Grok: Plugins; Gemini: Customise; Copilot: di dalam sebuah <em>agent</em>). Gemini menerima folder hasil ekstrak, sementara yang lain menerima berkas zip apa adanya. Paket langgananmu belum mendukung <em>skill</em>? Lampirkan <code>brotools-global-income-tax-calculator.zip</code> atau <code>SKILL.md</code>-nya ke <em>chat</em>, lalu tulis "pakai <em>skill</em> ini".</p>
       <p class="ai-asof">Berlaku per 7 November 2026. AI berubah dengan cepat, jadi tampilan, paket, dan fiturnya mungkin sudah berbeda saat kamu membaca ini.</p>
     </section>
 
@@ -140,7 +140,7 @@
 
     <section class="gd-sec card" id="use" aria-labelledby="use-h">
       <h2 id="use-h">Cara memakainya</h2>
-      <p class="gd-sub">Bertanyalah seperti kamu bertanya kepada teman. Begitu skill ini terpasang, AI memakai angka darimu apa adanya, mencari sendiri sisanya, lalu memberimu tautan. AI tidak menjawab sendiri, karena jawabannya baru dihitung oleh <em>tool</em> begitu tautan itu kamu buka.</p>
+      <p class="gd-sub">Bertanyalah seperti kamu bertanya kepada teman. Begitu <em>skill</em> ini terpasang, AI memakai angka yang kamu sebutkan apa adanya, mencari sendiri sisanya, lalu memberimu tautan. AI tidak menjawab sendiri, karena jawabannya baru dihitung oleh <em>tool</em> begitu tautan itu kamu buka.</p>
       <div class="ai-chat" aria-label="Contoh percakapan">
         <div class="ai-msg ai-user"><p>Saya dapat dua tawaran kerja: S$120.000 setahun di Singapura dengan Employment Pass, atau Rp 900 juta setahun di Jakarta. Saya sudah menikah dan punya satu anak. Setelah pajak, mana yang sisanya lebih besar?</p></div>
         <div class="ai-work">
@@ -161,8 +161,8 @@
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Putar ulang</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/#load&amp;v=1&amp;dispCur=IDR&amp;why.dispCur=Kedua%20gaji%20dibaca%20dalam%20rupiah%20supaya%20mudah%20dibandingkan&amp;json=%7B%22jobs%22:%5B%7B%22country%22:%22SG%22,%22sgRes%22:%22ep%22,%22amount%22:120000%7D,%7B%22country%22:%22ID%22,%22idMarried%22:true,%22idDeps%22:1,%22amount%22:900000000%7D%5D%7D&amp;note=Singapura%20dan%20Jakarta,%20November%202026" target="_blank" rel="noopener">Buka skenario ini</a></div>
       </div>
       <ul class="gd-facts">
-        <li><strong>Angka darimu tidak diubah.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.</li>
-        <li><strong>Dicek sebelum sampai kepadamu.</strong> Skrip di dalam skill mengecek nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautannya, sehingga yang terbuka memang skenario yang tertulis.</li>
+        <li><strong>Angkamu tidak diubah.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.</li>
+        <li><strong>Dicek sebelum sampai kepadamu.</strong> Skrip di dalam <em>skill</em> mengecek nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautannya, sehingga yang terbuka memang skenario yang tertulis.</li>
         <li><strong><em>Tool</em> menunjukkan pilihan AI.</strong> Begitu tautan dibuka, sebuah <em>banner</em> mencantumkan setiap nilai yang diisi AI beserta alasannya, lengkap dengan tombol untuk kembali ke <em>input</em>-mu sendiri.</li>
       </ul>
     </section>
@@ -183,7 +183,7 @@
   </main>
 
   <footer>
-    <p class="footer-collab"><strong>Proyek hobi yang terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-collab"><strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
     <p class="footer-links"><a href="../../../disclaimer/id/">Penafian</a> · <a href="../../../privacy/id/">Kebijakan Privasi</a> · <a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a></p>
     <div class="gd-made">
       <img loading="lazy" src="../../../logos/australian.png" alt="Bendera Australia" class="gd-flag">

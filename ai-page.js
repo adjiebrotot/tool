@@ -225,21 +225,21 @@
         ['Skills', 'Buka tab <strong>Skills</strong>, di samping Connectors dan Plugins.'],
         ['Add, lalu Upload skill', 'Tekan <strong>+ Add</strong> di kanan atas, lalu pilih <strong>Upload skill</strong>.'],
         ['Taruh zip-nya, lalu Upload', 'Seret <code>' + ZIP + '</code> ke <strong>Skill file</strong> (biarkan tetap berupa zip), lalu tekan <strong>Upload</strong>. Pemindaian keamanan berjalan selama berkasnya diunggah.'],
-        ['Aktifkan', 'Skill-nya langsung terbuka dalam keadaan aktif. Tekan <strong>Try in chat</strong>, atau mulai <em>chat</em> baru dan ajukan pertanyaanmu.']
+        ['Aktifkan', '<em>Skill</em>-nya langsung aktif. Tekan <strong>Try in chat</strong>, atau mulai <em>chat</em> baru dan ajukan pertanyaanmu.']
       ],
       chatgpt: [
         ['Plugins, lalu Skills', 'Di <em>workspace</em> Business, Enterprise, Healthcare, atau Edu, buka <strong>Plugins</strong> di <em>sidebar</em>, lalu tab <strong>Skills</strong>.'],
-        ['Create, lalu Upload', 'Tekan <strong>Create</strong>, lalu pilih <strong>Upload from your computer</strong>. Kalau pilihan Upload tidak ada, berarti admin belum mengizinkan unggahan skill.'],
-        ['Pilih zip-nya', 'Pilih <code>' + ZIP + '</code>. ChatGPT memindainya dulu sebelum skill-nya siap dipakai.'],
-        ['Siap', 'Skill-nya tampil dalam keadaan aktif. Buka <em>chat</em> baru, lalu ajukan pertanyaanmu.'],
-        ['Plus atau Pro: pakai Codex', 'ChatGPT-mu tidak punya Skills? Dengan paket Plus atau yang lebih tinggi, Codex bisa membaca skill: ekstrak unduhannya ke <code>~/.agents/skills/</code> (Codex versi lama: <code>~/.codex/skills/</code>), lalu ajukan pertanyaanmu ke Codex.']
+        ['Create, lalu Upload', 'Tekan <strong>Create</strong>, lalu pilih <strong>Upload from your computer</strong>. Kalau pilihan Upload tidak ada, berarti admin belum mengizinkan unggahan <em>skill</em>.'],
+        ['Pilih zip-nya', 'Pilih <code>' + ZIP + '</code>. ChatGPT memindainya dulu sebelum <em>skill</em>-nya siap dipakai.'],
+        ['Siap', '<em>Skill</em>-nya sudah aktif. Buka <em>chat</em> baru, lalu ajukan pertanyaanmu.'],
+        ['Plus atau Pro: pakai Codex', 'ChatGPT-mu tidak punya Skills? Dengan paket Plus atau yang lebih tinggi, Codex bisa membaca <em>skill</em>: ekstrak unduhannya ke <code>~/.agents/skills/</code> (Codex versi lama: <code>~/.codex/skills/</code>), lalu ajukan pertanyaanmu ke Codex.']
       ],
       grok: [
         ['Buka Plugins', 'Di Grok, tekan <strong>Plugins</strong> di kiri bawah, tepat di atas namamu.'],
         ['Skills', 'Buka tab <strong>Skills</strong>, di samping Connectors.'],
         ['New Skill, lalu Upload skill file', 'Tekan <strong>New Skill</strong>, lalu pilih <strong>Upload skill file</strong>.'],
         ['Taruh zip-nya', 'Taruh <code>' + ZIP + '</code> di kotak itu (berkas .zip, .skill, atau .md), atau klik untuk mencarinya.'],
-        ['Siap', 'Skill-nya tercantum di bawah <strong>Personal</strong>. Ajukan pertanyaanmu di <em>chat</em> baru.']
+        ['Siap', '<em>Skill</em>-nya tercantum di bawah <strong>Personal</strong>. Ajukan pertanyaanmu di <em>chat</em> baru.']
       ],
       gemini: [
         ['Ekstrak dulu', 'Gemini menerima berkas atau folder, bukan zip. Ekstrak <code>' + ZIP + '</code> sampai kamu mendapat folder <strong>' + SKILL + '</strong> yang berisi <code>SKILL.md</code>.'],
@@ -247,14 +247,14 @@
         ['Create, lalu Upload', 'Tekan <strong>Create</strong>, lalu pilih <strong>Upload</strong>.'],
         ['Pilih foldernya', 'Pilih folder <strong>' + SKILL + '</strong> (yang berisi <code>SKILL.md</code>), lalu tekan <strong>Continue</strong>.'],
         ['Cek, lalu Create', 'Gemini mengisi <strong>Name</strong>, <strong>Description</strong>, dan <strong>Instructions</strong> dari <code>SKILL.md</code>. Biarkan apa adanya, lalu tekan <strong>Create</strong>.'],
-        ['Siap', 'Skill-nya ada di bawah <strong>Installed</strong>. Ajukan pertanyaanmu di <em>chat</em> baru.']
+        ['Siap', '<em>Skill</em>-nya ada di bawah <strong>Installed</strong>. Ajukan pertanyaanmu di <em>chat</em> baru.']
       ],
       copilot: [
-        ['Agents, lalu New agent', 'Copilot menyimpan skill di dalam sebuah <em>agent</em>. Buka <strong>Agents</strong> di <em>sidebar</em>, lalu pilih <strong>New agent</strong>.'],
+        ['Agents, lalu New agent', 'Copilot menyimpan <em>skill</em> di dalam sebuah <em>agent</em>. Buka <strong>Agents</strong> di <em>sidebar</em>, lalu pilih <strong>New agent</strong>.'],
         ['Lewati chat pembuat agent', 'Di layar <strong>Build your own specialist agent</strong>, tekan <strong>Skip</strong> supaya kamu bisa mengaturnya sendiri.'],
-        ['Beri nama, lalu tambahkan skill', 'Ganti nama <strong>New Agent</strong> (misalnya menjadi <strong>Brotools</strong>). Di bagian <strong>Skills</strong>, tekan <strong>+ Add</strong>, lalu pilih untuk mengunggah skill.'],
+        ['Beri nama, lalu tambahkan skill', 'Ganti nama <strong>New Agent</strong> (misalnya menjadi <strong>Brotools</strong>). Di bagian <strong>Skills</strong>, tekan <strong>+ Add</strong>, lalu pilih untuk mengunggah <em>skill</em>.'],
         ['Unggah zip-nya', 'Pilih <code>' + ZIP + '</code>, lalu tekan <strong>Upload</strong>.'],
-        ['Create, lalu tambahkan sisanya', 'Tekan <strong>Create</strong>, lalu mulailah mengobrol dengan <em>agent</em> itu. Satu <em>agent</em> bisa menampung semua skill Brotools, jadi tambahkan yang lain dari <a href="' + HUB + '">semua skill Brotools</a>.']
+        ['Create, lalu tambahkan sisanya', 'Tekan <strong>Create</strong>, lalu mulailah mengobrol dengan <em>agent</em> itu. Satu <em>agent</em> bisa menampung semua <em>skill</em> Brotools, jadi tambahkan yang lain dari <a href="' + HUB + '">semua skill Brotools</a>.']
       ]
     };
     if (ID) Object.keys(STEPS).forEach(function (a) {
@@ -269,10 +269,10 @@
       copilot: 'Make one <strong>Brotools</strong> agent and add every Brotools skill to it, so one chat reaches all the tools. <a href="' + HUB + '">See all Brotools skills</a>.'
     };
     if (ID) NOTES = {
-      claude: 'Skill memakai fitur eksekusi kode Claude, jadi biarkan <strong>Code execution and file creation</strong> tetap aktif (Settings, Capabilities).',
-      chatgpt: 'Skills di ChatGPT tersedia untuk <em>workspace</em> <strong>Business, Enterprise, Healthcare, dan Edu</strong> yang memenuhi syarat, dan admin mungkin perlu mengizinkan unggahannya. Akun Free dan Plus pribadi biasanya belum bisa menambahkan skill, jadi kalau kamu memakai Plus atau yang lebih tinggi, pakai Codex (langkah terakhir).',
+      claude: '<em>Skill</em> memakai fitur eksekusi kode Claude, jadi biarkan <strong>Code execution and file creation</strong> tetap aktif (Settings, Capabilities).',
+      chatgpt: 'Skills di ChatGPT tersedia untuk <em>workspace</em> <strong>Business, Enterprise, Healthcare, dan Edu</strong> yang memenuhi syarat, dan admin mungkin perlu mengizinkan unggahannya. Akun Free dan Plus pribadi biasanya belum bisa menambahkan <em>skill</em>, jadi kalau kamu memakai Plus atau yang lebih tinggi, gunakan Codex (langkah terakhir).',
       gemini: 'Gemini mengunggah folder, bukan zip, jadi ekstrak dulu unduhannya.',
-      copilot: 'Buat satu <em>agent</em> <strong>Brotools</strong>, lalu tambahkan semua skill Brotools ke dalamnya, supaya satu <em>chat</em> bisa menjangkau semua <em>tool</em>. <a href="' + HUB + '">Lihat semua skill Brotools</a>.'
+      copilot: 'Buat satu <em>agent</em> <strong>Brotools</strong>, lalu tambahkan semua <em>skill</em> Brotools ke dalamnya, supaya satu <em>chat</em> bisa menjangkau semua <em>tool</em>. <a href="' + HUB + '">Lihat semua skill Brotools</a>.'
     };
     var STEP_MS = 3000;
     var stage = root.querySelector('.ai-stage');
