@@ -42,17 +42,27 @@
     var legal = isId
       ? '<a href="' + rootPath + 'disclaimer/id/">Penafian</a> · <a href="' + rootPath + 'privacy/id/">Kebijakan Privasi</a>'
       : '<a href="' + rootPath + 'disclaimer/">Disclaimer</a> · <a href="' + rootPath + 'privacy/">Privacy Policy</a>';
-    el.innerHTML = '<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'
+    // The Indonesian lines are the ones the site's other Indonesian pages carry (_ref/jurisdiction-pages.mjs).
+    var collab = isId
+      ? '<strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂'
+      : '<strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂';
+    var gpl = isId
+      ? 'Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'
+      : 'Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.';
+    var made = isId
+      ? 'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.'
+      : 'Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.';
+    el.innerHTML = '<p class="footer-collab">' + collab + '</p>'
       + '<p class="footer-links">' + legal + ' · ' + (isId ? '<a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a>' : '<a href="https://blog.adjiebrotots.com/">Blog</a>') + updated(el, isId) + '</p>'
       + '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">'
-      +   '<img src="' + logosPath + 'australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
+      +   '<img src="' + logosPath + 'australian.png" alt="' + (isId ? 'Bendera Australia' : 'Australian flag') + '" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
       +   '<div style="display:flex;align-items:center;gap:10px">'
       +     '<img src="' + logosPath + 'gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
-      +     '<span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>'
+      +     '<span style="color:var(--muted);font-size:0.76rem">' + gpl + '</span>'
       +   '</div>'
       +   '<div style="display:flex;align-items:center;gap:10px">'
-      +     '<img src="' + logosPath + 'indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
-      +     '<span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>'
+      +     '<img src="' + logosPath + 'indonesian.png" alt="' + (isId ? 'Lencana Indonesia' : 'Indonesian badge') + '" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
+      +     '<span style="color:var(--muted);font-size:0.76rem">' + made + '</span>'
       +   '</div>'
       + '</div>';
   };

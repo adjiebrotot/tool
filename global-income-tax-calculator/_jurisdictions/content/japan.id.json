@@ -409,6 +409,8 @@
     "National income tax with reconstruction surtax": "Pajak penghasilan nasional beserta pajak tambahan rekonstruksi",
     "Resident tax (10% and per-capita levy)": "Pajak penduduk (10% dan iuran per kepala)",
     "No resident tax in the first year (it follows last year's income)": "Tanpa pajak penduduk di tahun pertama (mengikuti penghasilan tahun lalu)",
-    "Income tax, non-resident (20.42%, final)": "Pajak penghasilan non-resident (20,42%, final)"
+    "Income tax, non-resident (20.42%, final)": "Pajak penghasilan non-resident (20,42%, final)",
+    "Tokyo": "Tokyo",
+    "Taxable income, national tax": "Penghasilan kena pajak, pajak nasional"
   }
 }

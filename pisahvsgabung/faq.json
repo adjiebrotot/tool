@@ -53,7 +53,7 @@
     {
       "q": "Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?",
       "a": [
-        "Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Alat ini menampilkan titik balik itu untuk data Anda."
+        "Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Tool ini menunjukkan titik balik itu berdasarkan gajimu dan gaji pasanganmu."
       ]
     },
     {
@@ -65,13 +65,13 @@
     {
       "q": "Bagaimana biaya jabatan dihitung?",
       "a": [
-        "Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombolnya hanya bila pengurang yang Anda isi sudah memuat biaya jabatan."
+        "Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombol biaya jabatan hanya kalau angka yang kamu isi di Pengurang sudah termasuk biaya jabatan."
       ]
     },
     {
       "q": "Apakah THR, bonus, dan iuran BPJS Ketenagakerjaan ikut dihitung?",
       "a": [
-        "THR, gaji ke-13, dan bonus ikut dihitung bila Anda memasukkannya ke gaji kotor setahun, karena alat ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga."
+        "THR, gaji ke-13, dan bonus ikut dihitung asalkan kamu memasukkannya ke gaji kotor setahun, karena tool ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga."
       ]
     }
   ]

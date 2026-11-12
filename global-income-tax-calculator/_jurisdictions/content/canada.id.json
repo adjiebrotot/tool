@@ -449,7 +449,13 @@
     "QPIP (0.430%)": "QPIP (0,430%)",
     "Federal tax, after the 16.5% Quebec abatement": "Pajak federal, setelah abatement Quebec 16,5%",
     "Quebec income tax": "Pajak penghasilan Quebec",
-    "Deduction for workers (6%, max 1,450), Quebec only": "Potongan khusus pekerja (6%, maks. C$1.450), hanya Quebec"
+    "Deduction for workers (6%, max 1,450), Quebec only": "Potongan khusus pekerja (6%, maks. C$1.450), hanya Quebec",
+    "Ontario Tax Reduction, inside the Ontario tax": "Ontario Tax Reduction, sudah termasuk di pajak Ontario",
+    "LIFT credit, inside the Ontario tax": "Kredit LIFT, sudah termasuk di pajak Ontario",
+    "Ontario income tax with surtax": "Pajak penghasilan Ontario beserta surtax",
+    "BC tax reduction credit, inside the tax": "Kredit BC tax reduction, sudah termasuk di pajaknya",
+    "Taxable income, federal": "Penghasilan kena pajak, federal",
+    "The Quebec work premium, solidarity credit and RAMQ drug insurance premium are not included.": "Work premium Quebec, kredit solidaritas, dan premi asuransi obat RAMQ tidak termasuk."
   },
   "bmc": "Terbantu? Traktir kopi, double-double juga boleh."
 }

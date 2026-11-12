@@ -77,7 +77,7 @@ var RVO_TIPS_ID = {
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa yang berupa jumlah tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
   riskFreeRate:         "Imbal hasil per tahun atas kas yang menganggur, seperti tabungan atau deposito. Berlaku di semua skenario.",
   generalInflation:     "Laju kenaikan harga umum per tahun (IHK). Rencananya tidak berubah: opsi Tampilkan dalam nilai hari ini, di samping hasil, membagi setiap angka dengan laju ini.",
-  initialCash:          "Kas yang Anda punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk DP Sewa Dulu nanti.",
+  initialCash:          "Kas yang kamu punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk DP Sewa Dulu nanti.",
   monthlyBudget:        "Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal tiap tahun, dengan cicilan di batas atas bunga floating, jadi semua skenario sanggup membayar.",
   monthlyBudgetIncrease: {
     manual: "Menaikkan anggaran bulanan tiap tahun secara majemuk, misalnya mengikuti kenaikan gaji atau inflasi. Surplus makin lebar seiring waktu.",
@@ -93,8 +93,8 @@ var RVO_TIPS_ID = {
     multi:  "Imbal hasil kas yang tidak terpakai per tahun, satu suku bunga per mata uang. Semua kolom dalam mata uang yang sama memakai suku bunga yang sama."
   },
   sensInitialCash: {
-    single: "Kas yang Anda miliki sekarang, sama di semua kolom. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikannya. Jika kosong, dipakai kebutuhan terbesar dari semua kolom.",
-    multi:  "Kas yang Anda miliki sekarang dalam mata uang dasar, sama di semua kolom sesuai kursnya. Jika kosong, dipakai kebutuhan awal terbesar dari semua kolom."
+    single: "Kas yang kamu miliki sekarang, sama di semua kolom. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikannya. Jika kosong, dipakai kebutuhan terbesar dari semua kolom.",
+    multi:  "Kas yang kamu miliki sekarang dalam mata uang dasar, sama di semua kolom sesuai kursnya. Jika kosong, dipakai kebutuhan awal terbesar dari semua kolom."
   },
   sensMonthlyBudget: {
     single: "Kas bulanan untuk perumahan, sama di semua kolom. Jika kosong, dipakai kebutuhan terbesar dari semua kolom tiap bulan, jadi rumah yang lebih murah menabung selisihnya.",
@@ -103,7 +103,7 @@ var RVO_TIPS_ID = {
   fxMode:       "Bandingkan rumah dengan mata uang berbeda. Hasil dan grafik dalam mata uang dasar, dan tiap kolom mendapat kas dan anggaran yang sama sesuai kursnya.",
   scenCurrency: "Mata uang harga, sewa dan biaya kolom ini. Menggantinya hanya mengganti label angka, tidak mengonversinya.",
   fxRate:       "Jumlah mata uang kolom ini untuk satu unit mata uang dasar hari ini, dari ExchangeRate-API. Isi kurs sendiri, atau kosongkan untuk kurs terkini.",
-  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga tinggi saja tidak membuatnya menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li><li><strong>Perkiraan penguatan/pelemahan:</strong> kurs bergerak sesuai perubahan tahunan yang Anda perkirakan untuk tiap mata uang.</li></ul>",
+  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga tinggi saja tidak membuatnya menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li><li><strong>Perkiraan penguatan/pelemahan:</strong> kurs bergerak sesuai perubahan tahunan yang kamu perkirakan untuk tiap mata uang.</li></ul>",
   fxTrend:      "Seberapa besar tiap mata uang diperkirakan menguat atau melemah terhadap mata uang dasar setiap tahun. Minus berarti melemah, plus berarti menguat: -2% berarti 1 unit mata uang dasar mendapat 2% lebih banyak mata uang itu setiap tahun.",
 };
 // Variant tips keyed by the option selected: explained one option at a time,

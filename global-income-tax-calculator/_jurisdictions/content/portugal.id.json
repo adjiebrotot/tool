@@ -266,6 +266,11 @@
     "Deductions from tax (family expenses)": "Pengurang dari pajak (pengeluaran keluarga)",
     "Deductions from tax (family expenses, health, education, rent)": "Pengurang dari pajak (pengeluaran keluarga, kesehatan, pendidikan, sewa)",
     "Deductions from tax (family expenses, dependants)": "Pengurang dari pajak (pengeluaran keluarga, tanggungan)",
-    "Deductions from tax (family expenses, dependants, health, education, rent)": "Pengurang dari pajak (pengeluaran keluarga, tanggungan, kesehatan, pendidikan, sewa)"
+    "Deductions from tax (family expenses, dependants, health, education, rent)": "Pengurang dari pajak (pengeluaran keluarga, tanggungan, kesehatan, pendidikan, sewa)",
+    "Income 2026 (mainland)": "Penghasilan 2026 (daratan Portugal)",
+    "Mainland": "Daratan Portugal",
+    "Deductions from tax (family expenses, dependants), inside the tax above": "Pengurang pajak (biaya keluarga, tanggungan), sudah termasuk di pajak di atas",
+    "Deductions from tax (family expenses, health, education, rent), inside the tax above": "Pengurang pajak (biaya keluarga, kesehatan, pendidikan, sewa), sudah termasuk di pajak di atas",
+    "Deductions from tax (family expenses, dependants, health, education, rent), inside the tax above": "Pengurang pajak (biaya keluarga, tanggungan, kesehatan, pendidikan, sewa), sudah termasuk di pajak di atas"
   }
 }

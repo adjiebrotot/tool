@@ -389,6 +389,7 @@
     "Non-taxable allowance (PTKP TK/0)": "PTKP TK/0 (Penghasilan Tidak Kena Pajak)",
     "Non-taxable allowance (PTKP K/2)": "PTKP K/2 (Penghasilan Tidak Kena Pajak)",
     "PPh 21 income tax": "PPh 21",
-    "PPh 26, 20% of gross, final": "PPh 26, 20% dari penghasilan bruto, final"
+    "PPh 26, 20% of gross, final": "PPh 26, 20% dari penghasilan bruto, final",
+    "Treaty relief for employment income is not modelled.": "Keringanan dari perjanjian penghindaran pajak berganda untuk penghasilan kerja tidak dihitung."
   }
 }

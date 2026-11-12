@@ -188,7 +188,7 @@ const LANG = {
     tabAdvanced: 'PTKP & Lapisan Pajak',
     groupFamily: 'Keluarga',
     dependentsLabel: 'Tanggungan',
-    dependentsTip: 'Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.',
+    dependentsTip: 'Anggota keluarga yang kamu tanggung, misalnya anak. Setiap tanggungan menambah PTKP, tetapi paling banyak hanya tiga yang dihitung.',
     dep0: 'Tanpa tanggungan',
     dep1: '1 tanggungan',
     dep2: '2 tanggungan',
@@ -331,7 +331,7 @@ const LANG = {
     warnSpouseExceed: '⚠️ Pengurang salah satu pasangan melebihi gaji kotornya, jadi penghasilan neto pasangan itu dihitung Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, paling banyak Rp 6 juta per tahun. Di atas batas: ',
     warnCapOf: ', batas ',
-    warnCapTail: '. Nilai yang Anda isi tetap dipakai sepenuhnya.',
+    warnCapTail: '. Angka yang kamu isi tetap dipakai sepenuhnya.',
     warnCapH: 'Suami',
     warnCapW: 'Istri',
     assumesTitle: 'Asumsi yang dipakai',
@@ -1179,7 +1179,7 @@ function renderAssumptions(state){
   const dep = S.dependents;
   items.push(L(
     `<strong>Gabung Harta:</strong> the wife's salary comes from one employer and has nothing to do with the husband's work, so her employer's withholding is final (UU PPh Pasal 8 ayat 1). The husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife's salary is taxed with her own ${rp(c.ptkpW)}.`,
-    `<strong>Gabung Harta:</strong> gaji istri berasal dari satu pemberi kerja dan tidak berhubungan dengan pekerjaan suami, jadi potongan pajak dari pemberi kerjanya final (UU PPh Pasal 8 ayat 1). PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; gaji istri dipajaki dengan PTKP istri sendiri ${rp(c.ptkpW)}.`));
+    `<strong>Gabung Harta:</strong> gaji istri berasal dari satu pemberi kerja dan tidak berhubungan dengan pekerjaan suami, jadi potongan pajak dari pemberi kerjanya final (UU PPh Pasal 8 ayat 1). PTKP suami ${rp(c.ptkpH)}, sudah termasuk tambahan untuk status kawin${dep ? ' dan ' + dep + ' tanggunganmu' : ''}; gaji istri dipajaki dengan PTKP istri sendiri ${rp(c.ptkpW)}.`));
   items.push(L(
     `<strong>Pisah Harta (PH or MT):</strong> the tax is worked out on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), then shared between you by net income.`,
     `<strong>Pisah Harta (PH atau MT):</strong> pajak dihitung dari penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), lalu dibagi antara suami dan istri menurut penghasilan neto.`));
@@ -1193,7 +1193,7 @@ function renderAssumptions(state){
       : ptkpEdited ? L('PTKP amounts', 'nilai PTKP') : L('tax brackets', 'lapisan tarif');
     items.push(L(
       `<strong>Your own ${what} apply,</strong> not the statutory ones.`,
-      `<strong>Memakai ${what} yang Anda ubah,</strong> bukan yang sesuai ketentuan.`));
+      `<strong>Hitungan ini memakai ${what} yang kamu ubah sendiri,</strong> bukan angka sesuai ketentuan.`));
   }
 
   items.push(L(

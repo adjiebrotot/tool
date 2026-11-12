@@ -406,7 +406,10 @@
     "Income tax (2.5 parts)": "Pajak penghasilan (2,5 part)",
     "Income tax (3 parts)": "Pajak penghasilan (3 part)",
     "High income contribution (CEHR, 3% then 4%)": "Iuran penghasilan tinggi (CEHR, 3% lalu 4%)",
-    "Company health and protection cover, your share": "Asuransi kesehatan dan perlindungan perusahaan, bagianmu"
+    "Company health and protection cover, your share": "Asuransi kesehatan dan perlindungan perusahaan, bagianmu",
+    "2026 salary (LF2026 scale)": "Gaji 2026 (tarif LF2026)",
+    "Net taxable income": "Penghasilan neto kena pajak",
+    "At this income the 20% minimum tax (CDHR) may apply, and its reductions are not loaded.": "Pada penghasilan ini, pajak minimum 20% (CDHR) bisa berlaku, sedangkan aturan pengurangnya belum dimuat."
   },
   "bmc": "Terbantu? Traktir croissant, kopinya saya yang pilih."
 }

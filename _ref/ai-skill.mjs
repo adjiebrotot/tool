@@ -12,6 +12,15 @@
 //   skill/scripts/build_link.py   builds and checks the #load link (source: _ref/ai-skill/)
 // The unzipped skill/ folder is published too, so an assistant that browses can read it.
 //
+// A tool with an Indonesian page (a PAGES entry with lang: 'id', in _ref/agent-lib.mjs) also
+// gets <tool>/ai/id/index.html: the same page and the same skill download, every word for
+// people in Indonesian (WORDS.id), its links to the Indonesian tool page, guide (when
+// <tool>/guides/id/ exists) and the Indonesian hub /ai/id/. Its worked conversation is the
+// notes' "## AI page example (id)" (the English one when a tool has none). The English and
+// Indonesian pages name each other with hreflang and carry an EN/ID toggle. The hub has the
+// same pair: /ai/id/ lists every tool, a tool with no Indonesian page in English, marked EN.
+// The skill itself (SKILL.md, the references) stays in English: its reader is the assistant.
+//
 // The zip is written byte for byte the same on every run (fixed dates, fixed order), so
 // node _ref/agent-doc.mjs --check can compare it like any other file.
 import { readFileSync, existsSync } from 'node:fs';
@@ -23,9 +32,11 @@ import { ROOT, SITE, AI_RULES, WHY_MAX, buildLink } from './agent-lib.mjs';
    tool    folder (the AI page is /<tool>/ai/)
    main    the page whose title, glyph and example the AI page shows
    name    the tool's name for people
+   nameId  its name on the Indonesian AI page, when the tool has an Indonesian page and a
+           name of its own there (default: name)
    use     when an assistant should reach for the skill (the YAML description's trigger) */
 export const TOOLS = [
-  { tool: 'rentvsownhouse', research: 'mortgage and loan rates, rents and prices, tax, duty and fee schedules, inflation, salaries and fees for the user\'s place and date (central banks, tax offices, statistics agencies, lenders)', main: 'rentvsownhouse', name: 'Rent vs Own',
+  { tool: 'rentvsownhouse', research: 'mortgage and loan rates, rents and prices, tax, duty and fee schedules, inflation, salaries and fees for the user\'s place and date (central banks, tax offices, statistics agencies, lenders)', main: 'rentvsownhouse', name: 'Rent vs Own', nameId: 'Sewa vs Beli Rumah',
     use: 'buying a home versus renting (and investing the difference), whether a house or apartment is worth buying at a price against a rent, mortgage vs rent comparisons, or how sensitive that answer is to rates, growth and costs. Covers 33 cities with local Quick Starts; has an Indonesian version.' },
   { tool: 'pisahvsgabung', research: 'the current PPh 21 rules, PTKP amounts and tax brackets (DJP, the tax law), and typical salaries and deductions in Indonesia', main: 'pisahvsgabung', name: 'Pisah vs Gabung Harta',
     use: 'Indonesian married couples\' PPh 21 income tax: whether Pisah Harta (PH/MT) or Gabung Harta (joint) pays less, for given salaries, deductions and dependants. Requests often come in Indonesian.' },
@@ -39,7 +50,7 @@ export const TOOLS = [
     use: 'whether an asking price is fair: a used car, a house, a hotel night or any item, fitted against comparable listings (price against year, mileage, size and other features).' },
   { tool: 'costofliving-comparator', research: 'take-home pay after tax, rents, groceries and other costs in each city (statistics agencies, payroll calculators, cost of living surveys), and exchange rates', main: 'costofliving-comparator', name: 'Cost of Living Comparator',
     use: 'moving between cities: how far a salary goes elsewhere, the salary needed in another city to live and save the same, comparing cost of living across many cities or on a world map.' },
-  { tool: 'global-income-tax-calculator', research: 'the job\'s pay as the user gave it, and anything the user did not say that the tool asks (residency status, state or province, family); the tool holds the 2026 tax and contribution rules itself, never type them in', main: 'global-income-tax-calculator', name: 'Global Income Tax Calculator',
+  { tool: 'global-income-tax-calculator', research: 'the job\'s pay as the user gave it, and anything the user did not say that the tool asks (residency status, state or province, family); the tool holds the 2026 tax and contribution rules itself, never type them in', main: 'global-income-tax-calculator', name: 'Global Income Tax Calculator', nameId: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
     use: 'take-home pay after income tax and social contributions for a job in one of 31 countries or any US state (gross to net, or the gross needed for a take-home amount), and comparing up to four job offers or cities side by side.' },
   { tool: 'dcasimulator', research: 'the exact ticker symbols (exchange suffixes such as .JK or .AX), fees and the date range the user means; prices load in the tool, never type them in', main: 'dcasimulator', name: 'DCA Scenario Explorer',
     use: 'backtesting regular investing (dollar cost averaging) into stocks, ETFs or crypto on past prices, comparing tickers, schedules and buying rules, and multi-ticker portfolios with rebalancing.' },
@@ -61,7 +72,11 @@ export const toolOf = page => page.split('/')[0];
 export const skillName = T => 'brotools-' + T.tool;
 // A page's reference file: rentvsownhouse/sensitivity/id -> rentvsownhouse-sensitivity-id.md
 export const refName = page => page.replace(/\//g, '-') + '.md';
-export const aiUrl = T => SITE + '/' + T.tool + '/ai/';
+// lang 'id': the tool's Indonesian AI page.
+export const aiUrl = (T, lang = 'en') => SITE + '/' + T.tool + '/ai/' + (lang === 'id' ? 'id/' : '');
+// The page an Indonesian AI page is about: the id twin of the tool's main page, else any id page (null: none).
+export const idMainOf = (T, models) => models.find(M => M.P.page === T.main + '/id') || models.find(M => M.P.lang === 'id') || null;
+const nameIn = (T, lang) => lang === 'id' ? T.nameId || T.name : T.name;
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const attr = s => esc(s).replace(/"/g, '&quot;');
@@ -307,21 +322,25 @@ function glyph(T, M) {
   return m ? m[1].replace(/^<svg[^>]*>/, t => t.replace(/\s(width|height|style)="[^"]*"/g, '').replace('<svg', '<svg width="1em" height="1em"')) : '';
 }
 
-// A value as people read it: 800000 as 800,000.
-const shown = v => /^(1[89]|2[0-2])\d\d$/.test(String(v)) ? String(v) : /^-?\d+(\.\d+)?$/.test(String(v)) ? Number(v).toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
+// A value as people read it: 800000 as 800,000 (800.000 on an Indonesian page).
+const LOCALE = { en: 'en-US', id: 'id-ID' };
+const shown = (v, lang = 'en') => /^(1[89]|2[0-2])\d\d$/.test(String(v)) ? String(v) : /^-?\d+(\.\d+)?$/.test(String(v)) ? Number(v).toLocaleString(LOCALE[lang], { maximumFractionDigits: 4 }) : String(v);
 
-// The demo conversation: the main page's "AI page example" notes section, else its Example.
-function demoRows(M, demo) {
+// The demo conversation: the main page's "AI page example" notes section, else its Example
+// (on an Indonesian AI page, the id page's "AI page example (id)" first).
+function demoRows(M, demo, lang = 'en') {
   const state = demo.state || {};
   const why = Object.fromEntries(demo.pairs.filter(([k]) => k.startsWith('why.')).map(([k, v]) => [k.slice(4), v]));
-  const said = String(demo.request).replace(/[,$]/g, '');
+  // Thousands separators out: "$800,000" and "Rp 300.000.000" both read as the number.
+  let said = String(demo.request).replace(/[,$]/g, '');
+  if (lang === 'id') said = String(demo.request).replace(/(\d)\.(?=\d{3}\b)/g, '$1').replace(/(\d),(\d)/g, '$1.$2');
   const rows = [];
   for (const [k, v] of demo.pairs) {
     if (k === 'v' || k === 'note' || k === 'json' || k === 'run' || k.startsWith('why.')) continue;
     const f = M.byKey[k];
     let label = k === 'qs' ? 'Quick Start' : f ? (f.label || k) : k;
     let value = k === 'qs' ? v : f && f.options ? ((f.options.find(o => o.value === v) || {}).label || v)
-      : f && f.money && Number.isFinite(Number(v)) ? Number(v).toLocaleString('en-US', { maximumFractionDigits: 4 }) : shown(v);
+      : f && f.money && Number.isFinite(Number(v)) ? Number(v).toLocaleString(LOCALE[lang], { maximumFractionDigits: 4 }) : shown(v, lang);
     if (f && !f.options) {
       // A unit another field sets (setupCost with setupCostType): that field's choice, as it opens.
       const by = (f.pairs || []).map(x => M.byKey[x]).find(x => x && x.options);
@@ -337,6 +356,7 @@ function demoRows(M, demo) {
     const n = Number(v);
     const forms = [String(v)];
     if (Number.isFinite(n) && n >= 1000) forms.push(n / 1000 + 'k', n / 1e6 + 'm', n / 1e6 + ' million');
+    if (lang === 'id' && Number.isFinite(n) && n >= 1e6) forms.push(n / 1e6 + ' juta', n / 1e9 + ' miliar');
     const word = f && f.options && (f.options.find(o => o.value === v) || {}).label;
     const lit = x => '(^|[^\\d.])' + String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\d])';
     const user = k !== 'qs' && (forms.some(x => String(x).length > 1 && new RegExp(lit(x), 'i').test(said)) ||

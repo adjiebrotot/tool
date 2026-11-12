@@ -6,11 +6,11 @@
 window.__TOUR = {
   seenKey: 'pvg-id-tour-v3-seen',
   launchLabel: '🧭 Tur',
-  guide: '../guides/',
+  guide: '../guides/id/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
-            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
-            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
+            guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [
     {
       target: null,
@@ -32,7 +32,7 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
         if (tab) tab.click();
       },
-      title: '② Rumah tangga Anda',
+      title: '② Rumah tanggamu',
       body: '<ul><li>Jumlah <strong>tanggungan</strong></li>' +
             '<li>Penghasilan sebagai total dan porsi istri, atau per pasangan</li>' +
             '<li>Pengurang bila ada; semua dalam rupiah per tahun</li></ul>'
@@ -68,9 +68,9 @@ window.__TOUR = {
     {
       target: '.chart-card',
       title: '⑥ Di berbagai gaji',
-      body: '<ul><li>Gaji rumah tangga Rp 100 juta sampai Rp 5 miliar, pada porsi Anda</li>' +
+      body: '<ul><li>Gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar, dengan porsi gaji istri yang kamu isi</li>' +
             '<li>Biru untuk Gabung, emas untuk Pisah</li>' +
-            '<li>Catatan breakeven di bawah grafik kedua menyebut titik baliknya</li></ul>'
+            '<li>Catatan <em>breakeven</em> di bawah grafik kedua menyebut titik baliknya</li></ul>'
     },
     {
       target: '#detailSection',

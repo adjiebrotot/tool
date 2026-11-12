@@ -13,7 +13,8 @@
         of its own, no analytics),
      D. fetches the solver (a run it starts was not solved ahead: run
         node _ref/presolve.mjs), or
-     E. changes the reader's own storage on the guide page.
+     E. changes the reader's own storage on the guide page, or
+     F. (an Indonesian guide) opens a page that is not in Indonesian.
 
    The screen's still scene must outline every part it names.
 
@@ -64,6 +65,7 @@ for (const tool of TOOLS) {
 }
 
 for (const { dir, name: tool } of GUIDES) {
+  const idGuide = dir.endsWith('/id/');
   for (const theme of ['light', 'dark']) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     // The libraries from cdnjs load as for a reader; analytics and the rest of the web do not.
@@ -89,7 +91,7 @@ for (const { dir, name: tool } of GUIDES) {
       const n0 = solver.length;
       const r = await page.evaluate(([n, fast]) => GuideLive.run(n, { fast, keep: true }), [sc.name, FAST]);
       const frame = page.frames().find(f => f !== page.mainFrame() && /[?&]demo(&|$)/.test(f.url()));
-      const demo = frame ? await frame.evaluate(() => ({ demo: !!window.ABT_DEMO, store: !!(localStorage && localStorage.__demo), ga: !!window['ga-disable-G-VYTV157ST0'] })) : null;
+      const demo = frame ? await frame.evaluate(() => ({ demo: !!window.ABT_DEMO, store: !!(localStorage && localStorage.__demo), ga: !!window['ga-disable-G-VYTV157ST0'], lang: document.documentElement.lang || '' })) : null;
       const boxes = sc.still ? await page.evaluate(n => [...document.querySelectorAll(`.gd-shot-frame[data-shot="${n}"] .gd-box`)]
         .map(b => b.getBoundingClientRect()).filter(b => b.width < 4 || b.height < 4).length, sc.name) : 0;
       await page.evaluate(n => GuideLive.demos.find(d => d.name === n).stop(), sc.name);
@@ -101,6 +103,7 @@ for (const { dir, name: tool } of GUIDES) {
       if (errs.length) bad.push('the tool threw: ' + errs.slice(0, 3).join(' | '));
       if (!demo || !demo.demo || !demo.store || !demo.ga) bad.push('the tool did not open in demo mode (guide-demo.js in its <head>)');
       if (solver.length > n0) bad.push('fetched the solver (run node _ref/presolve.mjs)');
+      if (idGuide && demo && !/^id\b/i.test(demo.lang)) bad.push(`opened a page in "${demo.lang}", not the Indonesian one`);
       if (boxes) bad.push(boxes + ' part(s) of the screen not outlined');
       if (bad.length) fail(label + ': ' + bad.join('; '));
       else { passed++; console.log(`PASS ${label}` + (sc.still ? '' : `: ${r.marks.length} steps, ${(r.ms / 1000).toFixed(1)} s`)); }
