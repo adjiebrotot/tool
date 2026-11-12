@@ -283,20 +283,9 @@
     .family-nav a.family-lang:active { transform: translate(1px, 1px); box-shadow: 0 0 0 var(--ink-line); }
     .family-lang svg { width: 15px; height: 15px; }
 
-    /* The page in the other language, in a line under the hero: on the English home the
-       tools that have an Indonesian version (in Indonesian), on the Indonesian home a
-       note on which tools are still in English. */
-    .lang-strip { margin-top: -0.5rem; margin-bottom: 1.5rem; color: var(--muted); font-size: var(--fs-sm); line-height: 1.55; }
-    .lang-strip h2 { display: inline; margin: 0 0.4rem 0 0; font-size: inherit; line-height: inherit; color: var(--text); }
-    .lang-strip p { display: inline; margin: 0; }
-    .lang-strip ul { display: inline; margin: 0; padding: 0; list-style: none; }
-    .lang-strip li { display: inline; white-space: nowrap; }
-    .lang-strip li:not(:last-child)::after { content: '\2022'; content: '\2022' / ''; margin: 0 0.15em 0 0.5em; opacity: 0.7; }
-    .lang-strip a { color: var(--accent-strong); font-weight: 700; }
-    .lang-strip a:hover { text-decoration: underline; }
-
-    /* The card's language, the last tag (on the Indonesian home only). */
-    .tool-tags .tag-lang { color: var(--accent-strong); font-weight: 700; }
+    /* A tool with no Indonesian page is marked EN beside its open button (on the
+       Indonesian home only). */
+    .tool-lang { color: var(--muted); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.04em; }
 
 
     .eyebrow {
@@ -1410,11 +1399,6 @@
   </div>
 
   <main>
-    <!-- lang-strip:start (written by _ref/bake-home-id.mjs; the English home, ../, lists the Indonesian pages here) -->
-    <section class="container lang-strip" aria-label="Bahasa">
-      <p>Semua <em>tool</em> di sini gratis dan berjalan di <em>browser</em>-mu. <em>Tool</em> yang bertanda <strong>Bahasa Indonesia</strong> sudah tersedia dalam bahasa Indonesia, sedangkan yang lain masih berbahasa Inggris, tetapi tetap bisa kamu pakai sepenuhnya.</p>
-    </section>
-    <!-- lang-strip:end -->
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
       <div class="section-heading">
         <div>
@@ -1500,11 +1484,11 @@
               <li>Global</li>
               <li>Konverter</li>
               <li>Dokumen</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/mdtopdf/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1531,11 +1515,11 @@
               <li>Teknik</li>
               <li>Global</li>
               <li>Sistem tenaga listrik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/powerfactory-scripter/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1562,11 +1546,11 @@
               <li>Teknik</li>
               <li>Global</li>
               <li>Sistem tenaga listrik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/pscad-scripter/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1593,11 +1577,11 @@
               <li>Teknik</li>
               <li>Global</li>
               <li>Sistem tenaga listrik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/loadflow-simulator/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1624,11 +1608,11 @@
               <li>Teknik</li>
               <li>Global</li>
               <li>Sistem tenaga listrik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/ed-uc-simulator/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1655,11 +1639,11 @@
               <li>Teknik</li>
               <li>Global</li>
               <li>Sistem tenaga listrik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/capacity-expansion-planner/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1686,7 +1670,6 @@
               <li>Keuangan</li>
               <li>Indonesia</li>
               <li>Pajak</li>
-              <li class="tag-lang">Bahasa Indonesia</li>
             </ul>
 
             <div class="tool-footer">
@@ -1718,11 +1701,11 @@
               <li>Global</li>
               <li>Investasi</li>
               <li>Leverage</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1750,7 +1733,6 @@
               <li>Global</li>
               <li>Properti</li>
               <li>Leverage</li>
-              <li class="tag-lang">Bahasa Indonesia</li>
             </ul>
 
             <div class="tool-footer">
@@ -1788,7 +1770,6 @@
               <li>Keuangan</li>
               <li>Global</li>
               <li>Investasi</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
@@ -1800,6 +1781,7 @@
                   <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" hreflang="en" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main" lang="en">Portfolio DCA Simulator</span><span class="combo-sub">Bandingkan portofolio secara utuh</span></span></a></li>
                 </ul>
               </div>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1825,11 +1807,11 @@
               <li>Keuangan</li>
               <li>Global</li>
               <li>Investasi</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1856,11 +1838,11 @@
               <li>Visualisasi</li>
               <li>Global</li>
               <li>Grafik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/graphvisualiser/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1887,11 +1869,11 @@
               <li>Visualisasi</li>
               <li>Global</li>
               <li>Grafik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/sankeycreator/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1918,11 +1900,11 @@
               <li>Visualisasi</li>
               <li>Global</li>
               <li>Grafik</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/jsonvisualiser/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1949,11 +1931,11 @@
               <li>Visualisasi</li>
               <li>Global</li>
               <li>Brainstorming</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/canvasbuilder/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -1981,11 +1963,11 @@
               <li>Global</li>
               <li>3D</li>
               <li>CAD</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/online-3d-viewer/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2012,7 +1994,6 @@
               <li>Keuangan</li>
               <li>Global</li>
               <li>Geoarbitrase</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
@@ -2024,6 +2005,7 @@
                   <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/costofliving-comparator/map/" hreflang="en" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main" lang="en">Map View</span><span class="combo-sub">Kotamu dibandingkan dengan lebih dari 500 kota di peta</span></span></a></li>
                 </ul>
               </div>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2051,7 +2033,6 @@
               <li>Global</li>
               <li>Pajak</li>
               <li>Geoarbitrase</li>
-              <li class="tag-lang">Bahasa Indonesia</li>
             </ul>
 
             <div class="tool-footer">
@@ -2082,11 +2063,11 @@
               <li>Lainnya</li>
               <li>Global</li>
               <li>Konverter</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/videotogif/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2114,11 +2095,11 @@
               <li>Global</li>
               <li>Pengacak</li>
               <li>Keputusan</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/randompicker/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2146,11 +2127,11 @@
               <li>Global</li>
               <li>Zona waktu</li>
               <li>Rapat</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/worldclock/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2178,11 +2159,11 @@
               <li>Global</li>
               <li>Belanja dapur</li>
               <li>Keputusan</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/eggprice/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2210,11 +2191,11 @@
               <li>Australia</li>
               <li>Properti</li>
               <li>Leverage</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/borrowingcapacity/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2242,11 +2223,11 @@
               <li>Global</li>
               <li>Harga</li>
               <li>Keputusan</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
               <a class="tool-link" href="https://tool.adjiebrotots.com/valuateeverything/" hreflang="en" target="_blank" rel="noopener noreferrer" itemprop="url">Buka tool</a>
+              <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>
             </div>
           </div>
         </article>
@@ -2273,7 +2254,6 @@
               <li>Keuangan</li>
               <li>Australia</li>
               <li>Pajak</li>
-              <li>Bahasa Inggris</li>
             </ul>
 
             <div class="tool-footer">
