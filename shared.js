@@ -4103,13 +4103,16 @@
       };
     }
     function parse(el){
-      var s = NUM.typed(String(el.value == null ? '' : el.value)).replace(/,/g, '').replace(/−/g, '-').trim();
+      // A type="number" field always holds 12.13, whatever the page's language; only a text field
+      // shows the page's own form (SharedNum.field), so only that one is read the page's way.
+      var raw = String(el.value == null ? '' : el.value);
+      var s = (NUM.field && !NUM.field(el) ? raw : NUM.typed(raw)).replace(/,/g, '').replace(/−/g, '-').trim();
       if(s === '' || s === '-' || s === '.' || s === '-.') return NaN;
       var n = parseFloat(s);
       return isFinite(n) ? n : NaN;
     }
     function grouped(el){
-      return NUM.hasGroup(el.value || '') || el.getAttribute('data-money') === 'true' ||
+      return (!(NUM.field && !NUM.field(el)) && NUM.hasGroup(el.value || '')) || el.getAttribute('data-money') === 'true' ||
              el.classList.contains('money-input') || el.hasAttribute('data-grouped');
     }
     function format(el, v, lim){
