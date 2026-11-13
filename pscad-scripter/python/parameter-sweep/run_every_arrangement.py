@@ -1122,10 +1122,15 @@ def _restore_one(obj, param, old):
     """Put one recorded change back.
 
     Most records are a component parameter, but a few things a workflow changes are not
-    parameters at all: whether a component is enabled, a layer's state and a global
-    substitution each carry a marker name beginning with "#" and go back their own way."""
+    parameters at all: whether a component is enabled, a layer's state, a global
+    substitution and where an input control stands each carry a marker name beginning
+    with "#" and go back their own way."""
     if param == "#enabled":
         obj.enable(bool(old))
+        return
+    if param == "#control":
+        # A slider, switch or dial the workflow moved: back to the value the case holds.
+        obj.reset()
         return
     if param == "#layer":
         _PX["project"].set_layer_state(obj[1], old)
@@ -1868,7 +1873,13 @@ def out_paths(app, prj=None):
         name = str((prj.parameters() or {}).get("output_filename") or "")
     except Exception:
         name = ""
-    stem = os.path.splitext(os.path.basename(name))[0] or str(getattr(prj, "name", "out"))
+    own = str(getattr(prj, "name", "") or "out")
+    stem = os.path.splitext(os.path.basename(name))[0] or own
+    # A new PSCAD 5 case names its output "$(Namespace).out": PSCAD writes the project's own
+    # name there, so the files to read are <project>_01.out and <project>.inf.
+    stem = re.sub(r"\$\(\s*namespace\s*\)", lambda m: own, stem, flags=re.IGNORECASE)
+    if "$(" in stem:
+        stem = own
     return folder, stem, os.path.join(folder, stem + ".inf")
 
 class SimResult(object):
@@ -2022,6 +2033,11 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
     folder, stem, inf = out_paths(app, prj)
     if read == "out" and not keep_files:
         _clear_out(folder, stem)
+    # A run from a snapshot carries on at the snapshot's time, but PSCAD's result files
+    # count their time from the start of that run. The snapshot's own time is read now
+    # (this run may write the same file again) and added to the times afterwards, so the
+    # samples sit where the case's faults and switchings are timed.
+    start_at = _snapshot_start(prj, folder)
 
     started = time.time()
     try:
@@ -2049,7 +2065,42 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
             defer("remove the result files of %s" % name, lambda: _clear_out(folder, stem))
     elif read == "curves":
         chans, times, cols = read_curves(app, prj)
+    if start_at and times and times[0] < 0.5 * start_at:
+        times = [t + start_at for t in times]
+        log("The run started from a snapshot taken at %gs; its times are counted from the "
+            "case's own start, as its events are." % start_at, "info")
     return SimResult(status, lines, took, events, chans, times, cols, name, built)
+
+
+def _snapshot_start(prj, folder):
+    """The time (s) of the snapshot the next run starts from, or 0.0 for a standard start.
+
+    The snapshot file says so itself: its second line holds the EMTDC version, the time
+    and the time step."""
+    try:
+        params = prj.parameters() or {}
+    except Exception:
+        return 0.0
+    if str(params.get("StartType") or "").upper() not in ("FROM_SNAP_FILE", "1"):
+        return 0.0
+    name = str(params.get("startup_filename") or "").strip()
+    if not name:
+        return 0.0
+    path = name if os.path.isabs(name) else os.path.join(str(folder or ""), name)
+    try:
+        with open(path, "r", errors="replace") as fh:
+            for _ in range(8):
+                line = fh.readline()
+                if not line:
+                    break
+                if not line.strip() or line.lstrip().startswith("!"):
+                    continue
+                return float(line.split()[1])
+    except Exception:
+        pass
+    log("The time of the snapshot %s could not be read, so the times of this run are "
+        "counted from the start of the run, not of the case." % name, "warn")
+    return 0.0
 
 
 def _run_status(prj, lines):

@@ -378,7 +378,7 @@ sim.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;tstop&quot;<
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Builder's Quick Start makes the same batch from blocks: a list of fault durations, a short circuit added at the busbar, an RMS run, the peak spread and a check, with every run drawn on one graph. On the 39-bus example it gives the same peaks within 2 degrees and the same unstable run. This is its file for the example (the fault at Bus 31):</p>
-  <p class="dx-file"><span><code>rms_runs_for_several_fault_durations.py</code> as the Builder writes it: the settings and the workflow</span><a href="rms_runs_for_several_fault_durations.py" download>⬇ Download the full file (.py, 3,265 lines)</a></p>
+  <p class="dx-file"><span><code>rms_runs_for_several_fault_durations.py</code> as the Builder writes it: the settings and the workflow</span><a href="rms_runs_for_several_fault_durations.py" download>⬇ Download the full file (.py, 3,277 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># RMS runs for several fault durations</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
@@ -540,7 +540,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 3,103 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 3,115 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><strong>Step 2</strong> loops over <code>FAULT_DURATION_VALUES</code> (0.1, 0.15, 0.2 and 0.25 s).</li>

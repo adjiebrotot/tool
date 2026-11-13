@@ -1,0 +1,8 @@
+# Written by the audit runners on every run (the fixtures and the runners themselves are kept).
+generated/
+out/
+_out/
+logs/
+workflow_*/
+__pycache__/
+*.pyc

@@ -417,6 +417,8 @@ await test('matplotlib: a key inside covers no data (else it goes under the grap
     '        for ax in fig.axes:',
     '            if getattr(ax, "name", "") == "3d":',
     '                tb = ax.get_tightbbox(r)',
+    '                for axis in (ax.xaxis, ax.yaxis, ax.zaxis):   # the box leaves the axis titles out',
+    '                    if axis.label.get_text(): tb = tb.union([tb, axis.label.get_window_extent(r)])',
     '                bars = [o.get_tightbbox(r) for o in fig.axes if o is not ax]',
     '                foot = 14.0 / 72.0 * fig.dpi',
     '                seen.append({"stem": stem, "d3": True, "bar": bool(all(tb.x1 <= b.x0 + 1 for b in bars)), "foot": bool(tb.y0 >= foot - 1),',

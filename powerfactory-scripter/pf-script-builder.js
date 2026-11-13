@@ -362,7 +362,9 @@ def build_range(lower, upper, step, dtype_name="float"):
     if dtype_name == "int":
         return list(range(int(lower), int(upper) + 1, int(step)))
     values = np.arange(float(lower), float(upper) + float(step) * 0.5, float(step))
-    values = [float(v) for v in values]
+    # 12 significant digits: 0.1 + 0.1 + 0.1 is 0.30000000000000004 in binary, and that is
+    # what would be written to the model, the results table and the graph file names.
+    values = [float(f"{float(v):.12g}") for v in values]
     return values
 
 `;
@@ -476,11 +478,18 @@ function buildStudyHelper(cfg) {
          ComHldf.iopt_net and run the load flow first.
     """
     cmd = app.GetFromStudyCase("ComHldf")
-    cmd.p_resvar = app.GetFromStudyCase("ElmRes")
     ldf = app.GetFromStudyCase("ComLdf")
+    # The study case keeps its own settings: what is changed for the run is put back after it
+    # (the results stay readable).
+    _resvar_was, _net_was = cmd.p_resvar, ldf.iopt_net
+    cmd.p_resvar = app.GetFromStudyCase("ElmRes")
     ldf.iopt_net = cmd.iopt_net
-    ldf.Execute()
-    err = cmd.Execute()
+    try:
+        ldf.Execute()
+        err = cmd.Execute()
+    finally:
+        cmd.p_resvar = _resvar_was
+        ldf.iopt_net = _net_was
     return err == 0
 `;
   } else if (st === 'dynamic_rms') {
@@ -490,16 +499,21 @@ function buildStudyHelper(cfg) {
     output_window.Clear()
 
     comInc = app.GetFromStudyCase("ComInc")
-    comInc.iopt_sim = "rms"
-
     comSim = app.GetFromStudyCase("ComSim")
+    # The study case keeps its own simulation method and stop time: both are set for this run
+    # and put back after it (the results stay readable in the ElmRes).
+    _sim_was, _tstop_was = comInc.iopt_sim, comSim.tstop
+    comInc.iopt_sim = "rms"
     comSim.tstop = tstop
-
-    app.EchoOff()         # Required: suppresses ComInc console flood
-    comInc.Execute()
-    app.EchoOn()
-    converged = comInc.ZeroDerivative() == 1  # 1 = converged; 0 = derivatives not at zero
-    comSim.Execute()
+    try:
+        app.EchoOff()         # Required: suppresses ComInc console flood
+        comInc.Execute()
+        app.EchoOn()
+        converged = comInc.ZeroDerivative() == 1  # 1 = converged; 0 = derivatives not at zero
+        comSim.Execute()
+    finally:
+        comSim.tstop = _tstop_was
+        comInc.iopt_sim = _sim_was
     return converged
 `;
   } else if (st === 'dynamic_emt') {
@@ -509,9 +523,11 @@ function buildStudyHelper(cfg) {
     output_window.Clear()
 
     comInc = app.GetFromStudyCase("ComInc")
-    comInc.iopt_sim = "ins"  # EMT mode
-
     comSim = app.GetFromStudyCase("ComSim")
+    # The study case keeps its own simulation method and stop time: both are set for this run
+    # and put back after it (the results stay readable in the ElmRes).
+    _sim_was, _tstop_was = comInc.iopt_sim, comSim.tstop
+    comInc.iopt_sim = "ins"  # EMT mode
     comSim.tstop = tstop
 
     app.EchoOff()         # Required: suppresses ComInc console flood
@@ -522,7 +538,11 @@ function buildStudyHelper(cfg) {
     # actual waveforms, so they oscillate at power frequency and their derivatives
     # are never zero. Base EMT convergence on the ComInc return code instead.
     converged = inc_err == 0  # 0 = initial conditions computed successfully
-    comSim.Execute()
+    try:
+        comSim.Execute()
+    finally:
+        comSim.tstop = _tstop_was
+        comInc.iopt_sim = _sim_was
     return converged
 `;
   }

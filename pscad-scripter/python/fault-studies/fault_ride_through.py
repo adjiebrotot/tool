@@ -1202,10 +1202,15 @@ def _restore_one(obj, param, old):
     """Put one recorded change back.
 
     Most records are a component parameter, but a few things a workflow changes are not
-    parameters at all: whether a component is enabled, a layer's state and a global
-    substitution each carry a marker name beginning with "#" and go back their own way."""
+    parameters at all: whether a component is enabled, a layer's state, a global
+    substitution and where an input control stands each carry a marker name beginning
+    with "#" and go back their own way."""
     if param == "#enabled":
         obj.enable(bool(old))
+        return
+    if param == "#control":
+        # A slider, switch or dial the workflow moved: back to the value the case holds.
+        obj.reset()
         return
     if param == "#layer":
         _PX["project"].set_layer_state(obj[1], old)
@@ -1820,7 +1825,13 @@ def out_paths(app, prj=None):
         name = str((prj.parameters() or {}).get("output_filename") or "")
     except Exception:
         name = ""
-    stem = os.path.splitext(os.path.basename(name))[0] or str(getattr(prj, "name", "out"))
+    own = str(getattr(prj, "name", "") or "out")
+    stem = os.path.splitext(os.path.basename(name))[0] or own
+    # A new PSCAD 5 case names its output "$(Namespace).out": PSCAD writes the project's own
+    # name there, so the files to read are <project>_01.out and <project>.inf.
+    stem = re.sub(r"\$\(\s*namespace\s*\)", lambda m: own, stem, flags=re.IGNORECASE)
+    if "$(" in stem:
+        stem = own
     return folder, stem, os.path.join(folder, stem + ".inf")
 
 class SimResult(object):
@@ -1974,6 +1985,11 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
     folder, stem, inf = out_paths(app, prj)
     if read == "out" and not keep_files:
         _clear_out(folder, stem)
+    # A run from a snapshot carries on at the snapshot's time, but PSCAD's result files
+    # count their time from the start of that run. The snapshot's own time is read now
+    # (this run may write the same file again) and added to the times afterwards, so the
+    # samples sit where the case's faults and switchings are timed.
+    start_at = _snapshot_start(prj, folder)
 
     started = time.time()
     try:
@@ -2001,7 +2017,42 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
             defer("remove the result files of %s" % name, lambda: _clear_out(folder, stem))
     elif read == "curves":
         chans, times, cols = read_curves(app, prj)
+    if start_at and times and times[0] < 0.5 * start_at:
+        times = [t + start_at for t in times]
+        log("The run started from a snapshot taken at %gs; its times are counted from the "
+            "case's own start, as its events are." % start_at, "info")
     return SimResult(status, lines, took, events, chans, times, cols, name, built)
+
+
+def _snapshot_start(prj, folder):
+    """The time (s) of the snapshot the next run starts from, or 0.0 for a standard start.
+
+    The snapshot file says so itself: its second line holds the EMTDC version, the time
+    and the time step."""
+    try:
+        params = prj.parameters() or {}
+    except Exception:
+        return 0.0
+    if str(params.get("StartType") or "").upper() not in ("FROM_SNAP_FILE", "1"):
+        return 0.0
+    name = str(params.get("startup_filename") or "").strip()
+    if not name:
+        return 0.0
+    path = name if os.path.isabs(name) else os.path.join(str(folder or ""), name)
+    try:
+        with open(path, "r", errors="replace") as fh:
+            for _ in range(8):
+                line = fh.readline()
+                if not line:
+                    break
+                if not line.strip() or line.lstrip().startswith("!"):
+                    continue
+                return float(line.split()[1])
+    except Exception:
+        pass
+    log("The time of the snapshot %s could not be read, so the times of this run are "
+        "counted from the start of the run, not of the case." % name, "warn")
+    return 0.0
 
 
 def _run_status(prj, lines):
@@ -2081,49 +2132,98 @@ def set_fault(app, defn="master:tpflt", name="", at=None, duration=None, on=True
 
     PSCAD has no event list: a fault is a component already drawn in the case, and a study
     changes when it happens by writing its parameters. This writes the fault's start time
-    and its duration on a Master Library three-phase fault, a timed fault logic block, or
-    any component with the same parameter names, and gives the times back so the checks can
-    use them and the graphs can mark them.
+    and its duration (both in seconds) on a timed fault logic block, or any component with
+    the same parameter names, and gives the times back so the checks can use them and the
+    graphs can mark them. With `match` "all" every component found is written.
 
     `kind` picks the faulted phases on a component that offers them (a letter string such
-    as "abc", "ab", "a", or "ABC->G")."""
-    comp = px_find(app, defn, name, match)
+    as "abc", "ab", "a", or "ABC->G"). `on` False switches the fault off for the next run:
+    through the component's own enable parameter where it has one, else by a duration of
+    zero."""
+    found = px_find(app, defn, name, match)
+    comps = [c for c in (found if isinstance(found, (list, tuple)) else [found])
+             if c is not None]
+    t0 = px_number(at)
+    dt = px_number(duration)
+    for comp in comps:
+        _set_fault_one(comp, t0, dt, on, kind, resistance)
+    clear = (t0 + dt) if (t0 is not None and dt is not None) else None
+    return (t0, clear)
+
+
+def _set_fault_one(comp, t0, dt, on, kind, resistance):
+    """Write one fault component; an error when it has nothing this step can write."""
     params = {}
     try:
         params = comp.parameters() or {}
     except Exception:
         pass
-    t0 = px_number(at)
-    dt = px_number(duration)
     wrote = []
+    off_by = ""
 
     for key in ("TF", "Tf", "FTime", "Tfault", "TFault", "T1"):
         if key in params and t0 is not None:
-            px_set(comp, key, t0)
+            px_set(comp, key, t0, unit="s")
             wrote.append(key)
             break
+    enab = next((k for k in ("ENAB", "Enab", "Enabled") if k in params), None)
     for key in ("DF", "Df", "Duration", "FDur", "Tdur", "DTime"):
-        if key in params and dt is not None:
-            px_set(comp, key, dt)
+        if key not in params:
+            continue
+        if not on and enab is None:
+            # No switch of its own: a fault that lasts no time is no fault.
+            px_set(comp, key, 0.0, unit="s")
             wrote.append(key)
-            break
-    if kind is not None:
+            off_by = key
+        elif dt is not None:
+            px_set(comp, key, dt, unit="s")
+            wrote.append(key)
+        break
+    if kind is not None and str(kind).strip():
+        done = False
         for key in ("Type", "FType", "Phase", "PhType", "ABC"):
             if key in params:
                 px_set(comp, key, kind)
                 wrote.append(key)
+                done = True
                 break
+        if not done and all(k in params for k in ("A", "B", "C")):
+            # The Three Phase Fault holds one Yes / No for each phase and one for ground.
+            text = str(kind).upper()
+            phases = [p for p in "ABC" if p in text]
+            for p in "ABC":
+                px_set(comp, p, "1" if p in phases else "0")
+            wrote.append("A, B, C")
+            if "G" in params and ("G" in text or len(phases) == 1 or len(phases) == 2):
+                px_set(comp, "G", "1" if ("G" in text or len(phases) == 1) else "0")
+                wrote.append("G")
+            if str(params.get("Ctype", "0")).strip().upper() in ("1", "EXTERNAL"):
+                _say_once("%s takes its fault type from a signal (Fault Type Control is "
+                          "External), so the phases written on it are not what it uses."
+                          % _label(comp), "warn")
+            done = True
+        if not done:
+            _say_once("%s has no phase parameter, so the phases were not written."
+                      % _label(comp), "warn")
     if resistance is not None:
         for key in ("RON", "Ron", "Rf", "RF"):
             if key in params:
-                px_set(comp, key, resistance)
+                px_set(comp, key, resistance, unit="ohm")
                 wrote.append(key)
                 break
-    for key in ("ENAB", "Enab", "Enabled"):
-        if key in params:
-            px_set(comp, key, "ENABLED" if on else "DISABLED")
-            wrote.append(key)
-            break
+        else:
+            _say_once("%s has no fault resistance parameter, so the resistance was not "
+                      "written." % _label(comp), "warn")
+    if enab is not None:
+        px_set(comp, enab, "ENABLED" if on else "DISABLED")
+        wrote.append(enab)
+    elif not on and not off_by:
+        raise PXError(
+            "[MODEL] %s cannot be switched off by this step: it has no enable parameter "
+            "and no duration.\n"
+            "  It has: %s\n"
+            "  Switch it off in the logic wired to it, or with Enable / disable components."
+            % (_label(comp), ", ".join(sorted(params)[:14])))
 
     if not wrote:
         raise PXError(
@@ -2131,11 +2231,13 @@ def set_fault(app, defn="master:tpflt", name="", at=None, duration=None, on=True
             "  It has: %s\n"
             "  Use Set component parameter to write the right one by name."
             % (_label(comp), ", ".join(sorted(params)[:14])))
-    log("Fault %s: start %s s, duration %s s (wrote %s)."
-        % (_label(comp), "%g" % t0 if t0 is not None else "unchanged",
-           "%g" % dt if dt is not None else "unchanged", ", ".join(wrote)), "info")
-    clear = (t0 + dt) if (t0 is not None and dt is not None) else None
-    return (t0, clear)
+    if not on:
+        log("Fault %s: switched off for the next run (wrote %s)."
+            % (_label(comp), ", ".join(wrote)), "info")
+        return
+    log("Fault %s: start %s, duration %s (wrote %s)."
+        % (_label(comp), "%g s" % t0 if t0 is not None else "unchanged",
+           "%g s" % dt if dt is not None else "unchanged", ", ".join(wrote)), "info")
 
 
 def set_switching(app, defn="", name="", at=None, action="open", match="one"):
@@ -2144,29 +2246,74 @@ def set_switching(app, defn="", name="", at=None, action="open", match="one"):
     As with a fault, PSCAD holds the timing in the component: a Master Library breaker
     takes its time from the logic wired to it, and a timed breaker logic block takes it
     from its own parameters. `action` "open" or "close" picks which of the two times is
-    written where the component has both."""
-    comp = px_find(app, defn, name, match)
+    written where the component has both. The time is in seconds; with `match` "all"
+    every component found is written.
+
+    The Timed Breaker Logic (master:tbreakn) names its times by order, not by action: the
+    first operation leaves its initial state and the second returns to it. So on a breaker
+    that starts closed, "open" is the first time and "close" the second, and the other way
+    round on one that starts open."""
+    t0 = px_number(at)
+    if t0 is None:
+        raise PXError("[CODE] set_switching needs a time in seconds.")
+    found = px_find(app, defn, name, match)
+    comps = [c for c in (found if isinstance(found, (list, tuple)) else [found])
+             if c is not None]
+    opening = str(action or "open").lower().startswith("o")
+    for comp in comps:
+        _set_switching_one(comp, t0, opening)
+    return t0
+
+
+def _set_switching_one(comp, t0, opening):
+    """Write one breaker's time; an error when it has no time this step can write."""
     try:
         params = comp.parameters() or {}
     except Exception:
         params = {}
-    t0 = px_number(at)
-    if t0 is None:
-        raise PXError("[CODE] set_switching needs a time in seconds.")
-    opening = str(action or "open").lower().startswith("o")
+    word = "open" if opening else "close"
+    if "TO1" in params and "TO2" in params:
+        init = str(params.get("INIT", "0")).strip().upper()
+        starts_open = init in ("1", "OPEN", "OPENED") or init.startswith("1 ")
+        second = (opening == starts_open)
+        key = "TO2" if second else "TO1"
+        px_set(comp, key, t0, unit="s")
+        wrote = [key]
+        if second and "NUMS" in params and str(params.get("NUMS")).strip() in ("1", "1.0"):
+            # One operation only: the second time would never be used.
+            px_set(comp, "NUMS", "2")
+            wrote.append("NUMS")
+        first, _ = _seconds_of(params.get("TO1")) if second else (t0, "")
+        last, _ = (t0, "") if second else _seconds_of(params.get("TO2"))
+        two = second or str(params.get("NUMS")).strip() not in ("1", "1.0")
+        if two and first is not None and last is not None and last <= first:
+            log("%s: its second operation (%gs) is not after its first (%gs)."
+                % (_label(comp), last, first), "warn")
+        log("%s %ss at %gs (wrote %s; it starts %s)."
+            % (_label(comp), word, t0, ", ".join(wrote),
+               "open" if starts_open else "closed"), "info")
+        return
     order = (("TO", "Topen", "T1", "TB", "Tbrk") if opening
              else ("TC", "Tclose", "T2", "TB", "Tbrk"))
     for key in order:
         if key in params:
-            px_set(comp, key, t0)
-            log("%s %ss at %gs (wrote %s)."
-                % (_label(comp), "open" if opening else "close", t0, key), "info")
-            return t0
+            px_set(comp, key, t0, unit="s")
+            log("%s %ss at %gs (wrote %s)." % (_label(comp), word, t0, key), "info")
+            return
     raise PXError("[MODEL] %s has no %s-time parameter this step recognises.\n"
                   "  It has: %s\n"
                   "  Use Set component parameter to write the right one by name."
                   % (_label(comp), "opening" if opening else "closing",
                      ", ".join(sorted(params)[:14])))
+
+
+def _seconds_of(value):
+    """(seconds, unit) of a time parameter, or (None, "") when it is not a number."""
+    num, unit = px_split_value(value)
+    if num is None:
+        return None, ""
+    factor = unit_factor(unit, "s") if unit else None
+    return (num * factor if factor else num), unit
 
 class SigResult:
     """What a check worked out. Read a field as an attribute (r.value) or a key (r["value"]);
@@ -2948,7 +3095,19 @@ def _po_fit3d(fig, foot):
     gap = 4.0 * fig.dpi / 72.0
     for ax in [a for a in fig.axes if getattr(a, "name", "") == "3d"]:
         for _ in range(5):
+            # mplot3d places its numbers and titles while drawing: until the figure is drawn
+            # at this size, the box it reports is the axes' own and nothing looks cut. The
+            # box also leaves the axis titles out (it is the one tight_layout uses), so
+            # they are added here.
+            try:
+                fig.draw_without_rendering()
+            except Exception:
+                fig.canvas.draw()
             tb = ax.get_tightbbox(renderer)
+            for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+                lab = axis.label
+                if tb is not None and lab.get_visible() and lab.get_text():
+                    tb = tb.union([tb, lab.get_window_extent(renderer)])
             if tb is None:
                 break
             box = ax.get_window_extent(renderer)

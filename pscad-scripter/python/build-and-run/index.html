@@ -229,7 +229,7 @@ worst = <span class="py-f">peak</span>(va, kind=<span class="py-s">&quot;abs&quo
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Build the case Quick Start compiles the case and writes one table row either way: built, with the time and the warnings, or not built, with the compiler's errors. It is the first file to run on a case you have not scripted before. This is the file with the case set to <code>C:/Studies/feeder/feeder.pscx</code>:</p>
-  <p class="dx-file"><span><code>build_the_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_the_case.py" download>⬇ Download the full file (.py, 1,498 lines)</a></p>
+  <p class="dx-file"><span><code>build_the_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="build_the_case.py" download>⬇ Download the full file (.py, 1,503 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Build the case</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -323,7 +323,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 1,404 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 1,409 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><code>px_build(app, None, True, False)</code> is a clean build: the previous one is thrown away first.</li>
@@ -381,5 +381,7 @@ CHECK_ONLY = <span class="py-k">False</span>
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
 </script>
 <!--/email_off-->
+<script src="../../../bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="Built and ran without a click? Run one coffee my way!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
 </body>
 </html>

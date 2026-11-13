@@ -239,7 +239,7 @@ cct = <span class="py-f">find_limit</span>(one_try, <span class="py-n">0.05</spa
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python scripts from the Builder</h2>
   <p>The Fault ride through Quick Start runs the case for each fault duration from 0.08 s to 0.24 s and tables the voltage dip and the machine speed nadir, with every run's speed on one graph. Set the channel names to the ones your case records. This is the file with the case set to <code>C:/Studies/wind_farm/wind_farm.pscx</code>:</p>
-  <p class="dx-file"><span><code>fault_ride_through.py</code> as the Builder writes it: the settings and the workflow</span><a href="fault_ride_through.py" download>⬇ Download the full file (.py, 3,567 lines)</a></p>
+  <p class="dx-file"><span><code>fault_ride_through.py</code> as the Builder writes it: the settings and the workflow</span><a href="fault_ride_through.py" download>⬇ Download the full file (.py, 3,726 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Fault ride through</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -395,7 +395,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 3,411 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 3,570 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li>The loop is <code>num_range(0.08, 0.24, 0.04)</code>, both ends included. Each pass opens a mark and puts every parameter back in the <code>finally</code>, so a pass never inherits the previous one's fault.</li>
@@ -405,7 +405,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <li><code>collect_series</code> keeps each pass's speed curve and <code>draw_collected</code> draws them on one graph at the end, one line per duration.</li>
   </ul>
   <p>The Critical clearing time Quick Start does the search: Find limit tries 0.05 s and 0.5 s, then halves towards the boundary until it is within 5 ms, and Stays in step passes a try whose highest machine speed is at most 1.05 p.u.:</p>
-  <p class="dx-file"><span>The Critical clearing time Quick Start, as the Builder writes it</span><a href="critical_clearing_time.py" download>⬇ Download the full file (.py, 2,688 lines)</a></p>
+  <p class="dx-file"><span>The Critical clearing time Quick Start, as the Builder writes it</span><a href="critical_clearing_time.py" download>⬇ Download the full file (.py, 2,835 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Critical clearing time</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -574,5 +574,7 @@ CHECK_ONLY = <span class="py-k">False</span>
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
 </script>
 <!--/email_off-->
+<script src="../../../bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="Your case rode through the fault? I ride through on coffee!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
 </body>
 </html>

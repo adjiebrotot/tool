@@ -12,6 +12,7 @@ Needs: PSCAD installed and licensed, mhi-pscad (pip), and the sandbox
 """
 import os
 import sys
+import tempfile
 import time
 import traceback
 
@@ -21,6 +22,7 @@ sys.path.insert(0, HERE)
 import loader                                                        # noqa: E402
 import sandbox                                                       # noqa: E402
 
+OUT = os.environ.get("PXB_TEST_OUT") or tempfile.mkdtemp(prefix="pxb_live_")
 TESTS = []
 FAILED = []
 PASSED = []
@@ -40,8 +42,10 @@ def settings(**over):
         "UNDO_CHANGES": True,
         "CONNECT_TIMEOUT": 180,
         "F_NOMINAL": "auto",
-        "RUN_NAME": "live",
-        "OUT_DIR": os.path.join(HERE, "_out"),
+        # The run folder (run.log) goes outside the repository: the runtime reads
+        # OUTPUT_DIR and WORKFLOW_NAME, and with neither it writes beside this file.
+        "WORKFLOW_NAME": "live",
+        "OUTPUT_DIR": OUT,
         "CHECK_ONLY": False,
         "TABLE_FORMAT": "csv",
         "PREFLIGHT_MODULES": (),
@@ -350,6 +354,10 @@ def snapshot():
         ns["snapshot_use"](app, name)
         r2 = ns["px_run"](app, duration=0.2, from_snapshot=name)
         check("run from snapshot ok", r2.status, "ok")
+        # The run carries on from the snapshot's time, with the duration added after it.
+        t2 = r2.series(r2.names()[0]).t
+        check("it starts at the snapshot's time", t2[0], 0.1, near=2e-3)
+        check("and runs the duration from there", t2[-1], 0.3, near=2e-3)
         ns["snapshot_off"](app)
         check("back to a standard start",
               ns["_PX"]["project"].parameters()["StartType"], "STANDARD")
@@ -455,7 +463,7 @@ def globalsubs():
 @test
 def controls():
     """Sliders, switches, dials and buttons are driven by name."""
-    ns = env(["px_connect", "px_find", "controls", "px_mark", "px_undo", "finish"],
+    ns = env(["px_connect", "px_find", "controls", "px_mark", "px_undo", "px_run", "finish"],
              PROJECT=sandbox.case("inputctrl.pscx"))
     app = ns["px_connect"]()
     try:
@@ -467,6 +475,12 @@ def controls():
         check("switches found", len(switches) >= 1)
         check("dials found", len(dials) >= 1)
         check("buttons found", len(buttons) >= 1)
+
+        def stand(objs):
+            return [dict(o.parameters() or {}) for o in objs]
+        moved = [g[0] for g in (sliders, switches, dials) if g]
+        was = stand(moved)
+        mark = ns["px_mark"]()
         if sliders:
             check("slider kind", ns["_control_kind"](sliders[0]), "slider")
             check("slider set", ns["_control_one"](sliders[0], 0.5, "auto"), 0.5, near=1e-9)
@@ -480,6 +494,23 @@ def controls():
         if buttons:
             check("button kind", ns["_control_kind"](buttons[0]), "button")
             check("button clicked", ns["_control_one"](buttons[0], None, "auto"), True)
+        if sliders:
+            lo, hi = ns["control_limits"](app, "Slider", ns["_name_of"](sliders[0]), -5, 5, "first")
+            check("slider limits set", (lo, hi), (-5.0, 5.0))
+        check("the limits moved", stand(moved) != was)
+        # Where a control stands is not a parameter, so a run is what shows it: the slider
+        # drives a channel of its own.
+        chan, first = "Slider_1", [s for s in sliders if ns["_name_of"](s) == "Slider 1"]
+        if first:
+            ns["_control_one"](first[0], 0.3, "auto")
+            r = ns["px_run"](app, duration=0.05)
+            check("the run uses the slider as set", r.series(chan).y[-1], 0.3, near=1e-6)
+        ns["px_undo"](mark)
+        check("the limits are back where they stood", stand(moved), was)
+        if first:
+            r = ns["px_run"](app, duration=0.05)
+            check("and the slider is back at the case's own value", r.series(chan).y[-1],
+                  ns["px_number"](first[0].parameters()["Value"]), near=1e-5)
     finally:
         ns["finish"](app)
 
@@ -522,10 +553,12 @@ def build_page():
     finally:
         ns["finish"](app)
         import shutil
-        try:
-            os.remove(made)
-        except OSError:
-            pass
+        # PSCAD saves a .psmx beside the case it saves; both are this test's own.
+        for path in (made, os.path.join(sandbox.folder(), stem + ".psmx")):
+            try:
+                os.remove(path)
+            except OSError:
+                pass
         for suffix in (".gf46", ".gf81", ".if18", ".vs17"):
             shutil.rmtree(os.path.join(sandbox.folder(), stem + suffix), ignore_errors=True)
 
@@ -612,6 +645,126 @@ def fault_timing():
                   "Set component parameter" in str(err))
         ns["px_undo"](mark)
         check("the fault is back as it was", (target.parameters() or {}) == params)
+    finally:
+        ns["finish"](app)
+
+
+@test
+def output_namespace():
+    """A case that keeps PSCAD 5's default output name "$(Namespace).out" still has its channels read."""
+    ns = env(["px_connect", "px_run", "finish"], PROJECT=sandbox.case("PLL_Example_3.pscx"))
+    app = ns["px_connect"]()
+    try:
+        prj = ns["_PX"]["project"]
+        check("the case names its output by the macro",
+              "$(" in str(prj.parameters().get("output_filename")))
+        folder, stem, inf = ns["out_paths"](app)
+        check("the stem is the project's name", stem, "PLL_Example_3")
+        r = ns["px_run"](app, duration=0.1, step=50, plot_step=500)
+        check("status ok", r.status, "ok")
+        check("channels read", len(r.channels) >= 5)
+        check("samples read", len(r.series(r.names()[0])) > 100)
+    finally:
+        ns["finish"](app)
+
+
+@test
+def switching_timing():
+    """set_switching on the Timed Breaker Logic: the first and second operation, seconds, put back."""
+    ns = env(["px_connect", "px_find", "px_set", "px_events", "px_mark", "px_undo", "finish"],
+             PROJECT=sandbox.case("PLL_Example_3.pscx"))
+    app = ns["px_connect"]()
+    try:
+        brk = ns["px_find"](app, "master:tbreakn")
+        was = dict(brk.parameters() or {})
+        check("it starts closed with one operation",
+              (str(was.get("INIT")), str(was.get("NUMS"))), ("CLOSE", "1"))
+        mark = ns["px_mark"]()
+        check("open gives the time back", ns["set_switching"](app, "master:tbreakn", "", 0.3, "open"),
+              0.3, near=1e-12)
+        now = brk.parameters()
+        check("open wrote the first operation", ns["px_number"](now["TO1"]), 0.3, near=1e-9)
+        check("one operation is still one", str(now["NUMS"]), "1")
+        ns["set_switching"](app, "master:tbreakn", "", 0.4, "close")
+        now = brk.parameters()
+        check("close wrote the second operation", ns["px_number"](now["TO2"]), 0.4, near=1e-9)
+        check("and made it two operations", str(now["NUMS"]), "2")
+        # A breaker that starts open: closing is its first operation, opening its second.
+        ns["px_set"](brk, "INIT", "OPEN")
+        ns["set_switching"](app, "master:tbreakn", "", 0.25, "close")
+        ns["set_switching"](app, "master:tbreakn", "", 0.45, "open")
+        now = brk.parameters()
+        check("starting open, close is the first", ns["px_number"](now["TO1"]), 0.25, near=1e-9)
+        check("starting open, open is the second", ns["px_number"](now["TO2"]), 0.45, near=1e-9)
+        # A time the case holds in milliseconds is written in milliseconds.
+        ns["px_set"](brk, "TO1", "600 [ms]")
+        ns["set_switching"](app, "master:tbreakn", "", 0.2, "close")
+        check("seconds go into a [ms] parameter as ms", str(brk.parameters()["TO1"]), "200 [ms]")
+        # match "all" writes every component found (here the one there is).
+        check("all components", ns["set_switching"](app, "master:tbreakn", "", 0.21, "close", "all"),
+              0.21, near=1e-12)
+        ns["px_undo"](mark)
+        check("the breaker is back as it was", dict(brk.parameters() or {}), was)
+    finally:
+        ns["finish"](app)
+
+
+@test
+def fault_off():
+    """set_fault off on Timed Fault Logic is a fault that lasts no time, and the run shows none."""
+    ns = env(["px_connect", "px_find", "px_events", "px_mark", "px_undo", "px_run", "finish"],
+             PROJECT=sandbox.case("PLL_Example_3.pscx"))
+    app = ns["px_connect"]()
+    try:
+        flt = ns["px_find"](app, "master:tfaultn")
+        was = dict(flt.parameters() or {})
+        mark = ns["px_mark"]()
+        check("times back", ns["set_fault"](app, "master:tfaultn", "", 0.2, 0.05, True, "all"),
+              (0.2, 0.25))
+        now = flt.parameters()
+        check("start written", ns["px_number"](now["TF"]), 0.2, near=1e-9)
+        check("duration written", ns["px_number"](now["DF"]), 0.05, near=1e-9)
+        on = ns["px_run"](app, duration=0.3, step=50, plot_step=500)
+        ns["set_fault"](app, "master:tfaultn", "", 0.2, 0.05, False)
+        check("off wrote a zero duration", ns["px_number"](flt.parameters()["DF"]), 0.0, near=1e-12)
+        off = ns["px_run"](app, duration=0.3, step=50, plot_step=500)
+        check("both runs ok", (on.status, off.status), ("ok", "ok"))
+
+        def swing(res):
+            s = res.series("Error1")
+            ys = [abs(y) for t, y in zip(s.t, s.y) if 0.2 <= t <= 0.28]
+            return max(ys) if ys else None
+        a, b = swing(on), swing(off)
+        check("the fault shows in the run", a is not None and a > 5.0, True)
+        check("switched off, it does not", b is not None and b < 0.2 * a, True)
+        ns["px_undo"](mark)
+        check("the fault is back as it was", dict(flt.parameters() or {}), was)
+    finally:
+        ns["finish"](app)
+
+
+@test
+def fault_phases():
+    """set_fault writes the phases of a Three Phase Fault, which holds one Yes / No for each."""
+    ns = env(["px_connect", "px_find", "px_events", "px_mark", "px_undo", "finish"],
+             PROJECT=sandbox.case("multirun.pscx"))
+    app = ns["px_connect"]()
+    try:
+        flt = ns["px_find"](app, "master:tpflt", match="first")
+        was = dict(flt.parameters() or {})
+        yes = {"1", "YES", "TRUE"}
+        mark = ns["px_mark"]()
+        ns["set_fault"](app, "master:tpflt", "", None, None, True, "first", "AB", 0.5)
+        now = flt.parameters()
+        got = tuple(str(now[k]).upper() in yes for k in ("A", "B", "C", "G"))
+        check("AB is phases A and B, not to ground", got, (True, True, False, False))
+        check("resistance in ohm", ns["px_number"](now["RON"]), 0.5, near=1e-9)
+        ns["set_fault"](app, "master:tpflt", "", None, None, True, "first", "c")
+        now = flt.parameters()
+        got = tuple(str(now[k]).upper() in yes for k in ("A", "B", "C", "G"))
+        check("one phase goes to ground", got, (False, False, True, True))
+        ns["px_undo"](mark)
+        check("the fault is back as it was", dict(flt.parameters() or {}), was)
     finally:
         ns["finish"](app)
 

@@ -562,6 +562,12 @@ Emits exactly one study runner function based on `studyType`:
 | `dynamic_rms` | `run_study_dynamic_rms(app, tstop=N)` | `ComInc` (`iopt_sim="rms"`), `ComSim` |
 | `dynamic_emt` | `run_study_dynamic_emt(app, tstop=N)` | `ComInc` (`iopt_sim="ins"`), `ComSim` |
 
+The study case keeps its own command settings. What a runner sets for its run (`ComInc.iopt_sim`
+and `ComSim.tstop` for a dynamic run; `ComHldf.p_resvar` and `ComLdf.iopt_net` for a harmonic one)
+is put back as soon as the run ends, the way the input attributes are; the results stay readable.
+Checked on PowerFactory 2024 with the rotor-angle sample on the Nine-bus System: the case's stop
+time is 10 s again after ten runs to 20 s, and the angles read the same.
+
 ---
 
 ### `buildElmResHelpers(cfg)`

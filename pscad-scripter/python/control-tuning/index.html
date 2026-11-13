@@ -218,7 +218,7 @@ d = <span class="py-f">damping</span>(run.<span class="py-f">series</span>(<span
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Damping of a ringdown Quick Start applies a 50 ms disturbance at 1 s, runs for 10 s, reads the damping ratio and the frequency of the oscillation from 1.2 s on, and passes the run when the ratio is at least 0.03. This is the file with the case set to <code>C:/Studies/statcom/statcom.pscx</code>:</p>
-  <p class="dx-file"><span><code>damping_of_a_ringdown.py</code> as the Builder writes it: the settings and the workflow</span><a href="damping_of_a_ringdown.py" download>⬇ Download the full file (.py, 2,473 lines)</a></p>
+  <p class="dx-file"><span><code>damping_of_a_ringdown.py</code> as the Builder writes it: the settings and the workflow</span><a href="damping_of_a_ringdown.py" download>⬇ Download the full file (.py, 2,620 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Damping check</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -320,7 +320,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 2,371 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 2,518 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><code>set_fault(app, "master:tfaultn", "", 1, 0.05, ...)</code> is the disturbance: a 50 ms fault on the Timed Fault Logic, put back at the end.</li>
@@ -377,5 +377,7 @@ CHECK_ONLY = <span class="py-k">False</span>
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
 </script>
 <!--/email_off-->
+<script src="../../../bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="Damping tuned? My own settling time depends on coffee!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
 </body>
 </html>

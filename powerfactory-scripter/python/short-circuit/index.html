@@ -275,7 +275,7 @@ shc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_allbus&
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Builder's Quick Start does the same with a loop: a fault at one busbar per pass, the results into a table, and a bar chart of the fault currents at the end. It gives the same 2.256 kA at Bus 5 of the Nine-bus example. This is its file, filled in for that example:</p>
-  <p class="dx-file"><span><code>short_circuit_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="short_circuit_at_every_busbar.py" download>⬇ Download the full file (.py, 2,604 lines)</a></p>
+  <p class="dx-file"><span><code>short_circuit_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="short_circuit_at_every_busbar.py" download>⬇ Download the full file (.py, 2,616 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Short circuit at every busbar</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
@@ -424,7 +424,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 2,455 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 2,467 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><strong>Step 2</strong> finds every busbar in service that matches <code>BUSBAR_EL</code> (<code>*</code> for all) and loops over them.</li>

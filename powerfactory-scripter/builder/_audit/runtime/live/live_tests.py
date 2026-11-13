@@ -79,6 +79,17 @@ def at(series, tq):
 
 def write_csv(path, header, t, y):
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    # A trace that is the same as the one on file to the last written digit (PowerFactory's
+    # results differ in the sixth decimal from run to run) is left alone, so a test run does
+    # not show up as a change to the fixture.
+    try:
+        with open(path, encoding="utf-8") as fh:
+            old = [ln.split(",") for ln in fh.read().split("\n")[1:] if ln.strip()]
+        if len(old) == len(t) == len(y) and all(
+                abs(float(o[0]) - a) <= 2e-6 and abs(float(o[1]) - b) <= 2e-6 for o, a, b in zip(old, t, y)):
+            return
+    except (OSError, ValueError, IndexError):
+        pass
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(header + "\n")
         for a, b in zip(t, y):

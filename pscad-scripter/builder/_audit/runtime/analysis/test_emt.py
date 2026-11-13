@@ -9,6 +9,7 @@ right answer to compare with.
 """
 import math
 import os
+import tempfile
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +47,7 @@ def check(label, got, want=_NOTHING, near=None):
 LIB = loader.parse(loader.FILES)
 NS = loader.load(["window_rms", "spectrum", "sequence", "overshoot", "damping", "Series",
                   "stat", "convert", "log", "run_dir"],
-                 {"F_NOMINAL": 50, "RUN_NAME": "emt", "OUT_DIR": os.path.join(HERE, "_out"),
+                 {"F_NOMINAL": 50, "OUTPUT_DIR": tempfile.mkdtemp(prefix="pxb_emt_"),
                   "WORKFLOW_NAME": "emt checks"}, LIB)
 Series = NS["Series"]
 

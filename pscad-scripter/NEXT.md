@@ -96,16 +96,20 @@ without them, so running `--tags` makes `agent-check` A5 fail for every tool. Th
 left as `agent-doc` writes them. The fix belongs in `agent-doc.mjs` (write the four tags) or in
 `og.mjs` (skip `ai/`), for the whole site.
 
-### 3. Worth checking on the PSCAD machine
+### 3. Checked on the PSCAD machine (2026-11-13)
 
-The offline suites cannot settle these. Each needs one live run:
+Each of these was open on the first version of this list and is now settled by a live run on
+PSCAD 5.0.0, with a test in `live_tests.py` (`snapshot`, `switching_timing`, `fault_off`,
+`fault_phases`, `output_namespace`; the sandbox gained `PLL_Example_3.pscx` for them):
 
-- That a run from a snapshot really resumes at the snapshot's time with the duration added after
-  it (the snapshot Quick Start's fault at 2.1 s and its 2 s runs assume so).
-- `set_switching` recognises `TO`, `TC`, `T1`, `T2`, `TB` and `Tbrk`, but the Timed Breaker Logic
-  (`master:tbreakn`) calls its times `TO1` and `TO2`, so a Set a switching block on it stops with
-  "no opening-time parameter". Adding them is a one-line change to verify live.
-- The six live block runs and `live_tests.py` after the snapshot fix in `px_run`.
+- A run from a snapshot does resume at the snapshot's time with the duration added after it. Its
+  `.out` files count time from zero though, so `px_run` now adds the snapshot's time back.
+- `set_switching` writes `TO1` or `TO2` on the Timed Breaker Logic, by its initial state.
+- A case with the default output name `$(Namespace).out` read no channels at all; fixed.
+- `set_fault` switched off, on several components, in `[ms]`, and with phases on a Three Phase
+  Fault: each was silently wrong and is fixed.
+- `sequence` (and so Unbalance) took minutes on an EMT run; it is one pass now.
+- A control the workflow set stayed set after `finish()`; it is reset now (`controls`).
 
 ### 4. Site-wide checks failing elsewhere (not this tool's)
 

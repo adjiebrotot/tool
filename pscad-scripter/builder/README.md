@@ -85,6 +85,18 @@ Changes since the first release that saved work rests on:
 - `snapshot_use` now holds for every run after it until `snapshot_off`, so the runs a **Start
   from a snapshot** block leads to start from the snapshot. Before, the next `px_run` set the start
   back to zero.
+- A run from a snapshot gives its samples at the case's own times (2 s to 4 s after a snapshot at
+  2 s). Before, they came back counted from zero, so a check or a graph marker at the fault's time
+  looked at the wrong instant.
+- **Set a switching time** works on its default component, the Timed Breaker Logic
+  (`master:tbreakn`); before, it stopped with "no opening-time parameter". **Set a fault** with
+  Switch the fault on turned off now does switch a Timed Fault Logic off, writes the phases of a
+  Three Phase Fault, and both blocks write every component when the match is "all".
+- A case that keeps PSCAD's default output name `$(Namespace).out` has its channels read; before,
+  every channel of such a run came back empty.
+- **Set a control** is put back with everything else: at the end of a pass and at the end of the
+  run the slider, switch or dial is reset to the value the case holds. Before, it stayed where
+  the workflow left it for every later run in that PSCAD.
 
 ## 4. Blocks
 
@@ -208,7 +220,27 @@ the runtime. PSCAD 5.0.0 is the only version the live suite has run on.
   logic wired to it, Timed Fault Logic (`master:tfaultn`, parameters `TF` and `DF`), which is what
   `set_fault` writes.
 - **A run from a snapshot carries on from the snapshot's time**, so an event in a branch is timed
-  after it.
+  after it, and it runs its whole duration from there (a 2 s run from a snapshot at 2 s ends at
+  4 s). The `.out` files of such a run count their time from the start of the run, not of the
+  case, so `px_run` adds the snapshot's time back: it is on the second line of the `.snp` file
+  (version, time, time step).
+- **A new PSCAD 5 case names its output `$(Namespace).out`**, and PSCAD writes the project's own
+  name there: the files are `<project>_01.out` and `<project>.inf` (`out_paths`).
+- **Timed Breaker Logic (`master:tbreakn`) names its times by order, not by action**: `TO1` is the
+  first operation and `TO2` the second, `INIT` (`CLOSE` or `OPEN`) says which way the first one
+  goes, and `NUMS` (1 or 2) whether there is a second. `set_switching` picks the time from `INIT`
+  and raises `NUMS` to 2 when it writes the second. The obsolete `master:tbreak` has `TO` and `TC`.
+- **Timed Fault Logic has no enable parameter**, so `set_fault(on=False)` writes a duration of
+  zero, which EMTDC runs as no fault at all.
+- **The Three Phase Fault holds its phases as four Yes / No parameters** (`A`, `B`, `C`, `G`), used
+  only while its Fault Type Control (`Ctype`) is Internal.
+- **A time parameter can carry `[ms]`**, so the fault and switching times, which the workflow
+  gives in seconds, are written through `px_set(..., unit="s")`.
+- **Where an input control stands is not a parameter.** A slider, switch or dial set through the
+  Automation Library (`Slider.value()`, `Switch.set_state()`, `Selector.position()`) keeps its
+  `Value` parameter, the value the case holds for it, and takes a position of its own that every
+  later run uses and that no call reads back. `Control.reset()` returns it to `Value`, which is
+  what the put-back does.
 
 ## 7. Tests
 

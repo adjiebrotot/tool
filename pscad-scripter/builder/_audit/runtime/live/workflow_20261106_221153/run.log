@@ -1,8 +1,0 @@
-[22:11:53] Using the PSCAD that is already running.
-[22:11:53] PSCAD 5.0.0 connected in 0.9s (connect), Automation Library 3.1.3.
-[22:11:54] Loaded project vdiv.pscx.
-[22:11:54] Project vdiv is open.
-[22:11:57] Simulation settings: PlotType=OUT, StartType=STANDARD, time_duration=0.1.
-[22:12:03] Built vdiv in 5.9s.
-[22:12:09] Ran vdiv in 5.4s (ok).
-[22:12:09] Put back 3 changed values.

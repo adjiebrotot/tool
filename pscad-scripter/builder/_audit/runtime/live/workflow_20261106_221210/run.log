@@ -1,9 +1,0 @@
-[22:12:10] Using the PSCAD that is already running.
-[22:12:10] PSCAD 5.0.0 connected in 1.0s (connect), Automation Library 3.1.3.
-[22:12:11] Loaded project vdiv.pscx.
-[22:12:12] Project vdiv is open.
-[22:12:13] Simulation settings: StartType=STANDARD, time_duration=0.1.
-[22:12:19] Built vdiv in 5.7s.
-[22:12:25] Ran vdiv in 5.3s (ok).
-[22:12:26] Read 2 curves off the project's graphs.
-[22:12:26] Put back 2 changed values.
