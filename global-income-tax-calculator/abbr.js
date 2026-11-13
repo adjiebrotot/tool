@@ -20,7 +20,7 @@ SharedAbbr.glossary('global-income-tax-calculator', {
   CEHR:  { en: ['Contribution Exceptionnelle sur les Hauts Revenus', 'a French surtax of 3% then 4% on high incomes'],
            id: ['Contribution Exceptionnelle sur les Hauts Revenus', 'pajak tambahan Prancis sebesar 3% lalu 4% atas penghasilan tinggi'] },
   CDHR:  { en: ['Contribution Différentielle sur les Hauts Revenus', 'a French floor that tops high earners up to a 20% average tax rate'],
-           id: ['Contribution Différentielle sur les Hauts Revenus', 'batas bawah di Prancis yang menaikkan tarif rata-rata penghasilan tinggi sampai 20%'] },
+           id: ['Contribution Différentielle sur les Hauts Revenus', 'pajak minimum Prancis yang menaikkan tarif rata-rata penghasilan tinggi sampai 20%'] },
   CPF:   { en: ['Central Provident Fund', 'Singapore\'s compulsory savings for citizens and permanent residents'],
            id: ['Central Provident Fund', 'tabungan wajib Singapura bagi warga negara dan penduduk tetap'] },
   CPP:   { en: ['Canada Pension Plan', 'the Canadian earnings-related pension, outside Quebec'],

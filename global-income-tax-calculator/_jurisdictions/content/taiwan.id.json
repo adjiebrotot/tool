@@ -347,15 +347,15 @@
     }
   ],
   "lineLabels": {
-    "Labour insurance, employee share": "Asuransi tenaga kerja, porsi karyawan",
-    "National health insurance, employee share": "Asuransi kesehatan nasional, porsi karyawan",
+    "Labour insurance, employee share": "Asuransi tenaga kerja, bagian karyawan",
+    "National health insurance, employee share": "Asuransi kesehatan nasional, bagian karyawan",
     "Salary special deduction": "Potongan khusus gaji",
     "Gold Card exclusion (50% above 3M)": "Pengecualian Gold Card (50% di atas NT$3 juta)",
     "Exemptions and standard deduction": "Pembebasan pribadi dan potongan standar",
     "Individual income tax": "Pajak penghasilan perorangan",
-    "Withholding, non-resident (18%, final)": "Pemotongan non-resident (18%, final)",
-    "Withholding, non-resident (6%, final)": "Pemotongan non-resident (6%, final)",
-    "Labour insurance only (11.5%, no employment insurance), employee share": "Asuransi tenaga kerja saja (11,5%, tanpa asuransi kerja), porsi karyawan",
+    "Withholding, non-resident (18%, final)": "Pemotongan bukan penduduk pajak (18%, final)",
+    "Withholding, non-resident (6%, final)": "Pemotongan bukan penduduk pajak (6%, final)",
+    "Labour insurance only (11.5%, no employment insurance), employee share": "Asuransi tenaga kerja saja (11,5%, tanpa asuransi ketenagakerjaan), bagian karyawan",
     "Income 2026": "Penghasilan 2026",
     "Net taxable income": "Penghasilan neto kena pajak"
   }

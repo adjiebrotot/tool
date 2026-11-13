@@ -114,7 +114,7 @@ usState: Negara bagian  (most important)
 usNyc: Tinggal di New York City
   Checkbox: true or false. Default false.
   US, New York only. true adds New York City resident tax.
-  Tip on the page: New York City memajaki penduduknya di atas pajak negara bagian, dengan tarif
+  Tip on the page: New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif
   3.078% sampai 3.876%.
 caProv: Provinsi  (most important)
   One of: ON (Ontario), BC (British Columbia), AB (Alberta), QC (Quebec). Default ON.
@@ -155,18 +155,19 @@ auRes: Status penduduk (Warga negara atau penduduk tetap, Penduduk sementara, be
   menetap, misalnya dengan visa turis 600 atau visa kerja singkat 400. Working holiday maker:
   pemegang visa Working Holiday (417) atau Work and Holiday (462).
 sgRes: Status penduduk
-  One of: ep (Employment Pass atau S Pass), citizen (Warga negara, atau PR mulai tahun ke-3), pr1
-  (Penduduk tetap, tahun ke-1), pr2 (Penduduk tetap, tahun ke-2), nonres (Bukan penduduk pajak
-  (kurang dari 183 hari)). Default ep.
+  One of: ep (Employment Pass atau S Pass), citizen (Warga negara, atau penduduk tetap mulai tahun
+  ke-3), pr1 (Penduduk tetap, tahun ke-1), pr2 (Penduduk tetap, tahun ke-2), nonres (Bukan penduduk
+  pajak (kurang dari 183 hari)). Default ep.
   Singapore. ep (Employment Pass or S Pass, no CPF), citizen (citizen, or PR from year 3), pr1, pr2
   (permanent resident in year 1 or 2) or nonres (under 183 days).
   Tip on the page: Employment Pass atau S Pass: profesional dan tenaga terampil asing yang memegang
-  Employment Pass atau S Pass. Warga negara, atau PR mulai tahun ke-3: warga negara Singapura, dan
-  penduduk tetap mulai tahun ketiga sejak status PR diberikan. Penduduk tetap, tahun ke-1: penduduk
-  tetap Singapura yang baru, di tahun pertama sejak status PR diberikan, sering kali setelah
-  memegang Employment Pass atau S Pass. Penduduk tetap, tahun ke-2: penduduk tetap Singapura di
-  tahun kedua sejak status PR diberikan. Bukan penduduk pajak: siapa pun yang berada di Singapura
-  kurang dari 183 hari dalam setahun, misalnya karyawan yang ditugaskan sebentar.
+  Employment Pass atau S Pass. Warga negara, atau penduduk tetap mulai tahun ke-3: warga negara
+  Singapura, dan penduduk tetap mulai tahun ketiga sejak status penduduk tetap diberikan. Penduduk
+  tetap, tahun ke-1: penduduk tetap Singapura yang baru, di tahun pertama sejak status penduduk
+  tetap diberikan, sering kali setelah memegang Employment Pass atau S Pass. Penduduk tetap, tahun
+  ke-2: penduduk tetap Singapura di tahun kedua sejak status penduduk tetap diberikan. Bukan
+  penduduk pajak: siapa pun yang berada di Singapura kurang dari 183 hari dalam setahun, misalnya
+  karyawan yang ditugaskan sebentar.
 sgAge: Usia
   One of: 55 tahun atau kurang, 60 (Di atas 55 sampai 60), 65 (Di atas 60 sampai 65), 70 (Di atas 65
   sampai 70), 99 (Di atas 70). Default 55.
@@ -179,9 +180,9 @@ usRes: Status pajak
   US. res (citizen or resident) or nra (nonresident alien: no standard deduction, files as single;
   most new H-1B, L-1, F-1 holders in their first year).
   Tip on the page: Warga negara atau penduduk pajak: warga negara AS, pemegang green card, dan
-  pemegang visa seperti H-1B atau L-1 yang lolos substantial presence test. Nonresident alien: orang
-  yang tidak lolos kedua uji itu, misalnya mahasiswa F-1 atau J-1 di 5 tahun kalender pertamanya,
-  atau pendatang baru H-1B sebelum 183 hari.
+  pemegang visa seperti H-1B atau L-1 yang lolos substantial presence test. Nonresident alien: tanpa
+  green card dan tidak lolos substantial presence test, misalnya mahasiswa F-1 atau J-1 di 5 tahun
+  kalender pertamanya, atau pendatang H-1B sebelum 183 hari.
 deClass: Kelas pajak
   One of: I (Kelas I, lajang), III (Kelas III, menikah, pasangan bergaji kecil). Default I.
   Germany. I (single) or III (married, partner earns little or nothing).
@@ -233,9 +234,8 @@ fiRes: Skema (Pajak biasa or Key employee, tarif tunggal 25%)
 beExpat: Rezim ekspatriat
   Checkbox: true or false. Default false.
   Belgium. true for the expat regime (35% of gross tax-free; needs more than 70,000 a year).
-  Tip on the page: Untuk karyawan yang direkrut atau ditugaskan dari luar negeri dengan gaji di atas
-  70,000 setahun: sampai 35% gaji kotor dibayarkan sebagai penggantian bebas pajak dan bebas iuran
-  jaminan sosial.
+  Tip on the page: Untuk karyawan yang direkrut atau ditugaskan dari luar negeri bergaji di atas
+  70,000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.
 itImp: Rezim (Penduduk pajak, Impatriat, 50% dibebaskan or Impatriat dengan anak di bawah umur, 60% dibebaskan)
   One of: none (Penduduk pajak), imp50 (Impatriat, 50% dibebaskan), imp60 (Impatriat dengan anak di
   bawah umur, 60% dibebaskan). Default none.
@@ -340,7 +340,7 @@ usFiling: Status pelaporan  (most important)
 deKids: Punya anak
   Checkbox: true or false. Default false.
   Germany. true if the employee has children (lowers long-term care).
-  Tip on the page: Tanpa anak, iuran perawatan jangka panjang 0.6% lebih tinggi.
+  Tip on the page: Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0.6 poin persentase.
 idMarried: Menikah
   Checkbox: true or false. Default false.
   Indonesia, residents. true if married.
@@ -388,8 +388,8 @@ chKids: Anak
 frMarried: Menikah atau PACS
   Checkbox: true or false. Default false.
   France. true for a married or PACS couple taxed jointly.
-  Tip on the page: Pasangan dipajaki bersama dengan dua part. Setiap anak menambah setengah part,
-  dan anak ketiga satu part penuh.
+  Tip on the page: Pasangan dipajaki bersama dengan dua part, satuan pembagi penghasilan di Prancis.
+  Setiap anak menambah setengah part, dan anak ketiga satu part penuh.
 frKids: Anak
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
   France. Children, 0 to 6.
@@ -481,7 +481,7 @@ idJkk: Tarif JKK (kecelakaan kerja)
   Indonesia, residents. Work accident premium rate: 0.24, 0.54, 0.89, 1.27 or 1.74 by the industry's
   risk.
   Tip on the page: Premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja ikut dihitung
-  sebagai penghasilan kena pajak. Tarif JKK bergantung pada bidang usahanya.
+  sebagai penghasilan kena pajak. Tarif JKK bergantung pada bidang usaha pemberi kerja.
 idBpjs: Bayar BPJS seperti penduduk pajak
   Checkbox: true or false. Default true.
   Indonesia, non-residents. false if no BPJS contributions are paid.
@@ -491,7 +491,8 @@ myLindung: Klaim LINDUNG sebagai pengurang SOCSO
   Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini mati sejak
   awal. Pengaruhnya pada pajak paling banyak RM31.50.
 nlNorm: Salary norm
-  One of: std (Standar (48,013)), young (Di bawah 30 dengan gelar master (36,497)). Default std.
+  One of: std (Standar (48,013)), young (Di bawah 30 tahun dengan gelar master (36,497)). Default
+  std.
   Netherlands, with the 30% ruling. std (salary norm 48,013) or young (under 30 with a master's,
   36,497).
   Tip on the page: Ruling ini tidak boleh membuat gaji turun di bawah salary norm, jadi bagian bebas
@@ -505,8 +506,8 @@ nlHoliday: Uang liburan dibayar di atas gaji
 nlPension: Iuran pensiun, bagianmu
   Number (% after it). 0 to 15. Default 0.
   Netherlands. Employee pension contribution in % of gross.
-  Tip on the page: Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang baru
-  dihitung di atas franchise memotong lebih sedikit.
+  Tip on the page: Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang hanya
+  menghitung iuran di atas bagian gaji yang dikecualikan (franchise) memotong lebih sedikit.
 seMun: Tarif pajak kota
   Number (% after it). 28 to 36. Default 30.55.
   Sweden, residents. Municipal tax rate in %: 30.55 for Stockholm, 32.38 national average.
@@ -543,7 +544,7 @@ chAge: Usia (tarif pensiun)
   One of: 25 sampai 34 (3.5%), 35 sampai 44 (5%), 45 sampai 54 (7.5%), 55 sampai 65 (9%). Default
   35.
   Switzerland. Age band for the pension rate: 25, 35, 45 or 55.
-  Tip on the page: Separuh bagianmu dari kredit usia BVG atas gaji terkoordinasi.
+  Tip on the page: Kredit usia BVG dihitung atas gaji terkoordinasi, dan kamu menanggung separuhnya.
 chNbu: Asuransi kecelakaan (NBU)
   Number (% after it). 0 to 3. Default 0.4.
   Switzerland. Non-occupational accident insurance rate in %, 0.4 by default.
@@ -589,8 +590,8 @@ jpSupport: Iuran dukungan anak
   One of: 12 (Setahun penuh), 9 (Tahun kalender 2026 (April sampai Desember)). Default 12.
   Japan. 12 (a full steady year) or 9 (calendar 2026, April to December) months of the child-support
   levy.
-  Tip on the page: Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Setahun penuh menunjukkan
-  tahun yang sudah berjalan normal.
+  Tip on the page: Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk
+  melihat tahun ketika iuran ini sudah berjalan normal.
 cnHf: Tarif dana perumahan
   One of: 5 (5%), 6 (6%), 7 (7%). Default 7.
   China. Housing fund rate: 5, 6 or 7 (%).

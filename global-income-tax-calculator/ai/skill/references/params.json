@@ -2655,7 +2655,7 @@
       },
       {
        "value": "citizen",
-       "label": "Warga negara, atau PR mulai tahun ke-3"
+       "label": "Warga negara, atau penduduk tetap mulai tahun ke-3"
       },
       {
        "value": "pr1",
@@ -3924,7 +3924,7 @@
       },
       {
        "value": "young",
-       "label": "Di bawah 30 dengan gelar master (36,497)"
+       "label": "Di bawah 30 tahun dengan gelar master (36,497)"
       }
      ],
      "default": "std"

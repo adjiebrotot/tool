@@ -43,9 +43,9 @@
       ]
     },
     {
-      "q": "Bagaimana kalkulator ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?",
+      "q": "Bagaimana tool ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?",
       "a": [
-        "Kalau kolom Hitung dari diisi Gaji bersih, kalkulator mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti yang terjadi pada recapture tax di New York."
+        "Kalau kolom Hitung dari diisi Gaji bersih, tool ini mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti pada penarikan kembali manfaat tarif rendah (recapture) di New York."
       ]
     },
     {
@@ -63,7 +63,7 @@
     {
       "q": "Apakah kurs mata uang mengubah hitungan pajaknya?",
       "a": [
-        "Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Kalkulator mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs."
+        "Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Tool ini mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs."
       ]
     }
   ]

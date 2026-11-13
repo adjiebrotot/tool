@@ -21,7 +21,7 @@ window.__TOUR = {
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
             guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap ada di sini',
-            guideTitle: 'Cara memakai kalkulator ini, langkah demi langkah' },
+            guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   saveState: function () {
     return window.__GSC_TOUR ? window.__GSC_TOUR.saveState() : null;
   },
@@ -33,7 +33,7 @@ window.__TOUR = {
       target: null,
       title: '👋 Selamat datang di Kalkulator Gaji Bersih dan Pajak Penghasilan',
       body: 'Hitung gaji bersih setelah pajak penghasilan dan iuran jaminan sosial di <strong>31 negara</strong>, ' +
-            '39 negara bagian AS, dan DC, dengan sumber untuk setiap baris. Sekitar satu menit.'
+            '39 negara bagian AS, dan DC, dengan sumber untuk setiap baris. Tur ini memakan waktu sekitar satu menit.'
     },
     {
       target: '.quick-start-row',
@@ -60,14 +60,14 @@ window.__TOUR = {
     {
       target: '.ctrl-tabs',
       title: '④ Rumah tangga dan Detail',
-      body: 'Hanya isian yang dipakai negara pekerjaan itu: anak, pasangan menikah, pajak gereja, ' +
+      body: 'Tab ini hanya menampilkan isian yang dipakai negara pekerjaan itu: anak, pasangan menikah, pajak gereja, ' +
             'tarif pensiun, atau pinjaman mahasiswa. Tab yang tidak punya isian akan memberi tahu.'
     },
     {
       target: '#verdict',
       onEnter: gitcSeed,
       title: '⑤ Jawabannya',
-      body: 'Satu kalimat: pekerjaan mana yang menyisakan gaji bersih paling besar, atau gaji kotor yang dibutuhkan untuk gaji bersih tertentu. ' +
+      body: 'Jawabannya satu kalimat: pekerjaan mana yang menyisakan gaji bersih paling besar, atau gaji kotor yang dibutuhkan untuk gaji bersih tertentu. ' +
             'Kartu di bawahnya menunjukkan gaji bersih, pajak, dan iuran tiap pekerjaan.'
     },
     {
@@ -76,7 +76,7 @@ window.__TOUR = {
       title: '⑥ Mata uang dan periode',
       body: '<ul><li><strong>Tampilkan dalam</strong>: mata uang tiap pekerjaan, atau satu mata uang untuk semuanya</li>' +
             '<li><strong>Per</strong>: tahun atau bulan</li>' +
-            '<li>Kursnya kurs hari ini, hanya untuk memudahkan membaca</li></ul>'
+            '<li>Kurs yang dipakai adalah kurs hari ini, hanya untuk memudahkan membaca</li></ul>'
     },
     {
       target: '.chart-card',
@@ -89,7 +89,7 @@ window.__TOUR = {
       target: '#linesSection',
       onEnter: gitcSeed,
       title: '⑧ Rincian gaji bersih',
-      body: 'Satu pekerjaan sekali tampil, dipilih di samping judulnya: setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturannya mulai berlaku, ' +
+      body: 'Rincian ditampilkan untuk satu pekerjaan per kali, dipilih di samping judulnya: setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturannya mulai berlaku, ' +
             'dengan label Resmi, Sekunder, atau Asumsi. Buka lewat tanda panahnya.'
     },
     {

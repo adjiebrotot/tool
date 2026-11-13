@@ -115,10 +115,10 @@
     },
     {
       "@type": "Question",
-      "name": "Bagaimana kalkulator ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?",
+      "name": "Bagaimana tool ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Kalau kolom Hitung dari diisi Gaji bersih, kalkulator mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti yang terjadi pada recapture tax di New York."
+        "text": "Kalau kolom Hitung dari diisi Gaji bersih, tool ini mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti pada penarikan kembali manfaat tarif rendah (recapture) di New York."
       }
     },
     {
@@ -142,7 +142,7 @@
       "name": "Apakah kurs mata uang mengubah hitungan pajaknya?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Kalkulator mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs."
+        "text": "Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Tool ini mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs."
       }
     }
   ]
@@ -228,7 +228,7 @@
         <select class="sel-input" id="usState"><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA" selected>California</option><option value="CO">Colorado</option><option value="DE">Delaware</option><option value="DC">District of Columbia</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OK">Oklahoma</option><option value="PA">Pennsylvania</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WY">Wyoming</option></select>
       </div>
       <div class="toggle-row" data-show="US" data-if="usState=NY">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_usNyc">Tinggal di New York City</span> <i class="tip-icon" data-i18n-tip="tip_usNyc" data-tip="New York City memajaki penduduknya di atas pajak negara bagian, dengan tarif 3.078% sampai 3.876%.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_usNyc">Tinggal di New York City</span> <i class="tip-icon" data-i18n-tip="tip_usNyc" data-tip="New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif 3.078% sampai 3.876%.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="usNyc"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="CA">
@@ -269,7 +269,7 @@
       </div>
       <div class="field-row" data-show="SG">
         <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_sgRes">Status penduduk</span> <i class="tip-icon" data-tip="" data-tip-options>?</i></span></div>
-        <select class="sel-input" id="sgRes"><option data-i18n-opt="opt_sgRes_ep" value="ep" data-i18n-otip="otip_sgRes_ep" data-opt-tip="&lt;strong&gt;Employment Pass atau S Pass:&lt;/strong&gt; profesional dan tenaga terampil asing yang memegang Employment Pass atau S Pass." selected>Employment Pass atau S Pass</option><option data-i18n-opt="opt_sgRes_citizen" value="citizen" data-i18n-otip="otip_sgRes_citizen" data-opt-tip="&lt;strong&gt;Warga negara, atau PR mulai tahun ke-3:&lt;/strong&gt; warga negara Singapura, dan penduduk tetap mulai tahun ketiga sejak status PR diberikan.">Warga negara, atau PR mulai tahun ke-3</option><option data-i18n-opt="opt_sgRes_pr1" value="pr1" data-i18n-otip="otip_sgRes_pr1" data-opt-tip="&lt;strong&gt;Penduduk tetap, tahun ke-1:&lt;/strong&gt; penduduk tetap Singapura yang baru, di tahun pertama sejak status PR diberikan, sering kali setelah memegang Employment Pass atau S Pass.">Penduduk tetap, tahun ke-1</option><option data-i18n-opt="opt_sgRes_pr2" value="pr2" data-i18n-otip="otip_sgRes_pr2" data-opt-tip="&lt;strong&gt;Penduduk tetap, tahun ke-2:&lt;/strong&gt; penduduk tetap Singapura di tahun kedua sejak status PR diberikan.">Penduduk tetap, tahun ke-2</option><option data-i18n-opt="opt_sgRes_nonres" value="nonres" data-i18n-otip="otip_sgRes_nonres" data-opt-tip="&lt;strong&gt;Bukan penduduk pajak:&lt;/strong&gt; siapa pun yang berada di Singapura kurang dari 183 hari dalam setahun, misalnya karyawan yang ditugaskan sebentar.">Bukan penduduk pajak (kurang dari 183 hari)</option></select>
+        <select class="sel-input" id="sgRes"><option data-i18n-opt="opt_sgRes_ep" value="ep" data-i18n-otip="otip_sgRes_ep" data-opt-tip="&lt;strong&gt;Employment Pass atau S Pass:&lt;/strong&gt; profesional dan tenaga terampil asing yang memegang Employment Pass atau S Pass." selected>Employment Pass atau S Pass</option><option data-i18n-opt="opt_sgRes_citizen" value="citizen" data-i18n-otip="otip_sgRes_citizen" data-opt-tip="&lt;strong&gt;Warga negara, atau penduduk tetap mulai tahun ke-3:&lt;/strong&gt; warga negara Singapura, dan penduduk tetap mulai tahun ketiga sejak status penduduk tetap diberikan.">Warga negara, atau penduduk tetap mulai tahun ke-3</option><option data-i18n-opt="opt_sgRes_pr1" value="pr1" data-i18n-otip="otip_sgRes_pr1" data-opt-tip="&lt;strong&gt;Penduduk tetap, tahun ke-1:&lt;/strong&gt; penduduk tetap Singapura yang baru, di tahun pertama sejak status penduduk tetap diberikan, sering kali setelah memegang Employment Pass atau S Pass.">Penduduk tetap, tahun ke-1</option><option data-i18n-opt="opt_sgRes_pr2" value="pr2" data-i18n-otip="otip_sgRes_pr2" data-opt-tip="&lt;strong&gt;Penduduk tetap, tahun ke-2:&lt;/strong&gt; penduduk tetap Singapura di tahun kedua sejak status penduduk tetap diberikan.">Penduduk tetap, tahun ke-2</option><option data-i18n-opt="opt_sgRes_nonres" value="nonres" data-i18n-otip="otip_sgRes_nonres" data-opt-tip="&lt;strong&gt;Bukan penduduk pajak:&lt;/strong&gt; siapa pun yang berada di Singapura kurang dari 183 hari dalam setahun, misalnya karyawan yang ditugaskan sebentar.">Bukan penduduk pajak (kurang dari 183 hari)</option></select>
       </div>
       <div class="field-row" data-show="SG" data-if="sgRes=citizen">
         <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_sgAge">Usia</span> <i class="tip-icon" data-i18n-tip="tip_sgAge" data-tip="Tarif iuran CPF karyawan turun seiring usia, dari 20% untuk usia 55 tahun atau kurang sampai 5% di atas 70 tahun.">?</i></span></div>
@@ -277,7 +277,7 @@
       </div>
       <div class="field-row" data-show="US">
         <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_usRes">Status pajak</span> <i class="tip-icon" data-tip="" data-tip-options>?</i></span></div>
-        <select class="sel-input" id="usRes"><option data-i18n-opt="opt_usRes_res" value="res" data-i18n-otip="otip_usRes_res" data-opt-tip="&lt;strong&gt;Warga negara atau penduduk pajak:&lt;/strong&gt; warga negara AS, pemegang green card, dan pemegang visa seperti H-1B atau L-1 yang lolos substantial presence test." selected>Warga negara atau penduduk pajak</option><option data-i18n-opt="opt_usRes_nra" value="nra" data-i18n-otip="otip_usRes_nra" data-opt-tip="&lt;strong&gt;Nonresident alien:&lt;/strong&gt; orang yang tidak lolos kedua uji itu, misalnya mahasiswa F-1 atau J-1 di 5 tahun kalender pertamanya, atau pendatang baru H-1B sebelum 183 hari.">Nonresident alien</option></select>
+        <select class="sel-input" id="usRes"><option data-i18n-opt="opt_usRes_res" value="res" data-i18n-otip="otip_usRes_res" data-opt-tip="&lt;strong&gt;Warga negara atau penduduk pajak:&lt;/strong&gt; warga negara AS, pemegang green card, dan pemegang visa seperti H-1B atau L-1 yang lolos substantial presence test." selected>Warga negara atau penduduk pajak</option><option data-i18n-opt="opt_usRes_nra" value="nra" data-i18n-otip="otip_usRes_nra" data-opt-tip="&lt;strong&gt;Nonresident alien:&lt;/strong&gt; tanpa green card dan tidak lolos substantial presence test, misalnya mahasiswa F-1 atau J-1 di 5 tahun kalender pertamanya, atau pendatang H-1B sebelum 183 hari.">Nonresident alien</option></select>
       </div>
       <div class="field-row" data-show="DE">
         <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_deClass">Kelas pajak</span> <i class="tip-icon" data-tip="" data-tip-options>?</i></span></div>
@@ -312,7 +312,7 @@
         <select class="sel-input" id="fiRes"><option data-i18n-opt="opt_fiRes_res" value="res" data-i18n-otip="otip_fiRes_res" data-opt-tip="&lt;strong&gt;Pajak biasa:&lt;/strong&gt; karyawan yang dikenai tarif progresif, termasuk penduduk dan WNA yang tinggal lebih dari 6 bulan." selected>Pajak biasa</option><option data-i18n-opt="opt_fiRes_key" value="key" data-i18n-otip="otip_fiRes_key" data-opt-tip="&lt;strong&gt;Key employee:&lt;/strong&gt; tenaga ahli asing yang direkrut dari luar negeri, bergaji minimal 5,800 sebulan, dan tidak menjadi penduduk Finlandia dalam 5 tahun terakhir.">Key employee, tarif tunggal 25%</option></select>
       </div>
       <div class="toggle-row" data-show="BE">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_beExpat">Rezim ekspatriat</span> <i class="tip-icon" data-i18n-tip="tip_beExpat" data-tip="Untuk karyawan yang direkrut atau ditugaskan dari luar negeri dengan gaji di atas 70,000 setahun: sampai 35% gaji kotor dibayarkan sebagai penggantian bebas pajak dan bebas iuran jaminan sosial.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_beExpat">Rezim ekspatriat</span> <i class="tip-icon" data-i18n-tip="tip_beExpat" data-tip="Untuk karyawan yang direkrut atau ditugaskan dari luar negeri bergaji di atas 70,000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="beExpat"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="IT">
@@ -383,7 +383,7 @@
       </div>
       <p class="field-sub" data-show="US" data-if="usRes=nra" data-i18n="sub_9">Nonresident alien melapor sebagai lajang.</p>
       <div class="toggle-row" data-show="DE">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_deKids">Punya anak</span> <i class="tip-icon" data-i18n-tip="tip_deKids" data-tip="Tanpa anak, iuran perawatan jangka panjang 0.6% lebih tinggi.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_deKids">Punya anak</span> <i class="tip-icon" data-i18n-tip="tip_deKids" data-tip="Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0.6 poin persentase.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="deKids"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="toggle-row" data-show="ID" data-if="idRes=res">
@@ -435,7 +435,7 @@
         <select class="sel-input seg-src" id="chKids"><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select>
       </div>
       <div class="toggle-row" data-show="FR">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_frMarried">Menikah atau PACS</span> <i class="tip-icon" data-i18n-tip="tip_frMarried" data-tip="Pasangan dipajaki bersama dengan dua part. Setiap anak menambah setengah part, dan anak ketiga satu part penuh.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_frMarried">Menikah atau PACS</span> <i class="tip-icon" data-i18n-tip="tip_frMarried" data-tip="Pasangan dipajaki bersama dengan dua part, satuan pembagi penghasilan di Prancis. Setiap anak menambah setengah part, dan anak ketiga satu part penuh.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="frMarried"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="FR">
@@ -526,7 +526,7 @@
         <label class="toggle-switch"><input type="checkbox" id="usFicaExempt"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="ID" data-if="idRes=res">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_idJkk">Tarif JKK (kecelakaan kerja)</span> <i class="tip-icon" data-i18n-tip="tip_idJkk" data-tip="Premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja ikut dihitung sebagai penghasilan kena pajak. Tarif JKK bergantung pada bidang usahanya.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_idJkk">Tarif JKK (kecelakaan kerja)</span> <i class="tip-icon" data-i18n-tip="tip_idJkk" data-tip="Premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja ikut dihitung sebagai penghasilan kena pajak. Tarif JKK bergantung pada bidang usaha pemberi kerja.">?</i></span></div>
         <select class="sel-input" id="idJkk"><option data-i18n-opt="opt_idJkk_0_24" value="0.24" selected>0.24%, risiko sangat rendah</option><option data-i18n-opt="opt_idJkk_0_54" value="0.54">0.54%, risiko rendah</option><option data-i18n-opt="opt_idJkk_0_89" value="0.89">0.89%, risiko sedang</option><option data-i18n-opt="opt_idJkk_1_27" value="1.27">1.27%, risiko tinggi</option><option data-i18n-opt="opt_idJkk_1_74" value="1.74">1.74%, risiko sangat tinggi</option></select>
       </div>
       <div class="toggle-row" data-show="ID" data-if="idRes=nonres">
@@ -539,14 +539,14 @@
       </div>
       <div class="field-row" data-show="NL" data-if="nlRuling=on">
         <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_nlNorm">Salary norm</span> <i class="tip-icon" data-i18n-tip="tip_nlNorm" data-tip="Ruling ini tidak boleh membuat gaji turun di bawah salary norm, jadi bagian bebas pajaknya adalah gaji dikurangi norm itu bila hasilnya lebih kecil.">?</i></span></div>
-        <select class="sel-input" id="nlNorm"><option data-i18n-opt="opt_nlNorm_std" value="std" selected>Standar (48,013)</option><option data-i18n-opt="opt_nlNorm_young" value="young">Di bawah 30 dengan gelar master (36,497)</option></select>
+        <select class="sel-input" id="nlNorm"><option data-i18n-opt="opt_nlNorm_std" value="std" selected>Standar (48,013)</option><option data-i18n-opt="opt_nlNorm_young" value="young">Di bawah 30 tahun dengan gelar master (36,497)</option></select>
       </div>
       <div class="toggle-row" data-show="NL">
         <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_nlHoliday">Uang liburan dibayar di atas gaji</span> <i class="tip-icon" data-i18n-tip="tip_nlHoliday" data-tip="Gaji di Belanda ditambah uang liburan 8%, biasanya dibayar pada bulan Mei. Kalau aktif, jumlah yang kamu isi belum termasuk uang liburan dan 8% ditambahkan.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="nlHoliday" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="NL">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_nlPension">Iuran pensiun, bagianmu</span> <i class="tip-icon" data-i18n-tip="tip_nlPension" data-tip="Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang baru dihitung di atas franchise memotong lebih sedikit.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_nlPension">Iuran pensiun, bagianmu</span> <i class="tip-icon" data-i18n-tip="tip_nlPension" data-tip="Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang hanya menghitung iuran di atas bagian gaji yang dikecualikan (franchise) memotong lebih sedikit.">?</i></span></div>
         <div class="affix-wrap"><input class="affix-input has-suffix fmt-pct" id="nlPension" type="text" inputmode="decimal" data-min="0" data-max="15" value="0"><span class="suffix">%</span></div>
       </div>
       <div class="field-row" data-show="SE" data-if="seRes=res">
@@ -582,7 +582,7 @@
         <label class="toggle-switch"><input type="checkbox" id="chChurch"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="CH">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_chAge">Usia (tarif pensiun)</span> <i class="tip-icon" data-i18n-tip="tip_chAge" data-tip="Separuh bagianmu dari kredit usia BVG atas gaji terkoordinasi.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_chAge">Usia (tarif pensiun)</span> <i class="tip-icon" data-i18n-tip="tip_chAge" data-tip="Kredit usia BVG dihitung atas gaji terkoordinasi, dan kamu menanggung separuhnya.">?</i></span></div>
         <select class="sel-input" id="chAge"><option data-i18n-opt="opt_chAge_25" value="25">25 sampai 34 (3.5%)</option><option data-i18n-opt="opt_chAge_35" value="35" selected>35 sampai 44 (5%)</option><option data-i18n-opt="opt_chAge_45" value="45">45 sampai 54 (7.5%)</option><option data-i18n-opt="opt_chAge_55" value="55">55 sampai 65 (9%)</option></select>
       </div>
       <div class="field-row" data-show="CH">
@@ -622,7 +622,7 @@
         <label class="toggle-switch"><input type="checkbox" id="jpCare"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="JP">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_jpSupport">Iuran dukungan anak</span> <i class="tip-icon" data-i18n-tip="tip_jpSupport" data-tip="Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Setahun penuh menunjukkan tahun yang sudah berjalan normal.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_jpSupport">Iuran dukungan anak</span> <i class="tip-icon" data-i18n-tip="tip_jpSupport" data-tip="Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk melihat tahun ketika iuran ini sudah berjalan normal.">?</i></span></div>
         <select class="sel-input" id="jpSupport"><option data-i18n-opt="opt_jpSupport_12" value="12" selected>Setahun penuh</option><option data-i18n-opt="opt_jpSupport_9" value="9">Tahun kalender 2026 (April sampai Desember)</option></select>
       </div>
       <div class="field-row" data-show="CN">
@@ -740,8 +740,8 @@
         <p>Setiap negara memakai aturan tahun 2026, dan tahun persisnya tertulis di samping tiap pekerjaan: Australia 2026-27 (mulai 1 Juli 2026), Inggris 2026/27 (mulai 6 April 2026), Singapura YA2027 (penghasilan tahun 2026), sedangkan Amerika Serikat mengikuti IRS Rev. Proc. 2025-32. Aturan-aturan ini diriset per 10 November 2026. Setiap baris di rincian gaji bersih mencantumkan sumbernya, lengkap dengan label Resmi, Sekunder, atau Asumsi.</p>
       </div>
       <div class="faq-item">
-        <h3>Bagaimana kalkulator ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?</h3>
-        <p>Kalau kolom Hitung dari diisi Gaji bersih, kalkulator mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti yang terjadi pada recapture tax di New York.</p>
+        <h3>Bagaimana tool ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?</h3>
+        <p>Kalau kolom Hitung dari diisi Gaji bersih, tool ini mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti pada penarikan kembali manfaat tarif rendah (recapture) di New York.</p>
       </div>
       <div class="faq-item">
         <h3>Apa arti tarif marginal, dan kenapa angkanya berbeda dari tarif rata-rata?</h3>
@@ -753,7 +753,7 @@
       </div>
       <div class="faq-item">
         <h3>Apakah kurs mata uang mengubah hitungan pajaknya?</h3>
-        <p>Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Kalkulator mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs.</p>
+        <p>Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Tool ini mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs.</p>
       </div>
     </div>
   </section>
