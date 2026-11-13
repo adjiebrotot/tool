@@ -59,6 +59,8 @@ const PAGES = [
     also: `document.getElementById('addJob').click();
            var c = document.getElementById('country'); c.value = 'ES'; c.dispatchEvent(new Event('change', {bubbles: true}));
            var k = document.getElementById('esKids'); k.value = '2'; k.dispatchEvent(new Event('change', {bubbles: true}));` },
+  // The Indonesian page shows 1.234,5 but saves 1,234.5: the file must read the same on either.
+  { path: 'global-income-tax-calculator/id/', preset: 'europe', probe: '.metrics' },
   { path: 'costofliving-comparator/',  probe: '#analysisArea',
     also: `document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click();
            document.getElementById('swapCities').click();` },

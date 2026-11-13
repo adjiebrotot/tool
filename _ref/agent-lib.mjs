@@ -1250,7 +1250,7 @@ export function readFields() {
         const strong = l && l.querySelector('strong, b, .radio-opt-title');
         return { value: r.value, label: strong ? text(strong) : text(l) };
       });
-    } else f.value = first.value;
+    } else f.value = window.SharedNum ? window.SharedNum.read(first) : first.value;   // the stored (English) form, on an Indonesian page too
     if (f.tag === 'select') {
       f.options = Array.from(first.options).map(o => ({ value: o.value, label: norm(o.textContent) }));
     }

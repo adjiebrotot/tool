@@ -230,7 +230,7 @@ rtbEnabled: Aktifkan Sewa Dulu, Beli Kemudian
   Checkbox: true or false. Default false.
   Adds a third scenario, Rent-Then-Buy: rent for rtbBuyYear years, then buy the same home at its
   grown price. Leave it out unless the user asks about buying later.
-  Tip on the page: Skenario ketiga: rumah disewa X tahun, lalu dibeli pada harga saat itu, dengan
+  Tip on the page: Skenario ketiga: rumah disewa X tahun, lalu dibeli dengan harga saat itu dan
   anggaran sama. Jika anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli
   dan Sewa ikut berubah.
 rtbBuyYear: Beli di tahun

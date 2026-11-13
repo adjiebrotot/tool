@@ -45,8 +45,8 @@ https://tool.adjiebrotots.com/global-income-tax-calculator/id/#load&v=1&qs=<quic
   # is %23, + is %2B).
 - v=1 is the format version. qs=<key> starts from that Quick Start; without it the tool starts from
   its defaults.
-- Then each key in the link is set, in the units its label shows on screen. deAddOn=29 means 29%,
-  not 0.29. Write numbers plainly (800000, 6.5): a field also takes $, thousands commas and a
+- Then each key in the link is set, in the units its label shows on screen. deAddOn=2.9 means 2.9%,
+  not 0.029. Write numbers plainly (800000, 6.5): a field also takes $, thousands commas and a
   trailing %, but inside a list a comma separates the items, so never put one in a number there. A
   checkbox takes true or false. A select or a choice takes the value listed, or its visible label.
 - Anything the link does not name keeps the value it started from, so send only what differs.
@@ -132,7 +132,7 @@ dir: Hitung dari  (most important)
   gross: amount is gross pay before tax. net: amount is the take-home pay wanted, and the tool
   solves for the gross that leaves it.
 amount: Gaji kotor  (most important)
-  Number (A$ before it). 0 to 100,000,000,000. Default 120.000.
+  Number (A$ before it). 0 to 100,000,000,000. Default 120,000.
   The pay in the job's own currency (dollars for US, euros for FR, yen for JP), per period. Send the
   number alone, no currency.
   Tip on the page: Sebelum dipotong pajak penghasilan dan iuran karyawan. Iuran yang dibayar pemberi
@@ -456,7 +456,7 @@ deChurch: Pajak gereja
   Tip on the page: Anggota gereja membayar sebagian dari pajak penghasilannya: 8% di Bavaria dan
   Baden-Württemberg, 9% di negara bagian lain.
 deAddOn: Iuran tambahan asuransi kesehatan
-  Number (% after it). 0 to 5. Default 2,9.
+  Number (% after it). 0 to 5. Default 2.9.
   Germany. Health fund add-on rate in %, 2.9 on average.
   Tip on the page: Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2.9%
   pada 2026. Kamu menanggung separuhnya.
@@ -509,11 +509,11 @@ nlPension: Iuran pensiun, bagianmu
   Tip on the page: Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang hanya
   menghitung iuran di atas bagian gaji yang dikecualikan (franchise) memotong lebih sedikit.
 seMun: Tarif pajak kota
-  Number (% after it). 28 to 36. Default 30,55.
+  Number (% after it). 28 to 36. Default 30.55.
   Sweden, residents. Municipal tax rate in %: 30.55 for Stockholm, 32.38 national average.
   Tip on the page: Stockholm 30.55%; rata-rata nasional 32.38%.
 seBurial: Biaya penguburan
-  Number (% after it). 0 to 1.5. Default 0,292.
+  Number (% after it). 0 to 1.5. Default 0.292.
   Sweden, residents. Burial fee in %, 0.292 on average.
   Tip on the page: Rata-rata nasional 0.292%. Anggota Gereja Swedia membayar iuran gereja sebagai
   gantinya.
@@ -525,7 +525,7 @@ eePension: Sudah usia pensiun
   Estonia. true at pension age (tax-free 776 a month).
   Tip on the page: Penghasilan bebas pajak menjadi 776 sebulan, bukan 700.
 fiMun: Tarif pajak kota
-  Number (% after it). 4 to 11. Default 5,30.
+  Number (% after it). 4 to 11. Default 5.30.
   Finland, residents. Municipal tax rate in %, 5.30 for Helsinki.
   Tip on the page: Helsinki 5.30%.
 fiChurch: Tarif pajak gereja
@@ -546,7 +546,7 @@ chAge: Usia (tarif pensiun)
   Switzerland. Age band for the pension rate: 25, 35, 45 or 55.
   Tip on the page: Kredit usia BVG dihitung atas gaji terkoordinasi, dan kamu menanggung separuhnya.
 chNbu: Asuransi kecelakaan (NBU)
-  Number (% after it). 0 to 3. Default 0,4.
+  Number (% after it). 0 to 3. Default 0.4.
   Switzerland. Non-occupational accident insurance rate in %, 0.4 by default.
   Tip on the page: Asuransi kecelakaan di luar pekerjaan; tarifnya bergantung pada perusahaan
   asuransinya.
