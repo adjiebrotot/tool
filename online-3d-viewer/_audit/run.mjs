@@ -353,6 +353,72 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   await page.click('#resetViewBtn');
   check('page: ⟳ puts the view back', JSON.stringify(await camAt()) === JSON.stringify(start), JSON.stringify(await camAt()) + ' vs ' + JSON.stringify(start));
 
+  // The camera pad: each button moves the camera the way its name says, and
+  // the mouse carries on from there. Read after the glide has settled.
+  const cam = () => page.evaluate(() => {
+    const v = window.__o3v.viewer, c = v.camera, t = v.controls.target;
+    const off = c.position.clone().sub(t);
+    return { pos: c.position.toArray(), up: c.up.toArray(), dist: off.length(), off: off.normalize().toArray(), target: t.toArray(),
+      right: [c.matrixWorld.elements[0], c.matrixWorld.elements[1], c.matrixWorld.elements[2]],
+      screenUp: [c.matrixWorld.elements[4], c.matrixWorld.elements[5], c.matrixWorld.elements[6]] };
+  });
+  const still = async () => { await page.waitForFunction(() => { const v = window.__o3v.viewer; return !v._tween && !v._spin; }); await page.waitForTimeout(150); };
+  const press = async sel => { await page.click(sel); await still(); };
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const deg = (a, b) => Math.acos(Math.max(-1, Math.min(1, dot(a, b)))) * 180 / Math.PI;
+  check('page: the camera pad is open on a wide screen', await page.evaluate(() => !document.getElementById('navBody').hidden && document.getElementById('navToggle').getAttribute('aria-expanded') === 'true'));
+  let a = await cam();
+  await press('[data-nav="yaw"][data-dir="1"]');
+  let b = await cam();
+  const azim = o => Math.atan2(o[0], o[2]) * 180 / Math.PI;
+  check('page: Turn left spins the camera 15° to its right about the vertical, height kept', Math.abs(azim(b.off) - azim(a.off) - 15) < 0.01 && Math.abs(b.off[1] - a.off[1]) < 1e-6 && Math.abs(b.dist - a.dist) < 1e-6 * a.dist && deg(b.up, [0, 1, 0]) < 1e-6, (azim(b.off) - azim(a.off)).toFixed(3));
+  await press('[data-nav="pitch"][data-dir="1"]');
+  a = b; b = await cam();
+  check('page: Tip up drops the camera 15° below where it was', Math.abs(deg(a.off, b.off) - 15) < 0.01 && dot(b.off, a.up) < dot(a.off, a.up), deg(a.off, b.off).toFixed(3));
+  await press('[data-nav="roll"][data-dir="1"]');
+  a = b; b = await cam();
+  check('page: Roll keeps the line of sight and turns the screen 15°', deg(a.off, b.off) < 0.01 && Math.abs(deg(a.screenUp, b.screenUp) - 15) < 0.01 && dot(b.screenUp, a.right) > 0, deg(a.screenUp, b.screenUp).toFixed(3));
+  await press('[data-nav="zoom"][data-dir="1"]');
+  a = b; b = await cam();
+  check('page: Zoom in comes 25% closer, same direction', Math.abs(a.dist / b.dist - 1.25) < 1e-6 && deg(a.off, b.off) < 0.01, (a.dist / b.dist).toFixed(6) + ', ' + deg(a.off, b.off).toFixed(4) + '°');
+  await press('[data-nav="panx"][data-dir="1"]');
+  a = b; b = await cam();
+  const moved = [0, 1, 2].map(i => b.target[i] - a.target[i]);
+  check('page: Pan right moves the turning point left (the model goes right)', dot(moved, a.right) < 0 && deg(a.off, b.off) < 0.01);
+  // Hold: keeps turning past one step, stops when let go.
+  const yawBtn = page.locator('[data-nav="yaw"][data-dir="-1"]');
+  a = await cam();
+  await yawBtn.hover(); await page.mouse.down(); await page.waitForTimeout(1100); await page.mouse.up();
+  await page.waitForTimeout(100);
+  b = await cam();
+  await page.waitForTimeout(300);
+  check('page: holding Turn right keeps turning, and stops on release', deg(a.off, b.off) > 30 && deg(b.off, (await cam()).off) < 0.01, deg(a.off, b.off).toFixed(1));
+  // The mouse still turns the view after a roll (OrbitControls follows the new up).
+  a = await cam();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + 120, box.y + box.height / 2, { steps: 6 }); await page.mouse.up();
+  await page.waitForTimeout(500);
+  b = await cam();
+  check('page: a drag after a roll turns about the rolled up, without snapping it back', deg(a.off, b.off) > 5 && deg(a.up, b.up) < 0.01, deg(a.up, b.up).toFixed(3));
+  await press('[data-view="top"]');
+  b = await cam();
+  check('page: Top looks straight down, front at the bottom of the screen', deg(b.off, [0, 1, 0]) < 0.01 && deg(b.screenUp, [0, 0, -1]) < 0.01, JSON.stringify(b.screenUp));
+  await press('[data-view="right"]');
+  b = await cam();
+  check('page: Right looks along -X, Y up', deg(b.off, [1, 0, 0]) < 0.01 && deg(b.up, [0, 1, 0]) < 0.01);
+  await page.keyboard.press('1'); await still();
+  b = await cam();
+  check('page: key 1 is the front view', deg(b.off, [0, 0, 1]) < 0.01, JSON.stringify(b.off));
+  await page.keyboard.press('ArrowLeft'); await still();
+  check('page: ← turns the model left', Math.abs(azim((await cam()).off) - azim(b.off) - 15) < 0.01, (azim((await cam()).off) - azim(b.off)).toFixed(3));
+  await page.keyboard.press('q'); await still();
+  check('page: Q rolls 15°', Math.abs(deg(b.screenUp, (await cam()).screenUp) - 15) < 0.01);
+  await page.click('#resetViewBtn');
+  check('page: ⟳ after the pad puts the view back, Y up', JSON.stringify(await camAt()) === JSON.stringify(start) && deg((await cam()).up, [0, 1, 0]) < 1e-6);
+  await page.click('#navToggle');
+  check('page: the pad folds away', await page.evaluate(() => document.getElementById('navBody').hidden && document.getElementById('navToggle').getAttribute('aria-expanded') === 'false'));
+  await page.click('#navToggle');
+
   // The ruler. Each click lands 5 px off a corner, toward the box's middle:
   // snapping must pull it onto the corner, so the figures come out exact.
   const corner = (x, y, z) => page.evaluate(([x, y, z]) => {

@@ -10,6 +10,24 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const VIEW_DIR = new THREE.Vector3(0.95, 0.7, 1.15).normalize();
+const Y = new THREE.Vector3(0, 1, 0);
+const STEP = THREE.MathUtils.degToRad(15);   // one press of a turn button
+const SPIN = THREE.MathUtils.degToRad(90);   // per second, while a turn button is held
+const TWEEN = 0.22;                          // seconds a button's move takes
+
+/* The standard views, in the scene once the model is turned up: where the
+   camera sits (seen from) and which way is up on screen. The front is +Z,
+   which is the file's -Y for a Z-up CAD file (its front view) and +Z for a
+   Y-up glTF. */
+const VIEWS = {
+  front:  { from: [0, 0, 1],  up: [0, 1, 0] },
+  back:   { from: [0, 0, -1], up: [0, 1, 0] },
+  left:   { from: [-1, 0, 0], up: [0, 1, 0] },
+  right:  { from: [1, 0, 0],  up: [0, 1, 0] },
+  top:    { from: [0, 1, 0],  up: [0, 0, -1] },
+  bottom: { from: [0, -1, 0], up: [0, 0, 1] },
+  iso:    { from: VIEW_DIR.toArray(), up: [0, 1, 0] },
+};
 const EDGE_BUDGET = 3e6;   // triangles: above this, feature edges would cost more than they show
 
 export class Viewer {
@@ -20,7 +38,7 @@ export class Viewer {
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.domElement.className = 'viewer-canvas';
-    renderer.domElement.setAttribute('aria-label', '3D view of the model. Drag to turn, scroll or pinch to zoom, right-drag or two fingers to pan.');
+    renderer.domElement.setAttribute('aria-label', '3D view of the model. Drag to turn, scroll or pinch to zoom, right-drag or two fingers to pan; the arrow keys turn it too.');
     renderer.domElement.setAttribute('role', 'img');
     host.prepend(renderer.domElement);
 
@@ -57,6 +75,9 @@ export class Viewer {
     controls.screenSpacePanning = true;
     controls.zoomToCursor = true;
     controls.addEventListener('change', () => this.request());
+    controls.addEventListener('start', () => { this._tween = null; this._spin = null; });
+    this._tween = null;     // a button's move under way: { from, to, t }
+    this._spin = null;      // a pad button held down: { op, dir }
 
     this.timer = new THREE.Timer();
     this.timer.connect(document);
@@ -84,12 +105,168 @@ export class Viewer {
     this._raf = 0;
     this.timer.update();
     const dt = Math.min(this.timer.getDelta(), 0.1);
+    const steering = this._steer(dt);
     const moved = this.controls.update();
     this._clip();
     if (this.mixer && this.playing) this.mixer.update(dt);
     this.renderer.render(this.scene, this.camera);
     if (this.onFrame) this.onFrame();
-    if (moved || (this.mixer && this.playing)) this.request();
+    if (moved || steering || (this.mixer && this.playing)) this.request();
+  }
+
+  // ── Camera by button (the navigation pad and the keyboard) ──
+  /* The camera as a pose: the point it turns about, which way it faces, how
+     far back it stands, and the axis a sideways drag spins it about (the
+     turntable axis, OrbitControls' "up": world up until a roll tilts it).
+     Every button move goes from one pose to the next, so turning, rolling,
+     panning, zooming and the standard views all glide the same way, and the
+     mouse takes over from wherever they stop. */
+  _pose() {
+    return {
+      target: this.controls.target.clone(),
+      quat: this.camera.quaternion.clone(),
+      dist: this.camera.position.distanceTo(this.controls.target),
+      axis: this.camera.up.clone(),
+    };
+  }
+
+  _apply(p) {
+    const cam = this.camera, q = p.quat.clone();
+    // OrbitControls points the camera with lookAt(target, up), so the
+    // turntable axis must lie in the plane of the line of sight and the
+    // screen's up, on the up side. Bring it there; over the top (a tip past
+    // straight down) it turns round; exactly at the pole (the top view) the
+    // camera leans a hair off it, or lookAt could not tell which way is up.
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(q);
+    let axis = p.axis.clone().addScaledVector(right, -p.axis.dot(right));
+    if (axis.lengthSq() < 1e-12) axis.set(0, 1, 0).applyQuaternion(q);
+    axis.normalize();
+    let up = Y.clone().applyQuaternion(q);
+    if (axis.dot(up) < 0) axis.negate();
+    if (axis.dot(up) < 1e-5) {
+      const back = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
+      q.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), (axis.dot(back) > 0 ? 1 : -1) * 2e-5));
+    }
+    cam.quaternion.copy(q);
+    cam.position.set(0, 0, p.dist).applyQuaternion(q).add(p.target);
+    cam.up.copy(axis);
+    this.controls.target.copy(p.target);
+    // OrbitControls reads the up once, when it is made: tell it again.
+    this.controls._quat.setFromUnitVectors(axis, Y);
+    this.controls._quatInverse.copy(this.controls._quat).invert();
+    cam.updateMatrixWorld();
+  }
+
+  /** Spend whatever turn or pan is still gliding from the last drag. */
+  _settle() {
+    this.controls.enableDamping = false;
+    this.controls.update();
+    this.controls.enableDamping = true;
+  }
+
+  /* Where a move leads from pose p, each named for what the model does on
+     screen, the way a drag moves it. Yaw spins about the turntable axis, as a
+     sideways drag does (+: the model's front swings left); pitch tips about
+     the screen's horizontal, and may go on over the top (+: the front tips
+     up); roll turns about the line of sight, and the turntable axis with it
+     (+: anticlockwise on screen). */
+  _moved(p, op, amount) {
+    let q = p.quat.clone();
+    const t = p.target.clone(), axis = p.axis.clone();
+    let dist = p.dist;
+    const about = (v, a) => new THREE.Quaternion().setFromAxisAngle(v, a);
+    switch (op) {
+      case 'yaw': q = about(axis.clone().normalize(), amount).multiply(q); break;
+      case 'pitch': q.multiply(about(new THREE.Vector3(1, 0, 0), amount)); break;
+      case 'roll': {
+        const turn = about(new THREE.Vector3(0, 0, 1).applyQuaternion(q), -amount);
+        q = turn.clone().multiply(q);
+        axis.applyQuaternion(turn);
+        break;
+      }
+      case 'panx': case 'pany': {
+        // A fraction of what the screen shows at the turning point.
+        const h = 2 * dist * Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+        const dir = new THREE.Vector3(op === 'panx' ? 1 : 0, op === 'pany' ? 1 : 0, 0).applyQuaternion(q);
+        t.addScaledVector(dir, -amount * h);       // + moves the model right or up
+        break;
+      }
+      case 'zoom': dist = THREE.MathUtils.clamp(dist / amount, this.controls.minDistance, this.controls.maxDistance); break;   // >1 closer
+    }
+    return { target: t, quat: q.normalize(), dist, axis };
+  }
+
+  /** One step of a move, gliding there: 'yaw', 'pitch', 'roll' (sign is the
+      direction, size in steps of 15°), 'panx', 'pany' (in tenths of the view)
+      or 'zoom' (+1 in, -1 out). */
+  nudge(op, steps = 1) {
+    if (!this.model) return;
+    this._settle();
+    this._spin = null;
+    // A press during a glide adds to where that glide was going.
+    const end = this._tween ? this._tween.to : this._pose();
+    const amount = op === 'zoom' ? Math.pow(1.25, steps) : op === 'panx' || op === 'pany' ? steps * 0.1 : steps * STEP;
+    this._glide(this._pose(), this._moved(end, op, amount));
+  }
+
+  /** Keep moving while a button is held (dir +1 or -1); hold(null) stops. */
+  hold(op, dir) {
+    if (!op) { this._spin = null; return; }
+    if (!this.model) return;
+    if (this._tween) { this._apply(this._tween.to); this._tween = null; }
+    this._settle();
+    this._spin = { op, dir };
+    this.timer.update();
+    this.request();
+  }
+
+  /** Glide to a standard view ('front', 'top', 'iso' …), framing the model. */
+  view(name) {
+    const v = VIEWS[name];
+    if (!v || !this.box) return;
+    this._settle();
+    this._spin = null;
+    const back = new THREE.Vector3(...v.from).normalize();
+    this._glide(this._pose(), Object.assign(this._framed(back, new THREE.Vector3(...v.up)), { axis: Y.clone() }));
+  }
+
+  /** Frame the whole model again without changing the direction it is seen from. */
+  fit() {
+    if (!this.box) return;
+    this._settle();
+    this._spin = null;
+    const p = this._pose();
+    const back = new THREE.Vector3(0, 0, 1).applyQuaternion(p.quat);
+    const up = Y.clone().applyQuaternion(p.quat);
+    this._glide(p, Object.assign(this._framed(back, up), { axis: p.axis }));
+  }
+
+  _glide(from, to) {
+    this._tween = { from, to, t: 0 };
+    this.timer.update();
+    this.request();
+  }
+
+  /** Advance a glide or a held turn by dt seconds; true while one is under way. */
+  _steer(dt) {
+    if (this._spin) {
+      const { op, dir } = this._spin;
+      const rate = op === 'zoom' ? Math.pow(2, dir * dt) : op === 'panx' || op === 'pany' ? dir * dt * 0.6 : dir * dt * SPIN;
+      this._apply(this._moved(this._pose(), op, rate));
+      return true;
+    }
+    const tw = this._tween;
+    if (!tw) return false;
+    tw.t = Math.min(1, tw.t + dt / TWEEN);
+    const k = 1 - Math.pow(1 - tw.t, 3);   // ease out
+    this._apply({
+      target: tw.from.target.clone().lerp(tw.to.target, k),
+      quat: tw.from.quat.clone().slerp(tw.to.quat, k),
+      dist: tw.from.dist * Math.pow(tw.to.dist / tw.from.dist, k),   // even steps in scale
+      axis: tw.to.axis,
+    });
+    if (tw.t >= 1) { this._tween = null; return false; }
+    return true;
   }
 
   // Keep the near and far planes snug around what is in view, so a close
@@ -145,6 +322,8 @@ export class Viewer {
   }
 
   clear() {
+    this._tween = null;
+    this._spin = null;
     if (this.mixer) { this.mixer.stopAllAction(); this.mixer = null; }
     this.playing = false;
     if (!this.model) return;
@@ -188,14 +367,33 @@ export class Viewer {
       off until all eight corners of the model's box are in view. */
   resetView() {
     if (!this.box) return;
+    this._tween = null;
+    this._spin = null;
+    // Spend whatever turn or pan is still gliding from the last drag, so it
+    // does not carry the camera on past the reset.
+    this._settle();
+    const p = this._framed(VIEW_DIR.clone(), Y.clone());
+    this._apply(p);
+    this.camera.near = p.dist / 400;
+    this.camera.far = p.dist + this.radius * 30;
+    this.camera.updateProjectionMatrix();
+    this.controls.update();
+    this.request();
+  }
+
+  /** The pose that looks at the model's centre from direction back (towards
+      the camera), with up on screen as near to up as it can be, standing back
+      until all eight corners of the model's box are in view. */
+  _framed(back, up) {
     const sphere = this.box.getBoundingSphere(new THREE.Sphere());
     const center = this.box.getCenter(new THREE.Vector3());
     const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
     const tanH = tanV * this.camera.aspect;
-    // Camera basis looking along -VIEW_DIR with world Y up.
-    const back = VIEW_DIR.clone();
-    const right = new THREE.Vector3(0, 1, 0).cross(back).normalize();
-    const up = back.clone().cross(right).normalize();
+    back = back.clone().normalize();
+    const right = up.clone().cross(back);
+    if (right.lengthSq() < 1e-8) right.set(1, 0, 0).cross(back);   // up along the line of sight
+    right.normalize();
+    up = back.clone().cross(right).normalize();
     let dist = 0;
     const p = new THREE.Vector3();
     for (let i = 0; i < 8; i++) {
@@ -204,18 +402,8 @@ export class Viewer {
       dist = Math.max(dist, z + x / tanH, z + y / tanV);
     }
     dist = Math.max(dist * 1.18, sphere.radius * 0.5, 1e-6);
-    // Spend whatever turn or pan is still gliding from the last drag, so it
-    // does not carry the camera on past the reset.
-    this.controls.enableDamping = false;
-    this.controls.update();
-    this.controls.enableDamping = true;
-    this.controls.target.copy(center);
-    this.camera.position.copy(center).addScaledVector(VIEW_DIR, dist);
-    this.camera.near = dist / 400;
-    this.camera.far = dist + sphere.radius * 30;
-    this.camera.updateProjectionMatrix();
-    this.controls.update();
-    this.request();
+    const quat = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(right, up, back));
+    return { target: center, quat, dist, axis: Y.clone() };
   }
 
   _buildGrid() {

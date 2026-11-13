@@ -25,6 +25,7 @@ const dom = {
   measureBtn: $('measureBtn'), measurePanel: $('measurePanel'), measureMode: $('measureMode'), measureClose: $('measureClose'),
   measureHint: $('measureHint'), measureList: $('measureList'), measureFoot: $('measureFoot'),
   measureUndo: $('measureUndo'), measureClear: $('measureClear'), measureTip: $('measureTip'), themeToggle: $('themeToggle'), header: document.querySelector('.header'),
+  navPad: $('navPad'), navToggle: $('navToggle'), navBody: $('navBody'),
 };
 
 const hook = window.__o3v = { state: 'idle', model: null, error: null, viewer: null, loads: 0 };
@@ -418,6 +419,91 @@ dom.pngBtn.addEventListener('click', async () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 });
 
+// ── Camera by button: the pad on the stage, and the keyboard ─────────────
+/* A click is one step (15°, a tenth of the view, 25% zoom) that glides into
+   place; held past a moment, the button keeps the model moving until it is let
+   go, as the arrows on a CAD program's view cube do. */
+const HOLD_AFTER = 350;   // ms before a press becomes a hold
+let navHold = null;       // { timer, btn, pointerId } while a pad button is down
+
+function navStep(op, dir, steps) {
+  if (!viewer || !current) return;
+  hideHint();
+  if (op === 'fit') viewer.fit();
+  else viewer.nudge(op, dir * (steps || 1));
+}
+function navRelease() {
+  if (!navHold) return;
+  clearTimeout(navHold.timer);
+  navHold.btn.classList.remove('held');
+  if (viewer) viewer.hold(null);
+  navHold = null;
+}
+dom.navBody.addEventListener('pointerdown', e => {
+  const b = e.target.closest('[data-nav]');
+  if (!b || e.button !== 0) return;
+  e.preventDefault();   // no focus ring flash, no text selection, no long-press menu
+  navRelease();
+  const op = b.dataset.nav, dir = +b.dataset.dir || 1;
+  navStep(op, dir);
+  if (op === 'fit') return;
+  try { b.setPointerCapture(e.pointerId); } catch (_) {}
+  navHold = { btn: b, timer: setTimeout(() => { if (viewer && current) { b.classList.add('held'); viewer.hold(op, dir); } }, HOLD_AFTER) };
+});
+for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) dom.navBody.addEventListener(ev, navRelease);
+window.addEventListener('blur', navRelease);
+dom.navBody.addEventListener('contextmenu', e => { if (e.target.closest('[data-nav]')) e.preventDefault(); });
+// Keyboard on a focused pad button (Enter, Space) takes one step; the pointer
+// already did its own, so a click that came from a pointer is skipped.
+dom.navBody.addEventListener('click', e => {
+  const b = e.target.closest('[data-nav]');
+  if (b && e.detail === 0) navStep(b.dataset.nav, +b.dataset.dir || 1);
+  const v = e.target.closest('[data-view]');
+  if (v && viewer && current) { hideHint(); viewer.view(v.dataset.view); }
+});
+
+function setNavOpen(open) {
+  dom.navBody.hidden = !open;
+  dom.navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  dom.navToggle.title = open ? 'Hide the camera controls' : 'Show the camera controls: turn, roll, pan, zoom and standard views';
+  if (open) dom.navPad.removeAttribute('data-collapsed'); else dom.navPad.setAttribute('data-collapsed', '');
+  sizeNav();
+}
+// The ruler's panel shares the right side; it stops above the pad.
+function sizeNav() { dom.stage.style.setProperty('--o3v-nav-h', (dom.navPad.offsetHeight + 12) + 'px'); }
+dom.navToggle.addEventListener('click', () => setNavOpen(dom.navBody.hidden));
+// Open on a wide screen; on a phone it would cover the model, so it waits to be asked for.
+setNavOpen(!window.matchMedia('(max-width: 720px)').matches);
+
+/* Keys: arrows turn 15° (Shift: 90°), Q and E roll, Ctrl + arrows pan, + and
+   − zoom, F fits, 0 to 6 the standard views. (Not Alt + arrows for the roll,
+   as CAD programs have it: in a browser Alt + ← goes back a page, and the
+   model with it.) Not while typing, and never with Alt or Cmd held. */
+const VIEW_KEYS = { 1: 'front', 2: 'back', 3: 'left', 4: 'right', 5: 'top', 6: 'bottom', 0: 'iso' };
+window.addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.metaKey || e.altKey || !viewer || !current || !dom.workspace.classList.contains('active')) return;
+  const t = e.target;
+  if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+  if (t && t.closest && t.closest('[role="menu"], [role="listbox"], .bmc-btn-container, #bmc-wbtn')) return;
+  const k = e.key;
+  const arrow = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[k];
+  let done = true;
+  if (arrow) {
+    const [x, y] = arrow;
+    if (e.ctrlKey) navStep(x ? 'panx' : 'pany', x || y);
+    else if (x) navStep('yaw', -x, e.shiftKey ? 6 : 1);
+    else navStep('pitch', y, e.shiftKey ? 6 : 1);
+  } else if (e.ctrlKey) done = false;
+  else if (k === 'q' || k === 'Q') navStep('roll', 1);
+  else if (k === 'e' || k === 'E') navStep('roll', -1);
+  else if (k === '+' || k === '=') navStep('zoom', 1);
+  else if (k === '-' || k === '_') navStep('zoom', -1);
+  else if (k === 'f' || k === 'F') navStep('fit', 1);
+  else if (k in VIEW_KEYS) { hideHint(); viewer.view(VIEW_KEYS[k]); }
+  else done = false;
+  if (done) e.preventDefault();
+});
+
 // The how-to hint fades after the first turn or zoom.
 const hideHint = () => dom.stageHint.classList.add('gone');
 dom.stage.addEventListener('pointerdown', hideHint, { once: true });
@@ -442,6 +528,7 @@ dom.themeToggle.addEventListener('click', () => {
 // The stage fills the screen below the header.
 function sizeToHeader() {
   document.documentElement.style.setProperty('--o3v-header', dom.header.offsetHeight + 'px');
+  if (dom.navPad) sizeNav();
 }
 window.addEventListener('resize', sizeToHeader);
 sizeToHeader();
