@@ -448,6 +448,19 @@ function bake(tool) {
   html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
     '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
 
+  /* ── the footer's own lines in Indonesian (the same words as rentvsownhouse/footer.js and
+        the country pages, _ref/jurisdiction-pages.mjs) ── */
+  for (const [from, to] of [
+    [/<strong>A hobby project, open to collaboration\.<\/strong> This tool is free to use\. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots\.com\?subject=Collaboration">let’s talk<\/a>\. Bugs or questions: <a href="mailto:hi@adjiebrotots\.com">hi@adjiebrotots\.com<\/a> 🙂/,
+      '<strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂'],
+    [/Licensed under (<a href="https:\/\/www\.gnu\.org\/licenses\/gpl-3\.0\.html" target="_blank" rel="noopener">GNU GPL<\/a>): free to use, modify, and share with source code disclosed\./,
+      'Berlisensi $1: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'],
+    [/Made in Australia by (<a href="https:\/\/www\.adjiebrotots\.com\/about\/" rel="author">Adjie Brotosukmono<\/a>), an Indonesian engineer\./,
+      'Dibuat di Australia oleh $1, insinyur asal Indonesia.'],
+    [/alt="Australian flag"/, 'alt="Bendera Australia"'],
+    [/alt="Indonesian badge"/, 'alt="Lencana Indonesia"'],
+  ]) html = html.replace(from, to);
+
   /* ── an Indonesian reader stays in Indonesian: the back link goes to the Indonesian home
         (which lists every tool, Indonesian or not), the footer's Blog to the Indonesian blog ── */
   html = html.replace('<a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">', '<a href="https://tool.adjiebrotots.com/id/" class="btn-theme btn-back">');

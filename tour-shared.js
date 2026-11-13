@@ -16,7 +16,7 @@
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Tour',               // header button text (optional)
        guide:       'guides/',               // optional: the tool's guide page
-       labels:      { skip, back, next, start, done, dialog,
+       labels:      { skip, back, next, start, done, dialog, launchAria,
                       guide, seeGuide, guideNote, guideTitle }, // optional
        saveState:   function () { ... },   // optional, see below
        restoreState:function (snapshot) { ... },
@@ -439,7 +439,7 @@
     }
     if (!btn.className) btn.className = 'pf-tour-launch';
     setLabel(btn, LAUNCH_LABEL);
-    btn.setAttribute('aria-label', 'Take a guided tour of this tool');
+    btn.setAttribute('aria-label', L.launchAria || (/^id\b/i.test(document.documentElement.lang || '') ? 'Ikuti tur singkat tool ini' : 'Take a guided tour of this tool'));
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.
     var aiBtn = nav.querySelector('[data-abt-ai-link]');

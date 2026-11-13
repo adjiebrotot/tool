@@ -81,7 +81,7 @@ const CARDS = {
       [`${T}costofliving-comparator/map/`]: { sub: 'Kotamu dibandingkan dengan lebih dari 500 kota di peta' },
     },
   },
-  'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, termasuk 39 negara bagian AS dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, lalu baca penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
+  'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, name: 'Kalkulator Gaji Bersih dan Pajak Penghasilan', desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, termasuk 39 negara bagian AS dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, lalu baca penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
   'videotogif': { desc: 'Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat <em>tool</em> ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.' },
   'randompicker': { desc: 'Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.' },
   'worldclock': { desc: 'Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat yang terus berjalan, lengkap dengan <em>daylight saving</em>.' },
