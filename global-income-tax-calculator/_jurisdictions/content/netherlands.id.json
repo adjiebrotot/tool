@@ -58,7 +58,7 @@
       },
       {
         "h3": "Uang liburan (<em>vakantiegeld</em>)",
-        "html": "<p>Pada umumnya karyawan berhak atas uang liburan minimal 8% dari gaji, yang dibayar sekali setahun pada Mei atau Juni. Fungsinya mirip THR di Indonesia, dan sama seperti THR, uang ini dipajaki seperti gaji biasa. <em>Tool</em> ini menambahkan uang liburan di atas gaji yang kamu masukkan lalu memajakinya, sehingga angka gaji bersih mencakup gaji ditambah uang liburan. Kalau kontrakmu menyebut gaji sudah termasuk uang liburan, matikan pilihan itu di kalkulator.</p>",
+        "html": "<p>Pada umumnya karyawan berhak atas uang liburan minimal 8% dari gaji, yang dibayar sekali setahun pada Mei atau Juni. Fungsinya mirip THR di Indonesia, dan sama seperti THR, uang ini dipajaki seperti gaji biasa. <em>Tool</em> ini menambahkan uang liburan di atas gaji yang kamu masukkan lalu memajakinya, sehingga angka gaji bersih mencakup gaji ditambah uang liburan. Kalau kontrakmu menyebut gaji sudah termasuk uang liburan, matikan pilihan itu di <em>tool</em>.</p>",
         "cite": [
           {
             "name": "Business.gov.nl, uang liburan (holiday allowance)",
@@ -200,18 +200,18 @@
     },
     {
       "h3": "Ikut skema pensiun dari pemberi kerja",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menjalankan skema pensiun. Iuran milikmu dipotong sebelum pajak, jadi kamu menghemat pajak pada tarif tertinggimu. Kalkulator ini punya <em>input</em> untuk persentase iuran pensiunmu.</p><p><strong>Catatan:</strong> iuran pensiun mengurangi gaji bersih sekarang dan merupakan tabungan jangka panjang. Skema yang dimulai di atas ambang tertentu memotong lebih sedikit daripada persentase yang kamu masukkan. Kalau kamu berencana pulang ke Indonesia, tanyakan ke penyelenggara apa yang terjadi pada dana itu.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menjalankan skema pensiun. Iuran milikmu dipotong sebelum pajak, jadi kamu menghemat pajak pada tarif tertinggimu. <em>Tool</em> ini punya <em>input</em> untuk persentase iuran pensiunmu.</p><p><strong>Catatan:</strong> iuran pensiun mengurangi gaji bersih sekarang dan merupakan tabungan jangka panjang. Skema yang dimulai di atas ambang tertentu memotong lebih sedikit daripada persentase yang kamu masukkan. Kalau kamu berencana pulang ke Indonesia, tanyakan ke penyelenggara apa yang terjadi pada dana itu.</p>"
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belanda lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Belanda, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belanda lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Belanda, tetapi <em>tool</em> ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun penuh. Penghasilan investasi di Box 3, usaha, dan tahun yang tidak penuh tidak masuk.",
     "<strong>Tanpa bonus atau saham.</strong> Bonus, bulan ke-13, opsi saham dan tunjangan lain tidak dihitung terpisah.",
     "<strong>Asuransi kesehatan tidak masuk.</strong> Semua penduduk Belanda wajib memiliki asuransi kesehatan dasar dari perusahaan swasta dan membayar premi bulanan. Premi itu tidak dihitung di sini, begitu juga tunjangan perawatan kesehatan (<em>zorgtoeslag</em>).",
-    "<strong>Syarat aturan 30% tidak diuji.</strong> Kamu yang memilih apakah aturan ini berlaku. Kalkulator tidak memeriksa aturan 150 km, aturan 16 dari 24 bulan, atau apakah pekerjaanmu memenuhi syarat.",
+    "<strong>Syarat aturan 30% tidak diuji.</strong> Kamu yang memilih apakah aturan ini berlaku. <em>Tool</em> ini tidak memeriksa aturan 150 km, aturan 16 dari 24 bulan, atau apakah pekerjaanmu memenuhi syarat.",
     "<strong>Keringanan disederhanakan.</strong> Pasangan, anak dan keringanan lain tidak dihitung, dan potongan bunga KPR juga tidak masuk.",
     "<strong>Di bawah usia pensiun negara.</strong> Tarifnya mengasumsikan kamu belum mencapai usia pensiun negara.",
     "<strong>Tanpa P3B dan pajak Indonesia.</strong> Dua hal itu tidak dihitung."
@@ -281,7 +281,7 @@
     },
     {
       "q": "Apakah norma gaji aturan 30% sudah termasuk uang liburan?",
-      "a": "<p>Di kalkulator ini ya: penghasilan total dengan uang liburan diuji terhadap norma, dan tunjangan tidak pernah membuat penghasilan kena pajak turun di bawah norma. Ujian hukumnya dilakukan pada gaji kena pajakmu, jadi pastikan ke pemberi kerja dan Belastingdienst bagaimana gajimu dihitung.</p>",
+      "a": "<p>Di <em>tool</em> ini ya: penghasilan total dengan uang liburan diuji terhadap norma, dan tunjangan tidak pernah membuat penghasilan kena pajak turun di bawah norma. Ujian hukumnya dilakukan pada gaji kena pajakmu, jadi pastikan ke pemberi kerja dan Belastingdienst bagaimana gajimu dihitung.</p>",
       "cite": [
         {
           "name": "Belastingdienst, syarat keahlian (norma gaji)",
@@ -295,7 +295,7 @@
     },
     {
       "q": "Kalau bekerja di Belanda, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Belanda pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak Box 1 yang sudah dibayar di sana dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Belanda, dan halaman ini bukan nasihat hukum.</p>"
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Belanda pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak Box 1 yang sudah dibayar di sana dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. <em>Tool</em> ini hanya menghitung pajak Belanda, dan halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {

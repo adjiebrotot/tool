@@ -268,13 +268,13 @@
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Inggris lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Inggris, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Inggris lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Inggris, tetapi <em>tool</em> ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun pajak penuh. Usaha sendiri, sewa properti, tabungan, dividen dan keuntungan jual aset tidak masuk.",
     "<strong>Tanpa bonus atau saham.</strong> Opsi saham, bonus dan tunjangan dalam bentuk barang tidak dihitung terpisah, dan tidak ada iuran pensiun yang dipotong.",
-    "<strong>England dan Skotlandia saja.</strong> Kamu memilih tarif England atau tarif Skotlandia. Wales dan Irlandia Utara memakai tarif England, dan kalkulator tidak menguji tempat tinggal utamamu.",
+    "<strong>England dan Skotlandia saja.</strong> Kamu memilih tarif England atau tarif Skotlandia. Wales dan Irlandia Utara memakai tarif England, dan <em>tool</em> ini tidak menguji tempat tinggal utamamu.",
     "<strong>Status penduduk pajak dianggap sudah jelas.</strong> Dalam hitungan <em>tool</em> ini, kamu dianggap penduduk pajak Inggris selama setahun penuh, tanpa Statutory Residence Test dan tanpa rezim khusus untuk pendatang baru.",
     "<strong>Orang lajang tanpa keringanan lain.</strong> Yang dipakai hanya <em>personal allowance</em> standar dan penyusutannya. Marriage Allowance, keringanan bagi tunanetra dan keringanan lain tidak dihitung.",
     "<strong>Biaya di luar pajak tidak masuk.</strong> Biaya visa dan Immigration Health Surcharge (iuran kesehatan bagi pemegang visa) tidak dikurangkan dari gaji bersih.",
@@ -321,7 +321,7 @@
     },
     {
       "q": "Apa itu kode pajak 1257L dan kenapa pajak slip gaji pertamaku terlihat besar?",
-      "a": "<p>Kode pajak memberi tahu pemberi kerja berapa bagian gajimu yang bebas pajak. Kode standarnya 1257L, sesuai batas bebas pajak £12.570. HMRC mengubahnya kalau kamu punya tunjangan kena pajak, pekerjaan kedua, atau pajak terutang. Kalau kamu mulai bekerja tanpa kode, beberapa slip gaji pertama bisa memakai kode darurat, sehingga pajaknya tampak tinggi sampai kode yang benar tiba. Kalkulator ini mengasumsikan batas bebas pajak standar sepanjang tahun.</p>",
+      "a": "<p>Kode pajak memberi tahu pemberi kerja berapa bagian gajimu yang bebas pajak. Kode standarnya 1257L, sesuai batas bebas pajak £12.570. HMRC mengubahnya kalau kamu punya tunjangan kena pajak, pekerjaan kedua, atau pajak terutang. Kalau kamu mulai bekerja tanpa kode, beberapa slip gaji pertama bisa memakai kode darurat, sehingga pajaknya tampak tinggi sampai kode yang benar tiba. <em>Tool</em> ini mengasumsikan batas bebas pajak standar sepanjang tahun.</p>",
       "cite": [
         {
           "name": "GOV.UK, arti kode pajak",
@@ -355,7 +355,7 @@
     },
     {
       "q": "Kalau bekerja di Inggris, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Inggris pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak yang sudah dibayar di Inggris dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Inggris, dan halaman ini bukan nasihat hukum.</p>"
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Inggris pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak yang sudah dibayar di Inggris dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. <em>Tool</em> ini hanya menghitung pajak Inggris, dan halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {

@@ -6,11 +6,11 @@
   "description": "Oman belum memajaki gaji pada 2026, tetapi pajak penghasilan 5% direncanakan mulai 2028. Lihat gaji bersih pekerja asing dan warga Oman.",
   "lede": "<p>Oman tidak memungut pajak penghasilan atas gaji pada 2026, jadi pekerja asing (<em>expat</em>) bergaji OMR 18.000 setahun menerima gaji bersih (<em>take-home pay</em>). Warga Oman menyetor 8% ke Social Protection Fund, yaitu OMR 1.440, dan menerima gaji bersih OMR 16.560. Pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun direncanakan berlaku mulai 1 Januari 2028.</p>",
   "law": {
-    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dihitung kalkulator. Oman sedang berubah: di antara negara Teluk yang ada di kalkulator ini, hanya Oman yang punya rencana pajak penghasilan perorangan. Sampai pajak itu berlaku, satu-satunya potongan dari gaji adalah iuran jaminan sosial untuk warga negaranya.</p>",
+    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dihitung <em>tool</em> ini. Oman sedang berubah: di antara negara Teluk yang ada di <em>tool</em> ini, hanya Oman yang punya rencana pajak penghasilan perorangan. Sampai pajak itu berlaku, satu-satunya potongan dari gaji adalah iuran jaminan sosial untuk warga negaranya.</p>",
     "blocks": [
       {
         "h3": "Tanpa pajak penghasilan pada 2026, pajak baru mulai 2028",
-        "html": "<p>Oman tidak memajaki gaji pada 2026, jadi belum ada pemotongan seperti PPh 21, PTKP, atau bukti potong yang perlu kamu urus. Kalkulator mencatat pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun yang direncanakan mulai 1 Januari 2028, sehingga hanya penghasilan tinggi yang terkena. Periksa aturan akhirnya sebelum kamu mengandalkan angka ini, karena rinciannya masih bisa berubah. Pajak pertambahan nilai (PPN) di Oman sebesar 5% dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>",
+        "html": "<p>Oman tidak memajaki gaji pada 2026, jadi belum ada pemotongan seperti PPh 21, PTKP, atau bukti potong yang perlu kamu urus. <em>Tool</em> ini mencatat pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun yang direncanakan mulai 1 Januari 2028, sehingga hanya penghasilan tinggi yang terkena. Periksa aturan akhirnya sebelum kamu mengandalkan angka ini, karena rinciannya masih bisa berubah. Pajak pertambahan nilai (PPN) di Oman sebesar 5% dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>",
         "cite": [
           {
             "name": "PwC Worldwide Tax Summaries, Oman: pajak penghasilan pribadi (5% di atas OMR 42.000 mulai 2028)",
@@ -63,7 +63,7 @@
       },
       {
         "h3": "Status pajakmu di Indonesia tidak ikut hilang",
-        "html": "<p>Gaji tanpa pajak di Oman tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan. Rencana pajak Oman 5% mulai 2028 bisa mengubah hitungan itu, jadi cek lagi saat aturannya terbit. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. Kalkulator ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
+        "html": "<p>Gaji tanpa pajak di Oman tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan. Rencana pajak Oman 5% mulai 2028 bisa mengubah hitungan itu, jadi cek lagi saat aturannya terbit. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. <em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
       }
     ],
     "sources": [
@@ -145,8 +145,8 @@
   "limits": [
     "<strong>Hanya penghasilan dari kerja.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrak, jadi tidak ditambahkan ke angka di halaman ini.",
-    "<strong>Pajak Indonesia tidak dihitung.</strong> Kalkulator hanya menunjukkan apa yang diambil Oman. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dihitung.",
-    "<strong>Statusnya kamu yang memilih.</strong> Kalkulator menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Pajak Indonesia tidak dihitung.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Oman. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dihitung.",
+    "<strong>Statusnya kamu yang memilih.</strong> <em>Tool</em> ini menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Yang dihitung adalah gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrakmu tidak dipisahkan.",
     "<strong>Rencana pajak 2028 belum dihitung.</strong> Pajak 5% yang direncanakan mulai 1 Januari 2028 hanya tampil sebagai catatan bernilai nol, karena baru berlaku setelah 2026."
   ],
@@ -171,7 +171,7 @@
     },
     {
       "q": "Apakah Oman akan menerapkan pajak penghasilan?",
-      "a": "<p>Ya, menurut rencana yang dicatat kalkulator: pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun mulai 1 Januari 2028. Pada 2026 belum ada pajak itu. Yang terkena hanya penghasilan tinggi, dan aturan akhirnya, termasuk definisi penghasilan dan pengecualiannya, perlu kamu periksa setelah diterbitkan. Pajak ini belum masuk hitungan mana pun di halaman ini.</p>",
+      "a": "<p>Ya, menurut rencana yang dicatat <em>tool</em> ini: pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun mulai 1 Januari 2028. Pada 2026 belum ada pajak itu. Yang terkena hanya penghasilan tinggi, dan aturan akhirnya, termasuk definisi penghasilan dan pengecualiannya, perlu kamu periksa setelah diterbitkan. Pajak ini belum masuk hitungan mana pun di halaman ini.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Oman: pajak penghasilan pribadi (5% di atas OMR 42.000 mulai 2028)",
@@ -181,7 +181,7 @@
     },
     {
       "q": "Apa itu uang akhir masa kerja di Oman, dan apakah sama dengan pesangon?",
-      "a": "<p>Pekerja asing berada di luar Social Protection Fund, jadi saat kontrak berakhir pemberi kerja membayar uang akhir masa kerja menurut undang-undang ketenagakerjaan, berdasarkan gaji dan lama bekerja. Fungsinya mirip pesangon di Indonesia: dibayar sekali dan bukan pensiun bulanan. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
+      "a": "<p>Pekerja asing berada di luar Social Protection Fund, jadi saat kontrak berakhir pemberi kerja membayar uang akhir masa kerja menurut undang-undang ketenagakerjaan, berdasarkan gaji dan lama bekerja. Fungsinya mirip pesangon di Indonesia: dibayar sekali dan bukan pensiun bulanan. <em>Tool</em> ini tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
       "cite": [
         {
           "name": "Dekret Kerajaan 53/2023, UU Ketenagakerjaan (pesangon akhir masa kerja)",

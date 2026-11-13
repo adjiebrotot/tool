@@ -11,6 +11,10 @@
 .gd code { font-family: 'DM Mono', monospace; font-size: .88em; background: var(--input-bg); padding: 1px 5px; border-radius: var(--radius-sm); }
 .gd a:not(.btn-theme):not(.btn-primary) { color: var(--accent-strong); }
 .gd em { font-style: normal; font-weight: 600; color: var(--text); }
+/* Indonesian marks a foreign word (tool, breakeven, offset) in italic, as the language does;
+   bold stays for highlighting. In a button the word reads as the button's own word. */
+.gd:lang(id) em { font-style: italic; font-weight: inherit; color: inherit; }
+.gd:lang(id) .btn-primary em, .gd:lang(id) .btn-theme em, .gd:lang(id) .btn-sm em { font-style: inherit; }
 .gd h3 { color: var(--text); }
 
 /* ---- Top bar ------------------------------------------------------------------------------ */

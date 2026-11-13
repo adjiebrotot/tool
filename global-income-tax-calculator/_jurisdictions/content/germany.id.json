@@ -298,7 +298,7 @@
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Jerman lebih dari satu tahun, termasuk perawat, tenaga terampil dan peserta <em>Ausbildung</em> (pelatihan kerja bergaji). Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Jerman, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Jerman lebih dari satu tahun, termasuk perawat, tenaga terampil dan peserta <em>Ausbildung</em> (pelatihan kerja bergaji). Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Jerman, tetapi <em>tool</em> ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
@@ -401,7 +401,7 @@
     },
     {
       "q": "Kalau bekerja di Jerman, apakah saya masih harus bayar pajak di Indonesia?",
-      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Jerman pada dasarnya tetap dilaporkan di SPT Tahunan, dan <em>Lohnsteuer</em> yang sudah dipotong di sana dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Jerman, dan halaman ini bukan nasihat hukum.</p>"
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Jerman pada dasarnya tetap dilaporkan di SPT Tahunan, dan <em>Lohnsteuer</em> yang sudah dipotong di sana dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. <em>Tool</em> ini hanya menghitung pajak Jerman, dan halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "lineLabels": {
