@@ -475,6 +475,7 @@ const LANG = {
     placeSco: "Scotland, UK",
     nyc: "New York City",
     chipTitle: "Switch the form to job {n}",
+    jobColour: "Change this job's colour",
     chipMo: "/mo",
     chipYr: "/yr",
     chipNet: " net",
@@ -1042,6 +1043,7 @@ const LANG = {
     placeSco: "Skotlandia, Inggris",
     nyc: "New York City",
     chipTitle: "Tampilkan pekerjaan {n} di formulir",
+    jobColour: "Ganti warna pekerjaan ini",
     chipMo: "/bln",
     chipYr: "/thn",
     chipNet: " bersih",
@@ -1364,9 +1366,15 @@ function fullJob(partial){
   FIELDS.forEach(el => { j[handle(el)] = DEFAULTS[handle(el)]; });
   Object.assign(j, partial || {});
   if(!E.C[j.country]) j.country = DEFAULTS.country;
+  // A job's own chart colour (picked on its dot); absent means the palette slot for its place.
+  if(!isHex(j.color)) delete j.color;
   return j;
 }
-function syncActive(){ JOBS[ACTIVE] = readJob(); }
+function syncActive(){
+  const color = JOBS[ACTIVE] && JOBS[ACTIVE].color;
+  JOBS[ACTIVE] = readJob();
+  if(isHex(color)) JOBS[ACTIVE].color = color;
+}
 function compactJob(job){
   const out = { country: job.country };
   Object.keys(job).forEach(h => { if(h !== 'country' && job[h] !== DEFAULTS[h]) out[h] = job[h]; });
@@ -1386,6 +1394,7 @@ function addJob(){
   if(JOBS.length >= MAX_JOBS) return;
   syncActive();
   JOBS.push(JSON.parse(JSON.stringify(JOBS[ACTIVE])));
+  delete JOBS[JOBS.length - 1].color;   // a new job takes its own palette slot
   ACTIVE = JOBS.length - 1;
   linesPick = null;
   writeJob(JOBS[ACTIVE]);
@@ -1405,7 +1414,29 @@ function removeJob(i){
   if(persist) persist.schedule();
   render();
 }
-const colourOf = i => SharedPalette.at(i);
+const isHex = v => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v);
+// A colour as #rrggbb, which is all a colour input takes.
+function toHex(c){
+  if(isHex(c)) return c;
+  const m = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(c || '');
+  if(m) return '#' + m[1] + m[1] + m[2] + m[2] + m[3] + m[3];
+  const n = String(c || '').match(/\d+(\.\d+)?/g);
+  if(n && n.length >= 3) return '#' + n.slice(0, 3).map(v => Math.round(+v).toString(16).padStart(2, '0')).join('');
+  return '#888888';
+}
+const colourOf = i => (JOBS[i] && isHex(JOBS[i].color)) ? JOBS[i].color : SharedPalette.at(i);
+// The dot on a job's chip picks its colour: the chip, cards, table and chart follow it.
+function setJobColour(i, hex, live){
+  if(!JOBS[i] || !isHex(hex)) return;
+  JOBS[i].color = hex;
+  if(live){
+    document.querySelectorAll('.job-dot[data-job="' + i + '"]').forEach(d => { if(d.tagName !== 'INPUT') d.style.background = hex; });
+    return;
+  }
+  clearQuickStart();
+  if(persist) persist.schedule();
+  render();
+}
 // Where a job is, in words: the state or province where the country has more than one set of rules.
 const CA_PROV = { ON: 'Ontario', BC: 'British Columbia', AB: 'Alberta', QC: 'Quebec' };
 function jobPlace(job){
@@ -1421,8 +1452,9 @@ function renderJobs(results){
   JOBS.forEach((job, i) => {
     const row = document.createElement('div');
     row.className = 'job-row';
-    const chip = document.createElement('button');
-    chip.type = 'button';
+    // A div, not a button: the colour input inside it has to stay clickable.
+    const chip = document.createElement('div');
+    chip.tabIndex = 0;
     chip.className = 'job-chip' + (i === ACTIVE ? ' active' : '');
     chip.setAttribute('role', 'tab');
     chip.setAttribute('aria-selected', i === ACTIVE ? 'true' : 'false');
@@ -1430,9 +1462,14 @@ function renderJobs(results){
     const r = results[i];
     const amt = SharedNum.parse(job.amount) || 0;
     const pay = money(amt, E.C[job.country].cur, true) + T(job.period === 'monthly' ? 'chipMo' : 'chipYr') + (job.dir === 'net' ? T('chipNet') : '');
-    chip.innerHTML = '<span class="job-dot" style="background:' + colourOf(i) + '"></span><span class="job-name">' + esc(jobTitle(job, i)) + '</span>'
+    chip.innerHTML = '<input type="color" class="job-dot job-dot-pick" data-job="' + i + '" data-no-persist value="' + toHex(colourOf(i)) + '" title="' + esc(T('jobColour')) + '" aria-label="' + esc(T('jobColour')) + '"><span class="job-name">' + esc(jobTitle(job, i)) + '</span>'
       + '<span class="job-pay">' + esc(r && r.notSupported ? T('notLoaded') : pay) + '</span>';
+    const dot = chip.querySelector('.job-dot-pick');
+    ['click', 'keydown'].forEach(ev => dot.addEventListener(ev, e => e.stopPropagation()));
+    dot.addEventListener('input', e => { e.stopPropagation(); setJobColour(i, e.target.value, true); });
+    dot.addEventListener('change', e => { e.stopPropagation(); setJobColour(i, e.target.value, false); });
     chip.addEventListener('click', () => pickJob(i));
+    chip.addEventListener('keydown', e => { if(e.target === chip && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); pickJob(i); } });
     row.appendChild(chip);
     if(JOBS.length > 1){
       const wrap = document.createElement('span');
@@ -1790,7 +1827,7 @@ function compareRows(results){
 function renderCompare(results){
   const curNote = disp().cur === 'local' ? T('ownCur') : disp().cur;
   let h = '<table><thead><tr><th>' + T('thItem') + ' <span class="th-unit">' + esc(perWord() + ', ' + curNote) + '</span></th>';
-  results.forEach((r, i) => { h += '<th><span class="job-dot" style="background:' + colourOf(i) + '"></span>' + esc(jobTitle(JOBS[i], i)) + '</th>'; });
+  results.forEach((r, i) => { h += '<th><span class="job-dot" data-job="' + i + '" style="background:' + colourOf(i) + '"></span>' + esc(jobTitle(JOBS[i], i)) + '</th>'; });
   h += '</tr></thead><tbody>';
   compareRows(results).forEach(([label, fn, cls]) => {
     h += '<tr' + (cls === 'total' ? ' class="total"' : '') + '><td>' + esc(label) + '</td>';
@@ -1924,7 +1961,7 @@ function renderLines(results){
   const i = renderLinesPicker(results);
   const r = results[i], job = JOBS[i], c = E.C[job.country];
   let h = '<div class="job-block">';
-  h += '<p class="job-meta"><span class="job-dot" style="background:' + colourOf(i) + '"></span><strong>' + esc(jobTitle(job, i)) + '</strong>'
+  h += '<p class="job-meta"><span class="job-dot" data-job="' + i + '" style="background:' + colourOf(i) + '"></span><strong>' + esc(jobTitle(job, i)) + '</strong>'
     + '<span class="job-meta-sep">·</span>' + esc(trE(c.year, job.country)) + (c.place ? ' · ' + esc(trE(c.place, job.country)) : '') + ' · ' + esc(TF('amountsIn', { cur: r.cur })) + '</p>';
   if(r.notSupported){ $('linesWrap').innerHTML = h + '<div class="warning ns">' + esc(trE(r.reason, job.country)) + '</div></div>'; return; }
   h += '<div class="table-wrap explainer"><table class="lines-table"><colgroup><col class="c-op"><col class="c-line"><col class="c-amt"><col class="c-status"></colgroup>'
@@ -2231,7 +2268,7 @@ function init(){
       if(restoredJobs){ JOBS = restoredJobs; ACTIVE = Math.min(Math.max(0, ACTIVE), JOBS.length - 1); }
       else { JOBS = [readJob()]; ACTIVE = 0; }
       // An AI link's json jobs already carry the fields it named; anywhere else the fields win.
-      if(!restoredAgent) JOBS[ACTIVE] = fullJob(readJob());
+      if(!restoredAgent){ const c = JOBS[ACTIVE].color; JOBS[ACTIVE] = fullJob(readJob()); if(isHex(c)) JOBS[ACTIVE].color = c; }
       writeJob(JOBS[ACTIVE]);
       restoredJobs = null; restoredAgent = false;
       render();
