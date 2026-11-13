@@ -77,13 +77,13 @@ var RVO_TIPS_ID = {
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa yang berupa jumlah tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
   riskFreeRate:         "Imbal hasil per tahun atas kas yang menganggur, seperti tabungan atau deposito. Berlaku di semua skenario.",
   generalInflation:     "Laju kenaikan harga umum per tahun (IHK). Angka dalam skenario tidak berubah; opsi Tampilkan dalam nilai hari ini hanya menampilkan setiap angka setelah disesuaikan dengan inflasi umum.",
-  initialCash:          "Kas yang kamu punya sekarang. Skenario Beli memakainya untuk DP dan biaya awal, skenario Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk DP Sewa Dulu.",
+  initialCash:          "Kas yang kamu punya sekarang. Di skenario Beli, kas ini dipakai untuk DP dan biaya awal; di skenario Sewa, seluruhnya diinvestasikan. Jika kosong, dipakai jumlah yang cukup untuk semua skenario.",
   monthlyBudget:        "Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal tiap tahun, dengan cicilan di batas atas bunga floating, sehingga biaya semua skenario tertutup.",
   monthlyBudgetIncrease: {
     manual: "Menaikkan anggaran bulanan tiap tahun secara majemuk, misalnya mengikuti kenaikan gaji atau inflasi. Surplus makin lebar seiring waktu.",
     auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi isi anggaran di atas dulu."
   },
-  rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli dengan harga saat itu dan anggaran yang sama. Kalau anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli dan Sewa ikut berubah.",
+  rtbEnabled:           "Skenario ketiga: rumah disewa X tahun, lalu dibeli dengan harga saat itu dan anggaran sama. Jika anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli dan Sewa ikut berubah.",
   rtbBuyAtYear:         "Rumah dibeli di akhir tahun yang dipilih, dengan harga yang sudah naik sesuai kenaikan harga properti. KPR baru dimulai saat itu, dengan jangka waktu penuh dan jadwal bunga dari tahun ke-1.",
   calcCagr:             "Isi pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya dipakai untuk Kenaikan harga properti di atas.",
   graphMetric:          "<ul><li><strong>Kekayaan bersih:</strong> rumah jika dijual, dikurangi pinjaman, ditambah kas.</li><li><strong>Uang tunai:</strong> kas di bank.</li><li><strong>Biaya kumulatif:</strong> total biaya perumahan sejauh ini.</li></ul>",
@@ -93,7 +93,7 @@ var RVO_TIPS_ID = {
     multi:  "Imbal hasil kas yang tidak terpakai per tahun, satu suku bunga per mata uang. Semua kolom dalam mata uang yang sama memakai suku bunga yang sama."
   },
   sensInitialCash: {
-    single: "Kas yang kamu miliki sekarang, sama di semua kolom. Skenario Beli memakainya untuk DP dan biaya awal, skenario Sewa menginvestasikannya. Jika kosong, dipakai kebutuhan terbesar semua kolom.",
+    single: "Kas yang kamu miliki sekarang, sama di semua kolom. Di skenario Beli, kas ini dipakai untuk DP dan biaya awal; di skenario Sewa, diinvestasikan. Jika kosong, dipakai kebutuhan terbesar semua kolom.",
     multi:  "Kas yang kamu miliki sekarang dalam mata uang dasar, sama di semua kolom sesuai kursnya. Jika kosong, dipakai kebutuhan awal terbesar dari semua kolom."
   },
   sensMonthlyBudget: {

@@ -230,9 +230,9 @@ rtbEnabled: Aktifkan Sewa Dulu, Beli Kemudian
   Checkbox: true or false. Default false.
   Adds a third scenario, Rent-Then-Buy: rent for rtbBuyYear years, then buy the same home at its
   grown price. Leave it out unless the user asks about buying later.
-  Tip on the page: Skenario ketiga: menyewa X tahun, lalu membeli dengan harga saat itu dan anggaran
-  yang sama. Kalau anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli dan
-  Sewa ikut berubah.
+  Tip on the page: Skenario ketiga: rumah disewa X tahun, lalu dibeli pada harga saat itu, dengan
+  anggaran sama. Jika anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli
+  dan Sewa ikut berubah.
 rtbBuyYear: Beli di tahun
   Slider (thn). 1 to 29. Default 5.
   The year the Rent-Then-Buy scenario buys. Must be less than horizon.
@@ -281,9 +281,9 @@ initialCash: Modal awal (opsional)
   Amount ($ before it). 0 to 1,000,000,000,000. Default blank.
   Cash the user has today. Leave it out unless the user gives it: blank covers the deposit and setup
   cost, and the renter invests that same amount.
-  Tip on the page: Kas yang kamu punya sekarang. Skenario Beli memakainya untuk DP dan biaya awal,
-  skenario Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua
-  skenario, termasuk DP Sewa Dulu.
+  Tip on the page: Kas yang kamu punya sekarang. Di skenario Beli, kas ini dipakai untuk DP dan
+  biaya awal; di skenario Sewa, seluruhnya diinvestasikan. Jika kosong, dipakai jumlah yang cukup
+  untuk semua skenario.
 monthlyBudget: Anggaran perumahan bulanan (opsional)
   Amount ($ before it, /bln after it). 0 to 100,000,000,000. Default 0.
   Monthly cash for housing. 0 or blank (the default) is automatic: each year it follows whichever of

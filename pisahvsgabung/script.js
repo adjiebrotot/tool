@@ -212,7 +212,7 @@ const LANG = {
     wifeDeductionLabel: 'Pengurang istri',
     wifeDeductionTip: 'Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor istri, sebelum PTKP. Biaya jabatan punya tombol sendiri.',
     bjLabel: 'Biaya jabatan, dihitung otomatis',
-    bjTip: '5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP, selain pengurang yang kamu isi di atas. Matikan tombol ini kalau kamu ingin mengisi biaya jabatan sendiri.',
+    bjTip: '5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP, selain pengurang yang kamu isi di atas. Matikan kalau kamu ingin mengisi biaya jabatan sendiri.',
     ptkpSectionLabel: 'Penghasilan tidak kena pajak per tahun (PTKP)',
     ptkpTK0: 'Dasar, untuk tiap wajib pajak (TK/0)',
     ptkpK: 'Tambahan bila kawin (K)',
