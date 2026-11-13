@@ -574,7 +574,7 @@ const WORDS = {
   en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'], gif: 'Download as GIF',
         back: 'Try your own scenarios at', copied: '✓ Copied', linkCopied: '✓ Link copied' },
   id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke clipboard', 'Bagikan sebagai tautan', 'Sematkan sebagai HTML'], gif: 'Unduh sebagai GIF',
-        back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
+        back: 'Coba skenariomu sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
 };
 
 /* The viewer's own probes: the chart it drew, its card, its views. */

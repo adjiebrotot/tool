@@ -18,6 +18,13 @@ tool:
 - Example: `Request:` (what the user asked), `Link:` (one `- key=value` per pair, in link order,
   values unencoded), `Assumptions:` (the numbered list a reply gives; `{key}` is replaced by the
   value that key has once the Quick Start and the link apply, so it never goes stale).
+- AI page example (optional): the conversation the tool's AI page (`ai/`) plays, in the same
+  form as Example, plus `Searches:` (one `- query` per search the assistant made). Without it,
+  the page plays Example.
+- AI page example (id) (optional, for a tool with an Indonesian page): the same for the
+  Indonesian AI page (`ai/id/`), written in Indonesian (saya and kamu, as the blog's
+  bahasa-indonesia skill says); `{key}` values come out the Indonesian way (300.000.000). Its
+  link opens the Indonesian page. Without it, that page plays the English one.
 - Compact lists: list keys the tool's adapter reads, one `- key=<syntax>` entry each, then
   their rules. Owned by the adapter.
 - Json: the `json=` shape, if the tool takes one.
@@ -127,6 +134,31 @@ Assumptions:
 3. Setup cost: {setupCost}% of the price, for Western Australian transfer duty on $800,000 (about $32,300) plus conveyancing and inspections.
 4. Ongoing costs of owning: ${ownOngoingCost} a year for council and water rates, insurance and upkeep.
 5. Growth and returns, from the Quick Start: house prices {houseGrowth}% a year, rent {rentInflation}% a year, spare cash earning {riskFreeRate}% a year, selling costs of {sellingCostPct}%, compared over {horizon} years.
+
+## AI page example (id)
+
+Request: Saya sedang menimbang beli rumah tapak di Jakarta Timur seharga Rp 1,5 miliar, atau tetap ngontrak Rp 45 juta setahun. Mana yang lebih masuk akal?
+
+Searches:
+- Tarif BPHTB DKI Jakarta dan NPOPTKP untuk rumah pertama
+- Suku bunga KPR fixed dan floating bank besar, November 2026
+
+Link:
+- qs=jakarta/house-2br
+- propertyPrice=1500000000
+- rentAmount=45000000
+- setupCost=6.2
+- why.setupCost=BPHTB 5% atas harga di atas Rp250 juta, akta PPAT dan balik nama, provisi bank, serta biaya appraisal dan akta KPR
+- ownOngoingCost=5500000
+- why.ownOngoingCost=PBB, perawatan, dan asuransi kebakaran untuk rumah seharga Rp1,5 miliar
+- note=Jakarta Timur, November 2026, rumah tapak 2 kamar tidur
+
+Assumptions:
+1. Rumah: rumah tapak 2 kamar tidur di Jakarta Timur, jadi tautannya dimulai dari Quick Start Jakarta untuk rumah tapak 2 kamar tidur (qs=jakarta/house-2br) dan memakai angka lokalnya: DP {downPaymentPct}% dan KPR {mortgageTerm} tahun, dengan bunga fixed 8,5% selama 5 tahun pertama lalu floating 11% sampai 13%.
+2. Biaya awal: {setupCost}% dari harga rumah, untuk BPHTB 5% atas harga di atas Rp250 juta (fasilitas rumah pertama), akta PPAT dan balik nama sekitar 1%, provisi bank 1% dari pinjaman, serta biaya appraisal dan akta KPR.
+3. Biaya kepemilikan: Rp{ownOngoingCost} setahun untuk PBB, perawatan, dan asuransi kebakaran.
+4. Sewa: naik {rentInflation}% setahun, ditambah biaya menyewa Rp{rentOngoingCost} setahun dari Quick Start.
+5. Pertumbuhan dan imbal hasil, dari Quick Start: harga rumah naik {houseGrowth}% setahun, uang yang tidak terpakai mendapat Suku Bunga Bebas Risiko {riskFreeRate}% setahun, biaya menjual rumah {sellingCostPct}%, dan perbandingannya dihitung selama {horizon} tahun.
 
 ## Compact lists
 

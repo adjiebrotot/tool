@@ -3,10 +3,10 @@ https://tool.adjiebrotots.com/rentvsownhouse/id/
 
 This is the full reference for one page of the skill brotools-rentvsownhouse: read SKILL.md first.
 
-Pasang skill alat ini di asisten AI Anda (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
-pertanyaan Anda. Asisten akan membalas dengan tautan yang membuka alat ini pada skenario Anda,
-lengkap dengan daftar asumsinya, lalu alat inilah yang menghitung hasilnya. Bagian di bawah ini
-ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.
+Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
+pertanyaanmu. Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap
+dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. Bagian di bawah ini ditulis
+untuk asisten AI, jadi tetap dalam bahasa Inggris.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it
@@ -279,7 +279,7 @@ initialCash: Modal awal (opsional)
   Amount ($ before it). 0 to 1,000,000,000,000. Default blank.
   Cash the user has today. Leave it out unless the user gives it: blank covers the deposit and setup
   cost, and the renter invests that same amount.
-  Tip on the page: Kas yang Anda punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa
+  Tip on the page: Kas yang kamu punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa
   menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk
   DP Sewa Dulu nanti.
 monthlyBudget: Anggaran perumahan bulanan (opsional)

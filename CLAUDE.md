@@ -16,7 +16,10 @@ generated from `index.html` by `node _ref/bake-home-id.mjs` and lists every tool
 not: after changing a card on the home page, give it its Indonesian words there and run it.
 `node _ref/hreflang.mjs` checks every pair and writes the sitemap's `xhtml:link` lines; run it
 after any generator that writes a paired page or the sitemap (`bake-id.mjs`, `bake-home-id.mjs`,
-`jurisdiction-pages.mjs`), and `--check` before shipping. An Indonesian page links back to
+`jurisdiction-pages.mjs`), and `--check` before shipping. A tool with an `id/` page also has its
+guide and AI page in Indonesian: `<tool>/guides/id/` (written by hand, its demos replayed on the
+`id/` page through `guides/id/scenes.js` and `guide-id.js`; change it with the English guide) and
+`<tool>/ai/id/` (written by `_ref/agent-doc.mjs`), plus the hub `ai/id/`. An Indonesian page links back to
 Indonesian pages (the home `id/`, the blog's `id/`) where one exists, and to the English tool
 where none does. Indonesian copy follows the blog's `bahasa-indonesia` skill (saya and kamu).
 

@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/id/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/"/>
@@ -21,9 +21,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/</loc>
@@ -207,7 +219,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
@@ -216,15 +228,39 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/guides/</loc>
-    <lastmod>2026-11-10</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/ai/</loc>
-    <lastmod>2026-11-10</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/australia/</loc>
@@ -405,15 +441,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/id/</loc>
-    <lastmod>2026-11-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
-    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/</loc>
@@ -794,6 +821,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/"/>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/graphvisualiser/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -846,19 +882,43 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
@@ -3576,19 +3636,43 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
@@ -3597,9 +3681,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/</loc>
@@ -3612,7 +3708,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>

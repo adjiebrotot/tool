@@ -355,7 +355,8 @@
     "CPF, employee share (12.5%)": "CPF, bagian karyawan (12,5%)",
     "CPF, employee share (7.5%)": "CPF, bagian karyawan (7,5%)",
     "CPF, employee share (5%)": "CPF, bagian karyawan (5%)",
-    "Income tax, non-resident (15% of gross)": "Pajak penghasilan, non-resident (15% dari gaji kotor)",
-    "Income tax, non-resident (resident rates, no reliefs)": "Pajak penghasilan, non-resident (tarif penduduk, tanpa pengurang)"
+    "Income tax, non-resident (15% of gross)": "Pajak penghasilan, bukan penduduk pajak (15% dari gaji kotor)",
+    "Income tax, non-resident (resident rates, no reliefs)": "Pajak penghasilan, bukan penduduk pajak (tarif penduduk, tanpa pengurang)",
+    "YA2027 (income 2026)": "YA2027 (penghasilan 2026)"
   }
 }

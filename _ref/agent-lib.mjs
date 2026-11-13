@@ -130,6 +130,9 @@ export const PAGES = [
   // Up to four jobs: plain fields are job 1, json carries them all; the probe reads the jobs as loaded.
   { page: 'global-income-tax-calculator', url: '/global-income-tax-calculator/', lang: 'en', notes: 'global-income-tax-calculator/agent-notes.md',
     insertBefore: '<!-- Display ad (Display 1', probe: gscProbe },
+  // Its Indonesian twin (baked by _ref/bake-id.mjs): the same script, fields and Quick Start keys.
+  { page: 'global-income-tax-calculator/id', url: '/global-income-tax-calculator/id/', lang: 'id', notes: 'global-income-tax-calculator/agent-notes.md',
+    insertBefore: '<!-- Display ad (Display 1', probe: gscProbe },
   { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
   // The sensitivity table has one form field (the currency symbol): the figures are compact keys, six of which

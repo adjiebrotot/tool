@@ -73,11 +73,11 @@ const LANG = {
     quickStartLabel: 'Quick Start',
     quickStartTip: 'Fills the Household tab with a worked example and puts PTKP and the brackets back to the statutory values. Equal incomes is the example the page opens with.',
     qsEven: 'Equal incomes, no children',
-    qsEvenTip: 'Rp 500 million a year shared equally, no dependants: the figures the page opens with. Gabung Harta saves Rp 19.8 million.',
+    qsEvenTip: 'Rp 500 million a year shared equally, no dependants: the figures the page opens with. Gabung Harta saves Rp 18.6 million.',
     qsSingle: 'Single income family',
     qsSingleTip: 'Husband earns Rp 300 million a year, wife earns nothing, two children. With no income of hers to combine, both ways cost the same.',
     qsDouble: 'Double income family',
-    qsDoubleTip: 'Husband Rp 400 million a year, wife Rp 300 million, one child. Under Gabung her salary climbs its own bracket ladder, which saves Rp 34.8 million.',
+    qsDoubleTip: 'Husband Rp 400 million a year, wife Rp 300 million, one child. Under Gabung her salary climbs its own bracket ladder, which saves Rp 33.5 million.',
     kpiSavingLabel: 'Tax savings (cheaper option)',
     kpiPisahLabel: 'Gabung Harta: total tax',
     kpiPisahTip: "The husband's SPT with PTKP K, plus the wife's salary taxed final by her employer with her own PTKP. The effective rate is the tax as a share of gross salary.",
@@ -188,7 +188,7 @@ const LANG = {
     tabAdvanced: 'PTKP & Lapisan Pajak',
     groupFamily: 'Keluarga',
     dependentsLabel: 'Tanggungan',
-    dependentsTip: 'Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.',
+    dependentsTip: 'Anggota keluarga yang kamu tanggung, misalnya anak. Setiap tanggungan menambah PTKP, tetapi paling banyak hanya tiga yang dihitung.',
     dep0: 'Tanpa tanggungan',
     dep1: '1 tanggungan',
     dep2: '2 tanggungan',
@@ -231,11 +231,11 @@ const LANG = {
     quickStartLabel: 'Quick Start',
     quickStartTip: 'Mengisi tab Rumah tangga dengan contoh, dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh yang tampil saat halaman dibuka.',
     qsEven: 'Penghasilan setara, tanpa anak',
-    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 19,8 juta.',
+    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 18,6 juta.',
     qsSingle: 'Keluarga satu penghasilan',
     qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.',
     qsDouble: 'Keluarga dua penghasilan',
-    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 34,8 juta.',
+    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 33,5 juta.',
     kpiSavingLabel: 'Penghematan pajak (opsi lebih murah)',
     kpiPisahLabel: 'Gabung Harta: total pajak',
     kpiPisahTip: 'SPT suami dengan PTKP K, ditambah gaji istri yang dipotong final oleh pemberi kerjanya dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.',
@@ -331,7 +331,7 @@ const LANG = {
     warnSpouseExceed: '⚠️ Pengurang salah satu pasangan melebihi gaji kotornya, jadi penghasilan neto pasangan itu dihitung Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, paling banyak Rp 6 juta per tahun. Di atas batas: ',
     warnCapOf: ', batas ',
-    warnCapTail: '. Nilai yang Anda isi tetap dipakai sepenuhnya.',
+    warnCapTail: '. Angka yang kamu isi tetap dipakai sepenuhnya.',
     warnCapH: 'Suami',
     warnCapW: 'Istri',
     assumesTitle: 'Asumsi yang dipakai',
@@ -1179,7 +1179,7 @@ function renderAssumptions(state){
   const dep = S.dependents;
   items.push(L(
     `<strong>Gabung Harta:</strong> the wife's salary comes from one employer and has nothing to do with the husband's work, so her employer's withholding is final (UU PPh Pasal 8 ayat 1). The husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife's salary is taxed with her own ${rp(c.ptkpW)}.`,
-    `<strong>Gabung Harta:</strong> gaji istri berasal dari satu pemberi kerja dan tidak berhubungan dengan pekerjaan suami, jadi potongan pajak dari pemberi kerjanya final (UU PPh Pasal 8 ayat 1). PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; gaji istri dipajaki dengan PTKP istri sendiri ${rp(c.ptkpW)}.`));
+    `<strong>Gabung Harta:</strong> gaji istri berasal dari satu pemberi kerja dan tidak berhubungan dengan pekerjaan suami, jadi potongan pajak dari pemberi kerjanya final (UU PPh Pasal 8 ayat 1). PTKP suami ${rp(c.ptkpH)}, sudah termasuk tambahan untuk status kawin${dep ? ' dan ' + dep + ' tanggunganmu' : ''}; gaji istri dipajaki dengan PTKP istri sendiri ${rp(c.ptkpW)}.`));
   items.push(L(
     `<strong>Pisah Harta (PH or MT):</strong> the tax is worked out on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), then shared between you by net income.`,
     `<strong>Pisah Harta (PH atau MT):</strong> pajak dihitung dari penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), lalu dibagi antara suami dan istri menurut penghasilan neto.`));
@@ -1193,7 +1193,7 @@ function renderAssumptions(state){
       : ptkpEdited ? L('PTKP amounts', 'nilai PTKP') : L('tax brackets', 'lapisan tarif');
     items.push(L(
       `<strong>Your own ${what} apply,</strong> not the statutory ones.`,
-      `<strong>Memakai ${what} yang Anda ubah,</strong> bukan yang sesuai ketentuan.`));
+      `<strong>Hitungan ini memakai ${what} yang kamu ubah sendiri,</strong> bukan angka sesuai ketentuan.`));
   }
 
   items.push(L(

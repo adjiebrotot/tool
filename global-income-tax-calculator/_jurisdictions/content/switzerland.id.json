@@ -378,7 +378,10 @@
     "Personal tax": "Pajak pribadi",
     "Federal tax (DBST)": "Pajak federal (DBST)",
     "Federal tax (DBST), after 263 a child": "Pajak federal (DBST), setelah pengurangan CHF 263 per anak",
-    "Health insurance (KVG) is a private premium, not included": "Asuransi kesehatan (KVG) adalah premi pribadi, tidak termasuk"
+    "Health insurance (KVG) is a private premium, not included": "Asuransi kesehatan (KVG) adalah premi pribadi, tidak termasuk",
+    "Canton of Zurich": "Kanton Zürich",
+    "Taxable income, canton of Zurich": "Penghasilan kena pajak, kanton Zürich",
+    "One cantonal comparison read about 1.6% less tax near 120,000. Not yet resolved against the Kanton Zürich calculator.": "Satu perbandingan menunjukkan pajak kanton sekitar 1,6% lebih rendah di sekitar CHF 120.000. Selisih itu belum dicocokkan dengan kalkulator Kanton Zürich."
   },
   "bmc": "Terbantu? Traktir kopi, harganya jangan disamakan dengan Zürich."
 }

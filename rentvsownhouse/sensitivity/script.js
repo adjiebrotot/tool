@@ -248,7 +248,7 @@ const LANG_SENS = {
     fxIsBase: 'Mata uang dasar, tanpa konversi',
     fxLive: (date) => `Kurs terkini, ${date}`,
     fxBundled: (date) => `Kurs per ${date}`,
-    fxCustom: 'Kurs Anda, kosongkan untuk kurs terkini',
+    fxCustom: 'Kursmu sendiri, kosongkan untuk kurs terkini',
     fxNone: 'Belum ada kurs: isi sendiri',
     fxCapital: (cash, budget) => `Setara di mata uang ini: kas ${cash}, anggaran ${budget}/bln di tahun 1`,
     shortOwn: (y) => `Kas Beli habis di tahun ${y}: tidak dibandingkan`,
@@ -981,7 +981,7 @@ function presetRender(){
     });
   });
   presetPop.opts.innerHTML = (html || `<div class="combo-empty">${escHtml(T('presetNone'))}</div>`)
-    + `<a class="scen-preset-all" href="${lang==='id' ? '../../' : '../'}quickstart-assumptions/">${escHtml(T('presetAll'))}</a>`;
+    + `<a class="scen-preset-all" href="${lang==='id' ? '../../quickstart-assumptions/id/' : '../quickstart-assumptions/'}">${escHtml(T('presetAll'))}</a>`;
   presetPop.focus = -1;
 }
 function presetPlace(){

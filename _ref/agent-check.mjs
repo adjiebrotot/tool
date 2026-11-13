@@ -44,7 +44,8 @@
 //   A8. PEOPLE AND ASSISTANTS FIND THE SKILL. Each page's tool has its AI page
 //       (<tool>/ai/index.html), its skill zip and the same skill unzipped (SKILL.md first),
 //       and the tool page's own HTML points to the AI page in a hidden pointer people never
-//       see, whose data-ai is where the header's "Use in AI" button goes.
+//       see, whose data-ai is where the header's "Use in AI" button goes: on an Indonesian
+//       page (lang 'id'), the tool's Indonesian AI page (<tool>/ai/id/), which must exist.
 //       After a deploy, node _ref/agent-live-check.mjs checks the same on the live site.
 //   H.  THE LINK STEPS ASIDE. Once applied, the #load hash is gone from the address, and a
 //       reload keeps what the reader changed after it instead of applying the link again.
@@ -394,7 +395,10 @@ for (const P of pages) {
   check('A8', `${P.page}: SKILL.md description is one double-quoted YAML string`, quoted, 'unquoted or multi-line description');
   const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
   const href = aiUrl(T);
-  check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="/${dir}"`), sec ? 'no <a href> or data-ai for ' + href : 'no agent section');
+  // An Indonesian page's header button goes to the Indonesian AI page (the links for the assistant stay English).
+  const button = '/' + dir + (P.lang === 'id' ? 'id/' : '');
+  check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="${button}"`), sec ? 'no <a href> for ' + href + ' or data-ai="' + button + '"' : 'no agent section');
+  if (P.lang === 'id') check('A8', `${P.page}: ${dir}id/ has its Indonesian AI page`, existsSync(join(ROOT, dir, 'id', 'index.html')), 'run node _ref/agent-doc.mjs');
   check('A8', `${P.page}/index.html shows people no AI text`, /<div id="agentHelp"[^>]*\shidden[\s>]/.test(sec) && !/<details|agent-rules/.test(sec), sec ? 'the agent section is visible' : 'no agent section');
 }
 

@@ -61,7 +61,11 @@ On the line itself:
   `name` (the badge shows them).
 - **The label is what readers see.** A changed label is also a key in each Indonesian content
   file's `lineLabels`: add the new English label there with its Indonesian text, or the page
-  generator reports `no Indonesian for line`.
+  generator reports `no Indonesian for line`. The same `lineLabels` word the Indonesian
+  calculator (`id/`), through `labels-id.js`: so does a new note, reason, tax year or place
+  text the engine writes. Re-run `node global-income-tax-calculator/_jurisdictions/labels.mjs`
+  after editing a content file; `_audit/labels-id.mjs` fails on any engine text without
+  Indonesian.
 - Write a one-line comment above the change: what the rule is, from when, and the source.
 
 ## 4. Keep every saved state, Share link and AI link working
@@ -119,6 +123,9 @@ node global-income-tax-calculator/_audit/page.mjs
 ## 7. Regenerate and check
 
 ```
+node global-income-tax-calculator/_jurisdictions/labels.mjs   # labels-id.js, after a lineLabels change
+node global-income-tax-calculator/_audit/labels-id.mjs  # every engine text has its Indonesian
+node _ref/bake-id.mjs                                    # the Indonesian calculator page
 node _ref/agent-doc.mjs                                  # AI docs, after any knob or label change
 node _ref/agent-check.mjs global-income                  # A2 fails if a kept AI link lost its field
 node _ref/scenario-check.mjs

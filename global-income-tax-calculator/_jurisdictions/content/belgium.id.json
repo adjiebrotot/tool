@@ -53,7 +53,7 @@
         ]
       },
       {
-        "h3": "Jaminan sosial (ONSS) dan potongan biaya kerja",
+        "h3": "Iuran jaminan sosial (ONSS) dan potongan biaya kerja",
         "html": "<p>Karyawan membayar 13,07% dari gaji kotor ke kantor jaminan sosial (ONSS), dipotong oleh pemberi kerja, mirip BPJS Ketenagakerjaan di Indonesia tetapi jauh lebih besar. ONSS membuka hakmu atas jaminan kesehatan, tetapi kamu wajib mendaftar ke dana asuransi kesehatan (<em>mutualité</em>) untuk mendapat penggantian biaya berobat. Pekerja bergaji rendah mendapat bonus kerja yang mengurangi ONSS dan pajak, dan bonus itu menghilang jauh di bawah gaji pada contoh.</p><p>Potongan tetap biaya kerja sebesar 30% dari gaji setelah ONSS, maksimum €6.070 setahun, juga berlaku. Mirip biaya jabatan di Indonesia, tetapi persentase dan batasnya berbeda. Iuran sosial khusus (CSSS) adalah potongan bulanan tambahan yang naik seiring gaji dan berhenti di batas sekitar €731 setahun pada penghasilan lebih tinggi.</p>",
         "cite": [
           {
@@ -334,8 +334,8 @@
     "Tax-free amount with child supplements, inside the tax above": "Bagian bebas pajak dengan tambahan anak, sudah termasuk di pajak di atas",
     "Tax-free amount, inside the tax above": "Bagian bebas pajak, sudah termasuk di pajak di atas",
     "Less the fiscal employment bonus": "Dikurangi bonus kerja fiskal",
-    "Social security (ONSS, 13.07%)": "Jaminan sosial (ONSS, 13,07%)",
-    "Social security (ONSS, 13.07%) after the employment bonus": "Jaminan sosial (ONSS, 13,07%) setelah bonus kerja",
+    "Social security (ONSS, 13.07%)": "Iuran jaminan sosial (ONSS, 13,07%)",
+    "Social security (ONSS, 13.07%) after the employment bonus": "Iuran jaminan sosial (ONSS, 13,07%) setelah bonus kerja",
     "Lump-sum professional expenses (30%, max 6,070)": "Potongan tetap biaya kerja (30%, maksimum €6.070)",
     "Tax-free amount": "Jumlah bebas pajak",
     "Tax-free amount with child supplements": "Jumlah bebas pajak dengan tambahan untuk anak",
@@ -346,7 +346,10 @@
     "Expat regime, tax and ONSS free reimbursement (35%)": "Rezim ekspatriat, penggantian bebas pajak dan bebas ONSS (35%)",
     "Expat regime needs gross above 70,000": "Rezim ekspatriat butuh gaji kotor di atas €70.000",
     "Fiscal employment bonus, inside the tax": "Bonus kerja fiskal, sudah termasuk di pajak",
-    "Expat regime, tax-free reimbursement (35%; 30%, max 90,000, free of ONSS)": "Rezim ekspatriat, penggantian bebas pajak (35%; 30%, maks. 90.000, bebas ONSS)"
+    "Expat regime, tax-free reimbursement (35%; 30%, max 90,000, free of ONSS)": "Rezim ekspatriat, penggantian bebas pajak (35%; 30%, maks. 90.000, bebas ONSS)",
+    "Income 2026": "Penghasilan 2026",
+    "Below 12 times the full-time minimum wage (26,803 a year) the employment bonus rules change, and they are not loaded.": "Di bawah 12 kali upah minimum penuh waktu (€26.803 setahun), aturan bonus kerja berubah, dan aturan itu belum dimuat.",
+    "Fiscal employment bonus, inside the tax above": "Bonus kerja fiskal, sudah termasuk di pajak di atas"
   },
   "bmc": "Traktir kopi, atau sepotong cokelat Belgia juga boleh"
 }

@@ -2109,25 +2109,25 @@
                     backlink: 'Make your own at', failed: 'This tool could not be loaded here.' } },
       id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
             svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], gif: ['Unduh sebagai GIF'], copy: ['Salin ke clipboard'],
-            link: ['Bagikan sebagai tautan', 'Membuka tool ini dengan skenario Anda'],
+            link: ['Bagikan sebagai tautan', 'Membuka tool ini dengan skenariomu'],
             linkCopied: '✓ Tautan tersalin', linkPrompt: 'Salin tautan ini:', noLink: 'Tautan ini tidak bisa dibuat: ',
-            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
+            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situsmu'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
             embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan:',
-            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka dengan skenario Anda, yang ikut tersimpan di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawah grafik.',
+            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka dengan skenariomu, yang ikut tersimpan di dalam tautannya. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawah grafik.',
             credit: ['Grafik interaktif: ', ' oleh '],
             copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
             noEmbed: 'Grafik ini tidak bisa disematkan: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
-            backlink: 'Coba skenario Anda sendiri di',
+            backlink: 'Coba skenariomu sendiri di',
             long: 'Kode ini {kb} KB, karena data yang digambar grafik ikut di dalamnya.',
             tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
             failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka tool-nya',
-            tool: { shareTitle: 'Tautkan atau sematkan tool ini', embed: ['Sematkan sebagai HTML', 'Tool interaktif untuk situs Anda'],
+            tool: { shareTitle: 'Tautkan atau sematkan tool ini', embed: ['Sematkan sebagai HTML', 'Tool interaktif untuk situsmu'],
                     embedTitle: 'Sematkan tool ini',
-                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka seperti yang Anda atur sekarang, yang ikut tersimpan di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawahnya.',
+                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka persis seperti yang kamu atur sekarang, karena pengaturannya ikut tersimpan di dalam tautan. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawahnya.',
                     credit: ['Tool interaktif: ', ' oleh '], noEmbed: 'Tool ini tidak bisa disematkan: ',
-                    backlink: 'Buat versi Anda sendiri di', failed: 'Tool ini tidak bisa dimuat di sini.' } }
+                    backlink: 'Buat versimu sendiri di', failed: 'Tool ini tidak bisa dimuat di sini.' } }
     };
     var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
     // Share as link and Embed are drawn by this menu, not by a button the tool binds.
@@ -3293,7 +3293,7 @@
         a.href = href;
         a.setAttribute('data-abt-ai-link', '');
         a.setAttribute('aria-label', word);
-        a.title = idLang ? 'Pakai alat ini lewat asisten AI Anda (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
+        a.title = idLang ? 'Pakai tool ini lewat asisten AI-mu (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
         var emo = document.createElement('span');
         emo.className = 'pf-tour-emo';
         emo.setAttribute('aria-hidden', 'true');

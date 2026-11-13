@@ -15,6 +15,15 @@
   var body = document.body;
   // What the clips were recorded from, for their names: "the Builder", "the tool".
   var SRC = body.getAttribute('data-guide-src') || 'tool';
+  // The words a reader sees: Indonesian on a guide whose <html lang> is id (<tool>/guides/id/).
+  var ID = /^id\b/i.test(document.documentElement.lang || '');
+  var W = ID ? {
+    play: 'Putar', pause: 'Jeda', playTitle: 'Putar atau jeda klip', full: 'Layar penuh', fullTitle: 'Tampilkan klip di layar penuh',
+    rec: function (cap) { var s = SRC === 'tool' ? 'tool-nya' : SRC; return cap ? cap + ' (rekaman dari ' + s + ')' : 'Rekaman dari ' + s; }
+  } : {
+    play: 'Play', pause: 'Pause', playTitle: 'Play or pause the clip', full: 'Full screen', fullTitle: 'Show the clip full screen',
+    rec: function (cap) { return cap ? cap + ' (recorded from the ' + SRC + ')' : 'Recorded from the ' + SRC; }
+  };
 
   // The sun and moon button (theme.js draws it and keeps the choice; this flips the page).
   var tgl = document.getElementById('themeToggle');
@@ -42,7 +51,7 @@
     video.muted = true; video.loop = true; video.playsInline = true; video.preload = 'none';
     video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
     video.setAttribute('disablepictureinpicture', '');
-    video.setAttribute('aria-label', cap ? cap + ' (recorded from the ' + SRC + ')' : 'Recorded from the ' + SRC);
+    video.setAttribute('aria-label', W.rec(cap));
     video.width = w; video.height = h;
     view.appendChild(video);
 
@@ -51,8 +60,8 @@
     var label = document.createElement('span');
     label.className = 'gd-cap';
     label.textContent = cap;
-    var play = button('Play', 'Play or pause the clip');
-    var full = button('Full screen', 'Show the clip full screen');
+    var play = button(W.play, W.playTitle);
+    var full = button(W.full, W.fullTitle);
     bar.appendChild(label); bar.appendChild(play); bar.appendChild(full);
     fig.appendChild(view); fig.appendChild(bar);
     if (!(video.requestFullscreen || video.webkitEnterFullscreen)) full.hidden = true;
@@ -65,7 +74,7 @@
       b.type = 'button'; b.className = 'btn-secondary btn-sm'; b.textContent = text; b.title = title;
       return b;
     }
-    function setLabel() { play.textContent = video.paused ? 'Play' : 'Pause'; }
+    function setLabel() { play.textContent = video.paused ? W.play : W.pause; }
 
     // The poster, once the clip is near the screen (and again when the theme changes).
     d.near = false;

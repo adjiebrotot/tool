@@ -3,10 +3,10 @@ https://tool.adjiebrotots.com/pisahvsgabung/id/
 
 This is the full reference for one page of the skill brotools-pisahvsgabung: read SKILL.md first.
 
-Pasang skill alat ini di asisten AI Anda (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
-pertanyaan Anda. Asisten akan membalas dengan tautan yang membuka alat ini pada skenario Anda,
-lengkap dengan daftar asumsinya, lalu alat inilah yang menghitung hasilnya. Bagian di bawah ini
-ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.
+Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
+pertanyaanmu. Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap
+dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. Bagian di bawah ini ditulis
+untuk asisten AI, jadi tetap dalam bahasa Inggris.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it
@@ -97,8 +97,8 @@ dependents: Tanggungan  (most important)
   One of: 0 (Tanpa tanggungan), 1 tanggungan, 2 tanggungan, 3 tanggungan. Default 0.
   Dependants (tanggungan) the household supports, usually children, 0 to 3; more than three count as
   three. Each one adds to the PTKP.
-  Tip on the page: Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP,
-  dan paling banyak tiga yang dihitung.
+  Tip on the page: Anggota keluarga yang kamu tanggung, misalnya anak. Setiap tanggungan menambah
+  PTKP, tetapi paling banyak hanya tiga yang dihitung.
 
 [Rumah tangga: Penghasilan]
 totalSalaryInput: Gaji kotor rumah tangga (suami dan istri)  (most important)
