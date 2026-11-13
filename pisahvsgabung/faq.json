@@ -41,7 +41,7 @@
     {
       "q": "Berapa PTKP dan tarif PPh 21 yang dipakai untuk membandingkan pisah harta dan gabung harta?",
       "a": [
-        "Alat ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya."
+        "Hitungan tool ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya."
       ]
     },
     {
@@ -53,13 +53,13 @@
     {
       "q": "Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?",
       "a": [
-        "Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Tool ini menunjukkan titik balik itu berdasarkan gajimu dan gaji pasanganmu."
+        "Tergantung porsi gaji istri. Bila gaji keduanya setara, selisihnya sangat kecil: Pisah Harta hanya lebih murah pada gaji rumah tangga sekitar Rp 114 juta sampai Rp 123 juta, dengan penghematan paling banyak sekitar Rp 112 ribu per tahun. Sampai sekitar Rp 181 juta kedua cara sama, dan di atasnya Gabung Harta yang lebih murah. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Tool ini menunjukkan titik balik itu berdasarkan gajimu dan gaji pasanganmu."
       ]
     },
     {
       "q": "Bagaimana kalau hanya suami atau hanya istri yang bergaji?",
       "a": [
-        "Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Alat ini menganggap pemberi kerja istri tidak memakai PTKP K."
+        "Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Hitungan tool ini mengasumsikan pemberi kerja istri tidak memakai PTKP K."
       ]
     },
     {

@@ -64,11 +64,11 @@ var RVO_TIPS_ID = {
   downPaymentPct:       "Persentase harga yang dibayar di muka. 100% berarti beli tunai, dan penyewa menginvestasikan jumlah yang sama. 20% belum tentu optimal.",
   mortgageType:         "<ul><li><strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi sisa pokok dan menambah ekuitas.</li><li><strong>Bunga Saja:</strong> ekuitas tidak bertambah. Pokok dilunasi sekaligus dari kas di akhir.</li></ul>",
   costInterestOnly:     "Apa yang masuk ke Biaya kumulatif.<ul><li><strong>Aktif:</strong> bunga dan biaya rutin, karena pokok menjadi ekuitas.</li><li><strong>Nonaktif:</strong> seluruh cicilan dan biaya rutin.</li></ul>",
-  rateSchedule:         "Bunga KPR per tahun. Tiap periode <strong>Fixed</strong>, atau <strong>Floating</strong> dalam rentang. KPR Sewa Dulu memakai jadwal ini dari tahun ke-1 sejak membeli.",
+  rateSchedule:         "Bunga KPR per tahun. Tiap periode <strong>Fixed</strong>, atau <strong>Floating</strong> dalam rentang. Pada skenario Sewa Dulu, KPR memakai jadwal ini dari tahun ke-1 sejak rumah dibeli.",
   mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
   sellingCost:          "Komisi agen, pemasaran, notaris, dan PPh penjual saat rumah dijual. Ekuitas rumah dan kekayaan bersih dihitung setelah biaya ini, seolah rumah dijual tahun itu.",
-  houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.",
-  setupCost:            "Biaya sekali bayar saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan. Saat Sewa Dulu membeli nanti, biaya ini mengikuti harga saat itu.",
+  houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli pada skenario Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.",
+  setupCost:            "Biaya sekali bayar saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan. Ketika skenario Sewa Dulu membeli rumah nanti, biaya ini mengikuti harga saat itu.",
   ownOngoingCost:       "Biaya tahunan di luar KPR: PBB, asuransi, perawatan, iuran pengelola. Item jumlah tetap naik sesuai lajunya sendiri, item % mengikuti nilai properti.",
   ownOngoingInflation:  "Kenaikan tahunan biaya kepemilikan yang berupa jumlah tetap. Item % dari nilai properti sudah naik bersama harga rumah.",
   rentAmount:           "Sewa saat ini, per minggu, bulan atau tahun. Naik tiap tahun sesuai kenaikan sewa, dan sisa anggaran setelah sewa diinvestasikan.",
@@ -76,34 +76,34 @@ var RVO_TIPS_ID = {
   rentOngoingCost:      "Biaya di luar sewa: asuransi isi rumah, biaya pasang listrik dan internet. Tanpa PBB atau perawatan gedung, jadi jauh di bawah biaya pemilik.",
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa yang berupa jumlah tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
   riskFreeRate:         "Imbal hasil per tahun atas kas yang menganggur, seperti tabungan atau deposito. Berlaku di semua skenario.",
-  generalInflation:     "Laju kenaikan harga umum per tahun (IHK). Rencananya tidak berubah: opsi Tampilkan dalam nilai hari ini, di samping hasil, membagi setiap angka dengan laju ini.",
-  initialCash:          "Kas yang kamu punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk DP Sewa Dulu nanti.",
-  monthlyBudget:        "Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal tiap tahun, dengan cicilan di batas atas bunga floating, jadi semua skenario sanggup membayar.",
+  generalInflation:     "Laju kenaikan harga umum per tahun (IHK). Angka dalam skenario tidak berubah; opsi Tampilkan dalam nilai hari ini hanya menampilkan setiap angka setelah disesuaikan dengan inflasi umum.",
+  initialCash:          "Kas yang kamu punya sekarang. Skenario Beli memakainya untuk DP dan biaya awal, skenario Sewa menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk DP Sewa Dulu.",
+  monthlyBudget:        "Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal tiap tahun, dengan cicilan di batas atas bunga floating, sehingga biaya semua skenario tertutup.",
   monthlyBudgetIncrease: {
     manual: "Menaikkan anggaran bulanan tiap tahun secara majemuk, misalnya mengikuti kenaikan gaji atau inflasi. Surplus makin lebar seiring waktu.",
     auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi isi anggaran di atas dulu."
   },
-  rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli pada harga saat itu, dengan anggaran yang sama. Anggaran atau modal awal yang otomatis ikut naik untuk mendanainya, jadi Beli dan Sewa juga berubah.",
-  rtbBuyAtYear:         "Membeli di akhir tahun ini, pada harga yang naik sesuai RPPI. KPR baru dimulai saat itu: jangka waktu penuh, jadwal bunga dari tahun ke-1.",
+  rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli dengan harga saat itu dan anggaran yang sama. Kalau anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli dan Sewa ikut berubah.",
+  rtbBuyAtYear:         "Rumah dibeli di akhir tahun yang dipilih, dengan harga yang sudah naik sesuai kenaikan harga properti. KPR baru dimulai saat itu, dengan jangka waktu penuh dan jadwal bunga dari tahun ke-1.",
   calcCagr:             "Isi pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya dipakai untuk Kenaikan harga properti di atas.",
   graphMetric:          "<ul><li><strong>Kekayaan bersih:</strong> rumah jika dijual, dikurangi pinjaman, ditambah kas.</li><li><strong>Uang tunai:</strong> kas di bank.</li><li><strong>Biaya kumulatif:</strong> total biaya perumahan sejauh ini.</li></ul>",
   cashflowTable:        "<ul><li><strong>Posisi kas:</strong> kas masuk dan keluar tahun itu.</li><li><strong>Posisi KPR:</strong> rumah dan pinjaman.</li><li><strong>Posisi keuangan:</strong> kekayaan bersih dan biaya kumulatif.</li></ul>",
   sensRiskFree: {
-    single: "Imbal hasil kas yang tidak terpakai per tahun, seperti deposito. Satu suku bunga untuk semua kolom, jadi tidak ada kolom yang menang hanya karena bunga.",
+    single: "Imbal hasil kas yang tidak terpakai per tahun, seperti deposito. Satu suku bunga untuk semua kolom, jadi tidak ada skenario yang unggul semata-mata karena bunganya lebih tinggi.",
     multi:  "Imbal hasil kas yang tidak terpakai per tahun, satu suku bunga per mata uang. Semua kolom dalam mata uang yang sama memakai suku bunga yang sama."
   },
   sensInitialCash: {
-    single: "Kas yang kamu miliki sekarang, sama di semua kolom. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikannya. Jika kosong, dipakai kebutuhan terbesar dari semua kolom.",
+    single: "Kas yang kamu miliki sekarang, sama di semua kolom. Skenario Beli memakainya untuk DP dan biaya awal, skenario Sewa menginvestasikannya. Jika kosong, dipakai kebutuhan terbesar semua kolom.",
     multi:  "Kas yang kamu miliki sekarang dalam mata uang dasar, sama di semua kolom sesuai kursnya. Jika kosong, dipakai kebutuhan awal terbesar dari semua kolom."
   },
   sensMonthlyBudget: {
-    single: "Kas bulanan untuk perumahan, sama di semua kolom. Jika kosong, dipakai kebutuhan terbesar dari semua kolom tiap bulan, jadi rumah yang lebih murah menabung selisihnya.",
+    single: "Kas bulanan untuk perumahan, sama di semua kolom. Jika kosong, dipakai kebutuhan terbesar dari semua kolom tiap bulan, sehingga pada skenario yang biayanya lebih rendah, selisihnya ditabung.",
     multi:  "Kas bulanan untuk perumahan dalam mata uang dasar, sama di semua kolom sesuai kursnya. Jika kosong, dipakai kebutuhan terbesar dari semua kolom tiap bulan."
   },
   fxMode:       "Bandingkan rumah dengan mata uang berbeda. Hasil dan grafik dalam mata uang dasar, dan tiap kolom mendapat kas dan anggaran yang sama sesuai kursnya.",
   scenCurrency: "Mata uang harga, sewa dan biaya kolom ini. Menggantinya hanya mengganti label angka, tidak mengonversinya.",
   fxRate:       "Jumlah mata uang kolom ini untuk satu unit mata uang dasar hari ini, dari ExchangeRate-API. Isi kurs sendiri, atau kosongkan untuk kurs terkini.",
-  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga tinggi saja tidak membuatnya menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li><li><strong>Perkiraan penguatan/pelemahan:</strong> kurs bergerak sesuai perubahan tahunan yang kamu perkirakan untuk tiap mata uang.</li></ul>",
+  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, sehingga bunga tinggi saja tidak membuat mata uang itu unggul.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li><li><strong>Perkiraan penguatan/pelemahan:</strong> kurs bergerak sesuai perubahan tahunan yang kamu perkirakan untuk tiap mata uang.</li></ul>",
   fxTrend:      "Seberapa besar tiap mata uang diperkirakan menguat atau melemah terhadap mata uang dasar setiap tahun. Minus berarti melemah, plus berarti menguat: -2% berarti 1 unit mata uang dasar mendapat 2% lebih banyak mata uang itu setiap tahun.",
 };
 // Variant tips keyed by the option selected: explained one option at a time,

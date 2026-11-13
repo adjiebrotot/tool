@@ -2597,7 +2597,7 @@
      "unit": "A$",
      "min": 0,
      "max": 100000000000,
-     "default": "120,000",
+     "default": "120.000",
      "important": true
     },
     {
@@ -3843,7 +3843,7 @@
      "unit": "%",
      "min": 0,
      "max": 5,
-     "default": "2.9"
+     "default": "2,9"
     },
     {
      "key": "usLocal",
@@ -3954,7 +3954,7 @@
      "unit": "%",
      "min": 28,
      "max": 36,
-     "default": "30.55"
+     "default": "30,55"
     },
     {
      "key": "seBurial",
@@ -3964,7 +3964,7 @@
      "unit": "%",
      "min": 0,
      "max": 1.5,
-     "default": "0.292"
+     "default": "0,292"
     },
     {
      "key": "eeP2",
@@ -4006,7 +4006,7 @@
      "unit": "%",
      "min": 4,
      "max": 11,
-     "default": "5.30"
+     "default": "5,30"
     },
     {
      "key": "fiChurch",
@@ -4068,7 +4068,7 @@
      "unit": "%",
      "min": 0,
      "max": 3,
-     "default": "0.4"
+     "default": "0,4"
     },
     {
      "key": "chCommune",

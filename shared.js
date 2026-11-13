@@ -42,7 +42,39 @@
     return hash.length > AGENT_MAX ? { raw: '', tooLong: true } : { raw: hash.slice(1), tooLong: false };
   }
 
-  function formatThousands(value, opts){
+  /* SharedNum — the number format of the page. English is the default and the
+     form every saved value, scenario file, Share link, AI link and embed is
+     written in ("1,234.5"). An Indonesian page that loads shared-id.js switches
+     this object to Indonesian ("1.234,5"); nothing else in the file knows the
+     difference, and with the defaults below every call behaves as it always did.
+       show(s)      canonical text -> the page's own ("1,234.5" -> "1.234,5")
+       typed(s)     what a reader typed or a field shows -> canonical
+       text(s)      every figure inside a sentence written in canonical form
+       field(el)    true for a text field that shows its figure in the page's format
+       read(el)     a field's value as it is stored (canonical)
+       write(el, v) a stored (canonical) value into a field
+       parse(s)     canonical text -> number (0 when it is not one)
+       hasGroup(s)  true when a field's text carries thousands separators      */
+  var NUM = {
+    id: false,
+    show: function(s){ return s; },
+    typed: function(s){ return s; },
+    text: function(s){ return s; },
+    field: function(el){ return false; },
+    read: function(el){ return el.value; },
+    write: function(el, v){ el.value = v; },
+    parse: function(s){
+      var n = parseFloat(String(s == null ? '' : s).replace(/,/g, '').trim());
+      return isFinite(n) ? n : 0;
+    },
+    hasGroup: function(s){ return /,/.test(s); }
+  };
+  global.SharedNum = NUM;
+
+  // The value is canonical ("1234.5", what code writes); the text comes out in the page's format.
+  function formatThousands(value, opts){ return NUM.show(formatCanonical(value, opts)); }
+  // The same in canonical English form, which is what gets stored.
+  function formatCanonical(value, opts){
     opts = opts || {};
     var maxDecimals = opts.maxDecimals || 0;
     var allowNegative = !!opts.allowNegative;
@@ -70,7 +102,7 @@
   }
 
   function parseFormatted(value){
-    var cleaned = String(value == null ? '' : value).replace(/,/g,'').trim();
+    var cleaned = NUM.typed(String(value == null ? '' : value)).replace(/,/g,'').trim();
     var n = parseFloat(cleaned);
     return isFinite(n) ? n : 0;
   }
@@ -78,7 +110,7 @@
   function liveFormat(el, opts){
     var pos = el.selectionStart;
     var oldLen = el.value.length;
-    el.value = formatThousands(el.value, opts);
+    el.value = formatThousands(NUM.typed(el.value), opts);
     var newLen = el.value.length;
     var newPos = Math.max(0, pos + (newLen - oldLen));
     if (document.activeElement === el) el.setSelectionRange(newPos, newPos);
@@ -125,6 +157,7 @@
 
   global.SharedFmt = {
     formatThousands: formatThousands,
+    formatCanonical: formatCanonical,
     parseFormatted: parseFormatted,
     liveFormat: liveFormat,
     attachCurrencyInput: attachCurrencyInput,
@@ -1293,7 +1326,7 @@
         var t = (el.type||'').toLowerCase(), id = handle(el);
         if(t === 'checkbox') out['c:'+id] = !!el.checked;
         else if(t === 'radio'){ if(el.checked) out['r:'+el.name] = el.value; }
-        else out['v:'+id] = el.value;
+        else out['v:'+id] = NUM.read(el);
       }
       return out;
     }
@@ -1323,7 +1356,7 @@
           if(Object.prototype.hasOwnProperty.call(data,'c:'+id)){ el.checked = !!data['c:'+id]; hit = true; }
         } else if(t === 'radio'){
           if(Object.prototype.hasOwnProperty.call(data,'r:'+el.name)){ el.checked = (el.value === data['r:'+el.name]); hit = true; }
-        } else if(Object.prototype.hasOwnProperty.call(data,'v:'+id)){ el.value = data['v:'+id]; hit = true; }
+        } else if(Object.prototype.hasOwnProperty.call(data,'v:'+id)){ NUM.write(el, data['v:'+id]); hit = true; }
         // A browser only fires change on the radio that became checked, and
         // tools read el.value in that handler, so the unchecked ones in the
         // group are restored but not announced.
@@ -2621,13 +2654,13 @@
       var ty = (el.type || '').toLowerCase();
       if(ty === 'checkbox' || ty === 'radio') return el.checked;
       if(el.tagName === 'SELECT' && el.multiple) return Array.prototype.filter.call(el.options, function(o){ return o.selected; }).map(function(o){ return o.value; });
-      return el.value;
+      return NUM.read(el);
     }
     function writeField(el, v){
       var ty = (el.type || '').toLowerCase();
       if(ty === 'checkbox' || ty === 'radio') el.checked = !!v;
       else if(el.tagName === 'SELECT' && el.multiple) each(el.options, function(o){ o.selected = Array.isArray(v) && v.indexOf(o.value) >= 0; });
-      else el.value = v;
+      else NUM.write(el, v);
     }
     function isOn(b){ return b.classList.contains('active') || b.getAttribute('aria-pressed') === 'true'; }
     function togglesIn(root){
@@ -3583,14 +3616,14 @@
         used = snap;
       }
       var fmt = moneyFormat(el);
-      out.store = fmt ? formatThousands(plain(used, fmt.maxDecimals), { maxDecimals: fmt.maxDecimals, allowNegative: true }) : plain(used);
+      out.store = fmt ? formatCanonical(plain(used, fmt.maxDecimals), { maxDecimals: fmt.maxDecimals, allowNegative: true }) : plain(used);
       out.money = !!fmt;
       return out;
     }
     function current(f){
       if(f.type === 'c') return !!f.el.checked;
       if(f.type === 'r'){ for(var i = 0; i < f.els.length; i++) if(f.els[i].checked) return f.els[i].value; return undefined; }
-      return f.el.value;
+      return NUM.read(f.el);
     }
     // Words a reader sees, without the tooltip's ? and the unit beside them.
     function cleanText(node){
@@ -3855,7 +3888,7 @@
         var f = d.f;
         if(f.type === 'c') f.el.checked = !!d.store;
         else if(f.type === 'r') f.els.forEach(function(r){ r.checked = r.value === d.store; });
-        else f.el.value = d.store;
+        else NUM.write(f.el, d.store);
         var el = f.type === 'r' ? f.els.filter(function(r){ return r.checked; })[0] : f.el;
         if(el){ el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
       });
@@ -4027,7 +4060,7 @@
     var n = +(+v).toFixed(maxDp == null ? 10 : maxDp);
     var s = String(Math.abs(n));
     if(Math.abs(n) >= 10000) s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits: maxDp == null ? 10 : maxDp});
-    return (n < 0 ? '−' : '') + s;
+    return (n < 0 ? '−' : '') + NUM.show(s);
   }
 
   /* ── SharedBounds — a field refuses a value outside its range ─────────────
@@ -4070,20 +4103,20 @@
       };
     }
     function parse(el){
-      var s = String(el.value == null ? '' : el.value).replace(/,/g, '').replace(/−/g, '-').trim();
+      var s = NUM.typed(String(el.value == null ? '' : el.value)).replace(/,/g, '').replace(/−/g, '-').trim();
       if(s === '' || s === '-' || s === '.' || s === '-.') return NaN;
       var n = parseFloat(s);
       return isFinite(n) ? n : NaN;
     }
     function grouped(el){
-      return /,/.test(el.value || '') || el.getAttribute('data-money') === 'true' ||
+      return NUM.hasGroup(el.value || '') || el.getAttribute('data-money') === 'true' ||
              el.classList.contains('money-input') || el.hasAttribute('data-grouped');
     }
     function format(el, v, lim){
       var dp = decimalsOf(lim.step);
       if(grouped(el)) return SharedFmtRef().formatThousands(String(v), {maxDecimals: dp == null ? 2 : dp, allowNegative: v < 0});
       var n = dp == null ? +(+v).toPrecision(12) : +(+v).toFixed(dp);
-      return String(n);
+      return NUM.field(el) ? NUM.show(String(n)) : String(n);
     }
     function unitOf(el){
       var pre = '', suf = el.getAttribute('data-unit') || '';
@@ -4098,7 +4131,7 @@
     function boundText(el, v, lim){
       var u = unitOf(el), dp = decimalsOf(lim.step);
       var num = plainNumber(v, dp == null ? 2 : dp);
-      if(grouped(el)) num = (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US', {maximumFractionDigits: dp == null ? 2 : dp});
+      if(grouped(el)) num = (v < 0 ? '−' : '') + NUM.show(Math.abs(v).toLocaleString('en-US', {maximumFractionDigits: dp == null ? 2 : dp}));
       return (u.pre ? u.pre + ' ' : '') + num + (u.suf ? ' ' + u.suf : '');
     }
     function showHint(el, text){

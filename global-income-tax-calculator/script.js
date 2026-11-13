@@ -26,10 +26,12 @@ const MAX_JOBS = 4;
    One script for two pages: the English page and its Indonesian twin (id/, baked from
    index.html by _ref/bake-id.mjs, which sets window.DEFAULT_LANG = 'id'). Both read and
    write the same fields under the same Persist namespace, so a reader's work, a scenario
-   file, a Share link and an AI link open the same on either page. Only words change:
-   figures keep the form's own format (1,234.5) on both, as the fields do, so a value
-   saved on one page reads as the same number on the other. On the English page nothing
-   below is applied: the page shows index.html as it is.
+   file, a Share link and an AI link open the same on either page. Words change, and so does
+   the way a figure is written: the Indonesian page shows and takes 1.234,5 (shared-id.js,
+   SharedNum), the English one 1,234.5. What is stored is the English form on both (the jobs
+   below, the mini cache, a file, a link), and SharedNum.read / write turn a field's text into
+   it and back, so a value saved on one page reads as the same number on the other.
+   On the English page nothing below is applied: the page shows index.html as it is.
    The engine's own text (line labels, notes, the tax year) is worded on the Indonesian
    page by labels-id.js (GSCLabelsId), made from the country pages' content files. */
 const LANG = {
@@ -1177,7 +1179,8 @@ function TF(key, vars){ return T(key).replace(/\{(\w+)\}/g, (m, k) => vars && va
 function trE(text, cc){
   if(!ID || text == null || text === '' || !window.GSCLabelsId) return text;
   const t = window.GSCLabelsId.tr(text, cc);
-  return t == null ? text : t;
+  // The engine writes its figures in the English form (5,101.20); the page shows them in its own.
+  return SharedNum.text(t == null ? text : t);
 }
 // Country names as the reader says them (the country pages' names on the Indonesian page).
 const COUNTRY_ID = { AU: 'Australia', SG: 'Singapura', GB: 'Inggris', DE: 'Jerman', US: 'Amerika Serikat', CA: 'Kanada', FR: 'Prancis', NL: 'Belanda', BE: 'Belgia',
@@ -1190,6 +1193,8 @@ const MON_ID = { May: 'Mei', Aug: 'Agu', Oct: 'Okt', Dec: 'Des' };
 const dateW = d => ID ? String(d).replace(/\b(May|Aug|Oct|Dec)\b/g, m => MON_ID[m]) : d;
 // Short amounts use the page's own magnitude words: in Indonesian "M" is miliar (a billion), a million is "jt".
 const MAG = { en: { b: 'b', m: 'm', k: 'k' }, id: { b: ' M', m: ' jt', k: ' rb' } }[lang];
+// A figure written as JavaScript writes it, in the page's own form (1,234.5 or 1.234,5).
+const loc = x => SharedNum.show(String(x));
 
 // Words the page shows, in its language. Not on the English page, which shows index.html as written.
 function applyLang(){
@@ -1220,22 +1225,23 @@ function money(v, cur, compact){
   const n = Number(v), abs = Math.abs(n), sign = n < 0 ? '−' : '';
   if(!isFinite(n)) return '—';
   const s = symOf(cur);
-  if(compact && abs >= 1e9) return sign + s + (abs/1e9).toFixed(abs >= 1e10 ? 0 : 1) + MAG.b;
-  if(compact && abs >= 1e6) return sign + s + (abs/1e6).toFixed(abs >= 1e7 ? 0 : 1) + MAG.m;
-  if(compact && abs >= 1e4) return sign + s + (abs/1e3).toFixed(0) + MAG.k;
-  return sign + s + Math.round(abs).toLocaleString('en');
+  if(compact && abs >= 1e9) return sign + s + loc((abs/1e9).toFixed(abs >= 1e10 ? 0 : 1)) + MAG.b;
+  if(compact && abs >= 1e6) return sign + s + loc((abs/1e6).toFixed(abs >= 1e7 ? 0 : 1)) + MAG.m;
+  if(compact && abs >= 1e4) return sign + s + loc((abs/1e3).toFixed(0)) + MAG.k;
+  return sign + s + loc(Math.round(abs).toLocaleString('en'));
 }
-const pct = (v, d = 1) => isFinite(v) ? (v*100).toFixed(d) + '%' : '—';
+const pct = (v, d = 1) => isFinite(v) ? loc((v*100).toFixed(d)) + '%' : '—';
 
 /* ───────────────────────── Job fields ───────────────────────── */
 const scope = $('jobScope');
 let FIELDS = [];                 // every control inside the job scope
 const DEFAULTS = {};             // their values as the page ships them
 const handle = el => el.getAttribute('data-persist') || el.id;
-const valueOf = el => el.type === 'checkbox' ? !!el.checked : el.value;
+// A job keeps its figures in the English form on both pages: SharedNum.read / write cross from and to the field.
+const valueOf = el => el.type === 'checkbox' ? !!el.checked : SharedNum.read(el);
 function setValue(el, v){
   if(el.type === 'checkbox') el.checked = v === true || v === 'true' || v === 1 || v === '1' || v === 'on';
-  else el.value = String(v);
+  else SharedNum.write(el, String(v));
 }
 // Every field is kept, the other countries' too, so a job that goes to Germany
 // and back still has its Australian settings, and a reload gives back exactly what was saved.
@@ -1273,7 +1279,7 @@ function knobsOf(job){
   const k = {};
   Object.entries(job).forEach(([h, v]) => {
     const el = FIELDS.find(f => handle(f) === h);
-    if(el && (el.classList.contains('fmt-num') || el.classList.contains('fmt-pct'))) k[h] = SharedFmt.parseFormatted(String(v)) || 0;
+    if(el && (el.classList.contains('fmt-num') || el.classList.contains('fmt-pct'))) k[h] = SharedNum.parse(v) || 0;
     else k[h] = v;
   });
   return k;
@@ -1422,7 +1428,7 @@ function renderJobs(results){
     chip.setAttribute('aria-selected', i === ACTIVE ? 'true' : 'false');
     chip.title = TF('chipTitle', { n: i + 1 });
     const r = results[i];
-    const amt = SharedFmt.parseFormatted(String(job.amount)) || 0;
+    const amt = SharedNum.parse(job.amount) || 0;
     const pay = money(amt, E.C[job.country].cur, true) + T(job.period === 'monthly' ? 'chipMo' : 'chipYr') + (job.dir === 'net' ? T('chipNet') : '');
     chip.innerHTML = '<span class="job-dot" style="background:' + colourOf(i) + '"></span><span class="job-name">' + esc(jobTitle(job, i)) + '</span>'
       + '<span class="job-pay">' + esc(r && r.notSupported ? T('notLoaded') : pay) + '</span>';
@@ -1443,7 +1449,7 @@ function renderJobs(results){
 /* ───────────────────────── Compute ───────────────────────── */
 function computeJob(job){
   const k = knobsOf(job), country = job.country;
-  const amt = Math.max(0, SharedFmt.parseFormatted(String(job.amount)) || 0);
+  const amt = Math.max(0, SharedNum.parse(job.amount) || 0);
   const annual = amt*(job.period === 'monthly' ? 12 : 1);
   let r;
   if(job.dir === 'net'){
@@ -1715,7 +1721,7 @@ function updateChart(results){
   const jobCur = i => disp().cur === 'local' ? sw.series[i].r.cur : cc;
   const yText = (it, short) => {
     if(it.parsed.y == null) return T('notLoaded');
-    if(!amt) return it.parsed.y.toFixed(1) + (short ? '%' : T('takenHomePct'));
+    if(!amt) return loc(it.parsed.y.toFixed(1)) + (short ? '%' : T('takenHomePct'));
     const s = sw.series[it.datasetIndex], c = jobCur(it.datasetIndex);
     return money(E.convert(it.raw.net, s.r.cur, c), c) + (short ? '' : T('takenHome'));
   };
@@ -1759,7 +1765,7 @@ function updateChart(results){
     },
     scales: Object.assign(xScales, {
       y: { title: { display: true, text: amt ? TF('axTakeCur', { c: cc }) : T('axTakePct'), color: muted, font: { size: 11 } },
-        ticks: { color: muted, font: { size: 11 }, callback: v => amt ? money(v, cc, true) : v + '%' }, grid: { color: grid } }
+        ticks: { color: muted, font: { size: 11 }, callback: v => amt ? money(v, cc, true) : loc(v) + '%' }, grid: { color: grid } }
     })
   };
   $('chartTitle').textContent = chartTitle();
@@ -1845,7 +1851,7 @@ const SUMMED = ['tax', 'social', 'other', 'benefit'];
    bracket the base reaches, with the slice of income in it, its rate and its tax,
    then the credits or surcharges that turn their sum into the line, then any
    rounding the rules make. */
-const rateText = v => Array.isArray(v) ? rateText(v[0]) + T('rising') + rateText(v[1]) : +(v*100).toFixed(4) + '%';
+const rateText = v => Array.isArray(v) ? rateText(v[0]) + T('rising') + rateText(v[1]) : loc(+(v*100).toFixed(4)) + '%';
 function bracketRows(sec, l, cur, cc){
   const b = l.brackets, out = [];
   if(!b || !(b.base > 0)) return out;   // nothing taxable: no bracket is reached
@@ -2292,7 +2298,7 @@ function openFromComparator(){
     if(el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v)) return;
     if(k === 'amount'){
       const n = Number(v);
-      if(isFinite(n) && n > 0) job.amount = SharedFmt.formatThousands(String(Math.min(n, 1e11)), { maxDecimals: 2 });
+      if(isFinite(n) && n > 0) job.amount = SharedFmt.formatCanonical(String(Math.min(n, 1e11)), { maxDecimals: 2 });
       return;
     }
     job[k] = el.type === 'checkbox' ? v === 'true' : v;
@@ -2349,7 +2355,7 @@ function agentValue(el, raw, api, label){
   const lo = +el.getAttribute('data-min'), hi = +el.getAttribute('data-max');
   const used = Math.min(isFinite(hi) ? hi : Infinity, Math.max(isFinite(lo) ? lo : -Infinity, n));
   if(used !== n) api.clamp(label, n, used);
-  return SharedFmt.formatThousands(String(used), { maxDecimals: el.classList.contains('fmt-pct') ? 3 : 2 });
+  return SharedFmt.formatCanonical(String(used), { maxDecimals: el.classList.contains('fmt-pct') ? 3 : 2 });
 }
 function agentJsonJobs(obj, extra, api){
   const list = obj && (Array.isArray(obj.jobs) ? obj.jobs : Array.isArray(obj) ? obj : null);

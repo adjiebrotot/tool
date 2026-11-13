@@ -179,7 +179,7 @@ const LANG_SENS = {
     fxWarn: (list) => `Kolom dalam ${list} tidak dikonversi`,
     labelView: 'Bandingkan',
     labelMetric: 'Metrik:',
-    labelAtYear: 'Di tahun:',
+    labelAtYear: 'Tahun:',
     yearHint: '(hingga jangka waktu)',
     btnCSV: '⬇ CSV',
     btnUploadCSV: 'CSV',
@@ -414,7 +414,7 @@ const PER_SUFFIX = {yearly:'uPerYr', monthly:'uPerMo', weekly:'uPerWk'};
 /* A column's own figures: the home, its loan and its rent. What every column
    shares (SHARED below) is not in here. */
 const DEFAULT_SCENARIO = {
-  name: 'Base Case',
+  name: lang === 'id' ? 'Skenario Dasar' : 'Base Case',
   propertyPrice: 800000,
   downPaymentPct: 20,
   mortgageType: 'pi',
@@ -505,7 +505,7 @@ const FX = window.RVOFX || null;
 
 /* ── STATE ── */
 const cloneScenario = sc => JSON.parse(JSON.stringify(sc));
-let scenarios = [cloneScenario(DEFAULT_SCENARIO), Object.assign(cloneScenario(DEFAULT_SCENARIO), {name:'Scenario 1'})];
+let scenarios = [cloneScenario(DEFAULT_SCENARIO), Object.assign(cloneScenario(DEFAULT_SCENARIO), {name: lang === 'id' ? 'Skenario 1' : 'Scenario 1'})];
 let shared = sharedFrom(null);
 let fxs = JSON.parse(JSON.stringify(DEFAULT_FX));
 let persist = null; // mini cache handle (assigned at init)
@@ -873,7 +873,7 @@ function addRatePeriodTo(sc){
 /* ── SCENARIO MANAGEMENT ── */
 function addScenario(){
   const clone = cloneScenario(scenarios[scenarios.length-1]);
-  clone.name = 'Scenario '+(scenarios.length+1);
+  clone.name = (lang === 'id' ? 'Skenario ' : 'Scenario ')+(scenarios.length+1);
   scenarios.push(clone);
   rerender();
 }
@@ -1865,7 +1865,7 @@ function buildScenariosFromCSV(text){
   const newScen = [];
   for(let j=0;j<nScen;j++){
     const sc = cloneScenario(DEFAULT_SCENARIO);
-    sc.name = names[j] || ('Scenario '+(j+1));
+    sc.name = names[j] || ((lang === 'id' ? 'Skenario ' : 'Scenario ')+(j+1));
     sc.currencySymbol = sym;
     sc.ratePeriods = null; sc.ownSetupCosts = null; sc.ownOngoingCosts = null; sc.rentOngoingCosts = null;
     newScen.push(sc);
