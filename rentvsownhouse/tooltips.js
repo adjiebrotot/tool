@@ -67,7 +67,7 @@ var RVO_TIPS_ID = {
   rateSchedule:         "Bunga KPR per tahun. Tiap periode <strong>Fixed</strong>, atau <strong>Floating</strong> dalam rentang. Pada skenario Sewa Dulu, KPR memakai jadwal ini dari tahun ke-1 sejak rumah dibeli.",
   mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
   sellingCost:          "Komisi agen, pemasaran, notaris, dan PPh penjual saat rumah dijual. Ekuitas rumah dan kekayaan bersih dihitung setelah biaya ini, seolah rumah dijual tahun itu.",
-  houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli pada skenario Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.",
+  houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli pada skenario Sewa Dulu. <em>Tool</em> CAGR di bawah menghitungnya dari harga historis.",
   setupCost:            "Biaya sekali bayar saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan. Ketika skenario Sewa Dulu membeli rumah nanti, biaya ini mengikuti harga saat itu.",
   ownOngoingCost:       "Biaya tahunan di luar KPR: PBB, asuransi, perawatan, iuran pengelola. Item jumlah tetap naik sesuai lajunya sendiri, item % mengikuti nilai properti.",
   ownOngoingInflation:  "Kenaikan tahunan biaya kepemilikan yang berupa jumlah tetap. Item % dari nilai properti sudah naik bersama harga rumah.",

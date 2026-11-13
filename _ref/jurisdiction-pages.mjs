@@ -91,7 +91,7 @@ const T = {
   id: {
     tool: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
     back: '← Kalkulator Gaji Bersih dan Pajak Penghasilan',
-    open: 'Buka <em>tool</em>-nya',
+    open: 'Buka tool-nya',
     openOwn: 'Hitung gajimu sendiri',
     langOther: 'English version', langOtherShort: 'EN', langOtherTitle: 'Read in English',
     toc: ['Ringkasan aturan pajak', 'Contoh perhitungan', 'Tips pajak', 'Yang tidak dihitung', 'Tanya jawab'],
@@ -105,7 +105,7 @@ const T = {
     band: (lo, hi, rate) => `${lo} sampai ${hi}, tarif ${rate}`, rising: (a, b) => `${a} naik ke ${b}`,
     bandW: 'lapisan tarif, bagian dari pajak di atas', adjW: 'bagian dari pajak di atas',
     kind: { tax: 'pajak, dipotong dari gaji', social: 'iuran, dipotong dari gaji', other: 'dipotong dari gaji', benefit: 'menambah gaji', deduction: 'mengurangi penghasilan kena pajak', credit: 'kredit pajak, sudah masuk di pajaknya', employer: 'dibayar pemberi kerja, di luar gaji', info: 'keterangan' },
-    openEx: 'Buka contoh ini di kalkulator',
+    openEx: 'Buka contoh ini di <em>tool</em>',
     marginal: m => `Dari setiap tambahan 1% gaji, ${m} habis untuk pajak dan iuran.`,
     exList: 'Contoh di halaman ini',
     others: 'Pajak penghasilan di negara lain',

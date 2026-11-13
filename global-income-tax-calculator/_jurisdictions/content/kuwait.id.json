@@ -6,7 +6,7 @@
   "description": "Kuwait tidak memajaki gaji. Pekerja asing menerima gaji penuh, warga Kuwait membayar iuran PIFSS. Lihat contoh gaji KWD 18.000 dan bedanya dengan PPh 21.",
   "lede": "<p>Kuwait tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>) bergaji KWD 18.000 setahun menerima gaji bersih (<em>take-home pay</em>), tanpa potongan setara PPh 21 dan tanpa iuran semacam BPJS. Warga Kuwait membayar iuran jaminan sosial ke PIFSS sebesar KWD 1.890 dan menerima gaji bersih KWD 16.110. Pekerja asing tidak ikut PIFSS, tetapi menerima uang akhir masa kerja dari pemberi kerja.</p>",
   "law": {
-    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dihitung kalkulator. Gaji perorangan tidak dipajaki di Kuwait. Jaminan sosial dikelola Public Institution for Social Security (PIFSS), lembaga yang hanya mencakup warga negara Kuwait dan perannya kira-kira setara BPJS Ketenagakerjaan di Indonesia.</p>",
+    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dihitung <em>tool</em> ini. Gaji perorangan tidak dipajaki di Kuwait. Jaminan sosial dikelola Public Institution for Social Security (PIFSS), lembaga yang hanya mencakup warga negara Kuwait dan perannya kira-kira setara BPJS Ketenagakerjaan di Indonesia.</p>",
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
@@ -86,7 +86,7 @@
       },
       {
         "h3": "Status pajakmu di Indonesia tidak ikut hilang",
-        "html": "<p>Gaji tanpa pajak di Kuwait tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan, dan tidak ada pajak Kuwait yang bisa dikreditkan karena memang tidak ada. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. Kalkulator ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
+        "html": "<p>Gaji tanpa pajak di Kuwait tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan, dan tidak ada pajak Kuwait yang bisa dikreditkan karena memang tidak ada. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. <em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
       }
     ],
     "sources": [
@@ -162,14 +162,14 @@
     },
     {
       "h3": "Kirim uang pulang lewat jalur resmi dan simpan buktinya",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang mengirim sebagian gaji ke keluarga di Indonesia. Transfer lewat bank atau penyedia remitansi berizin meninggalkan catatan yang berguna kalau suatu saat kamu perlu menunjukkan asal penghasilanmu, termasuk untuk SPT Tahunan.</p><p><strong>Catatan:</strong> biaya transfer dan kurs berbeda antarpenyedia, dan kalkulator ini tidak memperhitungkannya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang mengirim sebagian gaji ke keluarga di Indonesia. Transfer lewat bank atau penyedia remitansi berizin meninggalkan catatan yang berguna kalau suatu saat kamu perlu menunjukkan asal penghasilanmu, termasuk untuk SPT Tahunan.</p><p><strong>Catatan:</strong> biaya transfer dan kurs berbeda antarpenyedia, dan <em>tool</em> ini tidak memperhitungkannya.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari kerja.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrak, jadi tidak ditambahkan ke angka di halaman ini.",
-    "<strong>Pajak Indonesia tidak dihitung.</strong> Kalkulator hanya menunjukkan apa yang diambil Kuwait. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dihitung.",
-    "<strong>Statusnya kamu yang memilih.</strong> Kalkulator menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Pajak Indonesia tidak dihitung.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Kuwait. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dihitung.",
+    "<strong>Statusnya kamu yang memilih.</strong> <em>Tool</em> ini menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Yang dihitung adalah gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrakmu tidak dipisahkan.",
     "<strong>Iuran pemberi kerja.</strong> Bagian PIFSS yang dibayar pemberi kerja tidak ditampilkan."
   ],
@@ -208,7 +208,7 @@
     },
     {
       "q": "Apa itu uang akhir masa kerja di Kuwait, dan apakah sama dengan pesangon?",
-      "a": "<p>Itu uang yang dibayar pemberi kerja kepada pekerja asing ketika kontrak berakhir, dihitung dari gaji dan lama bekerja menurut undang-undang ketenagakerjaan. Fungsinya mirip pesangon di Indonesia, tetapi aturan hitungnya berbeda. Kalkulator tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
+      "a": "<p>Itu uang yang dibayar pemberi kerja kepada pekerja asing ketika kontrak berakhir, dihitung dari gaji dan lama bekerja menurut undang-undang ketenagakerjaan. Fungsinya mirip pesangon di Indonesia, tetapi aturan hitungnya berbeda. <em>Tool</em> ini tidak memasukkannya karena besarnya bergantung pada kontrakmu.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Kuwait: pajak lain, indemnitas akhir masa kerja bagi ekspatriat",
