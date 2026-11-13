@@ -48,12 +48,12 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | Job | Picture | Weight | Where |
 | --- | --- | --- | --- |
 | Save the work to a file | floppy disk | bare in a Quick Start row, boxed in a header or toolbar | every finance tool (`SharedScenario`) · Canvas Builder `Save` · PowerFactory setup |
-| Open a file from this device | open folder | as above | every finance tool (`SharedScenario`) · Canvas Builder `Open` · PowerFactory setup · Sensitivity `CSV` · Video to GIF `Open video` · WEM Checker `Open XLSX` · JSON Visualiser drop zone |
+| Open a file from this device | open folder | as above | every finance tool (`SharedScenario`) · Canvas Builder `Open` · PowerFactory setup · Sensitivity `CSV` · Video to GIF `Open video` · Online 3D Viewer `Open model` · WEM Checker `Open XLSX` · JSON Visualiser drop zone |
 | Share a chart (download, copy, link, embed) | `Share ⌄`, opening the dropdown list: `⬇ Download as SVG`, `⬇ Download as PNG`, (`⬇ Download as GIF` on an animated chart), `⧉ Copy to clipboard`, `Share as link` (chain-link icon), `</> Embed as HTML` | secondary, its rows as a dropdown's | every chart's toolbar, beside its `⟳` (`SharedShare` folds the chart's `⬇ SVG` `⬇ PNG` `⬇ GIF` `⧉` into it at load) · Load Flow Simulator diagram (with GIF) |
-| Download an export | `⬇` + format | secondary | tables `⬇ CSV` on every chart tool, and inside a chart's Share menu · Sensitivity `⬇ CSV` and per-scenario `⬇` Own / Rent cashflow · Markdown to PDF `⬇ MD` `⬇ PDF` · JSON Visualiser `⬇ JSON` (the document, with its edits) · Video to GIF `⬇ Download GIF` · PowerFactory `⬇ .py` / `⬇ .ipynb`, `⬇ Download Template (.xlsx)`, samples `⬇ JSON` · Sankey `⬇ CSV`, `⬇ Download CSV Template` · WEM Checker `⬇ CSV` · Canvas Builder `⬇ PNG` (primary: it is that tool's output) |
+| Download an export | `⬇` + format | secondary | tables `⬇ CSV` on every chart tool, and inside a chart's Share menu · Sensitivity `⬇ CSV` and per-scenario `⬇` Own / Rent cashflow · Markdown to PDF `⬇ MD` `⬇ PDF` · JSON Visualiser `⬇ JSON` (the document, with its edits) · Video to GIF `⬇ Download GIF` · Online 3D Viewer `⬇ PNG` (the view) · PowerFactory `⬇ .py` / `⬇ .ipynb`, `⬇ Download Template (.xlsx)`, samples `⬇ JSON` · Sankey `⬇ CSV`, `⬇ Download CSV Template` · WEM Checker `⬇ CSV` · Canvas Builder `⬇ PNG` (primary: it is that tool's output) |
 | Copy to the clipboard | `⧉` | secondary, square | inside every chart's Share menu · `⧉ Copy code` in its embed dialog (primary) · Canvas Builder · PowerFactory code · JSON Visualiser · Sankey |
 | Fetch data from the web | `⤓ Load tickers`, `Fetch` | primary / secondary | DCA and Portfolio · Financial Freedom ticker · JSON Visualiser URL |
-| Load a worked example | `Load a sample …` / `Sample` | secondary | Graph Visualiser · JSON Visualiser · Markdown to PDF · Video to GIF · Canvas Builder |
+| Load a worked example | `Load a sample …` / `Sample` | secondary | Graph Visualiser · JSON Visualiser · Markdown to PDF · Video to GIF · Online 3D Viewer · Canvas Builder |
 
 ## Running and viewing
 
@@ -61,11 +61,11 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | --- | --- | --- | --- |
 | Run the tool's computation | `▶ …` | primary | `▶ Run load flow` (Load Flow Simulator) · `▶ Simulate` (DCA, Portfolio, Financial Freedom) · `▶ Generate Code` (PowerFactory) · `▶ Check` (WEM Checker) · `▶ Convert to GIF` (Video to GIF) · `▶ Visualise` (Graph Visualiser) |
 | Compute a side answer | worded | primary, small | `Calculate CAGR` (Rent vs Own) |
-| Reset a chart's zoom or view | `⟳` | secondary, square | every chart cluster · Finance vs Cash 3D view · JSON Visualiser `⟳ Reset` |
+| Reset a chart's zoom or view | `⟳` | secondary, square | every chart cluster · Finance vs Cash 3D view · Online 3D Viewer · JSON Visualiser `⟳ Reset` |
 | Zoom | `+` / `−` | secondary, square | JSON Visualiser · World Clock · Load Flow Simulator diagram (inside the stage, never in a cluster) |
 | Back to my place / now | crosshair · `↩ Back to now` | secondary | World Clock |
 | Show a chart or table | `▾` chevron, last in the head row · chart icon · `Compare` | secondary / bare | every finance tool's tables · Sensitivity per-scenario chart and `Compare` |
-| Play a video | `▶` `◀◀` `▶▶` | secondary, square | Video to GIF player |
+| Play a video | `▶` `◀◀` `▶▶` | secondary, square | Video to GIF player · Online 3D Viewer model animation (`▶` / `❚❚`) |
 
 ## Page furniture
 

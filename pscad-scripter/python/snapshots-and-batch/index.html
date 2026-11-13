@@ -224,7 +224,7 @@ result = <span class="py-f">simset_run</span>(app, sim_set)                  <sp
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python scripts from the Builder</h2>
   <p>The Initialise once, then branch Quick Start saves a snapshot at 2 s, initialises once, then runs three fault durations from the snapshot and tables the lowest voltage of each. This is the file with the case set to <code>C:/Studies/hvdc/hvdc.pscx</code>:</p>
-  <p class="dx-file"><span><code>initialise_once_then_branch.py</code> as the Builder writes it: the settings and the workflow</span><a href="initialise_once_then_branch.py" download>⬇ Download the full file (.py, 2,582 lines)</a></p>
+  <p class="dx-file"><span><code>initialise_once_then_branch.py</code> as the Builder writes it: the settings and the workflow</span><a href="initialise_once_then_branch.py" download>⬇ Download the full file (.py, 2,588 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Snapshot then branch</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -350,7 +350,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 2,456 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 2,462 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><code>snapshot_save(app, 2, None, "")</code> sets the case to save one snapshot at 2 s, named after the case, and the Initialise run of 2.2 s writes it.</li>

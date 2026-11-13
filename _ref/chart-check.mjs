@@ -395,6 +395,11 @@ const PAGES = [
     charts: ['chartCanvas'],
   },
   {
+    name: 'global-income-tax-calculator',
+    url: '/global-income-tax-calculator/',
+    charts: ['chartCanvas'],
+  },
+  {
     name: 'financingvscash',
     url: '/financingvscash/',
     charts: ['chartCanvas'],

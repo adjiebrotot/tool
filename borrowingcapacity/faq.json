@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "What interest rate does a lender test my repayments at?",
+      "a": [
+        "The higher of your loan rate plus the APRA buffer, and the lender floor. The page opens with a 5.90% rate, a 3.00 point APRA buffer (in place since October 2021) and a 5.50% lender floor, so the loan is tested at 8.90%, over the full loan term. Each extra point on the tested rate cuts the loan your repayment can support by about 8%, so the buffer matters more than the rate you are offered."
+      ]
+    },
+    {
+      "q": "Why does the tool use a higher living cost than the one I entered?",
+      "a": [
+        "Living costs are the higher of your Declared living expenses and a HEM benchmark, so a low figure does not raise your result. The benchmark starts at $1,850 a month for one adult or $2,750 for two, adds $480 per dependant, then scales by a city cost index (Perth is 100) and an income band from 1.00 up to 1.62. A Melbourne couple with two children on $185,000 gets about $5,315 a month, above $4,800 declared."
+      ]
+    },
+    {
+      "q": "Why does a credit card I never use reduce how much I can borrow?",
+      "a": [
+        "Cards are counted on the limit, not the balance, at the Assessed monthly rate, 3.80% of the limit by default. A $10,000 limit is charged as $380 a month of repayments. At the 8.90% test rate over 30 years, that $380 would otherwise support about $47,600 of loan. Lowering the limit or closing the card in Credit card and line of credit limits is one of the cheapest ways to lift the result."
+      ]
+    },
+    {
+      "q": "Which of the four limits is actually holding my borrowing capacity down?",
+      "a": [
+        "Capacity is the smallest of four caps: serviceability, debt to income (6 times income by default), loan to value (80%, or 95% with Lenders Mortgage Insurance on) and the deposit. The Binding constraint tile names the one that holds. On the default settings serviceability decides for most borrowers, and debt to income rarely binds. Turning LMI off for a thin deposit makes the deposit cap bind instead."
+      ]
+    },
+    {
+      "q": "Does it work out stamp duty and first home buyer concessions?",
+      "a": [
+        "No. Stamp duty is a plain percentage of the price, or a dollar amount, that you enter in Stamp duty, and concessions and grants are not worked out for you. Each Quick Start holds the general rate for its state on its own price, for example 5.46% on $920,000 in Victoria, and the Brisbane first home buyer uses 0% because Queensland fully exempts first homes up to $700,000. Enter your own figure, or 0, to allow for a concession."
+      ]
+    },
+    {
+      "q": "How is tax worked out for two applicants?",
+      "a": [
+        "Two applicants are taxed as two people, not as one pooled income. The tool splits taxable income using the Second applicant's share of income (0 to 50% in steps of 5), runs the resident scale and the low income offset for each person, then adds the 2% Medicare levy. The scale is the 2026-27 one by default, with a 15% lowest bracket, against 16% in 2025-26 and 14% in 2027-28. Pooling would push the couple up the brackets and understate take-home pay."
+      ]
+    }
+  ]
+}

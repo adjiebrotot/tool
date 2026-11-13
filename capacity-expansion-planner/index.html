@@ -85,29 +85,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I find the least-cost generation expansion plan online for free?",
+      "name": "How is a whole year of demand represented in the plan?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Open the Capacity Expansion Planner at https://tool.adjiebrotots.com/capacity-expansion-planner/, enter the peak demand, its growth and its load profile, list the plants in service and the technologies that can be built with their costs, and press Run plan. It builds PyPSA's multi-period investment problem and solves it with HiGHS in your browser, giving the capacity to build in every decision year."
+        "text": "Each decision year is run hour by hour over typical days of each season, and every hour is weighted by the hours of the year it stands for. A temperate climate has four seasons and a tropical one two. With One typical day, each season is a single weekday. With the 'A weekday and a weekend day' or 'A typical week' choices it is finer, but slower to solve."
       }
     },
     {
       "@type": "Question",
-      "name": "How does the planner decide when to build?",
+      "name": "How does the plan count the capital cost of a new plant?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Every technology has a candidate in every decision year, at that year's capital cost, running from the year it is built until the end of its life. The optimiser picks the size of each candidate that meets the demand in every sampled hour of every year at the least cost over the whole plan, every year's cost discounted to the plan's first year, so a plant is built the first year it pays its way or the demand needs it."
+        "text": "Capital is paid as an annuity of the overnight cost at the Discount rate (7% real by default) over the plant's life, only for years inside the plan. At 7% a 25-year life costs about 8.6% of the overnight cost a year. The first payment falls in the year it enters service, so a plant that lives out its life inside the plan pays 1.07 times its overnight cost."
       }
     },
     {
       "@type": "Question",
-      "name": "How is the load profile taken into account?",
+      "name": "Does the plan include transmission, reserve margin or start-up costs?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Each decision year is run hour by hour over typical days of every season, each weighted by how many days of the year it stands for, plus, if you switch it on, a still and overcast day at the peak. The load profile can be one typical day, a weekday and a weekend day, or a full week, built in, drawn or from your own CSV or Excel file, for every season or each its own, or a full year of hours, which is averaged into a typical week for each season with its peak day kept, and the typical days follow it. Solar, wind and batteries are matched to the shape of the demand hour by hour, so the plan sizes firm capacity for the evening peak and storage for the hours the sun is down."
+        "text": "No. The grid is a single copper-plate bus: every plant serves every load with no network limits or losses, and every hour is known in advance. Firm plants run anywhere from zero to their availability, with no start-up costs or minimum output, and no reserve margin is held beyond what the typical days need. To allow for it, lower a plant's Availability or turn on the still, overcast peak day."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the still, overcast peak day add to the plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It adds one extra day in the peak season with a quarter of the normal sun and a tenth of the normal wind, standing for 2 days of that season each year. The plan then has to serve peak demand with almost no solar or wind, so it holds more firm capacity or storage. Without it, a plan can lean on solar and wind that the typical days always deliver."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a real and a nominal discount rate here?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All money is at first-year prices, so the plan always runs on a real rate. Real mode takes the Discount rate as typed. Nominal mode converts it as (1 + nominal) divided by (1 + inflation) minus 1, so 10.2% nominal with 3% inflation is about 7% real. At 7%, a cost ten years out counts about 0.51 of the same cost in the first year."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does a plant that retires partway through a decision step keep running?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A decision year counts in whole. A plant in service in it runs, and is paid for, in every year that decision year stands for, which is up to 5 years with the default Years between decisions. So a retirement date or a life ending mid-step runs on to the end of the step. Choosing 1 year between decisions removes this, at the cost of a bigger problem to solve."
       }
     }
   ]
@@ -128,7 +153,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
@@ -139,7 +164,6 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20.5h18"/> <path stroke="var(--accent)" d="M5.5 20.5v-4M10 20.5v-7M14.5 20.5v-10"/> <path stroke="var(--accent2)" d="M19.5 3.5v6M16.5 6.5h6"/> </svg>Capacity Expansion Planner</h1>
-    <p><strong>What to build, and when.</strong> Find the size and timing of new power plants and batteries that meet a growing load, hour by hour, at the least cost.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -527,6 +551,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>How is a whole year of demand represented in the plan?</h3>
+        <p>Each decision year is run hour by hour over typical days of each season, and every hour is weighted by the hours of the year it stands for. A temperate climate has four seasons and a tropical one two. With One typical day, each season is a single weekday. With the 'A weekday and a weekend day' or 'A typical week' choices it is finer, but slower to solve.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does the plan count the capital cost of a new plant?</h3>
+        <p>Capital is paid as an annuity of the overnight cost at the Discount rate (7% real by default) over the plant's life, only for years inside the plan. At 7% a 25-year life costs about 8.6% of the overnight cost a year. The first payment falls in the year it enters service, so a plant that lives out its life inside the plan pays 1.07 times its overnight cost.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the plan include transmission, reserve margin or start-up costs?</h3>
+        <p>No. The grid is a single copper-plate bus: every plant serves every load with no network limits or losses, and every hour is known in advance. Firm plants run anywhere from zero to their availability, with no start-up costs or minimum output, and no reserve margin is held beyond what the typical days need. To allow for it, lower a plant's Availability or turn on the still, overcast peak day.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the still, overcast peak day add to the plan?</h3>
+        <p>It adds one extra day in the peak season with a quarter of the normal sun and a tenth of the normal wind, standing for 2 days of that season each year. The plan then has to serve peak demand with almost no solar or wind, so it holds more firm capacity or storage. Without it, a plan can lean on solar and wind that the typical days always deliver.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the difference between a real and a nominal discount rate here?</h3>
+        <p>All money is at first-year prices, so the plan always runs on a real rate. Real mode takes the Discount rate as typed. Nominal mode converts it as (1 + nominal) divided by (1 + inflation) minus 1, so 10.2% nominal with 3% inflation is about 7% real. At 7%, a cost ten years out counts about 0.51 of the same cost in the first year.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why does a plant that retires partway through a decision step keep running?</h3>
+        <p>A decision year counts in whole. A plant in service in it runs, and is paid for, in every year that decision year stands for, which is up to 5 years with the default Years between decisions. So a retirement date or a life ending mid-step runs on to the end of the step. Choosing 1 year between decisions removes this, at the cost of a bigger problem to solve.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>
@@ -554,7 +609,7 @@
 <script src="../dropdown.js"></script>
 <script src="../chart-kit.js"></script>
 <script src="chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="../solve-cache.js"></script>
 <script src="cx-core.js"></script>

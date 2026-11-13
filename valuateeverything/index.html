@@ -78,29 +78,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/valuateeverything/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I tell if a used car or a house is fairly priced?",
+      "name": "How does it work out a fair price from the listings I enter?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Collect listings of similar items with their price and the features that drive it, such as age and kilometres for a car or bedrooms and land size for a house. A regression fitted to those listings gives the price an item with your features should fetch. The free Valuate Everything tool at https://tool.adjiebrotots.com/valuateeverything/ fits that model and shows how far each asking price sits above or below it."
+        "text": "It fits a least-squares regression to your listings, so a price is explained as the sum of what each feature is worth, such as year, kilometres or land size. The fair price of an item is the model evaluated at that item's features. The gap is the asking price minus the fair price, shown as a share of the fair price. A negative gap means the asking price is below it."
       }
     },
     {
       "@type": "Question",
-      "name": "Why convert a model year into age?",
+      "name": "How are older listing prices adjusted for inflation?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Buyers pay for how old an item is, not for the number on it. A 2020 car sold in 2022 was two years old, the same car sold in 2026 is six. Converting the year to age at the year the listing was seen lets listings from different years be compared fairly."
+        "text": "Each price is lifted to the current year with P × (1 + inflation) raised to the power of the current year minus the listing's data year. A 2023 sale of $515,000 at 3% a year counts as $515,000 × 1.03³ = $562,754 in 2026. This only applies when the table has a Data year column. Without one, every listing is taken as seen this year."
       }
     },
     {
       "@type": "Question",
-      "name": "Can I mix listings from different years?",
+      "name": "Which model should I pick: Linear, Log-linear, Ridge or Quadratic?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Give each listing the year it was seen and the tool lifts older prices to today's money with the inflation rate you set, 3% a year by default, before fitting the model."
+        "text": "Use Linear unless you have a reason. Log-linear makes each feature change the price by a fixed percentage, which suits cars and cameras that lose a share of their value each year. Ridge pulls effects toward zero at the Ridge penalty you set, which steadies a fit with few listings. Quadratic lets one feature bend the line and needs many more listings than features."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many listings do I need before the answer is trustworthy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The tool refuses to fit with fewer than the number of terms plus two complete listings, and warns when a non-Ridge model has fewer than three listings per term plus three. Below that, the fit can chase noise. More listings, fewer features or Ridge steady it. Rows with a blank or unreadable cell are left out, and a feature identical in every listing is dropped."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should I read the range and the typical error?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The range is the fair price plus or minus one typical error (RMSE), which is how far listings scatter around the fitted line. For Log-linear it is the fair price times e to the plus or minus the typical error on the log scale. It is not a confidence interval. A gap smaller than one typical error is inside the normal scatter and does not prove a bargain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the fair price leave out?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It leaves out anything not in your columns, such as condition, history, colour or street. Effects add up with no interaction, so the same kilometres cost a 2019 car what they cost a 2024 one. No outlier is removed, and an item outside the listings' range is flagged as extrapolated. Asking-price listings give what similar items are listed at, not what they sell for."
       }
     }
   ]
@@ -116,7 +141,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
@@ -126,7 +151,6 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3.5 12.5 11.5 4.5h8v8l-8 8z"/> <circle stroke="var(--accent)" cx="15.6" cy="8.4" r="1.4"/> <path stroke="var(--accent2)" d="M8.2 15.8l3-3M10.4 17.4l2.6-2.6"/> </svg>Valuate Everything</h1>
-    <p>What a secondhand item should cost, judged by the listings you have seen. Fit a price model to them, then check the items you want to buy against it.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -378,6 +402,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>How does it work out a fair price from the listings I enter?</h3>
+        <p>It fits a least-squares regression to your listings, so a price is explained as the sum of what each feature is worth, such as year, kilometres or land size. The fair price of an item is the model evaluated at that item's features. The gap is the asking price minus the fair price, shown as a share of the fair price. A negative gap means the asking price is below it.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How are older listing prices adjusted for inflation?</h3>
+        <p>Each price is lifted to the current year with P × (1 + inflation) raised to the power of the current year minus the listing's data year. A 2023 sale of $515,000 at 3% a year counts as $515,000 × 1.03³ = $562,754 in 2026. This only applies when the table has a Data year column. Without one, every listing is taken as seen this year.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which model should I pick: Linear, Log-linear, Ridge or Quadratic?</h3>
+        <p>Use Linear unless you have a reason. Log-linear makes each feature change the price by a fixed percentage, which suits cars and cameras that lose a share of their value each year. Ridge pulls effects toward zero at the Ridge penalty you set, which steadies a fit with few listings. Quadratic lets one feature bend the line and needs many more listings than features.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How many listings do I need before the answer is trustworthy?</h3>
+        <p>The tool refuses to fit with fewer than the number of terms plus two complete listings, and warns when a non-Ridge model has fewer than three listings per term plus three. Below that, the fit can chase noise. More listings, fewer features or Ridge steady it. Rows with a blank or unreadable cell are left out, and a feature identical in every listing is dropped.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How should I read the range and the typical error?</h3>
+        <p>The range is the fair price plus or minus one typical error (RMSE), which is how far listings scatter around the fitted line. For Log-linear it is the fair price times e to the plus or minus the typical error on the log scale. It is not a confidence interval. A gap smaller than one typical error is inside the normal scatter and does not prove a bargain.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the fair price leave out?</h3>
+        <p>It leaves out anything not in your columns, such as condition, history, colour or street. Effects add up with no interaction, so the same kilometres cost a 2019 car what they cost a 2024 one. No outlier is removed, and an item outside the listings' range is flagged as extrapolated. Asking-price listings give what similar items are listed at, not what they sell for.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>
@@ -422,7 +477,7 @@
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="../dropdown.js"></script>
 <script src="../chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="script.js"></script>
 <!--/email_off-->

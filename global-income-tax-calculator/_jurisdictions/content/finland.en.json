@@ -1,0 +1,315 @@
+{
+  "slug": "finland",
+  "lang": "en",
+  "title": "Finland Income Tax 2026: How to Calculate It",
+  "h1": "How to calculate income tax in Finland (2026), Helsinki",
+  "description": "Finnish income tax 2026 for Helsinki: state and municipal tax, church tax, the earned income credit, the 25% key employee regime and two worked examples.",
+  "lede": "<p>Finland taxes residents with a progressive state income tax (12.64% to 37.5%), a flat municipal tax (5.30% in Helsinki), a health care contribution and a Yle tax, less an earned income credit. On €55,000 a Helsinki resident pays about €10,300 in tax plus about €5,000 in pension and insurance contributions, keeping about €39,700 (72.2%). Key employees on a flat 25% regime keep about €59,300 on €90,000.</p>",
+  "law": {
+    "intro": "<p>The figures below are the 2026 rates as the calculator models them, in euros. The page models <strong>Helsinki</strong>, with a municipal tax rate of 5.30%. Municipal rates differ across Finland, and the calculator lets you change it between 4% and 11%.</p>",
+    "blocks": [
+      {
+        "h3": "State and municipal income tax",
+        "html": "<p>State income tax is progressive, with rates rising from 12.64% to 37.5% across five bands. The top band starts at taxable income of €52,100. Municipal tax is a flat rate on taxable income after a basic deduction, and the calculator uses 5.30% for Helsinki. Taxable income is pay after a €750 work expense deduction and after your pension and unemployment contributions.</p>",
+        "cite": [
+          {
+            "name": "Vero.fi, Ansiotulot: valtion tuloveroasteikko 2026 (state income tax scale)",
+            "url": "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko"
+          },
+          {
+            "name": "Vero.fi, Kommunernas och församlingarnas inkomstskattesatser 2026",
+            "url": "https://www.vero.fi/sv/Detaljerade_skatteanvisningar/beslut/47465/kommunernas-och-forsamlingarnas-inkomstskattesatser-ar-2026/"
+          },
+          {
+            "name": "Vero.fi, Deductions calculated automatically by the Tax Administration",
+            "url": "https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Deduction%20for%20the%20production%20of%20income"
+          },
+          {
+            "name": "KPMG, Taxation of international executives: Finland (Helsinki 5.30% in 2026)",
+            "url": "https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2023/01/TIES-Finland.pdf.coredownload.inline.pdf"
+          }
+        ]
+      },
+      {
+        "h3": "Contributions deducted from your pay",
+        "html": "<p>Employees pay TyEL pension at 7.30% of pay, unemployment insurance at 0.89%, and a sickness daily allowance contribution of 0.88% once pay passes €17,255 a year. These come off pay before tax is worked out.</p>",
+        "cite": [
+          {
+            "name": "Vero.fi, Social insurance contributions",
+            "url": "https://www.vero.fi/en/businesses-and-corporations/taxes-and-charges/being-an-employer/social-insurance-contributions/"
+          },
+          {
+            "name": "Vero.fi, Tax bases for earned income in 2026",
+            "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+          }
+        ]
+      },
+      {
+        "h3": "Health care contribution, Yle tax and church tax",
+        "html": "<p>A health care contribution of 1.10% of taxable income is charged with income tax. The Yle tax is a broadcasting tax capped at €160 a year. If you belong to a church, church tax is added at a percentage your parish sets, and the calculator has a field for it, set to zero by default.</p>",
+        "cite": [
+          {
+            "name": "Vero.fi, Tax bases for earned income in 2026",
+            "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+          },
+          {
+            "name": "Vero.fi, Tax bases 2026: Public Broadcasting Tax",
+            "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Public%20Broadcasting%20Tax"
+          },
+          {
+            "name": "Vero.fi, Earned income (municipal and church tax)",
+            "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/#:~:text=municipal%20tax%20and%20church%20tax"
+          }
+        ]
+      },
+      {
+        "h3": "Earned income credit",
+        "html": "<p>A tax credit for people who work reduces the taxes above. The calculator spreads it over state, municipal, church and health care tax in proportion, the way the tax administration does, and it cannot take the total below zero.</p>",
+        "cite": [
+          {
+            "name": "Vero.fi, Employment income credit (deductions calculated automatically)",
+            "url": "https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Employment%20income%20credit"
+          }
+        ]
+      },
+      {
+        "h3": "The key employee regime",
+        "html": "<p>Key employees who qualify can pay a flat 25% on their pay instead of ordinary income tax. The calculator requires monthly pay of at least €5,800 (€69,600 a year) and still charges the pension and insurance contributions. Eligibility and the application go through the Finnish Tax Administration, and the regime has a time limit.</p>",
+        "cite": [
+          {
+            "name": "Vero.fi, Key employees from other countries",
+            "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months"
+          },
+          {
+            "name": "Vero.fi, Taxation of key employees (detailed guidance)",
+            "url": "https://www.vero.fi/en/detailed-guidance/guidance/106825/taxation-of-key-employees4/"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "Vero.fi, Ansiotulot: valtion tuloveroasteikko 2026 (state income tax scale)",
+        "url": "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko"
+      },
+      {
+        "name": "Vero.fi, Tax bases for earned income in 2026",
+        "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+      },
+      {
+        "name": "Vero.fi, Social insurance contributions",
+        "url": "https://www.vero.fi/en/businesses-and-corporations/taxes-and-charges/being-an-employer/social-insurance-contributions/"
+      },
+      {
+        "name": "Vero.fi, Kommunernas och församlingarnas inkomstskattesatser 2026",
+        "url": "https://www.vero.fi/sv/Detaljerade_skatteanvisningar/beslut/47465/kommunernas-och-forsamlingarnas-inkomstskattesatser-ar-2026/"
+      },
+      {
+        "name": "Vero.fi, Key employees from other countries",
+        "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months"
+      },
+      {
+        "name": "Vero.fi, Deductions calculated automatically by the Tax Administration",
+        "url": "https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Deduction%20for%20the%20production%20of%20income"
+      },
+      {
+        "name": "Vero.fi, Yleisradiovero (public broadcasting tax guidance)",
+        "url": "https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48391/yleisradiovero5/"
+      },
+      {
+        "name": "KPMG, Taxation of international executives: Finland (Helsinki 5.30% in 2026)",
+        "url": "https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2023/01/TIES-Finland.pdf.coredownload.inline.pdf"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "Vero.fi, Kommunernas och församlingarnas inkomstskattesatser 2026",
+        "url": "https://www.vero.fi/sv/Detaljerade_skatteanvisningar/beslut/47465/kommunernas-och-forsamlingarnas-inkomstskattesatser-ar-2026/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident-helsinki",
+      "title": "How to calculate income tax in Helsinki on a €55,000 salary",
+      "intro": "<p>This is a Helsinki resident on €55,000. First the contributions come out of pay: €4,015 TyEL pension, €489.50 unemployment insurance and €484 sickness allowance contribution. Then state tax, 5.30% municipal tax, the health care contribution and the €160 Yle tax are worked out, and the earned income credit (€3,119) reduces them. Tax comes to about €7,732 state, €1,997 municipal, €414 health care and €160 Yle. You keep about €39,708, or 72.2% of gross.</p>",
+      "after": "<p>Your marginal rate is 45.1%, higher than the 5.30% municipal rate suggests, because state tax is in a high band and contributions and the credit taper all count. Church members would add their church tax on top.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Ansiotulot: valtion tuloveroasteikko 2026 (state income tax scale)",
+          "url": "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko"
+        },
+        {
+          "name": "Vero.fi, Tax bases for earned income in 2026",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+        },
+        {
+          "name": "Vero.fi, Social insurance contributions",
+          "url": "https://www.vero.fi/en/businesses-and-corporations/taxes-and-charges/being-an-employer/social-insurance-contributions/"
+        },
+        {
+          "name": "KPMG, Taxation of international executives: Finland (Helsinki 5.30% in 2026)",
+          "url": "https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2023/01/TIES-Finland.pdf.coredownload.inline.pdf"
+        }
+      ]
+    },
+    {
+      "key": "key-employee",
+      "title": "Finland key employee tax: what does €90,000 pay at 25%?",
+      "intro": "<p>This is a key employee on €90,000, above the €69,600 minimum. The flat 25% tax is €22,500. Contributions still apply: €6,570 TyEL pension, €801 unemployment insurance and €792 sickness allowance contribution. You keep about €59,337, or 65.9% of gross.</p>",
+      "after": "<p>The marginal rate is 34.1%: the 25% flat tax plus the 9.07% of contributions. Whether the regime saves you money depends on your pay and on your deductions, so compare it with ordinary tax in the calculator.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Key employees from other countries",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to manage Finnish tax. Which ones apply depends on your status.</p>",
+  "strategies": [
+    {
+      "h3": "Apply for the key employee regime if you qualify",
+      "html": "<p><strong>Suits:</strong> foreign experts and key employees with monthly pay above the threshold, recruited from abroad.</p><p><strong>Caveat:</strong> it is a time-limited regime with conditions, and a flat 25% gives no deductions or credits. Confirm eligibility with the Finnish Tax Administration.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Key employees from other countries",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months"
+        },
+        {
+          "name": "Vero.fi, Taxation of key employees (detailed guidance)",
+          "url": "https://www.vero.fi/en/detailed-guidance/guidance/106825/taxation-of-key-employees4/"
+        }
+      ]
+    },
+    {
+      "h3": "Set the withholding percentage on your tax card",
+      "html": "<p><strong>Suits:</strong> anyone with several jobs or a changing income. The tax card carries a withholding percentage your employer uses. A card that is too low causes a tax bill the following year, and one that is too high gives a refund.</p><p><strong>Caveat:</strong> changing the card changes only when you pay, not your final tax.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Tax rate and income ceiling",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/#:~:text=income%20ceiling"
+        }
+      ]
+    },
+    {
+      "h3": "Claim travel and work expense deductions",
+      "html": "<p><strong>Suits:</strong> employees with long commutes or work costs above the standard deduction. The calculator applies a flat €750 deduction, and a larger amount can be claimed when you can document it.</p><p><strong>Caveat:</strong> deductions apply above set thresholds and you need records.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Commuting expenses",
+          "url": "https://www.vero.fi/en/individuals/deductions/travel-expenses/commuting-expenses/"
+        },
+        {
+          "name": "Vero.fi, Deductions calculated automatically by the Tax Administration",
+          "url": "https://www.vero.fi/en/individuals/deductions/what-can-I-deduct/these-deductions-are-calculated-automatically-by-the-tax-administration/#:~:text=Deduction%20for%20the%20production%20of%20income"
+        }
+      ]
+    },
+    {
+      "h3": "Think about church membership",
+      "html": "<p><strong>Suits:</strong> people who belong to a church only by registration. Church tax is a percentage of taxable income, set by the parish, and leaving the church ends it.</p><p><strong>Caveat:</strong> membership has religious and civic consequences you may want to consider before changing it.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Earned income (municipal and church tax)",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/#:~:text=municipal%20tax%20and%20church%20tax"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Helsinki only.</strong> The default municipal rate is 5.30%. Change it in the calculator for another municipality.",
+    "<strong>Employment income only.</strong> It models one salary for a full year. Capital income, a business and a part year are not included.",
+    "<strong>Church tax is optional.</strong> It is zero unless you enter a rate.",
+    "<strong>Simplified deductions.</strong> The calculator applies the standard work expense deduction, not your real deductions.",
+    "<strong>You choose the regime.</strong> It does not test whether you qualify as a key employee or a Finnish tax resident.",
+    "<strong>No bonuses, equity or tax treaties.</strong> Share options and foreign tax credits are not modelled."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on €55,000 in Helsinki?",
+      "a": "<p>A resident pays about €10,300 in state tax, municipal tax, the health care contribution and Yle tax, plus about €4,990 in pension and insurance contributions, and keeps about €39,700. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Ansiotulot: valtion tuloveroasteikko 2026 (state income tax scale)",
+          "url": "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko"
+        },
+        {
+          "name": "Vero.fi, Tax bases for earned income in 2026",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+        }
+      ]
+    },
+    {
+      "q": "What is the withholding percentage on a Finnish tax card?",
+      "a": "<p>The tax card (verokortti) gives your employer a withholding percentage to use on each payment. The Finnish Tax Administration sets it from your expected income, and you can change it during the year. The final tax is settled after the tax assessment the following year, with a refund or a bill for the difference.</p><p>The calculator works out the full-year tax, so a monthly payslip can differ from it.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Tax rate and income ceiling",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/#:~:text=income%20ceiling"
+        }
+      ]
+    },
+    {
+      "q": "Do I pay church tax in Finland?",
+      "a": "<p>Only if you are a member of the Evangelical Lutheran or Orthodox church. The parish sets the rate and it is charged on taxable income. The calculator has a church tax field, set to zero by default, and the examples assume no membership.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Earned income (municipal and church tax)",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/income/earned-income/#:~:text=municipal%20tax%20and%20church%20tax"
+        }
+      ]
+    },
+    {
+      "q": "What is the key employee tax regime?",
+      "a": "<p>It is a flat 25% income tax for qualifying foreign experts in place of ordinary tax. The calculator needs pay of at least €5,800 a month and still charges pension and insurance contributions. The 25% is final, with no deductions.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Key employees from other countries",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/arriving_in_finland/work_in_finland/specific-instructions-for-different-occupations/key_employees_from_other_countrie/#:~:text=84%20months"
+        },
+        {
+          "name": "Vero.fi, Taxation of key employees (detailed guidance)",
+          "url": "https://www.vero.fi/en/detailed-guidance/guidance/106825/taxation-of-key-employees4/"
+        }
+      ]
+    },
+    {
+      "q": "Why is my marginal tax rate so high in Finland?",
+      "a": "<p>Several layers stack up: the state tax band, the municipal rate, the health care contribution, pension and insurance contributions, and a credit that tapers as pay rises. At €55,000 the calculator shows a marginal rate of 45.1%, even though the municipal rate is only 5.30%.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Ansiotulot: valtion tuloveroasteikko 2026 (state income tax scale)",
+          "url": "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/#tuloveroasteikko"
+        },
+        {
+          "name": "Vero.fi, Tax bases for earned income in 2026",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Health%20care%20contribution"
+        },
+        {
+          "name": "KPMG, Taxation of international executives: Finland (Helsinki 5.30% in 2026)",
+          "url": "https://assets.kpmg.com/content/dam/kpmgsites/xx/pdf/2023/01/TIES-Finland.pdf.coredownload.inline.pdf"
+        }
+      ]
+    },
+    {
+      "q": "What is the Yle tax?",
+      "a": "<p>The Yle tax pays for public broadcasting. It is a percentage of income with a cap of €160 a year, and the calculator charges the cap at €55,000.</p>",
+      "cite": [
+        {
+          "name": "Vero.fi, Tax bases 2026: Public Broadcasting Tax",
+          "url": "https://www.vero.fi/en/individuals/tax-cards-and-tax-returns/tax_card/tax-rate-and-income-ceiling/tax-bases/#:~:text=Public%20Broadcasting%20Tax"
+        },
+        {
+          "name": "Vero.fi, Yleisradiovero (public broadcasting tax guidance)",
+          "url": "https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48391/yleisradiovero5/"
+        }
+      ]
+    },
+    {
+      "q": "How does Finland compare with other Nordic countries?",
+      "a": "<p>See the pages for <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/norway/\">Norway</a>, <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/\">Sweden</a> and <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/\">Estonia</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a coffee."
+}

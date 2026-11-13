@@ -79,37 +79,46 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/financialfreedom/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How much money do I need to be financially free?",
+      "name": "Where do the return and volatility presets come from?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Use the free Financial Freedom Calculator at https://tool.adjiebrotots.com/financialfreedom/. Enter your spending, your saving, your expected return and inflation, and it gives you the pot you need in today's money. The number depends on what you want the money to do: run out exactly when you die, leave a set amount behind, or last forever."
+        "text": "Each preset is a long-run nominal figure, before tax and fees, as of 2026-09: global diversified shares 8.5% with 15% volatility, United States shares 10% and 15.5%, Australian shares 9.5% and 16%, government bonds 5% and 6%, gold 7.5% and 17%. The US figure is the S&P 500 total return from 1928; gold starts in 1971.\n\nThe cash preset is 4% with 1% volatility, a current savings rate rather than a long-run one. Cash has historically beaten inflation by only about 0.5 to 1%, so treat it as generous."
       }
     },
     {
       "@type": "Question",
-      "name": "When can I stop working?",
+      "name": "How is the amount needed to stop work worked out, and why is it not simply 25 times spending?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The Financial Freedom Calculator plots two curves: what you will have saved at each age, and the pot you would need if you stopped at that age. Where they cross is the earliest age you can stop. Free and fully in your browser at https://tool.adjiebrotots.com/financialfreedom/."
+        "text": "The tool finds the smallest pot that never runs out before the life expectancy, month by month, with spending taken at the start of each month. For Just Die at a constant return this is the present value of an annuity due: monthly spending at retirement, over the months to life expectancy, discounted at the real monthly return.\n\nThe 25 times rule is the same arithmetic at a 4% real return. Here the real return uses Fisher, not subtraction (8.5% with 2.5% inflation is 5.85%), and the FIRE number shows the withdrawal rate it implies."
       }
     },
     {
       "@type": "Question",
-      "name": "What is my FIRE number?",
+      "name": "Does the freedom age allow for tax and fees?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Your FIRE number is the pot that funds your spending without you working. The familiar 25 times spending rule is one case of it, the case where your return beats inflation by 4 percent a year. The Financial Freedom Calculator at https://tool.adjiebrotots.com/financialfreedom/ works it out from your own return and inflation assumptions instead of a rule of thumb."
+        "text": "No tax is modelled at all, and fees only count through the return you enter. The Expected return (CAGR) and the Savings or Net income you type are taken as already after tax, so enter pay after tax and a return after fund fees.\n\nTax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly. If tax on withdrawals is large, lower the return a point or two and treat the age as optimistic."
       }
     },
     {
       "@type": "Question",
-      "name": "Will my money last if I retire early?",
+      "name": "Which input moves the retirement age the most?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A single average return hides the risk that the bad years land just as you stop working. The Financial Freedom Calculator works out the spread of futures from your return and your volatility, weighing a bad year by how much money it hits, to give a success probability, and shows the pot needed for 90 percent confidence. Free at https://tool.adjiebrotots.com/financialfreedom/."
+        "text": "The real return, set by Inflation and the Expected return (CAGR) together. On the Moderate FIRE plan, free at 44y 4m, one point more inflation adds 2.8 years and one point less return adds 2.1 years.\n\nYour own levers are smaller: 10% less spending or 10% more Savings moves it about a year. Spending cuts also shrink the pot needed for every retired year, so they do slightly more than saving more. Test your plan at a real return a point lower."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is Chance it works calculated without running thousands of simulations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is worked out directly, not simulated. Returns are lognormal and independent month to month, and each month counts by the money exposed in it, so a bad year near stopping hurts most. Checked against 5,000 simulated futures, the 90% confidence pot agreed to about 1% and the chance to about a point.\n\nVolatility moves the age only once you ask for caution: at the default Investment outcome chance of 50% it is ignored, at 90% each 5 points shifts it about 2 years."
       }
     }
   ]
@@ -127,7 +136,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
@@ -138,7 +147,6 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20h18"/> <path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/> <path stroke="var(--accent2)" d="M18 5v9"/> <path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/> </svg>Financial Freedom Calculator</h1>
-    <p>How much is enough to stop working, and the age you actually get there.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -628,6 +636,38 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Where do the return and volatility presets come from?</h3>
+        <p>Each preset is a long-run nominal figure, before tax and fees, as of 2026-09: global diversified shares 8.5% with 15% volatility, United States shares 10% and 15.5%, Australian shares 9.5% and 16%, government bonds 5% and 6%, gold 7.5% and 17%. The US figure is the S&amp;P 500 total return from 1928; gold starts in 1971.</p>
+        <p>The cash preset is 4% with 1% volatility, a current savings rate rather than a long-run one. Cash has historically beaten inflation by only about 0.5 to 1%, so treat it as generous.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is the amount needed to stop work worked out, and why is it not simply 25 times spending?</h3>
+        <p>The tool finds the smallest pot that never runs out before the life expectancy, month by month, with spending taken at the start of each month. For Just Die at a constant return this is the present value of an annuity due: monthly spending at retirement, over the months to life expectancy, discounted at the real monthly return.</p>
+        <p>The 25 times rule is the same arithmetic at a 4% real return. Here the real return uses Fisher, not subtraction (8.5% with 2.5% inflation is 5.85%), and the FIRE number shows the withdrawal rate it implies.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the freedom age allow for tax and fees?</h3>
+        <p>No tax is modelled at all, and fees only count through the return you enter. The Expected return (CAGR) and the Savings or Net income you type are taken as already after tax, so enter pay after tax and a return after fund fees.</p>
+        <p>Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly. If tax on withdrawals is large, lower the return a point or two and treat the age as optimistic.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which input moves the retirement age the most?</h3>
+        <p>The real return, set by Inflation and the Expected return (CAGR) together. On the Moderate FIRE plan, free at 44y 4m, one point more inflation adds 2.8 years and one point less return adds 2.1 years.</p>
+        <p>Your own levers are smaller: 10% less spending or 10% more Savings moves it about a year. Spending cuts also shrink the pot needed for every retired year, so they do slightly more than saving more. Test your plan at a real return a point lower.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is Chance it works calculated without running thousands of simulations?</h3>
+        <p>It is worked out directly, not simulated. Returns are lognormal and independent month to month, and each month counts by the money exposed in it, so a bad year near stopping hurts most. Checked against 5,000 simulated futures, the 90% confidence pot agreed to about 1% and the chance to about a point.</p>
+        <p>Volatility moves the age only once you ask for caution: at the default Investment outcome chance of 50% it is ignored, at 90% each 5 points shifts it about 2 years.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>
@@ -653,7 +693,7 @@
 
 <script src="../chart-kit.js"></script>
 <script src="chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>

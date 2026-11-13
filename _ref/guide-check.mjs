@@ -13,9 +13,13 @@
         of its own, no analytics),
      D. fetches the solver (a run it starts was not solved ahead: run
         node _ref/presolve.mjs), or
-     E. changes the reader's own storage on the guide page.
+     E. changes the reader's own storage on the guide page, or
+     F. (an Indonesian guide) opens a page that is not in Indonesian.
 
    The screen's still scene must outline every part it names.
+
+   A tool whose guide has an Indonesian twin (<tool>/guides/id/scenes.js, the same scenes
+   played against the tool's id/ pages through guide-id.js) is checked in both languages.
 
    Run: node _ref/guide-check.mjs [tool ...]   (REAL=1: at a reader's pace, not at once)
 */
@@ -49,8 +53,19 @@ const browser = await chromium.launch();
 let failed = 0, passed = 0;
 const fail = (msg) => { console.log('FAIL ' + msg); failed++; };
 
+// Each guide of a tool: the English one, and its Indonesian twin when it has one.
+const GUIDES = [];
 for (const tool of TOOLS) {
   if (!existsSync(join(ROOT, tool, 'guides', 'scenes.js'))) { fail(tool + ': no guides/scenes.js'); continue; }
+  GUIDES.push({ tool, dir: tool + '/guides/', name: tool });
+  if (existsSync(join(ROOT, tool, 'guides', 'id', 'index.html'))) {
+    if (!existsSync(join(ROOT, tool, 'guides', 'id', 'scenes.js'))) fail(tool + ': guides/id/ has no scenes.js');
+    else GUIDES.push({ tool, dir: tool + '/guides/id/', name: tool + ' [id]' });
+  }
+}
+
+for (const { dir, name: tool } of GUIDES) {
+  const idGuide = dir.endsWith('/id/');
   for (const theme of ['light', 'dark']) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     // The libraries from cdnjs load as for a reader; analytics and the rest of the web do not.
@@ -64,7 +79,7 @@ for (const tool of TOOLS) {
     page.on('request', r => { if (/highs\.wasm/.test(r.url())) solver.push(r.frame().name() || r.url()); });
     const pageErrors = [];
     page.on('pageerror', e => pageErrors.push(e.message));
-    await page.goto(base + tool + '/guides/');
+    await page.goto(base + dir);
     const scenes = await page.evaluate(() => GuideLive.ready.then(() => GuideLive.scenes.SCENES.map(s => ({ name: s.name, still: !!s.still }))));
     const onPage = await page.evaluate(() => GuideLive.demos.map(d => d.name));
     for (const n of onPage) if (!scenes.some(s => s.name === n)) fail(`${tool} (${theme}): the page has a demo "${n}" with no scene`);
@@ -76,7 +91,7 @@ for (const tool of TOOLS) {
       const n0 = solver.length;
       const r = await page.evaluate(([n, fast]) => GuideLive.run(n, { fast, keep: true }), [sc.name, FAST]);
       const frame = page.frames().find(f => f !== page.mainFrame() && /[?&]demo(&|$)/.test(f.url()));
-      const demo = frame ? await frame.evaluate(() => ({ demo: !!window.ABT_DEMO, store: !!(localStorage && localStorage.__demo), ga: !!window['ga-disable-G-VYTV157ST0'] })) : null;
+      const demo = frame ? await frame.evaluate(() => ({ demo: !!window.ABT_DEMO, store: !!(localStorage && localStorage.__demo), ga: !!window['ga-disable-G-VYTV157ST0'], lang: document.documentElement.lang || '' })) : null;
       const boxes = sc.still ? await page.evaluate(n => [...document.querySelectorAll(`.gd-shot-frame[data-shot="${n}"] .gd-box`)]
         .map(b => b.getBoundingClientRect()).filter(b => b.width < 4 || b.height < 4).length, sc.name) : 0;
       await page.evaluate(n => GuideLive.demos.find(d => d.name === n).stop(), sc.name);
@@ -88,6 +103,7 @@ for (const tool of TOOLS) {
       if (errs.length) bad.push('the tool threw: ' + errs.slice(0, 3).join(' | '));
       if (!demo || !demo.demo || !demo.store || !demo.ga) bad.push('the tool did not open in demo mode (guide-demo.js in its <head>)');
       if (solver.length > n0) bad.push('fetched the solver (run node _ref/presolve.mjs)');
+      if (idGuide && demo && !/^id\b/i.test(demo.lang)) bad.push(`opened a page in "${demo.lang}", not the Indonesian one`);
       if (boxes) bad.push(boxes + ' part(s) of the screen not outlined');
       if (bad.length) fail(label + ': ' + bad.join('; '));
       else { passed++; console.log(`PASS ${label}` + (sc.still ? '' : `: ${r.marks.length} steps, ${(r.ms / 1000).toFixed(1)} s`)); }

@@ -1,0 +1,362 @@
+{
+  "slug": "taiwan",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan Taiwan (Tiongkok) 2026",
+  "h1": "Cara menghitung pajak penghasilan di Taiwan (Tiongkok) untuk 2026",
+  "description": "Hitung pajak penghasilan Taiwan (Tiongkok) 2026 untuk penduduk, non-resident dan pemegang Gold Card: aturan 183 hari, tarif, pemotongan 18%, tiga contoh.",
+  "lede": "<p>Taiwan (Tiongkok) mengenakan pajak penghasilan progresif 5% sampai 40% atas gaji penduduk pajak (<em>resident</em>, di Indonesia disebut subjek pajak dalam negeri) setelah dikurangi berbagai potongan, sedangkan iuran jaminan sosialnya kecil. Penduduk dengan gaji NT$1.200.000 setahun membayar pajak NT$45.620 dan menerima gaji bersih (<em>take-home pay</em>) sekitar NT$1.122.028, atau 93,5%. Kamu menjadi penduduk pajak kalau tinggal di Taiwan 183 hari atau lebih dalam satu tahun kalender. Sebelum itu, kamu dianggap <em>non-resident</em> dan gajimu dipotong 18% untuk kebanyakan gaji. Potongan itu final hanya kalau kamu tetap <em>non-resident</em>, dan kalau kamu melewati 183 hari, pajakmu dihitung ulang dan kelebihannya dikembalikan pada Mei.</p>",
+  "law": {
+    "introCite": [
+      {
+        "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+      }
+    ],
+    "intro": "<p>Angka di bagian ini memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan. Taiwan menentukan status penduduk pajak dari jumlah hari, bukan dari visa, mirip patokan 183 hari di UU PPh Indonesia. Kalau kamu berada di Taiwan 183 hari atau lebih dalam satu tahun kalender, kamu penduduk pajak untuk tahun itu dan gaji dari pekerjaan di Taiwan dikenai tarif progresif. Kalau kurang dari itu, kamu <em>non-resident</em> dan dikenai pajak dengan tarif tunggal. Tahun pajaknya tahun kalender, dan laporannya diserahkan pada Mei tahun berikutnya, jadi lebih lambat daripada batas SPT Tahunan di Indonesia yang jatuh pada akhir Maret.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak untuk penduduk",
+        "cite": [
+          {
+            "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+          },
+          {
+            "name": "Portal eTax MOF, tabel pembebasan dan potongan",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+          }
+        ],
+        "html": "<p>Tarif dikenakan pada penghasilan neto kena pajak. Angka ini adalah gaji dikurangi potongan khusus gaji (paling banyak NT$227.000, fungsinya mirip biaya jabatan), potongan standar (NT$136.000 untuk orang lajang dan NT$272.000 untuk pasangan menikah) dan pembebasan pribadi (NT$101.000 per orang dalam hitungan ini, dengan tambahan per anak yang bisa kamu isi). Potongan standar dan pembebasan pribadi bersama-sama berperan seperti PTKP.</p>",
+        "table": {
+          "head": [
+            "Penghasilan neto kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "Sampai NT$610.000",
+              "5%"
+            ],
+            [
+              "NT$610.001 sampai NT$1.380.000",
+              "12%"
+            ],
+            [
+              "NT$1.380.001 sampai NT$2.770.000",
+              "20%"
+            ],
+            [
+              "NT$2.770.001 sampai NT$5.190.000",
+              "30%"
+            ],
+            [
+              "Di atas NT$5.190.000",
+              "40%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Pajak untuk <em>non-resident</em>",
+        "cite": [
+          {
+            "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+          },
+          {
+            "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+            "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+          }
+        ],
+        "html": "<p>Kalau kamu berada di Taiwan kurang dari 183 hari dalam tahun kalender, pemberi kerja memotong gajimu dengan tarif tunggal tanpa potongan apa pun. <em>Tool</em> memakai 6% bila gaji bulanan sampai NT$44.250 dan 18% bila lebih. Pemotongan itu final hanya bagi yang tetap <em>non-resident</em> sampai akhir tahun. Kalau kamu melewati 183 hari di tahun kalender yang sama, kamu melapor sebagai penduduk pajak pada Mei, pajakmu dihitung ulang dan kelebihan potongan dikembalikan.</p>",
+        "table": null
+      },
+      {
+        "h3": "Keringanan Gold Card",
+        "cite": [
+          {
+            "name": "Basis Data Peraturan RRT, UU Perekrutan dan Pekerjaan Profesional Asing",
+            "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+          },
+          {
+            "name": "Biro Pajak Nasional Taipei, keringanan pajak profesional spesialis asing",
+            "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+          }
+        ],
+        "html": "<p>Pemegang Employment Gold Card, kartu untuk tenaga profesional asing, boleh mengecualikan separuh gaji di atas NT$3.000.000 dari penghasilan kena pajak menurut Undang-Undang Tenaga Profesional Asing (<em>Foreign Professionals Act</em>). <em>Tool</em> menerapkannya pada gaji setelah potongan khusus gaji. Keringanan ini terbatas waktunya, jadi tanyakan ke National Taxation Bureau berapa lama berlaku untukmu.</p>",
+        "table": null
+      },
+      {
+        "h3": "Jaminan sosial",
+        "cite": [
+          {
+            "name": "Bureau of Labor Insurance, kalkulator premi (asuransi tenaga kerja 11,5%, asuransi kerja 1%, batas NT$45.800)",
+            "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+          },
+          {
+            "name": "NHIA, tabel premi (tarif 5,17%, batas atas NT$313.000)",
+            "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf"
+          },
+          {
+            "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+            "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+          }
+        ],
+        "html": "<p>Karyawan membayar asuransi tenaga kerja (11,5%) dan asuransi kerja (1%), total 12,5% dengan porsi karyawan 20% atas gaji sampai NT$45.800 per bulan, serta asuransi kesehatan nasional (tarif 5,17%, porsi karyawan 30%, atas gaji sampai NT$313.000 per bulan). Pekerja asing baru ikut asuransi kerja kalau menikah dengan warga Taiwan yang punya registrasi rumah tangga atau, sejak 2026, memegang izin tinggal tetap; selain itu hanya 11,5% yang berlaku, sedikit lebih kecil daripada yang dihitung kalkulator. Padanannya di Indonesia kira-kira BPJS Ketenagakerjaan dan BPJS Kesehatan. Iurannya kecil karena ada batas atas, dan pemberi kerja menanggung porsi yang lebih besar di luar potongan dari gajimu.</p>",
+        "table": null
+      }
+    ],
+    "sources": [
+      {
+        "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate",
+        "note": "tarif progresif 5% sampai 40%"
+      },
+      {
+        "name": "Portal eTax MOF, tabel pembebasan dan potongan",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction",
+        "note": "pembebasan dan potongan"
+      },
+      {
+        "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25",
+        "note": "pemotongan untuk non-resident"
+      },
+      {
+        "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+        "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident",
+        "note": "aturan residensi 183 hari"
+      },
+      {
+        "name": "Basis Data Peraturan RRT, UU Perekrutan dan Pekerjaan Profesional Asing",
+        "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars",
+        "note": "keringanan Gold Card"
+      },
+      {
+        "name": "Bureau of Labor Insurance, kalkulator premi (asuransi tenaga kerja 11,5%, asuransi kerja 1%, batas NT$45.800)",
+        "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1",
+        "note": "premi asuransi tenaga kerja"
+      },
+      {
+        "name": "NHIA, tabel premi (tarif 5,17%, batas atas NT$313.000)",
+        "url": "https://www.nhi.gov.tw/ch/dl-93508-d686c1e5bad442a08382e5eb648ae512-1.pdf",
+        "note": "premi asuransi kesehatan nasional"
+      },
+      {
+        "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+        "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Portal eTax MOF, tabel pembebasan dan potongan",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+        },
+        {
+          "name": "Bureau of Labor Insurance, kalkulator premi (asuransi tenaga kerja 11,5%, asuransi kerja 1%, batas NT$45.800)",
+          "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+        }
+      ],
+      "title": "Cara menghitung pajak di Taiwan (Tiongkok) untuk penduduk bergaji NT$1.200.000",
+      "intro": "<p>Contoh ini untuk penduduk pajak lajang dengan gaji NT$1.200.000 setahun. Potongan khusus gaji sebesar NT$227.000, sedangkan pembebasan dan potongan standar bersama-sama mencapai NT$237.000, sehingga penghasilan neto kena pajaknya NT$736.000. Angka itu masuk lapisan 12%, jadi pajaknya menjadi NT$45.620. Asuransi tenaga kerja memotong NT$13.740 dan asuransi kesehatan NT$18.612. Gaji bersihmu menjadi sekitar NT$1.122.028, atau 93,5% dari gaji kotor.</p>",
+      "after": "<p>Tarif marjinalnya 13,6%. Iuran jaminan sosial kecil karena ada batas atas, dan dalam model ini tidak ada iuran pensiun yang dipotong dari gaji.</p>"
+    },
+    {
+      "key": "non-resident",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+        }
+      ],
+      "title": "Pajak <em>non-resident</em> di Taiwan (Tiongkok): berapa potongan 18% dari gaji NT$600.000?",
+      "intro": "<p>Contoh ini untuk <em>non-resident</em> yang dibayar NT$600.000 setahun dan belum tinggal 183 hari di Taiwan dalam tahun kalender itu. Gaji bulanannya di atas NT$44.250, sehingga gajinya dipotong 18%, yaitu NT$108.000, tanpa potongan apa pun, dan pemotongan itu final kalau kamu tetap <em>non-resident</em>. Sebagai pekerja asing di luar asuransi kerja, asuransi tenaga kerja memotong NT$12.641 dan asuransi kesehatan NT$9.306. Gaji bersihmu menjadi sekitar NT$470.053, atau 78,3% dari gaji kotor.</p>",
+      "after": "<p>Kalau kamu melewati 183 hari dalam tahun itu, kamu melapor sebagai penduduk pajak pada Mei dan gaji yang sama dihitung dengan tarif progresif. Kelebihan pemotongan dikembalikan, jadi bagi pendatang yang menetap, potongan 18% pada dasarnya hanya menekan arus kas sementara. Penduduk dengan gaji NT$600.000 yang sama hanya membayar pajak penghasilan sekitar NT$6.800.</p>"
+    },
+    {
+      "key": "gold-card",
+      "cite": [
+        {
+          "name": "Basis Data Peraturan RRT, UU Perekrutan dan Pekerjaan Profesional Asing",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Kementerian Tenaga Kerja Taiwan, kepesertaan asuransi kerja bagi pekerja asing",
+          "url": "https://www.mol.gov.tw/1607/1632/1640/45895/"
+        }
+      ],
+      "title": "Berapa pajak pemegang Gold Card di Taiwan (Tiongkok) dengan gaji NT$5.000.000?",
+      "intro": "<p>Contoh ini untuk penduduk pajak pemegang Gold Card dengan gaji NT$5.000.000. Setelah potongan khusus gaji, gajinya NT$4.773.000. Separuh dari bagian di atas NT$3.000.000 (NT$886.500) dikecualikan, dan pembebasan serta potongan standar NT$237.000 dikurangkan juga. Penghasilan neto kena pajak sebesar NT$3.649.500 itu dikenai pajak NT$664.750. Asuransi kesehatan memotong NT$58.256 dan asuransi tenaga kerja, tanpa asuransi kerja, NT$12.641. Gaji bersihmu menjadi sekitar NT$4.264.354, atau 85,3% dari gaji kotor.</p>",
+      "after": "<p>Tanpa pengecualian Gold Card, gaji yang sama akan dikenai pajak NT$930.700, jadi keringanan ini bernilai NT$265.950. Tarif marjinal untuk tambahan gaji adalah 15,0%, separuh dari lapisan 30%.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Beberapa langkah berikut legal dan lazim dipakai, dan mana yang cocok bergantung pada status tinggal dan visamu.</p>",
+  "strategies": [
+    {
+      "h3": "Hitung jumlah harimu dan lapor sebagai penduduk pajak",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        },
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang datang atau pulang di tengah tahun kalender, termasuk pekerja migran yang tiba pada pertengahan tahun. Status penduduk pajak bergantung pada 183 hari dalam tahun kalender, bukan pada tanggal mulai kerja. Kalau kamu melewati 183 hari, kamu bisa melapor pada Mei sebagai penduduk pajak dan meminta kembali kelebihan potongan tarif <em>non-resident</em>.</p><p><strong>Perlu diingat:</strong> kamu butuh izin tinggal dan nomor pajak untuk melapor, dan harus menyimpan catatan masuk dan keluarmu. Rencanakan tanggal kedatangan dan kepulangan dengan memperhatikan batas 183 hari.</p>"
+    },
+    {
+      "h3": "Ajukan keringanan Employment Gold Card",
+      "cite": [
+        {
+          "name": "Basis Data Peraturan RRT, UU Perekrutan dan Pekerjaan Profesional Asing",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "Biro Pajak Nasional Taipei, keringanan pajak profesional spesialis asing",
+          "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> tenaga profesional asing bergaji di atas NT$3.000.000. Separuh gaji di atas angka itu dikecualikan dari penghasilan kena pajak, seperti pada contoh gaji NT$5.000.000.</p><p><strong>Perlu diingat:</strong> kamu harus memegang Gold Card dan keringanannya terbatas waktunya. Cek syaratnya ke National Taxation Bureau.</p>"
+    },
+    {
+      "h3": "Klaim potongan terperinci pada laporan Mei",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (potongan terperinci)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=Itemized%20Deductions"
+        },
+        {
+          "name": "Portal eTax MOF, tabel pembebasan dan potongan",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/exemption-deduction-table#:~:text=Table%20of%20Exemption%20and%20Deduction"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang pengeluarannya memenuhi syarat dan melebihi potongan standar, seperti donasi, premi asuransi, biaya berobat atau sewa rumah. Kamu boleh memilih potongan terperinci sebagai ganti potongan standar.</p><p><strong>Perlu diingat:</strong> tiap pos punya batas sendiri dan butuh kuitansi. <em>Tool</em> ini hanya memakai potongan standar.</p>"
+    },
+    {
+      "h3": "Iuran pensiun sukarela",
+      "cite": [
+        {
+          "name": "Biro Asuransi Tenaga Kerja, UU Pensiun Tenaga Kerja (iuran sukarela)",
+          "url": "https://www.bli.gov.tw/en/0010376.html#:~:text=six%20percent"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang tercakup skema pensiun tenaga kerja. Iuran sukarela sampai 6% dari gaji bulanan boleh dikurangkan dari penghasilan. Prinsipnya mirip iuran DPLK pribadi di Indonesia.</p><p><strong>Perlu diingat:</strong> tidak semua karyawan asing tercakup skema ini, dan uangnya untuk masa pensiun. Tanyakan ke pemberi kerja.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Hitungannya satu gaji selama setahun penuh, tanpa penghasilan investasi, usaha sendiri atau tahun yang tidak penuh.",
+    "<strong>Tanpa bonus dan saham.</strong> Bonus akhir tahun, pemberian saham karyawan dan tunjangan tidak dihitung terpisah.",
+    "<strong>Potongan standar saja.</strong> Potongan terperinci tidak dipakai, dan tambahan pajak serta kredit untuk tabungan dan investasi tidak dihitung.",
+    "<strong>Status dipilih sendiri.</strong> <em>Tool</em> tidak menghitung hari tinggalmu, jadi tidak bisa memastikan apakah kamu melewati batas 183 hari.",
+    "<strong>Jaminan sosial disederhanakan.</strong> Premi kesehatan tambahan atas bonus dan penghasilan lain tidak dihitung.",
+    "<strong>Tanpa arus kas bulanan.</strong> Yang dihitung adalah pajak setahun penuh, jadi slip gaji dengan pemotongan pada tarif lain akan berbeda.",
+    "<strong>Tanpa pajak berganda dan tanpa pajak Indonesia.</strong> <em>Tool</em> tidak menghitung ketentuan penghindaran pajak berganda ataupun kewajiban pajak di Indonesia atas penghasilan di luar negeri. Yang tampil hanya pajak dan iuran di Taiwan."
+  ],
+  "faq": [
+    {
+      "q": "Berapa pajak yang saya bayar dengan gaji NT$1.200.000 di Taiwan?",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, tarif progresif (penduduk pajak)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/progressive-tax-rate#:~:text=Progressive%20Tax%20Rate"
+        },
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Bureau of Labor Insurance, kalkulator premi (asuransi tenaga kerja 11,5%, asuransi kerja 1%, batas NT$45.800)",
+          "url": "https://www.bli.gov.tw/0014162.html#:~:text=%E5%B0%B1%E6%A5%AD%E4%BF%9D%E9%9A%AA%E8%B2%BB%E7%8E%87%E7%82%BA1"
+        }
+      ],
+      "a": "<p>Penduduk pajak lajang membayar sekitar NT$45.620 untuk pajak penghasilan dan NT$32.352 untuk jaminan sosial, sehingga gaji bersihnya sekitar NT$1.122.028. Orang yang berstatus <em>non-resident</em> dengan gaji yang sama dipotong 18%, atau NT$216.000. Masukkan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Apa itu aturan 183 hari di Taiwan, dan kapan saya dianggap penduduk pajak?",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        }
+      ],
+      "a": "<p>Kalau kamu berada di Taiwan 183 hari atau lebih dalam satu tahun kalender, kamu penduduk pajak untuk tahun itu. Hitungannya per tahun kalender (1 Januari sampai 31 Desember), bukan sejak tanggal kedatangan. Orang yang tiba setelah pertengahan tahun, misalnya akhir Juli, biasanya <em>non-resident</em> di tahun pertama dan penduduk pajak di tahun kedua. Penduduk pajak dikenai tarif progresif dengan potongan, sedangkan <em>non-resident</em> dikenai pemotongan tarif tunggal.</p>"
+    },
+    {
+      "q": "Kenapa gaji saya dipotong 18% padahal sebentar lagi saya jadi penduduk pajak?",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (tarif pemotongan)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=The%20withholding%20tax%20rate%20on%20salaries%20is%2018%25"
+        },
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (aturan 183 hari)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=is%20regarded%20as%20a%20resident"
+        }
+      ],
+      "a": "<p>Pemberi kerja tidak bisa tahu lebih dulu bahwa kamu akan mencapai 183 hari, jadi sebelum itu ia memotong dengan tarif <em>non-resident</em>. Setelah kamu melewati 183 hari, kamu melapor sebagai penduduk pajak pada Mei tahun berikutnya dan pajakmu dihitung ulang dengan tarif progresif. Kelebihan pemotongan dikembalikan, sehingga pendatang sering menerima pengembalian besar pada Mei berikutnya.</p><p>Hitungan di <em>tool</em> ini menunjukkan tiap status sebagai angka setahun penuh, jadi slip gajimu akan berbeda.</p>"
+    },
+    {
+      "q": "Kapan batas lapor pajak di Taiwan, dan apakah mirip SPT Tahunan?",
+      "cite": [
+        {
+          "name": "Portal eTax MOF, petunjuk pajak penghasilan orang asing (masa lapor)",
+          "url": "https://www.etax.nat.gov.tw/etwmain/en/announcement/alien-individual-income-tax/instructions#:~:text=from%20May%201%20to%20May%2031"
+        }
+      ],
+      "a": "<p>Musim lapor pajak jatuh pada Mei tiap tahun, untuk penghasilan tahun kalender sebelumnya. Wajib pajak bisa melapor secara daring atau di kantor pajak. Pemberi kerja memberimu surat keterangan pemotongan pada awal tahun, setara bukti potong di Indonesia. Cek tanggal pastinya dan pilihan lapor daring di situs <a href=\"https://www.ntbt.gov.tw/\">National Taxation Bureau</a>.</p>"
+    },
+    {
+      "q": "Bagaimana keringanan pajak Gold Card bekerja?",
+      "cite": [
+        {
+          "name": "Basis Data Peraturan RRT, UU Perekrutan dan Pekerjaan Profesional Asing",
+          "url": "https://law.moj.gov.tw/ENG/LawClass/LawAll.aspx?pcode=A0030295#:~:text=above%20three%20million%20NT%20dollars"
+        },
+        {
+          "name": "Biro Pajak Nasional Taipei, keringanan pajak profesional spesialis asing",
+          "url": "https://www.ntbt.gov.tw/English/multiplehtml/14cdeff61f1a49e18263cd0b8766737a#:~:text=Foreign%20Specialist%20Professionals"
+        }
+      ],
+      "a": "<p>Pemegang Gold Card boleh mengecualikan 50% gaji di atas NT$3.000.000 dari penghasilan kena pajak, sehingga hanya separuh bagian itu yang dikenai pajak. Pada gaji NT$5.000.000, <em>tool</em> mengecualikan NT$886.500 dan memangkas pajak sebesar NT$265.950. Keringanan ini terbatas waktunya, jadi pastikan syarat dan jangka waktunya ke otoritas pajak.</p>"
+    },
+    {
+      "q": "Apakah saya masih kena pajak di Indonesia kalau bekerja di Taiwan?",
+      "a": "<p>Kalau kamu pindah ke Taiwan dan tidak lagi berstatus subjek pajak dalam negeri, penghasilan dari pekerjaan di Taiwan pada dasarnya tidak dikenai PPh Indonesia lagi. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di sana dapat menjadi subjek pajak luar negeri. Tetapi kalau kamu masih punya rumah atau keluarga yang tinggal di Indonesia, kamu bisa tetap dianggap subjek pajak dalam negeri. Langkah yang lazim adalah memberi tahu Direktorat Jenderal Pajak (DJP) lewat Kantor Pelayanan Pajak (KPP) tempat kamu terdaftar, supaya penghasilanmu tidak dipajaki dua kali.</p><p>Soal ada tidaknya P3B antara Indonesia dan Taiwan, tanyakan ke DJP. <em>Tool</em> ini tidak menghitungnya. Karena Taiwan menghitung status dari hari tinggal per tahun kalender, simpan catatan tanggal masuk dan keluarmu, yang juga berguna untuk urusan di Indonesia.</p>"
+    },
+    {
+      "q": "Cukupkah gaji NT$1.200.000 di Taipei dibanding hidup di Jakarta?",
+      "a": "<p>Gaji bersih baru separuh gambarnya. Lihat apa yang bisa dibeli di Taipei dibanding kotamu sekarang di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>. Untuk melihat di kota mana tabungan akhir bulan lebih tebal, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Labour insurance, employee share": "Asuransi tenaga kerja, bagian karyawan",
+    "National health insurance, employee share": "Asuransi kesehatan nasional, bagian karyawan",
+    "Salary special deduction": "Potongan khusus gaji",
+    "Gold Card exclusion (50% above 3M)": "Pengecualian Gold Card (50% di atas NT$3 juta)",
+    "Exemptions and standard deduction": "Pembebasan pribadi dan potongan standar",
+    "Individual income tax": "Pajak penghasilan perorangan",
+    "Withholding, non-resident (18%, final)": "Pemotongan bukan penduduk pajak (18%, final)",
+    "Withholding, non-resident (6%, final)": "Pemotongan bukan penduduk pajak (6%, final)",
+    "Labour insurance only (11.5%, no employment insurance), employee share": "Asuransi tenaga kerja saja (11,5%, tanpa asuransi ketenagakerjaan), bagian karyawan",
+    "Income 2026": "Penghasilan 2026",
+    "Net taxable income": "Penghasilan neto kena pajak"
+  }
+}

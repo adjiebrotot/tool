@@ -59,7 +59,7 @@
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "dateModified": "2026-06-12",
+  "dateModified": "2026-11-13",
   "screenshot": "https://tool.adjiebrotots.com/og/pisahvsgabung-id.jpg",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "IDR" },
   "inLanguage": "id",
@@ -72,7 +72,7 @@
   "featureList": [
     "Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran",
     "Tersedia dalam bahasa Indonesia dan Inggris",
-    "Semua perhitungan berjalan lokal di browser, jadi data penghasilan Anda tidak pernah keluar dari perangkat",
+    "Semua hitungan berjalan di browser-mu sendiri, jadi data penghasilanmu tidak pernah keluar dari perangkatmu",
     "Ekspor grafik dan CSV gratis tanpa paywall"
   ],
   "author": {
@@ -91,29 +91,54 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "inLanguage": "id",
+  "url": "https://tool.adjiebrotots.com/pisahvsgabung/id/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Lebih baik harta suami istri digabung atau dipisah?",
+      "name": "Berapa PTKP dan tarif PPh 21 yang dipakai untuk membandingkan pisah harta dan gabung harta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP dan lapisan tarif, serta menampilkan titik breakeven sehingga Anda tahu skema mana yang lebih hemat."
+        "text": "Alat ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya."
       }
     },
     {
       "@type": "Question",
-      "name": "Cara bayar SPT suami istri lebih baik digabung atau dipisah?",
+      "name": "Kenapa pajak Gabung Harta lebih kecil kalau suami dan istri sama-sama bekerja?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Masukkan penghasilan suami dan istri ke kalkulator, lalu kalkulator ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor."
+        "text": "Karena gaji istri menapaki lapisan tarifnya sendiri. Pada Gabung Harta, pemberi kerja istri memotong pajak final dengan PTKP istri sendiri, TK/0 (UU PPh Pasal 8 ayat 1), sehingga gajinya kembali dikenai 5% dan 15% dari awal. Pisah Harta menjumlahkan semua penghasilan dalam satu tangga tarif. Contoh gaji Rp 250 juta masing-masing, tanpa tanggungan: pajak Gabung Harta sekitar Rp 44,3 juta, Pisah Harta Rp 62,9 juta, selisih sekitar Rp 18,6 juta."
       }
     },
     {
       "@type": "Question",
-      "name": "Apakah ada kalkulator SPT / PPh 21 suami istri?",
+      "name": "Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ada. Ini satu-satunya kalkulator SPT suami istri untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada kalkulator pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah keluar dari perangkat."
+        "text": "Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Tool ini menunjukkan titik balik itu berdasarkan gajimu dan gaji pasanganmu."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bagaimana kalau hanya suami atau hanya istri yang bergaji?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Alat ini menganggap pemberi kerja istri tidak memakai PTKP K."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Bagaimana biaya jabatan dihitung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombol biaya jabatan hanya kalau angka yang kamu isi di Pengurang sudah termasuk biaya jabatan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Apakah THR, bonus, dan iuran BPJS Ketenagakerjaan ikut dihitung?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "THR, gaji ke-13, dan bonus ikut dihitung asalkan kamu memasukkannya ke gaji kotor setahun, karena tool ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga."
       }
     }
   ]
@@ -131,7 +156,7 @@
   <link rel="stylesheet" href="../../dark.css">
   <link rel="stylesheet" href="../../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="../../shared.css?v=20261110">
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../../tour-shared.css">
 </head>
@@ -142,10 +167,9 @@
   <section class="header card">
     <div>
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh 21: Pisah Harta vs Gabung Harta</h1>
-      <p data-i18n="subtitle">Bandingkan PPh suami istri di Indonesia antara Gabung Harta dan Pisah Harta (PH atau MT).</p>
     </div>
     <div class="header-right">
-      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Tool Lainnya</span><span class="nav-short">&nbsp;Lainnya</span></a>
+      <a href="https://tool.adjiebrotots.com/id/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Tool Lainnya</span><span class="nav-short">&nbsp;Lainnya</span></a>
       <a id="langToggle" class="btn-theme" href="../" hreflang="en" lang="en" title="English version">EN</a>
       <button id="themeToggle" class="btn-theme">🌙 Dark</button>
     </div>
@@ -153,7 +177,7 @@
 
   <!-- agent:start -->
 <!-- Generated by _ref/agent-doc.mjs from pisahvsgabung/agent-notes.md and the page itself: edit those, then run it. -->
-<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en" data-ai="/pisahvsgabung/ai/">For AI assistants: this tool has a skill that opens it on your user's scenario with one link: <a href="https://tool.adjiebrotots.com/pisahvsgabung/ai/">https://tool.adjiebrotots.com/pisahvsgabung/ai/</a> (instructions: <a href="https://tool.adjiebrotots.com/pisahvsgabung/ai/skill/SKILL.md">https://tool.adjiebrotots.com/pisahvsgabung/ai/skill/SKILL.md</a>)</div>
+<div id="agentHelp" class="agent-ref" hidden aria-hidden="true" data-nosnippet data-no-abbr lang="en" data-ai="/pisahvsgabung/ai/id/">For AI assistants: this tool has a skill that opens it on your user's scenario with one link: <a href="https://tool.adjiebrotots.com/pisahvsgabung/ai/">https://tool.adjiebrotots.com/pisahvsgabung/ai/</a> (instructions: <a href="https://tool.adjiebrotots.com/pisahvsgabung/ai/skill/SKILL.md">https://tool.adjiebrotots.com/pisahvsgabung/ai/skill/SKILL.md</a>)</div>
 <!-- agent:end -->
 
 <!-- Display ad (Display 1, a banner): just below the header card (.ad-slot in shared.css) -->
@@ -167,9 +191,9 @@
       <div class="quick-start-row">
         <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Mengisi tab Rumah tangga dengan contoh, dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh yang tampil saat halaman dibuka.">?</span>
         <div class="quick-start-btns">
-          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 19,8 juta.">Penghasilan setara, tanpa anak</button>
+          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 18,6 juta.">Penghasilan setara, tanpa anak</button>
           <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.">Keluarga satu penghasilan</button>
-          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 34,8 juta.">Keluarga dua penghasilan</button>
+          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 33,5 juta.">Keluarga dua penghasilan</button>
         </div>
       </div>
       <div class="ctrl-scroll">
@@ -182,7 +206,7 @@
         <div class="field-group">
           <div class="group-title" data-i18n="groupFamily">Keluarga</div>
           <div class="field-row">
-            <div class="field-label"><span data-i18n="dependentsLabel">Tanggungan</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.">?</span></div>
+            <div class="field-label"><span data-i18n="dependentsLabel">Tanggungan</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Anggota keluarga yang kamu tanggung, misalnya anak. Setiap tanggungan menambah PTKP, tetapi paling banyak hanya tiga yang dihitung.">?</span></div>
             <select class="num-input sel-input" id="dependents">
               <option value="0" selected data-i18n-opt="dep0">Tanpa tanggungan</option>
               <option value="1" data-i18n-opt="dep1">1 tanggungan</option>
@@ -408,22 +432,53 @@
         <h2 data-i18n="assumesTitle">Asumsi yang dipakai</h2>
         <ul class="assumptions" id="assumptions"></ul>
       </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Pertanyaan</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Berapa PTKP dan tarif PPh 21 yang dipakai untuk membandingkan pisah harta dan gabung harta?</h3>
+        <p>Alat ini memakai ketentuan yang berlaku sebagai nilai awal, dan semuanya bisa diubah. PTKP: Rp 54.000.000 untuk wajib pajak (TK/0), tambahan Rp 4.500.000 bila kawin (K), Rp 54.000.000 bila penghasilan istri digabung (I), dan Rp 4.500.000 per tanggungan, paling banyak tiga. PKP dibulatkan ke bawah ke ribuan penuh (Pasal 17 ayat 4), lalu tarifnya 5% sampai Rp 60 juta, 15% sampai Rp 250 juta, 25% sampai Rp 500 juta, 30% sampai Rp 5 miliar, dan 35% di atasnya.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Kenapa pajak Gabung Harta lebih kecil kalau suami dan istri sama-sama bekerja?</h3>
+        <p>Karena gaji istri menapaki lapisan tarifnya sendiri. Pada Gabung Harta, pemberi kerja istri memotong pajak final dengan PTKP istri sendiri, TK/0 (UU PPh Pasal 8 ayat 1), sehingga gajinya kembali dikenai 5% dan 15% dari awal. Pisah Harta menjumlahkan semua penghasilan dalam satu tangga tarif. Contoh gaji Rp 250 juta masing-masing, tanpa tanggungan: pajak Gabung Harta sekitar Rp 44,3 juta, Pisah Harta Rp 62,9 juta, selisih sekitar Rp 18,6 juta.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Pada gaji rumah tangga berapa pisah harta jadi lebih hemat daripada gabung harta?</h3>
+        <p>Tergantung porsi gaji istri, dan bila gaji keduanya setara, Pisah Harta tidak pernah lebih hemat. Bila istri berpenghasilan 30% dari total dan tanpa tanggungan, Pisah Harta lebih murah di bawah sekitar Rp 190 juta per tahun, sedangkan di atasnya Gabung Harta lebih murah. Bila istri 10%, titik baliknya naik ke sekitar Rp 570 juta. Tool ini menunjukkan titik balik itu berdasarkan gajimu dan gaji pasanganmu.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Bagaimana kalau hanya suami atau hanya istri yang bergaji?</h3>
+        <p>Bila hanya suami yang bergaji, kedua cara sama, karena tidak ada penghasilan istri yang digabung dan suami tetap memakai PTKP K. Bila hanya istri yang bergaji, Pisah Harta lebih hemat: pada gaji Rp 500 juta tanpa tanggungan, pajaknya sekitar Rp 64,4 juta dibanding Rp 79,0 juta, karena PTKP suami terbuang pada Gabung Harta. Alat ini menganggap pemberi kerja istri tidak memakai PTKP K.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Bagaimana biaya jabatan dihitung?</h3>
+        <p>Biaya jabatan adalah 5% dari gaji kotor masing-masing, paling banyak Rp 6.000.000 per tahun (PMK 250/PMK.03/2008), dikurangkan sebelum PTKP dan di luar kolom Pengurang. Batas itu tercapai pada gaji kotor Rp 120 juta setahun, jadi gaji Rp 250 juta mendapat biaya jabatan penuh Rp 6 juta. Matikan tombol biaya jabatan hanya kalau angka yang kamu isi di Pengurang sudah termasuk biaya jabatan.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Apakah THR, bonus, dan iuran BPJS Ketenagakerjaan ikut dihitung?</h3>
+        <p>THR, gaji ke-13, dan bonus ikut dihitung asalkan kamu memasukkannya ke gaji kotor setahun, karena tool ini menghitung pajak dari angka tahunan. Iuran pensiun karyawan, termasuk JHT dan JP BPJS Ketenagakerjaan, diisi di Pengurang, bukan bagian pemberi kerja. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung. Tanggungan lebih dari tiga hanya dihitung tiga.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
     </main>
   </section>
 </div>
 <footer class="page-footer">
   <section class="page-footer-info">
-    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
-    <p class="footer-links"><a href="../../disclaimer/id/">Penafian</a> · <a href="../../privacy/id/">Kebijakan Privasi</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Diperbarui <time datetime="2026-06-12">12 Juni 2026</time></span></p>
+    <p class="footer-collab"><strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/id/">Penafian</a> · <a href="../../privacy/id/">Kebijakan Privasi</a> · <a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a> · <span class="footer-updated">Diperbarui <time datetime="2026-11-13">13 November 2026</time></span></p>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
-      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <img loading="lazy" src="../../logos/australian.png" alt="Bendera Australia" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>
+        <span style="color:var(--muted);font-size:0.76rem">Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
+        <img loading="lazy" src="../../logos/indonesian.png" alt="Lencana Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.76rem">Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.</span>
       </div>
     </div>
   </section>
@@ -432,7 +487,7 @@
 <script src="../../dropdown.js"></script>
 
 <script src="../../chart-kit.js"></script>
-<script src="../../shared.js"></script>
+<script src="../../shared.js?v=20261110"></script>
 <script src="../abbr.js"></script>
 <script>window.DEFAULT_LANG='id';</script>
 <script src="../script.js"></script>

@@ -1,0 +1,70 @@
+{
+  "title": {
+    "en": "Frequent Questions",
+    "id": "Pertanyaan yang Sering Diajukan"
+  },
+  "en": [
+    {
+      "q": "Which tax year and rules does it use for each country?",
+      "a": [
+        "Each country uses its 2026 rules, and the page shows the exact year beside the job: Australia 2026-27 (from 1 July 2026), the UK 2026/27 (from 6 April 2026), Singapore YA2027 (income earned in 2026), and the US under IRS Rev. Proc. 2025-32. The rules were researched on 10 November 2026. Every line in the breakdown carries a source and an Official, Secondary or Assumption badge."
+      ]
+    },
+    {
+      "q": "How does it find the gross pay for a take-home amount I want?",
+      "a": [
+        "With I know my set to Take-home pay, it searches for the lowest gross whose net reaches your target. It scans 400 steps up the pay range to the first step that reaches it, then narrows by bisection to within 0.5 of a currency unit. The scan matters because net pay does not always rise with gross, as with the New York recapture tax."
+      ]
+    },
+    {
+      "q": "What does the marginal rate mean, and why is it not the average rate?",
+      "a": [
+        "The marginal rate is the share of your next 1% of pay that goes to tax and contributions. It is worked out as one minus the extra take-home pay over the extra gross, so it can be well above or below your average rate. In the US, Social Security is 6.2% only up to 184,500, so the marginal rate falls once pay passes that wage base."
+      ]
+    },
+    {
+      "q": "Does the take-home figure include bonuses, equity or employer contributions?",
+      "a": [
+        "No. It covers employment income for one full year in one job, with no bonuses, equity, benefits in kind, other income, tax treaties or foreign tax credits. Employer-side costs are shown but never deducted from your pay. Australia's 12% super guarantee is paid on top unless you turn on Amount includes super, which treats your amount as a package and divides it by 1.12."
+      ]
+    },
+    {
+      "q": "Do exchange rates change the tax calculation?",
+      "a": [
+        "No. Every sum is worked out in the job's own currency, and the rates only restate the result for reading. The tool fetches the day's rates from ExchangeRate-API when it can and falls back to a bundled set dated 10 November 2026. They apply when you set Show amounts in to a currency, or when jobs in different currencies share the chart, which then gives each currency its own gross pay axis, lined up at the rate."
+      ]
+    }
+  ],
+  "id": [
+    {
+      "q": "Tahun pajak dan aturan mana yang dipakai untuk tiap negara?",
+      "a": [
+        "Setiap negara memakai aturan tahun 2026, dan tahun persisnya tertulis di samping tiap pekerjaan: Australia 2026-27 (mulai 1 Juli 2026), Inggris 2026/27 (mulai 6 April 2026), Singapura YA2027 (penghasilan tahun 2026), sedangkan Amerika Serikat mengikuti IRS Rev. Proc. 2025-32. Aturan-aturan ini diriset per 10 November 2026. Setiap baris di rincian gaji bersih mencantumkan sumbernya, lengkap dengan label Resmi, Sekunder, atau Asumsi."
+      ]
+    },
+    {
+      "q": "Bagaimana tool ini mencari gaji kotor untuk gaji bersih yang kamu inginkan?",
+      "a": [
+        "Kalau kolom Hitung dari diisi Gaji bersih, tool ini mencari gaji kotor terkecil yang gaji bersihnya mencapai targetmu. Pencarian dimulai dengan 400 langkah di sepanjang rentang gaji sampai menemukan langkah pertama yang mencapai target, lalu dipersempit dengan metode bagi dua (bisection) sampai selisihnya kurang dari 0,5 satuan mata uang. Langkah awal itu penting karena gaji bersih tidak selalu ikut naik ketika gaji kotor naik, seperti pada penarikan kembali manfaat tarif rendah (recapture) di New York."
+      ]
+    },
+    {
+      "q": "Apa arti tarif marginal, dan kenapa angkanya berbeda dari tarif rata-rata?",
+      "a": [
+        "Tarif marginal adalah bagian dari tambahan 1% gaji berikutnya yang habis untuk pajak dan iuran. Angkanya dihitung sebagai satu dikurangi tambahan gaji bersih dibagi tambahan gaji kotor, sehingga bisa jauh di atas atau di bawah tarif rata-ratamu. Di Amerika Serikat, misalnya, iuran Social Security sebesar 6,2% hanya berlaku sampai gaji 184.500 dolar, sehingga tarif marginal justru turun begitu gaji melewati batas itu."
+      ]
+    },
+    {
+      "q": "Apakah gaji bersihnya sudah termasuk bonus, saham, atau iuran dari pemberi kerja?",
+      "a": [
+        "Belum. Hitungannya hanya mencakup penghasilan dari satu pekerjaan selama satu tahun penuh, tanpa bonus, saham, natura, penghasilan lain, perjanjian pajak, atau kredit pajak luar negeri. Iuran yang ditanggung pemberi kerja ditampilkan, tetapi tidak pernah dipotong dari gajimu. Di Australia, super guarantee sebesar 12% dibayar di luar gaji, kecuali kamu menyalakan Jumlah sudah termasuk super, yang memperlakukan angka isianmu sebagai paket gaji lalu membaginya dengan 1,12."
+      ]
+    },
+    {
+      "q": "Apakah kurs mata uang mengubah hitungan pajaknya?",
+      "a": [
+        "Tidak. Semua hitungan dikerjakan dalam mata uang tiap pekerjaan, dan kurs hanya dipakai untuk menyajikan ulang hasilnya agar mudah dibaca. Tool ini mengambil kurs hari itu dari ExchangeRate-API bila bisa, dan kalau gagal, memakai kurs bawaan per 10 November 2026. Kurs dipakai ketika kamu memilih satu mata uang di Tampilkan dalam, atau ketika pekerjaan dengan mata uang berbeda tampil di grafik yang sama, sehingga setiap mata uang mendapat sumbu gaji kotornya sendiri yang disejajarkan dengan kurs."
+      ]
+    }
+  ]
+}

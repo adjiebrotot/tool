@@ -1,0 +1,355 @@
+{
+  "slug": "china",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Tiongkok 2026",
+  "h1": "Cara menghitung pajak penghasilan di Tiongkok untuk 2026 (Shanghai)",
+  "description": "Hitung pajak penghasilan karyawan dan ekspat di Shanghai 2026: tarif, iuran jaminan sosial, tunjangan bebas pajak, pemotongan kumulatif, dengan dua contoh.",
+  "place": "Shanghai",
+  "lede": "<p>Tiongkok mengenakan pajak penghasilan progresif 3% sampai 45% atas penghasilan kena pajak setahun penuh, setelah potongan dasar CN¥60.000 dan iuran jaminan sosial. Di Shanghai karyawan juga membayar 10,5% untuk pensiun, kesehatan dan pengangguran, ditambah 7% untuk dana perumahan pada pengaturan bawaan <em>tool</em> ini. Dengan gaji CN¥360.000 setahun, karyawan lokal menerima gaji bersih (<em>take-home pay</em>) sekitar CN¥266.520, atau 74,0%. Pajak dipotong pemberi kerja tiap bulan dengan cara kumulatif.</p>",
+  "law": {
+    "introCite": [
+      {
+        "name": "STA, UU Pajak Penghasilan Perorangan RRT (status penduduk dan pelaporan)",
+        "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%80%E7%99%BE%E5%85%AB%E5%8D%81%E4%B8%89%E5%A4%A9"
+      }
+    ],
+    "intro": "<p>Angka di bagian ini memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan di Shanghai. Kamu menjadi penduduk pajak Tiongkok (<em>resident</em>, di Indonesia disebut subjek pajak dalam negeri) kalau punya tempat tinggal di sana atau berada di Tiongkok 183 hari atau lebih dalam satu tahun pajak, patokan yang mirip aturan 183 hari di UU PPh Indonesia. Penduduk pajak dikenai satu tarif tahunan atas gaji dari pekerjaan di Tiongkok (disebut penghasilan komprehensif). Pemberi kerja memotong pajaknya tiap bulan, lalu angkanya diselesaikan lewat rekonsiliasi tahunan di tahun berikutnya, seperti SPT Tahunan di Indonesia.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan perorangan",
+        "cite": [
+          {
+            "name": "STA, UU Pajak Penghasilan Perorangan RRT",
+            "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%AA%E4%BA%BA%E6%89%80%E5%BE%97%E7%A8%8E%E7%9A%84%E7%A8%8E%E7%8E%87"
+          },
+          {
+            "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+            "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
+          }
+        ],
+        "html": "<p>Tarif tahunan yang sama berlaku untuk semua orang, dengan lapisan 3% sampai 45%, lebih lebar daripada tarif Pasal 17 di Indonesia (5% sampai 35%). Penghasilan kena pajak adalah gaji dikurangi potongan dasar CN¥60.000 (CN¥5.000 per bulan, peran yang mirip PTKP), iuran jaminan sosial dan dana perumahan, serta pengurang tambahan khusus (untuk karyawan lokal) atau tunjangan bebas pajak (untuk ekspat).</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak setahun",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "Sampai CN¥36.000",
+              "3%"
+            ],
+            [
+              "CN¥36.001 sampai CN¥144.000",
+              "10%"
+            ],
+            [
+              "CN¥144.001 sampai CN¥300.000",
+              "20%"
+            ],
+            [
+              "CN¥300.001 sampai CN¥420.000",
+              "25%"
+            ],
+            [
+              "CN¥420.001 sampai CN¥660.000",
+              "30%"
+            ],
+            [
+              "CN¥660.001 sampai CN¥960.000",
+              "35%"
+            ],
+            [
+              "Di atas CN¥960.000",
+              "45%"
+            ]
+          ]
+        }
+      },
+      {
+        "h3": "Jaminan sosial dan dana perumahan",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+            "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
+          },
+          {
+            "name": "Shanghai HRSS, batas dasar iuran sosial 2025",
+            "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html"
+          },
+          {
+            "name": "Shanghai HRSS, batas dasar iuran sosial 2026",
+            "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"
+          },
+          {
+            "name": "Pemerintah Shanghai, pemberitahuan penyesuaian dasar dana perumahan",
+            "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"
+          },
+          {
+            "name": "NNRoad, tarif dana perumahan per kota (Shanghai 5% sampai 7%, karyawan sama)",
+            "url": "https://nnroad.com/blog/housing-fund-agency-in-china/#:~:text=Shanghai%E2%80%99s%20standard%20employer%20rate"
+          }
+        ],
+        "html": "<p>Porsi karyawan di Shanghai adalah 8% untuk pensiun, 2% untuk kesehatan dan 0,5% untuk pengangguran, jadi totalnya 10,5%. <em>Tool</em> menerapkannya pada gaji bulanan sampai batas atas, yang berada di kisaran CN¥37.300 sampai CN¥37.700 per bulan, sehingga yang bergaji sangat tinggi berhenti membayar lebih. Dana perumahan (<em>housing fund</em>) adalah tabungan wajib tempat kamu dan pemberi kerja sama-sama menyetor, gagasannya mirip Tapera di Indonesia. <em>Tool</em> memakai 7% pada batas atas yang sama, dan angkanya bisa kamu ubah. Tanyakan ke pemberi kerja apakah dana perumahan berlaku untukmu. Semua iuran ini mengurangi penghasilan kena pajak.</p>",
+        "table": null
+      },
+      {
+        "h3": "Tunjangan bebas pajak ekspat dan pengurang khusus",
+        "cite": [
+          {
+            "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+            "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
+          }
+        ],
+        "html": "<p>Karyawan lokal boleh mengklaim pengurang tambahan khusus, misalnya untuk pendidikan anak, pendidikan lanjutan, bunga KPR atau sewa rumah, dan perawatan orang tua. Karyawan asing bisa memilih tunjangan bebas pajak untuk hal seperti perumahan, kursus bahasa dan sekolah anak, selama pemberi kerja membayarnya sesuai aturan. Menurut pemberitahuan yang dirujuk <em>tool</em> ini (pemberitahuan bersama Kementerian Keuangan atau MOF dan State Taxation Administration atau STA tahun 2023 No. 29), ekspat memilih salah satu dari keduanya, tidak boleh dua-duanya, dan pilihan itu terbuka sampai akhir 2027. <em>Tool</em> mengikuti aturan itu: tunjangan ekspat berupa angka yang kamu masukkan, dan pengurang khusus tidak dihitung untuk ekspat. Indonesia tidak punya padanan langsung untuk tunjangan seperti ini.</p>",
+        "table": null
+      },
+      {
+        "h3": "Pemotongan kumulatif tiap bulan",
+        "cite": [
+          {
+            "name": "STA, Tata Cara Pemotongan PPh Perorangan (metode kumulatif)",
+            "url": "https://fgk.chinatax.gov.cn/zcfgk/c100015/c5200946/content.html#:~:text=%E7%B4%AF%E8%AE%A1%E9%A2%84%E6%89%A3%E6%B3%95"
+          }
+        ],
+        "html": "<p>Pemberi kerja memotong pajak dengan menjumlahkan gajimu sejak 1 Januari, mengurangkan potongan dasar dan pengurang lain sampai bulan itu, menerapkan tarif tahunan pada total berjalan, lalu mengurangkan pajak yang sudah dipotong. Pada Januari pajaknya rendah, dan naik ketika penghasilan kumulatifmu melewati suatu lapisan. Ini berbeda dari PPh 21 di Indonesia yang memakai tarif efektif rata-rata (TER) tiap bulan lalu dihitung ulang di Desember. <em>Tool</em> menampilkan angka setahun penuh, yaitu yang diselesaikan rekonsiliasi tahunan.</p>",
+        "table": null
+      }
+    ],
+    "sources": [
+      {
+        "name": "STA, UU Pajak Penghasilan Perorangan RRT",
+        "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%AA%E4%BA%BA%E6%89%80%E5%BE%97%E7%A8%8E%E7%9A%84%E7%A8%8E%E7%8E%87",
+        "note": "UU PPh: status penduduk, penghasilan komprehensif dan rekonsiliasi tahunan"
+      },
+      {
+        "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+        "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf",
+        "note": "tabel tarif tahunan (3% sampai 45%)"
+      },
+      {
+        "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+        "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97",
+        "note": "tunjangan ekspat sampai akhir 2027"
+      },
+      {
+        "name": "STA, Tata Cara Pemotongan PPh Perorangan (metode kumulatif)",
+        "url": "https://fgk.chinatax.gov.cn/zcfgk/c100015/c5200946/content.html#:~:text=%E7%B4%AF%E8%AE%A1%E9%A2%84%E6%89%A3%E6%B3%95",
+        "note": "metode pemotongan kumulatif"
+      },
+      {
+        "name": "Shanghai HRSS, batas dasar iuran sosial 2026",
+        "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html",
+        "note": "batas dasar iuran sosial Shanghai, Juli 2026"
+      },
+      {
+        "name": "Shanghai HRSS, batas dasar iuran sosial 2025",
+        "url": "https://rsj.sh.gov.cn/tgsgg_17341/20250918/t0035_1435637.html",
+        "note": "batas dasar iuran sosial Shanghai, Juli 2025"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+        "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai",
+        "note": "tarif karyawan untuk pensiun, medis dan pengangguran"
+      },
+      {
+        "name": "NNRoad, tarif dana perumahan per kota (Shanghai 5% sampai 7%, karyawan sama)",
+        "url": "https://nnroad.com/blog/housing-fund-agency-in-china/#:~:text=Shanghai%E2%80%99s%20standard%20employer%20rate"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "local-shanghai",
+      "cite": [
+        {
+          "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+          "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
+        },
+        {
+          "name": "Shanghai HRSS, batas dasar iuran sosial 2026",
+          "url": "https://rsj.sh.gov.cn/tgsgg_17341/20260818/t0035_1443203.html"
+        },
+        {
+          "name": "NNRoad, tarif dana perumahan per kota (Shanghai 5% sampai 7%, karyawan sama)",
+          "url": "https://nnroad.com/blog/housing-fund-agency-in-china/#:~:text=Shanghai%E2%80%99s%20standard%20employer%20rate"
+        }
+      ],
+      "title": "Gaji CN¥360.000 di Shanghai: berapa pajak dan gaji bersihnya?",
+      "intro": "<p>Contoh ini untuk karyawan lokal di Shanghai dengan gaji CN¥360.000 setahun. Iuran jaminan sosial 10,5% sebesar CN¥37.800 dan dana perumahan 7% sebesar CN¥25.200 dikurangkan lebih dulu. Penghasilan kena pajaknya adalah gaji dikurangi potongan dasar CN¥60.000 dan kedua iuran itu, yaitu CN¥237.000. Angka tersebut masuk lapisan 20%, sehingga pajaknya menjadi CN¥30.480. Gaji bersihmu menjadi sekitar CN¥266.520, atau 74,0% dari gaji kotor.</p>",
+      "after": "<p>Iuran memang mengurangi penghasilan kena pajak, tetapi tiap yuan tambahan gaji ikut menambah iuran juga. Karena itu tarif marjinalmu 34,0%, bukan 20%. Hitungan ini tanpa pengurang tambahan khusus, jadi yang punya anak sekolah atau menyewa rumah membayar lebih sedikit.</p>"
+    },
+    {
+      "key": "expat-allowances",
+      "cite": [
+        {
+          "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+          "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
+        },
+        {
+          "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+          "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
+        }
+      ],
+      "title": "Berapa gaji bersih ekspat di Shanghai dengan tunjangan bebas pajak CN¥120.000?",
+      "intro": "<p>Contoh ini untuk pekerja asing bergaji CN¥600.000 setahun yang menerima tunjangan bebas pajak CN¥120.000, misalnya untuk sewa rumah atau sekolah anak. Iuran jaminan sosialnya sudah dibatasi sampai CN¥47.271 dan dana perumahannya mencapai CN¥31.514. Setelah potongan dasar CN¥60.000, kedua iuran itu dan tunjangan, penghasilan kena pajaknya tinggal CN¥341.215. Angka ini masuk lapisan 25%, sehingga pajaknya menjadi CN¥53.384. Gaji bersihnya menjadi sekitar CN¥467.832, atau 78,0% dari gaji kotor.</p>",
+      "after": "<p>Tanpa tunjangan, penghasilan kena pajak akan CN¥120.000 lebih tinggi dan pajaknya sekitar CN¥32.000 lebih besar, karena bagian itu dikenai tarif 25% dan 30%. Tunjangan hanya dihitung kalau didokumentasikan dengan benar dan dibayar sesuai aturan, dan pilihannya berakhir setelah 2027 menurut pemberitahuan yang berlaku. Tarif marjinal pada gaji ini 25,0%, karena iuran sudah berhenti naik di batas atas.</p>"
+    }
+  ],
+  "strategyIntro": "<p>Beberapa langkah berikut legal dan lazim dipakai, dan mana yang cocok bergantung pada statusmu dan pemberi kerjamu.</p>",
+  "strategies": [
+    {
+      "h3": "Pakai pengurang tambahan khusus lewat rekonsiliasi tahunan",
+      "cite": [
+        {
+          "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+          "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
+        },
+        {
+          "name": "STA, UU Pajak Penghasilan Perorangan RRT (status penduduk dan pelaporan)",
+          "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%80%E7%99%BE%E5%85%AB%E5%8D%81%E4%B8%89%E5%A4%A9"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> karyawan lokal, dan karyawan asing yang memilih pengurang, bukan tunjangan. Pengurang untuk pendidikan anak, pendidikan lanjutan, sewa atau bunga KPR, dan orang tua lanjut usia menurunkan penghasilan kena pajak. Kamu mengisinya di aplikasi pajak, lalu pemberi kerja menerapkannya pada pemotongan.</p><p><strong>Perlu diingat:</strong> tiap pengurang punya syarat dan batas sendiri, dan tidak bisa diambil bersamaan dengan tunjangan ekspat.</p>"
+    },
+    {
+      "h3": "Ambil tunjangan bebas pajak ekspat selama masih berlaku",
+      "cite": [
+        {
+          "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+          "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> karyawan asing yang pemberi kerjanya membayar perumahan, kursus bahasa atau pendidikan anak. Tunjangan yang dibayar sesuai aturan bebas pajak, dan hasilnya bisa lebih baik daripada pengurang tambahan khusus.</p><p><strong>Perlu diingat:</strong> kamu harus memilih salah satu, dan pilihan itu terikat pada pemberitahuan yang berlaku sampai akhir 2027. Minta konfirmasi tertulis dari pemberi kerja tentang apa yang dibayar dan bagaimana dokumentasinya.</p>"
+    },
+    {
+      "h3": "Lapor rekonsiliasi tahunan dan klaim kelebihan bayar",
+      "cite": [
+        {
+          "name": "STA, UU Pajak Penghasilan Perorangan RRT (status penduduk dan pelaporan)",
+          "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%80%E7%99%BE%E5%85%AB%E5%8D%81%E4%B8%89%E5%A4%A9"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: administrasi pajak dan rekonsiliasi tahunan",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/tax-administration#:~:text=1%20March"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang pemotongan bulanannya lebih besar daripada pajak akhirnya, misalnya yang mulai bekerja di tengah tahun atau punya pengurang yang belum diterapkan. Waktu pelaporannya 1 Maret sampai 30 Juni, jauh lebih longgar daripada batas SPT Tahunan orang pribadi di Indonesia yang jatuh pada akhir Maret.</p><p><strong>Perlu diingat:</strong> kalau pemotongannya kurang, kamu menanggung selisihnya, dan kamu butuh nomor pajakmu. Lapor tepat waktu supaya tidak kena denda.</p>"
+    },
+    {
+      "h3": "Cek dana perumahan dan aturan penarikannya",
+      "cite": [
+        {
+          "name": "Pemerintah Shanghai, pemberitahuan penyesuaian dasar dana perumahan",
+          "url": "https://www.shanghai.gov.cn/nw17239/20250704/649d8a7b2b1b4ceab2107b8d84fe805e.html"
+        }
+      ],
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menyediakan dana perumahan. Iurannya mengurangi penghasilan kena pajak sehingga menghemat pajak, dan uangnya tetap milikmu.</p><p><strong>Perlu diingat:</strong> penarikan dibatasi pada keperluan tertentu seperti perumahan atau meninggalkan Tiongkok, tergantung kotanya. Tanyakan ke pusat dana perumahan setempat apa yang berlaku untuk karyawan asing.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Hitungannya satu gaji selama setahun penuh, tanpa penghasilan investasi, usaha sendiri atau tahun yang tidak penuh.",
+    "<strong>Tanpa bonus dan saham.</strong> Bonus akhir tahun, pemberian saham dan komponen lain tidak dihitung terpisah, dan perlakuan pajaknya bisa berbeda.",
+    "<strong>Hanya Shanghai.</strong> Batas dasar dan tarif jaminan sosial serta dana perumahan berbeda di tiap kota.",
+    "<strong>Status dipilih sendiri.</strong> <em>Tool</em> tidak menguji status penduduk pajakmu, atau apakah aturan enam tahun berlaku untukmu (penghasilan dari luar Tiongkok baru dikenai pajak setelah kamu tinggal di sana enam tahun berturut-turut). Penghasilan dari luar Tiongkok tidak dihitung.",
+    "<strong>Tunjangan sesuai isianmu.</strong> Untuk ekspat, tunjangan berupa angka yang kamu masukkan, dan <em>tool</em> tidak memeriksa apakah syaratnya terpenuhi.",
+    "<strong>Tanpa arus kas bulanan.</strong> Yang dihitung adalah pajak setahun penuh, sedangkan slip gaji dengan pemotongan kumulatif berbeda dari bulan ke bulan.",
+    "<strong>Tanpa P3B dan tanpa pajak Indonesia.</strong> <em>Tool</em> tidak menghitung persetujuan penghindaran pajak berganda (P3B) ataupun kewajiban pajak di Indonesia atas penghasilan di luar negeri. Yang tampil hanya pajak dan iuran di Tiongkok."
+  ],
+  "faq": [
+    {
+      "q": "Berapa pajak yang saya bayar dengan gaji CN¥360.000 di Shanghai?",
+      "cite": [
+        {
+          "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+          "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
+        }
+      ],
+      "a": "<p>Karyawan lokal membayar sekitar CN¥30.480 untuk pajak penghasilan, ditambah CN¥37.800 iuran jaminan sosial dan CN¥25.200 untuk dana perumahan, sehingga gaji bersihnya sekitar CN¥266.520. Masukkan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>"
+    },
+    {
+      "q": "Apa itu pemotongan pajak kumulatif di Tiongkok, dan kenapa pajak saya berubah tiap bulan?",
+      "cite": [
+        {
+          "name": "STA, Tata Cara Pemotongan PPh Perorangan (metode kumulatif)",
+          "url": "https://fgk.chinatax.gov.cn/zcfgk/c100015/c5200946/content.html#:~:text=%E7%B4%AF%E8%AE%A1%E9%A2%84%E6%89%A3%E6%B3%95"
+        }
+      ],
+      "a": "<p>Pemberi kerja menjumlahkan gajimu sejak 1 Januari, menerapkan tarif tahunan pada total berjalan, lalu mengurangkan pajak yang sudah dipotong. Di bulan-bulan awal penghasilan kumulatifmu masih di lapisan rendah, jadi pajaknya kecil. Ketika totalnya naik ke lapisan yang lebih tinggi, pajak bulanan ikut naik, sehingga gaji bersih dari gaji yang sama menurun di akhir tahun. Orang yang mulai bekerja di tengah tahun atau gajinya berubah bisa melihat pola yang berbeda.</p><p>Hitungan di <em>tool</em> ini menunjukkan angka setahun penuh, jadi setiap slip gaji akan berbeda darinya.</p>"
+    },
+    {
+      "q": "Apakah saya wajib lapor rekonsiliasi pajak tahunan di Tiongkok?",
+      "cite": [
+        {
+          "name": "STA, UU Pajak Penghasilan Perorangan RRT (status penduduk dan pelaporan)",
+          "url": "https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html#:~:text=%E4%B8%80%E7%99%BE%E5%85%AB%E5%8D%81%E4%B8%89%E5%A4%A9"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: administrasi pajak dan rekonsiliasi tahunan",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/tax-administration#:~:text=1%20March"
+        }
+      ],
+      "a": "<p>Rekonsiliasi tahunan untuk tahun sebelumnya berlangsung 1 Maret sampai 30 Juni. Isinya membandingkan pajak yang sudah dipotong sepanjang tahun dengan pajak yang terutang untuk setahun penuh, lalu kamu menerima pengembalian atau membayar selisihnya. Peraturan menentukan siapa yang wajib melapor, misalnya penghasilan di atas batas tertentu dan kurang bayar melebihi jumlah kecil, jadi cek ketentuan terbaru di <a href=\"https://www.chinatax.gov.cn/chinatax/n810219/n810744/n3752930/n3752974/c3970366/content.html\">situs State Taxation Administration</a> atau di aplikasi pajak resmi. Melapor juga cara utama untuk meminta pengembalian kelebihan bayar.</p>"
+    },
+    {
+      "q": "Bagaimana nasib tunjangan bebas pajak untuk ekspat?",
+      "cite": [
+        {
+          "name": "Pengumuman MOF dan STA 2023 No. 29 (tunjangan warga asing)",
+          "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
+        }
+      ],
+      "a": "<p>Karyawan asing dulu boleh mengambil tunjangan bebas pajak untuk perumahan, kursus bahasa, pendidikan anak dan hal serupa. Kebijakan peralihan memberi ekspat pilihan antara tunjangan itu dan pengurang tambahan khusus. Pemberitahuan yang dipakai <em>tool</em> ini berlaku sampai akhir 2027, dan apa yang terjadi sesudahnya belum diatur dalam hitungan. <em>Tool</em> memperlakukan tunjangan sebagai angka yang kamu masukkan, jadi kamu bisa membandingkan hasilnya dengan dan tanpa tunjangan.</p>"
+    },
+    {
+      "q": "Apakah orang asing wajib ikut jaminan sosial Tiongkok?",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
+        }
+      ],
+      "a": "<p>Karyawan asing yang bekerja di Tiongkok dengan kontrak umumnya wajib ikut jaminan sosial, dengan porsi pemberi kerja dan porsi karyawan, dan <em>tool</em> ini memasukkannya. Sebagian negara punya perjanjian yang membebaskan warganya untuk jangka waktu tertentu. Tanyakan ke pemberi kerja dan ke kantor jaminan sosial setempat bagaimana ketentuannya untuk warga negara Indonesia.</p>"
+    },
+    {
+      "q": "Kenapa tarif marjinal saya pada gaji CN¥360.000 lebih tinggi dari 20%?",
+      "cite": [
+        {
+          "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
+          "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Tiongkok: tarif jaminan sosial (Shanghai)",
+          "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
+        }
+      ],
+      "a": "<p>Iuran pensiun, kesehatan dan dana perumahan naik seiring gaji sampai batas atas, jadi tiap yuan tambahan gaji ikut menambah iuran. Dalam hitungan ini, 17,5% menjadi iuran dan pajak 20% dikenakan pada 82,5% sisanya, sehingga totalnya sekitar 34%. Di atas batas atas, seperti pada contoh ekspat, iuran berhenti naik dan tarif marjinal kembali ke tarif pajak saja (25%).</p>"
+    },
+    {
+      "q": "Apakah saya masih kena pajak di Indonesia kalau bekerja di Tiongkok?",
+      "a": "<p>Kalau kamu pindah ke Tiongkok dan tidak lagi berstatus subjek pajak dalam negeri, penghasilan dari pekerjaan di Tiongkok pada dasarnya tidak dikenai PPh Indonesia lagi. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di sana dapat menjadi subjek pajak luar negeri. Tetapi kalau kamu masih punya rumah atau keluarga yang tinggal di Indonesia, kamu bisa tetap dianggap subjek pajak dalam negeri. Langkah yang lazim adalah memberi tahu Direktorat Jenderal Pajak (DJP) lewat Kantor Pelayanan Pajak (KPP) tempat kamu terdaftar, supaya penghasilanmu tidak dipajaki dua kali.</p><p>Indonesia dan Tiongkok punya persetujuan penghindaran pajak berganda (P3B), tetapi <em>tool</em> ini tidak menghitungnya. Kalau kamu sekaligus penduduk pajak Tiongkok dan masih dianggap subjek pajak dalam negeri, P3B itulah yang menentukan negara mana yang berhak memajaki penghasilanmu.</p>"
+    },
+    {
+      "q": "Cukupkah gaji CN¥360.000 di Shanghai dibanding hidup di Jakarta?",
+      "a": "<p>Gaji bersih baru separuh gambarnya. Lihat apa yang bisa dibeli di Shanghai dibanding kotamu sekarang di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan uji bagaimana tabungan yang lebih besar bertumbuh di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>. Untuk melihat di kota mana tabungan akhir bulan lebih tebal, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Basic deduction (5,000 a month)": "Potongan dasar (CN¥5.000 per bulan)",
+    "Pension, medical and unemployment (10.5%)": "Pensiun, kesehatan dan pengangguran (10,5%)",
+    "Housing fund (5%)": "Dana perumahan (5%)",
+    "Housing fund (6%)": "Dana perumahan (6%)",
+    "Housing fund (7%)": "Dana perumahan (7%)",
+    "Tax-free expat allowances": "Tunjangan ekspat bebas pajak",
+    "Special additional deductions": "Potongan tambahan khusus",
+    "Individual income tax": "Pajak penghasilan perorangan",
+    "Shanghai": "Shanghai"
+  }
+}

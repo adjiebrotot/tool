@@ -82,29 +82,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/loadflow-simulator/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "How do I run a load flow online for free?",
+      "name": "How different are the AC and DC load flow results here?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Open the Load Flow Simulator at https://tool.adjiebrotots.com/loadflow-simulator/, draw buses, lines, transformers, generators and loads on the single-line diagram, then press Run load flow. It solves an AC Newton-Raphson or DC load flow in your browser with an engine ported from PyPSA, so nothing is uploaded."
+        "text": "The DC option keeps every bus at 1 p.u., ignores resistance and reactive power, and solves the network linearly from reactances alone, so it shows no line or transformer losses. Only HVDC links still lose (1 minus efficiency) of what they send. The AC, Newton-Raphson option returns voltage magnitudes, reactive power and losses. If a result depends on voltage drop or losses, use AC."
       }
     },
     {
       "@type": "Question",
-      "name": "Can I put an animated load flow diagram on my own website?",
+      "name": "When does the AC solver decide it has converged?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Turn on the P and Q flow animations, then use Share to download an SVG, PNG or animated GIF, copy a link, or copy an embed code that shows the live, interactive diagram on your page."
+        "text": "Newton-Raphson stops once every bus is balanced to within the Tolerance, which defaults to 0.000001 MW / MVAr, and gives up after 100 iterations. The default Initial guess is the DC load flow, which also helps with phase-shifting transformers. A flat start (1 p.u., 0 degrees) is the alternative, but the tool warns that it may not converge with phase shifters."
       }
     },
     {
       "@type": "Question",
-      "name": "Which load flow method does the simulator use?",
+      "name": "Which generator covers the losses, and can the slack be shared?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It runs PSA.js, a JavaScript port of PyPSA: the full AC load flow by Newton-Raphson, optionally seeded by a DC load flow and with a distributed slack, or the linear DC load flow. The WSCC 9-bus Quick Start reproduces the published textbook voltages and generator outputs."
+        "text": "The generator set to Slack picks up the whole mismatch, so the losses land on that one unit. Its output is a result, not the p_set you typed. Each island gets one slack: with two Slack units, the first stays slack and the other is treated as PV. Turn on Distributed slack to share it among the island's generators, in proportion to Dispatch or Rating."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the model limit generator reactive power or switch transformer taps automatically?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. A PV generator holds its voltage setpoint whatever reactive power that takes, with no Q limits, so check the reported Q against the unit's real capability. Loads draw constant active and reactive power whatever the voltage. Tap changers are fixed at the tap position or ratio you enter. To test a limit, move the tap or the setpoint by hand and re-solve."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it run N-1 contingencies or check line limits?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no automatic N-1 analysis: it solves one operating point of a balanced three-phase network. To test an outage, remove the line or transformer from the diagram and read the new result. The limits only read the result and never change it: buses outside Lowest voltage and Highest voltage (default 0.95 and 1.05 p.u.), and branches above Highest loading (default 100% of rating), are flagged."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the tool count loading on a line, transformer or HVDC link?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Loading is the larger apparent power at either end divided by the branch rating, as a percentage. For a line or transformer that is the greater of the two end values of the square root of P squared plus Q squared, over s_nom in MVA. A typed line is rated root 3 times voltage times rated current times circuits. A link uses its active power sent over p_nom, since it carries no reactive power."
       }
     }
   ]
@@ -121,7 +146,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
@@ -132,7 +157,6 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 5.5h18"/> <path stroke="var(--accent)" d="M8 5.5v4.5"/> <circle stroke="var(--accent)" cx="8" cy="14.5" r="4.5"/> <path stroke="var(--accent)" stroke-width="1.6" d="M5.6 14.5q1.2-2 2.4 0t2.4 0"/> <path stroke="var(--accent2)" d="M17 9v11"/> <path stroke="var(--accent2)" d="m14 17 3 3 3-3"/> </svg>Load Flow Simulator</h1>
-    <p>Draw a single-line diagram, run an AC or DC load flow, and watch the power move.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -335,6 +359,37 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>How different are the AC and DC load flow results here?</h3>
+        <p>The DC option keeps every bus at 1 p.u., ignores resistance and reactive power, and solves the network linearly from reactances alone, so it shows no line or transformer losses. Only HVDC links still lose (1 minus efficiency) of what they send. The AC, Newton-Raphson option returns voltage magnitudes, reactive power and losses. If a result depends on voltage drop or losses, use AC.</p>
+      </div>
+      <div class="faq-item">
+        <h3>When does the AC solver decide it has converged?</h3>
+        <p>Newton-Raphson stops once every bus is balanced to within the Tolerance, which defaults to 0.000001 MW / MVAr, and gives up after 100 iterations. The default Initial guess is the DC load flow, which also helps with phase-shifting transformers. A flat start (1 p.u., 0 degrees) is the alternative, but the tool warns that it may not converge with phase shifters.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which generator covers the losses, and can the slack be shared?</h3>
+        <p>The generator set to Slack picks up the whole mismatch, so the losses land on that one unit. Its output is a result, not the p_set you typed. Each island gets one slack: with two Slack units, the first stays slack and the other is treated as PV. Turn on Distributed slack to share it among the island's generators, in proportion to Dispatch or Rating.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the model limit generator reactive power or switch transformer taps automatically?</h3>
+        <p>No. A PV generator holds its voltage setpoint whatever reactive power that takes, with no Q limits, so check the reported Q against the unit's real capability. Loads draw constant active and reactive power whatever the voltage. Tap changers are fixed at the tap position or ratio you enter. To test a limit, move the tap or the setpoint by hand and re-solve.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does it run N-1 contingencies or check line limits?</h3>
+        <p>There is no automatic N-1 analysis: it solves one operating point of a balanced three-phase network. To test an outage, remove the line or transformer from the diagram and read the new result. The limits only read the result and never change it: buses outside Lowest voltage and Highest voltage (default 0.95 and 1.05 p.u.), and branches above Highest loading (default 100% of rating), are flagged.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does the tool count loading on a line, transformer or HVDC link?</h3>
+        <p>Loading is the larger apparent power at either end divided by the branch rating, as a percentage. For a line or transformer that is the greater of the two end values of the square root of P squared plus Q squared, over s_nom in MVA. A typed line is rated root 3 times voltage times rated current times circuits. A link uses its active power sent over p_nom, since it carries no reactive power.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 </main>
 </section>
 </div>
@@ -361,7 +416,7 @@
 
 <script src="../dropdown.js"></script>
 <script src="../chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="lf-core.js"></script>
 <script src="lf-draw.js"></script>

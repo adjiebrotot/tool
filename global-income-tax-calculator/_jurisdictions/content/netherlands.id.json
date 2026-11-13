@@ -1,0 +1,312 @@
+{
+  "slug": "netherlands",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Gaji di Belanda 2026 (Aturan 30%)",
+  "h1": "Cara menghitung pajak penghasilan di Belanda (2026)",
+  "description": "Hitung pajak dan gaji bersih di Belanda 2026: tarif Box 1 yang sudah termasuk jaminan sosial, keringanan pajak, uang liburan 8%, dan aturan 30%.",
+  "lede": "<p>Di Belanda, gaji dipajaki lewat Box 1 (kategori pajak untuk penghasilan dari pekerjaan dan rumah tinggal), dengan satu tarif gabungan pajak penghasilan dan iuran jaminan sosial nasional sebesar 35,75%, 37,56% atau 49,5%, lalu dikurangi dua keringanan pajak. Karyawan juga menerima uang liburan 8% di atas gaji. Untuk gaji €60.000, pekerja yang tidak memakai aturan 30% menyisakan sekitar €46.471 setahun (€3.873 per bulan) termasuk uang liburan. Bagi pendatang yang memakai aturan 30%, gaji €75.000 menyisakan sekitar €66.759.</p>",
+  "law": {
+    "intro": "<p>Tahun pajak Belanda sama dengan tahun kalender, dan angka di sini mengikuti aturan 2026 seperti yang dipakai <em>tool</em>. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia, dan pendatang baru memakai sistem Box 1 yang sama, dengan aturan 30% sebagai tambahan bagi sebagian dari mereka. Pemberi kerja memotong pajak dari slip gaji, seperti PPh 21 yang dipotong kantor, dan kamu bisa mengajukan laporan pajak tahunan ke Belastingdienst, kantor pajak Belanda. Laporan itu setara dengan SPT Tahunan di Indonesia.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif Box 1 dan jaminan sosial nasional",
+        "html": "<p>Untuk orang yang belum mencapai usia pensiun negara, tarif di dua lapisan pertama sudah mencakup iuran jaminan sosial nasional (pensiun dasar, tunjangan ahli waris dan perawatan jangka panjang). Karena itu slip gaji Belanda tidak punya baris iuran sendiri seperti BPJS Ketenagakerjaan di Indonesia. Dua keringanan pajak baru dikurangkan dari hasilnya. Strukturnya berlapis seperti tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi angkanya jauh lebih tinggi karena sudah memuat iuran sosial.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "€0 sampai €38.883",
+              "35,75%"
+            ],
+            [
+              "€38.883 sampai €78.426",
+              "37,56%"
+            ],
+            [
+              "Di atas €78.426",
+              "49,5%"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+          },
+          {
+            "name": "Belastingdienst, tingkat pajak dan tarif",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/werk-en-inkomen/content/hoeveel-inkomstenbelasting-betalen"
+          }
+        ]
+      },
+      {
+        "h3": "Keringanan pajak",
+        "html": "<p>Dua keringanan mengurangi pajak yang kamu bayar, dan keduanya menyusut ketika penghasilan naik. Keringanan umum (<em>algemene heffingskorting</em>) bernilai sampai €3.115 untuk penghasilan sampai €29.736, lalu menyusut bertahap sampai nol di €78.426. Keringanan kerja (<em>arbeidskorting</em>) naik seiring penghasilan sampai maksimum sekitar €5.685 di €45.592, lalu turun sampai nol di €132.920. Keduanya sudah dimasukkan ke angka pajak <em>tool</em> ini, dan rinciannya tampil sebagai baris di dalam pajak.</p><p>Karena kedua keringanan menyusut di tengah rentang penghasilan, tarif marginal sebenarnya di sana lebih tinggi daripada 37,56%.</p>",
+        "cite": [
+          {
+            "name": "Belastingdienst, tabel arbeidskorting 2026",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/arbeidskorting/tabel-arbeidskorting-2026"
+          },
+          {
+            "name": "Belastingdienst, tabel algemene heffingskorting 2026",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/algemene_heffingskorting/tabel-algemene-heffingskorting-2026"
+          }
+        ]
+      },
+      {
+        "h3": "Uang liburan (<em>vakantiegeld</em>)",
+        "html": "<p>Pada umumnya karyawan berhak atas uang liburan minimal 8% dari gaji, yang dibayar sekali setahun pada Mei atau Juni. Fungsinya mirip THR di Indonesia, dan sama seperti THR, uang ini dipajaki seperti gaji biasa. <em>Tool</em> ini menambahkan uang liburan di atas gaji yang kamu masukkan lalu memajakinya, sehingga angka gaji bersih mencakup gaji ditambah uang liburan. Kalau kontrakmu menyebut gaji sudah termasuk uang liburan, matikan pilihan itu di kalkulator.</p>",
+        "cite": [
+          {
+            "name": "Business.gov.nl, uang liburan (holiday allowance)",
+            "url": "https://business.gov.nl/regulation/holiday-allowance/"
+          }
+        ]
+      },
+      {
+        "h3": "Aturan 30% (<em>30% ruling</em>)",
+        "html": "<p>Aturan 30% memungkinkan pemberi kerja membayar sampai 30% dari gajimu sebagai tunjangan bebas pajak untuk biaya tambahan bekerja di luar negeri. Aturan ini ditujukan bagi orang yang direkrut dari luar Belanda karena keahlian yang langka di pasar kerja Belanda. Syarat utamanya:</p><ul><li>Kamu direkrut dari luar negeri, atau dikirim oleh pemberi kerja asing, dan sebelum mulai bekerja kamu tinggal lebih dari 150 km dari perbatasan Belanda selama lebih dari 16 dari 24 bulan terakhir.</li><li>Gaji kena pajakmu, di luar tunjangan, memenuhi norma gaji. <em>Tool</em> ini memakai €48.013, atau €36.497 untuk orang di bawah 30 tahun yang bergelar master.</li><li>Kamu dan pemberi kerja mengajukan bersama-sama, dan aturan ini berlaku paling lama lima tahun.</li></ul><p>Dalam hitungan <em>tool</em> ini, tunjangan bebas pajak adalah yang terkecil dari tiga angka: 30% dari seluruh penghasilanmu, penghasilan dikurangi norma gaji, dan €78.600. Tarif 30% berlaku untuk 2026 dan dijadwalkan turun menjadi 27% mulai 1 Januari 2027, jadi pastikan syarat terbaru dan aturan peralihannya ke Belastingdienst.</p>",
+        "cite": [
+          {
+            "name": "Belastingdienst, Expat Scheme (fasilitas 30%): syarat",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/content/coming-to-work-in-the-netherlands-30-percent-facility#:~:text=Expat%20Scheme"
+          },
+          {
+            "name": "Belastingdienst, syarat keahlian (norma gaji)",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+          },
+          {
+            "name": "Rijksoverheid, aturan expat pekerja asing berpendidikan tinggi",
+            "url": "https://www.rijksoverheid.nl/themas/werk/inkomstenbelasting/belastingvoordeel-buitenlandse-werknemers"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+      },
+      {
+        "name": "Belastingdienst, tabel arbeidskorting 2026",
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/arbeidskorting/tabel-arbeidskorting-2026"
+      },
+      {
+        "name": "Belastingdienst, tabel algemene heffingskorting 2026",
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/algemene_heffingskorting/tabel-algemene-heffingskorting-2026"
+      },
+      {
+        "name": "Belastingdienst, Expat Scheme (fasilitas 30%): syarat",
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/content/coming-to-work-in-the-netherlands-30-percent-facility#:~:text=Expat%20Scheme"
+      },
+      {
+        "name": "Belastingdienst, syarat keahlian (norma gaji)",
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+      },
+      {
+        "name": "Rijksoverheid, aturan expat pekerja asing berpendidikan tinggi",
+        "url": "https://www.rijksoverheid.nl/themas/werk/inkomstenbelasting/belastingvoordeel-buitenlandse-werknemers"
+      },
+      {
+        "name": "Business.gov.nl, uang liburan (holiday allowance)",
+        "url": "https://business.gov.nl/regulation/holiday-allowance/"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Belanda: status residen",
+        "url": "https://taxsummaries.pwc.com/netherlands/individual/residence"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "resident",
+      "title": "Berapa gaji bersih di Belanda kalau gajinya €60.000 setahun?",
+      "intro": "<p>Contoh ini untuk karyawan yang bergaji €60.000 dan tidak memakai aturan 30%. Uang liburan 8% (€4.800) ditambahkan, sehingga penghasilan yang dipajaki €64.800. Pajak Box 1 sebelum keringanan sekitar €23.635, lalu keringanan umum (€872) dan keringanan kerja (€4.435) menurunkannya menjadi €18.329. Yang masuk rekeningmu sekitar €46.471 setahun (€3.873 per bulan) termasuk uang liburan, yaitu 77,5% dari gaji €60.000.</p>",
+      "after": "<p>Tarif marginalmu di sini 46,5%, lebih tinggi daripada 37,56% karena kedua keringanan sedang menyusut pada penghasilan ini, sehingga setiap euro tambahan juga mengurangi keringanan.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+        },
+        {
+          "name": "Belastingdienst, tabel arbeidskorting 2026",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/arbeidskorting/tabel-arbeidskorting-2026"
+        }
+      ]
+    },
+    {
+      "key": "30-percent-ruling",
+      "title": "Berapa gaji bersih di Belanda dengan gaji €75.000 dan aturan 30%?",
+      "intro": "<p>Contoh ini untuk tenaga terampil asing dengan aturan 30% yang bergaji €75.000, misalnya pemegang izin kennismigrant (pekerja terampil) yang direkrut dari luar negeri. Setelah ditambah uang liburan, penghasilannya €81.000, dan tunjangan bebas pajak sebesar 30% darinya, yaitu €24.300. Penghasilan kena pajak jadi €56.700, masih di atas norma gaji €48.013, sehingga 30% penuh berlaku. Pajak Box 1 sebesar €14.241 setelah keringanan €1.390 dan €4.962. Gaji bersihmu sekitar €66.759 setahun (€5.563 per bulan), atau 89,0% dari gaji.</p>",
+      "after": "<p>Tanpa aturan ini, gaji yang sama menyisakan sekitar €54.353, jadi manfaatnya sekitar €12.400 setahun. Aturan ini tidak otomatis: kamu butuh pemberi kerja yang memenuhi syarat dan pengajuan yang disetujui.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Expat Scheme (fasilitas 30%): syarat",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/content/coming-to-work-in-the-netherlands-30-percent-facility#:~:text=Expat%20Scheme"
+        },
+        {
+          "name": "Belastingdienst, syarat keahlian (norma gaji)",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+        }
+      ]
+    },
+    {
+      "key": "30-percent-ruling-under-30",
+      "title": "Cara menghitung pajak aturan 30% di Belanda untuk lulusan master di bawah 30 tahun",
+      "intro": "<p>Contoh ini untuk orang di bawah 30 tahun bergelar master, bergaji €50.000, yang memenuhi norma gaji lebih rendah €36.497. Setelah ditambah uang liburan, penghasilannya €54.000. Tunjangan bebas pajak 30%, yaitu €16.200, membuat penghasilan kena pajak €37.800, yang masih di dalam lapisan terendah 35,75%. Pajak Box 1 sebesar €5.381 setelah keringanan €2.599 dan €5.533. Gaji bersihmu sekitar €48.619 setahun (€4.052 per bulan), atau 97,2% dari gaji.</p>",
+      "after": "<p>Persentasenya melewati 95% karena gaji bersih sudah memuat uang liburan €4.000 dan tunjangan itu menghapus banyak pajak. Tanpa aturan ini, gaji yang sama menyisakan sekitar €41.122. Norma yang lebih rendah itulah yang membuat gaji sekecil ini masih memenuhi syarat.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, syarat keahlian (norma gaji)",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>Berikut cara-cara sah dan lazim untuk menjaga lebih banyak gaji tetap di tanganmu di Belanda. Mana yang berlaku bergantung pada cara kamu direkrut.</p>",
+  "strategies": [
+    {
+      "h3": "Ajukan aturan 30% bersama pemberi kerja",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> orang yang direkrut dari luar negeri dan memenuhi syarat 150 km, 16 dari 24 bulan, serta norma gaji. Pengajuan dilakukan olehmu dan pemberi kerja bersama-sama. Kalau diajukan dalam empat bulan sejak tanggal mulai kerja, aturan ini berlaku mundur sejak hari pertama kamu bekerja.</p><p><strong>Catatan:</strong> masa berlakunya paling lama lima tahun, tarifnya dijadwalkan turun menjadi 27% mulai 2027, dan syaratnya bisa berubah. Cek aturan terbaru di Belastingdienst sebelum mengandalkan aturan ini saat menilai penawaran kerja.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Expat Scheme (fasilitas 30%): syarat",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/content/coming-to-work-in-the-netherlands-30-percent-facility#:~:text=Expat%20Scheme"
+        },
+        {
+          "name": "Belastingdienst, keputusan: masa berlaku dan pengujian syarat",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/beschikking_geldigheid_en_toetsen_voorwaarden"
+        },
+        {
+          "name": "Rijksoverheid, aturan expat pekerja asing berpendidikan tinggi",
+          "url": "https://www.rijksoverheid.nl/themas/werk/inkomstenbelasting/belastingvoordeel-buitenlandse-werknemers"
+        }
+      ]
+    },
+    {
+      "h3": "Periksa norma gaji untuk lulusan master di bawah 30 tahun",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> lulusan master di bawah 30 tahun yang gajinya di bawah norma standar. Norma gaji yang lebih rendah, yaitu €36.497, berlaku bagi lulusan master di bawah 30 tahun.</p><p><strong>Catatan:</strong> gelar dan tingkat pendidikannya harus memenuhi syarat hukum. Pastikan dulu bahwa ijazahmu diakui sebelum kamu menerima gaji yang dihitung berdasarkan norma itu.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, syarat keahlian (norma gaji)",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+        }
+      ]
+    },
+    {
+      "h3": "Ikut skema pensiun dari pemberi kerja",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menjalankan skema pensiun. Iuran milikmu dipotong sebelum pajak, jadi kamu menghemat pajak pada tarif tertinggimu. Kalkulator ini punya <em>input</em> untuk persentase iuran pensiunmu.</p><p><strong>Catatan:</strong> iuran pensiun mengurangi gaji bersih sekarang dan merupakan tabungan jangka panjang. Skema yang dimulai di atas ambang tertentu memotong lebih sedikit daripada persentase yang kamu masukkan. Kalau kamu berencana pulang ke Indonesia, tanyakan ke penyelenggara apa yang terjadi pada dana itu.</p>"
+    },
+    {
+      "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
+      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Belanda lebih dari satu tahun. Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Belanda, tetapi kalkulator ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun penuh. Penghasilan investasi di Box 3, usaha, dan tahun yang tidak penuh tidak masuk.",
+    "<strong>Tanpa bonus atau saham.</strong> Bonus, bulan ke-13, opsi saham dan tunjangan lain tidak dihitung terpisah.",
+    "<strong>Asuransi kesehatan tidak masuk.</strong> Semua penduduk Belanda wajib memiliki asuransi kesehatan dasar dari perusahaan swasta dan membayar premi bulanan. Premi itu tidak dihitung di sini, begitu juga tunjangan perawatan kesehatan (<em>zorgtoeslag</em>).",
+    "<strong>Syarat aturan 30% tidak diuji.</strong> Kamu yang memilih apakah aturan ini berlaku. Kalkulator tidak memeriksa aturan 150 km, aturan 16 dari 24 bulan, atau apakah pekerjaanmu memenuhi syarat.",
+    "<strong>Keringanan disederhanakan.</strong> Pasangan, anak dan keringanan lain tidak dihitung, dan potongan bunga KPR juga tidak masuk.",
+    "<strong>Di bawah usia pensiun negara.</strong> Tarifnya mengasumsikan kamu belum mencapai usia pensiun negara.",
+    "<strong>Tanpa P3B dan pajak Indonesia.</strong> Dua hal itu tidak dihitung."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih untuk gaji €60.000 di Belanda?",
+      "a": "<p>Untuk gaji €60.000, pekerja yang tidak memakai aturan 30% membayar sekitar €18.329 pajak Box 1 dan iuran jaminan sosial atas penghasilan €64.800, yaitu gaji €60.000 ditambah uang liburan 8%. Yang tersisa sekitar €46.471 setahun. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\"><em>tool</em> Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+        }
+      ]
+    },
+    {
+      "q": "Apa itu aturan 30% di Belanda dan siapa yang berhak?",
+      "a": "<p>Aturan ini memberi tunjangan bebas pajak sampai 30% dari penghasilanmu untuk biaya tambahan bekerja jauh dari tempat asal. Kamu berhak kalau pemberi kerja Belanda merekrutmu dari luar negeri, kamu tinggal lebih dari 150 km dari perbatasan Belanda selama lebih dari 16 dari 24 bulan sebelum mulai kerja, dan gajimu memenuhi norma gaji (€48.013, atau €36.497 untuk orang di bawah 30 tahun bergelar master). Masa berlakunya paling lama lima tahun, dan kamu bersama pemberi kerja yang mengajukannya.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Expat Scheme (fasilitas 30%): syarat",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/en/individuals/content/coming-to-work-in-the-netherlands-30-percent-facility#:~:text=Expat%20Scheme"
+        },
+        {
+          "name": "Belastingdienst, syarat keahlian (norma gaji)",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+        }
+      ]
+    },
+    {
+      "q": "Kenapa ada uang liburan 8% di atas gaji di Belanda?",
+      "a": "<p>Hukum Belanda memberi karyawan uang liburan minimal 8% dari gaji, yang dibayar sekali setahun pada Mei atau Juni dan dipajaki sebagai gaji biasa. <em>Tool</em> ini menambahkannya ke gaji yang kamu masukkan, jadi dalam setahun penghasilanmu 8% lebih besar daripada kesan dari dua belas slip gaji. Periksa apakah kontrakmu menyebut gaji dengan atau tanpa uang liburan.</p>",
+      "cite": [
+        {
+          "name": "Business.gov.nl, uang liburan (holiday allowance)",
+          "url": "https://business.gov.nl/regulation/holiday-allowance/"
+        }
+      ]
+    },
+    {
+      "q": "Kenapa pajak penghasilan dan jaminan sosial di Belanda jadi satu angka?",
+      "a": "<p>Box 1 menggabungkan pajak penghasilan dan iuran jaminan sosial nasional dalam satu tarif untuk orang yang belum mencapai usia pensiun negara. Di Indonesia keduanya terpisah (PPh 21 di satu sisi, BPJS Ketenagakerjaan dan BPJS Kesehatan di sisi lain), sehingga slip gaji Belanda terlihat seolah tidak punya potongan jaminan sosial. Karena itu <em>tool</em> ini menampilkan satu baris, dengan dua keringanan pajak di dalamnya.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+        }
+      ]
+    },
+    {
+      "q": "Kenapa tarif marginal di Belanda terlihat lebih tinggi daripada tarif pajaknya?",
+      "a": "<p>Karena dua keringanan pajak menyusut ketika penghasilan naik. Di tengah rentang penghasilan keduanya mengecil, sehingga setiap euro tambahan dikenai 37,56% dan sekaligus mengurangi keringanan. Untuk gaji €60.000, tarif marginalnya 46,5%, padahal tarif lapisannya 37,56%.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, tabel arbeidskorting 2026",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/arbeidskorting/tabel-arbeidskorting-2026"
+        },
+        {
+          "name": "Belastingdienst, tabel algemene heffingskorting 2026",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/algemene_heffingskorting/tabel-algemene-heffingskorting-2026"
+        },
+        {
+          "name": "Belastingdienst, Box 1: penjelasan dan tarif",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/boxen_en_tarieven/box_1/box_1#:~:text=Box%201"
+        }
+      ]
+    },
+    {
+      "q": "Apakah norma gaji aturan 30% sudah termasuk uang liburan?",
+      "a": "<p>Di kalkulator ini ya: penghasilan total dengan uang liburan diuji terhadap norma, dan tunjangan tidak pernah membuat penghasilan kena pajak turun di bawah norma. Ujian hukumnya dilakukan pada gaji kena pajakmu, jadi pastikan ke pemberi kerja dan Belastingdienst bagaimana gajimu dihitung.</p>",
+      "cite": [
+        {
+          "name": "Belastingdienst, syarat keahlian (norma gaji)",
+          "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/internationaal/personeel/u_bent_niet_in_nederland_gevestigd_loonheffingen_inhouden/als_u_loonheffingen_gaat_inhouden/extraterritoriale_kosten_en_de_30procentregeling/voorwaarden_voor_de_30procentregeling1/deskundigheidsvereiste"
+        }
+      ]
+    },
+    {
+      "q": "Apakah premi asuransi kesehatan di Belanda sudah dipotong dalam gaji bersih?",
+      "a": "<p>Belum, karena semua penduduk Belanda wajib mengambil asuransi kesehatan dasar dari perusahaan asuransi swasta dan membayar premi bulanannya sendiri, tidak seperti BPJS Kesehatan yang iurannya dipotong dari gaji. Premi itu serta tunjangan perawatan kesehatan (<em>zorgtoeslag</em>) tidak masuk hitungan <em>tool</em> ini. Kurangi dari gaji bersihmu sendiri saat menyusun anggaran, dan bandingkan biaya hidup tiap kota di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\"><em>tool</em> Cost of Living Comparator</a>.</p>"
+    },
+    {
+      "q": "Kalau bekerja di Belanda, apakah saya masih harus bayar pajak di Indonesia?",
+      "a": "<p>Kalau statusmu masih subjek pajak dalam negeri, gaji dari Belanda pada dasarnya tetap dilaporkan di SPT Tahunan, dan pajak Box 1 yang sudah dibayar di sana dapat dikreditkan. Kalau kamu menjadi subjek pajak luar negeri, yang dipajaki di Indonesia hanya penghasilan yang bersumber dari Indonesia. Pergantian status itu antara lain bergantung pada lamanya kamu berada di luar Indonesia (183 hari dalam 12 bulan), jadi tanyakan ke KPP atau DJP. Kalkulator ini hanya menghitung pajak Belanda, dan halaman ini bukan nasihat hukum.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Less the general tax credit": "Dikurangi keringanan pajak umum",
+    "Less the labour tax credit": "Dikurangi keringanan pajak kerja",
+    "Holiday allowance (8%), paid on top": "Uang liburan (8%), dibayar di atas gaji",
+    "30% ruling, tax-free allowance": "30% ruling, tunjangan bebas pajak",
+    "Box 1 income tax and national insurance": "Pajak penghasilan Box 1 dan iuran jaminan sosial nasional",
+    "General tax credit, inside the tax above": "Keringanan pajak umum, sudah termasuk di pajak di atas",
+    "Labour tax credit, inside the tax above": "Keringanan pajak kerja, sudah termasuk di pajak di atas",
+    "Pension contribution, employee": "Iuran pensiun, bagian karyawan"
+  },
+  "bmc": "Traktir kopi, siapa tahu aturan 30% berlaku buat kamu"
+}

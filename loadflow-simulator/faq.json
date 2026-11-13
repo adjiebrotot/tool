@@ -1,0 +1,40 @@
+{
+  "en": [
+    {
+      "q": "How different are the AC and DC load flow results here?",
+      "a": [
+        "The DC option keeps every bus at 1 p.u., ignores resistance and reactive power, and solves the network linearly from reactances alone, so it shows no line or transformer losses. Only HVDC links still lose (1 minus efficiency) of what they send. The AC, Newton-Raphson option returns voltage magnitudes, reactive power and losses. If a result depends on voltage drop or losses, use AC."
+      ]
+    },
+    {
+      "q": "When does the AC solver decide it has converged?",
+      "a": [
+        "Newton-Raphson stops once every bus is balanced to within the Tolerance, which defaults to 0.000001 MW / MVAr, and gives up after 100 iterations. The default Initial guess is the DC load flow, which also helps with phase-shifting transformers. A flat start (1 p.u., 0 degrees) is the alternative, but the tool warns that it may not converge with phase shifters."
+      ]
+    },
+    {
+      "q": "Which generator covers the losses, and can the slack be shared?",
+      "a": [
+        "The generator set to Slack picks up the whole mismatch, so the losses land on that one unit. Its output is a result, not the p_set you typed. Each island gets one slack: with two Slack units, the first stays slack and the other is treated as PV. Turn on Distributed slack to share it among the island's generators, in proportion to Dispatch or Rating."
+      ]
+    },
+    {
+      "q": "Does the model limit generator reactive power or switch transformer taps automatically?",
+      "a": [
+        "No. A PV generator holds its voltage setpoint whatever reactive power that takes, with no Q limits, so check the reported Q against the unit's real capability. Loads draw constant active and reactive power whatever the voltage. Tap changers are fixed at the tap position or ratio you enter. To test a limit, move the tap or the setpoint by hand and re-solve."
+      ]
+    },
+    {
+      "q": "Does it run N-1 contingencies or check line limits?",
+      "a": [
+        "There is no automatic N-1 analysis: it solves one operating point of a balanced three-phase network. To test an outage, remove the line or transformer from the diagram and read the new result. The limits only read the result and never change it: buses outside Lowest voltage and Highest voltage (default 0.95 and 1.05 p.u.), and branches above Highest loading (default 100% of rating), are flagged."
+      ]
+    },
+    {
+      "q": "How does the tool count loading on a line, transformer or HVDC link?",
+      "a": [
+        "Loading is the larger apparent power at either end divided by the branch rating, as a percentage. For a line or transformer that is the greater of the two end values of the square root of P squared plus Q squared, over s_nom in MVA. A typed line is rated root 3 times voltage times rated current times circuits. A link uses its active power sent over p_nom, since it carries no reactive power."
+      ]
+    }
+  ]
+}

@@ -704,11 +704,77 @@ function setSeg(groupId, val){
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
 }
+// ═══════════════════════════════════════════════════════════
+// GLOBAL INCOME TAX CALCULATOR LINK
+//
+// Salaries here are net. Where a city's tax rules are loaded in the Global
+// Income Tax Calculator, a short link points there: under your own salary to
+// turn a known gross into net, and on a city's card to find the gross that
+// leaves the net salary it shows. Copied from the comparator's gitcHint (keep
+// the coverage lists the same as ../script.js, which mirrors that tool's
+// engine.js). Opens in a new tab so the map stays as it is.
+// ═══════════════════════════════════════════════════════════
+const GITC_COUNTRY = {
+  'Australia':'AU','Singapore':'SG','United Kingdom':'GB','Germany':'DE','United States':'US','Canada':'CA','France':'FR',
+  'Netherlands':'NL','Belgium':'BE','Switzerland':'CH','Italy':'IT','Spain':'ES','Portugal':'PT','Norway':'NO','Sweden':'SE',
+  'Finland':'FI','Estonia':'EE','Japan':'JP','South Korea':'KR','China':'CN','Taiwan (China)':'TW','Hong Kong (China)':'HK',
+  'Indonesia':'ID','Malaysia':'MY','Thailand':'TH','United Arab Emirates':'AE','Saudi Arabia':'SA','Qatar':'QA','Bahrain':'BH',
+  'Kuwait':'KW','Oman':'OM'
+};
+const GITC_ONE_CITY = { CH:'Zurich', IT:'Milan', ES:'Madrid', JP:'Tokyo', CN:'Shanghai' };
+const GITC_US_NOT_LOADED = ['AL','CT','ME','MN','NM','OH','OR','RI','SC','UT','WI'];
+const GITC_CA_PROV = {
+  'Toronto':'ON','Markham':'ON','Ottawa':'ON','Hamilton':'ON','London':'ON','Kitchener':'ON','Mississauga':'ON','Kingston':'ON',
+  'Brampton':'ON','St.Catharines':'ON','Windsor':'ON','Victoria':'BC','Nanaimo, BC':'BC','Vancouver':'BC','Kamloops':'BC',
+  'Surrey':'BC','Kelowna':'BC','Calgary':'AB','Edmonton':'AB','Red Deer':'AB','Quebec City':'QC','Montreal':'QC'
+};
+const GITC_SCOTLAND = ['Glasgow','Edinburgh','Aberdeen','Dundee','Inverness','Stirling','Perth'];
+const GITC_PT_ISLANDS = ['Funchal','Ponta Delgada','Angra do Heroismo'];
+// The calculator's fields for a city, or null when its rules are not loaded there.
+function gitcJob(city){
+  if(!city) return null;
+  const code = GITC_COUNTRY[city.country];
+  if(!code) return null;
+  if(GITC_ONE_CITY[code] && GITC_ONE_CITY[code] !== city.city) return null;
+  const job = { country: code };
+  if(code === 'US'){
+    const m = /,\s*([A-Z]{2})$/.exec(city.city);
+    if(!m || GITC_US_NOT_LOADED.includes(m[1])) return null;
+    job.usState = m[1];
+    if(m[1] === 'NY' && /^New York\b/.test(city.city)) job.usNyc = 'true';
+  } else if(code === 'CA'){
+    if(!GITC_CA_PROV[city.city]) return null;
+    job.caProv = GITC_CA_PROV[city.city];
+  } else if(code === 'GB'){
+    job.ukRegion = GITC_SCOTLAND.includes(city.city) ? 'sco' : 'ruk';
+  } else if(code === 'PT' && GITC_PT_ISLANDS.includes(city.city)) return null;
+  return job;
+}
+// kind 'gross': the reader may know a gross salary there. kind 'need': the
+// net salary there, monthly, in the city's currency.
+function gitcLink(city, kind, monthly){
+  const job = gitcJob(city);
+  if(!job) return '';
+  const q = Object.assign({ from: 'col' }, job, kind === 'need'
+    ? { dir: 'net', amount: Math.max(0, Math.round(monthly || 0)), period: 'monthly' }
+    : { dir: 'gross', period: 'monthly' });
+  const href = '../../global-income-tax-calculator/#' + Object.keys(q).map(k => k + '=' + encodeURIComponent(q[k])).join('&');
+  const place = esc(city.city);
+  const icon = '<svg class="gitc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c1.9 2 2.9 4.4 2.9 7s-1 5-2.9 7c-1.9-2-2.9-4.4-2.9-7s1-5 2.9-7z"/></svg>';
+  const lead = kind === 'need'
+    ? '<strong>' + place + '</strong> is covered by the Global Income Tax Calculator.'
+    : 'Know the gross salary? <strong>' + place + '</strong> is covered by the Global Income Tax Calculator.';
+  const go = kind === 'need' ? 'Find the gross salary that leaves this net income' : 'Find your net salary';
+  return '<a class="gitc-hint" href="' + href + '" target="_blank" rel="noopener">' + icon + '<span class="gitc-text">' + lead + ' <span class="gitc-go">' + go + ' ↗</span></span></a>';
+}
+
 function syncInputs(){
   const from = getCity(S.fromKey);
   const cur = from ? from.currency : '';
   document.querySelectorAll('.cur-tag').forEach(t => { t.textContent = cur || '¤'; });
   $('fromCurrNote').textContent = from ? 'Every figure leads with ' + cur + ', the ' + from.city + ' currency.' : 'Its currency is the one every figure leads with.';
+  const gitc = gitcLink(from, 'gross');
+  $('fromGitc').innerHTML = gitc; $('fromGitc').hidden = !gitc;
   if(document.activeElement !== $('salary')) $('salary').value = moneyText(S.salary);
   if(document.activeElement !== $('expense')) $('expense').value = moneyText(S.expense);
   setSeg('detailGroup', S.detail); setSeg('housingGroup', S.housing);
@@ -1803,6 +1869,7 @@ function renderCard(){
       html += '<div class="pop-rel">' + esc(reachText(o, R.from.city)) + (o.neg ? '. The scaled salary does not cover the lifestyle here.' : '') + '</div>';
       html += '<div class="pop-src">' + esc(wageSource(o.c)) + '</div>';
     } else html += '<div class="pop-rel">' + esc(relText(o, R.from.city)) + (o.neg ? '. Your salary does not cover the lifestyle here.' : '') + '</div>';
+    if(o.sal > 0) html += gitcLink(o.c, 'need', o.sal);
   }
   card.innerHTML = html;
 }

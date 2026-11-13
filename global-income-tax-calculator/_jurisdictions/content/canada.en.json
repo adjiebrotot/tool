@@ -1,0 +1,369 @@
+{
+  "slug": "canada",
+  "lang": "en",
+  "title": "Canadian Income Tax 2026: How to Calculate Take-Home",
+  "h1": "How to calculate income tax in Canada (2026)",
+  "description": "Canadian income tax for 2026: federal and provincial rates for Ontario, BC, Alberta and Quebec, CPP, EI, RRSP and TFSA, with four take-home examples.",
+  "lede": "<p>Canada taxes residents on worldwide income with federal rates from 14% to 33% plus provincial tax, and takes CPP and EI contributions from pay. On C$90,000 in Ontario you pay about C$22,803 in tax and contributions and keep about C$67,197. In Quebec, which has its own tax return, rates and pension plan, the same salary leaves about C$63,235.</p>",
+  "law": {
+    "intro": "<p>The Canadian tax year is the calendar year, and the figures below are the 2026 rates as the calculator models them. Your employer withholds income tax, CPP or QPP and EI from each payslip, and you file a return by 30 April the following year. Tax is charged on residency, not on visa type. Permanent residents and workers who make Canada their home are residents for tax and pay on worldwide income. In the year you arrive you are normally a part-year resident, taxed from the date you establish residential ties.</p>",
+    "blocks": [
+      {
+        "h3": "Federal income tax rates",
+        "html": "<p>Federal tax applies to taxable income, which is pay less the deductible CPP enhancement. There is no deduction for the first dollars. Instead non-refundable credits, calculated at the lowest rate of 14%, reduce the tax. They include the basic personal amount of about C$16,450, the Canada employment amount, and your CPP and EI contributions.</p>",
+        "table": {
+          "head": ["Taxable income", "Rate"],
+          "rows": [
+            ["C$0 to C$58,523", "14%"],
+            ["C$58,524 to C$117,045", "20.5%"],
+            ["C$117,046 to C$181,440", "26%"],
+            ["C$181,441 to C$258,482", "29%"],
+            ["Over C$258,482", "33%"]
+          ]
+        },
+        "cite": [
+          {
+            "name": "CRA, current year tax rates and income brackets (2026), federal rate",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026"
+          },
+          {
+            "name": "CRA, T4127 Payroll Deductions Formulas (basic personal amount)",
+            "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Federal%20Basic%20Personal%20Amount"
+          }
+        ]
+      },
+      {
+        "h3": "Provincial income tax",
+        "html": "<p>Each province adds its own tax with its own brackets and credits. The calculator loads four: Ontario, British Columbia, Alberta and Quebec. Ontario's rates run from 5.05% to 13.16%, with a surtax on higher Ontario tax, a health premium of up to C$900 and a low-income tax reduction. British Columbia's run from 5.6% to 20.5%. Alberta's run from 8% to 15%.</p><p>Other provinces and territories are not loaded.</p>",
+        "table": {
+          "head": ["Province", "Lowest rate", "Highest rate", "First bracket ends at"],
+          "rows": [
+            ["Ontario", "5.05%", "13.16%", "C$53,891"],
+            ["British Columbia", "5.6%", "20.5%", "C$50,363"],
+            ["Alberta", "8%", "15%", "C$61,200"],
+            ["Quebec", "14%", "25.75%", "C$54,345"]
+          ]
+        },
+        "cite": [
+          {
+            "name": "CRA, current year tax rates and income brackets (2026), provincial rates",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Ontario%20rate"
+          },
+          {
+            "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (Ontario surtax)",
+            "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+          },
+          {
+            "name": "Ontario.ca, Health premium",
+            "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+          },
+          {
+            "name": "Government of British Columbia, personal income tax rates",
+            "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates#:~:text=Personal%20income%20tax%20brackets%20and%20rates"
+          },
+          {
+            "name": "Government of Alberta, personal income tax",
+            "url": "https://www.alberta.ca/personal-income-tax#:~:text=2025%20and%202026%20tax%20brackets"
+          },
+          {
+            "name": "Revenu Québec, income tax rates",
+            "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+          }
+        ]
+      },
+      {
+        "h3": "CPP, CPP2 and EI",
+        "html": "<p>The Canada Pension Plan takes 5.95% of pay between C$3,500 and C$74,600. A second tier, CPP2, takes 4% of pay between C$74,600 and C$85,000. Employment Insurance takes 1.63% of pay up to C$68,900. The enhanced part of CPP is deducted from income, and the rest earns a tax credit, so these contributions lower your tax a little. Employers pay a matching CPP on top.</p>",
+        "cite": [
+          {
+            "name": "CRA, CPP contribution rates, maximums and exemptions",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html"
+          },
+          {
+            "name": "CRA, second additional CPP (CPP2) contribution rates and maximums",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/calculating-deductions/making-deductions/second-additional-cpp-contribution-rates-maximums.html"
+          },
+          {
+            "name": "CRA, EI premium rates and maximums",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+          }
+        ]
+      },
+      {
+        "h3": "Quebec: a separate system",
+        "html": "<p>Quebec residents file two returns, one federal and one with Revenu Québec, and the province collects its own income tax. Quebec has its own pension plan (QPP at 6.30%, QPP2 at 4%), a lower EI rate of 1.30% and a parental insurance plan (QPIP at 0.430%). Federal tax is reduced by 16.5% for Quebec residents, and Quebec adds a 6% deduction for workers, up to C$1,450. The brackets run from 14% to 25.75%. Quebec's work premium, solidarity credit and drug insurance premium are not included.</p>",
+        "cite": [
+          {
+            "name": "Revenu Québec, income tax rates",
+            "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+          },
+          {
+            "name": "Revenu Québec, QPP maximum pensionable earnings and contribution rate",
+            "url": "https://www.revenuquebec.ca/en/businesses/source-deductions-and-employer-contributions/calculating-source-deductions-and-contributions/qpp-contributions/maximum-pensionable-earnings-and-contribution-rate/"
+          },
+          {
+            "name": "Retraite Québec, 2026 benefit amounts and key data",
+            "url": "https://www.retraitequebec.gouv.qc.ca/en/other-sorted/benefits-amounts-key-data"
+          },
+          {
+            "name": "Gouvernement du Québec, QPIP contribution rates (RQAP)",
+            "url": "https://www.quebec.ca/entreprises-et-travailleurs-autonomes/administrer-gerer/embauche-gestion-personnel/assurance-parentale/taux-cotisations"
+          },
+          {
+            "name": "CRA, T4127 Payroll Deductions Formulas (Quebec reduction of federal tax)",
+            "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Formula%20to%20calculate%20the%20annual%20federal%20tax%20payable"
+          },
+          {
+            "name": "CRA, EI premium rates and maximums",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "CRA, current year tax rates and income brackets (2026), federal rate",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026",
+        "note": "federal rates"
+      },
+      {
+        "name": "CRA, T4127 Payroll Deductions Formulas, 122nd edition (1 Jan 2026)",
+        "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html",
+        "note": "payroll formulas, basic personal amount, Quebec reduction"
+      },
+      {
+        "name": "CRA, CPP contribution rates, maximums and exemptions",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html",
+        "note": "CPP rates"
+      },
+      {
+        "name": "CRA, EI premium rates and maximums",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html",
+        "note": "EI rates"
+      },
+      {
+        "name": "Ontario.ca, Health premium",
+        "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges",
+        "note": "Ontario health premium"
+      },
+      {
+        "name": "Revenu Québec, income tax rates",
+        "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/",
+        "note": "Quebec rates"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "CRA, Newcomers to Canada and the CRA",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html#:~:text=residential%20ties"
+      },
+      {
+        "name": "CRA, due dates and payment dates (personal income tax)",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html#:~:text=Filing%20dates%20for%202025%20taxes"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "ontario",
+      "title": "How to calculate income tax in Ontario on C$90,000",
+      "intro": "<p>This is a resident employee earning C$90,000 in Ontario. CPP is C$4,230, CPP2 is C$416 and EI is C$1,123. Federal income tax, after the basic credits, is C$11,252. Ontario income tax is C$5,032, plus an Ontario Health Premium of C$750. You keep about C$67,197, or 74.7% of gross.</p>",
+      "after": "<p>The marginal rate is 29.7%. Pay into an RRSP and the deduction saves tax at the combined federal and Ontario rate.</p>",
+      "cite": [
+        {
+          "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (Ontario surtax)",
+          "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+        },
+        {
+          "name": "Ontario.ca, Health premium",
+          "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+        }
+      ]
+    },
+    {
+      "key": "british-columbia",
+      "title": "Take-home pay on C$90,000 in British Columbia",
+      "intro": "<p>The same C$90,000 in British Columbia has the same C$5,769 of CPP, CPP2 and EI and the same C$11,252 of federal tax. Provincial tax is C$4,786 and there is no health premium. You keep about C$68,193, or 75.8% of gross, which is C$996 more than in Ontario.</p>",
+      "after": "<p>The marginal rate is 28.2%. BC's top rates are higher than Ontario's, so the gap closes at higher incomes.</p>",
+      "cite": [
+        {
+          "name": "Government of British Columbia, personal income tax rates",
+          "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates#:~:text=Personal%20income%20tax%20brackets%20and%20rates"
+        },
+        {
+          "name": "Government of British Columbia, basic personal income tax credits",
+          "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/credits/basic#:~:text=Basic%20personal%20amount"
+        }
+      ]
+    },
+    {
+      "key": "alberta",
+      "title": "How much tax do you pay in Alberta on C$90,000?",
+      "intro": "<p>In Alberta the same salary has C$5,769 of CPP, CPP2 and EI, C$11,252 of federal tax and C$5,470 of provincial tax. You keep about C$67,509, or 75.0% of gross. The marginal rate is 30.5%.</p>",
+      "after": "<p>Alberta's first bracket is a single 8% rate up to C$61,200, higher than Ontario's or British Columbia's lowest rates, so it costs a little more than BC at this income.</p>",
+      "cite": [
+        {
+          "name": "Government of Alberta, personal income tax",
+          "url": "https://www.alberta.ca/personal-income-tax#:~:text=2025%20and%202026%20tax%20brackets"
+        }
+      ]
+    },
+    {
+      "key": "quebec",
+      "title": "How to calculate Quebec income tax, QPP and QPIP on C$90,000",
+      "intro": "<p>A Quebec resident on C$90,000 pays QPP of C$4,479, QPP2 of C$416, EI at the lower Quebec rate of C$896 and QPIP of C$387. Federal tax, after the 16.5% Quebec abatement, is C$9,347. Quebec income tax is C$11,240, after the C$1,450 deduction for workers. You keep about C$63,235, or 70.3% of gross, about C$3,962 less than in Ontario.</p>",
+      "after": "<p>The marginal rate is 36.5%. Quebec's tax is higher, partly offset by the federal abatement and by provincial services such as childcare that this calculator does not value.</p>",
+      "cite": [
+        {
+          "name": "Revenu Québec, income tax rates",
+          "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+        },
+        {
+          "name": "Revenu Québec, QPP maximum pensionable earnings and contribution rate",
+          "url": "https://www.revenuquebec.ca/en/businesses/source-deductions-and-employer-contributions/calculating-source-deductions-and-contributions/qpp-contributions/maximum-pensionable-earnings-and-contribution-rate/"
+        },
+        {
+          "name": "Gouvernement du Québec, QPIP contribution rates (RQAP)",
+          "url": "https://www.quebec.ca/entreprises-et-travailleurs-autonomes/administrer-gerer/embauche-gestion-personnel/assurance-parentale/taux-cotisations"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Canadian tax. Which ones apply depends on your income and how long you stay.</p>",
+  "strategies": [
+    {
+      "h3": "Registered Retirement Savings Plan (RRSP)",
+      "html": "<p><strong>Suits:</strong> employees who expect a higher tax rate now than when they withdraw, in particular above the 20.5% federal bracket. A contribution is deducted from taxable income, so it saves tax at your marginal rate, and growth is untaxed until withdrawal. Your room is a share of your earlier earned income, shown on your notice of assessment.</p><p><strong>Caveat:</strong> withdrawals are taxed as income, and new arrivals have little room in their first years. If you leave Canada, withdrawals are taxed by Canada at withholding rates.</p>",
+      "cite": [
+        {
+          "name": "CRA, MP, DB, RRSP, DPSP, ALDA, TFSA limits, YMPE and the YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        }
+      ]
+    },
+    {
+      "h3": "Tax-Free Savings Account (TFSA)",
+      "html": "<p><strong>Suits:</strong> any resident aged 18 or over, including newcomers, whose room starts in the year they become a resident. Growth and withdrawals are tax-free.</p><p><strong>Caveat:</strong> contributions are not deductible, so it does not reduce this year's tax, and going over the room is penalised. If you later become a non-resident, check how contributions are treated.</p>",
+      "cite": [
+        {
+          "name": "CRA, calculate your TFSA contribution room",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/tax-free-savings-account/contributing/calculate-room.html"
+        }
+      ]
+    },
+    {
+      "h3": "First Home Savings Account (FHSA)",
+      "html": "<p><strong>Suits:</strong> resident first-time home buyers. Contributions are deductible like an RRSP, and withdrawals for a qualifying home purchase are tax-free.</p><p><strong>Caveat:</strong> you need to be a resident and a first-time buyer, with limits on yearly and lifetime contributions. Check the CRA rules first.</p>",
+      "cite": [
+        {
+          "name": "CRA, First Home Savings Account (FHSA)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/first-home-savings-account.html"
+        }
+      ]
+    },
+    {
+      "h3": "Group RRSP with employer matching",
+      "html": "<p><strong>Suits:</strong> employees whose employer matches contributions. The match is extra pay for your retirement, and your own contributions are deductible.</p><p><strong>Caveat:</strong> some plans lock in money or require a vesting period. Read the plan terms.</p>",
+      "cite": [
+        {
+          "name": "CRA, MP, DB, RRSP, DPSP, ALDA, TFSA limits, YMPE and the YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        }
+      ]
+    }
+  ],
+  "limits": ["<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, capital gains, self-employment, or the part-year you arrive in.", "<strong>Four provinces.</strong> Only Ontario, British Columbia, Alberta and Quebec are loaded. Other provinces and territories are not.", "<strong>No bonuses or equity.</strong> Share options, bonuses and allowances are not modelled separately.", "<strong>No RRSP or deductions.</strong> Contributions, union dues, childcare and similar deductions are not applied. Dependants matter only for Ontario's low-income reduction.", "<strong>Quebec items left out.</strong> The Quebec work premium, solidarity credit and RAMQ drug insurance premium are not included.", "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here.", "<strong>You choose the province.</strong> The calculator does not test where you are resident on 31 December."],
+  "faq": [
+    {
+      "q": "How much tax do I pay on C$90,000 in Canada?",
+      "a": "<p>It depends on the province. In Ontario about C$22,803 in tax and contributions, leaving about C$67,197. In British Columbia you keep about C$68,193, in Alberta about C$67,509 and in Quebec about C$63,235. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "CRA, current year tax rates and income brackets (2026), federal rate",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026"
+        }
+      ]
+    },
+    {
+      "q": "Why does Quebec have a separate tax return?",
+      "a": "<p>Quebec collects its own provincial income tax through Revenu Québec, while every other province's tax is collected by the CRA with the federal return. Quebec residents therefore file two returns. In exchange the federal tax is reduced by 16.5%, and Quebec has its own plans: QPP instead of CPP, QPIP for parental leave, and a lower EI rate. On C$90,000 the Quebec combination is about C$3,962 higher than Ontario's.</p>",
+      "cite": [
+        {
+          "name": "Revenu Québec, income tax rates",
+          "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+        },
+        {
+          "name": "CRA, T4127 Payroll Deductions Formulas (Quebec reduction of federal tax)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Formula%20to%20calculate%20the%20annual%20federal%20tax%20payable"
+        }
+      ]
+    },
+    {
+      "q": "What are CPP, CPP2 and EI, and are they taxes?",
+      "a": "<p>They are payroll contributions, deducted from every payslip. CPP is a pension plan: 5.95% of pay between C$3,500 and C$74,600. CPP2 is a second tier of 4% on pay between C$74,600 and C$85,000, and EI is 1.63% up to C$68,900. You build pension entitlement, and EI covers loss of work. They are not income tax, but they reduce income tax through credits and a deduction. Temporary workers still pay them.</p>",
+      "cite": [
+        {
+          "name": "CRA, CPP contribution rates, maximums and exemptions",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html"
+        },
+        {
+          "name": "CRA, second additional CPP (CPP2) contribution rates and maximums",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/calculating-deductions/making-deductions/second-additional-cpp-contribution-rates-maximums.html"
+        },
+        {
+          "name": "CRA, EI premium rates and maximums",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+        }
+      ]
+    },
+    {
+      "q": "When is the Canadian tax deadline, and will I get a refund?",
+      "a": "<p>Most people file by 30 April for the previous calendar year. Employers withhold tax during the year, and your return compares that with your actual tax, so if you paid too much you get a refund. RRSP contributions, tuition and other items that lower tax can create a refund. If you owe, payment is also due by 30 April.</p><p>The calculator shows a full year of tax, which matches the final bill, not each payslip.</p>",
+      "cite": [
+        {
+          "name": "CRA, due dates and payment dates (personal income tax)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html#:~:text=Filing%20dates%20for%202025%20taxes"
+        }
+      ]
+    },
+    {
+      "q": "Do I pay Canadian tax in the year I arrive?",
+      "a": "<p>Usually you are a part-year resident, taxed on worldwide income from the date you become resident and not on earlier income. Some tax credits are prorated. The calculator assumes a full year in one job, so it overstates a part year. Check your status with the CRA.</p>",
+      "cite": [
+        {
+          "name": "CRA, Newcomers to Canada and the CRA",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html#:~:text=residential%20ties"
+        }
+      ]
+    },
+    {
+      "q": "What is the difference between an RRSP and a TFSA?",
+      "a": "<p>An RRSP gives a deduction now and taxes withdrawals later, so it helps if your tax rate is higher now. A TFSA gives no deduction but all growth and withdrawals are tax-free, so it helps flexibility. Many people use both. The calculator does not apply either, so contributions are an extra saving over the figures shown.</p>",
+      "cite": [
+        {
+          "name": "CRA, MP, DB, RRSP, DPSP, ALDA, TFSA limits, YMPE and the YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        },
+        {
+          "name": "CRA, calculate your TFSA contribution room",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/tax-free-savings-account/contributing/calculate-room.html"
+        }
+      ]
+    },
+    {
+      "q": "Why is Ontario's tax more than the rate table suggests?",
+      "a": "<p>Ontario adds a surtax on higher amounts of Ontario tax and a flat Ontario Health Premium of up to C$900, which on C$90,000 is C$750. Both are charged on top of the rates, which raises the effective rate. At lower incomes Ontario also reduces tax through a tax reduction and the LIFT credit, which the calculator includes.</p>",
+      "cite": [
+        {
+          "name": "Ontario.ca, Health premium",
+          "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+        },
+        {
+          "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (Ontario surtax)",
+          "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+        }
+      ]
+    }
+  ],
+  "bmc": "Found this useful? Buy me a double-double."
+}

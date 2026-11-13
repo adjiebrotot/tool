@@ -54,6 +54,11 @@ const PAGES = [
   // for want of market data; it is a view of the output, not an input.
   { path: 'dcasimulator/',             preset: 'equity-mmf',   probe: '#secList',  ignore: ['detailSelect'] },
   { path: 'dcasimulator/portfolio/',   preset: 'rebal-freq',   probe: '#pfList',   ignore: ['detailPfSelect'] },
+  // The jobs live in JS state (Persist extra): a third job added, then edited.
+  { path: 'global-income-tax-calculator/', preset: 'europe',       probe: '.metrics',
+    also: `document.getElementById('addJob').click();
+           var c = document.getElementById('country'); c.value = 'ES'; c.dispatchEvent(new Event('change', {bubbles: true}));
+           var k = document.getElementById('esKids'); k.value = '2'; k.dispatchEvent(new Event('change', {bubbles: true}));` },
   { path: 'costofliving-comparator/',  probe: '#analysisArea',
     also: `document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click();
            document.getElementById('swapCities').click();` },

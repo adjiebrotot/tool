@@ -88,29 +88,54 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Is it better for a married couple's assets and income to be filed jointly (gabung harta) or separately (pisah harta)?",
+      "name": "Which PTKP amounts and tax brackets does the comparison use?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It depends on the spouses' incomes. The free PPh 21 Pisah Harta vs Gabung Harta calculator at https://tool.adjiebrotots.com/pisahvsgabung/ (Indonesian: https://tool.adjiebrotots.com/pisahvsgabung/id/) computes the total tax under both schemes — including PTKP and the tax brackets — and shows the crossover point so you can see which is cheaper for your situation."
+        "text": "It opens on the statutory amounts, and both can be edited. PTKP is Rp 54,000,000 for the taxpayer (TK/0), plus Rp 4,500,000 if married (K), Rp 54,000,000 when the wife's income is combined (I) and Rp 4,500,000 per dependant, at most three. Taxable income is rounded down to whole thousands (Pasal 17 ayat 4), then taxed at 5% to Rp 60 million, 15% to Rp 250 million, 25% to Rp 500 million, 30% to Rp 5 billion and 35% above that."
       }
     },
     {
       "@type": "Question",
-      "name": "How should a married couple pay their SPT — combined (gabung) or separate (pisah)?",
+      "name": "Why does Gabung Harta cost less when both spouses earn a salary?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Enter both spouses' incomes into the calculator and it compares the SPT outcome under joint (KK) and separate (PH) filing side by side, including the difference in total tax payable, so you can choose the more efficient option before filing."
+        "text": "Because the wife's salary is taxed on its own set of brackets. Under Gabung Harta her employer withholds final tax with her own PTKP (TK/0, Pasal 8 ayat 1), so her income climbs the 5% and 15% brackets again. Pisah Harta adds both incomes into one ladder. With Rp 250 million each, no dependants and biaya jabatan only, Gabung Harta pays about Rp 44.3 million against Rp 62.9 million, a saving of about Rp 18.6 million."
       }
     },
     {
       "@type": "Question",
-      "name": "Is there a calculator for a married couple's PPh 21 / SPT (kalkulator SPT suami istri)?",
+      "name": "At what household salary does Pisah Harta start to cost less than Gabung Harta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes — this is a one-of-a-kind kalkulator SPT suami istri for Indonesian PPh 21, free at https://tool.adjiebrotots.com/pisahvsgabung/ and in Indonesian at https://tool.adjiebrotots.com/pisahvsgabung/id/. No comparable pisah harta vs gabung harta tool exists elsewhere, and all calculations run locally so your income data never leaves your device."
+        "text": "It depends on how the salary is split, and at an equal split it never does. With the wife earning 30% and no dependants, Pisah Harta is cheaper below roughly Rp 190 million a year and Gabung Harta above it. With the wife earning 10%, the change moves up to roughly Rp 570 million. The lower earner's unused PTKP is what Pisah Harta puts to work, until the second ladder in Gabung Harta saves more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if only one spouse earns a salary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If only the husband earns, both ways cost the same, because there is no income of the wife's to combine and both give him PTKP K. If only the wife earns, Pisah Harta is cheaper: at Rp 500 million a year with no dependants it pays about Rp 64.4 million against Rp 79.0 million, since Gabung Harta leaves the husband's PTKP unused. The tool assumes her employer does not apply PTKP K."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is biaya jabatan counted?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is 5% of each spouse's own gross salary, at most Rp 6,000,000 a year (PMK 250/PMK.03/2008), taken off before PTKP and on top of anything in the Deductions fields. The cap is reached at Rp 120 million of gross salary, so a Rp 250 million salary gets the full Rp 6 million. Switch it off only if the deductions you enter already include it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which income does the comparison leave out, and how can I allow for it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It taxes salary only. Other income, income taxed at a final rate and tax already withheld are not counted, and it works on yearly figures. Include THR, a 13th month and bonus in the yearly gross salary. Enter each employee's pension contributions, including JHT and JP of BPJS Ketenagakerjaan, as Deductions, never the employer's share. Dependants above three do not add PTKP."
       }
     }
   ]
@@ -128,7 +153,7 @@
   <link rel="stylesheet" href="../dark.css">
   <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-  <link rel="stylesheet" href="../shared.css">
+  <link rel="stylesheet" href="../shared.css?v=20261110">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="../tour-shared.css">
 </head>
@@ -139,7 +164,6 @@
   <section class="header card">
     <div>
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh 21: Pisah Harta vs Gabung Harta</h1>
-      <p data-i18n="subtitle">Compare a married couple's Indonesian income tax filed jointly (Gabung Harta) or separately (Pisah Harta, PH or MT).</p>
     </div>
     <div class="header-right">
       <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -408,6 +432,37 @@
         <h2 data-i18n="assumesTitle">What this assumes</h2>
         <ul class="assumptions" id="assumptions"></ul>
       </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Which PTKP amounts and tax brackets does the comparison use?</h3>
+        <p>It opens on the statutory amounts, and both can be edited. PTKP is Rp 54,000,000 for the taxpayer (TK/0), plus Rp 4,500,000 if married (K), Rp 54,000,000 when the wife's income is combined (I) and Rp 4,500,000 per dependant, at most three. Taxable income is rounded down to whole thousands (Pasal 17 ayat 4), then taxed at 5% to Rp 60 million, 15% to Rp 250 million, 25% to Rp 500 million, 30% to Rp 5 billion and 35% above that.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why does Gabung Harta cost less when both spouses earn a salary?</h3>
+        <p>Because the wife's salary is taxed on its own set of brackets. Under Gabung Harta her employer withholds final tax with her own PTKP (TK/0, Pasal 8 ayat 1), so her income climbs the 5% and 15% brackets again. Pisah Harta adds both incomes into one ladder. With Rp 250 million each, no dependants and biaya jabatan only, Gabung Harta pays about Rp 44.3 million against Rp 62.9 million, a saving of about Rp 18.6 million.</p>
+      </div>
+      <div class="faq-item">
+        <h3>At what household salary does Pisah Harta start to cost less than Gabung Harta?</h3>
+        <p>It depends on how the salary is split, and at an equal split it never does. With the wife earning 30% and no dependants, Pisah Harta is cheaper below roughly Rp 190 million a year and Gabung Harta above it. With the wife earning 10%, the change moves up to roughly Rp 570 million. The lower earner's unused PTKP is what Pisah Harta puts to work, until the second ladder in Gabung Harta saves more.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What happens if only one spouse earns a salary?</h3>
+        <p>If only the husband earns, both ways cost the same, because there is no income of the wife's to combine and both give him PTKP K. If only the wife earns, Pisah Harta is cheaper: at Rp 500 million a year with no dependants it pays about Rp 64.4 million against Rp 79.0 million, since Gabung Harta leaves the husband's PTKP unused. The tool assumes her employer does not apply PTKP K.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How is biaya jabatan counted?</h3>
+        <p>It is 5% of each spouse's own gross salary, at most Rp 6,000,000 a year (PMK 250/PMK.03/2008), taken off before PTKP and on top of anything in the Deductions fields. The cap is reached at Rp 120 million of gross salary, so a Rp 250 million salary gets the full Rp 6 million. Switch it off only if the deductions you enter already include it.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which income does the comparison leave out, and how can I allow for it?</h3>
+        <p>It taxes salary only. Other income, income taxed at a final rate and tax already withheld are not counted, and it works on yearly figures. Include THR, a 13th month and bonus in the yearly gross salary. Enter each employee's pension contributions, including JHT and JP of BPJS Ketenagakerjaan, as Deductions, never the employer's share. Dependants above three do not add PTKP.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
     </main>
   </section>
 </div>
@@ -432,7 +487,7 @@
 <script src="../dropdown.js"></script>
 
 <script src="../chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>

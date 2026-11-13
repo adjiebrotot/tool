@@ -1303,7 +1303,7 @@ function renderAssumptions(state){
   }
   items.push(S.initialCash > 0
     ? L(`<strong>Every scenario starts with your ${m(S.initialCash)} of cash.</strong>`,
-        `<strong>Setiap skenario mulai dengan kas Anda ${m(S.initialCash)}.</strong>`)
+        `<strong>Setiap skenario dimulai dengan kasmu sebesar ${m(S.initialCash)}.</strong>`)
     : L(`<strong>With no starting cash entered, every scenario starts with ${m(state.initialCashUsed)},</strong> enough for what each one needs up front.`,
         `<strong>Tanpa modal awal yang diisi, setiap skenario mulai dengan ${m(state.initialCashUsed)},</strong> cukup untuk kebutuhan awal masing-masing.`));
   items.push(L(
@@ -1321,7 +1321,7 @@ function renderAssumptions(state){
   items.push(showToday()
     ? (g > 0
       ? L(`<strong>Figures are in today's money, with prices rising ${pc(g)} a year.</strong> Each year's are divided by that general inflation up to the end of the year, so the home's ${fmt.currency(state.summary.ownPropValue, true)} is what it would buy today. The amounts you enter are today's prices.`,
-          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi nilai rumah ${fmt.currency(state.summary.ownPropValue, true)} adalah daya belinya hari ini. Angka yang Anda isi adalah harga hari ini.`)
+          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi nilai rumah ${fmt.currency(state.summary.ownPropValue, true)} adalah daya belinya hari ini. Angka yang kamu isi dianggap sebagai harga hari ini.`)
       : L(`<strong>Figures are in today's money, with prices held still,</strong> so they read the same as the money of each year.`,
           `<strong>Angka dalam nilai hari ini, dengan harga tetap,</strong> jadi sama dengan nilai uang tiap tahun.`))
     : L(`<strong>Figures are in future's money,</strong> as the bank account will read them${g > 0 ? `. With prices rising ${pc(g)} a year, ${fmt.currency(100)} in year ${yrs} buys what ${fmt.currency(100/priceLevel(yrs))} does today` : ''}.`,
@@ -1812,7 +1812,8 @@ const qsInput = $('qsCity'), qsList = $('qsCityList'), qsTypeSel = $('qsType');
 let qsCity = null;   // the city on show, null until one is picked
 let qsFocus = -1;    // the row the arrow keys are on
 
-const qsPage = () => (lang === 'id' ? '../' : '') + 'quickstart-assumptions/';
+// The Indonesian page links the Indonesian assumptions page (its twin).
+const qsPage = () => lang === 'id' ? '../quickstart-assumptions/id/' : 'quickstart-assumptions/';
 // The field shows the city alone: the list's chip already named its country.
 function qsCityText(c){ return c.city; }
 const QS_MONTHS = {

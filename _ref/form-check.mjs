@@ -105,6 +105,11 @@ const PAGES = [
       await page.evaluate(() => { const b = document.querySelector('.quick-start-btn[data-preset="per"]'); if (b) b.click(); });
       await page.waitForTimeout(400);
   } },
+  // Opens on two jobs; the Family of four Quick Start puts four on screen.
+  { path: 'global-income-tax-calculator', setup: async page => {
+      await page.evaluate(() => { const b = document.querySelector('.quick-start-btn[data-preset="family"]'); if (b) b.click(); });
+      await page.waitForTimeout(300);
+  } },
 ].filter(p => !process.env.ONLY || p.path === process.env.ONLY);
 
 /* ── The site, served as in production ───────────────────────────────────── */

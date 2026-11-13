@@ -4,11 +4,11 @@
 window.__TOUR = {
   seenKey: 'rvos-id-tour-v3-seen',
   launchLabel: '🧭 Tur',
-  guide: '../../guides/#same',
+  guide: '../../guides/id/#same',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
-            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
-            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
+            guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [
     {
       target: null,

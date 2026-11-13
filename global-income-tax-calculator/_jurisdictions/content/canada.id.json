@@ -1,0 +1,461 @@
+{
+  "slug": "canada",
+  "lang": "id",
+  "title": "Cara Menghitung Pajak Penghasilan di Kanada 2026",
+  "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Kanada (2026)",
+  "description": "Gaji bersih di Kanada 2026: tarif pajak federal dan provinsi (Ontario, BC, Alberta, Quebec), CPP, EI, RRSP, dan TFSA, dengan empat contoh hitungan.",
+  "lede": "<p>Kanada memajaki <em>resident</em> atas penghasilan dari seluruh dunia dengan tarif federal 14% sampai 33% ditambah pajak provinsi, dan memotong iuran CPP serta EI dari gaji. Untuk gaji C$90.000 di Ontario, total pajak dan iuran sekitar C$22.803, sehingga gaji bersihnya (<em>take-home pay</em>) sekitar C$67.197. Di Quebec, yang punya laporan pajak, tarif pajak, dan dana pensiun sendiri, gaji yang sama menyisakan sekitar C$63.235.</p>",
+  "law": {
+    "intro": "<p>Tahun pajak Kanada adalah tahun kalender, dan angka di halaman ini memakai tarif 2026 seperti yang dihitung <em>tool</em> ini. Pemberi kerja memotong pajak penghasilan, CPP atau QPP, dan EI dari setiap slip gaji. Setelah itu kamu menyampaikan laporan pajak (<em>tax return</em>) paling lambat 30 April tahun berikutnya, yang fungsinya seperti SPT Tahunan di Indonesia.</p><p>Pajak Kanada ditentukan oleh status tempat tinggal, bukan jenis visa, sejalan dengan Indonesia yang juga melihat domisili. Pemegang <em>permanent residence</em> dan pekerja yang menjadikan Kanada rumahnya berstatus <em>resident</em> untuk pajak dan membayar pajak atas penghasilan dari seluruh dunia. Pada tahun kedatangan, kamu biasanya menjadi <em>part-year resident</em>, yang dipajaki sejak tanggal kamu membangun ikatan tempat tinggal (<em>residential ties</em>) di Kanada.</p>",
+    "blocks": [
+      {
+        "h3": "Tarif pajak penghasilan federal",
+        "html": "<p>Pajak federal dihitung dari penghasilan kena pajak, yaitu gaji dikurangi bagian iuran CPP tambahan yang boleh dikurangkan. Kanada tidak memberi pengurang penghasilan awal seperti PTKP. Sebagai gantinya ada kredit pajak (<em>non-refundable credits</em>) yang dihitung pada tarif terendah 14% dan mengurangi pajak terutang, bukan penghasilan. Kredit itu mencakup <em>basic personal amount</em> sekitar C$16.450, <em>Canada employment amount</em>, serta iuran CPP dan EI-mu.</p>",
+        "table": {
+          "head": [
+            "Penghasilan kena pajak",
+            "Tarif"
+          ],
+          "rows": [
+            [
+              "C$0 sampai C$58.523",
+              "14%"
+            ],
+            [
+              "C$58.524 sampai C$117.045",
+              "20,5%"
+            ],
+            [
+              "C$117.046 sampai C$181.440",
+              "26%"
+            ],
+            [
+              "C$181.441 sampai C$258.482",
+              "29%"
+            ],
+            [
+              "Di atas C$258.482",
+              "33%"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "CRA, tarif dan bracket pajak tahun berjalan (2026), tarif federal",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026"
+          },
+          {
+            "name": "CRA, T4127 Payroll Deductions Formulas (basic personal amount)",
+            "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Federal%20Basic%20Personal%20Amount"
+          }
+        ]
+      },
+      {
+        "h3": "Pajak penghasilan provinsi",
+        "html": "<p>Setiap provinsi memungut pajaknya sendiri dengan jenjang tarif dan kredit sendiri, tidak seperti Pasal 17 UU PPh yang berlaku sama di seluruh Indonesia. <em>Tool</em> ini memuat empat provinsi: Ontario (tempat Toronto dan Ottawa), British Columbia (Vancouver), Alberta (Calgary dan Edmonton), serta Quebec (Montreal). Tarif Ontario berjenjang dari 5,05% sampai 13,16%, dengan <em>surtax</em> untuk pajak Ontario yang lebih besar, premi kesehatan (<em>Ontario Health Premium</em>) sampai C$900, dan keringanan pajak bagi penghasilan rendah. Tarif British Columbia 5,6% sampai 20,5%, dan Alberta 8% sampai 15%.</p>",
+        "table": {
+          "head": [
+            "Provinsi",
+            "Tarif terendah",
+            "Tarif tertinggi",
+            "Lapisan pertama berakhir di"
+          ],
+          "rows": [
+            [
+              "Ontario",
+              "5,05%",
+              "13,16%",
+              "C$53.891"
+            ],
+            [
+              "British Columbia",
+              "5,6%",
+              "20,5%",
+              "C$50.363"
+            ],
+            [
+              "Alberta",
+              "8%",
+              "15%",
+              "C$61.200"
+            ],
+            [
+              "Quebec",
+              "14%",
+              "25,75%",
+              "C$54.345"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "CRA, tarif dan bracket pajak tahun berjalan (2026), tarif provinsi",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Ontario%20rate"
+          },
+          {
+            "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (surtax Ontario)",
+            "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+          },
+          {
+            "name": "Ontario.ca, health premium",
+            "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+          },
+          {
+            "name": "Pemerintah British Columbia, tarif pajak penghasilan pribadi",
+            "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates#:~:text=Personal%20income%20tax%20brackets%20and%20rates"
+          },
+          {
+            "name": "Pemerintah Alberta, pajak penghasilan pribadi",
+            "url": "https://www.alberta.ca/personal-income-tax#:~:text=2025%20and%202026%20tax%20brackets"
+          },
+          {
+            "name": "Revenu Québec, tarif pajak penghasilan",
+            "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+          }
+        ]
+      },
+      {
+        "h3": "CPP, CPP2, dan EI",
+        "html": "<p>Iuran Canada Pension Plan (CPP) sebesar 5,95% dari gaji antara C$3.500 dan C$74.600 dipotong dari slip gajimu. Fungsinya mirip JHT dan JP di BPJS Ketenagakerjaan, yaitu tabungan hari tua wajib. Iuran lapisan kedua, CPP2, sebesar 4% dari gaji antara C$74.600 dan C$85.000 juga dipotong dari slip gajimu. Begitu pula iuran Employment Insurance (EI) sebesar 1,63% dari gaji sampai C$68.900, yang menanggung pekerja yang kehilangan pekerjaan.</p><p>Bagian CPP tambahan (<em>enhanced CPP</em>) boleh dikurangkan dari penghasilan, dan sisanya memberi kredit pajak, sehingga iuran ini menurunkan pajakmu sedikit. Pemberi kerja membayar CPP dalam jumlah yang sama di luar gajimu.</p>",
+        "cite": [
+          {
+            "name": "CRA, tarif, batas maksimum, dan pengecualian iuran CPP",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html"
+          },
+          {
+            "name": "CRA, tarif dan batas maksimum iuran CPP kedua (CPP2)",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/calculating-deductions/making-deductions/second-additional-cpp-contribution-rates-maximums.html"
+          },
+          {
+            "name": "CRA, tarif dan batas maksimum premi EI",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+          }
+        ]
+      },
+      {
+        "h3": "Quebec: sistem yang terpisah",
+        "html": "<p>Penduduk Quebec membuat dua laporan pajak (<em>tax return</em>), satu federal dan satu ke Revenu Québec, karena provinsi itu memungut sendiri pajak penghasilannya. Quebec punya dana pensiun sendiri (QPP 6,30%, QPP2 4%), tarif EI yang lebih rendah (1,30%), dan asuransi cuti orang tua (QPIP 0,430%). Sebagai imbalannya, pajak federal untuk penduduk Quebec dikurangi 16,5% (<em>Quebec abatement</em>), dan Quebec menambahkan potongan khusus pekerja 6% sampai C$1.450. <em>Work premium</em>, <em>solidarity credit</em>, dan premi asuransi obat RAMQ tidak dihitung di sini.</p>",
+        "cite": [
+          {
+            "name": "Revenu Québec, tarif pajak penghasilan",
+            "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+          },
+          {
+            "name": "Revenu Québec, batas penghasilan QPP dan tarif iuran",
+            "url": "https://www.revenuquebec.ca/en/businesses/source-deductions-and-employer-contributions/calculating-source-deductions-and-contributions/qpp-contributions/maximum-pensionable-earnings-and-contribution-rate/"
+          },
+          {
+            "name": "Retraite Québec, jumlah manfaat dan data utama 2026",
+            "url": "https://www.retraitequebec.gouv.qc.ca/en/other-sorted/benefits-amounts-key-data"
+          },
+          {
+            "name": "Pemerintah Quebec, tarif iuran QPIP (RQAP)",
+            "url": "https://www.quebec.ca/entreprises-et-travailleurs-autonomes/administrer-gerer/embauche-gestion-personnel/assurance-parentale/taux-cotisations"
+          },
+          {
+            "name": "CRA, T4127 Payroll Deductions Formulas (pengurangan pajak federal untuk Quebec)",
+            "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Formula%20to%20calculate%20the%20annual%20federal%20tax%20payable"
+          },
+          {
+            "name": "CRA, tarif dan batas maksimum premi EI",
+            "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "CRA, tarif dan bracket pajak tahun berjalan (2026), tarif federal",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026",
+        "note": "tarif federal"
+      },
+      {
+        "name": "CRA, T4127 Payroll Deductions Formulas, edisi ke-122 (1 Jan 2026)",
+        "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html",
+        "note": "rumus payroll, basic personal amount, pengurangan Quebec"
+      },
+      {
+        "name": "CRA, tarif, batas maksimum, dan pengecualian iuran CPP",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html",
+        "note": "tarif CPP"
+      },
+      {
+        "name": "CRA, tarif dan batas maksimum premi EI",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html",
+        "note": "tarif EI"
+      },
+      {
+        "name": "Ontario.ca, health premium",
+        "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges",
+        "note": "premi kesehatan Ontario"
+      },
+      {
+        "name": "Revenu Québec, tarif pajak penghasilan",
+        "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/",
+        "note": "tarif Quebec"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "CRA, pendatang baru di Kanada dan CRA",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html#:~:text=residential%20ties"
+      },
+      {
+        "name": "CRA, tanggal jatuh tempo dan pembayaran (pajak penghasilan pribadi)",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html#:~:text=Filing%20dates%20for%202025%20taxes"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "ontario",
+      "title": "Berapa gaji bersih di Ontario (Toronto) dengan gaji C$90.000 setahun?",
+      "intro": "<p>Misalkan seorang pekerja <em>resident</em> bergaji C$90.000 tinggal di Ontario, provinsi tempat Toronto berada. Dari slip gajinya terpotong CPP C$4.230, CPP2 C$416, dan EI C$1.123. Pajak federal setelah kredit dasar C$11.252, pajak Ontario C$5.032, dan masih ada <em>Ontario Health Premium</em> C$750. Gaji bersihnya sekitar C$67.197, atau 74,7% dari gaji kotor, dan total potongannya C$22.803.</p>",
+      "after": "<p>Tarif marjinalnya 29,7%. Setiap dolar yang kamu setor ke RRSP boleh dikurangkan dari penghasilan, sehingga menghemat pajak pada tarif gabungan federal dan Ontario itu.</p>",
+      "cite": [
+        {
+          "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (surtax Ontario)",
+          "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+        },
+        {
+          "name": "Ontario.ca, health premium",
+          "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+        }
+      ]
+    },
+    {
+      "key": "british-columbia",
+      "title": "Berapa gaji bersih di British Columbia (Vancouver) dengan gaji C$90.000?",
+      "intro": "<p>Pekerja bergaji C$90.000 di British Columbia membayar iuran CPP, CPP2, dan EI sebesar C$5.769 dan pajak federal C$11.252. Pajak provinsinya C$4.786 dan tidak ada premi kesehatan. Gaji bersihnya sekitar C$68.193, atau 75,8% dari gaji kotor, C$996 lebih besar daripada pekerja bergaji sama di Ontario.</p>",
+      "after": "<p>Tarif marjinalnya 28,2%. Tarif atas British Columbia lebih tinggi daripada Ontario, sehingga selisih itu menyempit pada penghasilan yang lebih besar.</p>",
+      "cite": [
+        {
+          "name": "Pemerintah British Columbia, tarif pajak penghasilan pribadi",
+          "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates#:~:text=Personal%20income%20tax%20brackets%20and%20rates"
+        },
+        {
+          "name": "Pemerintah British Columbia, kredit pajak pribadi dasar",
+          "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/credits/basic#:~:text=Basic%20personal%20amount"
+        }
+      ]
+    },
+    {
+      "key": "alberta",
+      "title": "Gaji C$90.000 di Alberta (Calgary): berapa pajak dan gaji bersihnya?",
+      "intro": "<p>Di Alberta, gaji C$90.000 terkena iuran CPP, CPP2, dan EI sebesar C$5.769, pajak federal C$11.252, dan pajak provinsi C$5.470. Gaji bersihnya sekitar C$67.509, atau 75,0% dari gaji kotor, dengan tarif marjinal 30,5%.</p>",
+      "after": "<p>Alberta memakai satu tarif 8% sampai C$61.200, lebih tinggi daripada tarif terendah Ontario dan British Columbia, sehingga pada penghasilan ini pajaknya sedikit lebih besar daripada di BC.</p>",
+      "cite": [
+        {
+          "name": "Pemerintah Alberta, pajak penghasilan pribadi",
+          "url": "https://www.alberta.ca/personal-income-tax#:~:text=2025%20and%202026%20tax%20brackets"
+        }
+      ]
+    },
+    {
+      "key": "quebec",
+      "title": "Cara menghitung pajak Quebec, QPP, dan QPIP untuk gaji C$90.000",
+      "intro": "<p>Pekerja <em>resident</em> Quebec dengan gaji C$90.000 membayar QPP C$4.479, QPP2 C$416, EI dengan tarif Quebec yang lebih rendah C$896, dan QPIP C$387. Pajak federal setelah <em>abatement</em> 16,5% menjadi C$9.347, sedangkan pajak Quebec C$11.240 setelah potongan pekerja C$1.450. Gaji bersihnya sekitar C$63.235, atau 70,3% dari gaji kotor, sekitar C$3.962 lebih kecil daripada di Ontario.</p>",
+      "after": "<p>Tarif marjinalnya 36,5%. Pajak Quebec memang lebih tinggi, dan sebagian diimbangi pengurangan pajak federal serta layanan provinsi seperti penitipan anak yang tidak dinilai oleh <em>tool</em> ini.</p>",
+      "cite": [
+        {
+          "name": "Revenu Québec, tarif pajak penghasilan",
+          "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+        },
+        {
+          "name": "Revenu Québec, batas penghasilan QPP dan tarif iuran",
+          "url": "https://www.revenuquebec.ca/en/businesses/source-deductions-and-employer-contributions/calculating-source-deductions-and-contributions/qpp-contributions/maximum-pensionable-earnings-and-contribution-rate/"
+        },
+        {
+          "name": "Pemerintah Quebec, tarif iuran QPIP (RQAP)",
+          "url": "https://www.quebec.ca/entreprises-et-travailleurs-autonomes/administrer-gerer/embauche-gestion-personnel/assurance-parentale/taux-cotisations"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>Berikut cara-cara lazim yang sah untuk menurunkan pajak di Kanada. Mana yang berlaku bergantung pada penghasilan dan lama tinggalmu.</p>",
+  "strategies": [
+    {
+      "h3": "Registered Retirement Savings Plan (RRSP)",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memperkirakan tarif pajaknya sekarang lebih tinggi daripada saat menarik dana, terutama di atas lapisan federal 20,5%.</p><p>Setoran RRSP mengurangi penghasilan kena pajak sehingga menghemat pajak pada tarif marjinalmu, dan pertumbuhannya tidak dipajaki sampai ditarik. Batas setoranmu dihitung dari penghasilan tahun-tahun sebelumnya dan tercantum di <em>notice of assessment</em>. Rencana ini kira-kira setara DPLK di Indonesia.</p><p><strong>Catatan:</strong> penarikan dipajaki sebagai penghasilan, dan pendatang baru hanya punya ruang setor kecil pada tahun-tahun pertama. Kalau kamu meninggalkan Kanada, penarikan tetap dipajaki Kanada dengan tarif pemotongan (<em>withholding</em>).</p>",
+      "cite": [
+        {
+          "name": "CRA, batas MP, DB, RRSP, DPSP, ALDA, TFSA, YMPE dan YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        }
+      ]
+    },
+    {
+      "h3": "Tax-Free Savings Account (TFSA)",
+      "html": "<p><strong>Cocok untuk:</strong> setiap <em>resident</em> berusia 18 tahun ke atas, termasuk pendatang baru.</p><p>Ruang setornya baru mulai pada tahun kamu menjadi <em>resident</em>, dan pertumbuhan serta penarikannya bebas pajak.</p><p><strong>Catatan:</strong> setoran tidak bisa dikurangkan, jadi pajak tahun ini tidak turun, dan kelebihan setoran dikenai denda.</p>",
+      "cite": [
+        {
+          "name": "CRA, menghitung ruang iuran TFSA",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/tax-free-savings-account/contributing/calculate-room.html"
+        }
+      ]
+    },
+    {
+      "h3": "First Home Savings Account (FHSA)",
+      "html": "<p><strong>Cocok untuk:</strong> <em>resident</em> yang membeli rumah pertama.</p><p>Setorannya bisa dikurangkan seperti RRSP, dan penarikan untuk pembelian rumah yang memenuhi syarat bebas pajak.</p><p><strong>Catatan:</strong> kamu harus berstatus <em>resident</em> dan pembeli rumah pertama, dan ada batas setoran tahunan dan seumur hidup. Sebaiknya kamu memeriksa aturan CRA lebih dulu.</p>",
+      "cite": [
+        {
+          "name": "CRA, First Home Savings Account (FHSA)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/first-home-savings-account.html"
+        }
+      ]
+    },
+    {
+      "h3": "RRSP kelompok dengan dana pendamping pemberi kerja",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menyamai setoran.</p><p>Dana pendamping itu menjadi tambahan untuk hari tuamu, dan setoranmu sendiri bisa dikurangkan.</p><p><strong>Catatan:</strong> sebagian program mengunci dana atau mensyaratkan masa kerja tertentu (<em>vesting</em>). Sebaiknya kamu membaca ketentuan programnya sebelum ikut.</p>",
+      "cite": [
+        {
+          "name": "CRA, batas MP, DB, RRSP, DPSP, ALDA, TFSA, YMPE dan YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungan memakai satu gaji selama setahun penuh. Penghasilan investasi, <em>capital gains</em>, wirausaha, dan tahun kedatanganmu yang tidak penuh tidak dihitung.",
+    "<strong>Empat provinsi.</strong> Hanya Ontario, British Columbia, Alberta, dan Quebec yang dimuat. Provinsi dan wilayah lain belum.",
+    "<strong>Tanpa bonus dan saham.</strong> Opsi saham, bonus, dan tunjangan tidak dihitung terpisah.",
+    "<strong>Tanpa RRSP dan pengurang lain.</strong> Setoran RRSP, iuran serikat pekerja, biaya penitipan anak, dan pengurang sejenis tidak diterapkan. Tanggungan hanya berpengaruh pada keringanan penghasilan rendah di Ontario.",
+    "<strong>Beberapa pos Quebec tidak masuk.</strong> <em>Work premium</em>, <em>solidarity credit</em>, dan premi asuransi obat RAMQ tidak dihitung.",
+    "<strong>Tanpa persetujuan penghindaran pajak berganda (P3B) dan kredit pajak luar negeri.</strong> Penghasilan yang sudah dipajaki di Indonesia, atau pembagian hak pajak menurut P3B Indonesia dan Kanada, tidak diperhitungkan di sini.",
+    "<strong>Kamu yang memilih provinsi.</strong> <em>Tool</em> ini tidak menguji di provinsi mana kamu berstatus <em>resident</em> pada 31 Desember."
+  ],
+  "faq": [
+    {
+      "q": "Berapa gaji bersih dari gaji C$90.000 di Kanada?",
+      "a": "<p>Besarnya bergantung pada provinsi. Di Ontario total pajak dan iuran sekitar C$22.803, sehingga tersisa sekitar C$67.197. Di British Columbia gaji bersihnya sekitar C$68.193, di Alberta sekitar C$67.509, dan di Quebec sekitar C$63.235. Coba angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "CRA, tarif dan bracket pajak tahun berjalan (2026), tarif federal",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Federal%20rate%20for%202026"
+        }
+      ]
+    },
+    {
+      "q": "Kenapa penduduk Quebec membuat dua laporan pajak (tax return)?",
+      "a": "<p>Quebec memungut pajak penghasilan provinsinya lewat Revenu Québec, sedangkan pajak provinsi lain dipungut CRA bersama laporan pajak federal. Karena itu penduduk Quebec membuat dua laporan pajak. Sebagai imbalannya pajak federal dikurangi 16,5%, dan Quebec punya program sendiri: QPP sebagai pengganti CPP, QPIP untuk cuti orang tua, dan tarif EI yang lebih rendah. Pada gaji C$90.000, gabungan semua itu sekitar C$3.962 lebih besar daripada di Ontario.</p>",
+      "cite": [
+        {
+          "name": "Revenu Québec, tarif pajak penghasilan",
+          "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+        },
+        {
+          "name": "CRA, T4127 Payroll Deductions Formulas (pengurangan pajak federal untuk Quebec)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Formula%20to%20calculate%20the%20annual%20federal%20tax%20payable"
+        }
+      ]
+    },
+    {
+      "q": "Apa itu CPP, CPP2, dan EI, dan apakah itu pajak?",
+      "a": "<p>Ketiganya iuran yang dipotong dari setiap slip gaji, bukan pajak penghasilan. CPP adalah dana pensiun sebesar 5,95% dari gaji antara C$3.500 dan C$74.600, CPP2 adalah lapisan kedua 4% untuk gaji antara C$74.600 dan C$85.000, dan EI 1,63% sampai C$68.900. CPP membangun hak pensiunmu dan EI menanggung kehilangan pekerjaan, mirip peran JHT, JP, dan JKP di BPJS Ketenagakerjaan, hanya saja JKP di Indonesia tidak dipotong dari gaji pekerja. Iuran ini memang menurunkan pajak penghasilan lewat kredit dan potongan. Pekerja sementara pun tetap membayarnya.</p>",
+      "cite": [
+        {
+          "name": "CRA, tarif, batas maksimum, dan pengecualian iuran CPP",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html"
+        },
+        {
+          "name": "CRA, tarif dan batas maksimum iuran CPP kedua (CPP2)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/calculating-deductions/making-deductions/second-additional-cpp-contribution-rates-maximums.html"
+        },
+        {
+          "name": "CRA, tarif dan batas maksimum premi EI",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/employment-insurance-ei/ei-premium-rates-maximums.html"
+        }
+      ]
+    },
+    {
+      "q": "Kapan batas lapor pajak di Kanada, dan apakah saya mendapat refund?",
+      "a": "<p>Kebanyakan orang melapor paling lambat 30 April untuk tahun kalender sebelumnya. Pemberi kerja memotong pajak sepanjang tahun, dan laporanmu mencocokkannya dengan pajak yang sebenarnya, sehingga kelebihan potongan dikembalikan sebagai <em>refund</em>. Setoran RRSP, biaya kuliah, dan pos lain yang menurunkan pajak bisa menciptakan <em>refund</em>. Kalau kurang bayar, pelunasannya juga jatuh tempo 30 April.</p><p><em>Tool</em> ini menampilkan pajak setahun penuh, yang mendekati tagihan akhir, bukan potongan tiap slip gaji.</p>",
+      "cite": [
+        {
+          "name": "CRA, tanggal jatuh tempo dan pembayaran (pajak penghasilan pribadi)",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html#:~:text=Filing%20dates%20for%202025%20taxes"
+        }
+      ]
+    },
+    {
+      "q": "Apakah saya membayar pajak Kanada pada tahun kedatangan?",
+      "a": "<p>Biasanya kamu berstatus <em>part-year resident</em>, dipajaki atas penghasilan dari seluruh dunia sejak tanggal menjadi <em>resident</em>, bukan atas penghasilan sebelumnya. Sebagian kredit pajak dihitung proporsional. <em>Tool</em> ini mengandaikan satu tahun penuh di satu pekerjaan, sehingga hasilnya bisa lebih tinggi daripada pajak tahun kedatanganmu yang sebenarnya. Cek statusmu ke CRA.</p>",
+      "cite": [
+        {
+          "name": "CRA, pendatang baru di Kanada dan CRA",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html#:~:text=residential%20ties"
+        }
+      ]
+    },
+    {
+      "q": "Apa bedanya RRSP dan TFSA?",
+      "a": "<p>RRSP memberi pengurang pajak sekarang dan memajaki penarikan di kemudian hari, jadi menguntungkan kalau tarif pajakmu sekarang lebih tinggi. TFSA tidak memberi pengurang, tetapi seluruh pertumbuhan dan penarikannya bebas pajak, sehingga lebih fleksibel. Banyak orang memakai keduanya. <em>Tool</em> ini tidak menerapkan salah satunya, jadi setoran menjadi tabungan tambahan di luar angka yang ditampilkan.</p>",
+      "cite": [
+        {
+          "name": "CRA, batas MP, DB, RRSP, DPSP, ALDA, TFSA, YMPE dan YAMPE",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/registered-plans-administrators/pspa/mp-rrsp-dpsp-tfsa-limits-ympe.html"
+        },
+        {
+          "name": "CRA, menghitung ruang iuran TFSA",
+          "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/tax-free-savings-account/contributing/calculate-room.html"
+        }
+      ]
+    },
+    {
+      "q": "Kenapa pajak Ontario lebih besar daripada yang terlihat di tabel tarif?",
+      "a": "<p>Ontario menambahkan <em>surtax</em> atas pajak Ontario yang lebih besar dan <em>Ontario Health Premium</em> rata sampai C$900, yang untuk gaji C$90.000 sebesar C$750. Keduanya dikenakan di atas tarif, sehingga tarif efektifnya naik. Pada penghasilan rendah, Ontario justru menurunkan pajak lewat <em>tax reduction</em> dan kredit LIFT, yang sudah dihitung <em>tool</em> ini.</p>",
+      "cite": [
+        {
+          "name": "Ontario.ca, health premium",
+          "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+        },
+        {
+          "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (surtax Ontario)",
+          "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+        }
+      ]
+    },
+    {
+      "q": "Kalau bekerja di Kanada, apakah penghasilan itu tetap dilaporkan di Indonesia?",
+      "a": "<p>Itu bergantung pada statusmu di Indonesia. Kalau kamu menjadi subjek pajak luar negeri (menurut aturan PPh, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi bertempat tinggal di sini), hanya penghasilan yang bersumber di Indonesia yang dipajaki di sini. Kalau kamu masih subjek pajak dalam negeri, penghasilan dari Kanada dilaporkan di SPT Tahunan, dan pajak yang sudah dibayar di sana umumnya bisa dikreditkan, jadi simpan slip T4 dari pemberi kerja dan <em>notice of assessment</em> dari CRA sebagai bukti. Kanada dan Indonesia juga punya P3B yang membagi hak memajaki kedua negara. Untuk keadaanmu sendiri, tanyakan ke KPP tempat NPWP-mu terdaftar.</p>"
+    }
+  ],
+  "lineLabels": {
+    "Deduction for workers (6%, max 1,450), inside the Quebec tax above": "Potongan untuk pekerja (6%, maks. C$1.450), sudah termasuk di pajak Quebec di atas",
+    "Enhanced CPP (the top 1%), deductible": "CPP tambahan (1% teratas), boleh dikurangkan",
+    "Enhanced QPP (the top 1%), deductible": "QPP tambahan (1% teratas), boleh dikurangkan",
+    "Less the Alberta credits at 8% (basic personal amount, CPP, EI)": "Dikurangi kredit Alberta 8% (basic personal amount, CPP, EI)",
+    "Less the BC credits at 5.6% (basic personal amount, CPP, EI)": "Dikurangi kredit BC 5,6% (basic personal amount, CPP, EI)",
+    "Less the Ontario credits at 5.05% (basic personal amount, CPP, EI)": "Dikurangi kredit Ontario 5,05% (basic personal amount, CPP, EI)",
+    "Less the Quebec abatement (16.5%)": "Dikurangi abatement Quebec (16,5%)",
+    "Less the basic personal credit (14% of 18,952)": "Dikurangi kredit pribadi dasar (14% dari 18.952)",
+    "Less the federal credits at 14% (basic personal amount, CPP, EI, Canada employment)": "Dikurangi kredit federal 14% (basic personal amount, CPP, EI, Canada employment)",
+    "Less the federal credits at 14% (basic personal amount, QPP, EI, QPIP, Canada employment)": "Dikurangi kredit federal 14% (basic personal amount, QPP, EI, QPIP, Canada employment)",
+    "Plus the Ontario surtax": "Ditambah surtax Ontario",
+    "Less the Ontario Tax Reduction": "Dikurangi Ontario Tax Reduction",
+    "Less the LIFT credit": "Dikurangi kredit LIFT",
+    "Less the BC tax reduction": "Dikurangi BC tax reduction",
+    "CPP (5.95%)": "CPP (5,95%)",
+    "CPP2 (4%)": "CPP2 (4%)",
+    "EI (1.63%)": "EI (1,63%)",
+    "Federal income tax": "Pajak penghasilan federal",
+    "Ontario income tax": "Pajak penghasilan Ontario",
+    "Ontario Health Premium": "Ontario Health Premium (premi kesehatan)",
+    "British Columbia income tax": "Pajak penghasilan British Columbia",
+    "Alberta income tax": "Pajak penghasilan Alberta",
+    "QPP (6.30%)": "QPP (6,30%)",
+    "QPP2 (4%)": "QPP2 (4%)",
+    "EI, Quebec rate (1.30%)": "EI, tarif Quebec (1,30%)",
+    "QPIP (0.430%)": "QPIP (0,430%)",
+    "Federal tax, after the 16.5% Quebec abatement": "Pajak federal, setelah abatement Quebec 16,5%",
+    "Quebec income tax": "Pajak penghasilan Quebec",
+    "Deduction for workers (6%, max 1,450), Quebec only": "Potongan khusus pekerja (6%, maks. C$1.450), hanya Quebec",
+    "Ontario Tax Reduction, inside the Ontario tax": "Ontario Tax Reduction, sudah termasuk di pajak Ontario",
+    "LIFT credit, inside the Ontario tax": "Kredit LIFT, sudah termasuk di pajak Ontario",
+    "Ontario income tax with surtax": "Pajak penghasilan Ontario beserta surtax",
+    "BC tax reduction credit, inside the tax": "Kredit BC tax reduction, sudah termasuk di pajaknya",
+    "Taxable income, federal": "Penghasilan kena pajak, federal",
+    "The Quebec work premium, solidarity credit and RAMQ drug insurance premium are not included.": "Work premium Quebec, kredit solidaritas, dan premi asuransi obat RAMQ tidak termasuk."
+  },
+  "bmc": "Terbantu? Traktir kopi, double-double juga boleh."
+}

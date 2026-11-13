@@ -319,6 +319,10 @@ const PAGES = [
     async prep(page) { await page.click('.quick-start-btn[data-preset="couple"]'); },
   },
   {
+    name: 'global-income-tax-calculator', url: '/global-income-tax-calculator/', charts: ['chartCanvas'],
+    async prep(page) { await page.click('.quick-start-btn[data-preset="asia"]'); },
+  },
+  {
     name: 'financialfreedom', url: '/financialfreedom/', charts: ['ffChart', 'ddChart'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="legacy"]');
@@ -570,7 +574,7 @@ const WORDS = {
   en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'], gif: 'Download as GIF',
         back: 'Try your own scenarios at', copied: '✓ Copied', linkCopied: '✓ Link copied' },
   id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke clipboard', 'Bagikan sebagai tautan', 'Sematkan sebagai HTML'], gif: 'Unduh sebagai GIF',
-        back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
+        back: 'Coba skenariomu sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
 };
 
 /* The viewer's own probes: the chart it drew, its card, its views. */
@@ -1114,8 +1118,9 @@ const DICT_SHA256 = { a: '4d72827e85280530d51be554f9df8295152278423b8e8d1ab53225
   const kept = JSON.parse(readFileSync(join(HERE, 'share-links.json'), 'utf8'));
   // A kept link made at a tool's old address is checked where the tool lives
   // now. (/capacityexpansion-planner/ no longer forwards: it was removed before
-  // the planner went on the home page.)
-  const MOVED = { '/capacityexpansion-planner/': '/capacity-expansion-planner/' };
+  // the planner went on the home page. /global-salary-calculator/ forwards to
+  // the Global Income Tax Calculator from the site's 404 page.)
+  const MOVED = { '/capacityexpansion-planner/': '/capacity-expansion-planner/', '/global-salary-calculator/': '/global-income-tax-calculator/' };
   for (const kept0 of kept) {
     const k = { ...kept0, page: MOVED[kept0.page] || kept0.page };
     if (ONLY && !k.page.includes(ONLY) && ONLY !== "kept") continue;

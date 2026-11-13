@@ -5,11 +5,11 @@
 window.__TOUR = {
   seenKey: 'rvo-id-tour-v4-seen',
   launchLabel: '🧭 Tur',
-  guide: '../guides/',
+  guide: '../guides/id/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
-            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
-            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
+            guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [
     {
       target: null,
@@ -22,7 +22,7 @@ window.__TOUR = {
       title: '① Mulai dari kota',
       body: '<ul><li>Cari kota seperti Perth, Tokyo, atau Jakarta</li>' +
             '<li>Pilih hunian yang memang ada, dari studio hingga empat kamar</li>' +
-            '<li>Harga, sewa, dan syarat KPR setempat langsung terisi, dan semuanya bisa Anda ubah</li></ul>'
+            '<li>Harga, sewa, dan syarat KPR setempat langsung terisi, dan semuanya bisa kamu ubah</li></ul>'
     },
     {
       target: '.ctrl-tabs',

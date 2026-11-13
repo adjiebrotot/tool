@@ -127,6 +127,12 @@ export const PAGES = [
     insertBefore: '<!-- MODE TOGGLES -->', quickStarts: colQuickStarts,
     virtual: [{ key: 'salary', min: 0, max: 100000000000, value: '0' }, { key: 'expense', min: 0, max: 100000000000, value: '0' }],
     virtualRead: colVirtualRead, virtualWrite: colVirtualWrite },
+  // Up to four jobs: plain fields are job 1, json carries them all; the probe reads the jobs as loaded.
+  { page: 'global-income-tax-calculator', url: '/global-income-tax-calculator/', lang: 'en', notes: 'global-income-tax-calculator/agent-notes.md',
+    insertBefore: '<!-- Display ad (Display 1', probe: gscProbe },
+  // Its Indonesian twin (baked by _ref/bake-id.mjs): the same script, fields and Quick Start keys.
+  { page: 'global-income-tax-calculator/id', url: '/global-income-tax-calculator/id/', lang: 'id', notes: 'global-income-tax-calculator/agent-notes.md',
+    insertBefore: '<!-- Display ad (Display 1', probe: gscProbe },
   { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
   // The sensitivity table has one form field (the currency symbol): the figures are compact keys, six of which
@@ -176,6 +182,13 @@ export const PAGES = [
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
    What a link set beyond the fields, for a kept link's "probe" to name. The names a probe
    returns are frozen with the links that name them: add, never rename. */
+// Global Income Tax Calculator: the jobs as loaded, by country and place, and which one the form shows.
+export function gscProbe() {
+  const g = window.__GSC;
+  if (!g) return {};
+  const jobs = g.JOBS();
+  return { count: jobs.length, countries: jobs.map(j => j.country), active: g.active() };
+}
 export function defaultProbe() {
   const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
   const body = prov ? prov.save() : null;
@@ -1249,7 +1262,13 @@ export function readFields() {
       });
     }
     const tipEl = (node && node.querySelector('.tip-icon[data-tip]')) || (row && row.querySelector('.tip-icon[data-tip]'));
-    if (tipEl && (!row || tipEl.closest(ROW) === row)) f.tip = tipText(tipEl.getAttribute('data-tip'));
+    if (tipEl && (!row || tipEl.closest(ROW) === row)) {
+      // A tip that explains the selected option only (data-tip-options) and finds it on each option's
+      // own data-opt-tip (global-income-tax-calculator): an AI reads them all, not just the default's.
+      const per = f.tag === 'select' && tipEl.hasAttribute('data-tip-options')
+        ? Array.from(first.options).map(o => o.getAttribute('data-opt-tip')).filter(Boolean) : [];
+      f.tip = per.length ? per.map(tipText).join(' ') : tipText(tipEl.getAttribute('data-tip'));
+    }
     byKey[key] = f;
     out.push(f);
   });

@@ -202,3 +202,25 @@
 .ai-tool .ai-tool-skill { font-size: .78rem; overflow-wrap: anywhere; }
 .ai-tool-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
 .ai-tool-btns .btn-sm { padding: 6px 14px; font-size: .82rem; text-decoration: none; }
+/* The Indonesian hub (/ai/id/): a tool with no Indonesian page, marked EN as on the Indonesian home */
+.ai .gd-top .btn-back { min-width: 0; overflow: hidden; white-space: nowrap; }
+.ai .gd-top-r { flex: none; }
+.ai-tool-btns .tool-lang { align-self: center; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .04em; }
+
+/* The "Effective <date>" line under the install demo: a footnote */
+.ai-asof { margin: 10px 2px 0; font-size: .72rem; line-height: 1.45; color: var(--muted); }
+
+/* The hub's example picker: one tool's conversation at a time */
+.ai-ex-pick { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; font-size: .9rem; font-weight: 600; }
+.ai-ex-pick select { max-width: 100%; }
+.ai-chat[hidden] { display: none; }
+
+/* The hub's skill list: a keyword search, then the cards by category as on the home page */
+.ai-filter { margin: 0 0 6px; }
+.ai-filter label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.ai-filter input { box-sizing: border-box; width: 100%; height: 40px; padding: 0 .85rem; font: inherit; color: var(--text); background: var(--input-bg); border: 1.5px solid var(--border); border-radius: var(--radius-md); outline: none; transition: border-color var(--motion-fast); }
+.ai-filter input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(90, 145, 232, .15); }
+.ai-count { margin: 8px 0 0; font-size: .85rem; color: var(--muted); }
+.ai-group { margin: 18px 0 10px; font-size: 1.05rem; font-weight: 800; letter-spacing: -.01em; }
+.ai-group[hidden], .ai-tools[hidden], .ai-tool[hidden] { display: none; }
+.ai-empty { margin: 14px 0 0; color: var(--muted); }

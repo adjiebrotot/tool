@@ -103,6 +103,55 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does Towards Weight do with each top-up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It spends the top-up only on assets below their target weight, in proportion to each shortfall, and never sells anything. Each asset's shortfall is its Target Weight times total portfolio value, less what it is worth now. If the shortfalls add up to more than the cash, each buy is scaled down to fit.\n\nIf every asset is at or above target, nothing is bought and the cash waits, so some money can sit uninvested. The tile's Cash share shows how much."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does idle cash earn while it waits to be invested?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nothing, unless you set it: the Risk-free rate starts at 0%. A rate is applied each trading day as (1 + rate) to the power of 1/252, or you can follow a money market ticker through Risk-Free Account.\n\nThis matters for a Separate schedule rebalance or a rare trigger, which can hold each top-up in cash for up to three months. At 4%, as in the monthly against quarterly rebalance example, that cash earns interest, shown in the table's Interest column."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do the Buying fee and Selling fee charge, and what does rebalancing cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each is a percentage of every trade, starting at 0.1% for both, and the table's Fees column keeps the running total. Towards Weight, Constant Allocation and Trend Following never sell, so only the Buying fee applies to them.\n\nConstant Weight sells whatever is above target, then buys the shortfalls, so it pays both fees. Over the 50/50 SPY and GOVT example, splitting each top-up and never rebalancing ended $1,720 ahead of holding 50/50, because shares beat bonds and the winner was left to grow."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Constant Weight and Constant Allocation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Constant Weight keeps the whole portfolio on its Target Weights by selling what is over and buying what is under, either at every top-up or on a Separate schedule. Constant Allocation only splits each new top-up by the weights and never rebalances what is already held.\n\nSo the weights mean different things: a share of the whole portfolio for Constant Weight, and a share of each top-up for Constant Allocation. With Constant Allocation the holdings drift toward whichever asset has done best."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why can a portfolio with less return have the higher Sharpe ratio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sharpe measures return above the portfolio's own Risk-free rate per unit of daily swing, so a smoother portfolio can score higher while earning less. In the DHHF.AX and AAA.AX example, 80/20 ended at $78,915 against $75,604 for 60/40 on $60,000 put in, with CAGR (TWR) 8.42% against 7.19%.\n\nYet 60/40 had the higher Sharpe, 1.08 against 0.96. The portfolio's swing is measured from its own daily values, so the cash-heavy mix pays better per unit of risk even though it ends lower."
+      }
+    }
+  ]
+}
+</script>
 <link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
 <link rel="manifest" href="../../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
@@ -114,7 +163,7 @@
 <link rel="stylesheet" href="../../dark.css">
 <link rel="stylesheet" href="../../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../shared.css?v=20261110">
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../../tour-shared.css">
@@ -128,7 +177,6 @@
 <section class="header card">
   <div class="header-left">
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="m7 15 4-4 3 3 6-7"/> <path stroke="var(--accent2)" d="M16 7h4v4"/> </svg>Portfolio DCA Simulator</h1>
-    <p>Compare portfolio strategies side by side, each with its own assets, target weights, top-up schedule and rebalancing method. See which approach grows value fastest.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -660,6 +708,38 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>What does Towards Weight do with each top-up?</h3>
+        <p>It spends the top-up only on assets below their target weight, in proportion to each shortfall, and never sells anything. Each asset's shortfall is its Target Weight times total portfolio value, less what it is worth now. If the shortfalls add up to more than the cash, each buy is scaled down to fit.</p>
+        <p>If every asset is at or above target, nothing is bought and the cash waits, so some money can sit uninvested. The tile's Cash share shows how much.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How much does idle cash earn while it waits to be invested?</h3>
+        <p>Nothing, unless you set it: the Risk-free rate starts at 0%. A rate is applied each trading day as (1 + rate) to the power of 1/252, or you can follow a money market ticker through Risk-Free Account.</p>
+        <p>This matters for a Separate schedule rebalance or a rare trigger, which can hold each top-up in cash for up to three months. At 4%, as in the monthly against quarterly rebalance example, that cash earns interest, shown in the table's Interest column.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What do the Buying fee and Selling fee charge, and what does rebalancing cost?</h3>
+        <p>Each is a percentage of every trade, starting at 0.1% for both, and the table's Fees column keeps the running total. Towards Weight, Constant Allocation and Trend Following never sell, so only the Buying fee applies to them.</p>
+        <p>Constant Weight sells whatever is above target, then buys the shortfalls, so it pays both fees. Over the 50/50 SPY and GOVT example, splitting each top-up and never rebalancing ended $1,720 ahead of holding 50/50, because shares beat bonds and the winner was left to grow.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the difference between Constant Weight and Constant Allocation?</h3>
+        <p>Constant Weight keeps the whole portfolio on its Target Weights by selling what is over and buying what is under, either at every top-up or on a Separate schedule. Constant Allocation only splits each new top-up by the weights and never rebalances what is already held.</p>
+        <p>So the weights mean different things: a share of the whole portfolio for Constant Weight, and a share of each top-up for Constant Allocation. With Constant Allocation the holdings drift toward whichever asset has done best.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why can a portfolio with less return have the higher Sharpe ratio?</h3>
+        <p>Sharpe measures return above the portfolio's own Risk-free rate per unit of daily swing, so a smoother portfolio can score higher while earning less. In the DHHF.AX and AAA.AX example, 80/20 ended at $78,915 against $75,604 for 60/40 on $60,000 put in, with CAGR (TWR) 8.42% against 7.19%.</p>
+        <p>Yet 60/40 had the higher Sharpe, 1.08 against 0.96. The portfolio's swing is measured from its own daily values, so the cash-heavy mix pays better per unit of risk even though it ends lower.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 
 </main>
 </section><!-- /layout -->
@@ -735,7 +815,7 @@
 
 <script src="../../chart-kit.js"></script>
 <script src="../chart-kit.js"></script>
-<script src="../../shared.js"></script>
+<script src="../../shared.js?v=20261110"></script>
 <script src="../abbr.js"></script>
 <script src="../ticker/names.js"></script>
 <script src="script.js"></script>

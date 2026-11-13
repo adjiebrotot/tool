@@ -1970,6 +1970,7 @@ def px_run(app, duration=None, step=None, plot_step=None, prj=None, events=(),
         want["SnapType"] = "ONLY_ONCE"
         want["SnapTime"] = float(px_number(snapshot, 0.0))
         want["snapshot_filename"] = "%s.snp" % (px_clean_name(name) or "snap")
+        _PX.setdefault("snap_at", {})[want["snapshot_filename"]] = want["SnapTime"]
     # snapshot_use() makes the runs after it start from a snapshot until snapshot_off(), so a
     # run given neither argument keeps that start rather than going back to zero.
     sticky = (_PX.get("snap_start") or {}).get(name, "")
@@ -2032,7 +2033,8 @@ def _snapshot_start(prj, folder):
     """The time (s) of the snapshot the next run starts from, or 0.0 for a standard start.
 
     The snapshot file says so itself: its second line holds the EMTDC version, the time
-    and the time step."""
+    and the time step. For a file that cannot be read it is the time this script saved the
+    snapshot at, when it did."""
     try:
         params = prj.parameters() or {}
     except Exception:
@@ -2054,6 +2056,9 @@ def _snapshot_start(prj, folder):
                 return float(line.split()[1])
     except Exception:
         pass
+    known = (_PX.get("snap_at") or {}).get(name)
+    if known is not None:
+        return float(known)
     log("The time of the snapshot %s could not be read, so the times of this run are "
         "counted from the start of the run, not of the case." % name, "warn")
     return 0.0

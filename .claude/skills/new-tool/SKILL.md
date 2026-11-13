@@ -33,15 +33,19 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">   <!-- same ?v= as every page; see the note below -->
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
 <script src="../dropdown.js"></script>     <!-- every dropdown's open list (dropdown.css comes via shared.css) -->
 <script src="../chart-kit.js"></script>    <!-- what a chart is drawn with: SharedLegend, SharedChartTip, SharedZoom, SharedPane, ChartKit -->
 <script src="chart-kit.js"></script>       <!-- only if the tool has chart pieces of its own (below) -->
-<script src="../shared.js"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
+<script src="../shared.js?v=20261110"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
 <script src="script.js"></script>
 ```
+
+`shared.css` and `shared.js` carry a `?v=` stamp on every page (and in `_ref/ai-skill.mjs`). The site is
+cached for hours, so a change to either one that new page markup depends on (a new card class, say) bumps
+the stamp everywhere in the same commit; otherwise a reader can get the new HTML with the old stylesheet.
 
 The fastest way to stay consistent is to open the closest existing tool and mirror its
 structure. Theme toggle, dark/light behaviour, and fonts should match the others exactly.
@@ -77,8 +81,9 @@ Before calling it done, every line here must hold:
       a chevron (`SharedFold`), and a closing **What this assumes** card (folded closed
       by `shared.js`), built from the
       reader's own input on every redraw: only lines for what their plan uses, each naming
-      its figure ("Inflation is 2.5% a year", not "Inflation is modelled"). Display options
-      sit beside the results they change.
+      its figure ("Inflation is 2.5% a year", not "Inflation is modelled"), then a folded
+      **Questions** card from `<tool>/faq.json` (`node _ref/faq-bake.mjs`; rules in
+      `_ref/design-reference.md`). Display options sit beside the results they change.
 - [ ] **Units everywhere**: the unit is the field's prefix or suffix, never the label;
       `data-unit` when it lives in a column header, `data-unitless` for a seed. Every y axis
       names its unit, every x axis is titled, every table shows its unit per column
@@ -214,7 +219,10 @@ unless the user explicitly asks.** Build the tool in its own folder and stop the
 When the user does ask, copy a card in `index.html` (the comment above the grid lists what
 to change). Its description is one or two short sentences in the words people search for,
 and its `data-anim` key needs a drawing in `home-anim.js`: hand that to the `tool-animator`
-agent (`.claude/agents/tool-animator.md`) rather than drawing it inline.
+agent (`.claude/agents/tool-animator.md`) rather than drawing it inline. The Indonesian home
+(`id/index.html`) is generated from `index.html`: add the card's Indonesian description (and
+any new tag) to `CARDS` and `LABELS` in `_ref/bake-home-id.mjs`, run it, then
+`node _ref/hreflang.mjs`. It stops on a card it has no Indonesian for.
 
 ## 5. Testing
 
@@ -333,6 +341,23 @@ For a multi-language tool (an `en` page and an `id/` page sharing one `script.js
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is
 per-origin, so both pages then share one cache and a user's work follows them across a language
 switch instead of resetting.
+
+A tool with an Indonesian page gets the whole experience in Indonesian, each page paired with
+its English twin by `hreflang` and an EN/ID `#langToggle` in its header:
+
+- **AI page.** Once the `id/` page is in `PAGES` with `lang: 'id'`, `agent-doc` also writes
+  `<tool>/ai/id/` (the same skill download and install animation, every word for people in
+  Indonesian, links to the Indonesian tool page, guide, `/ai/id/` hub and footer pages) and lists
+  the tool in Indonesian on `/ai/id/`; the `id/` page's hidden pointer sends its ✨ Use in AI
+  button there. Give it an Indonesian conversation: a `## AI page example (id)` in the notes
+  (saya and kamu, per the blog's `bahasa-indonesia` skill), checked like the English one, its
+  link on the `id/` page.
+- **Guide.** `<tool>/guides/id/index.html` is the guide in Indonesian (`<html lang="id">`,
+  `data-guide-live="scenes.js"`), and its `scenes.js` is a few lines that replay the English
+  scenes on the Indonesian pages through `guide-id.js` (paths, storage keys and the words a scene
+  finds by text). `guide-live.js` speaks Indonesian on it, `node _ref/guide-check.mjs <tool>`
+  plays both, and the `id/` tour's `guide` points at `../guides/id/`.
+- **Sitemap.** Each new page goes right after its English twin, then `node _ref/hreflang.mjs`.
 
 ## Two agents
 

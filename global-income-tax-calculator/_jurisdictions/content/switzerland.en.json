@@ -1,0 +1,202 @@
+{
+  "slug": "switzerland",
+  "lang": "en",
+  "title": "Swiss Income Tax 2026 (Zurich): How to Calculate It",
+  "h1": "How to calculate income tax in Switzerland (Zurich, 2026)",
+  "description": "Swiss income tax for employees in the City of Zurich in 2026: federal, cantonal and communal tax, social contributions and withholding tax, with examples.",
+  "lede": "<p>Switzerland taxes income at three layers (federal, cantonal and communal), and the cantonal and communal layers depend on where you live. This page models the City of Zurich only. On a CHF 110,000 salary a single employee there pays about CHF 14,278 in income tax and CHF 10,693 in social contributions, and keeps about CHF 85,029, or 77.3% of gross, before health insurance, which is a separate private premium.</p>",
+  "law": {
+    "intro": "<p>The Swiss tax year is the calendar year, and the figures below are the 2026 rules as the calculator models them for the City of Zurich. Other cantons and municipalities have different tariffs and multipliers, so the result for another place can be quite different. Residents are taxed on worldwide income. How you are taxed depends partly on your permit, because foreign workers without a settlement permit are taxed at source (see the withholding tax block below).</p>",
+    "introCite": [
+      { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent" }
+    ],
+    "blocks": [
+      {
+        "h3": "Three layers of tax",
+        "html": "<p>Income is taxed by the Confederation (the direct federal tax, DBST), by the Canton of Zurich and by the commune. The canton and the commune both start from the same cantonal \"simple tax\" worked out from a tariff, and each applies its own multiplier. In the calculator the canton charges 95% of the simple tax and the City of Zurich charges 119%. A small personal tax (CHF 24 for a single person, CHF 48 for a married couple) is added.</p><p>The federal tax is separate and progressive. For a single person it starts above CHF 15,200 of taxable income and rises through the bands to a flat 11.5% on very high incomes.</p>",
+        "cite": [
+          { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" },
+          { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent" },
+          { "name": "ESTV, Tarife direkte Bundessteuer natürliche Personen 2026", "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf" }
+        ]
+      },
+      {
+        "h3": "Canton of Zurich simple tax tariff (single)",
+        "html": "<p>The simple tax is worked out on taxable income band by band. Married couples have a more generous tariff, which the calculator applies. Taxable income is your salary after social contributions, a professional expenses deduction (3% of net income, between CHF 2,000 and CHF 4,000) and personal deductions.</p>",
+        "table": {
+          "head": ["Taxable income", "Rate"],
+          "rows": [
+            ["CHF 0 to 7,000", "0%"],
+            ["CHF 7,000 to 12,000", "2%"],
+            ["CHF 12,000 to 16,800", "3%"],
+            ["CHF 16,800 to 24,800", "4%"],
+            ["CHF 24,800 to 34,500", "5%"],
+            ["CHF 34,500 to 45,700", "6%"],
+            ["CHF 45,700 to 58,800", "7%"],
+            ["CHF 58,800 to 76,400", "8%"],
+            ["CHF 76,400 to 110,400", "9%"],
+            ["CHF 110,400 to 144,100", "10%"],
+            ["CHF 144,100 to 197,400", "11%"],
+            ["CHF 197,400 to 266,700", "12%"],
+            ["Over CHF 266,700", "13%"]
+          ]
+        },
+        "cite": [
+          { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" },
+          { "name": "Kanton Zürich, Weisung über Sozialabzüge und Steuertarife (ZStB 34.1)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-34-1.html#:~:text=Grundtarif" }
+        ]
+      },
+      {
+        "h3": "Social contributions",
+        "html": "<p>Your employer deducts your share of social insurance from gross pay. The calculator includes: AHV/IV/EO (state pension, disability and income compensation) at 5.3%; unemployment insurance (ALV) at 1.1% up to CHF 148,200; non-occupational accident insurance (NBU), assumed at 0.4%; and your half of the occupational pension (BVG, also called pillar 2).</p><p>The BVG share is a percentage of a coordinated salary, which the calculator caps at CHF 64,260. The percentage depends on your age band: 3.5% (25 to 34), 5% (35 to 44), 7.5% (45 to 54) and 9% (55 to 65). The calculator uses 5% by default. Pillar 2 is savings kept in your pension fund, not a lost cost.</p>",
+        "cite": [
+          { "name": "BSV, Schweizerische Sozialversicherungen: synoptische Tabelle der Beitragssätze (Stand 1.1.2026)", "url": "https://sozialversicherungen.admin.ch/de/d/6877/download" },
+          { "name": "Informationsstelle AHV/IV, Update Sozialversicherungen in der Schweiz (Stand 1. Januar 2026)", "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf" }
+        ]
+      },
+      {
+        "h3": "Health insurance is a private premium",
+        "html": "<p>Basic health insurance (KVG) is compulsory, but it is not deducted from your salary. You choose an insurer and pay a monthly premium yourself, normally within three months of arriving. The premium depends on the canton, the insurer, your deductible and the insurance model. The calculator does not include it, so budget for it separately.</p>",
+        "cite": [
+          { "name": "FOPH (BAG), Health insurance: requirement to obtain insurance for persons resident in Switzerland", "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months" }
+        ]
+      },
+      {
+        "h3": "Withholding tax (Quellensteuer) for B-permit holders",
+        "html": "<p>Foreign nationals who do not hold a settlement (C) permit, such as most B-permit holders, are taxed at source. Your employer withholds the tax from each payslip using a cantonal table that combines the federal, cantonal and communal taxes, and you generally do not file a tax return. Marital status and children change the table, and church tax is included if you declare a church membership. Above a gross income of about CHF 120,000 an ordinary assessment becomes mandatory, and in some cases you can ask for one.</p><p>The calculator models the ordinary assessment that Swiss citizens and C-permit holders get. Withholding tax on the same salary is usually in the same range but will not be identical.</p>",
+        "cite": [
+          { "name": "ESTV, Schweizerische Quellensteuer", "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung" },
+          { "name": "Kanton Zürich, Quellensteuerpflichtige Personen", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/quellensteuer/Quellensteuerpflichtige-Personen.html#:~:text=keine%20Niederlassungsbewilligung" },
+          { "name": "Kanton Zürich, Merkblatt Quellenbesteuerung (ZStB 87.3), Schwellenwert Fr. 120'000", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von" }
+        ]
+      }
+    ],
+    "sources": [
+      { "name": "ESTV, Tarife direkte Bundessteuer natürliche Personen 2026", "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf", "note": "direct federal tax tariff 2026" },
+      { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf", "note": "Zurich tax law: income tax tariff and wealth tax" },
+      { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent", "note": "state and commune multipliers" },
+      { "name": "BSV, Schweizerische Sozialversicherungen: synoptische Tabelle der Beitragssätze (Stand 1.1.2026)", "url": "https://sozialversicherungen.admin.ch/de/d/6877/download", "note": "AHV/IV/EO and unemployment rates" },
+      { "name": "Informationsstelle AHV/IV, Update Sozialversicherungen in der Schweiz (Stand 1. Januar 2026)", "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf", "note": "pillar 2 and pillar 3a limits" },
+      { "name": "FOPH (BAG), Health insurance: requirement to obtain insurance for persons resident in Switzerland", "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months", "note": "compulsory health insurance" },
+      { "name": "Kanton Zürich, Merkblatt Quellenbesteuerung (ZStB 87.3), Schwellenwert Fr. 120'000", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von", "note": "withholding tax and the CHF 120,000 threshold" },
+      { "name": "ESTV, Schweizerische Quellensteuer", "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung", "note": "withholding tax at source" }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single-zurich",
+      "title": "How much income tax do you pay in Zurich on CHF 110,000?",
+      "intro": "<p>This is a single employee living in the City of Zurich on CHF 110,000 gross, aged 35 to 44. Social contributions are CHF 10,693: AHV/IV/EO CHF 5,830, unemployment CHF 1,210, accident insurance CHF 440 and pension fund CHF 3,213. Taxable income is about CHF 93,400. The canton charges CHF 5,297 and the commune CHF 6,635. The personal tax is CHF 24 and federal tax is CHF 2,321. You keep about CHF 85,029, or 77.3% of gross, before health insurance premiums.</p>",
+      "after": "<p>Your marginal rate is 30.3%. The pension fund share stays at CHF 3,213 at higher salaries, because it is based on the capped coordinated salary.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" },
+        { "name": "ESTV, Tarife direkte Bundessteuer natürliche Personen 2026", "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf" }
+      ]
+    },
+    {
+      "key": "married-two-children-zurich",
+      "title": "Take-home pay for a married couple with two children in Zurich on CHF 140,000",
+      "intro": "<p>This is a married household in the City of Zurich with two children and one earner on CHF 140,000. Social contributions are CHF 12,733. Taxable income is about CHF 96,200 after the married and child deductions. The canton charges CHF 4,218 and the commune CHF 5,284. The personal tax is CHF 48 and federal tax is CHF 1,385 after a CHF 263 reduction for each child. You keep about CHF 116,332, or 83.1% of gross, before health insurance premiums.</p>",
+      "after": "<p>The married tariff and the child deductions pull the tax rate down, even though the salary is higher than in the single example. Health insurance for four people is a significant separate cost.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" },
+        { "name": "Kanton Zürich, Weisung über Sozialabzüge und Steuertarife (ZStB 34.1)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-34-1.html#:~:text=Grundtarif" }
+      ]
+    },
+    {
+      "key": "church-member",
+      "title": "How to calculate Zurich tax with church tax on CHF 110,000",
+      "intro": "<p>This repeats the single example for someone who is a member of a recognised church. Church tax is 10% of the cantonal simple tax, or CHF 558. Everything else is the same, so you keep about CHF 84,471, or 76.8% of gross, about CHF 558 less than without church membership.</p>",
+      "after": "<p>Church tax applies only if you belong to a recognised church, and your church membership is declared when you register. The calculator uses 10% of the simple tax. The actual rate is set locally.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent" }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Swiss tax or build long-term savings. Which ones apply depends on your permit, age and employer.</p>",
+  "strategies": [
+    {
+      "h3": "Pay into pillar 3a",
+      "html": "<p><strong>Suits:</strong> employees who are insured in a pension fund. Contributions to a pillar 3a account are deductible from taxable income up to a yearly limit that the federal government sets, so check the current figure. Opening more than one account lets you withdraw in stages later, which can lower the withdrawal tax.</p><p><strong>Caveat:</strong> the money is locked until about five years before retirement age. Early withdrawal is possible only for specific reasons, such as buying a home, starting self-employment or permanently leaving Switzerland.</p>",
+      "cite": [
+        { "name": "Informationsstelle AHV/IV, Update Sozialversicherungen in der Schweiz (Stand 1. Januar 2026)", "url": "https://www.shop.ahv-iv.ch/data/docs/de/82816/Update-%C2%ABSozialversicherungen-in-der-Schweiz%C2%BB-Stand-1.-Januar-2026.pdf" }
+      ]
+    },
+    {
+      "h3": "Consider a voluntary pension fund buy-in",
+      "html": "<p><strong>Suits:</strong> people with a gap in their occupational pension, which is common for someone who came from abroad. A buy-in is deductible from taxable income.</p><p><strong>Caveat:</strong> special limits can apply in your first years in Switzerland if you came from abroad, and withdrawing a buy-in early has tax consequences. Confirm the rules with your pension fund.</p>"
+    },
+    {
+      "h3": "Claim real work-related costs",
+      "html": "<p><strong>Suits:</strong> people whose commuting, meals away from home or training costs exceed the flat professional expenses deduction. A higher claim lowers taxable income.</p><p><strong>Caveat:</strong> you need records, the costs must relate to your job, and the tax office checks claims. The calculator only applies the flat deduction. If you are taxed at source, a claim usually needs an assessment.</p>"
+    },
+    {
+      "h3": "Compare communes before you rent",
+      "html": "<p><strong>Suits:</strong> people who can choose where in the canton they live. Communal multipliers in the Canton of Zurich differ, and the calculator lets you change the multiplier from the City of Zurich's 119%.</p><p><strong>Caveat:</strong> a lower multiplier often comes with different rents and commute costs, so weigh them together.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent" }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>City of Zurich only.</strong> It models the Canton of Zurich and the City of Zurich. Other cantons and communes have different tariffs and multipliers, so do not use it for them. You can change the communal multiplier, but not the cantonal tariff.",
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, a business, rental income or a part year.",
+    "<strong>Ordinary assessment, not withholding tax.</strong> It does not model Quellensteuer tables for B-permit holders, or the choice of an ordinary assessment.",
+    "<strong>Health insurance not included.</strong> The basic insurance premium is a private monthly cost and is excluded from the take-home figure.",
+    "<strong>No wealth tax.</strong> Switzerland taxes net wealth at cantonal level, and this is not modelled.",
+    "<strong>Simplified household.</strong> A married household is modelled as one earner, and your own pension rate and accident insurance rate are inputs. Pillar 3a, buy-ins and other deductions are not included.",
+    "<strong>No bonuses or equity.</strong> Bonuses, a 13th salary and share options are not modelled separately."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on CHF 110,000 in Zurich?",
+      "a": "<p>A single employee in the City of Zurich pays about CHF 14,278 in income tax and CHF 10,693 in social contributions, and keeps about CHF 85,029 before health insurance. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" },
+        { "name": "ESTV, Tarife direkte Bundessteuer natürliche Personen 2026", "url": "https://www.estv.admin.ch/dam/de/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf" }
+      ]
+    },
+    {
+      "q": "What is withholding tax (Quellensteuer) and do I file a tax return in Switzerland?",
+      "a": "<p>If you are a foreign national without a C permit, your employer deducts the tax directly from your pay with a cantonal table, and you normally do not file a return. If your gross income is above about CHF 120,000, an ordinary assessment becomes mandatory, and in other cases you may be able to ask for one. Swiss citizens and C-permit holders file an annual return. The calculator shows the ordinary assessment, so a withheld amount can be somewhat different.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, Merkblatt Quellenbesteuerung (ZStB 87.3), Schwellenwert Fr. 120'000", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/treuhaender/steuerbuch/steuerbuch-definition/zstb-87-3.html#:~:text=Schwellenwert%20von" },
+        { "name": "ESTV, Schweizerische Quellensteuer", "url": "https://www.estv.admin.ch/de/quellensteuer#:~:text=keine%20Niederlassungsbewilligung" }
+      ]
+    },
+    {
+      "q": "Why does my Swiss tax depend on where I live?",
+      "a": "<p>Cantons set their own tariffs, and each commune applies its own multiplier on the cantonal simple tax. In the calculator the Canton of Zurich charges 95% of the simple tax and the City of Zurich 119%. Another canton or commune can mean a much higher or lower bill on the same salary. This page models only the City of Zurich.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, aktuelle Steuerfüsse (Staatssteuerfuss 95 Prozent)", "url": "https://www.zh.ch/de/steuern-finanzen/steuern/steuerstatistiken/aktuelle-gemeinde-steuerfuesse.html#:~:text=95%20Prozent" },
+        { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" }
+      ]
+    },
+    {
+      "q": "Is health insurance deducted from my Swiss salary?",
+      "a": "<p>No. Basic health insurance is compulsory, but you buy it yourself from a private insurer and pay a monthly premium. It varies by canton, insurer, deductible and model. The calculator leaves it out, so subtract your own premium from the take-home figure.</p>",
+      "cite": [
+        { "name": "FOPH (BAG), Health insurance: requirement to obtain insurance for persons resident in Switzerland", "url": "https://www.bag.admin.ch/en/health-insurance-requirement-to-obtain-insurance-for-persons-resident-in-switzerland#:~:text=within%20three%20months" }
+      ]
+    },
+    {
+      "q": "Do I pay wealth tax in Switzerland?",
+      "a": "<p>Yes, most cantons tax net wealth every year, in addition to income tax. The rate is usually small, but it is not part of this calculator, which covers income tax and social contributions only.</p>",
+      "cite": [
+        { "name": "Kanton Zürich, Steuergesetz (LS 631.1), § 35 Einkommenssteuertarif, § 200 Personalsteuer", "url": "https://www.notes.zh.ch/appl/zhlex_r.nsf/WebView/A1B72A220CD6E747C1258DC4002A921E/$File/631.1_8.6.97_132.pdf" }
+      ]
+    },
+    {
+      "q": "What is pillar 2, and do I get the money back?",
+      "a": "<p>Pillar 2 (BVG) is your employer's occupational pension. You and your employer both pay into it, and it is your savings, kept in a pension fund. It is paid out at retirement, and in some cases earlier, such as when you leave Switzerland. If you move to an EU or EFTA country, the mandatory part generally cannot be paid out in cash and stays in a Swiss vested-benefits account. Pay-outs are taxed. Ask your pension fund.</p>",
+      "cite": [
+        { "name": "SFBVG, Cash payment on departure abroad", "url": "https://sfbvg.ch/en/tasks/cash-payment-on-departure-abroad#:~:text=EU%20or%20EFTA%20country" }
+      ]
+    },
+    {
+      "q": "What does a salary buy in Zurich?",
+      "a": "<p>Compare cities in the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, and see how savings could grow in the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a Swiss chocolate."
+}

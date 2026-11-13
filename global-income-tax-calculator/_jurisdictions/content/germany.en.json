@@ -1,0 +1,410 @@
+{
+  "slug": "germany",
+  "lang": "en",
+  "title": "German Income Tax 2026: How to Calculate Take-Home Pay",
+  "h1": "How to calculate income tax in Germany (2026)",
+  "description": "German income tax for employees in 2026: rates, tax classes, solidarity surcharge, church tax and social insurance, with four worked take-home examples.",
+  "lede": "<p>Germany taxes residents on worldwide income with a progressive rate from 14% to 45%, and employees also pay about 22% of salary in social insurance (pension, unemployment, health and long-term care) up to annual ceilings. On a gross salary of €65,000 a single childless employee in tax class I pays €10,772 in income tax and €14,138 in social insurance, and keeps about €40,091, or 61.7% of gross. A married sole earner in class III on the same salary keeps about €45,281.</p>",
+  "law": {
+    "intro": "<p>The German tax year is the calendar year, and the figures below are the 2026 rules as the calculator models them. You are taxed as a resident if you have a home in Germany or your habitual stay is longer than about six months, regardless of your visa or citizenship. Your employer withholds wage tax (Lohnsteuer) every month according to your tax class, and also deducts your share of social insurance. The annual tax return (Steuererklärung) then settles the exact bill for the year.</p><p>The calculator works out the full-year result in one step, so it matches the final annual figures, not each monthly payslip.</p>",
+    "blocks": [
+      {
+        "h3": "Income tax rates",
+        "html": "<p>German income tax is not a set of flat bands. Inside each zone the rate climbs smoothly along a formula, so the figures below are the marginal rate at the start and end of each zone. The first €12,348 of taxable income is tax-free. Taxable income is your gross salary less the €1,230 employee lump sum for work costs, a €36 allowance for other expenses and your pension, health and long-term care contributions, which is how the calculator applies it.</p>",
+        "table": {
+          "head": [
+            "Taxable income",
+            "Marginal rate"
+          ],
+          "rows": [
+            [
+              "Up to €12,348",
+              "0%"
+            ],
+            [
+              "€12,349 to €17,799",
+              "rises from 14% to about 24%"
+            ],
+            [
+              "€17,800 to €69,878",
+              "rises from about 24% to 42%"
+            ],
+            [
+              "€69,879 to €277,825",
+              "42%"
+            ],
+            [
+              "Over €277,825",
+              "45%"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+            "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+          },
+          {
+            "name": "EStG § 9a, Arbeitnehmer-Pauschbetrag €1.230",
+            "url": "https://www.gesetze-im-internet.de/estg/__9a.html#:~:text=Pauschbetr%C3%A4ge%20f%C3%BCr%20Werbungskosten"
+          },
+          {
+            "name": "EStG § 10c, Sonderausgaben-Pauschbetrag",
+            "url": "https://www.gesetze-im-internet.de/estg/__10c.html#:~:text=Sonderausgaben%2DPauschbetrag"
+          }
+        ]
+      },
+      {
+        "h3": "Tax classes (Steuerklassen)",
+        "html": "<p>Employees are placed in a tax class that decides how much wage tax is withheld each month. Your employer retrieves your class electronically from the tax office. <strong>Class I</strong> is for single people. <strong>Class II</strong> is for single parents. <strong>Class III and class V</strong> are a pair for married couples: III withholds as if the couple's income were split in half (the splitting tariff), and V, for the partner with the lower income, withholds more. <strong>Class IV for both partners</strong> taxes each as if single. <strong>Class VI</strong> applies to a second job.</p><p>The class changes only the monthly withholding. The final tax for the year comes from the tax return. The calculator models class I and class III, and in class III it applies the splitting tariff to a household with one earner.</p>",
+        "cite": [
+          {
+            "name": "EStG § 38b, Lohnsteuerklassen",
+            "url": "https://www.gesetze-im-internet.de/estg/__38b.html#:~:text=Lohnsteuerklassen"
+          }
+        ]
+      },
+      {
+        "h3": "Solidarity surcharge and church tax",
+        "html": "<p>The solidarity surcharge (Solidaritätszuschlag, or Soli) is 5.5% of income tax, but only once your income tax passes a threshold. The calculator uses €20,350 of income tax for single people and €40,700 for class III couples, with a gradual phase-in just above it. Most employees on a mid-level salary pay no Soli at all.</p><p>Church tax (Kirchensteuer) applies only if you are a registered member of a church that levies it. It is 9% of your income tax in most states and 8% in Bavaria and Baden-Württemberg.</p>",
+        "cite": [
+          {
+            "name": "SolzG 1995 § 3, Bemessungsgrundlage und Freigrenzen",
+            "url": "https://www.gesetze-im-internet.de/solzg_1995/__3.html"
+          },
+          {
+            "name": "SolzG 1995 § 4, Zuschlagsatz 5,5 %",
+            "url": "https://www.gesetze-im-internet.de/solzg_1995/__4.html#:~:text=Zuschlagsatz"
+          },
+          {
+            "name": "EStG § 51a, Kirchensteuer als Zuschlag",
+            "url": "https://www.gesetze-im-internet.de/estg/__51a.html"
+          },
+          {
+            "name": "PwC Worldwide Tax Summaries, Germany: taxes on personal income (church tax)",
+            "url": "https://taxsummaries.pwc.com/germany/individual/taxes-on-personal-income#:~:text=Church%20tax"
+          }
+        ]
+      },
+      {
+        "h3": "Social insurance contributions",
+        "html": "<p>The employee share of statutory social insurance is deducted from your gross salary each month. The employer pays a roughly matching share on top, which is not part of your take-home figure. Contributions are charged only up to an annual ceiling: €101,400 for pension and unemployment insurance, and €69,750 for health and long-term care insurance.</p>",
+        "table": {
+          "head": [
+            "Contribution",
+            "Your share"
+          ],
+          "rows": [
+            [
+              "Pension insurance",
+              "9.3%"
+            ],
+            [
+              "Unemployment insurance",
+              "1.3%"
+            ],
+            [
+              "Health insurance",
+              "7.3% plus half of your fund's add-on (2.9% on average, so 1.45%)"
+            ],
+            [
+              "Long-term care insurance",
+              "1.8%, or 2.4% if you have no children"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+            "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+          },
+          {
+            "name": "SVBezGrV 2026 § 2, Jahresarbeitsentgeltgrenzen (€69.750)",
+            "url": "https://www.gesetze-im-internet.de/svbezgrv_2026/__2.html#:~:text=Jahresarbeitsentgeltgrenzen%20in%20der%20Krankenversicherung"
+          },
+          {
+            "name": "SGB V § 241, allgemeiner Beitragssatz 14,6 %",
+            "url": "https://www.gesetze-im-internet.de/sgb_5/__241.html#:~:text=Allgemeiner%20Beitragssatz"
+          },
+          {
+            "name": "BMG, Beiträge der gesetzlichen Krankenversicherung (Zusatzbeitrag)",
+            "url": "https://www.bundesgesundheitsministerium.de/beitraege"
+          },
+          {
+            "name": "SGB III § 341, Beitragssatz Arbeitslosenversicherung 2,6 %",
+            "url": "https://www.gesetze-im-internet.de/sgb_3/__341.html#:~:text=Beitragssatz%20und%20Beitragsbemessung"
+          },
+          {
+            "name": "SGB XI § 55, Beitragssatz Pflegeversicherung (Zuschlag für Kinderlose)",
+            "url": "https://www.gesetze-im-internet.de/sgb_11/__55.html#:~:text=Beitragssatz%2C%20Beitragsbemessungsgrenze"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+        "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+      },
+      {
+        "name": "EStG § 38b, Lohnsteuerklassen",
+        "url": "https://www.gesetze-im-internet.de/estg/__38b.html#:~:text=Lohnsteuerklassen"
+      },
+      {
+        "name": "SolzG 1995 § 3, Bemessungsgrundlage und Freigrenzen",
+        "url": "https://www.gesetze-im-internet.de/solzg_1995/__3.html"
+      },
+      {
+        "name": "EStG § 51a, Kirchensteuer als Zuschlag",
+        "url": "https://www.gesetze-im-internet.de/estg/__51a.html"
+      },
+      {
+        "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+        "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+      },
+      {
+        "name": "Bundesregierung, Rechengrößen in der Sozialversicherung 2026",
+        "url": "https://www.bundesregierung.de/breg-de/aktuelles/beitragsgemessungsgrenzen-2386514"
+      },
+      {
+        "name": "SGB V § 241, allgemeiner Beitragssatz 14,6 %",
+        "url": "https://www.gesetze-im-internet.de/sgb_5/__241.html#:~:text=Allgemeiner%20Beitragssatz"
+      },
+      {
+        "name": "BMG, Beiträge der gesetzlichen Krankenversicherung (Zusatzbeitrag)",
+        "url": "https://www.bundesgesundheitsministerium.de/beitraege"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "AO § 9, gewöhnlicher Aufenthalt (sechs Monate)",
+        "url": "https://www.gesetze-im-internet.de/ao_1977/__9.html#:~:text=Gew%C3%B6hnlicher%20Aufenthalt"
+      },
+      {
+        "name": "EStG § 1, unbeschränkte Steuerpflicht",
+        "url": "https://www.gesetze-im-internet.de/estg/__1.html"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single",
+      "title": "How to calculate income tax in Germany on a €65,000 salary (tax class I)",
+      "intro": "<p>This is a single, childless employee in tax class I with no church membership. After the €1,230 work-cost lump sum, the €36 allowance and the insurance contributions, taxable income is about €50,600. Income tax is €10,772, and there is no solidarity surcharge because it is below the threshold. Social insurance is €14,138: pension €6,045, unemployment €845, health €5,688 and long-term care €1,560. You keep about €40,091, or 61.7% of gross.</p>",
+      "after": "<p>Your marginal rate is 50.1% here, because each extra euro is taxed at the income tax rate and also still carries the full social insurance share. The employer's own social insurance contribution is paid on top and is not in this figure.</p>",
+      "cite": [
+        {
+          "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+        },
+        {
+          "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+          "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+        }
+      ]
+    },
+    {
+      "key": "nurse",
+      "title": "Take-home pay for a nurse in Germany on €42,000",
+      "intro": "<p>This is a nurse recruited to Germany on a €42,000 gross salary, taxed in class I without children or church tax. Taxable income is about €32,300 and income tax is €4,866. Social insurance is €9,135, which is about 21.75% of gross: pension €3,906, unemployment €546, health €3,675 and long-term care €1,008. You keep about €27,999, or 66.7% of gross.</p>",
+      "after": "<p>The salary is an illustration, not a quoted wage, since pay depends on the employer, the collective agreement and your experience. If you have a child, the long-term care share falls from 2.4% to 1.8%.</p>",
+      "cite": [
+        {
+          "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+        },
+        {
+          "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+          "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+        }
+      ]
+    },
+    {
+      "key": "married-sole-earner",
+      "title": "How much tax does a married sole earner pay in Germany on €65,000 (class III)?",
+      "intro": "<p>This is a married employee in tax class III with a partner who has no income, and a child, so the long-term care rate is 1.8%. Taxable income is about €51,000. The splitting tariff taxes half of it (about €25,500) and doubles the result, so income tax falls to €5,972, against €10,772 for a single person on the same pay. Social insurance is €13,748, and you keep about €45,281, or 69.7% of gross. That is about €5,190 more than the single example, partly because of the lower long-term care rate.</p>",
+      "after": "<p>The splitting tariff is also why the class III and V pair is settled in the tax return. If both partners work, the combined result depends on both salaries and on the class combination. The calculator does not model a working partner, child allowances or child benefit.</p>",
+      "cite": [
+        {
+          "name": "EStG § 38b, Lohnsteuerklassen",
+          "url": "https://www.gesetze-im-internet.de/estg/__38b.html#:~:text=Lohnsteuerklassen"
+        },
+        {
+          "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+        }
+      ]
+    },
+    {
+      "key": "church-tax",
+      "title": "How to calculate church tax in Germany on a €65,000 salary",
+      "intro": "<p>This repeats the single example for a church member in a state with the 9% rate. Church tax is 9% of the €10,772 income tax, or €969. Everything else is the same, so you keep about €39,121, or 60.2% of gross, which is about €970 less than without church membership.</p>",
+      "after": "<p>In practice church tax can be deducted as a special expense when you file a return, which the calculator does not apply, so the real cost is somewhat lower. In Bavaria and Baden-Württemberg the rate is 8%.</p>",
+      "cite": [
+        {
+          "name": "EStG § 51a, Kirchensteuer als Zuschlag",
+          "url": "https://www.gesetze-im-internet.de/estg/__51a.html"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Germany: taxes on personal income (church tax)",
+          "url": "https://taxsummaries.pwc.com/germany/individual/taxes-on-personal-income#:~:text=Church%20tax"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to lower German tax or build long-term savings. Which ones suit you depends on your residence status, family situation and employer.</p>",
+  "strategies": [
+    {
+      "h3": "Pay into an employer pension (Entgeltumwandlung)",
+      "html": "<p><strong>Suits:</strong> employees whose employer offers a company pension (betriebliche Altersvorsorge). Contributions come out of gross pay, so they are free of wage tax and, up to limits, of social insurance, and your take-home pay falls by less than the contribution. Many employers add a subsidy.</p><p><strong>Caveat:</strong> the money is for retirement and is taxed when paid out. Ask your employer for the exact terms and limits.</p>",
+      "cite": [
+        {
+          "name": "BetrAVG § 1a, Anspruch auf Entgeltumwandlung",
+          "url": "https://www.gesetze-im-internet.de/betravg/__1a.html"
+        },
+        {
+          "name": "EStG § 3, steuerfreie Einnahmen (betriebliche Altersversorgung)",
+          "url": "https://www.gesetze-im-internet.de/estg/__3.html"
+        }
+      ]
+    },
+    {
+      "h3": "Claim work costs above the €1,230 lump sum",
+      "html": "<p><strong>Suits:</strong> anyone with higher work costs, for example a long commute, a home office, tools, training or the costs of a job-related move. The tax office applies the €1,230 lump sum automatically, and you only gain by filing a return with proof of costs above it.</p><p><strong>Caveat:</strong> you need receipts and the costs must relate to your job. The calculator only applies the lump sum.</p>",
+      "cite": [
+        {
+          "name": "EStG § 9a, Arbeitnehmer-Pauschbetrag €1.230",
+          "url": "https://www.gesetze-im-internet.de/estg/__9a.html#:~:text=Pauschbetr%C3%A4ge%20f%C3%BCr%20Werbungskosten"
+        },
+        {
+          "name": "EStG § 9, Werbungskosten",
+          "url": "https://www.gesetze-im-internet.de/estg/__9.html"
+        }
+      ]
+    },
+    {
+      "h3": "Choose the tax class combination with care (married couples)",
+      "html": "<p><strong>Suits:</strong> married couples where the two incomes differ. The class III and V pair gives the higher earner more cash each month, and class IV for both is closer to what each owes. Either way, the return applies the same joint result, and a III and V pair means you must file a return.</p><p><strong>Caveat:</strong> a class V partner has a high monthly withholding, and a couple who choose III and V can owe tax afterwards. Plan for that and check your own numbers.</p>",
+      "cite": [
+        {
+          "name": "EStG § 38b, Lohnsteuerklassen",
+          "url": "https://www.gesetze-im-internet.de/estg/__38b.html#:~:text=Lohnsteuerklassen"
+        },
+        {
+          "name": "EStG § 26b, Zusammenveranlagung von Ehegatten",
+          "url": "https://www.gesetze-im-internet.de/estg/__26b.html"
+        }
+      ]
+    },
+    {
+      "h3": "Private pension saving with state support (Riester)",
+      "html": "<p><strong>Suits:</strong> employees who pay into the statutory pension and want a supported private pension. The state adds allowances, and the contributions can also be deducted up to a ceiling.</p><p><strong>Caveat:</strong> contracts differ in cost and flexibility, so compare providers and read the terms before you sign.</p>",
+      "cite": [
+        {
+          "name": "EStG § 10a, Altersvorsorgebeiträge (Riester)",
+          "url": "https://www.gesetze-im-internet.de/estg/__10a.html"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, capital gains, a business, rental income or a part year.",
+    "<strong>No bonuses or equity.</strong> Bonuses, a 13th salary, share options and benefits in kind are not modelled separately.",
+    "<strong>Classes I and III only.</strong> Classes II, IV, V and VI change monthly withholding and are not modelled. Class III assumes a partner with no income of their own.",
+    "<strong>Children are simplified.</strong> The children toggle lowers the long-term care rate. Child allowances and child benefit (Kindergeld) are not modelled.",
+    "<strong>Statutory health insurance only.</strong> Private health insurance, which some higher earners and self-employed people use, is not covered. The fund add-on is an input you can change.",
+    "<strong>Flat deductions.</strong> It applies the €1,230 lump sum for work costs. Your real deductions, including church tax as a deduction, will differ.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on €65,000 in Germany?",
+      "a": "<p>A single, childless employee in tax class I pays €10,772 in income tax and €14,138 in social insurance, and keeps about €40,091. A married sole earner in class III keeps about €45,281. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "EStG § 32a, Einkommensteuertarif (gesetze-im-internet.de)",
+          "url": "https://www.gesetze-im-internet.de/estg/__32a.html#:~:text=Einkommensteuertarif"
+        },
+        {
+          "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+          "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+        }
+      ]
+    },
+    {
+      "q": "What are the German tax classes, and why does the tax return even them out?",
+      "a": "<p>The tax class decides how much wage tax your employer withholds each month. It does not decide the final tax. For a married couple, class III withholds as if the two incomes were split in half, and class V, for the other partner, withholds more to make up for it. Each month the total can be too low or too high compared with the real bill.</p><p>The final bill comes from the tax return, where a married couple's combined income is taxed with the splitting tariff whatever the classes were. The difference is then refunded or collected. If you choose III and V, you must file a return. The calculator shows the full-year result, so a monthly payslip can differ from it.</p>",
+      "cite": [
+        {
+          "name": "EStG § 38b, Lohnsteuerklassen",
+          "url": "https://www.gesetze-im-internet.de/estg/__38b.html#:~:text=Lohnsteuerklassen"
+        },
+        {
+          "name": "EStG § 26b, Zusammenveranlagung von Ehegatten",
+          "url": "https://www.gesetze-im-internet.de/estg/__26b.html"
+        }
+      ]
+    },
+    {
+      "q": "Do I have to pay church tax in Germany, and how do I leave the church?",
+      "a": "<p>Church tax is charged only if you are registered as a member of a church that levies it, such as the Catholic or Protestant church. When you register your address in Germany you are asked for your religion, and what you state decides whether church tax is withheld. It is 9% of your income tax, or 8% in Bavaria and Baden-Württemberg.</p><p>To stop paying, you declare your exit at the competent office, which is the local civil registry or court depending on the state, and a fee may apply. The tax then stops shortly afterwards, typically from the end of that month. Leaving also has consequences inside the church, so decide for yourself.</p>",
+      "cite": [
+        {
+          "name": "EStG § 51a, Kirchensteuer als Zuschlag",
+          "url": "https://www.gesetze-im-internet.de/estg/__51a.html"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Germany: taxes on personal income (church tax)",
+          "url": "https://taxsummaries.pwc.com/germany/individual/taxes-on-personal-income#:~:text=Church%20tax"
+        }
+      ]
+    },
+    {
+      "q": "Do I have to pay the solidarity surcharge in Germany?",
+      "a": "<p>Only if your income tax is above a threshold. The calculator uses €20,350 of annual income tax for single people and €40,700 for class III couples. Below it the surcharge is zero, and just above it the surcharge phases in gradually up to 5.5% of income tax. In the single €65,000 example the income tax is €10,772, so no Soli is charged.</p>",
+      "cite": [
+        {
+          "name": "SolzG 1995 § 3, Bemessungsgrundlage und Freigrenzen",
+          "url": "https://www.gesetze-im-internet.de/solzg_1995/__3.html"
+        },
+        {
+          "name": "SolzG 1995 § 4, Zuschlagsatz 5,5 %",
+          "url": "https://www.gesetze-im-internet.de/solzg_1995/__4.html#:~:text=Zuschlagsatz"
+        }
+      ]
+    },
+    {
+      "q": "Is health insurance a fixed rate in Germany?",
+      "a": "<p>Only partly. The general rate is 14.6% of salary, split between you and your employer (7.3% each). On top, each health fund sets its own add-on, which averages 2.9% in 2026 and which you also share equally. The calculator uses the average and lets you change it. Contributions stop at a ceiling of €69,750 of salary.</p>",
+      "cite": [
+        {
+          "name": "SGB V § 241, allgemeiner Beitragssatz 14,6 %",
+          "url": "https://www.gesetze-im-internet.de/sgb_5/__241.html#:~:text=Allgemeiner%20Beitragssatz"
+        },
+        {
+          "name": "BMG, Beiträge der gesetzlichen Krankenversicherung (Zusatzbeitrag)",
+          "url": "https://www.bundesgesundheitsministerium.de/beitraege"
+        },
+        {
+          "name": "SVBezGrV 2026 § 2, Jahresarbeitsentgeltgrenzen (€69.750)",
+          "url": "https://www.gesetze-im-internet.de/svbezgrv_2026/__2.html#:~:text=Jahresarbeitsentgeltgrenzen%20in%20der%20Krankenversicherung"
+        }
+      ]
+    },
+    {
+      "q": "Does my employer also pay social insurance on top of my salary?",
+      "a": "<p>Yes. Your employer pays a roughly matching share of pension, unemployment, health and long-term care insurance on top of your gross salary. It does not reduce your take-home pay, and the calculator shows only your own share.</p>",
+      "cite": [
+        {
+          "name": "Deutsche Rentenversicherung, Änderungen 2026 (Beitragssatz 18,6 %, Beitragsbemessungsgrenze)",
+          "url": "https://www.deutsche-rentenversicherung.de/Nord/DE/Presse/Pressemitteilungen-und-Pressearchiv/Pressemitteilungen/20251218_Aenderung-RV-01012026"
+        }
+      ]
+    },
+    {
+      "q": "What does a salary buy once I live in Germany?",
+      "a": "<p>Compare cities in the <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, and see how savings could grow in the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a pretzel."
+}

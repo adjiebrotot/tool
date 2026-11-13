@@ -1,0 +1,4391 @@
+{
+ "skill": "brotools-global-income-tax-calculator",
+ "tool": "Global Income Tax Calculator",
+ "site": "https://tool.adjiebrotots.com",
+ "format": "load link version 1",
+ "whyMax": 200,
+ "pages": [
+  {
+   "page": "global-income-tax-calculator",
+   "url": "/global-income-tax-calculator/",
+   "base": "https://tool.adjiebrotots.com/global-income-tax-calculator/",
+   "lang": "en",
+   "title": "Global Income Tax Calculator",
+   "reference": "references/global-income-tax-calculator.md",
+   "decides": "Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.",
+   "important": [
+    "country",
+    "dir",
+    "amount",
+    "period",
+    "usState",
+    "usFiling",
+    "caProv",
+    "ukRegion",
+    "dispCur"
+   ],
+   "fields": [
+    {
+     "key": "country",
+     "label": "Country",
+     "group": "Salary: Where you work",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "AU",
+       "label": "Australia"
+      },
+      {
+       "value": "CN",
+       "label": "China (Shanghai)"
+      },
+      {
+       "value": "HK",
+       "label": "Hong Kong (China)"
+      },
+      {
+       "value": "ID",
+       "label": "Indonesia"
+      },
+      {
+       "value": "JP",
+       "label": "Japan (Tokyo)"
+      },
+      {
+       "value": "MY",
+       "label": "Malaysia"
+      },
+      {
+       "value": "SG",
+       "label": "Singapore"
+      },
+      {
+       "value": "KR",
+       "label": "South Korea"
+      },
+      {
+       "value": "TW",
+       "label": "Taiwan (China)"
+      },
+      {
+       "value": "TH",
+       "label": "Thailand"
+      },
+      {
+       "value": "BE",
+       "label": "Belgium"
+      },
+      {
+       "value": "EE",
+       "label": "Estonia"
+      },
+      {
+       "value": "FI",
+       "label": "Finland"
+      },
+      {
+       "value": "FR",
+       "label": "France"
+      },
+      {
+       "value": "DE",
+       "label": "Germany"
+      },
+      {
+       "value": "IT",
+       "label": "Italy (Milan)"
+      },
+      {
+       "value": "NL",
+       "label": "Netherlands"
+      },
+      {
+       "value": "NO",
+       "label": "Norway"
+      },
+      {
+       "value": "PT",
+       "label": "Portugal"
+      },
+      {
+       "value": "ES",
+       "label": "Spain (Madrid)"
+      },
+      {
+       "value": "SE",
+       "label": "Sweden"
+      },
+      {
+       "value": "CH",
+       "label": "Switzerland (Zurich)"
+      },
+      {
+       "value": "GB",
+       "label": "United Kingdom"
+      },
+      {
+       "value": "CA",
+       "label": "Canada"
+      },
+      {
+       "value": "US",
+       "label": "United States"
+      },
+      {
+       "value": "BH",
+       "label": "Bahrain"
+      },
+      {
+       "value": "KW",
+       "label": "Kuwait"
+      },
+      {
+       "value": "OM",
+       "label": "Oman"
+      },
+      {
+       "value": "QA",
+       "label": "Qatar"
+      },
+      {
+       "value": "SA",
+       "label": "Saudi Arabia"
+      },
+      {
+       "value": "AE",
+       "label": "United Arab Emirates"
+      }
+     ],
+     "default": "AU",
+     "important": true
+    },
+    {
+     "key": "usState",
+     "label": "State",
+     "group": "Salary: Where you work",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "AK",
+       "label": "Alaska"
+      },
+      {
+       "value": "AZ",
+       "label": "Arizona"
+      },
+      {
+       "value": "AR",
+       "label": "Arkansas"
+      },
+      {
+       "value": "CA",
+       "label": "California"
+      },
+      {
+       "value": "CO",
+       "label": "Colorado"
+      },
+      {
+       "value": "DE",
+       "label": "Delaware"
+      },
+      {
+       "value": "DC",
+       "label": "District of Columbia"
+      },
+      {
+       "value": "FL",
+       "label": "Florida"
+      },
+      {
+       "value": "GA",
+       "label": "Georgia"
+      },
+      {
+       "value": "HI",
+       "label": "Hawaii"
+      },
+      {
+       "value": "ID",
+       "label": "Idaho"
+      },
+      {
+       "value": "IL",
+       "label": "Illinois"
+      },
+      {
+       "value": "IN",
+       "label": "Indiana"
+      },
+      {
+       "value": "IA",
+       "label": "Iowa"
+      },
+      {
+       "value": "KS",
+       "label": "Kansas"
+      },
+      {
+       "value": "KY",
+       "label": "Kentucky"
+      },
+      {
+       "value": "LA",
+       "label": "Louisiana"
+      },
+      {
+       "value": "MD",
+       "label": "Maryland"
+      },
+      {
+       "value": "MA",
+       "label": "Massachusetts"
+      },
+      {
+       "value": "MI",
+       "label": "Michigan"
+      },
+      {
+       "value": "MS",
+       "label": "Mississippi"
+      },
+      {
+       "value": "MO",
+       "label": "Missouri"
+      },
+      {
+       "value": "MT",
+       "label": "Montana"
+      },
+      {
+       "value": "NE",
+       "label": "Nebraska"
+      },
+      {
+       "value": "NV",
+       "label": "Nevada"
+      },
+      {
+       "value": "NH",
+       "label": "New Hampshire"
+      },
+      {
+       "value": "NJ",
+       "label": "New Jersey"
+      },
+      {
+       "value": "NY",
+       "label": "New York"
+      },
+      {
+       "value": "NC",
+       "label": "North Carolina"
+      },
+      {
+       "value": "ND",
+       "label": "North Dakota"
+      },
+      {
+       "value": "OK",
+       "label": "Oklahoma"
+      },
+      {
+       "value": "PA",
+       "label": "Pennsylvania"
+      },
+      {
+       "value": "SD",
+       "label": "South Dakota"
+      },
+      {
+       "value": "TN",
+       "label": "Tennessee"
+      },
+      {
+       "value": "TX",
+       "label": "Texas"
+      },
+      {
+       "value": "VT",
+       "label": "Vermont"
+      },
+      {
+       "value": "VA",
+       "label": "Virginia"
+      },
+      {
+       "value": "WA",
+       "label": "Washington"
+      },
+      {
+       "value": "WV",
+       "label": "West Virginia"
+      },
+      {
+       "value": "WY",
+       "label": "Wyoming"
+      }
+     ],
+     "default": "CA",
+     "important": true
+    },
+    {
+     "key": "usNyc",
+     "label": "Live in New York City",
+     "group": "Salary: Where you work",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "caProv",
+     "label": "Province",
+     "group": "Salary: Where you work",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ON",
+       "label": "Ontario"
+      },
+      {
+       "value": "BC",
+       "label": "British Columbia"
+      },
+      {
+       "value": "AB",
+       "label": "Alberta"
+      },
+      {
+       "value": "QC",
+       "label": "Quebec"
+      }
+     ],
+     "default": "ON",
+     "important": true
+    },
+    {
+     "key": "ukRegion",
+     "label": "Where you live",
+     "group": "Salary: Where you work",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ruk",
+       "label": "England, Wales or Northern Ireland"
+      },
+      {
+       "value": "sco",
+       "label": "Scotland"
+      }
+     ],
+     "default": "ruk",
+     "important": true
+    },
+    {
+     "key": "dir",
+     "label": "I know my",
+     "group": "Salary: Your pay",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "gross",
+       "label": "Gross pay"
+      },
+      {
+       "value": "net",
+       "label": "Take-home pay"
+      }
+     ],
+     "default": "gross",
+     "important": true
+    },
+    {
+     "key": "amount",
+     "label": "Gross pay",
+     "group": "Salary: Your pay",
+     "kind": "number",
+     "unit": "A$",
+     "min": 0,
+     "max": 100000000000,
+     "default": "120,000",
+     "important": true
+    },
+    {
+     "key": "period",
+     "label": "Gross pay",
+     "group": "Salary: Your pay",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "a year"
+      },
+      {
+       "value": "monthly",
+       "label": "a month"
+      }
+     ],
+     "default": "yearly",
+     "important": true
+    },
+    {
+     "key": "auRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pr",
+       "label": "Citizen or permanent resident"
+      },
+      {
+       "value": "temp",
+       "label": "Temporary resident, Medicare-exempt"
+      },
+      {
+       "value": "foreign",
+       "label": "Foreign resident"
+      },
+      {
+       "value": "whm",
+       "label": "Working holiday maker"
+      }
+     ],
+     "default": "pr"
+    },
+    {
+     "key": "sgRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ep",
+       "label": "Employment Pass or S Pass"
+      },
+      {
+       "value": "citizen",
+       "label": "Citizen, or PR from year 3"
+      },
+      {
+       "value": "pr1",
+       "label": "Permanent resident, year 1"
+      },
+      {
+       "value": "pr2",
+       "label": "Permanent resident, year 2"
+      },
+      {
+       "value": "nonres",
+       "label": "Non-resident (under 183 days)"
+      }
+     ],
+     "default": "ep"
+    },
+    {
+     "key": "sgAge",
+     "label": "Age",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "55",
+       "label": "55 or under"
+      },
+      {
+       "value": "60",
+       "label": "Above 55 to 60"
+      },
+      {
+       "value": "65",
+       "label": "Above 60 to 65"
+      },
+      {
+       "value": "70",
+       "label": "Above 65 to 70"
+      },
+      {
+       "value": "99",
+       "label": "Above 70"
+      }
+     ],
+     "default": "55"
+    },
+    {
+     "key": "usRes",
+     "label": "Tax status",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Citizen or resident"
+      },
+      {
+       "value": "nra",
+       "label": "Nonresident alien"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "deClass",
+     "label": "Tax class",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "I",
+       "label": "Class I, single"
+      },
+      {
+       "value": "III",
+       "label": "Class III, married, partner earns little"
+      }
+     ],
+     "default": "I"
+    },
+    {
+     "key": "idRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Resident"
+      },
+      {
+       "value": "nonres",
+       "label": "Non-resident (PPh 26)"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "myRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "citizen",
+       "label": "Citizen or permanent resident"
+      },
+      {
+       "value": "expat",
+       "label": "Expat, tax resident (182 days or more)"
+      },
+      {
+       "value": "nonres",
+       "label": "Expat, non-resident"
+      }
+     ],
+     "default": "citizen"
+    },
+    {
+     "key": "nlRuling",
+     "label": "30% ruling",
+     "group": "Salary: Your status",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "noRes",
+     "label": "Scheme",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Ordinary tax"
+      },
+      {
+       "value": "paye",
+       "label": "PAYE scheme, 25% flat"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "noNi",
+     "label": "Member of Norwegian national insurance",
+     "group": "Salary: Your status",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "seRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Resident"
+      },
+      {
+       "value": "sink",
+       "label": "Non-resident, SINK 22.5%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "fiRes",
+     "label": "Scheme",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Ordinary tax"
+      },
+      {
+       "value": "key",
+       "label": "Key employee, 25% flat"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "beExpat",
+     "label": "Expat regime",
+     "group": "Salary: Your status",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "itImp",
+     "label": "Regime",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "Resident"
+      },
+      {
+       "value": "imp50",
+       "label": "Impatriate, 50% exempt"
+      },
+      {
+       "value": "imp60",
+       "label": "Impatriate with a minor child, 60% exempt"
+      }
+     ],
+     "default": "none"
+    },
+    {
+     "key": "frCadre",
+     "label": "Contract",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "noncadre",
+       "label": "Non-cadre"
+      },
+      {
+       "value": "cadre",
+       "label": "Cadre"
+      }
+     ],
+     "default": "noncadre"
+    },
+    {
+     "key": "frImp",
+     "label": "Impatriate regime, 30% forfait",
+     "group": "Salary: Your status",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "esRegime",
+     "label": "Regime",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Resident"
+      },
+      {
+       "value": "beckham",
+       "label": "Beckham regime, 24% flat"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "ptRegime",
+     "label": "Regime",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Resident"
+      },
+      {
+       "value": "jovem",
+       "label": "IRS Jovem"
+      },
+      {
+       "value": "ifici",
+       "label": "IFICI, 20% flat"
+      },
+      {
+       "value": "nonres",
+       "label": "Non-resident, 25% flat"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "ptJovemYear",
+     "label": "Year of work",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "1",
+       "label": "Year 1"
+      },
+      {
+       "value": "2",
+       "label": "Year 2"
+      },
+      {
+       "value": "3",
+       "label": "Year 3"
+      },
+      {
+       "value": "4",
+       "label": "Year 4"
+      },
+      {
+       "value": "5",
+       "label": "Year 5"
+      },
+      {
+       "value": "6",
+       "label": "Year 6"
+      },
+      {
+       "value": "7",
+       "label": "Year 7"
+      },
+      {
+       "value": "8",
+       "label": "Year 8"
+      },
+      {
+       "value": "9",
+       "label": "Year 9"
+      },
+      {
+       "value": "10",
+       "label": "Year 10"
+      }
+     ],
+     "default": "1"
+    },
+    {
+     "key": "jpRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "y2",
+       "label": "Resident, year 2 or later"
+      },
+      {
+       "value": "y1",
+       "label": "Resident, first year"
+      },
+      {
+       "value": "nonres",
+       "label": "Non-resident, 20.42% flat"
+      }
+     ],
+     "default": "y2"
+    },
+    {
+     "key": "krMethod",
+     "label": "Tax method",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "prog",
+       "label": "Progressive rates"
+      },
+      {
+       "value": "flat",
+       "label": "19% flat rate for foreign workers"
+      }
+     ],
+     "default": "prog"
+    },
+    {
+     "key": "cnRes",
+     "label": "Status",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "local",
+       "label": "Standard"
+      },
+      {
+       "value": "expat",
+       "label": "Expat with tax-free allowances"
+      }
+     ],
+     "default": "local"
+    },
+    {
+     "key": "twRes",
+     "label": "Residency",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Resident (183 days or more)"
+      },
+      {
+       "value": "nonres",
+       "label": "Non-resident"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "twGold",
+     "label": "Gold Card",
+     "group": "Salary: Your status",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "twEi",
+     "label": "Employment insurance",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yes",
+       "label": "Covered: 11.5% + 1%"
+      },
+      {
+       "value": "no",
+       "label": "Foreign employee: 11.5% only"
+      }
+     ],
+     "default": "yes"
+    },
+    {
+     "key": "gulfNat",
+     "label": "Citizenship",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "expat",
+       "label": "Expatriate"
+      },
+      {
+       "value": "national",
+       "label": "National"
+      }
+     ],
+     "default": "expat"
+    },
+    {
+     "key": "saScheme",
+     "label": "GOSI scheme",
+     "group": "Salary: Your status",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "legacy",
+       "label": "Joined before 3 Jul 2024"
+      },
+      {
+       "value": "new",
+       "label": "New entrant from 3 Jul 2024"
+      }
+     ],
+     "default": "legacy"
+    },
+    {
+     "key": "usFiling",
+     "label": "Filing status",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "S",
+       "label": "Single"
+      },
+      {
+       "value": "MFJ",
+       "label": "Married filing jointly"
+      }
+     ],
+     "default": "S",
+     "important": true
+    },
+    {
+     "key": "deKids",
+     "label": "Has children",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idMarried",
+     "label": "Married",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idDeps",
+     "label": "Dependants",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "thSpouse",
+     "label": "Spouse with no income",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "thKids",
+     "label": "Children born before 2018",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "thKidsNew",
+     "label": "Children born 2018 or later",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "mySpouse",
+     "label": "Spouse with no income",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "myKids",
+     "label": "Children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      },
+      {
+       "value": "7",
+       "label": "7"
+      },
+      {
+       "value": "8",
+       "label": "8"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "beStatus",
+     "label": "Household",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Single"
+      },
+      {
+       "value": "married",
+       "label": "Married or legal cohabitant, sole earner"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "beKids",
+     "label": "Dependent children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      },
+      {
+       "value": "7",
+       "label": "7"
+      },
+      {
+       "value": "8",
+       "label": "8"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "beSingleParent",
+     "label": "Single parent",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "chStatus",
+     "label": "Household",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Single"
+      },
+      {
+       "value": "married",
+       "label": "Married, sole earner"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "chKids",
+     "label": "Children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "frMarried",
+     "label": "Married or in a PACS",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "frKids",
+     "label": "Children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "esKids",
+     "label": "Children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepOld",
+     "label": "Dependants aged 7 or over",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepMid",
+     "label": "Dependants aged 4 to 6",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepYoung",
+     "label": "Dependants aged 3 or under",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "caKids",
+     "label": "Children 18 or under",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "hkMarried",
+     "label": "Married, partner with no income",
+     "group": "Household: Household",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "hkKids",
+     "label": "Children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "twStatus",
+     "label": "Household",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Single"
+      },
+      {
+       "value": "married",
+       "label": "Married, filing jointly"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "twKids",
+     "label": "Minor children",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "krDeps",
+     "label": "Dependants",
+     "group": "Household: Household",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "auCover",
+     "label": "Private hospital cover",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "auSuper",
+     "label": "Amount includes super",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "ukLoan",
+     "label": "Student loan",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "None"
+      },
+      {
+       "value": "plan1",
+       "label": "Plan 1"
+      },
+      {
+       "value": "plan2",
+       "label": "Plan 2"
+      },
+      {
+       "value": "plan4",
+       "label": "Plan 4 (Scotland)"
+      },
+      {
+       "value": "plan5",
+       "label": "Plan 5"
+      }
+     ],
+     "default": "none"
+    },
+    {
+     "key": "ukPg",
+     "label": "Postgraduate loan",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "deChurch",
+     "label": "Church tax",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "None"
+      },
+      {
+       "value": "8",
+       "label": "8% (Bavaria, Baden-Württemberg)"
+      },
+      {
+       "value": "9",
+       "label": "9% (other states)"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "deAddOn",
+     "label": "Health insurance add-on",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 5,
+     "default": "2.9"
+    },
+    {
+     "key": "usLocal",
+     "label": "Local or county income tax",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 5,
+     "default": "0"
+    },
+    {
+     "key": "usNyDbl",
+     "label": "Employer collects NY disability (DBL)",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "usFicaExempt",
+     "label": "Exempt from Social Security and Medicare",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idJkk",
+     "label": "Work accident rate (JKK)",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0.24",
+       "label": "0.24%, very low risk"
+      },
+      {
+       "value": "0.54",
+       "label": "0.54%, low risk"
+      },
+      {
+       "value": "0.89",
+       "label": "0.89%, medium risk"
+      },
+      {
+       "value": "1.27",
+       "label": "1.27%, high risk"
+      },
+      {
+       "value": "1.74",
+       "label": "1.74%, very high risk"
+      }
+     ],
+     "default": "0.24"
+    },
+    {
+     "key": "idBpjs",
+     "label": "Pay BPJS as a resident would",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "myLindung",
+     "label": "Claim LINDUNG as SOCSO relief",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "nlNorm",
+     "label": "Salary norm",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "std",
+       "label": "Standard (48,013)"
+      },
+      {
+       "value": "young",
+       "label": "Under 30 with a master's (36,497)"
+      }
+     ],
+     "default": "std"
+    },
+    {
+     "key": "nlHoliday",
+     "label": "Holiday allowance paid on top",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "nlPension",
+     "label": "Pension contribution, your share",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "seMun",
+     "label": "Municipal tax rate",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 28,
+     "max": 36,
+     "default": "30.55"
+    },
+    {
+     "key": "seBurial",
+     "label": "Burial fee",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 1.5,
+     "default": "0.292"
+    },
+    {
+     "key": "eeP2",
+     "label": "Pension pillar II",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "Off"
+      },
+      {
+       "value": "2",
+       "label": "2%"
+      },
+      {
+       "value": "4",
+       "label": "4%"
+      },
+      {
+       "value": "6",
+       "label": "6%"
+      }
+     ],
+     "default": "2"
+    },
+    {
+     "key": "eePension",
+     "label": "At pension age",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "fiMun",
+     "label": "Municipal tax rate",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 4,
+     "max": 11,
+     "default": "5.30"
+    },
+    {
+     "key": "fiChurch",
+     "label": "Church tax rate",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 2.5,
+     "default": "0"
+    },
+    {
+     "key": "beMun",
+     "label": "Municipal surcharge",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 9,
+     "default": "7"
+    },
+    {
+     "key": "chChurch",
+     "label": "Church member",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "chAge",
+     "label": "Age (pension rate)",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "25",
+       "label": "25 to 34 (3.5%)"
+      },
+      {
+       "value": "35",
+       "label": "35 to 44 (5%)"
+      },
+      {
+       "value": "45",
+       "label": "45 to 54 (7.5%)"
+      },
+      {
+       "value": "55",
+       "label": "55 to 65 (9%)"
+      }
+     ],
+     "default": "35"
+    },
+    {
+     "key": "chNbu",
+     "label": "Accident insurance (NBU)",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 3,
+     "default": "0.4"
+    },
+    {
+     "key": "chCommune",
+     "label": "Communal multiplier",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 70,
+     "max": 130,
+     "default": "119"
+    },
+    {
+     "key": "frMutuelle",
+     "label": "Company health cover, your share",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 100000,
+     "default": "0"
+    },
+    {
+     "key": "esTemp",
+     "label": "Temporary contract",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "ptHealth",
+     "label": "Health expenses",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptEdu",
+     "label": "Education expenses",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptRent",
+     "label": "Rent on your home",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptColeta",
+     "label": "General family expenses deduction",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 250,
+     "default": "250"
+    },
+    {
+     "key": "jpCare",
+     "label": "Aged 40 to 64",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "jpSupport",
+     "label": "Child-support levy",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "12",
+       "label": "Full year"
+      },
+      {
+       "value": "9",
+       "label": "Calendar 2026 (April to December)"
+      }
+     ],
+     "default": "12"
+    },
+    {
+     "key": "cnHf",
+     "label": "Housing fund rate",
+     "group": "Details: Details",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "5",
+       "label": "5%"
+      },
+      {
+       "value": "6",
+       "label": "6%"
+      },
+      {
+       "value": "7",
+       "label": "7%"
+      }
+     ],
+     "default": "7"
+    },
+    {
+     "key": "cnAllow",
+     "label": "Tax-free allowances",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 100000000,
+     "default": "0"
+    },
+    {
+     "key": "cnSpecial",
+     "label": "Special additional deductions",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "A$ /yr",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "hkMpf",
+     "label": "MPF member",
+     "group": "Details: Details",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "gulfWagePct",
+     "label": "Contributory share of pay",
+     "group": "Details: Details",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 100,
+     "default": "100"
+    },
+    {
+     "key": "dispCur",
+     "label": "Currency to show amounts in",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "local",
+       "label": "Each job's own currency"
+      },
+      {
+       "value": "USD",
+       "label": "US dollar (USD)"
+      },
+      {
+       "value": "EUR",
+       "label": "Euro (EUR)"
+      },
+      {
+       "value": "GBP",
+       "label": "British pound (GBP)"
+      },
+      {
+       "value": "AUD",
+       "label": "Australian dollar (AUD)"
+      },
+      {
+       "value": "SGD",
+       "label": "Singapore dollar (SGD)"
+      },
+      {
+       "value": "IDR",
+       "label": "Indonesian rupiah (IDR)"
+      },
+      {
+       "value": "JPY",
+       "label": "Japanese yen (JPY)"
+      },
+      {
+       "value": "CHF",
+       "label": "Swiss franc (CHF)"
+      },
+      {
+       "value": "CAD",
+       "label": "Canadian dollar (CAD)"
+      },
+      {
+       "value": "HKD",
+       "label": "Hong Kong dollar (HKD)"
+      },
+      {
+       "value": "AED",
+       "label": "UAE dirham (AED)"
+      },
+      {
+       "value": "CNY",
+       "label": "Chinese yuan (CNY)"
+      },
+      {
+       "value": "KRW",
+       "label": "Korean won (KRW)"
+      },
+      {
+       "value": "MYR",
+       "label": "Malaysian ringgit (MYR)"
+      },
+      {
+       "value": "THB",
+       "label": "Thai baht (THB)"
+      },
+      {
+       "value": "TWD",
+       "label": "New Taiwan dollar (TWD)"
+      },
+      {
+       "value": "SEK",
+       "label": "Swedish krona (SEK)"
+      },
+      {
+       "value": "NOK",
+       "label": "Norwegian krone (NOK)"
+      },
+      {
+       "value": "SAR",
+       "label": "Saudi riyal (SAR)"
+      },
+      {
+       "value": "QAR",
+       "label": "Qatari riyal (QAR)"
+      },
+      {
+       "value": "BHD",
+       "label": "Bahraini dinar (BHD)"
+      },
+      {
+       "value": "KWD",
+       "label": "Kuwaiti dinar (KWD)"
+      },
+      {
+       "value": "OMR",
+       "label": "Omani rial (OMR)"
+      }
+     ],
+     "default": "local",
+     "important": true
+    },
+    {
+     "key": "dispPer",
+     "label": "Show amounts per year or per month",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "year",
+       "label": "Year"
+      },
+      {
+       "value": "month",
+       "label": "Month"
+      }
+     ],
+     "default": "year"
+    },
+    {
+     "key": "chartMeasure",
+     "label": "Show take-home as",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pct",
+       "label": "% of gross"
+      },
+      {
+       "value": "amount",
+       "label": "Amount"
+      }
+     ],
+     "default": "pct"
+    }
+   ],
+   "lists": [],
+   "families": [],
+   "json": true,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "asia",
+     "title": "Asia hubs"
+    },
+    {
+     "key": "europe",
+     "title": "European tech"
+    },
+    {
+     "key": "us",
+     "title": "US states"
+    },
+    {
+     "key": "net",
+     "title": "Same take-home, Southern Europe"
+    },
+    {
+     "key": "family",
+     "title": "Family of four"
+    }
+   ]
+  },
+  {
+   "page": "global-income-tax-calculator/id",
+   "url": "/global-income-tax-calculator/id/",
+   "base": "https://tool.adjiebrotots.com/global-income-tax-calculator/id/",
+   "lang": "id",
+   "title": "Kalkulator Gaji Bersih dan Pajak Penghasilan",
+   "reference": "references/global-income-tax-calculator-id.md",
+   "decides": "Take-home pay after income tax and employee social contributions for one to four jobs in 31 countries, 39 US states and DC, under 2026 rules, from gross to net or net to gross, with each line of the sum named, sourced and dated, and which job leaves the most.",
+   "important": [
+    "country",
+    "dir",
+    "amount",
+    "period",
+    "usState",
+    "usFiling",
+    "caProv",
+    "ukRegion",
+    "dispCur"
+   ],
+   "fields": [
+    {
+     "key": "country",
+     "label": "Negara",
+     "group": "Gaji: Tempat kerja",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "AU",
+       "label": "Australia"
+      },
+      {
+       "value": "CN",
+       "label": "Tiongkok (Shanghai)"
+      },
+      {
+       "value": "HK",
+       "label": "Hong Kong (Tiongkok)"
+      },
+      {
+       "value": "ID",
+       "label": "Indonesia"
+      },
+      {
+       "value": "JP",
+       "label": "Jepang (Tokyo)"
+      },
+      {
+       "value": "MY",
+       "label": "Malaysia"
+      },
+      {
+       "value": "SG",
+       "label": "Singapura"
+      },
+      {
+       "value": "KR",
+       "label": "Korea Selatan"
+      },
+      {
+       "value": "TW",
+       "label": "Taiwan (Tiongkok)"
+      },
+      {
+       "value": "TH",
+       "label": "Thailand"
+      },
+      {
+       "value": "BE",
+       "label": "Belgia"
+      },
+      {
+       "value": "EE",
+       "label": "Estonia"
+      },
+      {
+       "value": "FI",
+       "label": "Finlandia"
+      },
+      {
+       "value": "FR",
+       "label": "Prancis"
+      },
+      {
+       "value": "DE",
+       "label": "Jerman"
+      },
+      {
+       "value": "IT",
+       "label": "Italia (Milan)"
+      },
+      {
+       "value": "NL",
+       "label": "Belanda"
+      },
+      {
+       "value": "NO",
+       "label": "Norwegia"
+      },
+      {
+       "value": "PT",
+       "label": "Portugal"
+      },
+      {
+       "value": "ES",
+       "label": "Spanyol (Madrid)"
+      },
+      {
+       "value": "SE",
+       "label": "Swedia"
+      },
+      {
+       "value": "CH",
+       "label": "Swiss (Zürich)"
+      },
+      {
+       "value": "GB",
+       "label": "Inggris"
+      },
+      {
+       "value": "CA",
+       "label": "Kanada"
+      },
+      {
+       "value": "US",
+       "label": "Amerika Serikat"
+      },
+      {
+       "value": "BH",
+       "label": "Bahrain"
+      },
+      {
+       "value": "KW",
+       "label": "Kuwait"
+      },
+      {
+       "value": "OM",
+       "label": "Oman"
+      },
+      {
+       "value": "QA",
+       "label": "Qatar"
+      },
+      {
+       "value": "SA",
+       "label": "Arab Saudi"
+      },
+      {
+       "value": "AE",
+       "label": "Uni Emirat Arab"
+      }
+     ],
+     "default": "AU",
+     "important": true
+    },
+    {
+     "key": "usState",
+     "label": "Negara bagian",
+     "group": "Gaji: Tempat kerja",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "AK",
+       "label": "Alaska"
+      },
+      {
+       "value": "AZ",
+       "label": "Arizona"
+      },
+      {
+       "value": "AR",
+       "label": "Arkansas"
+      },
+      {
+       "value": "CA",
+       "label": "California"
+      },
+      {
+       "value": "CO",
+       "label": "Colorado"
+      },
+      {
+       "value": "DE",
+       "label": "Delaware"
+      },
+      {
+       "value": "DC",
+       "label": "District of Columbia"
+      },
+      {
+       "value": "FL",
+       "label": "Florida"
+      },
+      {
+       "value": "GA",
+       "label": "Georgia"
+      },
+      {
+       "value": "HI",
+       "label": "Hawaii"
+      },
+      {
+       "value": "ID",
+       "label": "Idaho"
+      },
+      {
+       "value": "IL",
+       "label": "Illinois"
+      },
+      {
+       "value": "IN",
+       "label": "Indiana"
+      },
+      {
+       "value": "IA",
+       "label": "Iowa"
+      },
+      {
+       "value": "KS",
+       "label": "Kansas"
+      },
+      {
+       "value": "KY",
+       "label": "Kentucky"
+      },
+      {
+       "value": "LA",
+       "label": "Louisiana"
+      },
+      {
+       "value": "MD",
+       "label": "Maryland"
+      },
+      {
+       "value": "MA",
+       "label": "Massachusetts"
+      },
+      {
+       "value": "MI",
+       "label": "Michigan"
+      },
+      {
+       "value": "MS",
+       "label": "Mississippi"
+      },
+      {
+       "value": "MO",
+       "label": "Missouri"
+      },
+      {
+       "value": "MT",
+       "label": "Montana"
+      },
+      {
+       "value": "NE",
+       "label": "Nebraska"
+      },
+      {
+       "value": "NV",
+       "label": "Nevada"
+      },
+      {
+       "value": "NH",
+       "label": "New Hampshire"
+      },
+      {
+       "value": "NJ",
+       "label": "New Jersey"
+      },
+      {
+       "value": "NY",
+       "label": "New York"
+      },
+      {
+       "value": "NC",
+       "label": "North Carolina"
+      },
+      {
+       "value": "ND",
+       "label": "North Dakota"
+      },
+      {
+       "value": "OK",
+       "label": "Oklahoma"
+      },
+      {
+       "value": "PA",
+       "label": "Pennsylvania"
+      },
+      {
+       "value": "SD",
+       "label": "South Dakota"
+      },
+      {
+       "value": "TN",
+       "label": "Tennessee"
+      },
+      {
+       "value": "TX",
+       "label": "Texas"
+      },
+      {
+       "value": "VT",
+       "label": "Vermont"
+      },
+      {
+       "value": "VA",
+       "label": "Virginia"
+      },
+      {
+       "value": "WA",
+       "label": "Washington"
+      },
+      {
+       "value": "WV",
+       "label": "West Virginia"
+      },
+      {
+       "value": "WY",
+       "label": "Wyoming"
+      }
+     ],
+     "default": "CA",
+     "important": true
+    },
+    {
+     "key": "usNyc",
+     "label": "Tinggal di New York City",
+     "group": "Gaji: Tempat kerja",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "caProv",
+     "label": "Provinsi",
+     "group": "Gaji: Tempat kerja",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ON",
+       "label": "Ontario"
+      },
+      {
+       "value": "BC",
+       "label": "British Columbia"
+      },
+      {
+       "value": "AB",
+       "label": "Alberta"
+      },
+      {
+       "value": "QC",
+       "label": "Quebec"
+      }
+     ],
+     "default": "ON",
+     "important": true
+    },
+    {
+     "key": "ukRegion",
+     "label": "Tempat tinggal",
+     "group": "Gaji: Tempat kerja",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ruk",
+       "label": "Inggris, Wales, atau Irlandia Utara"
+      },
+      {
+       "value": "sco",
+       "label": "Skotlandia"
+      }
+     ],
+     "default": "ruk",
+     "important": true
+    },
+    {
+     "key": "dir",
+     "label": "Hitung dari",
+     "group": "Gaji: Gajimu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "gross",
+       "label": "Gaji kotor"
+      },
+      {
+       "value": "net",
+       "label": "Gaji bersih"
+      }
+     ],
+     "default": "gross",
+     "important": true
+    },
+    {
+     "key": "amount",
+     "label": "Gaji kotor",
+     "group": "Gaji: Gajimu",
+     "kind": "number",
+     "unit": "A$",
+     "min": 0,
+     "max": 100000000000,
+     "default": "120,000",
+     "important": true
+    },
+    {
+     "key": "period",
+     "label": "Gaji kotor",
+     "group": "Gaji: Gajimu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yearly",
+       "label": "setahun"
+      },
+      {
+       "value": "monthly",
+       "label": "sebulan"
+      }
+     ],
+     "default": "yearly",
+     "important": true
+    },
+    {
+     "key": "auRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pr",
+       "label": "Warga negara atau penduduk tetap"
+      },
+      {
+       "value": "temp",
+       "label": "Penduduk sementara, bebas Medicare levy"
+      },
+      {
+       "value": "foreign",
+       "label": "Penduduk asing (foreign resident)"
+      },
+      {
+       "value": "whm",
+       "label": "Working holiday maker"
+      }
+     ],
+     "default": "pr"
+    },
+    {
+     "key": "sgRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "ep",
+       "label": "Employment Pass atau S Pass"
+      },
+      {
+       "value": "citizen",
+       "label": "Warga negara, atau penduduk tetap mulai tahun ke-3"
+      },
+      {
+       "value": "pr1",
+       "label": "Penduduk tetap, tahun ke-1"
+      },
+      {
+       "value": "pr2",
+       "label": "Penduduk tetap, tahun ke-2"
+      },
+      {
+       "value": "nonres",
+       "label": "Bukan penduduk pajak (kurang dari 183 hari)"
+      }
+     ],
+     "default": "ep"
+    },
+    {
+     "key": "sgAge",
+     "label": "Usia",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "55",
+       "label": "55 tahun atau kurang"
+      },
+      {
+       "value": "60",
+       "label": "Di atas 55 sampai 60"
+      },
+      {
+       "value": "65",
+       "label": "Di atas 60 sampai 65"
+      },
+      {
+       "value": "70",
+       "label": "Di atas 65 sampai 70"
+      },
+      {
+       "value": "99",
+       "label": "Di atas 70"
+      }
+     ],
+     "default": "55"
+    },
+    {
+     "key": "usRes",
+     "label": "Status pajak",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Warga negara atau penduduk pajak"
+      },
+      {
+       "value": "nra",
+       "label": "Nonresident alien"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "deClass",
+     "label": "Kelas pajak",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "I",
+       "label": "Kelas I, lajang"
+      },
+      {
+       "value": "III",
+       "label": "Kelas III, menikah, pasangan bergaji kecil"
+      }
+     ],
+     "default": "I"
+    },
+    {
+     "key": "idRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Penduduk pajak"
+      },
+      {
+       "value": "nonres",
+       "label": "Bukan penduduk pajak (PPh 26)"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "myRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "citizen",
+       "label": "Warga negara atau penduduk tetap"
+      },
+      {
+       "value": "expat",
+       "label": "Ekspatriat, penduduk pajak (182 hari atau lebih)"
+      },
+      {
+       "value": "nonres",
+       "label": "Ekspatriat, bukan penduduk pajak"
+      }
+     ],
+     "default": "citizen"
+    },
+    {
+     "key": "nlRuling",
+     "label": "30% ruling",
+     "group": "Gaji: Statusmu",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "noRes",
+     "label": "Skema",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Pajak biasa"
+      },
+      {
+       "value": "paye",
+       "label": "Skema PAYE, tarif tunggal 25%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "noNi",
+     "label": "Peserta asuransi nasional Norwegia",
+     "group": "Gaji: Statusmu",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "seRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Penduduk pajak"
+      },
+      {
+       "value": "sink",
+       "label": "Bukan penduduk pajak, SINK 22.5%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "fiRes",
+     "label": "Skema",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Pajak biasa"
+      },
+      {
+       "value": "key",
+       "label": "Key employee, tarif tunggal 25%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "beExpat",
+     "label": "Rezim ekspatriat",
+     "group": "Gaji: Statusmu",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "itImp",
+     "label": "Rezim",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "Penduduk pajak"
+      },
+      {
+       "value": "imp50",
+       "label": "Impatriat, 50% dibebaskan"
+      },
+      {
+       "value": "imp60",
+       "label": "Impatriat dengan anak di bawah umur, 60% dibebaskan"
+      }
+     ],
+     "default": "none"
+    },
+    {
+     "key": "frCadre",
+     "label": "Kontrak",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "noncadre",
+       "label": "Non-cadre"
+      },
+      {
+       "value": "cadre",
+       "label": "Cadre"
+      }
+     ],
+     "default": "noncadre"
+    },
+    {
+     "key": "frImp",
+     "label": "Rezim impatriat, forfait 30%",
+     "group": "Gaji: Statusmu",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "esRegime",
+     "label": "Rezim",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Penduduk pajak"
+      },
+      {
+       "value": "beckham",
+       "label": "Rezim Beckham, tarif tunggal 24%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "ptRegime",
+     "label": "Rezim",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Penduduk pajak"
+      },
+      {
+       "value": "jovem",
+       "label": "IRS Jovem"
+      },
+      {
+       "value": "ifici",
+       "label": "IFICI, tarif tunggal 20%"
+      },
+      {
+       "value": "nonres",
+       "label": "Bukan penduduk pajak, tarif tunggal 25%"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "ptJovemYear",
+     "label": "Tahun kerja ke-",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "1",
+       "label": "Tahun ke-1"
+      },
+      {
+       "value": "2",
+       "label": "Tahun ke-2"
+      },
+      {
+       "value": "3",
+       "label": "Tahun ke-3"
+      },
+      {
+       "value": "4",
+       "label": "Tahun ke-4"
+      },
+      {
+       "value": "5",
+       "label": "Tahun ke-5"
+      },
+      {
+       "value": "6",
+       "label": "Tahun ke-6"
+      },
+      {
+       "value": "7",
+       "label": "Tahun ke-7"
+      },
+      {
+       "value": "8",
+       "label": "Tahun ke-8"
+      },
+      {
+       "value": "9",
+       "label": "Tahun ke-9"
+      },
+      {
+       "value": "10",
+       "label": "Tahun ke-10"
+      }
+     ],
+     "default": "1"
+    },
+    {
+     "key": "jpRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "y2",
+       "label": "Penduduk pajak, tahun ke-2 dan seterusnya"
+      },
+      {
+       "value": "y1",
+       "label": "Penduduk pajak, tahun pertama"
+      },
+      {
+       "value": "nonres",
+       "label": "Bukan penduduk pajak, tarif tunggal 20.42%"
+      }
+     ],
+     "default": "y2"
+    },
+    {
+     "key": "krMethod",
+     "label": "Cara hitung pajak",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "prog",
+       "label": "Tarif progresif"
+      },
+      {
+       "value": "flat",
+       "label": "Tarif tunggal 19% untuk pekerja asing"
+      }
+     ],
+     "default": "prog"
+    },
+    {
+     "key": "cnRes",
+     "label": "Status",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "local",
+       "label": "Standar"
+      },
+      {
+       "value": "expat",
+       "label": "Ekspatriat dengan tunjangan bebas pajak"
+      }
+     ],
+     "default": "local"
+    },
+    {
+     "key": "twRes",
+     "label": "Status penduduk",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "res",
+       "label": "Penduduk pajak (183 hari atau lebih)"
+      },
+      {
+       "value": "nonres",
+       "label": "Bukan penduduk pajak"
+      }
+     ],
+     "default": "res"
+    },
+    {
+     "key": "twGold",
+     "label": "Gold Card",
+     "group": "Gaji: Statusmu",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "twEi",
+     "label": "Asuransi ketenagakerjaan",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "yes",
+       "label": "Ikut: 11.5% + 1%"
+      },
+      {
+       "value": "no",
+       "label": "Karyawan asing: 11.5% saja"
+      }
+     ],
+     "default": "yes"
+    },
+    {
+     "key": "gulfNat",
+     "label": "Kewarganegaraan",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "expat",
+       "label": "Ekspatriat"
+      },
+      {
+       "value": "national",
+       "label": "Warga negara"
+      }
+     ],
+     "default": "expat"
+    },
+    {
+     "key": "saScheme",
+     "label": "Skema GOSI",
+     "group": "Gaji: Statusmu",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "legacy",
+       "label": "Terdaftar sebelum 3 Jul 2024"
+      },
+      {
+       "value": "new",
+       "label": "Peserta baru mulai 3 Jul 2024"
+      }
+     ],
+     "default": "legacy"
+    },
+    {
+     "key": "usFiling",
+     "label": "Status pelaporan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "S",
+       "label": "Lajang (single)"
+      },
+      {
+       "value": "MFJ",
+       "label": "Menikah, lapor bersama (MFJ)"
+      }
+     ],
+     "default": "S",
+     "important": true
+    },
+    {
+     "key": "deKids",
+     "label": "Punya anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idMarried",
+     "label": "Menikah",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idDeps",
+     "label": "Tanggungan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "thSpouse",
+     "label": "Pasangan tanpa penghasilan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "thKids",
+     "label": "Anak lahir sebelum 2018",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "thKidsNew",
+     "label": "Anak lahir 2018 atau sesudahnya",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "mySpouse",
+     "label": "Pasangan tanpa penghasilan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "myKids",
+     "label": "Anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      },
+      {
+       "value": "7",
+       "label": "7"
+      },
+      {
+       "value": "8",
+       "label": "8"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "beStatus",
+     "label": "Rumah tangga",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Lajang"
+      },
+      {
+       "value": "married",
+       "label": "Menikah atau kohabitasi resmi, satu pencari nafkah"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "beKids",
+     "label": "Anak tanggungan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      },
+      {
+       "value": "7",
+       "label": "7"
+      },
+      {
+       "value": "8",
+       "label": "8"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "beSingleParent",
+     "label": "Orang tua tunggal",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "chStatus",
+     "label": "Rumah tangga",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Lajang"
+      },
+      {
+       "value": "married",
+       "label": "Menikah, satu pencari nafkah"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "chKids",
+     "label": "Anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "frMarried",
+     "label": "Menikah atau PACS",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "frKids",
+     "label": "Anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "esKids",
+     "label": "Anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepOld",
+     "label": "Tanggungan usia 7 tahun ke atas",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepMid",
+     "label": "Tanggungan usia 4 sampai 6 tahun",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "ptDepYoung",
+     "label": "Tanggungan usia 3 tahun ke bawah",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "caKids",
+     "label": "Anak usia 18 tahun ke bawah",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "hkMarried",
+     "label": "Menikah, pasangan tanpa penghasilan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "hkKids",
+     "label": "Anak",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "twStatus",
+     "label": "Rumah tangga",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "single",
+       "label": "Lajang"
+      },
+      {
+       "value": "married",
+       "label": "Menikah, lapor bersama"
+      }
+     ],
+     "default": "single"
+    },
+    {
+     "key": "twKids",
+     "label": "Anak di bawah umur",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "krDeps",
+     "label": "Tanggungan",
+     "group": "Rumah tangga: Rumah tangga",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "0"
+      },
+      {
+       "value": "1",
+       "label": "1"
+      },
+      {
+       "value": "2",
+       "label": "2"
+      },
+      {
+       "value": "3",
+       "label": "3"
+      },
+      {
+       "value": "4",
+       "label": "4"
+      },
+      {
+       "value": "5",
+       "label": "5"
+      },
+      {
+       "value": "6",
+       "label": "6"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "auCover",
+     "label": "Asuransi rumah sakit swasta",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "auSuper",
+     "label": "Jumlah sudah termasuk super",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "ukLoan",
+     "label": "Pinjaman mahasiswa",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "Tidak ada"
+      },
+      {
+       "value": "plan1",
+       "label": "Plan 1"
+      },
+      {
+       "value": "plan2",
+       "label": "Plan 2"
+      },
+      {
+       "value": "plan4",
+       "label": "Plan 4 (Skotlandia)"
+      },
+      {
+       "value": "plan5",
+       "label": "Plan 5"
+      }
+     ],
+     "default": "none"
+    },
+    {
+     "key": "ukPg",
+     "label": "Pinjaman pascasarjana",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "deChurch",
+     "label": "Pajak gereja",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "Tidak ada"
+      },
+      {
+       "value": "8",
+       "label": "8% (Bavaria, Baden-Württemberg)"
+      },
+      {
+       "value": "9",
+       "label": "9% (negara bagian lain)"
+      }
+     ],
+     "default": "0"
+    },
+    {
+     "key": "deAddOn",
+     "label": "Iuran tambahan asuransi kesehatan",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 5,
+     "default": "2.9"
+    },
+    {
+     "key": "usLocal",
+     "label": "Pajak penghasilan lokal atau county",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 5,
+     "default": "0"
+    },
+    {
+     "key": "usNyDbl",
+     "label": "Pemberi kerja memotong iuran disabilitas NY (DBL)",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "usFicaExempt",
+     "label": "Bebas Social Security dan Medicare",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "idJkk",
+     "label": "Tarif JKK (kecelakaan kerja)",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0.24",
+       "label": "0.24%, risiko sangat rendah"
+      },
+      {
+       "value": "0.54",
+       "label": "0.54%, risiko rendah"
+      },
+      {
+       "value": "0.89",
+       "label": "0.89%, risiko sedang"
+      },
+      {
+       "value": "1.27",
+       "label": "1.27%, risiko tinggi"
+      },
+      {
+       "value": "1.74",
+       "label": "1.74%, risiko sangat tinggi"
+      }
+     ],
+     "default": "0.24"
+    },
+    {
+     "key": "idBpjs",
+     "label": "Bayar BPJS seperti penduduk pajak",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "myLindung",
+     "label": "Klaim LINDUNG sebagai pengurang SOCSO",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "nlNorm",
+     "label": "Salary norm",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "std",
+       "label": "Standar (48,013)"
+      },
+      {
+       "value": "young",
+       "label": "Di bawah 30 tahun dengan gelar master (36,497)"
+      }
+     ],
+     "default": "std"
+    },
+    {
+     "key": "nlHoliday",
+     "label": "Uang liburan dibayar di atas gaji",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "nlPension",
+     "label": "Iuran pensiun, bagianmu",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 15,
+     "default": "0"
+    },
+    {
+     "key": "seMun",
+     "label": "Tarif pajak kota",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 28,
+     "max": 36,
+     "default": "30.55"
+    },
+    {
+     "key": "seBurial",
+     "label": "Biaya penguburan",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 1.5,
+     "default": "0.292"
+    },
+    {
+     "key": "eeP2",
+     "label": "Pilar pensiun kedua",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "0",
+       "label": "Tidak ikut"
+      },
+      {
+       "value": "2",
+       "label": "2%"
+      },
+      {
+       "value": "4",
+       "label": "4%"
+      },
+      {
+       "value": "6",
+       "label": "6%"
+      }
+     ],
+     "default": "2"
+    },
+    {
+     "key": "eePension",
+     "label": "Sudah usia pensiun",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "fiMun",
+     "label": "Tarif pajak kota",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 4,
+     "max": 11,
+     "default": "5.30"
+    },
+    {
+     "key": "fiChurch",
+     "label": "Tarif pajak gereja",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 2.5,
+     "default": "0"
+    },
+    {
+     "key": "beMun",
+     "label": "Pajak tambahan kota",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 9,
+     "default": "7"
+    },
+    {
+     "key": "chChurch",
+     "label": "Anggota gereja",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "chAge",
+     "label": "Usia (tarif pensiun)",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "25",
+       "label": "25 sampai 34 (3.5%)"
+      },
+      {
+       "value": "35",
+       "label": "35 sampai 44 (5%)"
+      },
+      {
+       "value": "45",
+       "label": "45 sampai 54 (7.5%)"
+      },
+      {
+       "value": "55",
+       "label": "55 sampai 65 (9%)"
+      }
+     ],
+     "default": "35"
+    },
+    {
+     "key": "chNbu",
+     "label": "Asuransi kecelakaan (NBU)",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 3,
+     "default": "0.4"
+    },
+    {
+     "key": "chCommune",
+     "label": "Pengali pajak kota",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 70,
+     "max": 130,
+     "default": "119"
+    },
+    {
+     "key": "frMutuelle",
+     "label": "Asuransi kesehatan perusahaan, bagianmu",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 100000,
+     "default": "0"
+    },
+    {
+     "key": "esTemp",
+     "label": "Kontrak sementara",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "ptHealth",
+     "label": "Biaya kesehatan",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptEdu",
+     "label": "Biaya pendidikan",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptRent",
+     "label": "Sewa rumah tinggalmu",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "ptColeta",
+     "label": "Pengurang biaya keluarga umum",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 250,
+     "default": "250"
+    },
+    {
+     "key": "jpCare",
+     "label": "Usia 40 sampai 64",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": false
+    },
+    {
+     "key": "jpSupport",
+     "label": "Iuran dukungan anak",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "12",
+       "label": "Setahun penuh"
+      },
+      {
+       "value": "9",
+       "label": "Tahun kalender 2026 (April sampai Desember)"
+      }
+     ],
+     "default": "12"
+    },
+    {
+     "key": "cnHf",
+     "label": "Tarif dana perumahan",
+     "group": "Detail: Detail",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "5",
+       "label": "5%"
+      },
+      {
+       "value": "6",
+       "label": "6%"
+      },
+      {
+       "value": "7",
+       "label": "7%"
+      }
+     ],
+     "default": "7"
+    },
+    {
+     "key": "cnAllow",
+     "label": "Tunjangan bebas pajak",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 100000000,
+     "default": "0"
+    },
+    {
+     "key": "cnSpecial",
+     "label": "Potongan tambahan khusus",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "A$ /thn",
+     "min": 0,
+     "max": 1000000,
+     "default": "0"
+    },
+    {
+     "key": "hkMpf",
+     "label": "Peserta MPF",
+     "group": "Detail: Detail",
+     "kind": "checkbox",
+     "default": true
+    },
+    {
+     "key": "gulfWagePct",
+     "label": "Porsi gaji yang dikenai iuran",
+     "group": "Detail: Detail",
+     "kind": "number",
+     "unit": "%",
+     "min": 0,
+     "max": 100,
+     "default": "100"
+    },
+    {
+     "key": "dispCur",
+     "label": "Mata uang untuk menampilkan angka",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "local",
+       "label": "Mata uang tiap pekerjaan"
+      },
+      {
+       "value": "USD",
+       "label": "Dolar AS (USD)"
+      },
+      {
+       "value": "EUR",
+       "label": "Euro (EUR)"
+      },
+      {
+       "value": "GBP",
+       "label": "Pound sterling (GBP)"
+      },
+      {
+       "value": "AUD",
+       "label": "Dolar Australia (AUD)"
+      },
+      {
+       "value": "SGD",
+       "label": "Dolar Singapura (SGD)"
+      },
+      {
+       "value": "IDR",
+       "label": "Rupiah (IDR)"
+      },
+      {
+       "value": "JPY",
+       "label": "Yen Jepang (JPY)"
+      },
+      {
+       "value": "CHF",
+       "label": "Franc Swiss (CHF)"
+      },
+      {
+       "value": "CAD",
+       "label": "Dolar Kanada (CAD)"
+      },
+      {
+       "value": "HKD",
+       "label": "Dolar Hong Kong (HKD)"
+      },
+      {
+       "value": "AED",
+       "label": "Dirham UEA (AED)"
+      },
+      {
+       "value": "CNY",
+       "label": "Yuan Tiongkok (CNY)"
+      },
+      {
+       "value": "KRW",
+       "label": "Won Korea (KRW)"
+      },
+      {
+       "value": "MYR",
+       "label": "Ringgit Malaysia (MYR)"
+      },
+      {
+       "value": "THB",
+       "label": "Baht Thailand (THB)"
+      },
+      {
+       "value": "TWD",
+       "label": "Dolar Taiwan Baru (TWD)"
+      },
+      {
+       "value": "SEK",
+       "label": "Krona Swedia (SEK)"
+      },
+      {
+       "value": "NOK",
+       "label": "Krone Norwegia (NOK)"
+      },
+      {
+       "value": "SAR",
+       "label": "Riyal Arab Saudi (SAR)"
+      },
+      {
+       "value": "QAR",
+       "label": "Riyal Qatar (QAR)"
+      },
+      {
+       "value": "BHD",
+       "label": "Dinar Bahrain (BHD)"
+      },
+      {
+       "value": "KWD",
+       "label": "Dinar Kuwait (KWD)"
+      },
+      {
+       "value": "OMR",
+       "label": "Rial Oman (OMR)"
+      }
+     ],
+     "default": "local",
+     "important": true
+    },
+    {
+     "key": "dispPer",
+     "label": "Tampilkan angka per tahun atau per bulan",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "year",
+       "label": "Tahun"
+      },
+      {
+       "value": "month",
+       "label": "Bulan"
+      }
+     ],
+     "default": "year"
+    },
+    {
+     "key": "chartMeasure",
+     "label": "Tampilkan gaji bersih sebagai",
+     "group": "Beside the results",
+     "kind": "choice",
+     "options": [
+      {
+       "value": "pct",
+       "label": "% dari gaji kotor"
+      },
+      {
+       "value": "amount",
+       "label": "Jumlah"
+      }
+     ],
+     "default": "pct"
+    }
+   ],
+   "lists": [],
+   "families": [],
+   "json": true,
+   "run": false,
+   "quickStarts": [
+    {
+     "key": "asia",
+     "title": "Kota bisnis Asia"
+    },
+    {
+     "key": "europe",
+     "title": "Insinyur di Eropa"
+    },
+    {
+     "key": "us",
+     "title": "Negara bagian AS"
+    },
+    {
+     "key": "net",
+     "title": "Gaji bersih sama, Eropa Selatan"
+    },
+    {
+     "key": "family",
+     "title": "Keluarga empat orang"
+    }
+   ]
+  }
+ ]
+}

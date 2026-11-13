@@ -1,0 +1,388 @@
+{
+  "slug": "france",
+  "lang": "en",
+  "title": "French Income Tax 2026: How to Calculate Take-Home Pay",
+  "h1": "How to calculate income tax and take-home pay in France (2026)",
+  "description": "French income tax and employee contributions in 2026: progressive rates to 45%, family parts, cadre status, the impatriate regime, and four take-home examples.",
+  "lede": "<p>France taxes residents on worldwide income with progressive rates from 0% to 45%, after you and your employer have already paid social contributions out of the gross salary. The family is taxed as a unit, so a spouse and children divide your income into parts and lower the rate. A single non-cadre employee on €45,000 pays about €12,446 in employee contributions and income tax and keeps about €32,554, or 72.3% of gross.</p>",
+  "law": {
+    "intro": "<p>This page models an employee in France on a full-year salary, with the 2026 figures the calculator uses. French pay has two layers. First come employee social contributions (pension, the CSG and CRDS levies), which are taken from your gross salary at source. Then income tax is worked out on what remains, using the household's parts. Residents are taxed on worldwide income, and the rules below assume you are a French tax resident for the whole year.</p>",
+    "blocks": [
+      {
+        "h3": "Income tax scale",
+        "html": "<p>The scale is applied to taxable income divided by the number of parts, and the result is multiplied back by the parts. Taxable income is your salary after employee contributions (the deductible CSG included) and after a 10% professional expenses deduction, which the calculator caps at €14,555 and floors at €509. Low tax bills also get a discount called the <em>décote</em>.</p>",
+        "table": {
+          "head": [
+            "Taxable income per part",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "€0 to €11,600",
+              "0%"
+            ],
+            [
+              "€11,601 to €29,579",
+              "11%"
+            ],
+            [
+              "€29,580 to €84,577",
+              "30%"
+            ],
+            [
+              "€84,578 to €181,917",
+              "41%"
+            ],
+            [
+              "Over €181,917",
+              "45%"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, Barème de l'impôt sur le revenu",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+          },
+          {
+            "name": "service-public.gouv.fr, Impôt sur le revenu: calcul de l'impôt (décote)",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34328#:~:text=La%20d%C3%A9cote"
+          },
+          {
+            "name": "service-public.gouv.fr, Frais professionnels (déduction de 10 %)",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1989#:~:text=Frais%20professionnels"
+          },
+          {
+            "name": "service-public.gouv.fr, Contribution exceptionnelle sur les hauts revenus",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130#:~:text=Contribution%20exceptionnelle%20sur%20les%20hauts%20revenus"
+          }
+        ]
+      },
+      {
+        "h3": "Family parts (quotient familial)",
+        "html": "<p>A single person has 1 part and a married or civil-partnered couple has 2. Each of the first two children adds 0.5 part, and each child from the third adds a full part. More parts mean a lower rate on each slice, but the saving from each half part is capped: the calculator limits it to €1,807 per half part. A couple with two children therefore has 3 parts.</p>",
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, Quotient familial d'un couple marié ou pacsé",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+          },
+          {
+            "name": "service-public.gouv.fr, Quotient familial d'une personne seule",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2702"
+          }
+        ]
+      },
+      {
+        "h3": "Employee social contributions",
+        "html": "<p>The calculator uses the social security ceiling of €48,060 a year. Employee contributions are: old-age insurance of 6.90% up to the ceiling plus 0.40% on all pay; AGIRC-ARRCO supplementary pension of 3.15% up to the ceiling and 8.64% between one and eight times the ceiling; a general balance contribution (CEG) of 0.86% and 1.08% on the same two slices; and a technical balance contribution (CET) of 0.14% on pay above the ceiling. The calculator adds the APEC levy of 0.024% when you choose cadre status.</p><p>Employer contributions are paid on top and are not part of your net pay.</p>",
+        "cite": [
+          {
+            "name": "Urssaf, Taux de cotisations du secteur privé",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+          },
+          {
+            "name": "Urssaf, Plafonds de la Sécurité sociale",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+          }
+        ]
+      },
+      {
+        "h3": "CSG and CRDS",
+        "html": "<p>The CSG and CRDS levies apply to 98.25% of salary up to four times the ceiling, and to the full amount above that. 6.8% is the part of the CSG that is deductible from taxable income. The other 2.9% (the rest of the CSG plus the CRDS) is not deductible. That is why the calculator treats the two pieces separately: only the 6.8% lowers the income tax base.</p>",
+        "cite": [
+          {
+            "name": "service-public.gouv.fr, CSG et CRDS sur les revenus d'activité",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+          },
+          {
+            "name": "Urssaf, Taux de cotisations du secteur privé",
+            "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+          }
+        ]
+      },
+      {
+        "h3": "Impatriate regime",
+        "html": "<p>People recruited from abroad can qualify for a special regime in the tax code (article 155 B), which exempts part of the pay linked to the move. The calculator models the flat option: 30% of salary after contributions is exempt from income tax. It does not test whether you qualify. As a general rule the regime is meant for people who were not French tax residents in the years before they arrived and who come to work for a limited number of years, so confirm the conditions with your employer or an adviser.</p>",
+        "cite": [
+          {
+            "name": "impots.gouv.fr, Le régime des impatriés",
+            "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+          },
+          {
+            "name": "BOFiP, Salariés impatriés: exonération (BOI-RSA-GEO-40-10-20)",
+            "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+          },
+          {
+            "name": "Légifrance, Code général des impôts, article 155 B",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "service-public.gouv.fr, Barème de l'impôt sur le revenu",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+      },
+      {
+        "name": "service-public.gouv.fr, Quotient familial d'un couple marié ou pacsé",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+      },
+      {
+        "name": "Urssaf, Taux de cotisations du secteur privé",
+        "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+      },
+      {
+        "name": "Urssaf, Plafonds de la Sécurité sociale",
+        "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+      },
+      {
+        "name": "service-public.gouv.fr, CSG et CRDS sur les revenus d'activité",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+      },
+      {
+        "name": "service-public.gouv.fr, Contribution exceptionnelle sur les hauts revenus",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31130#:~:text=Contribution%20exceptionnelle%20sur%20les%20hauts%20revenus"
+      },
+      {
+        "name": "impots.gouv.fr, Le régime des impatriés",
+        "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+      },
+      {
+        "name": "Légifrance, Code général des impôts, article 155 B",
+        "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "single-non-cadre",
+      "title": "How much tax and take-home pay on a €45,000 salary in France (single, non-cadre)",
+      "intro": "<p>This is a single employee without children on a €45,000 salary. Employee contributions come to about €9,378: €3,285 for old-age insurance, €1,418 for AGIRC-ARRCO, €387 for the CEG, €3,006 for the deductible CSG and €1,282 for the non-deductible CSG and CRDS. After the contributions that lower the tax base and the 10% professional expenses deduction (€3,690), taxable income is about €33,214. Income tax on one part is €3,068. You keep about €32,554, or 72.3% of gross.</p>",
+      "after": "<p>The marginal rate is 43.0% here: a 30% income tax slice, plus the contributions and CSG that apply to every extra euro, less the effect of the deductions.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Barème de l'impôt sur le revenu",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, Taux de cotisations du secteur privé",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
+    },
+    {
+      "key": "cadre",
+      "title": "French income tax and net salary for a cadre on €70,000",
+      "intro": "<p>A single cadre on €70,000 passes the social security ceiling, so the second pension slice and the CET apply. Contributions total about €14,442, including €3,410 of AGIRC-ARRCO, €98 of CET and €17 of APEC. Taxable income after contributions and the 10% deduction is about €51,797, which reaches the 30% slice. Income tax is €8,643, and you keep about €46,915, or 67.0% of gross.</p>",
+      "after": "<p>In the calculator, cadre status only adds the small APEC levy. The larger step up in contributions comes from pay above the ceiling, whatever your status. Your marginal rate is 42.2%.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Barème de l'impôt sur le revenu",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, Taux de cotisations du secteur privé",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        },
+        {
+          "name": "Urssaf, Plafonds de la Sécurité sociale",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+        }
+      ]
+    },
+    {
+      "key": "married-two-children",
+      "title": "Take-home pay on €70,000 in France for a married cadre with two children",
+      "intro": "<p>The salary and contributions are the same as in the single cadre case, so contributions are still about €14,442. What changes is the number of parts: a married couple with two children has 3 parts. Taxable income per part is much lower, so most of it falls in the 11% slice, and the <em>décote</em> cuts the bill further. Income tax falls from €8,643 to €1,233, and you keep about €54,325, or 77.6% of gross.</p>",
+      "after": "<p>The marginal rate drops to 31.8%. The example assumes one earner: if your spouse also works, their income is added to the household before the parts are applied, which this calculator does not model.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Quotient familial d'un couple marié ou pacsé",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        }
+      ]
+    },
+    {
+      "key": "impatriate",
+      "title": "How the French impatriate regime changes tax on a €90,000 salary",
+      "intro": "<p>A single cadre on €90,000 who qualifies for the impatriate regime has 30% of salary after contributions exempt, which is about €22,248. Contributions are about €18,405 (including €5,138 of AGIRC-ARRCO and €6,013 of deductible CSG). The 10% deduction applies to the reduced figure and is €5,191. Income tax on one part is €7,120, and you keep about €64,475, or 71.6% of gross.</p>",
+      "after": "<p>The exemption only reduces income tax. Social contributions and the CSG are still charged on the full salary. The marginal rate is 35.5%.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, Le régime des impatriés",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "BOFiP, Salariés impatriés: exonération (BOI-RSA-GEO-40-10-20)",
+          "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to lower French tax or improve what you keep. Which ones apply depends on your situation.</p>",
+  "strategies": [
+    {
+      "h3": "Voluntary contributions to a PER pension plan",
+      "html": "<p><strong>Suits:</strong> taxpayers on the 30% slice or above. Payments into an individual retirement savings plan (<em>plan d'épargne retraite</em>, PER) can usually be deducted from taxable income within a ceiling tied to your earnings, so check the current limit on the tax site.</p><p><strong>Caveat:</strong> the money is generally locked until retirement, with a few exceptions such as buying a main home, and the capital is taxed when you take it out.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Plan d'épargne retraite (PER)",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34982"
+        }
+      ]
+    },
+    {
+      "h3": "Employer savings plans",
+      "html": "<p><strong>Suits:</strong> employees of companies that offer profit-sharing (<em>participation</em>, <em>intéressement</em>) or a company savings plan (PEE). Sums paid into the plan are generally exempt from income tax, although social levies can still apply.</p><p><strong>Caveat:</strong> money paid into a company savings plan is usually blocked for several years unless you meet a release condition.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Plan d'épargne entreprise (PEE)",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2142"
+        },
+        {
+          "name": "service-public.gouv.fr, Intéressement",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2140"
+        },
+        {
+          "name": "service-public.gouv.fr, Participation",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2141"
+        }
+      ]
+    },
+    {
+      "h3": "Check whether you qualify for the impatriate regime",
+      "html": "<p><strong>Suits:</strong> people recruited from abroad, as in the €90,000 example. The regime can lower the income tax base for a limited period.</p><p><strong>Caveat:</strong> it has conditions on your previous residence and on the move, and it must be set up with your employer. This calculator only models the flat 30% option.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, Le régime des impatriés",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "BOFiP, Salariés impatriés: exonération (BOI-RSA-GEO-40-10-20)",
+          "url": "https://bofip.impots.gouv.fr/bofip/5677-PGP.html/identifiant=BOI-RSA-GEO-40-10-20-20170621"
+        }
+      ]
+    },
+    {
+      "h3": "Keep your family situation up to date",
+      "html": "<p><strong>Suits:</strong> anyone who marries, has a child or separates. Parts change the tax directly, as the married example shows, and you can update your situation on your online tax account so that your withholding rate follows.</p><p><strong>Caveat:</strong> the benefit per half part is capped, so extra parts help most at moderate incomes.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Quotient familial d'un couple marié ou pacsé",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        },
+        {
+          "name": "service-public.gouv.fr, Changer votre taux de prélèvement à la source",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F35894"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. It does not cover investment income, property income or a part year.",
+    "<strong>One earner per household.</strong> A married example uses a single salary. A spouse's income is not added.",
+    "<strong>No bonuses, equity or benefits in kind.</strong> They are not modelled separately.",
+    "<strong>No health or provident cover unless you enter it.</strong> Your share of an employer scheme lowers your taxable income and your net pay. The calculator assumes none by default.",
+    "<strong>High incomes.</strong> At very high incomes a minimum tax rate (CDHR) can apply. When it may, the calculator says so and does not give a figure.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Income taxed in your home country is not offset here.",
+    "<strong>Simplified regime test.</strong> You choose the impatriate option. The calculator does not check that you qualify."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on a €45,000 salary in France?",
+      "a": "<p>A single employee without children pays about €3,068 in income tax and about €9,378 in employee contributions, so about €12,446 in total. That leaves about €32,554. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Barème de l'impôt sur le revenu",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419#:~:text=Bar%C3%A8me"
+        },
+        {
+          "name": "Urssaf, Taux de cotisations du secteur privé",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
+    },
+    {
+      "q": "What is the quotient familial and how many parts do I get?",
+      "a": "<p>The <em>quotient familial</em> divides your taxable income by the number of parts in your household before the scale is applied, then multiplies the tax back up. You get 1 part if single and 2 if married or in a civil partnership. Each of the first two children adds 0.5 part, and each further child adds 1 part. In the married example with two children, 3 parts take the tax on €70,000 from €8,643 down to €1,233.</p><p>The saving from each half part is capped, so the family quotient helps less as income rises.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Quotient familial d'un couple marié ou pacsé",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2705"
+        },
+        {
+          "name": "service-public.gouv.fr, Quotient familial d'une personne seule",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2702"
+        }
+      ]
+    },
+    {
+      "q": "Why is part of the CSG deductible and part not?",
+      "a": "<p>The CSG and CRDS levies are not all treated the same way. 6.8% of the base is deductible from the income you pay tax on, which lowers your income tax. The remaining 2.9% (the rest of the CSG plus the CRDS) is not deductible, so it is a pure cost. That is why the calculator shows two separate CSG lines and why your taxable income is lower than your gross pay minus only the pension contributions.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, CSG et CRDS sur les revenus d'activité",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+        }
+      ]
+    },
+    {
+      "q": "Does my payslip tax match the calculator? (withholding at source and the personalised rate)",
+      "a": "<p>France withholds income tax from each payslip, called <em>prélèvement à la source</em>. The rate your employer uses is given to them by the tax office. If you have not yet filed a return in France, a default neutral rate is used until the tax office has your details and sets a personalised rate. After your annual return in the following spring, any difference is settled with a refund or a balance to pay.</p><p>The calculator shows the tax for a full year, so it matches your final bill, not necessarily each month's withholding.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, Prélèvement à la source",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34009"
+        },
+        {
+          "name": "service-public.gouv.fr, Changer votre taux de prélèvement à la source",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F35894"
+        }
+      ]
+    },
+    {
+      "q": "Do cadres pay more tax than non-cadres?",
+      "a": "<p>Not in income tax: the scale is the same. In the calculator, cadre status adds the small APEC contribution (0.024%). The bigger difference between the €45,000 and €70,000 examples is that pay above the social security ceiling triggers the second slice of AGIRC-ARRCO and the CET. Cadre status also has other effects in real life, such as pension rights and benefits, that this calculator does not model.</p>",
+      "cite": [
+        {
+          "name": "Urssaf, Taux de cotisations du secteur privé",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        },
+        {
+          "name": "Urssaf, Plafonds de la Sécurité sociale",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html"
+        }
+      ]
+    },
+    {
+      "q": "Who can use the French impatriate regime?",
+      "a": "<p>It is aimed at people recruited from abroad to work in France who were not French tax residents beforehand. In the calculator, 30% of salary after contributions is exempt from income tax. The real regime has its own conditions on residence history and the nature of the move, and it can run for a limited number of years, so check the details on <a href=\"https://www.impots.gouv.fr/\">impots.gouv.fr</a> or with your employer.</p>",
+      "cite": [
+        {
+          "name": "impots.gouv.fr, Le régime des impatriés",
+          "url": "https://www.impots.gouv.fr/international-particulier/le-regime-des-impatries"
+        },
+        {
+          "name": "Légifrance, Code général des impôts, article 155 B",
+          "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037985788"
+        }
+      ]
+    },
+    {
+      "q": "Why is my take-home pay so much lower than my gross salary?",
+      "a": "<p>In France, a large share of the gross-to-net gap is social contributions taken before any income tax. In the €70,000 cadre example, contributions and CSG take about €14,442, and income tax takes another €8,643. Employer contributions are on top of your gross and never appear on your payslip as a deduction.</p>",
+      "cite": [
+        {
+          "name": "service-public.gouv.fr, CSG et CRDS sur les revenus d'activité",
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2971"
+        },
+        {
+          "name": "Urssaf, Taux de cotisations du secteur privé",
+          "url": "https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/taux-cotisations-secteur-prive.html"
+        }
+      ]
+    }
+  ],
+  "bmc": "Found this useful? Buy me a croissant."
+}

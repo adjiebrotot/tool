@@ -1,0 +1,306 @@
+{
+  "slug": "malaysia",
+  "lang": "en",
+  "title": "Malaysia Income Tax YA2026: How to Calculate It",
+  "h1": "How to calculate income tax in Malaysia (YA2026)",
+  "description": "Malaysia income tax for citizens, resident expats and non-residents in YA2026: rates from 0% to 30%, EPF, reliefs, the 182-day rule and three worked examples.",
+  "lede": "<p>Malaysia taxes residents on a progressive scale from 0% to 30% after reliefs, and non-residents at a flat 30% with no reliefs. You are generally a tax resident if you are in Malaysia for 182 days or more in the year. On RM180,000 a resident expat pays about RM26,250 in income tax and keeps about RM149,835, while a non-resident on RM60,000 pays RM18,000 and keeps about RM40,538.</p>",
+  "law": {
+    "intro": "<p>The Malaysian tax year is the calendar year, and these are the rates and reliefs for Year of Assessment (YA) 2026 as the calculator models them. Residency decides the table that applies, not your citizenship. The basic test is presence in Malaysia for 182 days or more in the calendar year, and other tests exist for stays that span two years, so ask the tax authority (LHDN) about your dates. Employers deduct tax from each payslip under the monthly tax deduction scheme (PCB), and you settle any difference in your annual return.</p>",
+    "blocks": [
+      {
+        "h3": "Tax rates for residents",
+        "html": "<p>Residents are taxed on chargeable income, which is pay less reliefs. Each slice is taxed at the rate for its band.</p>",
+        "table": {
+          "head": [
+            "Chargeable income",
+            "Rate"
+          ],
+          "rows": [
+            [
+              "First RM5,000",
+              "0%"
+            ],
+            [
+              "RM5,001 to RM20,000",
+              "1%"
+            ],
+            [
+              "RM20,001 to RM35,000",
+              "3%"
+            ],
+            [
+              "RM35,001 to RM50,000",
+              "6%"
+            ],
+            [
+              "RM50,001 to RM70,000",
+              "11%"
+            ],
+            [
+              "RM70,001 to RM100,000",
+              "19%"
+            ],
+            [
+              "RM100,001 to RM400,000",
+              "25%"
+            ],
+            [
+              "RM400,001 to RM600,000",
+              "26%"
+            ],
+            [
+              "RM600,001 to RM2,000,000",
+              "28%"
+            ],
+            [
+              "Over RM2,000,000",
+              "30%"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "LHDN, Individual tax rate",
+            "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-rate/"
+          }
+        ]
+      },
+      {
+        "h3": "Non-residents",
+        "html": "<p>A non-resident is taxed at a flat 30% on employment income. There are no reliefs and no rebate, so the rate is the same at every salary.</p>",
+        "cite": [
+          {
+            "name": "LHDN, Introduction to individual income tax",
+            "url": "https://www.hasil.gov.my/en/individu/pengenalan-cukai-pendapatan-individu/"
+          }
+        ]
+      },
+      {
+        "h3": "Reliefs and the rebate",
+        "html": "<p>The calculator gives every resident RM9,000 for themselves, EPF contributions up to RM4,000, and SOCSO up to RM350 where it applies. It adds RM4,000 for a spouse with no income and RM2,000 for each child where those options are used. A rebate of RM400 applies when chargeable income is RM35,000 or less. Real returns allow many other reliefs, such as lifestyle, medical, insurance and education, that the calculator does not model.</p>",
+        "cite": [
+          {
+            "name": "LHDN, Tax reliefs",
+            "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-reliefs/"
+          }
+        ]
+      },
+      {
+        "h3": "EPF, SOCSO and LINDUNG 24 Jam",
+        "html": "<p>Citizens pay 11% of pay into the Employees Provident Fund (EPF), plus SOCSO and EIS contributions of 0.5% and 0.2% on pay up to RM6,000 a month. The calculator models a 2% EPF share for expats and non-residents, who do not pay SOCSO and EIS. It also charges a 0.75% LINDUNG 24 Jam contribution on pay up to RM6,000 a month from 1 June 2026, which is seven months in the year. Employers pay their own share on top.</p>",
+        "cite": [
+          {
+            "name": "KWSP, Contribute as a member",
+            "url": "https://www.kwsp.gov.my/en/member/overview/contribution"
+          },
+          {
+            "name": "KWSP, Contribution for non-Malaysian citizen employees",
+            "url": "https://www.kwsp.gov.my/en/employer/responsibilities/non-malaysian-citizen-employees"
+          },
+          {
+            "name": "PERKESO, Contributions",
+            "url": "https://www.perkeso.gov.my/en/our-services/employer-employee/contributions.html"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "LHDN, Individual tax rate",
+        "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-rate/"
+      },
+      {
+        "name": "LHDN, Introduction to individual income tax",
+        "url": "https://www.hasil.gov.my/en/individu/pengenalan-cukai-pendapatan-individu/"
+      },
+      {
+        "name": "LHDN, Tax reliefs",
+        "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-reliefs/"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Malaysia individual residence",
+        "url": "https://taxsummaries.pwc.com/malaysia/individual/residence"
+      },
+      {
+        "name": "KWSP, Contribute as a member",
+        "url": "https://www.kwsp.gov.my/en/member/overview/contribution"
+      },
+      {
+        "name": "PERKESO, Contributions",
+        "url": "https://www.perkeso.gov.my/en/our-services/employer-employee/contributions.html"
+      },
+      {
+        "name": "PERKESO, New contribution rate (LINDUNG 24 Jam)",
+        "url": "https://www.perkeso.gov.my/images/lindung/lindung-24-jam/NewContributionRateIncludingSKBBK.pdf"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Malaysia individual residence",
+        "url": "https://taxsummaries.pwc.com/malaysia/individual/residence"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "citizen",
+      "title": "How to calculate income tax for a Malaysian citizen on RM96,000",
+      "intro": "<p>A citizen earning RM96,000 pays 11% EPF (RM10,560) and RM504 of SOCSO and EIS, plus the RM315 LINDUNG 24 Jam contribution. Reliefs are RM13,350: RM9,000 for yourself, the RM4,000 EPF limit and RM350 for SOCSO. Chargeable income is RM82,650 and income tax is RM6,103.50. You keep about RM78,518, or 81.8% of gross.</p>",
+      "after": "<p>At this income the marginal rate is 30%: 19% tax plus the 11% EPF contribution, which you keep as savings. The EPF is yours, so tax is only about 6% of gross.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Individual tax rate",
+          "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-rate/"
+        }
+      ]
+    },
+    {
+      "key": "expat-resident",
+      "title": "Take-home pay for an expat resident in Malaysia earning RM180,000",
+      "intro": "<p>A resident expat pays a 2% EPF share (RM3,600) and the RM315 LINDUNG contribution, with no SOCSO or EIS. Reliefs are RM12,600, the RM9,000 personal relief plus EPF, so chargeable income is RM167,400. The progressive rates give RM26,250 of income tax, and you keep about RM149,835, or 83.2% of gross.</p>",
+      "after": "<p>Your marginal rate is 26.5%: 25% tax, less the relief on EPF, plus the 2% EPF itself. The calculator does not include a SOCSO relief for expats here.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Individual tax rate",
+          "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-rate/"
+        },
+        {
+          "name": "KWSP, Contribution for non-Malaysian citizen employees",
+          "url": "https://www.kwsp.gov.my/en/employer/responsibilities/non-malaysian-citizen-employees"
+        }
+      ]
+    },
+    {
+      "key": "non-resident",
+      "title": "What tax does a non-resident pay in Malaysia on RM60,000?",
+      "intro": "<p>A non-resident stays fewer than 182 days and is taxed at a flat 30%, so RM60,000 gives RM18,000 of income tax. With the 2% EPF share of RM1,200 and LINDUNG of RM262.50, you keep about RM40,538, or 67.6% of gross. A resident on the same pay would have paid far less.</p>",
+      "after": "<p>If you will stay 182 days or more, becoming a resident can change this sharply, so check your dates and the other residence tests with LHDN.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Introduction to individual income tax",
+          "url": "https://www.hasil.gov.my/en/individu/pengenalan-cukai-pendapatan-individu/"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to reduce Malaysian tax. Which ones apply depends on your residency and family.</p>",
+  "strategies": [
+    {
+      "h3": "Claim every personal relief you qualify for",
+      "html": "<p><strong>Suits:</strong> any tax resident. Reliefs for a spouse, children, medical expenses, education, lifestyle spending and insurance each lower chargeable income and so save tax at your marginal rate.</p><p><strong>Caveat:</strong> each has a cap and conditions, and you need receipts. The calculator only models the personal, EPF, SOCSO, spouse and child reliefs.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Tax reliefs",
+          "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-reliefs/"
+        }
+      ]
+    },
+    {
+      "h3": "Private Retirement Scheme (PRS) and life insurance contributions",
+      "html": "<p><strong>Suits:</strong> residents who want extra retirement savings. Contributions to an approved PRS and some life insurance premiums qualify for relief up to a cap, so check the current limits with LHDN.</p><p><strong>Caveat:</strong> PRS money is meant for retirement, and withdrawals before that attract a charge.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Tax reliefs",
+          "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-reliefs/"
+        }
+      ]
+    },
+    {
+      "h3": "Voluntary EPF contributions",
+      "html": "<p><strong>Suits:</strong> residents whose mandatory EPF is below the relief limit, for example lower-paid employees whose 11% share is under RM4,000. Extra contributions can earn relief up to the limit (RM4,000 as the calculator models it) and build retirement savings.</p><p><strong>Caveat:</strong> the relief stops at the limit, and the money is locked until retirement age.</p>",
+      "cite": [
+        {
+          "name": "KWSP, Contribute as a member",
+          "url": "https://www.kwsp.gov.my/en/member/overview/contribution"
+        }
+      ]
+    },
+    {
+      "h3": "Plan your arrival and departure dates around residency",
+      "html": "<p><strong>Suits:</strong> expats starting or ending an assignment mid-year. Reaching 182 days gives you resident rates and reliefs, which cost far less than the 30% non-resident rate.</p><p><strong>Caveat:</strong> only days actually spent in Malaysia count, and LHDN applies other tests as well. Confirm your status before you rely on it.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Malaysia individual residence",
+          "url": "https://taxsummaries.pwc.com/malaysia/individual/residence"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year. Rental income, investments, a business or a part year are not included.",
+    "<strong>No bonuses or benefits.</strong> Bonuses, allowances and benefits in kind are not modelled separately.",
+    "<strong>You choose the status.</strong> The calculator does not test the 182-day rule or the other residence tests.",
+    "<strong>Reliefs are basic.</strong> Only the personal, EPF, SOCSO, spouse and child reliefs are included. Medical, lifestyle, education and insurance reliefs are not.",
+    "<strong>Citizen, expat or non-resident.</strong> Other statuses, such as permanent residents with special treatment, are not modelled separately.",
+    "<strong>No tax treaties or foreign tax credits.</strong> Tax paid in your home country is not offset here.",
+    "<strong>A full-year figure.</strong> Monthly PCB deductions are an estimate, so a payslip can differ from the result."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on RM96,000 in Malaysia?",
+      "a": "<p>A citizen pays about RM6,103.50 in income tax and keeps about RM78,518 after EPF, SOCSO and EIS. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Individual tax rate",
+          "url": "https://www.hasil.gov.my/en/individual/individual-life-cycle/income-declaration/tax-rate/"
+        }
+      ]
+    },
+    {
+      "q": "What is the 182-day rule in Malaysia?",
+      "a": "<p>You are generally a tax resident for a year if you are in Malaysia for 182 days or more in that calendar year. Residents pay the progressive rates (0% to 30%) with reliefs, and non-residents pay a flat 30% with none. On RM60,000 that is a large difference, so counting days before a move or departure matters. Other tests apply when a stay spans two years, so check LHDN.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Malaysia individual residence",
+          "url": "https://taxsummaries.pwc.com/malaysia/individual/residence"
+        }
+      ]
+    },
+    {
+      "q": "What is PCB and why does my payslip tax differ from my annual bill?",
+      "a": "<p>PCB (Potongan Cukai Bulanan) is the monthly tax deduction your employer takes from your pay and pays to LHDN. It is an estimate based on tables and the reliefs you declare, and not your final tax. After the year ends you file an annual return, usually in the spring, and LHDN compares the total PCB with your actual tax. You get a refund or pay the difference.</p><p>The calculator shows the full-year tax at one salary, so it can differ from a single month's PCB.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Specification for monthly tax deduction (MTD/PCB) 2026",
+          "url": "https://www.hasil.gov.my/wp-content/uploads/spesifikasi-kaedah-pengiraan-berkomputer-pcb-2026.pdf"
+        }
+      ]
+    },
+    {
+      "q": "Do expats pay EPF in Malaysia?",
+      "a": "<p>The calculator models a 2% EPF employee share for non-citizen employees, against 11% for citizens, and counts it as a relief up to RM4,000. Contribution rules for foreign workers have changed recently, so confirm the current rate with EPF and your employer.</p>",
+      "cite": [
+        {
+          "name": "KWSP, Contribution for non-Malaysian citizen employees",
+          "url": "https://www.kwsp.gov.my/en/employer/responsibilities/non-malaysian-citizen-employees"
+        }
+      ]
+    },
+    {
+      "q": "Why is the non-resident rate a flat 30%?",
+      "a": "<p>A non-resident is not given the tax-free band, the lower rates or the reliefs that residents get. Every ringgit of employment income is taxed at 30%. The calculator therefore shows the same rate at any salary, and a resident on RM60,000 would pay only a fraction of that.</p>",
+      "cite": [
+        {
+          "name": "LHDN, Introduction to individual income tax",
+          "url": "https://www.hasil.gov.my/en/individu/pengenalan-cukai-pendapatan-individu/"
+        }
+      ]
+    },
+    {
+      "q": "What is LINDUNG 24 Jam on my payslip?",
+      "a": "<p>It is a social security contribution the calculator models at 0.75% on pay up to RM6,000 a month from 1 June 2026, so seven months of the year. Check the official rate and who it applies to with PERKESO.</p>",
+      "cite": [
+        {
+          "name": "PERKESO, New contribution rate (LINDUNG 24 Jam)",
+          "url": "https://www.perkeso.gov.my/images/lindung/lindung-24-jam/NewContributionRateIncludingSKBBK.pdf"
+        },
+        {
+          "name": "PERKESO, Foreign workers (LINDUNG Pekerja)",
+          "url": "https://www.perkeso.gov.my/en/our-services/protection/foreign-worker.html"
+        }
+      ]
+    }
+  ],
+  "bmc": "Found this useful? Buy me a teh tarik."
+}

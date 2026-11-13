@@ -1,0 +1,27 @@
+ply
+format ascii 1.0
+comment box with vertex colours
+element vertex 8
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+element face 6
+property list uchar int vertex_indices
+end_header
+0 0 0 0 120 200
+30 0 0 30 120 200
+30 20 0 60 120 200
+0 20 0 90 120 200
+0 0 10 120 120 200
+30 0 10 150 120 200
+30 20 10 180 120 200
+0 20 10 210 120 200
+4 0 3 2 1
+4 4 5 6 7
+4 0 1 5 4
+4 2 3 7 6
+4 3 0 4 7
+4 1 2 6 5

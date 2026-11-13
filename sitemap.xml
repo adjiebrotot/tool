@@ -3,15 +3,39 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://tool.adjiebrotots.com/</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/</loc>
@@ -57,7 +81,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -114,12 +138,18 @@
     <lastmod>2026-10-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/disclaimer/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/disclaimer/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/disclaimer/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/disclaimer/id/</loc>
     <lastmod>2026-10-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/disclaimer/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/disclaimer/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/disclaimer/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/ed-uc-simulator/</loc>
@@ -188,6 +218,618 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/guides/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/ai/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/australia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/australia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/australia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/bahrain/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/belgium/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/canada/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/canada/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/canada/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/china/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/china/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/china/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/estonia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/finland/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/finland/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/france/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/france/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/france/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/germany/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/germany/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/germany/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/hong-kong/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/indonesia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/italy/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/italy/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/italy/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/japan/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/japan/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/japan/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/kuwait/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/malaysia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/netherlands/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/norway/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/norway/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/oman/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/oman/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/oman/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/portugal/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/qatar/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/saudi-arabia/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/south-korea/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/spain/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/spain/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/spain/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/sweden/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/switzerland/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/taiwan/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/thailand/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-arab-emirates/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-kingdom/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/id/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/united-states/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/global-income-tax-calculator/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/global-income-tax-calculator/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/global-income-tax-calculator/"/>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/graphvisualiser/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -224,6 +866,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/online-3d-viewer/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -234,19 +882,43 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/guides/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
@@ -2934,12 +3606,18 @@
     <lastmod>2026-10-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/privacy/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/privacy/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/privacy/id/</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/privacy/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/privacy/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/randompicker/</loc>
@@ -2958,19 +3636,43 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/guides/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/ai/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/ai/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
@@ -2979,9 +3681,21 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/</loc>
-    <lastmod>2026-10-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"/>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/</loc>
@@ -2994,7 +3708,7 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/</loc>
-    <lastmod>2026-06-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/"/>

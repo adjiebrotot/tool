@@ -1,0 +1,235 @@
+{
+  "slug": "bahrain",
+  "lang": "en",
+  "title": "Bahrain Income Tax 2026: Take-Home Pay for Expats",
+  "h1": "Income tax in Bahrain (2026): what do expats and Bahrainis keep?",
+  "description": "Bahrain charges no income tax on salary. Expats pay 1% unemployment insurance to the SIO, Bahrainis 8%. See take-home pay on BHD 24,000 with two examples.",
+  "lede": "<p>Bahrain charges no personal income tax on employment income. Expats pay only a 1% unemployment insurance contribution to the Social Insurance Organization (SIO), so on BHD 24,000 a year they pay BHD 240 and keep BHD 23,760. Bahraini nationals pay 8% for pension and unemployment, BHD 1,920, and keep BHD 22,080.</p>",
+  "law": {
+    "intro": "<p>The figures are the 2026 rules as the calculator models them. Salary is not taxed in Bahrain, so the only deductions are social insurance contributions through the SIO. Bahrain is the one Gulf state here where expats pay into social insurance, through the unemployment scheme.</p>",
+    "blocks": [
+      {
+        "h3": "No personal income tax on salary",
+        "html": "<p>Bahrain does not tax wages, allowances or bonuses for an individual. VAT, where a country charges it, is a consumption tax added to what you buy and is not taken from your pay, so it is not part of this calculation.</p>",
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Bahrain: taxes on personal income",
+            "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+          }
+        ]
+      },
+      {
+        "h3": "SIO contributions",
+        "html": "<p>The calculator takes 1% of pay from expats for unemployment insurance and 8% from Bahraini nationals for pension and unemployment. Both apply on pay up to BHD 4,000 a month. The employer pays its own contribution on top, which is not shown.</p>",
+        "table": {
+          "head": [
+            "Who",
+            "Employee rate",
+            "Covers",
+            "Monthly pay cap"
+          ],
+          "rows": [
+            [
+              "Expat",
+              "1%",
+              "Unemployment insurance",
+              "BHD 4,000"
+            ],
+            [
+              "Bahraini national",
+              "8%",
+              "Pension and unemployment",
+              "BHD 4,000"
+            ]
+          ]
+        },
+        "cite": [
+          {
+            "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+            "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+          },
+          {
+            "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+            "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+          },
+          {
+            "name": "Bahrain Unemployment Insurance Law, Article 6: 1% of the wage from the insured",
+            "url": "https://bahrainbusinesslaws.com/laws/Unemployment-Insurance-Law#:~:text=1%25%20of%20the%20wage%20shall%20be%20paid"
+          }
+        ]
+      },
+      {
+        "h3": "End-of-service benefit for expats",
+        "html": "<p>Expats do not build a state pension in Bahrain. The labour law gives an end-of-service indemnity from the employer, based on pay and length of service, when the contract ends. It is not included in the figures.</p>",
+        "cite": [
+          {
+            "name": "Social Insurance Organization (SIO) Bahrain, end-of-service gratuity for non-Bahrainis",
+            "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Bahrain: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income"
+      },
+      {
+        "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes"
+      },
+      {
+        "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+        "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+      },
+      {
+        "name": "Social Insurance Organization (SIO) Bahrain, end-of-service gratuity for non-Bahrainis",
+        "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+      },
+      {
+        "name": "Bahrain Unemployment Insurance Law, Article 6: 1% of the wage from the insured",
+        "url": "https://bahrainbusinesslaws.com/laws/Unemployment-Insurance-Law#:~:text=1%25%20of%20the%20wage%20shall%20be%20paid"
+      }
+    ],
+    "introCite": [
+      {
+        "name": "PwC Worldwide Tax Summaries, Bahrain: taxes on personal income",
+        "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "key": "expat",
+      "title": "How much tax does an expat pay in Bahrain on BHD 24,000?",
+      "intro": "<p>An expat on BHD 24,000 pays no income tax. The only deduction is the 1% unemployment insurance, BHD 240 a year. You keep BHD 23,760, or 99.0% of gross, and the marginal rate is 1.0% while pay is below the BHD 4,000 monthly cap.</p>",
+      "after": "<p>This is the one deduction an expat meets in Bahrain. It buys unemployment cover rather than a pension.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        },
+        {
+          "name": "Bahrain Unemployment Insurance Law, Article 6: 1% of the wage from the insured",
+          "url": "https://bahrainbusinesslaws.com/laws/Unemployment-Insurance-Law#:~:text=1%25%20of%20the%20wage%20shall%20be%20paid"
+        }
+      ]
+    },
+    {
+      "key": "national",
+      "title": "Take-home pay for a Bahraini national on BHD 24,000 after SIO",
+      "intro": "<p>A Bahraini national on the same BHD 24,000 pays no income tax but 8% to the SIO for pension and unemployment, BHD 1,920 a year. You keep BHD 22,080, or 92.0% of gross.</p>",
+      "after": "<p>The 8% builds pension rights, so it is a saving rather than a pure cost. The employer's contribution is not shown.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
+    }
+  ],
+  "strategyIntro": "<p>These are mainstream, legal ways to handle your pay and tax position.</p>",
+  "strategies": [
+    {
+      "h3": "Check your home-country tax residency before you move",
+      "html": "<p><strong>Suits:</strong> every expat. Zero tax in the Gulf does not always mean zero tax overall: some countries tax citizens on worldwide income, and others treat you as resident until you meet their exit conditions.</p><p><strong>Caveat:</strong> the rules sit in your home country's law, not in the Gulf state's. Ask your home tax authority or an adviser, and keep records of your move.</p>"
+    },
+    {
+      "h3": "Save and invest the extra take-home yourself",
+      "html": "<p><strong>Suits:</strong> expats who keep the whole salary. Without a pension deduction, retirement saving is your own job. Regular contributions to a pension or investment plan in your home country or a low-cost portfolio are the usual route.</p><p><strong>Caveat:</strong> a gratuity at the end of the contract is not a retirement plan, and where you invest decides the tax on the returns. Use the <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> to see how much you need.</p>"
+    },
+    {
+      "h3": "Plan for the end-of-service indemnity",
+      "html": "<p><strong>Suits:</strong> expats on fixed-term or open contracts. The indemnity is paid when you leave and depends on pay and years of service.</p><p><strong>Caveat:</strong> your contract and the labour law decide the amount. Ask your employer how it is calculated.</p>",
+      "cite": [
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, end-of-service gratuity for non-Bahrainis",
+          "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "<strong>Employment income only.</strong> It models one salary for a full year, with no other income, bonuses or a part year.",
+    "<strong>Gratuity not modelled.</strong> End-of-service gratuity depends on your basic pay, length of service and contract, so it is not added to the figures.",
+    "<strong>Home-country tax.</strong> The calculator shows only what the Gulf state takes. Your home country may still tax you on worldwide income, depending on its rules and any treaty.",
+    "<strong>You choose the status.</strong> The calculator takes national or expat from you and does not test whether you qualify.",
+    "<strong>Package versus cash.</strong> The calculator takes the gross pay you enter. Housing, schooling or flight allowances in your contract are not split out.",
+    "<strong>Employer contribution.</strong> The employer's own SIO share is not shown."
+  ],
+  "faq": [
+    {
+      "q": "How much tax do I pay on BHD 24,000 in Bahrain?",
+      "a": "<p>An expat pays no income tax and BHD 240 of unemployment insurance, keeping BHD 23,760. A Bahraini national pays 8% to the SIO and keeps BHD 22,080. Try your own figure in the <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        },
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        }
+      ]
+    },
+    {
+      "q": "Why do expats in Bahrain pay 1% for unemployment insurance?",
+      "a": "<p>Unlike most Gulf states, Bahrain makes expat employees pay into unemployment insurance through the SIO. The contribution is 1% of pay (up to BHD 4,000 a month) and it is deducted from the employee. It is not a tax on your income, but it does reduce your take-home pay, and it covers you if you lose your job under the scheme's rules. Bahraini nationals pay 8% because their rate also covers pension.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: other taxes, social insurance contributions",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/other-taxes#:~:text=Social%20insurance%20contributions"
+        },
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, Law No. 24 of 1976 (social insurance)",
+          "url": "https://www.sio.gov.bh/en/law-no-24-of-1976"
+        },
+        {
+          "name": "Bahrain Unemployment Insurance Law, Article 6: 1% of the wage from the insured",
+          "url": "https://bahrainbusinesslaws.com/laws/Unemployment-Insurance-Law#:~:text=1%25%20of%20the%20wage%20shall%20be%20paid"
+        }
+      ]
+    },
+    {
+      "q": "What is the end-of-service indemnity in Bahrain?",
+      "a": "<p>Expats are not in the pension scheme, so the labour law requires the employer to pay an indemnity when the contract ends, based on pay and years of service. It is a one-off payment, not a pension. The calculator does not include it.</p>",
+      "cite": [
+        {
+          "name": "Social Insurance Organization (SIO) Bahrain, end-of-service gratuity for non-Bahrainis",
+          "url": "https://www.sio.gov.bh/en/end-of-service-gratuity-for-non-bahrainis"
+        }
+      ]
+    },
+    {
+      "q": "Is there really no income tax in Bahrain?",
+      "a": "<p>There is no personal income tax on salary. VAT exists on purchases but is not taken from your pay. Your home country may still tax you.</p>",
+      "cite": [
+        {
+          "name": "PwC Worldwide Tax Summaries, Bahrain: taxes on personal income",
+          "url": "https://taxsummaries.pwc.com/bahrain/individual/taxes-on-personal-income#:~:text=There%20is%20no%20personal%20income%20tax"
+        }
+      ]
+    },
+    {
+      "q": "Do I need to pay tax at home if I work in Bahrain?",
+      "a": "<p>It depends on your home country, which the calculator does not model. Some countries tax citizens on worldwide income or keep you resident for tax for a time. Check with your home tax authority.</p>"
+    },
+    {
+      "q": "What does a Bahrain salary buy compared with home?",
+      "a": "<p>The <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> shows what a salary buys in another city.</p>"
+    }
+  ],
+  "bmc": "Found this useful? Buy me a coffee."
+}

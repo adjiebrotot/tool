@@ -223,7 +223,8 @@ the runtime. PSCAD 5.0.0 is the only version the live suite has run on.
   after it, and it runs its whole duration from there (a 2 s run from a snapshot at 2 s ends at
   4 s). The `.out` files of such a run count their time from the start of the run, not of the
   case, so `px_run` adds the snapshot's time back: it is on the second line of the `.snp` file
-  (version, time, time step).
+  (version, time, time step), and for a file that cannot be read it is the time this script
+  saved the snapshot at.
 - **A new PSCAD 5 case names its output `$(Namespace).out`**, and PSCAD writes the project's own
   name there: the files are `<project>_01.out` and `<project>.inf` (`out_paths`).
 - **Timed Breaker Logic (`master:tbreakn`) names its times by order, not by action**: `TO1` is the

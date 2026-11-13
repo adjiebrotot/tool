@@ -1,0 +1,39 @@
+{
+  "en": [
+    {
+      "q": "Why is the average cost lower than the average price paid?",
+      "a": [
+        "A fixed amount buys more units when the price is low, so the average cost per unit is the harmonic mean of the fill prices, which is never above their ordinary mean. Return on the money put in is then the last price divided by that average cost, minus one.",
+        "In the SPY example, 60 monthly fills of $520 averaged $512.90 a unit, but the average cost was $486.74, about 5% lower, mostly from buying more through the 2022 fall."
+      ]
+    },
+    {
+      "q": "Are dividends, fees and tax included?",
+      "a": [
+        "Dividends are included, fees and tax are not. A ticker loaded from Yahoo Finance uses the adjusted close, which folds dividends and splits into the price as if reinvested. A ticker that falls back to Stooq is unadjusted, shows a warning in the loaded list, and leaves its dividends out.",
+        "Every top-up buys its whole amount, in fractions of a unit, with no brokerage cost. That flatters a weekly plan most, since it trades about four times as often as a monthly one."
+      ]
+    },
+    {
+      "q": "How much does the buy day matter compared with the start date?",
+      "a": [
+        "Very little. On $520 a month into SPY from 1 October 2021 ($48,884 on $31,200), moving the buy day from the 1st to the 10th or 20th changes the result by under $200, and filling at the close instead of the next open by $24. Perfect hindsight, buying each month's lowest close, adds only $1,321.",
+        "The Date Range and the Amount per top-up are what matter: starting a year earlier or later moved the result by about $12,000 to $13,000, and 10% more per top-up by about $4,900."
+      ]
+    },
+    {
+      "q": "Why does the answer sometimes rank scenarios by ROI and sometimes by final value?",
+      "a": [
+        "The comparison follows how much money went in. If every scenario put in the same amount, within 0.5%, the highest final value wins. If they differ by more, more money in is not a better plan, so the sentence ranks them by ROI instead.",
+        "This matters for momentum and technical styles. With Invest at End of Month (or Week) if target not reached switched off, a period with no signal is skipped and its money never goes in, so compare such a plan on ROI, not final value."
+      ]
+    },
+    {
+      "q": "Why do CAGR (TWR) and CAGR (MWR) differ for the same plan?",
+      "a": [
+        "TWR grades the asset and MWR grades your own money. TWR chains the daily returns with each top-up taken out, while MWR is the internal rate of return on the dates you actually paid in. A monthly plan holds little in year one and the most at the end, so MWR leans on the later years.",
+        "For SPY at $520 a month, TWR was 14.21% and MWR 18.06%: the 2022 fall hit only the first few thousand dollars, and most of the money was invested in the strong years after."
+      ]
+    }
+  ]
+}

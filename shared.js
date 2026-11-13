@@ -2109,25 +2109,25 @@
                     backlink: 'Make your own at', failed: 'This tool could not be loaded here.' } },
       id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
             svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], gif: ['Unduh sebagai GIF'], copy: ['Salin ke clipboard'],
-            link: ['Bagikan sebagai tautan', 'Membuka tool ini dengan skenario Anda'],
+            link: ['Bagikan sebagai tautan', 'Membuka tool ini dengan skenariomu'],
             linkCopied: '✓ Tautan tersalin', linkPrompt: 'Salin tautan ini:', noLink: 'Tautan ini tidak bisa dibuat: ',
-            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
+            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situsmu'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
             embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan:',
-            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka dengan skenario Anda, yang ikut tersimpan di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawah grafik.',
+            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka dengan skenariomu, yang ikut tersimpan di dalam tautannya. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawah grafik.',
             credit: ['Grafik interaktif: ', ' oleh '],
             copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
             noEmbed: 'Grafik ini tidak bisa disematkan: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
-            backlink: 'Coba skenario Anda sendiri di',
+            backlink: 'Coba skenariomu sendiri di',
             long: 'Kode ini {kb} KB, karena data yang digambar grafik ikut di dalamnya.',
             tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
             failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka tool-nya',
-            tool: { shareTitle: 'Tautkan atau sematkan tool ini', embed: ['Sematkan sebagai HTML', 'Tool interaktif untuk situs Anda'],
+            tool: { shareTitle: 'Tautkan atau sematkan tool ini', embed: ['Sematkan sebagai HTML', 'Tool interaktif untuk situsmu'],
                     embedTitle: 'Sematkan tool ini',
-                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka seperti yang Anda atur sekarang, yang ikut tersimpan di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawahnya.',
+                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka persis seperti yang kamu atur sekarang, karena pengaturannya ikut tersimpan di dalam tautan. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawahnya.',
                     credit: ['Tool interaktif: ', ' oleh '], noEmbed: 'Tool ini tidak bisa disematkan: ',
-                    backlink: 'Buat versi Anda sendiri di', failed: 'Tool ini tidak bisa dimuat di sini.' } }
+                    backlink: 'Buat versimu sendiri di', failed: 'Tool ini tidak bisa dimuat di sini.' } }
     };
     var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
     // Share as link and Embed are drawn by this menu, not by a button the tool binds.
@@ -3293,7 +3293,7 @@
         a.href = href;
         a.setAttribute('data-abt-ai-link', '');
         a.setAttribute('aria-label', word);
-        a.title = idLang ? 'Pakai alat ini lewat asisten AI Anda (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
+        a.title = idLang ? 'Pakai tool ini lewat asisten AI-mu (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
         var emo = document.createElement('span');
         emo.className = 'pf-tour-emo';
         emo.setAttribute('aria-hidden', 'true');
@@ -4183,7 +4183,7 @@
      already has a tool's own typing box beside it keeps that box. */
   var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
                  'financialfreedom', 'dcasimulator', 'costofliving-comparator', 'valuateeverything',
-                 'capacity-expansion-planner'];
+                 'capacity-expansion-planner', 'global-income-tax-calculator'];
   function inFinanceTool(){
     var path = String((global.location && global.location.pathname) || '');
     return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });
@@ -4494,8 +4494,10 @@
      "What this assumes" (.assumes-card) folds the same way, by itself, on
      every page: SharedFold.assumes() runs at load.                          */
   function makeFold(){
-    var TEXT = { en: {show: 'Show table', hide: 'Hide table', showA: 'Show assumptions', hideA: 'Hide assumptions'},
-                 id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel', showA: 'Tampilkan asumsi', hideA: 'Sembunyikan asumsi'} };
+    var TEXT = { en: {show: 'Show table', hide: 'Hide table', showA: 'Show assumptions', hideA: 'Hide assumptions',
+                      showQ: 'Show questions', hideQ: 'Hide questions'},
+                 id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel', showA: 'Tampilkan asumsi', hideA: 'Sembunyikan asumsi',
+                      showQ: 'Tampilkan pertanyaan', hideQ: 'Sembunyikan pertanyaan'} };
     var CHEV = '<svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
     function attach(card, opts){
       opts = opts || {};
@@ -4542,21 +4544,26 @@
       set(open, false);
       return { open: function(){ set(true, true); }, close: function(){ set(false, true); }, isOpen: function(){ return open; }, button: btn };
     }
-    /* Every "What this assumes" card: its title moves into a head row and the
-       list folds under it, closed until the reader opens it. One key a page,
+    /* Every "What this assumes" card, and the "Questions" card under it
+       (.faq-card, written into the HTML by _ref/faq-bake.mjs so a crawler reads
+       it while it is folded): its title moves into a head row and the body
+       folds under it, closed until the reader opens it. One key a card a page,
        shared by its English and Indonesian copies. */
     function assumes(root){
-      (root || document).querySelectorAll('.assumes-card').forEach(function(card){
+      (root || document).querySelectorAll('.assumes-card, .faq-card').forEach(function(card){
         if(card.__fold) return;
         var h = card.querySelector('h2, h3');
         if(!h) return;
+        var faq = card.classList.contains('faq-card');
         var head = document.createElement('div');
         head.className = 'detail-head assumes-head';
         h.parentNode.insertBefore(head, h);
         head.appendChild(h);
         var path = (location.pathname || '/').replace(/index\.html$/, '').replace(/\/id\/$/, '/');
         var L = TEXT[pageLang()];
-        attach(card, { key: 'assumes:' + path, host: head, bodies: ['.assumptions'], text: {show: L.showA, hide: L.hideA} });
+        attach(card, faq
+          ? { key: 'faq:' + path, host: head, bodies: ['.faq-list'], text: {show: L.showQ, hide: L.hideQ} }
+          : { key: 'assumes:' + path, host: head, bodies: ['.assumptions'], text: {show: L.showA, hide: L.hideA} });
       });
     }
     return { attach: attach, assumes: assumes };

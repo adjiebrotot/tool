@@ -68,6 +68,27 @@ Assumptions:
 3. Tanggungan: {dependents} anak, sesuai yang disebutkan.
 4. Pengurang seperti iuran pensiun tidak disebutkan, jadi tetap Rp {husbandDeductionInput} untuk suami dan Rp {wifeDeductionInput} untuk istri. Biaya jabatan tetap dihitung otomatis.
 
+## AI page example (id)
+
+Request: Gaji kotor saya Rp 300 juta setahun, istri saya Rp 216 juta setahun, dan anak kami dua. Mana yang lebih hemat pajak, pisah harta atau gabung harta?
+
+Searches:
+- PTKP dan lapisan tarif PPh orang pribadi yang berlaku, November 2026
+
+Link:
+- qs=double
+- husbandSalaryInput=300000000
+- wifeSalaryInput=216000000
+- dependents=2
+- why.dependents=Dua anak, sesuai yang kamu sebutkan
+- note=Suami dan istri sama-sama bergaji, 2 anak, November 2026
+
+Assumptions:
+1. Rumah tangga: kamu dan istri sama-sama bergaji, jadi tautannya dimulai dari Quick Start untuk dua penghasilan (qs=double), yang mengisi gaji suami dan gaji istri secara terpisah, dengan PTKP dan lapisan tarif sesuai ketentuan yang berlaku.
+2. Tanggungan: {dependents} anak, sesuai yang kamu sebutkan. Setiap anak menambah PTKP.
+3. Gaji: angka yang kamu sebutkan saya anggap sudah mencakup THR dan bonus. Kalau belum, kabari saya dan saya kirim tautan baru.
+4. Pengurang seperti iuran pensiun tidak kamu sebutkan, jadi saya biarkan nol untuk suami maupun istri. Biaya jabatan tetap dihitung otomatis.
+
 ## Compact lists
 
 - `inputMode=total|individual`

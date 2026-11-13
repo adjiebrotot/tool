@@ -106,6 +106,22 @@
       '<g class="tg ob" style="animation-delay:-2s"><circle class="fg" cx="54" cy="91" r="3"/><rect class="fg" x="39" y="69" width="30" height="14" rx="4"/>' +
         '<path class="fg" d="M50.5 82L54 87L57.5 82Z"/><text class="fw" x="54" y="80" font-size="11">$$$</text></g>',
 
+    // A payslip: the gross bar, then tax (gold) and contributions (mint) fall away, leaving the
+    // take-home; the globe beside it turns, one payslip for each country.
+    'global-income-tax-calculator':
+      '<rect class="w" x="18" y="26" width="70" height="80" rx="5"/>' +
+      '<path class="sq t" d="M28 38H58M28 94H50"/>' +
+      '<rect class="fb" x="28" y="48" width="50" height="9" rx="2"/>' +
+      '<rect class="fB" x="28" y="66" width="28" height="9" rx="2"/>' +
+      '<rect class="tx ot fg" x="56" y="66" width="13" height="9" rx="2"/>' +
+      '<rect class="tx ot fm" x="69" y="66" width="9" height="9" rx="2" style="animation-delay:-.35s"/>' +
+      '<path class="sb" stroke-width="2" d="M28 84H56"/>' +
+      '<circle class="w" cx="88" cy="36" r="16"/>' +
+      '<path class="sb" stroke-width="2" stroke-opacity=".45" d="M72 36H104"/>' +
+      '<g class="sb" stroke-width="2" stroke-opacity=".7"><path class="mr ol" d="M88 20A8 16 0 0 1 88 52"/>' +
+        '<path class="mr m2 ol" d="M88 20A8 16 0 0 1 88 52" style="animation-delay:-2s"/>' +
+        '<path class="mr m3 ol" d="M88 20A8 16 0 0 1 88 52" style="animation-delay:-4s"/></g>',
+
     // A globe with three clocks around it, each at its own time.
     worldclock:
       '<circle class="w" cx="60" cy="62" r="26"/>' +
@@ -157,6 +173,23 @@
         '<text class="fw" x="91" y="91.5" font-size="19" letter-spacing="-.6">PF</text>' +
         '<path class="fw" d="M108 82V99A3 3 0 0 1 105 102H88Z"/>' +
         '<path class="rc fr" d="M108 87V99A3 3 0 0 1 105 102H93Z"/></g></g>',
+
+    // The PowerFactory Scripter's code window, with the PSCAD logo (yellow ellipse, PS CAD, white mouse
+    // pointer in the gap) stamping on its corner. The logo is a brand mark, so it keeps PSCAD's own yellow
+    // and navy in both themes (the one place this file uses hex).
+    'pscad-scripter':
+      '<rect class="w" x="14" y="20" width="92" height="80" rx="6"/><path class="sb t" d="M15 33H105"/>' +
+      '<path class="sg" stroke-width="4.5" d="M22 26.5h0"/><path class="sm" stroke-width="4.5" d="M29 26.5h0"/><path class="sb" stroke-width="4.5" d="M36 26.5h0"/>' +
+      '<path class="sm t" d="M23 44L28 47.5L23 51"/>' +
+      '<rect class="cu fm" x="31" y="49" width="7" height="2.5" rx="1"/><path class="ln ol sb" d="M24 61H62"/>' +
+      '<path class="ln ol sm" d="M32 71H68" style="animation-delay:-4.55s"/>' +
+      '<path class="ln ol sb" d="M32 81H56" style="animation-delay:-4.1s"/>' +
+      '<path class="ln ol sq" d="M24 91H46" style="animation-delay:-3.65s"/>' +
+      '<g class="bt oc">' +
+        '<ellipse class="py sw" stroke-width="2" cx="86" cy="84" rx="32" ry="9"/>' +
+        '<text class="pn" x="74.6" y="87.7" font-size="10.5" textLength="11.5" lengthAdjust="spacingAndGlyphs">PS</text>' +
+        '<text class="pn" x="93.3" y="87.7" font-size="10.5" textLength="19.8" lengthAdjust="spacingAndGlyphs">CAD</text>' +
+        '<path class="pc pk" stroke-width=".6" stroke-linejoin="round" d="M81.40 87.60L81.40 95.85L83.35 94.05L84.70 97.05L85.90 96.52L84.62 93.60L87.25 93.60Z"/></g></g>',
 
     // A 3-bus system: the grid and a generator feed the load bus, the busier line flowing faster;
     // gold reactive dots run between the top buses and the load breathes as power arrives.
@@ -314,7 +347,21 @@
       '<g class="sg t" fill="var(--gold)" fill-opacity=".3">' +
         '<circle cx="47" cy="93" r="6"/><circle cx="60" cy="93" r="6"/><circle cx="73" cy="93" r="6"/>' +
         '<circle cx="53.5" cy="81.5" r="6"/><circle cx="66.5" cy="81.5" r="6"/><circle cx="60" cy="70" r="6"/></g>' +
-      '<rect class="fm sm" x="38" y="42" width="44" height="9" rx="3"/>'
+      '<rect class="fm sm" x="38" y="42" width="44" height="9" rx="3"/>',
+
+    // An STP file drops onto a floor grid, sinks into it and rises as a cube that makes a quarter turn. The turn is
+    // projected: each side face is a unit square placed by translate / scale / skewY (a face going edge-on swaps
+    // to the far side), the top a square turning in a squashed group; outlines are non-scaling strokes.
+    'online-3d-viewer':
+      '<path class="sq" stroke-width="2" d="M72 46.7L24 74.4M48 46.7L96 74.4M84 53.6L36 81.4M36 53.6L84 81.4M96 60.6L48 88.3M24 60.6L72 88.3"/>' +
+      '<path class="sq" d="M60 39.8L108 67.5L60 95.2L12 67.5Z"/>' +
+      '<g class="fl ob"><path class="w" d="M43 30H67L77 40V74H43Z"/><path class="sb t" d="M67 30V40H77"/>' +
+        '<path class="sq t" d="M50 40H60M50 46H69"/><rect class="fB" x="36" y="52" width="28" height="14" rx="3"/>' +
+        '<text class="mono fw" x="50" y="62.8" font-size="10.5">STP</text></g><g class="cb">' +
+        '<g class="fx"><path class="w n" d="M0 0H1V1H0Z"/><path class="tx fb" opacity=".01" d="M0 0H1V1H0Z"/></g>' +
+        '<g class="fy"><path class="w n" d="M0 0H1V1H0Z"/><path class="ty fb" opacity=".31" d="M0 0H1V1H0Z"/></g>' +
+        '<g transform="translate(60 38.5) scale(1 .5774)"><g class="tp"><path class="fw" d="M25.11 0L0 25.11L-25.11 0L0-25.11Z"/>' +
+        '<path class="fm sb n" fill-opacity=".35" d="M25.11 0L0 25.11L-25.11 0L0-25.11Z"/></g></g></g>'
   };
 
   var CSS = {
@@ -339,6 +386,9 @@
       '@keyframes taCl1{0%{transform:scaleX(-2);opacity:0}25%,75%{opacity:1}100%{transform:scaleX(2);opacity:0}}' +
       '@keyframes taCl2{0%{transform:scale(0);opacity:0}7%{transform:scale(1.15);opacity:1}11%,40%{transform:none;opacity:1}48%,100%{transform:scale(.6);opacity:0}}',
 
+    'global-income-tax-calculator': '&{--d:6s}&.tx{animation-name:taGi1}&.mr{animation-name:taCl1}&.m2{transform:scaleX(-1)}&.m3{opacity:0}' +
+      '@keyframes taGi1{0%,22%{transform:none;opacity:1}40%,66%{transform:translateY(20px) rotate(8deg);opacity:0}67%{transform:translateY(-8px);opacity:0}80%,100%{transform:none;opacity:1}}',
+
     worldclock: '&{--d:8s}&.mh{animation-name:taWc;animation-timing-function:linear}' +
       '@keyframes taWc{to{transform:rotate(360deg)}}',
 
@@ -359,6 +409,8 @@
       '@keyframes taPf2{0%,20%,40%,60%,80%,100%{opacity:1}10%,30%,50%,70%,90%{opacity:0}}' +
       '@keyframes taPf3{0%,40%{transform:scale(1.7);opacity:0}48%{transform:scale(.92);opacity:1}54%,82%{transform:none;opacity:1}92%,100%{transform:none;opacity:0}}' +
       '@keyframes taPf4{0%,52%{transform:translate(6px,6px);opacity:0}60%{transform:translate(-1px,-1px);opacity:1}64%,100%{transform:none;opacity:1}}',
+
+    'pscad-scripter': '&{--d:5s}&.py{fill:#FCD419}&.pn{fill:#0B1838}&.pk{stroke:#0B1838}&.pc{fill:#FFFFFF}&.ln{animation-name:taPf1}&.cu{animation-name:taPf2}&.bt{animation-name:taPf3}',
 
     // Flows are linear and move whole dash periods per loop (12 for P, 10 for Q), so the loop is seamless.
     'loadflow-simulator': '&{--d:4.8s}&.pf{animation-name:taLf1}&.ps{animation-name:taLf2}&.q{animation-name:taLf3}' +
@@ -429,7 +481,22 @@
 
     superdasp: '&{--d:8s}&.pl{animation-name:taSd1}&.cn{animation-name:taSd2}' +
       '@keyframes taSd1{0%{transform:translate(-36px,6px);opacity:0}16%,84%{opacity:1}100%{transform:translate(36px,-4px);opacity:0}}' +
-      '@keyframes taSd2{0%,30%{transform:none;opacity:1}56%{transform:translateY(-20px);opacity:1}68%,100%{transform:translateY(-24px);opacity:0}}'
+      '@keyframes taSd2{0%,30%{transform:none;opacity:1}56%{transform:translateY(-20px);opacity:1}68%,100%{transform:translateY(-24px);opacity:0}}',
+
+    // The turn (40-70%): ease-in, linear, ease-out to a 5deg overshoot and back, posed every 22.5deg; faces
+    // reset while the cube is hidden. Non-scaling strokes are screen pixels: 3.2px / 2.3px match 3 units per layout.
+    'online-3d-viewer': '&{--d:7s}&.n{vector-effect:non-scaling-stroke;stroke-width:3.2px}@media (max-width:640px){&.n{stroke-width:2.3px}}' +
+      '&.fl{opacity:0;animation-name:taO3f}&.cb{transform-box:view-box;transform-origin:60px 67.5px;animation-name:taO3g}' +
+      '&.fx,&.fy,&.tp{transform-box:view-box;transform-origin:0 0}&.fx,&.fy,&.tx,&.ty,&.tp{animation-timing-function:linear}&.tx{animation-name:taO3c}&.ty{animation-name:taO3d}&.tp{animation-name:taO3e}' +
+      '&.fx{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg);animation-name:taO3a}' +
+      '&.fy{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg);animation-name:taO3b}' +
+      '@keyframes taO3a{0%,40%{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg);animation-timing-function:ease-in}50%{transform:translate(36.8px,44px) scale(32.8,29) skewY(15.1deg)}55%{transform:translate(42.2px,48.8px) scale(35.5,29) skewY(0deg)}60%{transform:translate(50.4px,51.9px) scale(32.8,29) skewY(-15.1deg);animation-timing-function:ease-out}70%{transform:translate(62.2px,52.9px) scale(22.8,29) skewY(-28.4deg);animation-timing-function:ease-in-out}75%,100%{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg)}}' +
+      '@keyframes taO3b{0%,40%{transform:translate(60px,53px) scale(25.1,29) skewY(-26.6deg);animation-timing-function:ease-in}50%{transform:translate(69.6px,51.9px) scale(13.6,29) skewY(-33.2deg)}55%{transform:translate(77.8px,48.8px) scale(0,29) skewY(-35.3deg);animation-timing-function:step-end}55.01%{transform:translate(42.2px,28.2px) scale(0,29) skewY(35.3deg)}60%{transform:translate(36.8px,33px) scale(13.6,29) skewY(33.2deg);animation-timing-function:ease-out}70%{transform:translate(35px,39.8px) scale(27.2,29) skewY(24.4deg);animation-timing-function:ease-in-out}75%,100%{transform:translate(34.9px,38.5px) scale(25.1,29) skewY(26.6deg)}}' +
+      '@keyframes taO3c{0%,40%{opacity:.01;animation-timing-function:ease-in}55%{opacity:.12}70%{opacity:.34;animation-timing-function:ease-in-out}75%,100%{opacity:.31}}@keyframes taO3d{0%,40%{opacity:.31;animation-timing-function:ease-in}55%{opacity:.47;animation-timing-function:step-end}55.01%{opacity:.03}70%{opacity:.02;animation-timing-function:ease-in-out}75%,100%{opacity:.01}}' +
+      '@keyframes taO3e{0%,40%{transform:none;animation-timing-function:ease-in}50%{transform:rotate(-22.5deg)}60%{transform:rotate(-67.5deg);animation-timing-function:ease-out}70%{transform:rotate(-95deg);animation-timing-function:ease-in-out}75%,100%{transform:rotate(-90deg)}}' +
+      '@keyframes taO3f{0%{transform:translateY(-26px);opacity:0;animation-timing-function:cubic-bezier(.5,0,1,1)}5%{opacity:1}12%{transform:scale(1.08,.9)}' +
+        '16%{transform:scale(.97,1.04)}20%,27%{transform:none;opacity:1}32%,100%{transform:scale(1.1,0);opacity:0}}' +
+      '@keyframes taO3g{0%,28%{transform:scaleY(0);opacity:0}30%{opacity:1}34%{transform:scaleY(1.08)}37%,86%{transform:none;opacity:1}94%,100%{transform:scaleY(0);opacity:0}}'
   };
 
   var SVG_OPEN = '" viewBox="0 0 120 120" fill="none" stroke-width="3" stroke-linecap="round" ' +

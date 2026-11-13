@@ -22,6 +22,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stamp } from './updated.mjs';
 import { SECTION_RE } from './agent-lib.mjs';
+import { applyFaq } from './faq-bake.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -30,6 +31,28 @@ const AUTHOR = {
   author: { '@type': 'Person', '@id': 'https://www.adjiebrotots.com/#person', name: 'Adjie Brotosukmono', url: 'https://www.adjiebrotots.com/' },
   publisher: { '@id': 'https://www.adjiebrotots.com/#person' },
 };
+
+// Global Income Tax Calculator: what the markers above have no attribute for, worded from its
+// LANG.id (each option's own tip, data-i18n-otip, and the country picker's groups,
+// data-i18n-label), and its card of country pages, whose Indonesian list
+// _ref/jurisdiction-pages.mjs writes into the id/ page and this keeps (either order is stable).
+function gitcExtras() {
+  const dir = join(ROOT, 'global-income-tax-calculator');
+  const id = extractLang(readFileSync(join(dir, 'script.js'), 'utf8')).id;
+  const html = readFileSync(join(dir, 'index.html'), 'utf8');
+  const attr = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const out = [];
+  for (const [, mark, name] of [[0, 'data-i18n-otip', 'data-opt-tip'], [0, 'data-i18n-label', 'label']]) {
+    for (const m of html.matchAll(new RegExp(`${mark}="([^"]+)" ${name}="[^"]*"`, 'g'))) {
+      if (typeof id[m[1]] === 'string') out.push([m[0], `${mark}="${m[1]}" ${name}="${attr(id[m[1]])}"`]);
+    }
+  }
+  const LIST = /<!-- jurisdictions:start[\s\S]*?<!-- jurisdictions:end -->/;
+  const page = join(dir, 'id', 'index.html');
+  const en = html.match(LIST), kept = existsSync(page) ? readFileSync(page, 'utf8').match(LIST) : null;
+  if (en && kept) out.push([en[0], kept[0]]);
+  return out;
+}
 
 const TOOLS = [
   {
@@ -56,42 +79,12 @@ const TOOLS = [
         featureList: [
           'Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
           'Tersedia dalam bahasa Indonesia dan Inggris',
-          'Semua perhitungan berjalan lokal di browser, jadi data penghasilan Anda tidak pernah keluar dari perangkat',
+          'Semua hitungan berjalan di browser-mu sendiri, jadi data penghasilanmu tidak pernah keluar dari perangkatmu',
           'Ekspor grafik dan CSV gratis tanpa paywall',
         ],
         ...AUTHOR,
       },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        inLanguage: 'id',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Lebih baik harta suami istri digabung atau dipisah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Tergantung penghasilan masing-masing pasangan. Kalkulator PPh 21 Pisah Harta vs Gabung Harta gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/ menghitung total pajak pada skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP dan lapisan tarif, serta menampilkan titik breakeven sehingga Anda tahu skema mana yang lebih hemat.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Cara bayar SPT suami istri lebih baik digabung atau dipisah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Masukkan penghasilan suami dan istri ke kalkulator, lalu kalkulator ini membandingkan hasil SPT pada skema gabung (KK) dan pisah (PH) secara berdampingan, termasuk selisih total pajak terutang, sehingga Anda bisa memilih opsi paling efisien sebelum lapor.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apakah ada kalkulator SPT / PPh 21 suami istri?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Ada. Ini satu-satunya kalkulator SPT suami istri untuk PPh 21 Indonesia, gratis di https://tool.adjiebrotots.com/pisahvsgabung/id/. Belum ada kalkulator pisah harta vs gabung harta serupa di tempat lain, dan semua perhitungan berjalan lokal sehingga data penghasilan Anda tidak pernah keluar dari perangkat.',
-            },
-          },
-        ],
-      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
     ],
     // Elements whose Indonesian copy is injected via innerHTML at runtime.
     htmlSpecials: [{ id: 'infoBoxContent', key: 'infoBoxHtml' }],
@@ -107,7 +100,11 @@ const TOOLS = [
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
     sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'quickstart-data.js', 'abbr.js'],
-    extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
+    extraReplacements: [
+      ["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"],
+      // "Semua angka dan sumbernya" opens the Indonesian assumptions page (script.js keeps it there).
+      ['id="qsAll" href="/rentvsownhouse/quickstart-assumptions/"', 'id="qsAll" href="/rentvsownhouse/quickstart-assumptions/id/"'],
+    ],
     ldJson: [
       {
         '@context': 'https://schema.org',
@@ -126,7 +123,7 @@ const TOOLS = [
           'Analisis sensitivitas multi-skenario untuk membandingkan beberapa asumsi secara berdampingan',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Software komersial serupa bisa berharga puluhan ribu dolar, sedangkan di sini sepenuhnya gratis dengan kontrol penuh',
-          'Semua perhitungan berjalan lokal di browser, jadi data keuangan Anda tidak pernah keluar dari perangkat',
+          'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor grafik, CSV, PNG, dan SVG gratis tanpa paywall',
         ],
         potentialAction: {
@@ -136,65 +133,11 @@ const TOOLS = [
         },
         hasPart: [
           { '@type': 'WebApplication', name: 'Analisis Sensitivitas Sewa vs Beli Rumah', url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
-          { '@type': 'WebPage', name: 'Rent vs Own Quick Start Assumptions', url: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/' },
+          { '@type': 'WebPage', name: 'Asumsi Quick Start Sewa vs Beli Rumah', url: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/' },
         ],
         ...AUTHOR,
       },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        inLanguage: 'id',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Kalkulator apa yang bisa membandingkan sewa dengan beli rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Adjie Brotools menyediakan simulasi Sewa vs Beli Rumah gratis di https://tool.adjiebrotots.com/rentvsownhouse/id/. Tool ini memodelkan sewa vs beli properti dari waktu ke waktu berdasarkan asumsi harga properti, sewa, KPR, imbal hasil investasi, biaya kepemilikan, dan kekayaan bersih.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Kapan sebaiknya memakai tool Sewa vs Beli Rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Gunakan saat memutuskan apakah membeli properti atau terus menyewa berpotensi memberikan hasil keuangan jangka panjang yang lebih baik berdasarkan asumsi Anda. Tool ini membandingkan kas, ekuitas, akumulasi biaya, dan kekayaan bersih antar skenario.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Lebih baik beli atau sewa rumah?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Tergantung asumsi Anda. Kalkulator beli vs sewa di https://tool.adjiebrotots.com/rentvsownhouse/id/ memodelkan kedua jalur dari tahun ke tahun (kas, ekuitas, dan kekayaan bersih) sehingga Anda bisa melihat mana yang lebih unggul berdasarkan harga rumah, sewa, bunga KPR, dan imbal hasil investasi Anda.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Lebih baik beli sekarang atau sewa dulu selama 5 tahun?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Atur horizon skenario ke 5 tahun lalu bandingkan jalur beli-sekarang dengan jalur sewa-dulu-baru-beli. Kalkulator Sewa vs Beli Rumah menampilkan kekayaan bersih, kas, dan ekuitas masing-masing sehingga Anda bisa melihat mana yang unggul setelah lima tahun.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apa dampak membeli apartemen dibanding rumah tapak? (sensitivitas)',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Jalankan keduanya sebagai skenario terpisah di tool analisis sensitivitas multi-skenario di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/. Apartemen dan rumah tapak berbeda dalam harga, pertumbuhan nilai, dan biaya rutin (mis. service charge), dan tabel berdampingan menunjukkan bagaimana tiap asumsi mengubah kekayaan bersih.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Apakah tool Sewa vs Beli Rumah merupakan nasihat keuangan?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Bukan. Tool ini bersifat edukatif untuk eksplorasi skenario. Verifikasi asumsi Anda dan konsultasikan dengan profesional sebelum mengambil keputusan properti, KPR, pajak, atau investasi.',
-            },
-          },
-        ],
-      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
     ],
     htmlSpecials: [{ id: 'sensitivityLinkDiv', key: 'sensitivityHtml' }],
   },
@@ -202,7 +145,7 @@ const TOOLS = [
     dir: 'rentvsownhouse/sensitivity',
     langVar: 'LANG_SENS',
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
-    description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah: lihat asumsi mana yang paling memengaruhi kekayaan bersih Anda. Gratis dan berjalan di browser.',
+    description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah untuk melihat asumsi mana yang paling memengaruhi kekayaan bersihmu. Gratis dan berjalan langsung di browser.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
     ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.',
     sameDirAssets: ['script.js', 'style.css', 'fx.js'],
@@ -235,7 +178,7 @@ const TOOLS = [
           'Uji bagaimana setiap asumsi (kenaikan harga, bunga KPR, inflasi sewa, biaya) mengubah hasilnya',
           'Alternatif gratis untuk software analisis properti bespoke dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
           'Tersedia dalam bahasa Indonesia dan Inggris',
-          'Semua perhitungan berjalan lokal di browser, jadi data keuangan Anda tidak pernah keluar dari perangkat',
+          'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor CSV gratis tanpa paywall',
         ],
         offers: {
@@ -260,7 +203,7 @@ const TOOLS = [
             name: 'Apa fungsi tool Analisis Sensitivitas Sewa vs Beli Rumah?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Tool ini membandingkan beberapa skenario sewa vs beli secara berdampingan sehingga Anda bisa melihat asumsi mana (kenaikan harga properti, bunga KPR, inflasi sewa, biaya rutin) yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/.',
+              text: 'Tool ini menyandingkan beberapa skenario sewa vs beli dalam satu tabel, sehingga kamu bisa melihat asumsi mana (kenaikan harga properti, bunga KPR, inflasi sewa, atau biaya rutin) yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Tool ini bisa dipakai gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/.',
             },
           },
           {
@@ -292,7 +235,7 @@ const TOOLS = [
             name: 'Asumsi mana yang paling menentukan apakah menyewa atau membeli yang lebih unggul?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Susun skenario yang masing-masing mengubah satu input saja (kenaikan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin), lalu baca tabel berdampingan pada tahun dan metrik yang Anda pilih untuk melihat asumsi mana yang paling menggerakkan kekayaan bersih. Ini menguji seberapa kuat keputusan sewa-atau-beli Anda.',
+              text: 'Susun beberapa skenario yang masing-masing hanya mengubah satu input (kenaikan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin), lalu bandingkan hasilnya di tabel pada tahun dan metrik yang kamu pilih. Asumsi yang paling menggeser kekayaan bersih adalah asumsi yang paling menentukan, dan dari situ kamu bisa menguji seberapa kokoh keputusanmu untuk menyewa atau membeli.',
             },
           },
         ],
@@ -301,13 +244,126 @@ const TOOLS = [
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Adjie Brotools', item: 'https://tool.adjiebrotots.com/' },
+          { '@type': 'ListItem', position: 1, name: 'Adjie Brotools', item: 'https://tool.adjiebrotots.com/id/' },
           { '@type': 'ListItem', position: 2, name: 'Sewa vs Beli Rumah', item: 'https://tool.adjiebrotots.com/rentvsownhouse/id/' },
           { '@type': 'ListItem', position: 3, name: 'Analisis Sensitivitas', item: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
         ],
       },
     ],
     htmlSpecials: [],
+  },
+  {
+    // A reference page, not a tool: no LANG table of the tool's, its own LANG_QA in script.js.
+    dir: 'rentvsownhouse/quickstart-assumptions',
+    langVar: 'LANG_QA',
+    title: 'Asumsi Quick Start Sewa vs Beli Rumah | Adjie Brotools',
+    description: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, kota demi kota: harga, sewa, DP, bunga KPR, pajak pembelian, biaya rutin, dan kenaikan harga, lengkap dengan sumbernya.',
+    ogTitle: 'Asumsi Quick Start Sewa vs Beli Rumah: Harga Rumah, Sewa, dan Syarat KPR per Kota',
+    ogDescription: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, per kota dan per jenis hunian, lengkap dengan sumbernya.',
+    sameDirAssets: ['script.js', 'style.css', 'abbr.js'],
+    extraReplacements: [
+      ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
+      ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
+      // The share card is the calculator's; its alt names the calculator, as the English page's does.
+      ['<meta property="og:image:alt" content="Asumsi Quick Start Sewa vs Beli Rumah: Harga Rumah, Sewa, dan Syarat KPR per Kota, tool gratis di Adjie Brotools">',
+       '<meta property="og:image:alt" content="Simulasi Sewa vs Beli Rumah, tool gratis di Adjie Brotools">'],
+      ['data-message="My one assumption: you\'ll buy me a coffee!"', 'data-message="Asumsi saya cuma satu: kamu mau traktir saya kopi!"'],
+    ],
+    ldJson: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: 'Asumsi Quick Start Sewa vs Beli Rumah',
+        url: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/',
+        description: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, per kota dan per jenis hunian: harga, sewa, DP, bunga KPR, pajak pembelian, biaya rutin, dan kenaikan harga, lengkap dengan sumbernya.',
+        inLanguage: 'id',
+        keywords: 'asumsi sewa vs beli rumah, harga rumah per kota, harga sewa per kota, bunga KPR per negara, pajak pembelian properti per negara, harga apartemen vs rumah tapak, rental yield per kota',
+        isPartOf: {
+          '@type': 'WebApplication',
+          name: 'Simulasi Sewa vs Beli Rumah',
+          url: 'https://tool.adjiebrotots.com/rentvsownhouse/id/',
+        },
+        ...AUTHOR,
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Adjie Brotools', item: 'https://tool.adjiebrotots.com/id/' },
+          { '@type': 'ListItem', position: 2, name: 'Sewa vs Beli Rumah', item: 'https://tool.adjiebrotots.com/rentvsownhouse/id/' },
+          { '@type': 'ListItem', position: 3, name: 'Asumsi Quick Start', item: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/id/' },
+        ],
+      },
+    ],
+    htmlSpecials: [{ id: 'qaIntro', key: 'introHtml' }, { id: 'glanceNote', key: 'glanceNoteHtml' }, { id: 'qaNoscript', key: 'noscriptHtml' }],
+  },
+  {
+    // Was the Indonesian hub of country pages (until Nov 2026); now the calculator itself. Its card
+    // of country pages keeps that crawl path (gitcExtras). The engine's own text (line labels,
+    // notes) is worded by labels-id.js, which only this page loads.
+    dir: 'global-income-tax-calculator',
+    title: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara | Adjie Brotools',
+    description: 'Hitung gaji bersih setelah pajak penghasilan dan iuran jaminan sosial di 31 negara dan 39 negara bagian AS, lalu bandingkan hingga empat tawaran kerja.',
+    ogTitle: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara',
+    ogDescription: 'Berapa gaji bersihmu setelah pajak dan iuran jaminan sosial di 31 negara? Bandingkan hingga empat tawaran kerja, lengkap dengan sumber setiap potongan.',
+    sameDirAssets: ['script.js', 'style.css', 'abbr.js', 'engine.js'],
+    extraReplacements: [
+      ['<script src="../engine.js"></script>', '<script src="../engine.js"></script>\n<script src="../labels-id.js"></script>'],
+      // The English page says en_AU and names its toggle in Indonesian, so the generic swaps above miss both.
+      ['<meta property="og:locale" content="en_AU">', '<meta property="og:locale" content="id_ID">'],
+      ['<meta property="og:locale:alternate" content="en_US">', '<meta property="og:locale:alternate" content="en_AU">'],
+      ['<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Baca dalam bahasa Indonesia">ID</a>',
+       '<a id="langToggle" class="btn-theme" href="../" hreflang="en" lang="en" title="Read in English">EN</a>'],
+      ['<p class="footer-note">Estimate only, not tax advice. Rules effective as of 10 November 2026.</p>',
+       '<p class="footer-note">Hanya perkiraan, bukan nasihat pajak. Aturan yang dipakai berlaku per 10 November 2026.</p>'],
+      ['<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>',
+       '<p class="footer-collab"><strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'],
+      ['alt="Australian flag"', 'alt="Bendera Australia"'],
+      ['alt="Indonesian badge"', 'alt="Lencana Indonesia"'],
+      ['Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.',
+       'Berlisensi <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'],
+      ['Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.',
+       'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.'],
+      ['data-description="Support me on Buy me a coffee!" data-message="Whatever your take-home pay, a coffee is tax-free from here!"',
+       'data-description="Dukung saya di Buy me a coffee!" data-message="Berapa pun gaji bersihmu, secangkir kopi dari sini bebas pajak!"'],
+      ...gitcExtras(),
+    ],
+    ldJson: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
+        url: 'https://tool.adjiebrotots.com/global-income-tax-calculator/id/',
+        hasPart: [
+          { '@type': 'WebPage', name: 'Cara memakai Kalkulator Gaji Bersih dan Pajak Penghasilan', url: 'https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/' },
+        ],
+        description: 'Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan berdampingan.',
+        applicationCategory: 'FinanceApplication',
+        operatingSystem: 'Any',
+        isAccessibleForFree: true,
+        inLanguage: 'id',
+        alternateName: [
+          'Global Income Tax Calculator',
+          'Kalkulator Gaji Bersih',
+          'Kalkulator Pajak Penghasilan Luar Negeri',
+          'Kalkulator Take Home Pay',
+          'Kalkulator Gaji Kotor ke Gaji Bersih',
+          'Perbandingan Gaji Antarnegara',
+        ],
+        keywords: 'kalkulator gaji bersih, kalkulator pajak penghasilan luar negeri, gaji bersih di luar negeri, take home pay, hitung gaji bersih, gaji kotor ke gaji bersih, pajak gaji di luar negeri, perbandingan gaji antarnegara, kerja di luar negeri, pajak penghasilan 2026',
+        featureList: [
+          'Pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, berdasarkan aturan tahun 2026',
+          'Hitung dari gaji kotor ke gaji bersih, atau hitung balik gaji kotor yang dibutuhkan untuk gaji bersih tertentu',
+          'Hingga empat tawaran kerja berdampingan, masing-masing dengan negara dan mata uangnya sendiri',
+          'Setiap potongan dilengkapi sumber, tanggal berlaku, dan status Resmi, Sekunder, atau Asumsi',
+          'Tersedia dalam bahasa Indonesia dan Inggris',
+          'Semua perhitungan berjalan lokal di browser, jadi data gajimu tidak pernah keluar dari perangkat',
+        ],
+        ...AUTHOR,
+      },
+      // Its FAQPage block is written by applyFaq() from ../faq.json ("id"), mirroring the visible Questions card.
+    ],
+    htmlSpecials: [{ id: 'mapLinkDiv', key: 'mapLinkHtml' }],
   },
 ];
 
@@ -392,6 +448,24 @@ function bake(tool) {
   html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
     '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
 
+  /* ── the footer's own lines in Indonesian (the same words as rentvsownhouse/footer.js and
+        the country pages, _ref/jurisdiction-pages.mjs) ── */
+  for (const [from, to] of [
+    [/<strong>A hobby project, open to collaboration\.<\/strong> This tool is free to use\. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots\.com\?subject=Collaboration">let’s talk<\/a>\. Bugs or questions: <a href="mailto:hi@adjiebrotots\.com">hi@adjiebrotots\.com<\/a> 🙂/,
+      '<strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Kolaborasi">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂'],
+    [/Licensed under (<a href="https:\/\/www\.gnu\.org\/licenses\/gpl-3\.0\.html" target="_blank" rel="noopener">GNU GPL<\/a>): free to use, modify, and share with source code disclosed\./,
+      'Berlisensi $1: kode sumbernya terbuka dan bebas dipakai, diubah, serta dibagikan.'],
+    [/Made in Australia by (<a href="https:\/\/www\.adjiebrotots\.com\/about\/" rel="author">Adjie Brotosukmono<\/a>), an Indonesian engineer\./,
+      'Dibuat di Australia oleh $1, insinyur asal Indonesia.'],
+    [/alt="Australian flag"/, 'alt="Bendera Australia"'],
+    [/alt="Indonesian badge"/, 'alt="Lencana Indonesia"'],
+  ]) html = html.replace(from, to);
+
+  /* ── an Indonesian reader stays in Indonesian: the back link goes to the Indonesian home
+        (which lists every tool, Indonesian or not), the footer's Blog to the Indonesian blog ── */
+  html = html.replace('<a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">', '<a href="https://tool.adjiebrotots.com/id/" class="btn-theme btn-back">');
+  html = html.replace('<a href="https://blog.adjiebrotots.com/">Blog</a>', '<a href="https://blog.adjiebrotots.com/id/" hreflang="id">Blog</a>');
+
   /* ── language toggle points back to the English page ── */
   html = html.replace(
     '<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>',
@@ -438,6 +512,12 @@ function bake(tool) {
   const out = join(toolDir, 'id', 'index.html');
   const kept = existsSync(out) ? (readFileSync(out, 'utf8').match(SECTION_RE) || [])[0] : null;
   if (kept && SECTION_RE.test(html)) html = html.replace(SECTION_RE, () => kept);
+  // So does its own Buy Me a Coffee note (written in Indonesian on the id/ page, new-tool skill).
+  const BMC_RE = /(<script data-name="BMC-Widget"[^>]*?data-message=")([^"]*)(")/;
+  const keptNote = existsSync(out) ? (readFileSync(out, 'utf8').match(BMC_RE) || [])[2] : null;
+  if (keptNote) html = html.replace(BMC_RE, (m, a, b, c) => a + keptNote + c);
+  // The Questions card and its FAQPage block, in Indonesian, from the tool's faq.json.
+  html = applyFaq(html, `${tool.dir}/id/`);
   // Its dateModified, offers and footer date, as _ref/updated.mjs gives every tool page.
   html = stamp(html, `${tool.dir}/id/`);
   writeFileSync(out, html);

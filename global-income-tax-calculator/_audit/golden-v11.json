@@ -1,0 +1,2843 @@
+{
+ "AU|pr|60000": {
+  "incomeTax": 9285.0,
+  "social": 0,
+  "net": 50715.0
+ },
+ "AU|temp|60000": {
+  "incomeTax": 8105.0,
+  "social": 0,
+  "net": 51895.0
+ },
+ "AU|foreign|60000": {
+  "incomeTax": 18000.0,
+  "social": 0,
+  "net": 42000.0
+ },
+ "AU|whm|60000": {
+  "incomeTax": 11250.0,
+  "social": 0,
+  "net": 48750.0
+ },
+ "AU|pr|120000": {
+  "incomeTax": 28600.0,
+  "social": 0,
+  "net": 91400.0
+ },
+ "AU|temp|120000": {
+  "incomeTax": 26220.0,
+  "social": 0,
+  "net": 93780.0
+ },
+ "AU|foreign|120000": {
+  "incomeTax": 36000.0,
+  "social": 0,
+  "net": 84000.0
+ },
+ "AU|whm|120000": {
+  "incomeTax": 29250.0,
+  "social": 0,
+  "net": 90750.0
+ },
+ "AU|pr|300000": {
+  "incomeTax": 106400.0,
+  "social": 0,
+  "net": 193600.0
+ },
+ "AU|temp|300000": {
+  "incomeTax": 100420.0,
+  "social": 0,
+  "net": 199580.0
+ },
+ "AU|foreign|300000": {
+  "incomeTax": 110350.0,
+  "social": 0,
+  "net": 189650.0
+ },
+ "AU|whm|300000": {
+  "incomeTax": 103600.0,
+  "social": 0,
+  "net": 196400.0
+ },
+ "SG|ep|60000": {
+  "incomeTax": 1880.0,
+  "social": 0,
+  "net": 58120.0
+ },
+ "SG|citizen55|60000": {
+  "incomeTax": 1040.0,
+  "social": 12000,
+  "net": 46960.0
+ },
+ "SG|pr1|60000": {
+  "incomeTax": 1670.0,
+  "social": 3000,
+  "net": 55330.0
+ },
+ "SG|pr2|60000": {
+  "incomeTax": 1250.0,
+  "social": 9000,
+  "net": 49750.0
+ },
+ "SG|ep|120000": {
+  "incomeTax": 7835.0,
+  "social": 0,
+  "net": 112165.0
+ },
+ "SG|citizen55|120000": {
+  "incomeTax": 5627.0,
+  "social": 19200,
+  "net": 95173.0
+ },
+ "SG|pr1|120000": {
+  "incomeTax": 7283.0,
+  "social": 4800,
+  "net": 107917.0
+ },
+ "SG|pr2|120000": {
+  "incomeTax": 6179.0,
+  "social": 14400,
+  "net": 99421.0
+ },
+ "SG|ep|300000": {
+  "incomeTax": 40350.0,
+  "social": 0,
+  "net": 259650.0
+ },
+ "SG|citizen55|300000": {
+  "incomeTax": 36511.0,
+  "social": 19200,
+  "net": 244289.0
+ },
+ "SG|pr1|300000": {
+  "incomeTax": 39390.0,
+  "social": 4800,
+  "net": 255810.0
+ },
+ "SG|pr2|300000": {
+  "incomeTax": 37470.0,
+  "social": 14400,
+  "net": 248130.0
+ },
+ "UK|rUK|40000": {
+  "incomeTax": 5486.0,
+  "social": 2194.4,
+  "net": 32319.6
+ },
+ "UK|SCO|40000": {
+  "incomeTax": 5551.07,
+  "social": 2194.4,
+  "net": 32254.53
+ },
+ "UK|rUK|80000": {
+  "incomeTax": 19432.0,
+  "social": 3610.6,
+  "net": 56957.4
+ },
+ "UK|SCO|80000": {
+  "incomeTax": 21732.05,
+  "social": 3610.6,
+  "net": 54657.35
+ },
+ "UK|rUK|150000": {
+  "incomeTax": 53703.0,
+  "social": 5010.6,
+  "net": 91286.4
+ },
+ "UK|SCO|150000": {
+  "incomeTax": 59634.35,
+  "social": 5010.6,
+  "net": 85355.05
+ },
+ "DE|I|50000": {
+  "incomeTax": 6788.0,
+  "social": 10875.0,
+  "net": 32337.0
+ },
+ "DE|III|50000": {
+  "incomeTax": 2884.0,
+  "social": 10575.0,
+  "net": 36541.0
+ },
+ "DE|I_church9|50000": {
+  "incomeTax": 7398.92,
+  "social": 10875.0,
+  "net": 31726.08
+ },
+ "DE|I|85000": {
+  "incomeTax": 17538.0,
+  "social": 16787.12,
+  "net": 50674.88
+ },
+ "DE|III|85000": {
+  "incomeTax": 10946.0,
+  "social": 16368.62,
+  "net": 57685.38
+ },
+ "DE|I_church9|85000": {
+  "incomeTax": 19116.42,
+  "social": 16787.12,
+  "net": 49096.46
+ },
+ "DE|I|150000": {
+  "incomeTax": 46623.61,
+  "social": 18525.53,
+  "net": 84850.86
+ },
+ "DE|III|150000": {
+  "incomeTax": 33282.0,
+  "social": 18107.03,
+  "net": 98610.98
+ },
+ "DE|I_church9|150000": {
+  "incomeTax": 50600.99,
+  "social": 18525.53,
+  "net": 80873.49
+ },
+ "US-TX|S|80000": {
+  "incomeTax": 8770.0,
+  "social": 6120.0,
+  "net": 65110.0
+ },
+ "US-TX|MFJ|80000": {
+  "incomeTax": 5240.0,
+  "social": 6120.0,
+  "net": 68640.0
+ },
+ "US-TX|S|180000": {
+  "incomeTax": 31934.0,
+  "social": 13770.0,
+  "net": 134296.0
+ },
+ "US-TX|MFJ|180000": {
+  "incomeTax": 21940.0,
+  "social": 13770.0,
+  "net": 144290.0
+ },
+ "US-TX|S|500000": {
+  "incomeTax": 138134.25,
+  "social": 21389.0,
+  "net": 340476.75
+ },
+ "US-TX|MFJ|500000": {
+  "incomeTax": 102608.0,
+  "social": 20939.0,
+  "net": 376453.0
+ },
+ "US-CA|single|80000": {
+  "incomeTax": 11835.12,
+  "social": 7160.0,
+  "net": 61004.88,
+  "detail": {
+   "state": 3065.12
+  }
+ },
+ "US-CA|MFJ|80000": {
+  "incomeTax": 6336.6,
+  "social": 7160.0,
+  "net": 66503.4,
+  "detail": {
+   "state": 1096.6
+  }
+ },
+ "US-CA|single|180000": {
+  "incomeTax": 44284.86,
+  "social": 16110.0,
+  "net": 119605.14,
+  "detail": {
+   "state": 12350.86
+  }
+ },
+ "US-CA|MFJ|180000": {
+  "incomeTax": 29901.72,
+  "social": 16110.0,
+  "net": 133988.28,
+  "detail": {
+   "state": 7961.72
+  }
+ },
+ "US-CA|single|500000": {
+  "incomeTax": 181676.75,
+  "social": 27889.0,
+  "net": 290434.25,
+  "detail": {
+   "state": 43542.5
+  }
+ },
+ "US-CA|MFJ|500000": {
+  "incomeTax": 140329.72,
+  "social": 27439.0,
+  "net": 332231.28,
+  "detail": {
+   "state": 37721.72
+  }
+ },
+ "US-NY|NYS_single|60000": {
+  "incomeTax": 7663.0,
+  "social": 4880.4,
+  "net": 47456.6,
+  "detail": {
+   "state": 2643.0,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_single|60000": {
+  "incomeTax": 9553.69,
+  "social": 4880.4,
+  "net": 45565.91,
+  "detail": {
+   "state": 2643.0,
+   "city": 1890.69,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|60000": {
+  "incomeTax": 4880.8,
+  "social": 4880.4,
+  "net": 50238.8,
+  "detail": {
+   "state": 2040.8,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_MFJ|60000": {
+  "incomeTax": 6386.45,
+  "social": 4880.4,
+  "net": 48733.14,
+  "detail": {
+   "state": 2040.8,
+   "city": 1505.65,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|100000": {
+  "incomeTax": 18029.75,
+  "social": 8093.11,
+  "net": 73877.14,
+  "detail": {
+   "state": 4859.75,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_single|100000": {
+  "incomeTax": 21470.84,
+  "social": 8093.11,
+  "net": 70436.05,
+  "detail": {
+   "state": 4859.75,
+   "city": 3441.09,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|100000": {
+  "incomeTax": 11840.8,
+  "social": 8093.11,
+  "net": 80066.09,
+  "detail": {
+   "state": 4200.8,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_MFJ|100000": {
+  "incomeTax": 14873.46,
+  "social": 8093.11,
+  "net": 77033.43,
+  "detail": {
+   "state": 4200.8,
+   "city": 3032.66,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|150000": {
+  "incomeTax": 33025.06,
+  "social": 11918.11,
+  "net": 105056.83,
+  "detail": {
+   "state": 8291.06,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_single|150000": {
+  "incomeTax": 38404.15,
+  "social": 11918.11,
+  "net": 99677.74,
+  "detail": {
+   "state": 8291.06,
+   "city": 5379.09,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|150000": {
+  "incomeTax": 22522.43,
+  "social": 11918.11,
+  "net": 115559.46,
+  "detail": {
+   "state": 7182.43,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_MFJ|150000": {
+  "incomeTax": 27489.64,
+  "social": 11918.11,
+  "net": 110592.25,
+  "detail": {
+   "state": 7182.43,
+   "city": 4967.21,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|180000": {
+  "incomeTax": 42082.0,
+  "social": 14213.11,
+  "net": 123704.89,
+  "detail": {
+   "state": 10148.0,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_single|180000": {
+  "incomeTax": 48623.89,
+  "social": 14213.11,
+  "net": 117163.0,
+  "detail": {
+   "state": 10148.0,
+   "city": 6541.89,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|180000": {
+  "incomeTax": 31103.36,
+  "social": 14213.11,
+  "net": 134683.53,
+  "detail": {
+   "state": 9163.36,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYC_MFJ|180000": {
+  "incomeTax": 37233.37,
+  "social": 14213.11,
+  "net": 128553.52,
+  "detail": {
+   "state": 9163.36,
+   "city": 6130.01,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|250000": {
+  "incomeTax": 67250.74,
+  "social": 15957.11,
+  "net": 166792.15,
+  "detail": {
+   "state": 15946.74,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|250000": {
+  "incomeTax": 51271.05,
+  "social": 15507.11,
+  "net": 183221.84,
+  "detail": {
+   "state": 13803.05,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|600000": {
+  "incomeTax": 213686.25,
+  "social": 24182.11,
+  "net": 362131.64,
+  "detail": {
+   "state": 40552.0,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|600000": {
+  "incomeTax": 176269.08,
+  "social": 23732.11,
+  "net": 399998.82,
+  "detail": {
+   "state": 40000.58,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_single|2500000": {
+  "incomeTax": 1115478.25,
+  "social": 68832.11,
+  "net": 1315689.64,
+  "detail": {
+   "state": 240478.0,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "US-NY|NYS_MFJ|2500000": {
+  "incomeTax": 1074951.68,
+  "social": 68382.11,
+  "net": 1356666.21,
+  "detail": {
+   "state": 239701.17,
+   "city": 0,
+   "dbl": 31.2
+  }
+ },
+ "ID (gross/month)|TK0|15000000": {
+  "incomeTax": 12271800.0,
+  "social": 6359578.0,
+  "net": 161368622.0
+ },
+ "ID (gross/month)|K2|15000000": {
+  "incomeTax": 10246800.0,
+  "social": 6359578.0,
+  "net": 163393622.0
+ },
+ "ID (gross/month)|TK0|40000000": {
+  "incomeTax": 73358000.0,
+  "social": 12359578.0,
+  "net": 394282422.0
+ },
+ "ID (gross/month)|K2|40000000": {
+  "incomeTax": 69983000.0,
+  "social": 12359578.0,
+  "net": 397657422.0
+ },
+ "ID (gross/month)|TK0|100000000": {
+  "incomeTax": 282076000.0,
+  "social": 26759578.0,
+  "net": 891164422.0
+ },
+ "ID (gross/month)|K2|100000000": {
+  "incomeTax": 278026000.0,
+  "social": 26759578.0,
+  "net": 895214422.0
+ },
+ "ID (gross/month)|nonresident|15000000": {
+  "incomeTax": 36000000.0,
+  "social": 6359578.0,
+  "net": 137640422.0
+ },
+ "ID (gross/month)|nonresident|40000000": {
+  "incomeTax": 96000000.0,
+  "social": 12359578.0,
+  "net": 371640422.0
+ },
+ "ID (gross/month)|nonresident|100000000": {
+  "incomeTax": 240000000.0,
+  "social": 26759578.0,
+  "net": 933240422.0
+ },
+ "TH|single|600000": {
+  "incomeTax": 20450.0,
+  "social": 10500.0,
+  "net": 569050.0
+ },
+ "TH|married2kids|600000": {
+  "incomeTax": 8450.0,
+  "social": 10500.0,
+  "net": 581050.0
+ },
+ "TH|single|1200000": {
+  "incomeTax": 122375.0,
+  "social": 10500.0,
+  "net": 1067125.0
+ },
+ "TH|married2kids|1200000": {
+  "incomeTax": 96900.0,
+  "social": 10500.0,
+  "net": 1092600.0
+ },
+ "TH|single|3600000": {
+  "incomeTax": 793850.0,
+  "social": 10500.0,
+  "net": 2795650.0
+ },
+ "TH|married2kids|3600000": {
+  "incomeTax": 757850.0,
+  "social": 10500.0,
+  "net": 2831650.0
+ },
+ "MY|citizen|42000": {
+  "incomeTax": 9.5,
+  "social": 5097.75,
+  "net": 36892.75
+ },
+ "MY|expat_resident|42000": {
+  "incomeTax": 114.8,
+  "social": 1023.75,
+  "net": 40861.45
+ },
+ "MY|expat_nonresident|42000": {
+  "incomeTax": 12600.0,
+  "social": 1023.75,
+  "net": 28376.25
+ },
+ "MY|citizen|120000": {
+  "incomeTax": 11062.5,
+  "social": 14019.0,
+  "net": 94918.5
+ },
+ "MY|expat_resident|120000": {
+  "incomeTax": 11550.0,
+  "social": 2715.0,
+  "net": 105735.0
+ },
+ "MY|expat_nonresident|120000": {
+  "incomeTax": 36000.0,
+  "social": 2715.0,
+  "net": 81285.0
+ },
+ "MY|citizen|360000": {
+  "incomeTax": 71062.5,
+  "social": 40419.0,
+  "net": 248518.5
+ },
+ "MY|expat_resident|360000": {
+  "incomeTax": 71150.0,
+  "social": 7515.0,
+  "net": 281335.0
+ },
+ "MY|expat_nonresident|360000": {
+  "incomeTax": 108000.0,
+  "social": 7515.0,
+  "net": 244485.0
+ },
+ "NL (gross incl. holiday pay)|standard|54000": {
+  "incomeTax": 12878.39,
+  "social": 0,
+  "net": 41121.61
+ },
+ "NL (gross incl. holiday pay)|ruling30|54000": {
+  "incomeTax": 9856.87,
+  "social": 0,
+  "net": 44143.13
+ },
+ "NL (gross incl. holiday pay)|standard|86400": {
+  "incomeTax": 29671.75,
+  "social": 0,
+  "net": 56728.25
+ },
+ "NL (gross incl. holiday pay)|ruling30|86400": {
+  "incomeTax": 16148.72,
+  "social": 0,
+  "net": 70251.28
+ },
+ "NL (gross incl. holiday pay)|standard|162000": {
+  "incomeTax": 70122.15,
+  "social": 0,
+  "net": 91877.85
+ },
+ "NL (gross incl. holiday pay)|ruling30|162000": {
+  "incomeTax": 44794.45,
+  "social": 0,
+  "net": 117205.55
+ },
+ "NO|resident|600000": {
+  "incomeTax": 98582.6,
+  "social": 45600.0,
+  "net": 455817.4
+ },
+ "NO|PAYE25|600000": {
+  "incomeTax": 150000.0,
+  "social": 0,
+  "net": 450000.0
+ },
+ "NO|resident|700000": {
+  "incomeTax": 124582.6,
+  "social": 53200.0,
+  "net": 522217.4
+ },
+ "NO|PAYE25|700000": {
+  "incomeTax": 175000.0,
+  "social": 0,
+  "net": 525000.0
+ },
+ "NO|resident|1500000": {
+  "incomeTax": 424197.65,
+  "social": 114000.0,
+  "net": 961802.35
+ },
+ "NO|PAYE25|1500000": "NOT_SUPPORTED",
+ "SE|Stockholm30.55|420000": {
+  "incomeTax": 78869.09,
+  "social": 0,
+  "net": 341130.91
+ },
+ "SE|SINK|420000": {
+  "incomeTax": 94500.0,
+  "social": 0,
+  "net": 325500.0
+ },
+ "SE|Stockholm30.55|600000": {
+  "incomeTax": 129940.08,
+  "social": 0,
+  "net": 470059.92
+ },
+ "SE|SINK|600000": {
+  "incomeTax": 135000.0,
+  "social": 0,
+  "net": 465000.0
+ },
+ "SE|Stockholm30.55|900000": {
+  "incomeTax": 270386.08,
+  "social": 0,
+  "net": 629613.92
+ },
+ "SE|SINK|900000": {
+  "incomeTax": 202500.0,
+  "social": 0,
+  "net": 697500.0
+ },
+ "EE|pillarII_2pct|24000": {
+  "incomeTax": 3241.92,
+  "social": 864.0,
+  "net": 19894.08
+ },
+ "EE|pillarII_off|24000": {
+  "incomeTax": 3347.52,
+  "social": 384.0,
+  "net": 20268.48
+ },
+ "EE|pillarII_2pct|48000": {
+  "incomeTax": 8331.84,
+  "social": 1728.0,
+  "net": 37940.16
+ },
+ "EE|pillarII_off|48000": {
+  "incomeTax": 8543.04,
+  "social": 768.0,
+  "net": 38688.96
+ },
+ "EE|pillarII_2pct|96000": {
+  "incomeTax": 18511.68,
+  "social": 3456.0,
+  "net": 74032.32
+ },
+ "EE|pillarII_off|96000": {
+  "incomeTax": 18934.08,
+  "social": 1536.0,
+  "net": 75529.92
+ },
+ "FI|Helsinki5.30|42000": {
+  "incomeTax": 5510.28,
+  "social": 3809.4,
+  "net": 32680.32
+ },
+ "FI|Helsinki_church1|42000": {
+  "incomeTax": 5884.69,
+  "social": 3809.4,
+  "net": 32305.91
+ },
+ "FI|keyEmployee|42000": "NOT_SUPPORTED",
+ "FI|Helsinki5.30|72000": {
+  "incomeTax": 16968.95,
+  "social": 6530.4,
+  "net": 48500.65
+ },
+ "FI|Helsinki_church1|72000": {
+  "incomeTax": 17616.15,
+  "social": 6530.4,
+  "net": 47853.45
+ },
+ "FI|keyEmployee|72000": {
+  "incomeTax": 18000.0,
+  "social": 6530.4,
+  "net": 47469.6
+ },
+ "FI|Helsinki5.30|120000": {
+  "incomeTax": 36129.72,
+  "social": 10884.0,
+  "net": 72986.28
+ },
+ "FI|Helsinki_church1|120000": {
+  "incomeTax": 37213.38,
+  "social": 10884.0,
+  "net": 71902.62
+ },
+ "FI|keyEmployee|120000": {
+  "incomeTax": 30000.0,
+  "social": 10884.0,
+  "net": 79116.0
+ },
+ "BE|single_7pct|30000": {
+  "incomeTax": 2554.01,
+  "social": 1137.25,
+  "net": 26308.75
+ },
+ "BE|expat35|30000": {
+  "incomeTax": 2554.01,
+  "social": 1137.25,
+  "net": 26308.75
+ },
+ "BE|married_sole_earner|30000": {
+  "incomeTax": 0.0,
+  "social": 1137.25,
+  "net": 28862.75
+ },
+ "BE|single_7pct|60000": {
+  "incomeTax": 14839.4,
+  "social": 8436.12,
+  "net": 36724.48
+ },
+ "BE|expat35|60000": {
+  "incomeTax": 14839.4,
+  "social": 8436.12,
+  "net": 36724.48
+ },
+ "BE|married_sole_earner|60000": {
+  "incomeTax": 9228.86,
+  "social": 8436.12,
+  "net": 42335.02
+ },
+ "BE|single_7pct|90000": {
+  "incomeTax": 28525.13,
+  "social": 12494.28,
+  "net": 48980.59
+ },
+ "BE|expat35|90000": {
+  "incomeTax": 14211.55,
+  "social": 8377.23,
+  "net": 67411.22
+ },
+ "BE|married_sole_earner|90000": {
+  "incomeTax": 22284.35,
+  "social": 12494.28,
+  "net": 55221.37
+ },
+ "BE|single_7pct|150000": {
+  "incomeTax": 56429.66,
+  "social": 20336.28,
+  "net": 73234.06
+ },
+ "BE|expat35|150000": {
+  "incomeTax": 32013.2,
+  "social": 13474.53,
+  "net": 104512.27
+ },
+ "BE|married_sole_earner|150000": {
+  "incomeTax": 50188.89,
+  "social": 20336.28,
+  "net": 79474.83
+ },
+ "BE|single_2kids|60000": {
+  "incomeTax": 13467.13,
+  "social": 8436.12,
+  "net": 38096.75
+ },
+ "BE|married_sole_earner_2kids|60000": {
+  "incomeTax": 7856.58,
+  "social": 8436.12,
+  "net": 43707.3
+ },
+ "BE|single_2kids|90000": {
+  "incomeTax": 27152.86,
+  "social": 12494.28,
+  "net": 50352.86
+ },
+ "BE|married_sole_earner_2kids|90000": {
+  "incomeTax": 20912.08,
+  "social": 12494.28,
+  "net": 56593.64
+ },
+ "BE|married_sole_earner_5kids|90000": {
+  "incomeTax": 11758.23,
+  "social": 12494.28,
+  "net": 65747.49
+ },
+ "BE|single_parent_2kids|60000": {
+  "incomeTax": 12626.11,
+  "social": 8436.12,
+  "net": 38937.77
+ },
+ "IT|Milan|35000": {
+  "incomeTax": 5751.28,
+  "social": 3216.5,
+  "net": 26032.22
+ },
+ "IT|impatriate50|35000": {
+  "incomeTax": 72.52,
+  "social": 3216.5,
+  "net": 31710.98
+ },
+ "IT|impatriate60_child|35000": {
+  "incomeTax": 451.65,
+  "social": 3216.5,
+  "net": 31331.85
+ },
+ "IT|Milan|60000": {
+  "incomeTax": 16893.58,
+  "social": 5551.76,
+  "net": 37554.66
+ },
+ "IT|impatriate50|60000": {
+  "incomeTax": 3810.96,
+  "social": 5551.76,
+  "net": 50637.28
+ },
+ "IT|impatriate60_child|60000": {
+  "incomeTax": 1821.42,
+  "social": 5551.76,
+  "net": 52626.82
+ },
+ "IT|Milan|120000": {
+  "incomeTax": 41427.88,
+  "social": 11665.76,
+  "net": 66906.36
+ },
+ "IT|impatriate50|120000": {
+  "incomeTax": 16765.59,
+  "social": 11665.76,
+  "net": 91568.65
+ },
+ "IT|impatriate60_child|120000": {
+  "incomeTax": 11921.67,
+  "social": 11665.76,
+  "net": 96412.57
+ },
+ "IT|Milan|250000": {
+  "incomeTax": 100510.4,
+  "social": 11899.62,
+  "net": 137589.98
+ },
+ "IT|impatriate50|250000": {
+  "incomeTax": 46306.85,
+  "social": 11899.62,
+  "net": 191793.53
+ },
+ "IT|impatriate60_child|250000": {
+  "incomeTax": 35466.14,
+  "social": 11899.62,
+  "net": 202634.24
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single|80000": {
+  "incomeTax": 7944.95,
+  "social": 8117.0,
+  "net": 63938.05,
+  "detail": {
+   "einfache": 3278.0,
+   "kanton": 3114.1,
+   "gemeinde": 3900.82,
+   "kirche": 0.0,
+   "bund": 906.03,
+   "ti_kanton": 66826.51,
+   "ti_bund": 67926.51
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single_church10|80000": {
+  "incomeTax": 8272.75,
+  "social": 8117.0,
+  "net": 63610.25,
+  "detail": {
+   "einfache": 3278.0,
+   "kanton": 3114.1,
+   "gemeinde": 3900.82,
+   "kirche": 327.8,
+   "bund": 906.03,
+   "ti_kanton": 66826.51,
+   "ti_bund": 67926.51
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married|80000": {
+  "incomeTax": 5167.34,
+  "social": 8117.0,
+  "net": 66715.66,
+  "detail": {
+   "einfache": 2181.0,
+   "bund": 452.0,
+   "ti_kanton": 63926.51,
+   "ti_bund": 63226.51
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single|120000": {
+  "incomeTax": 16605.39,
+  "social": 11373.0,
+  "net": 92021.61,
+  "detail": {
+   "einfache": 6386.0,
+   "kanton": 6066.7,
+   "gemeinde": 7599.34,
+   "kirche": 0.0,
+   "bund": 2915.35,
+   "ti_kanton": 102468.19,
+   "ti_bund": 103568.19
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single_church10|120000": {
+  "incomeTax": 17243.99,
+  "social": 11373.0,
+  "net": 91383.01,
+  "detail": {
+   "einfache": 6386.0,
+   "kanton": 6066.7,
+   "gemeinde": 7599.34,
+   "kirche": 638.6,
+   "bund": 2915.35,
+   "ti_kanton": 102468.19,
+   "ti_bund": 103568.19
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married|120000": {
+  "incomeTax": 11868.42,
+  "social": 11373.0,
+  "net": 96758.58,
+  "detail": {
+   "einfache": 4703.0,
+   "bund": 1756.0,
+   "ti_kanton": 99568.19,
+   "ti_bund": 98868.19
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single|200000": {
+  "incomeTax": 40353.85,
+  "social": 16036.0,
+  "net": 143610.15,
+  "detail": {
+   "einfache": 14095.0,
+   "kanton": 13390.25,
+   "gemeinde": 16773.05,
+   "kirche": 0.0,
+   "bund": 10166.55,
+   "ti_kanton": 177064.0,
+   "ti_bund": 178164.0
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|B_permit_single_church10|200000": {
+  "incomeTax": 41763.35,
+  "social": 16036.0,
+  "net": 142200.65,
+  "detail": {
+   "einfache": 14095.0,
+   "kanton": 13390.25,
+   "gemeinde": 16773.05,
+   "kirche": 1409.5,
+   "bund": 10166.55,
+   "ti_kanton": 177064.0,
+   "ti_bund": 178164.0
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married|200000": {
+  "incomeTax": 32277.5,
+  "social": 16036.0,
+  "net": 151686.5,
+  "detail": {
+   "einfache": 11125.0,
+   "bund": 8422.0,
+   "ti_kanton": 174164.0,
+   "ti_bund": 173464.0
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married_2kids|80000": {
+  "incomeTax": 2119.52,
+  "social": 8117.0,
+  "net": 69763.48,
+  "detail": {
+   "einfache": 968.0,
+   "bund": 0,
+   "ti_kanton": 42526.51,
+   "ti_bund": 48226.51
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married_2kids|120000": {
+  "incomeTax": 7429.22,
+  "social": 11373.0,
+  "net": 101197.78,
+  "detail": {
+   "einfache": 3173.0,
+   "bund": 591.0,
+   "ti_kanton": 78168.19,
+   "ti_bund": 83868.19
+  }
+ },
+ "CH-ZH (city, single, age 35-44)|married_2kids|200000": {
+  "incomeTax": 25679.86,
+  "social": 16036.0,
+  "net": 158284.14,
+  "detail": {
+   "einfache": 9199.0,
+   "bund": 5946.0,
+   "ti_kanton": 152764.0,
+   "ti_bund": 158464.0
+  }
+ },
+ "FR|single_noncadre|36000": {
+  "incomeTax": 1494.98,
+  "social": 7502.49,
+  "net": 27002.53
+ },
+ "FR|single_cadre|36000": {
+  "incomeTax": 1493.74,
+  "social": 7511.13,
+  "net": 26995.13
+ },
+ "FR|married2kids_cadre|36000": {
+  "incomeTax": 0,
+  "social": 7511.13,
+  "net": 28488.87
+ },
+ "FR|single_noncadre|60000": {
+  "incomeTax": 6405.13,
+  "social": 12446.06,
+  "net": 41148.8
+ },
+ "FR|single_cadre|60000": {
+  "incomeTax": 6401.24,
+  "social": 12460.46,
+  "net": 41138.29
+ },
+ "FR|married2kids_cadre|60000": {
+  "incomeTax": 38.73,
+  "social": 12460.46,
+  "net": 47500.81
+ },
+ "FR|single_noncadre|120000": {
+  "incomeTax": 20368.01,
+  "social": 24320.21,
+  "net": 75311.78
+ },
+ "FR|single_cadre|120000": {
+  "incomeTax": 20357.38,
+  "social": 24349.01,
+  "net": 75293.6
+ },
+ "FR|married2kids_cadre|120000": {
+  "incomeTax": 9342.9,
+  "social": 24349.01,
+  "net": 86308.08
+ },
+ "FR|single_cadre_impatriate30|60000": {
+  "incomeTax": 2412.07,
+  "social": 12460.46,
+  "net": 45127.47
+ },
+ "FR|single_cadre_impatriate30|120000": {
+  "incomeTax": 11828.24,
+  "social": 24349.01,
+  "net": 83822.75
+ },
+ "FR|single_cadre|250000": {
+  "incomeTax": 63106.41,
+  "social": 50191.72,
+  "net": 136701.86
+ },
+ "FR|single_cadre|320000": "NOT_SUPPORTED",
+ "ES (Madrid)|resident_single|17094": {
+  "incomeTax": 0.0,
+  "social": 1111.11,
+  "net": 15982.89,
+  "detail": {
+   "state": 295.45,
+   "madrid": 229.78,
+   "smiDeduction": 525.23
+  }
+ },
+ "ES (Madrid)|resident_2kids|17094": {
+  "incomeTax": 0,
+  "social": 1111.11,
+  "net": 15982.89,
+  "detail": {
+   "state": 0,
+   "madrid": 0,
+   "smiDeduction": 0
+  }
+ },
+ "ES (Madrid)|beckham|17094": {
+  "incomeTax": 4102.56,
+  "social": 1111.11,
+  "net": 11880.33
+ },
+ "ES (Madrid)|resident_single|19000": {
+  "incomeTax": 1217.15,
+  "social": 1235.0,
+  "net": 16547.85,
+  "detail": {
+   "state": 782.09,
+   "madrid": 644.75,
+   "smiDeduction": 209.69
+  }
+ },
+ "ES (Madrid)|resident_2kids|19000": {
+  "incomeTax": 267.39,
+  "social": 1235.0,
+  "net": 17497.61,
+  "detail": {
+   "state": 297.59,
+   "madrid": 179.48,
+   "smiDeduction": 209.69
+  }
+ },
+ "ES (Madrid)|beckham|19000": {
+  "incomeTax": 4560.0,
+  "social": 1235.0,
+  "net": 13205.0
+ },
+ "ES (Madrid)|resident_single|30000": {
+  "incomeTax": 4598.02,
+  "social": 1950.0,
+  "net": 23451.98,
+  "detail": {
+   "state": 2463.0,
+   "madrid": 2135.02,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|resident_2kids|30000": {
+  "incomeTax": 3648.26,
+  "social": 1950.0,
+  "net": 24401.74,
+  "detail": {
+   "state": 1978.5,
+   "madrid": 1669.76,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|beckham|30000": {
+  "incomeTax": 7200.0,
+  "social": 1950.0,
+  "net": 20850.0
+ },
+ "ES (Madrid)|resident_single|40000": {
+  "incomeTax": 7204.32,
+  "social": 2600.0,
+  "net": 30195.68,
+  "detail": {
+   "state": 3872.5,
+   "madrid": 3331.82,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|resident_2kids|40000": {
+  "incomeTax": 6254.56,
+  "social": 2600.0,
+  "net": 31145.44,
+  "detail": {
+   "state": 3388.0,
+   "madrid": 2866.56,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|beckham|40000": {
+  "incomeTax": 9600.0,
+  "social": 2600.0,
+  "net": 27800.0
+ },
+ "ES (Madrid)|resident_single|80000": {
+  "incomeTax": 22146.66,
+  "social": 3978.94,
+  "net": 53874.4,
+  "detail": {
+   "state": 11578.24,
+   "madrid": 10568.42,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|resident_2kids|80000": {
+  "incomeTax": 21196.9,
+  "social": 3978.94,
+  "net": 54824.16,
+  "detail": {
+   "state": 11093.74,
+   "madrid": 10103.16,
+   "smiDeduction": 0.0
+  }
+ },
+ "ES (Madrid)|beckham|80000": {
+  "incomeTax": 19200.0,
+  "social": 3978.94,
+  "net": 56821.06
+ },
+ "PT|resident|12880": {
+  "incomeTax": 0.0,
+  "social": 1416.8,
+  "net": 11463.2,
+  "detail": {
+   "minimo": 6243.73
+  }
+ },
+ "PT|IRSJovem_y3|12880": {
+  "incomeTax": 0,
+  "social": 1416.8,
+  "net": 11463.2,
+  "detail": {
+   "minimo": 6243.73
+  }
+ },
+ "PT|IFICI|12880": {
+  "incomeTax": 2576.0,
+  "social": 1416.8,
+  "net": 8887.2
+ },
+ "PT|nonresident|12880": {
+  "incomeTax": 3220.0,
+  "social": 1416.8,
+  "net": 8243.2
+ },
+ "PT|resident|15000": {
+  "incomeTax": 900.6,
+  "social": 1650.0,
+  "net": 12449.4,
+  "detail": {
+   "minimo": 1196.72
+  }
+ },
+ "PT|IRSJovem_y3|15000": {
+  "incomeTax": 0,
+  "social": 1650.0,
+  "net": 13350.0,
+  "detail": {
+   "minimo": 1196.72
+  }
+ },
+ "PT|IFICI|15000": {
+  "incomeTax": 3000.0,
+  "social": 1650.0,
+  "net": 10350.0
+ },
+ "PT|nonresident|15000": {
+  "incomeTax": 3750.0,
+  "social": 1650.0,
+  "net": 9600.0
+ },
+ "PT|resident|18000": {
+  "incomeTax": 1583.93,
+  "social": 1980.0,
+  "net": 14436.07,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IRSJovem_y3|18000": {
+  "incomeTax": 0,
+  "social": 1980.0,
+  "net": 16020.0,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IFICI|18000": {
+  "incomeTax": 3600.0,
+  "social": 1980.0,
+  "net": 12420.0
+ },
+ "PT|nonresident|18000": {
+  "incomeTax": 4500.0,
+  "social": 1980.0,
+  "net": 11520.0
+ },
+ "PT|resident|30000": {
+  "incomeTax": 4450.27,
+  "social": 3300.0,
+  "net": 22249.73,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IRSJovem_y3|30000": {
+  "incomeTax": 105.38,
+  "social": 3300.0,
+  "net": 26594.62,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IFICI|30000": {
+  "incomeTax": 6000.0,
+  "social": 3300.0,
+  "net": 20700.0
+ },
+ "PT|nonresident|30000": {
+  "incomeTax": 7500.0,
+  "social": 3300.0,
+  "net": 19200.0
+ },
+ "PT|resident|60000": {
+  "incomeTax": 14953.3,
+  "social": 6600.0,
+  "net": 38446.7,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IRSJovem_y3|60000": {
+  "incomeTax": 3974.43,
+  "social": 6600.0,
+  "net": 49425.57,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IFICI|60000": {
+  "incomeTax": 12000.0,
+  "social": 6600.0,
+  "net": 41400.0
+ },
+ "PT|nonresident|60000": {
+  "incomeTax": 15000.0,
+  "social": 6600.0,
+  "net": 38400.0
+ },
+ "PT|resident|120000": {
+  "incomeTax": 40125.35,
+  "social": 13200.0,
+  "net": 66674.65,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IRSJovem_y3|120000": {
+  "incomeTax": 25593.9,
+  "social": 13200.0,
+  "net": 81206.1,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|IFICI|120000": {
+  "incomeTax": 24000.0,
+  "social": 13200.0,
+  "net": 82800.0
+ },
+ "PT|nonresident|120000": {
+  "incomeTax": 30000.0,
+  "social": 13200.0,
+  "net": 76800.0
+ },
+ "PT|resident_2deps_8y_2y|30000": {
+  "incomeTax": 2950.27,
+  "social": 3300.0,
+  "net": 23749.73,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|resident_2deps_8y_2y|60000": {
+  "incomeTax": 13453.3,
+  "social": 6600.0,
+  "net": 39946.7,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "PT|resident_health2000_edu1000|40000": {
+  "incomeTax": 7150.91,
+  "social": 4400.0,
+  "net": 28449.09,
+  "detail": {
+   "minimo": 0.0
+  }
+ },
+ "JP (Tokyo, <40)|year2plus|5000000": {
+  "incomeTax": 334600,
+  "social": 723132,
+  "net": 3942268.0,
+  "detail": {
+   "incomeTax": 91600,
+   "residentTax": 243000
+  }
+ },
+ "JP (Tokyo, <40)|year1_noResidentTax|5000000": {
+  "incomeTax": 91600,
+  "social": 723132,
+  "net": 4185268.0,
+  "detail": {
+   "incomeTax": 91600,
+   "residentTax": 0
+  }
+ },
+ "JP (Tokyo, <40)|nonresident|5000000": {
+  "incomeTax": 1021000,
+  "social": 723132,
+  "net": 3255868.0
+ },
+ "JP (Tokyo, <40)|year2plus|8000000": {
+  "incomeTax": 887400,
+  "social": 1164960,
+  "net": 5947640.0,
+  "detail": {
+   "incomeTax": 434400,
+   "residentTax": 453000
+  }
+ },
+ "JP (Tokyo, <40)|year1_noResidentTax|8000000": {
+  "incomeTax": 434400,
+  "social": 1164960,
+  "net": 6400640.0,
+  "detail": {
+   "incomeTax": 434400,
+   "residentTax": 0
+  }
+ },
+ "JP (Tokyo, <40)|nonresident|8000000": {
+  "incomeTax": 1633600,
+  "social": 1164960,
+  "net": 5201440.0
+ },
+ "JP (Tokyo, <40)|year2plus|15000000": {
+  "incomeTax": 3203800,
+  "social": 1556784,
+  "net": 10239416.0,
+  "detail": {
+   "incomeTax": 2095100,
+   "residentTax": 1108700
+  }
+ },
+ "JP (Tokyo, <40)|year1_noResidentTax|15000000": {
+  "incomeTax": 2095100,
+  "social": 1556784,
+  "net": 11348116.0,
+  "detail": {
+   "incomeTax": 2095100,
+   "residentTax": 0
+  }
+ },
+ "JP (Tokyo, <40)|nonresident|15000000": {
+  "incomeTax": 3063000,
+  "social": 1556784,
+  "net": 10380216.0
+ },
+ "KR|progressive|50000000": {
+  "incomeTax": 3067565.9,
+  "social": 4858691.5,
+  "net": 42073742.6
+ },
+ "KR|flat19|50000000": {
+  "incomeTax": 10450000.0,
+  "social": 4858691.5,
+  "net": 34691308.5
+ },
+ "KR|progressive|100000000": {
+  "incomeTax": 12937500.49,
+  "social": 8660983.0,
+  "net": 78401516.51
+ },
+ "KR|flat19|100000000": {
+  "incomeTax": 20900000.0,
+  "social": 8660983.0,
+  "net": 70439017.0
+ },
+ "KR|progressive|200000000": {
+  "incomeTax": 48120843.01,
+  "social": 13628366.0,
+  "net": 138250790.99
+ },
+ "KR|flat19|200000000": {
+  "incomeTax": 41800000.0,
+  "social": 13628366.0,
+  "net": 144571634.0
+ },
+ "CA-ON|single|25000": {
+  "incomeTax": 1037.54,
+  "social": 1686.75,
+  "net": 22275.72,
+  "detail": {
+   "federal": 750.44,
+   "ontario": 287.1,
+   "otr": 78.63,
+   "lift": 875.0
+  }
+ },
+ "CA-ON|single|40000": {
+  "incomeTax": 3844.46,
+  "social": 2823.75,
+  "net": 33331.79,
+  "detail": {
+   "federal": 2691.26,
+   "ontario": 1153.21,
+   "otr": 0,
+   "lift": 518.25
+  }
+ },
+ "CA-ON|single|60000": {
+  "incomeTax": 8320.5,
+  "social": 4339.75,
+  "net": 47339.75,
+  "detail": {
+   "federal": 5338.3,
+   "ontario": 2982.2,
+   "otr": 0,
+   "lift": 0
+  }
+ },
+ "CA-ON|single|100000": {
+  "incomeTax": 20024.35,
+  "social": 5769.52,
+  "net": 74206.13,
+  "detail": {
+   "federal": 13301.6,
+   "ontario": 6722.75,
+   "otr": 0,
+   "lift": 0
+  }
+ },
+ "CA-ON|single|200000": {
+  "incomeTax": 62952.21,
+  "social": 5769.52,
+  "net": 131278.27,
+  "detail": {
+   "federal": 38876.54,
+   "ontario": 24075.67,
+   "otr": 0,
+   "lift": 0
+  }
+ },
+ "CA-BC|single|30000": {
+  "incomeTax": 1679.87,
+  "social": 2065.75,
+  "net": 26254.38,
+  "detail": {
+   "federal": 1397.38,
+   "bc": 282.5,
+   "bcReduction": 541.73
+  }
+ },
+ "CA-BC|single|60000": {
+  "incomeTax": 7905.68,
+  "social": 4339.75,
+  "net": 47754.57,
+  "detail": {
+   "federal": 5338.3,
+   "bc": 2567.39,
+   "bcReduction": 0
+  }
+ },
+ "CA-BC|single|100000": {
+  "incomeTax": 18857.12,
+  "social": 5769.52,
+  "net": 75373.36,
+  "detail": {
+   "federal": 13301.6,
+   "bc": 5555.52,
+   "bcReduction": 0
+  }
+ },
+ "CA-BC|single|200000": {
+  "incomeTax": 57956.16,
+  "social": 5769.52,
+  "net": 136274.32,
+  "detail": {
+   "federal": 38876.54,
+   "bc": 19079.61,
+   "bcReduction": 0
+  }
+ },
+ "CA-AB|single|30000": {
+  "incomeTax": 1810.6,
+  "social": 2065.75,
+  "net": 26123.65,
+  "detail": {
+   "federal": 1397.38,
+   "ab": 413.22
+  }
+ },
+ "CA-AB|single|60000": {
+  "incomeTax": 7969.6,
+  "social": 4339.75,
+  "net": 47690.65,
+  "detail": {
+   "federal": 5338.3,
+   "ab": 2631.3
+  }
+ },
+ "CA-AB|single|100000": {
+  "incomeTax": 19771.98,
+  "social": 5769.52,
+  "net": 74458.5,
+  "detail": {
+   "federal": 13301.6,
+   "ab": 6470.38
+  }
+ },
+ "CA-AB|single|200000": {
+  "incomeTax": 56376.82,
+  "social": 5769.52,
+  "net": 137853.66,
+  "detail": {
+   "federal": 38876.54,
+   "ab": 17500.28
+  }
+ },
+ "CA-QC|single|30000": {
+  "incomeTax": 2459.08,
+  "social": 2188.5,
+  "net": 25352.42,
+  "detail": {
+   "federal": 1152.46,
+   "quebec": 1306.62
+  }
+ },
+ "CA-QC|single|60000": {
+  "incomeTax": 10073.97,
+  "social": 4597.5,
+  "net": 45328.53,
+  "detail": {
+   "federal": 4427.35,
+   "quebec": 5646.62
+  }
+ },
+ "CA-QC|single|100000": {
+  "incomeTax": 24193.9,
+  "social": 6221.0,
+  "net": 69585.1,
+  "detail": {
+   "federal": 11054.06,
+   "quebec": 13139.84
+  }
+ },
+ "CA-QC|single|200000": {
+  "incomeTax": 70125.23,
+  "social": 6233.9,
+  "net": 123640.87,
+  "detail": {
+   "federal": 32407.63,
+   "quebec": 37717.6
+  }
+ },
+ "HK|single_MPF|360000": {
+  "incomeTax": 15580.0,
+  "social": 18000.0,
+  "net": 326420.0
+ },
+ "HK|single_MPFexempt|360000": {
+  "incomeTax": 18550.0,
+  "social": 0,
+  "net": 341450.0
+ },
+ "HK|married2kids_MPF|360000": {
+  "incomeTax": 0,
+  "social": 18000.0,
+  "net": 342000.0
+ },
+ "HK|single_MPF|720000": {
+  "incomeTax": 76690.0,
+  "social": 18000.0,
+  "net": 625310.0
+ },
+ "HK|single_MPFexempt|720000": {
+  "incomeTax": 79750.0,
+  "social": 0,
+  "net": 640250.0
+ },
+ "HK|married2kids_MPF|720000": {
+  "incomeTax": 7200.0,
+  "social": 18000.0,
+  "net": 694800.0
+ },
+ "HK|single_MPF|1500000": {
+  "incomeTax": 209290.0,
+  "social": 18000.0,
+  "net": 1272710.0
+ },
+ "HK|single_MPFexempt|1500000": {
+  "incomeTax": 212350.0,
+  "social": 0,
+  "net": 1287650.0
+ },
+ "HK|married2kids_MPF|1500000": {
+  "incomeTax": 137040.0,
+  "social": 18000.0,
+  "net": 1344960.0
+ },
+ "CN-SH|local_hf7|240000": {
+  "incomeTax": 11280.0,
+  "social": 42000.0,
+  "net": 186720.0
+ },
+ "CN-SH|expat_allow120k|240000": {
+  "incomeTax": 540.0,
+  "social": 42000.0,
+  "net": 197460.0
+ },
+ "CN-SH|local_hf7|480000": {
+  "incomeTax": 53383.84,
+  "social": 78784.65,
+  "net": 347831.51
+ },
+ "CN-SH|expat_allow120k|480000": {
+  "incomeTax": 27323.07,
+  "social": 78784.65,
+  "net": 373892.28
+ },
+ "CN-SH|local_hf7|960000": {
+  "incomeTax": 201505.37,
+  "social": 78784.65,
+  "net": 679709.98
+ },
+ "CN-SH|expat_allow120k|960000": {
+  "incomeTax": 159505.37,
+  "social": 78784.65,
+  "net": 721709.98
+ },
+ "TW|resident_single|1200000": {
+  "incomeTax": 45620.0,
+  "social": 32352.0,
+  "net": 1122028.0
+ },
+ "TW|resident_married2kids|1200000": {
+  "incomeTax": 9800.0,
+  "social": 32352.0,
+  "net": 1157848.0
+ },
+ "TW|nonresident|1200000": {
+  "incomeTax": 216000.0,
+  "social": 32352.0,
+  "net": 951648.0
+ },
+ "TW|resident_single|2400000": {
+  "incomeTax": 234100.0,
+  "social": 50964.0,
+  "net": 2114936.0
+ },
+ "TW|resident_married2kids|2400000": {
+  "incomeTax": 126100.0,
+  "social": 50964.0,
+  "net": 2222936.0
+ },
+ "TW|nonresident|2400000": {
+  "incomeTax": 432000.0,
+  "social": 50964.0,
+  "net": 1917036.0
+ },
+ "TW|resident_single|6000000": {
+  "incomeTax": 1265300.0,
+  "social": 54593.34,
+  "net": 4680106.66
+ },
+ "TW|resident_married2kids|6000000": {
+  "incomeTax": 1068700.0,
+  "social": 54593.34,
+  "net": 4876706.66
+ },
+ "TW|nonresident|6000000": {
+  "incomeTax": 1080000.0,
+  "social": 54593.34,
+  "net": 4865406.66
+ },
+ "TW|resident_single_goldcard|2400000": {
+  "incomeTax": 234100.0,
+  "social": 50964.0,
+  "net": 2114936.0
+ },
+ "TW|resident_single_goldcard|6000000": {
+  "incomeTax": 814750.0,
+  "social": 54593.34,
+  "net": 5130656.66
+ },
+ "Gulf|AE_expat|240000": {
+  "incomeTax": 0,
+  "social": 0,
+  "net": 240000
+ },
+ "Gulf|AE_national|240000": {
+  "incomeTax": 0,
+  "social": 26400.0,
+  "net": 213600.0
+ },
+ "Gulf|QA_national|240000": {
+  "incomeTax": 0,
+  "social": 16800.0,
+  "net": 223200.0
+ },
+ "Gulf|SA_national_legacy|240000": {
+  "incomeTax": 0,
+  "social": 23400.0,
+  "net": 216600.0
+ },
+ "Gulf|SA_national_new_2026|240000": {
+  "incomeTax": 0,
+  "social": 25200.0,
+  "net": 214800.0
+ },
+ "Gulf|BH_expat|240000": {
+  "incomeTax": 0,
+  "social": 480.0,
+  "net": 239520.0
+ },
+ "Gulf|BH_national|240000": {
+  "incomeTax": 0,
+  "social": 3840.0,
+  "net": 236160.0
+ },
+ "Gulf|OM_national|240000": {
+  "incomeTax": 0,
+  "social": 2880.0,
+  "net": 237120.0
+ },
+ "Gulf|AE_expat|600000": {
+  "incomeTax": 0,
+  "social": 0,
+  "net": 600000
+ },
+ "Gulf|AE_national|600000": {
+  "incomeTax": 0,
+  "social": 66000.0,
+  "net": 534000.0
+ },
+ "Gulf|QA_national|600000": {
+  "incomeTax": 0,
+  "social": 42000.0,
+  "net": 558000.0
+ },
+ "Gulf|SA_national_legacy|600000": {
+  "incomeTax": 0,
+  "social": 52650.0,
+  "net": 547350.0
+ },
+ "Gulf|SA_national_new_2026|600000": {
+  "incomeTax": 0,
+  "social": 56700.0,
+  "net": 543300.0
+ },
+ "Gulf|BH_expat|600000": {
+  "incomeTax": 0,
+  "social": 480.0,
+  "net": 599520.0
+ },
+ "Gulf|BH_national|600000": {
+  "incomeTax": 0,
+  "social": 3840.0,
+  "net": 596160.0
+ },
+ "Gulf|OM_national|600000": {
+  "incomeTax": 0,
+  "social": 2880.0,
+  "net": 597120.0
+ },
+ "Gulf|KW_national|12000": {
+  "incomeTax": 0,
+  "social": 1260.0,
+  "net": 10740.0
+ },
+ "Gulf|KW_national|36000": {
+  "incomeTax": 0,
+  "social": 3090.0,
+  "net": 32910.0
+ },
+ "US-TX NRA|H1B_NRA|80000": {
+  "incomeTax": 12312.0,
+  "social": 6120.0,
+  "net": 61568.0
+ },
+ "US-TX NRA|F1_NRA_ficaExempt|80000": {
+  "incomeTax": 12312.0,
+  "social": 0,
+  "net": 67688.0
+ },
+ "US-TX NRA|H1B_NRA|180000": {
+  "incomeTax": 35798.0,
+  "social": 13770.0,
+  "net": 130432.0
+ },
+ "US-TX NRA|F1_NRA_ficaExempt|180000": {
+  "incomeTax": 35798.0,
+  "social": 0,
+  "net": 144202.0
+ },
+ "US-states (v11)|AR_S|80000": {
+  "incomeTax": 11242.45,
+  "social": 6120.0,
+  "net": 62637.55,
+  "detail": {
+   "state": 2472.45
+  }
+ },
+ "US-states (v11)|AR_S|180000": {
+  "incomeTax": 38106.45,
+  "social": 13770.0,
+  "net": 128123.55,
+  "detail": {
+   "state": 6172.45
+  }
+ },
+ "US-states (v11)|AR_MFJ|80000": {
+  "incomeTax": 7592.06,
+  "social": 6120.0,
+  "net": 66287.94,
+  "detail": {
+   "state": 2352.06
+  }
+ },
+ "US-states (v11)|AR_MFJ|180000": {
+  "incomeTax": 27992.06,
+  "social": 13770.0,
+  "net": 138237.94,
+  "detail": {
+   "state": 6052.06
+  }
+ },
+ "US-states (v11)|AZ_S|80000": {
+  "incomeTax": 10367.5,
+  "social": 6120.0,
+  "net": 63512.5,
+  "detail": {
+   "state": 1597.5
+  }
+ },
+ "US-states (v11)|AZ_S|180000": {
+  "incomeTax": 36031.5,
+  "social": 13770.0,
+  "net": 130198.5,
+  "detail": {
+   "state": 4097.5
+  }
+ },
+ "US-states (v11)|AZ_MFJ|80000": {
+  "incomeTax": 6435.0,
+  "social": 6120.0,
+  "net": 67445.0,
+  "detail": {
+   "state": 1195.0
+  }
+ },
+ "US-states (v11)|AZ_MFJ|180000": {
+  "incomeTax": 25635.0,
+  "social": 13770.0,
+  "net": 140595.0,
+  "detail": {
+   "state": 3695.0
+  }
+ },
+ "US-states (v11)|CO_S|80000": {
+  "incomeTax": 11581.6,
+  "social": 6120.0,
+  "net": 62298.4,
+  "detail": {
+   "state": 2811.6
+  }
+ },
+ "US-states (v11)|CO_S|180000": {
+  "incomeTax": 39145.6,
+  "social": 13770.0,
+  "net": 127084.4,
+  "detail": {
+   "state": 7211.6
+  }
+ },
+ "US-states (v11)|CO_MFJ|80000": {
+  "incomeTax": 7343.2,
+  "social": 6120.0,
+  "net": 66536.8,
+  "detail": {
+   "state": 2103.2
+  }
+ },
+ "US-states (v11)|CO_MFJ|180000": {
+  "incomeTax": 28443.2,
+  "social": 13770.0,
+  "net": 137786.8,
+  "detail": {
+   "state": 6503.2
+  }
+ },
+ "US-states (v11)|DC_S|80000": {
+  "incomeTax": 12601.5,
+  "social": 6120.0,
+  "net": 61278.5,
+  "detail": {
+   "state": 3831.5
+  }
+ },
+ "US-states (v11)|DC_S|180000": {
+  "incomeTax": 44265.5,
+  "social": 13770.0,
+  "net": 121964.5,
+  "detail": {
+   "state": 12331.5
+  }
+ },
+ "US-states (v11)|DC_MFJ|80000": {
+  "incomeTax": 7947.0,
+  "social": 6120.0,
+  "net": 65933.0,
+  "detail": {
+   "state": 2707.0
+  }
+ },
+ "US-states (v11)|DC_MFJ|180000": {
+  "incomeTax": 32903.0,
+  "social": 13770.0,
+  "net": 133327.0,
+  "detail": {
+   "state": 10963.0
+  }
+ },
+ "US-states (v11)|DE_S|80000": {
+  "incomeTax": 12709.0,
+  "social": 6120.0,
+  "net": 61171.0,
+  "detail": {
+   "state": 3939.0
+  }
+ },
+ "US-states (v11)|DE_S|180000": {
+  "incomeTax": 42473.0,
+  "social": 13770.0,
+  "net": 123757.0,
+  "detail": {
+   "state": 10539.0
+  }
+ },
+ "US-states (v11)|DE_MFJ|80000": {
+  "incomeTax": 8854.5,
+  "social": 6120.0,
+  "net": 65025.5,
+  "detail": {
+   "state": 3614.5
+  }
+ },
+ "US-states (v11)|DE_MFJ|180000": {
+  "incomeTax": 32154.5,
+  "social": 13770.0,
+  "net": 134075.5,
+  "detail": {
+   "state": 10214.5
+  }
+ },
+ "US-states (v11)|GA_S|80000": {
+  "incomeTax": 12013.5,
+  "social": 6120.0,
+  "net": 61866.5,
+  "detail": {
+   "state": 3243.5
+  }
+ },
+ "US-states (v11)|GA_S|180000": {
+  "incomeTax": 40167.5,
+  "social": 13770.0,
+  "net": 126062.5,
+  "detail": {
+   "state": 8233.5
+  }
+ },
+ "US-states (v11)|GA_MFJ|80000": {
+  "incomeTax": 7735.0,
+  "social": 6120.0,
+  "net": 66145.0,
+  "detail": {
+   "state": 2495.0
+  }
+ },
+ "US-states (v11)|GA_MFJ|180000": {
+  "incomeTax": 29425.0,
+  "social": 13770.0,
+  "net": 136805.0,
+  "detail": {
+   "state": 7485.0
+  }
+ },
+ "US-states (v11)|HI_S|80000": {
+  "incomeTax": 13046.26,
+  "social": 6120.0,
+  "net": 60833.74,
+  "detail": {
+   "state": 4276.26
+  }
+ },
+ "US-states (v11)|HI_S|180000": {
+  "incomeTax": 43947.82,
+  "social": 13770.0,
+  "net": 122282.18,
+  "detail": {
+   "state": 12013.82
+  }
+ },
+ "US-states (v11)|HI_MFJ|80000": {
+  "incomeTax": 7890.82,
+  "social": 6120.0,
+  "net": 65989.18,
+  "detail": {
+   "state": 2650.82
+  }
+ },
+ "US-states (v11)|HI_MFJ|180000": {
+  "incomeTax": 32012.51,
+  "social": 13770.0,
+  "net": 134217.49,
+  "detail": {
+   "state": 10072.51
+  }
+ },
+ "US-states (v11)|IA_S|80000": {
+  "incomeTax": 11158.2,
+  "social": 6120.0,
+  "net": 62721.8,
+  "detail": {
+   "state": 2388.2
+  }
+ },
+ "US-states (v11)|IA_S|180000": {
+  "incomeTax": 38122.2,
+  "social": 13770.0,
+  "net": 128107.8,
+  "detail": {
+   "state": 6188.2
+  }
+ },
+ "US-states (v11)|IA_MFJ|80000": {
+  "incomeTax": 6976.4,
+  "social": 6120.0,
+  "net": 66903.6,
+  "detail": {
+   "state": 1736.4
+  }
+ },
+ "US-states (v11)|IA_MFJ|180000": {
+  "incomeTax": 27476.4,
+  "social": 13770.0,
+  "net": 138753.6,
+  "detail": {
+   "state": 5536.4
+  }
+ },
+ "US-states (v11)|ID_S|80000": {
+  "incomeTax": 11901.72,
+  "social": 6120.0,
+  "net": 61978.28,
+  "detail": {
+   "state": 3131.72
+  }
+ },
+ "US-states (v11)|ID_S|180000": {
+  "incomeTax": 40365.72,
+  "social": 13770.0,
+  "net": 125864.28,
+  "detail": {
+   "state": 8431.72
+  }
+ },
+ "US-states (v11)|ID_MFJ|80000": {
+  "incomeTax": 7263.43,
+  "social": 6120.0,
+  "net": 66616.57,
+  "detail": {
+   "state": 2023.43
+  }
+ },
+ "US-states (v11)|ID_MFJ|180000": {
+  "incomeTax": 29263.43,
+  "social": 13770.0,
+  "net": 136966.57,
+  "detail": {
+   "state": 7323.43
+  }
+ },
+ "US-states (v11)|IN_S|80000": {
+  "incomeTax": 11100.5,
+  "social": 6120.0,
+  "net": 62779.5,
+  "detail": {
+   "state": 2330.5
+  }
+ },
+ "US-states (v11)|IN_S|180000": {
+  "incomeTax": 37214.5,
+  "social": 13770.0,
+  "net": 129015.5,
+  "detail": {
+   "state": 5280.5
+  }
+ },
+ "US-states (v11)|IN_MFJ|80000": {
+  "incomeTax": 7541.0,
+  "social": 6120.0,
+  "net": 66339.0,
+  "detail": {
+   "state": 2301.0
+  }
+ },
+ "US-states (v11)|IN_MFJ|180000": {
+  "incomeTax": 27191.0,
+  "social": 13770.0,
+  "net": 139039.0,
+  "detail": {
+   "state": 5251.0
+  }
+ },
+ "US-states (v11)|KS_S|80000": {
+  "incomeTax": 12434.31,
+  "social": 6120.0,
+  "net": 61445.69,
+  "detail": {
+   "state": 3664.31
+  }
+ },
+ "US-states (v11)|KS_S|180000": {
+  "incomeTax": 41178.31,
+  "social": 13770.0,
+  "net": 125051.69,
+  "detail": {
+   "state": 9244.31
+  }
+ },
+ "US-states (v11)|KS_MFJ|80000": {
+  "incomeTax": 8047.15,
+  "social": 6120.0,
+  "net": 65832.85,
+  "detail": {
+   "state": 2807.15
+  }
+ },
+ "US-states (v11)|KS_MFJ|180000": {
+  "incomeTax": 30327.15,
+  "social": 13770.0,
+  "net": 135902.85,
+  "detail": {
+   "state": 8387.15
+  }
+ },
+ "US-states (v11)|KY_S|80000": {
+  "incomeTax": 11452.4,
+  "social": 6120.0,
+  "net": 62427.6,
+  "detail": {
+   "state": 2682.4
+  }
+ },
+ "US-states (v11)|KY_S|180000": {
+  "incomeTax": 38116.4,
+  "social": 13770.0,
+  "net": 128113.6,
+  "detail": {
+   "state": 6182.4
+  }
+ },
+ "US-states (v11)|KY_MFJ|80000": {
+  "incomeTax": 7804.8,
+  "social": 6120.0,
+  "net": 66075.2,
+  "detail": {
+   "state": 2564.8
+  }
+ },
+ "US-states (v11)|KY_MFJ|180000": {
+  "incomeTax": 28004.8,
+  "social": 13770.0,
+  "net": 138225.2,
+  "detail": {
+   "state": 6064.8
+  }
+ },
+ "US-states (v11)|LA_S|80000": {
+  "incomeTax": 10783.75,
+  "social": 6120.0,
+  "net": 63096.25,
+  "detail": {
+   "state": 2013.75
+  }
+ },
+ "US-states (v11)|LA_S|180000": {
+  "incomeTax": 36947.75,
+  "social": 13770.0,
+  "net": 129282.25,
+  "detail": {
+   "state": 5013.75
+  }
+ },
+ "US-states (v11)|LA_MFJ|80000": {
+  "incomeTax": 6867.5,
+  "social": 6120.0,
+  "net": 67012.5,
+  "detail": {
+   "state": 1627.5
+  }
+ },
+ "US-states (v11)|LA_MFJ|180000": {
+  "incomeTax": 26567.5,
+  "social": 13770.0,
+  "net": 139662.5,
+  "detail": {
+   "state": 4627.5
+  }
+ },
+ "US-states (v11)|MA_S|80000": {
+  "incomeTax": 12550.0,
+  "social": 6120.0,
+  "net": 61330.0,
+  "detail": {
+   "state": 3780.0
+  }
+ },
+ "US-states (v11)|MA_S|180000": {
+  "incomeTax": 40714.0,
+  "social": 13770.0,
+  "net": 125516.0,
+  "detail": {
+   "state": 8780.0
+  }
+ },
+ "US-states (v11)|MA_MFJ|80000": {
+  "incomeTax": 8800.0,
+  "social": 6120.0,
+  "net": 65080.0,
+  "detail": {
+   "state": 3560.0
+  }
+ },
+ "US-states (v11)|MA_MFJ|180000": {
+  "incomeTax": 30500.0,
+  "social": 13770.0,
+  "net": 135730.0,
+  "detail": {
+   "state": 8560.0
+  }
+ },
+ "US-states (v11)|MD_S|80000": {
+  "incomeTax": 12206.38,
+  "social": 6120.0,
+  "net": 61673.62,
+  "detail": {
+   "state": 3436.38
+  }
+ },
+ "US-states (v11)|MD_S|180000": {
+  "incomeTax": 40483.75,
+  "social": 13770.0,
+  "net": 125746.25,
+  "detail": {
+   "state": 8549.75
+  }
+ },
+ "US-states (v11)|MD_MFJ|80000": {
+  "incomeTax": 8365.25,
+  "social": 6120.0,
+  "net": 65514.75,
+  "detail": {
+   "state": 3125.25
+  }
+ },
+ "US-states (v11)|MD_MFJ|180000": {
+  "incomeTax": 29857.5,
+  "social": 13770.0,
+  "net": 136372.5,
+  "detail": {
+   "state": 7917.5
+  }
+ },
+ "US-states (v11)|MI_S|80000": {
+  "incomeTax": 11919.25,
+  "social": 6120.0,
+  "net": 61960.75,
+  "detail": {
+   "state": 3149.25
+  }
+ },
+ "US-states (v11)|MI_S|180000": {
+  "incomeTax": 39333.25,
+  "social": 13770.0,
+  "net": 126896.75,
+  "detail": {
+   "state": 7399.25
+  }
+ },
+ "US-states (v11)|MI_MFJ|80000": {
+  "incomeTax": 8138.5,
+  "social": 6120.0,
+  "net": 65741.5,
+  "detail": {
+   "state": 2898.5
+  }
+ },
+ "US-states (v11)|MI_MFJ|180000": {
+  "incomeTax": 29088.5,
+  "social": 13770.0,
+  "net": 137141.5,
+  "detail": {
+   "state": 7148.5
+  }
+ },
+ "US-states (v11)|MO_S|80000": {
+  "incomeTax": 11592.67,
+  "social": 6120.0,
+  "net": 62287.33,
+  "detail": {
+   "state": 2822.67
+  }
+ },
+ "US-states (v11)|MO_S|180000": {
+  "incomeTax": 39456.67,
+  "social": 13770.0,
+  "net": 126773.33,
+  "detail": {
+   "state": 7522.67
+  }
+ },
+ "US-states (v11)|MO_MFJ|80000": {
+  "incomeTax": 7305.97,
+  "social": 6120.0,
+  "net": 66574.03,
+  "detail": {
+   "state": 2065.97
+  }
+ },
+ "US-states (v11)|MO_MFJ|180000": {
+  "incomeTax": 28705.97,
+  "social": 13770.0,
+  "net": 137524.03,
+  "detail": {
+   "state": 6765.97
+  }
+ },
+ "US-states (v11)|MS_S|80000": {
+  "incomeTax": 11238.0,
+  "social": 6120.0,
+  "net": 62642.0,
+  "detail": {
+   "state": 2468.0
+  }
+ },
+ "US-states (v11)|MS_S|180000": {
+  "incomeTax": 38402.0,
+  "social": 13770.0,
+  "net": 127828.0,
+  "detail": {
+   "state": 6468.0
+  }
+ },
+ "US-states (v11)|MS_MFJ|80000": {
+  "incomeTax": 7376.0,
+  "social": 6120.0,
+  "net": 66504.0,
+  "detail": {
+   "state": 2136.0
+  }
+ },
+ "US-states (v11)|MS_MFJ|180000": {
+  "incomeTax": 28076.0,
+  "social": 13770.0,
+  "net": 138154.0,
+  "detail": {
+   "state": 6136.0
+  }
+ },
+ "US-states (v11)|MT_S|80000": {
+  "incomeTax": 11929.1,
+  "social": 6120.0,
+  "net": 61950.9,
+  "detail": {
+   "state": 3159.1
+  }
+ },
+ "US-states (v11)|MT_S|180000": {
+  "incomeTax": 40743.1,
+  "social": 13770.0,
+  "net": 125486.9,
+  "detail": {
+   "state": 8809.1
+  }
+ },
+ "US-states (v11)|MT_MFJ|80000": {
+  "incomeTax": 7486.6,
+  "social": 6120.0,
+  "net": 66393.4,
+  "detail": {
+   "state": 2246.6
+  }
+ },
+ "US-states (v11)|MT_MFJ|180000": {
+  "incomeTax": 29388.2,
+  "social": 13770.0,
+  "net": 136841.8,
+  "detail": {
+   "state": 7448.2
+  }
+ },
+ "US-states (v11)|NC_S|80000": {
+  "incomeTax": 11453.27,
+  "social": 6120.0,
+  "net": 62426.73,
+  "detail": {
+   "state": 2683.27
+  }
+ },
+ "US-states (v11)|NC_S|180000": {
+  "incomeTax": 38607.28,
+  "social": 13770.0,
+  "net": 127622.73,
+  "detail": {
+   "state": 6673.27
+  }
+ },
+ "US-states (v11)|NC_MFJ|80000": {
+  "incomeTax": 7414.55,
+  "social": 6120.0,
+  "net": 66465.45,
+  "detail": {
+   "state": 2174.55
+  }
+ },
+ "US-states (v11)|NC_MFJ|180000": {
+  "incomeTax": 28104.55,
+  "social": 13770.0,
+  "net": 138125.45,
+  "detail": {
+   "state": 6164.55
+  }
+ },
+ "US-states (v11)|ND_S|80000": {
+  "incomeTax": 9049.34,
+  "social": 6120.0,
+  "net": 64830.66,
+  "detail": {
+   "state": 279.34
+  }
+ },
+ "US-states (v11)|ND_S|180000": {
+  "incomeTax": 34163.34,
+  "social": 13770.0,
+  "net": 132066.66,
+  "detail": {
+   "state": 2229.34
+  }
+ },
+ "US-states (v11)|ND_MFJ|80000": {
+  "incomeTax": 5240.0,
+  "social": 6120.0,
+  "net": 68640.0,
+  "detail": {
+   "state": 0.0
+  }
+ },
+ "US-states (v11)|ND_MFJ|180000": {
+  "incomeTax": 23207.5,
+  "social": 13770.0,
+  "net": 143022.5,
+  "detail": {
+   "state": 1267.5
+  }
+ },
+ "US-states (v11)|NE_S|80000": {
+  "incomeTax": 11530.46,
+  "social": 6120.0,
+  "net": 62349.54,
+  "detail": {
+   "state": 2760.46
+  }
+ },
+ "US-states (v11)|NE_S|180000": {
+  "incomeTax": 39244.46,
+  "social": 13770.0,
+  "net": 126985.54,
+  "detail": {
+   "state": 7310.46
+  }
+ },
+ "US-states (v11)|NE_MFJ|80000": {
+  "incomeTax": 7120.91,
+  "social": 6120.0,
+  "net": 66759.09,
+  "detail": {
+   "state": 1880.91
+  }
+ },
+ "US-states (v11)|NE_MFJ|180000": {
+  "incomeTax": 28370.91,
+  "social": 13770.0,
+  "net": 137859.09,
+  "detail": {
+   "state": 6430.91
+  }
+ },
+ "US-states (v11)|NJ_S|80000": {
+  "incomeTax": 11676.05,
+  "social": 6120.0,
+  "net": 62203.95,
+  "detail": {
+   "state": 2906.05
+  }
+ },
+ "US-states (v11)|NJ_S|180000": {
+  "incomeTax": 41210.05,
+  "social": 13770.0,
+  "net": 125019.95,
+  "detail": {
+   "state": 9276.05
+  }
+ },
+ "US-states (v11)|NJ_MFJ|80000": {
+  "incomeTax": 6815.0,
+  "social": 6120.0,
+  "net": 67065.0,
+  "detail": {
+   "state": 1575.0
+  }
+ },
+ "US-states (v11)|NJ_MFJ|180000": {
+  "incomeTax": 29236.1,
+  "social": 13770.0,
+  "net": 136993.9,
+  "detail": {
+   "state": 7296.1
+  }
+ },
+ "US-states (v11)|OK_S|80000": {
+  "incomeTax": 11824.5,
+  "social": 6120.0,
+  "net": 62055.5,
+  "detail": {
+   "state": 3054.5
+  }
+ },
+ "US-states (v11)|OK_S|180000": {
+  "incomeTax": 39488.5,
+  "social": 13770.0,
+  "net": 126741.5,
+  "detail": {
+   "state": 7554.5
+  }
+ },
+ "US-states (v11)|OK_MFJ|80000": {
+  "incomeTax": 7749.0,
+  "social": 6120.0,
+  "net": 66131.0,
+  "detail": {
+   "state": 2509.0
+  }
+ },
+ "US-states (v11)|OK_MFJ|180000": {
+  "incomeTax": 28949.0,
+  "social": 13770.0,
+  "net": 137281.0,
+  "detail": {
+   "state": 7009.0
+  }
+ },
+ "US-states (v11)|PA_S|80000": {
+  "incomeTax": 11226.0,
+  "social": 6120.0,
+  "net": 62654.0,
+  "detail": {
+   "state": 2456.0
+  }
+ },
+ "US-states (v11)|PA_S|180000": {
+  "incomeTax": 37460.0,
+  "social": 13770.0,
+  "net": 128770.0,
+  "detail": {
+   "state": 5526.0
+  }
+ },
+ "US-states (v11)|PA_MFJ|80000": {
+  "incomeTax": 7696.0,
+  "social": 6120.0,
+  "net": 66184.0,
+  "detail": {
+   "state": 2456.0
+  }
+ },
+ "US-states (v11)|PA_MFJ|180000": {
+  "incomeTax": 27466.0,
+  "social": 13770.0,
+  "net": 138764.0,
+  "detail": {
+   "state": 5526.0
+  }
+ },
+ "US-states (v11)|VA_S|80000": {
+  "incomeTax": 12555.9,
+  "social": 6120.0,
+  "net": 61324.1,
+  "detail": {
+   "state": 3785.9
+  }
+ },
+ "US-states (v11)|VA_S|180000": {
+  "incomeTax": 41469.9,
+  "social": 13770.0,
+  "net": 124760.1,
+  "detail": {
+   "state": 9535.9
+  }
+ },
+ "US-states (v11)|VA_MFJ|80000": {
+  "incomeTax": 8469.3,
+  "social": 6120.0,
+  "net": 65410.7,
+  "detail": {
+   "state": 3229.3
+  }
+ },
+ "US-states (v11)|VA_MFJ|180000": {
+  "incomeTax": 30919.3,
+  "social": 13770.0,
+  "net": 135310.7,
+  "detail": {
+   "state": 8979.3
+  }
+ },
+ "US-states (v11)|VT_S|80000": {
+  "incomeTax": 11589.8,
+  "social": 6120.0,
+  "net": 62290.2,
+  "detail": {
+   "state": 2819.8
+  }
+ },
+ "US-states (v11)|VT_S|180000": {
+  "incomeTax": 41827.3,
+  "social": 13770.0,
+  "net": 124402.7,
+  "detail": {
+   "state": 9893.3
+  }
+ },
+ "US-states (v11)|VT_MFJ|80000": {
+  "incomeTax": 7052.35,
+  "social": 6120.0,
+  "net": 66827.65,
+  "detail": {
+   "state": 1812.35
+  }
+ },
+ "US-states (v11)|VT_MFJ|180000": {
+  "incomeTax": 29429.35,
+  "social": 13770.0,
+  "net": 136800.65,
+  "detail": {
+   "state": 7489.35
+  }
+ },
+ "US-states (v11)|WV_S|80000": {
+  "incomeTax": 11544.9,
+  "social": 6120.0,
+  "net": 62335.1,
+  "detail": {
+   "state": 2774.9
+  }
+ },
+ "US-states (v11)|WV_S|180000": {
+  "incomeTax": 39288.9,
+  "social": 13770.0,
+  "net": 126941.1,
+  "detail": {
+   "state": 7354.9
+  }
+ },
+ "US-states (v11)|WV_MFJ|80000": {
+  "incomeTax": 7923.3,
+  "social": 6120.0,
+  "net": 65956.7,
+  "detail": {
+   "state": 2683.3
+  }
+ },
+ "US-states (v11)|WV_MFJ|180000": {
+  "incomeTax": 29203.3,
+  "social": 13770.0,
+  "net": 137026.7,
+  "detail": {
+   "state": 7263.3
+  }
+ },
+ "US-states (v11)|IL_S_gated|80000": "NOT_SUPPORTED",
+ "US-states (v11)|OH_S_gated|80000": "NOT_SUPPORTED",
+ "US-states (v11)|UT_S_gated|80000": "NOT_SUPPORTED"
+}

@@ -89,21 +89,46 @@
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "url": "https://tool.adjiebrotots.com/dcasimulator/",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Which asset is more worth it: a money market fund or an equity fund?",
+      "name": "Why is the average cost lower than the average price paid?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Run both through the free DCA Scenario Explorer at https://tool.adjiebrotots.com/dcasimulator/. Enter each asset (or its ticker/assumptions), invest the same amount on the same schedule, and compare the resulting value, average cost, and return so you can see which would have been more worth it under real or custom market data."
+        "text": "A fixed amount buys more units when the price is low, so the average cost per unit is the harmonic mean of the fill prices, which is never above their ordinary mean. Return on the money put in is then the last price divided by that average cost, minus one.\n\nIn the SPY example, 60 monthly fills of $520 averaged $512.90 a unit, but the average cost was $486.74, about 5% lower, mostly from buying more through the 2022 fall."
       }
     },
     {
       "@type": "Question",
-      "name": "How do I compare multiple dollar-cost averaging (DCA) strategies?",
+      "name": "Are dividends, fees and tax included?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The DCA Scenario Explorer at https://tool.adjiebrotots.com/dcasimulator/ lets you line up several DCA strategies across different securities, contribution amounts, and schedules and chart them side by side, the kind of backtesting comparison that usually needs paid investment software, here free and running locally in your browser."
+        "text": "Dividends are included, fees and tax are not. A ticker loaded from Yahoo Finance uses the adjusted close, which folds dividends and splits into the price as if reinvested. A ticker that falls back to Stooq is unadjusted, shows a warning in the loaded list, and leaves its dividends out.\n\nEvery top-up buys its whole amount, in fractions of a unit, with no brokerage cost. That flatters a weekly plan most, since it trades about four times as often as a monthly one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does the buy day matter compared with the start date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Very little. On $520 a month into SPY from 1 October 2021 ($48,884 on $31,200), moving the buy day from the 1st to the 10th or 20th changes the result by under $200, and filling at the close instead of the next open by $24. Perfect hindsight, buying each month's lowest close, adds only $1,321.\n\nThe Date Range and the Amount per top-up are what matter: starting a year earlier or later moved the result by about $12,000 to $13,000, and 10% more per top-up by about $4,900."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does the answer sometimes rank scenarios by ROI and sometimes by final value?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The comparison follows how much money went in. If every scenario put in the same amount, within 0.5%, the highest final value wins. If they differ by more, more money in is not a better plan, so the sentence ranks them by ROI instead.\n\nThis matters for momentum and technical styles. With Invest at End of Month (or Week) if target not reached switched off, a period with no signal is skipped and its money never goes in, so compare such a plan on ROI, not final value."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do CAGR (TWR) and CAGR (MWR) differ for the same plan?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TWR grades the asset and MWR grades your own money. TWR chains the daily returns with each top-up taken out, while MWR is the internal rate of return on the dates you actually paid in. A monthly plan holds little in year one and the most at the end, so MWR leans on the later years.\n\nFor SPY at $520 a month, TWR was 14.21% and MWR 18.06%: the 2022 fall hit only the first few thousand dollars, and most of the money was invested in the strong years after."
       }
     }
   ]
@@ -120,7 +145,7 @@
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="../shared.css?v=20261110">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
@@ -133,7 +158,6 @@
 <section class="header card">
   <div class="header-left">
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="m7 15 4-4 3 3 6-7"/> <path stroke="var(--accent2)" d="M16 7h4v4"/> </svg>DCA Scenario Explorer</h1>
-    <p>Compare Dollar Cost Averaging strategies across multiple securities with real market data or custom models.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
@@ -465,6 +489,38 @@
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
+  <!-- faq:start -->
+  <section class="faq-card card" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Why is the average cost lower than the average price paid?</h3>
+        <p>A fixed amount buys more units when the price is low, so the average cost per unit is the harmonic mean of the fill prices, which is never above their ordinary mean. Return on the money put in is then the last price divided by that average cost, minus one.</p>
+        <p>In the SPY example, 60 monthly fills of $520 averaged $512.90 a unit, but the average cost was $486.74, about 5% lower, mostly from buying more through the 2022 fall.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are dividends, fees and tax included?</h3>
+        <p>Dividends are included, fees and tax are not. A ticker loaded from Yahoo Finance uses the adjusted close, which folds dividends and splits into the price as if reinvested. A ticker that falls back to Stooq is unadjusted, shows a warning in the loaded list, and leaves its dividends out.</p>
+        <p>Every top-up buys its whole amount, in fractions of a unit, with no brokerage cost. That flatters a weekly plan most, since it trades about four times as often as a monthly one.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How much does the buy day matter compared with the start date?</h3>
+        <p>Very little. On $520 a month into SPY from 1 October 2021 ($48,884 on $31,200), moving the buy day from the 1st to the 10th or 20th changes the result by under $200, and filling at the close instead of the next open by $24. Perfect hindsight, buying each month's lowest close, adds only $1,321.</p>
+        <p>The Date Range and the Amount per top-up are what matter: starting a year earlier or later moved the result by about $12,000 to $13,000, and 10% more per top-up by about $4,900.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why does the answer sometimes rank scenarios by ROI and sometimes by final value?</h3>
+        <p>The comparison follows how much money went in. If every scenario put in the same amount, within 0.5%, the highest final value wins. If they differ by more, more money in is not a better plan, so the sentence ranks them by ROI instead.</p>
+        <p>This matters for momentum and technical styles. With Invest at End of Month (or Week) if target not reached switched off, a period with no signal is skipped and its money never goes in, so compare such a plan on ROI, not final value.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why do CAGR (TWR) and CAGR (MWR) differ for the same plan?</h3>
+        <p>TWR grades the asset and MWR grades your own money. TWR chains the daily returns with each top-up taken out, while MWR is the internal rate of return on the dates you actually paid in. A monthly plan holds little in year one and the most at the end, so MWR leans on the later years.</p>
+        <p>For SPY at $520 a month, TWR was 14.21% and MWR 18.06%: the 2022 fall hit only the first few thousand dollars, and most of the money was invested in the strong years after.</p>
+      </div>
+    </div>
+  </section>
+  <!-- faq:end -->
 
 </main>
 </section><!-- /layout -->
@@ -530,7 +586,7 @@
 
 <script src="../chart-kit.js"></script>
 <script src="chart-kit.js"></script>
-<script src="../shared.js"></script>
+<script src="../shared.js?v=20261110"></script>
 <script src="abbr.js"></script>
 <script src="ticker/names.js"></script>
 <script src="script.js"></script>

@@ -44,7 +44,8 @@
 //   A8. PEOPLE AND ASSISTANTS FIND THE SKILL. Each page's tool has its AI page
 //       (<tool>/ai/index.html), its skill zip and the same skill unzipped (SKILL.md first),
 //       and the tool page's own HTML points to the AI page in a hidden pointer people never
-//       see, whose data-ai is where the header's "Use in AI" button goes.
+//       see, whose data-ai is where the header's "Use in AI" button goes: on an Indonesian
+//       page (lang 'id'), the tool's Indonesian AI page (<tool>/ai/id/), which must exist.
 //       After a deploy, node _ref/agent-live-check.mjs checks the same on the live site.
 //   H.  THE LINK STEPS ASIDE. Once applied, the #load hash is gone from the address, and a
 //       reload keeps what the reader changed after it instead of applying the link again.
@@ -75,7 +76,11 @@ if (!pages.length) { console.error(`agent-check: no page in PAGES matches "${FIL
 const AGENT_MAX = 512 * 1024;           // shared.js: a longer fragment is refused whole
 const KEPT_FILE = join(ROOT, '_ref', 'agent-links.json');
 const KEPT = JSON.parse(readFileSync(KEPT_FILE, 'utf8'));
-const keptFor = P => KEPT.links.filter(k => k.page === P.url);
+// A kept link made at a tool's old address is checked where the tool lives now
+// (the old address forwards there, hash and all).
+const MOVED = { '/global-salary-calculator/': '/global-income-tax-calculator/' };
+const pageOf = k => MOVED[k.page] || k.page;
+const keptFor = P => KEPT.links.filter(k => pageOf(k) === P.url);
 
 const IDS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'H', 'N'];
 const tally = Object.fromEntries(IDS.map(id => [id, { pass: 0, fail: 0 }]));
@@ -390,7 +395,10 @@ for (const P of pages) {
   check('A8', `${P.page}: SKILL.md description is one double-quoted YAML string`, quoted, 'unquoted or multi-line description');
   const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
   const href = aiUrl(T);
-  check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="/${dir}"`), sec ? 'no <a href> or data-ai for ' + href : 'no agent section');
+  // An Indonesian page's header button goes to the Indonesian AI page (the links for the assistant stay English).
+  const button = '/' + dir + (P.lang === 'id' ? 'id/' : '');
+  check('A8', `${P.page}/index.html hidden pointer links to ${dir}`, sec.includes(`<a href="${href}">`) && sec.includes(`data-ai="${button}"`), sec ? 'no <a href> for ' + href + ' or data-ai="' + button + '"' : 'no agent section');
+  if (P.lang === 'id') check('A8', `${P.page}: ${dir}id/ has its Indonesian AI page`, existsSync(join(ROOT, dir, 'id', 'index.html')), 'run node _ref/agent-doc.mjs');
   check('A8', `${P.page}/index.html shows people no AI text`, /<div id="agentHelp"[^>]*\shidden[\s>]/.test(sec) && !/<details|agent-rules/.test(sec), sec ? 'the agent section is visible' : 'no agent section');
 }
 
@@ -658,7 +666,7 @@ try {
   for (const P of eng) check('A6', `${P.page} solved at least one kept model`, (solvedSeen.get(P.page) || 0) > 0, '');
 
   /* ── A1/A2: the files themselves ── */
-  const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === k.page)).map(k => `${k.page} "${k.name}"`);
+  const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === pageOf(k))).map(k => `${k.page} "${k.name}"`);
   check('A2', 'every kept link names a page in PAGES', orphans.length === 0, list(orphans));
   const listedUrls = [...llmsSec.matchAll(/^- .*?: (\S+\/ai\/) \(skill:/gm)].map(m => m[1]);
   const strays = listedUrls.filter(u => !TOOLS.some(T => aiUrl(T) === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'skill', 'SKILL.md')));
