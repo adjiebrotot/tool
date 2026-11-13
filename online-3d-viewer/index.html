@@ -52,7 +52,7 @@
   "applicationCategory": "DesignApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "dateModified": "2026-11-12",
+  "dateModified": "2026-11-13",
   "screenshot": "https://tool.adjiebrotots.com/og/online-3d-viewer.jpg",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
@@ -223,7 +223,54 @@
         <button class="btn-secondary btn-sm" id="measureClear" type="button" data-icon="trash">Clear</button>
       </div>
     </section>
-    <div class="stage-hint" id="stageHint">Drag to turn · Scroll to zoom · Right-drag to pan</div>
+    <section class="nav-pad" id="navPad" aria-label="Camera controls">
+      <button type="button" class="btn-secondary btn-sm nav-toggle" id="navToggle" aria-expanded="true" aria-controls="navBody" title="Hide the camera controls">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg><span class="nav-toggle-label">Camera</span>
+      </button>
+      <div class="nav-body" id="navBody">
+        <div class="nav-group">
+          <span class="nav-label">Turn <span class="tip-icon" data-tip="Turns the model about the screen's own axes, 15° a click; hold to keep turning. Keys: arrows (Shift: 90°), Q and E to roll.">?</span></span>
+          <div class="nav-grid">
+            <button type="button" class="nav-btn" data-nav="roll" data-dir="1" title="Roll anticlockwise (Q)" aria-label="Roll anticlockwise"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 4v4.6h4.6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="pitch" data-dir="1" title="Tip up (↑)" aria-label="Tip up"><svg class="r90" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.3 10.6A9 5.5 0 0 1 20.7 10.6" opacity=".4"/><path d="M20.2 14.3A9 5.5 0 0 1 3.3 13.4M2.3 17.7l1-4.3 3.8 2.2"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="roll" data-dir="-1" title="Roll clockwise (E)" aria-label="Roll clockwise"><svg class="flip" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 4v4.6h4.6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="yaw" data-dir="1" title="Turn left (←)" aria-label="Turn left"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.3 10.6A9 5.5 0 0 1 20.7 10.6" opacity=".4"/><path d="M20.2 14.3A9 5.5 0 0 1 3.3 13.4M2.3 17.7l1-4.3 3.8 2.2"/></svg></button>
+            <span class="nav-hub" aria-hidden="true"></span>
+            <button type="button" class="nav-btn" data-nav="yaw" data-dir="-1" title="Turn right (→)" aria-label="Turn right"><svg class="flip" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.3 10.6A9 5.5 0 0 1 20.7 10.6" opacity=".4"/><path d="M20.2 14.3A9 5.5 0 0 1 3.3 13.4M2.3 17.7l1-4.3 3.8 2.2"/></svg></button>
+            <span aria-hidden="true"></span>
+            <button type="button" class="nav-btn" data-nav="pitch" data-dir="-1" title="Tip down (↓)" aria-label="Tip down"><svg class="r270" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.3 10.6A9 5.5 0 0 1 20.7 10.6" opacity=".4"/><path d="M20.2 14.3A9 5.5 0 0 1 3.3 13.4M2.3 17.7l1-4.3 3.8 2.2"/></svg></button>
+            <span aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="nav-group">
+          <span class="nav-label">Pan &amp; zoom <span class="tip-icon" data-tip="Moves the model across the screen a tenth of the view a click, zooms 25% a click; hold to keep going. Keys: Ctrl + arrows to pan, + and − to zoom, F to fit.">?</span></span>
+          <div class="nav-grid">
+            <button type="button" class="nav-btn" data-nav="zoom" data-dir="-1" title="Zoom out (−)" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.9-4.9M7.5 10.5h6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="pany" data-dir="1" title="Pan up (Ctrl + ↑)" aria-label="Pan up"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="zoom" data-dir="1" title="Zoom in (+)" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.9-4.9M7.5 10.5h6M10.5 7.5v6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="panx" data-dir="-1" title="Pan left (Ctrl + ←)" aria-label="Pan left"><svg class="r270" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="fit" title="Fit the model in view, from where you are looking (F)" aria-label="Fit the model in view"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>
+            <button type="button" class="nav-btn" data-nav="panx" data-dir="1" title="Pan right (Ctrl + →)" aria-label="Pan right"><svg class="r90" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+            <span aria-hidden="true"></span>
+            <button type="button" class="nav-btn" data-nav="pany" data-dir="-1" title="Pan down (Ctrl + ↓)" aria-label="Pan down"><svg class="r180" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+            <span aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="nav-group nav-views">
+          <span class="nav-label">View from</span>
+          <div class="nav-view-grid" role="group" aria-label="Standard views">
+            <button type="button" class="nav-view" data-view="front" title="Front view (1)">Front</button>
+            <button type="button" class="nav-view" data-view="back" title="Back view (2)">Back</button>
+            <button type="button" class="nav-view" data-view="left" title="Left view (3)">Left</button>
+            <button type="button" class="nav-view" data-view="right" title="Right view (4)">Right</button>
+            <button type="button" class="nav-view" data-view="top" title="Top view (5)">Top</button>
+            <button type="button" class="nav-view" data-view="bottom" title="Bottom view (6)">Bottom</button>
+            <button type="button" class="nav-view nav-iso" data-view="iso" title="Three-quarter view, from the front right and above (0)">Iso</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="stage-hint" id="stageHint">Drag to turn · Scroll to zoom · Right-drag to pan · Arrow keys turn</div>
     <div class="stage-drop" id="stageDrop" aria-hidden="true"><span>Drop to open</span></div>
     <div class="busy" id="stageBusy" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span class="busy-msg" id="stageBusyMsg">Reading…</span></div>
   </div>
@@ -231,7 +278,7 @@
 
 <footer class="page-footer">
   <section class="page-footer-info">
-    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-12">12 November 2026</time></span></p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-13">13 November 2026</time></span></p>
     <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
