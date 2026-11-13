@@ -4263,7 +4263,7 @@
       inp.setAttribute('aria-label', TEXT[pageLang()]);
       ro.parentNode.insertBefore(inp, ro.nextSibling);
       function open(){
-        inp.value = String(parseFloat(range.value));
+        inp.value = NUM.show(String(parseFloat(range.value)));
         ro.style.display = 'none';
         inp.style.display = 'inline-block';
         inp.focus();
@@ -4272,7 +4272,7 @@
       var cancelled = false;
       function commit(){
         if(!cancelled){
-          var v = parseFloat(String(inp.value).replace(/,/g, '').replace(/−/g, '-'));
+          var v = parseFloat(NUM.typed(String(inp.value)).replace(/,/g, '').replace(/−/g, '-'));
           if(isFinite(v)){
             var mn = parseFloat(range.min), mx = parseFloat(range.max), st = parseFloat(range.step) || 1;
             if(!isFinite(mn)) mn = 0;

@@ -517,6 +517,13 @@ let plan = null; // the shared money and the exchange-rate paths (computePlan)
 let modes = { mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple' };
 
 /* ── UTILITIES ── */
+/* Figures are written in the page's own format: 1,234.5 on the English page, 1.234,5 on the
+   Indonesian one (SharedNum, shared-id.js). The page's state, a file, a link and the CSV stay
+   English: loc() words a canonical figure for the reader, typedNum() turns what a reader typed
+   back into the canonical form, ungroup() drops the thousands separators a field shows. */
+const loc = x => SharedNum.show(String(x));
+const typedNum = x => SharedNum.typed(String(x ?? ''));
+const ungroup = x => SharedNum.id ? String(x).replace(/\./g, '') : String(x).replace(/,/g, '');
 function parseNum(val){
   if(typeof val==='number') return Number.isFinite(val) ? val : 0;
   const cleaned = String(val ?? '').replace(/,/g,'').replace(/[^\d.-]/g,'').trim();
@@ -533,13 +540,13 @@ function parseIntSafe(val, fb){ const n=parseInt(String(val).replace(/,/g,'')); 
 function addCommas(n){
   const num = Number(n) || 0;
   const isInt = Math.abs(num % 1) < 1e-9;
-  return num.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:isInt ? 0 : 2});
+  return loc(num.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:isInt ? 0 : 2}));
 }
 
 function fmtInputVal(val, type){
   const n = parseNum(val);
   if(type==='currency') return addCommas(n);
-  if(type==='percent')  return n.toFixed(2);
+  if(type==='percent')  return loc(n.toFixed(2));
   if(type==='integer')  return String(Math.round(n));
   return String(val ?? '');
 }
@@ -551,9 +558,10 @@ function inputText(p, val){ return isAutoZero(p, val) ? '' : fmtInputVal(val, p.
 function fmtCurrency(v, sym){
   sym = sym || '$';
   const n = Number(v||0), abs = Math.abs(n), sign = n<0 ? '−' : '';
-  if(abs>=1e9) return sign+sym+(abs/1e9).toFixed(2)+'b';
-  if(abs>=1e6) return sign+sym+(abs/1e6).toFixed(2)+'m';
-  if(abs>=1000) return sign+sym+(abs/1000).toFixed(0)+'k';
+  const mag = lang === 'id' ? {b:' M', m:' jt', k:' rb'} : {b:'b', m:'m', k:'k'};
+  if(abs>=1e9) return sign+sym+loc((abs/1e9).toFixed(2))+mag.b;
+  if(abs>=1e6) return sign+sym+loc((abs/1e6).toFixed(2))+mag.m;
+  if(abs>=1000) return sign+sym+loc((abs/1000).toFixed(0))+mag.k;
   return sign+sym+Math.round(abs);
 }
 
@@ -1255,8 +1263,8 @@ function periodCellHTML(sc, si, k){
   const floating = p.type === 'floating';
   const beyond = from > term;
   const ratesHtml = floating
-    ? `<input class="mini-input rp-min" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rateMin)||0}"/><span class="rp-dash">–</span><input class="mini-input rp-max" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rateMax)||0}"/><span class="mini-unit">${T('uPctPa')}</span>`
-    : `<input class="mini-input rp-rate" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(p.rate)||0}"/><span class="mini-unit">${T('uPctPa')}</span>`;
+    ? `<input class="mini-input rp-min" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${loc(Number(p.rateMin)||0)}"/><span class="rp-dash">–</span><input class="mini-input rp-max" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${loc(Number(p.rateMax)||0)}"/><span class="mini-unit">${T('uPctPa')}</span>`
+    : `<input class="mini-input rp-rate" data-si="${si}" data-idx="${k}" type="text" inputmode="decimal" value="${loc(Number(p.rate)||0)}"/><span class="mini-unit">${T('uPctPa')}</span>`;
   return `<td class="scen-td detail-td">
     <div class="dcell${beyond?' dcell-beyond':''}">
       <div class="dcell-line">
@@ -1285,9 +1293,9 @@ function costCellHTML(sc, si, listKey, kind, k){
     ? [['fixed', sym], ['pct', pctLabel]]
     : [['yearly', sym+' '+T('optPerYear')], ['monthly', sym+' '+T('optPerMonth')], ['weekly', sym+' '+T('optPerWeek')], ['pct', pctLabel]];
   const optsHtml = basisOpts.map(([v,l])=>`<option value="${v}"${it.basis===v?' selected':''}>${escHtml(l)}</option>`).join('');
-  const amtVal = isPct ? String(Number(it.amount)||0) : addCommas(Number(it.amount)||0);
+  const amtVal = isPct ? loc(Number(it.amount)||0) : addCommas(Number(it.amount)||0);
   const inflHtml = (kind==='ongoing' && !isPct)
-    ? `<div class="dcell-line"><span class="mini-unit">${T('lblInfl')}</span><input class="mini-input ci-infl" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="decimal" value="${Number(it.inflation)||0}"/><span class="mini-unit">${T('uPctPa')}</span></div>`
+    ? `<div class="dcell-line"><span class="mini-unit">${T('lblInfl')}</span><input class="mini-input ci-infl" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="decimal" value="${loc(Number(it.inflation)||0)}"/><span class="mini-unit">${T('uPctPa')}</span></div>`
     : '';
   return `<td class="scen-td detail-td">
     <div class="dcell">
@@ -1351,9 +1359,9 @@ function fmtDay(iso){
 // A rate with the digits that matter: 10,833.45 · 1.0832 · 0.000061.
 function fmtRate(r){
   if(!(r > 0)) return '';
-  if(r >= 1000) return r.toLocaleString('en-US', {maximumFractionDigits:2});
-  if(r >= 1) return String(Number(r.toFixed(4)));
-  return String(Number(r.toPrecision(4)));
+  if(r >= 1000) return loc(r.toLocaleString('en-US', {maximumFractionDigits:2}));
+  if(r >= 1) return loc(Number(r.toFixed(4)));
+  return loc(Number(r.toPrecision(4)));
 }
 function fxSourceNote(sc){
   if(Number(sc.fxRate) > 0) return T('fxCustom');
@@ -1380,7 +1388,7 @@ function fxCellHTML(sc, i){
 /* The expected change, one field per currency other than the base (every
    column in a currency shares it), each with a note saying in words what the
    figure does to the rate, and where the rate ends up. */
-const fmtTrendPct = v => String(Number(Math.abs(v).toFixed(2)));
+const fmtTrendPct = v => loc(Number(Math.abs(v).toFixed(2)));
 function trendNote(cur, a){
   const base = fxs.base;
   return a < 0 ? T('trendUp')(base, cur, fmtTrendPct(a))
@@ -2366,7 +2374,7 @@ function wireEvents(){
     el.addEventListener('focus', e=>{
       const p = PARAM_MAP[e.target.dataset.key];
       const val = scenarios[+e.target.dataset.si][e.target.dataset.key];
-      e.target.value = p && isAutoZero(p, val) ? '' : String(val ?? '').replace(/,/g,'');
+      e.target.value = p && isAutoZero(p, val) ? '' : loc(String(val ?? '').replace(/,/g,''));
     });
     el.addEventListener('input', e=>{
       // maxDecimals:2 matches the main tool's money inputs — a currency row can
@@ -2380,7 +2388,7 @@ function wireEvents(){
       if(!p) return;
       const sc = scenarios[si];
       const before = activeSignature(sc);
-      const raw = String(e.target.value).trim();
+      const raw = typedNum(e.target.value).trim();
       // A cleared automatic field goes back to automatic; any other cleared
       // field keeps what it held.
       let val = (p.auto && raw==='') ? 0
@@ -2422,7 +2430,7 @@ function wireEvents(){
       const p = PARAM_MAP[e.target.dataset.key];
       const cur = e.target.dataset.cur;
       const val = cur ? fxs.rfr[cur] : shared[p.key];
-      e.target.value = isAutoZero(p, val) ? '' : String(val ?? '').replace(/,/g,'');
+      e.target.value = isAutoZero(p, val) ? '' : loc(String(val ?? '').replace(/,/g,''));
     });
     el.addEventListener('input', e=>{ if(e.target.dataset.ptype==='currency') SharedFmt.liveFormat(e.target,{maxDecimals:2}); });
     el.addEventListener('blur', e=>{
@@ -2431,7 +2439,7 @@ function wireEvents(){
       const cur = e.target.dataset.cur, ptype = p.type;
       const before = activeSignature(null);
       const old = cur ? fxs.rfr[cur] : shared[p.key];
-      const raw = String(e.target.value).trim();
+      const raw = typedNum(e.target.value).trim();
       let val = (p.auto && raw==='') ? 0 : ptype==='integer' ? parseIntSafe(raw, old) : parseFloatSafe(raw, old);
       const typed = val;
       if(p.min!=null) val = Math.max(p.min, val);
@@ -2472,10 +2480,10 @@ function wireEvents(){
     });
   });
   document.querySelectorAll('.fx-input').forEach(el=>{
-    el.addEventListener('focus', e=>{ e.target.value = String(e.target.value).replace(/,/g,''); });
+    el.addEventListener('focus', e=>{ e.target.value = ungroup(e.target.value); });
     el.addEventListener('blur', e=>{
       const sc = scenarios[+e.target.dataset.si];
-      const raw = String(e.target.value).trim();
+      const raw = typedNum(e.target.value).trim();
       const live = FX ? FX.cross(fxs.base, curOf(sc)) : 0;
       if(raw===''){ sc.fxRate = null; }
       else {
@@ -2500,9 +2508,9 @@ function wireEvents(){
     const cur = el.dataset.cur;
     const box = () => el.closest('.trend-item');
     const shown = () => Number(trendOf(cur).toFixed(2));
-    el.addEventListener('focus', e=>{ e.target.value = String(shown()); });
+    el.addEventListener('focus', e=>{ e.target.value = loc(shown()); });
     el.addEventListener('input', e=>{
-      const v = parseFloat(String(e.target.value).replace(/,/g,''));
+      const v = parseFloat(typedNum(e.target.value));
       const b = box();
       if(!b || !Number.isFinite(v)) return;
       const a = Math.min(TREND_MAX, Math.max(TREND_MIN, v));
@@ -2510,7 +2518,7 @@ function wireEvents(){
       b.querySelector('[data-trend-path]').textContent = trendPathNote(cur, a);
     });
     el.addEventListener('blur', e=>{
-      const raw = String(e.target.value).trim();
+      const raw = typedNum(e.target.value).trim();
       let v = raw==='' ? 0 : parseFloatSafe(raw, trendOf(cur));
       const typed = v;
       v = Math.min(TREND_MAX, Math.max(TREND_MIN, v));
@@ -2610,8 +2618,8 @@ function wireEvents(){
       el.addEventListener('blur', e=>{
         const si = +e.target.dataset.si;
         const p = periodOf(e.target);
-        p[field] = Math.max(0, parseFloatSafe(e.target.value, p[field]||0));
-        e.target.value = p[field];
+        p[field] = Math.max(0, parseFloatSafe(typedNum(e.target.value), p[field]||0));
+        e.target.value = loc(p[field]);
         recomputeScenario(si);
         rerenderOutputOnly();
       });
@@ -2640,15 +2648,15 @@ function wireEvents(){
   // Detailed costs: per-item controls
   const costItemOf = el => scenarios[+el.dataset.si][el.dataset.list][+el.dataset.idx];
   document.querySelectorAll('.ci-amt').forEach(el=>{
-    el.addEventListener('focus', e=>{ e.target.value = String(e.target.value).replace(/,/g,''); });
+    el.addEventListener('focus', e=>{ e.target.value = ungroup(e.target.value); });
     el.addEventListener('input', e=>{
       SharedFmt.liveFormat(e.target,{maxDecimals:2});
     });
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si;
       const it = costItemOf(e.target);
-      it.amount = Math.max(0, parseNum(e.target.value));
-      e.target.value = it.basis==='pct' ? String(it.amount) : addCommas(it.amount);
+      it.amount = Math.max(0, parseNum(typedNum(e.target.value)));
+      e.target.value = it.basis==='pct' ? loc(it.amount) : addCommas(it.amount);
       recomputeScenario(si);
       rerenderOutputOnly();
     });
@@ -2672,8 +2680,8 @@ function wireEvents(){
     el.addEventListener('blur', e=>{
       const si = +e.target.dataset.si;
       const it = costItemOf(e.target);
-      it.inflation = Math.max(0, parseFloatSafe(e.target.value, it.inflation||0));
-      e.target.value = it.inflation;
+      it.inflation = Math.max(0, parseFloatSafe(typedNum(e.target.value), it.inflation||0));
+      e.target.value = loc(it.inflation);
       recomputeScenario(si);
       rerenderOutputOnly();
     });
@@ -3194,7 +3202,7 @@ function agentPatch(extra, api){
       if(cols.length + varied.length >= AGENT_MAX_COLUMNS){ over = true; return; }
       const sc = cloneScenario(parent);
       sc[v.p.key] = val;
-      sc.name = agentLabel(T(v.p.labelKey).replace(/\s*\(.*\)\s*$/, '') + ' ' + (v.p.type === 'percent' ? +val.toFixed(2) + '%' : agentShow(v.p, val, sc, sym)));
+      sc.name = agentLabel(T(v.p.labelKey).replace(/\s*\(.*\)\s*$/, '') + ' ' + (v.p.type === 'percent' ? loc(+val.toFixed(2)) + '%' : agentShow(v.p, val, sc, sym)));
       varied.push(sc);
     }));
     if(over) api.error('vary: ' + t.columns(AGENT_MAX_COLUMNS));
@@ -3309,7 +3317,7 @@ window.__RVOS_AGENT = {
   set: function(key, value){
     const el = document.querySelector('.param-input[data-si="0"][data-key="' + key + '"], .shared-input[data-key="' + key + '"]');
     if(!el) return;
-    el.value = value;
+    el.value = loc(value);   // the canonical figure as this page writes it; blur reads it back
     el.dispatchEvent(new Event('input', {bubbles: true}));
     el.dispatchEvent(new FocusEvent('blur'));
   }

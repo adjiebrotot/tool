@@ -475,11 +475,11 @@ const LANG = {
     labelDetail: 'Rincian',
     unitPctOfSale: '% harga jual',
     phCagrYear1: 'Tahun, mis. 2002',
-    phCagrPrice1: 'Harga, mis. 175,000',
+    phCagrPrice1: 'Harga, mis. 175.000',
     phCagrYear2: 'Tahun, mis. 2025',
-    phCagrPrice2: 'Harga, mis. 400,000',
+    phCagrPrice2: 'Harga, mis. 400.000',
     phCagrYear: 'Tahun, mis. 2020',
-    phCagrPrice: 'Harga, mis. 450,000',
+    phCagrPrice: 'Harga, mis. 450.000',
     kpiBreakevenNone: 'Belum breakeven dalam jangka waktu ini',
     kpiDiffSubYear: (n) => `Kekayaan bersih di tahun ke-${n}`,
     chartSub: 'Dalam nilai masa depan, tidak disesuaikan dengan inflasi.',
@@ -646,14 +646,18 @@ let currentCurrencySymbol = '$';
 const $ = id => document.getElementById(id);
 const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
 function moneySymbol(){ return currentCurrencySymbol || '$'; }
+/* Figures are written in the page's own format: 1,234.5 on the English page, 1.234,5 on the
+   Indonesian one (SharedNum, shared-id.js). What is stored (the mini cache, a file, a link, the
+   CSV) stays English. */
+const loc = x => SharedNum.show(String(x));
 function moneyWithSymbol(n, {minimumFractionDigits=0, maximumFractionDigits=0}={}){
   const abs = Math.abs(Number(n||0));
-  return moneySymbol() + abs.toLocaleString('en-AU', {minimumFractionDigits, maximumFractionDigits});
+  return moneySymbol() + loc(abs.toLocaleString('en-AU', {minimumFractionDigits, maximumFractionDigits}));
 }
 
 function parseNum(val){
   if(typeof val==='number') return Number.isFinite(val) ? val : 0;
-  const cleaned = String(val ?? '').replace(/,/g,'').replace(/[^\d.-]/g,'').trim();
+  const cleaned = SharedNum.typed(String(val ?? '')).replace(/,/g,'').replace(/[^\d.-]/g,'').trim();
   if(cleaned==='' || cleaned==='-' || cleaned==='.' || cleaned==='-.') return 0;
   const parsed = Number(cleaned);
   return Number.isFinite(parsed) ? parsed : 0;
@@ -670,14 +674,14 @@ function formatMoneyValue(val){
   const n = parseNum(val);
   if(!Number.isFinite(n)) return '';
   const isInt = Math.abs(n % 1) < 1e-9;
-  return n.toLocaleString('en-AU',{
+  return loc(n.toLocaleString('en-AU',{
     minimumFractionDigits:0,
     maximumFractionDigits:isInt ? 0 : 2
-  });
+  }));
 }
 function formatMoneyInput(el){
   if(!el) return;
-  const raw = String(el.value ?? '').replace(/,/g,'').trim();
+  const raw = String(el.value ?? '').trim();
   if(raw===''){ el.value=''; return; }
   el.value = formatMoneyValue(raw);
 }
@@ -688,13 +692,18 @@ function syncMoneyInputs(){
 const fmt = {
   currency(v, compact=false){
     const n=Number(v||0), abs=Math.abs(n), sign=n<0?'−':'';
-    if(compact&&abs>=1e9) return sign+moneySymbol()+(abs/1e9).toFixed(2)+'b';
-    if(compact&&abs>=1e6) return sign+moneySymbol()+(abs/1e6).toFixed(2)+'m';
-    if(compact&&abs>=1e3) return sign+moneySymbol()+(abs/1e3).toFixed(0)+'k';
+    // compact is true for a card, a table or an axis (k, m, b; rb, jt, M in Indonesian) and 'words'
+    // for an amount inside a sentence (the Indonesian page writes ribu, juta, miliar). English: the same.
+    const words = compact === 'words' && lang === 'id';
+    const mag = words ? {b:' miliar', m:' juta', k:' ribu'} : lang === 'id' ? {b:' M', m:' jt', k:' rb'} : {b:'b', m:'m', k:'k'};
+    const f = (x, d) => { const t = x.toFixed(d); return loc(words ? String(+t) : t); };
+    if(compact&&abs>=1e9) return sign+moneySymbol()+f(abs/1e9,2)+mag.b;
+    if(compact&&abs>=1e6) return sign+moneySymbol()+f(abs/1e6,2)+mag.m;
+    if(compact&&abs>=1e3) return sign+moneySymbol()+f(abs/1e3,0)+mag.k;
     return (n<0?'−':'')+moneyWithSymbol(Math.abs(n));
   },
-  pct(v,d=2){ const n=Number(v||0); return (Math.abs(n)<=1?n*100:n).toFixed(d)+'%'; },
-  num(v,d=0){ return Number(v||0).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d}); },
+  pct(v,d=2){ const n=Number(v||0); return loc((Math.abs(n)<=1?n*100:n).toFixed(d))+'%'; },
+  num(v,d=0){ return loc(Number(v||0).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d})); },
 };
 
 /* The model itself lives in engine.js, shared with the Sensitivity page so
@@ -728,7 +737,7 @@ function showToday(){ return !!$('showReal').checked; }
 function priceLevel(yr){ return Math.pow(1 + (S.generalInflation||0)/100, yr); }
 function moneyName(){ return T(showToday() ? 'moneyToday' : 'moneyFuture'); }
 // A rate as typed: fmt.pct reads anything at or under 1 as a fraction.
-function pctText(v){ return (+(Number(v)||0).toFixed(2)) + '%'; }
+function pctText(v){ return loc(+(Number(v)||0).toFixed(2)) + '%'; }
 function todayRows(rows){
   if(!rows) return rows;
   const last = {}, run = {};
@@ -895,14 +904,14 @@ function refreshLabels(){
   const dp = S.propertyPrice * S.downPaymentPct/100;
   /* Every readout carries its unit, so the slider's own ends (drawn by
      SharedSlider from the same text) and the figure agree. */
-  const pctYr = v => v.toFixed(2)+T('unitPctYr');
-  $('downPaymentPctVal').textContent = S.downPaymentPct+T('unitPctOfPrice');
+  const pctYr = v => loc(v.toFixed(2))+T('unitPctYr');
+  $('downPaymentPctVal').textContent = loc(S.downPaymentPct)+T('unitPctOfPrice');
   $('downPaymentDollar').textContent = fmt.currency(dp);
   $('riskFreeRateVal').textContent   = pctYr(S.riskFreeRate);
   $('horizonVal').textContent        = S.horizon+T('yrsSuffix');
   if(S.mortgageMode === 'detailed') syncRatePeriodLabels();
   $('houseGrowthVal').textContent         = pctYr(S.houseGrowth);
-  $('sellingCostPctVal').textContent      = S.sellingCostPct.toFixed(2)+T('unitPctOfSale');
+  $('sellingCostPctVal').textContent      = loc(S.sellingCostPct.toFixed(2))+T('unitPctOfSale');
   $('rentInflationVal').textContent       = pctYr(S.rentInflation);
   $('ownOngoingInflationVal').textContent = pctYr(S.ownOngoingInflation);
   $('rentOngoingInflationVal').textContent= pctYr(S.rentOngoingInflation);
@@ -1222,7 +1231,7 @@ function updateKPIs(state){
     const ownTotalWarn  = mPayment + ownOngoingWarn;
     const rentTotalWarn = rentMonthly0 + rentOngoingWarn;
     if(monthlyBudget < ownTotalWarn && monthlyBudget < rentTotalWarn){
-      msgs.push(T('warnBudgetLow')(fmt.currency(monthlyBudget), fmt.currency(ownTotalWarn,true), fmt.currency(rentTotalWarn,true)));
+      msgs.push(T('warnBudgetLow')(fmt.currency(monthlyBudget), fmt.currency(ownTotalWarn,'words'), fmt.currency(rentTotalWarn,'words')));
     }
   }
   // Any scenario whose cash goes below zero on any rate path: the model does
@@ -1240,7 +1249,7 @@ function shortfallText(state){
   const sf = state.shortfalls || {};
   const items = [['own','nameOwn'],['rent','nameRent'],['rtb','nameRTB']]
     .filter(([k])=>sf[k])
-    .map(([k,nm])=>T('shortfallItem')(T(nm), sf[k].year, fmt.currency(sf[k].worst, true)));
+    .map(([k,nm])=>T('shortfallItem')(T(nm), sf[k].year, fmt.currency(sf[k].worst,'words')));
   if(!items.length) return null;
   return {list: items.join(', '), auto: !(S.monthlyBudget > 0) && !(S.initialCash > 0)};
 }
@@ -1268,13 +1277,13 @@ function renderVerdict(state){
   const yrs = S.horizon, diff = summary.diff;
   let title;
   if(Math.abs(diff) < 0.5) title = T('verdictTie')(yrs);
-  else if(diff > 0) title = T('verdictOwn')(fmt.currency(diff, true), yrs);
-  else title = T('verdictRent')(fmt.currency(-diff, true), yrs);
+  else if(diff > 0) title = T('verdictOwn')(fmt.currency(diff,'words'), yrs);
+  else title = T('verdictRent')(fmt.currency(-diff,'words'), yrs);
   const body = [breakeven ? T('verdictBreakeven')(breakeven) : T('verdictNoBreakeven')(yrs),
-                T(showToday() ? 'verdictEquityToday' : 'verdictEquity')(fmt.currency(summary.ownNetEquity, true), fmt.currency(summary.rentNetEquity, true), yrs)];
+                T(showToday() ? 'verdictEquityToday' : 'verdictEquity')(fmt.currency(summary.ownNetEquity,'words'), fmt.currency(summary.rentNetEquity,'words'), yrs)];
   if(S.rtbEnabled && state.rtbRows && state.rtbRows.rows && state.rtbRows.rows.length){
     const last = state.rtbRows.rows[state.rtbRows.rows.length-1];
-    body.push(T('verdictRTB')(fmt.currency(last.rtbNetEquity, true), S.rtbBuyYear));
+    body.push(T('verdictRTB')(fmt.currency(last.rtbNetEquity,'words'), S.rtbBuyYear));
   }
   SharedVerdict.set('verdict', {tone:'', title, body: body.join(' ')});
 }
@@ -1286,7 +1295,7 @@ function renderAssumptions(state){
   const id = lang === 'id';
   const L = (en, idText) => id ? idText : en;
   const m = v => fmt.currency(v);
-  const pc = v => (+(Number(v)||0).toFixed(2)) + '%';
+  const pc = v => loc(+(Number(v)||0).toFixed(2)) + '%';
   const yrs = S.horizon;
   const perMo = T('perMo');
   const items = [];
@@ -1314,14 +1323,14 @@ function renderAssumptions(state){
     ? L(`rent rises ${pc(S.rentInflation)} a year from ${m(state.rentMonthly0)}${perMo}`, `sewa naik ${pc(S.rentInflation)} per tahun dari ${m(state.rentMonthly0)}${perMo}`)
     : L('renting costs no rent', 'menyewa tanpa biaya sewa');
   items.push(L(
-    `<strong>The home grows ${pc(S.houseGrowth)} a year,</strong> to ${fmt.currency(state.summary.ownPropValue, true)} by year ${yrs}, and ${rentPart}.`,
-    `<strong>Nilai rumah naik ${pc(S.houseGrowth)} per tahun,</strong> menjadi ${fmt.currency(state.summary.ownPropValue, true)} di tahun ${yrs}, dan ${rentPart}.`));
+    `<strong>The home grows ${pc(S.houseGrowth)} a year,</strong> to ${fmt.currency(state.summary.ownPropValue,'words')} by year ${yrs}, and ${rentPart}.`,
+    `<strong>Nilai rumah naik ${pc(S.houseGrowth)} per tahun,</strong> menjadi ${fmt.currency(state.summary.ownPropValue,'words')} di tahun ${yrs}, dan ${rentPart}.`));
   // Which money the page is in, named with the rate that makes it so.
   const g = S.generalInflation;
   items.push(showToday()
     ? (g > 0
-      ? L(`<strong>Figures are in today's money, with prices rising ${pc(g)} a year.</strong> Each year's are divided by that general inflation up to the end of the year, so the home's ${fmt.currency(state.summary.ownPropValue, true)} is what it would buy today. The amounts you enter are today's prices.`,
-          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi nilai rumah ${fmt.currency(state.summary.ownPropValue, true)} adalah daya belinya hari ini. Angka yang kamu isi dianggap sebagai harga hari ini.`)
+      ? L(`<strong>Figures are in today's money, with prices rising ${pc(g)} a year.</strong> Each year's are divided by that general inflation up to the end of the year, so the home's ${fmt.currency(state.summary.ownPropValue,'words')} is what it would buy today. The amounts you enter are today's prices.`,
+          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi nilai rumah ${fmt.currency(state.summary.ownPropValue,'words')} adalah daya belinya hari ini. Angka yang kamu isi dianggap sebagai harga hari ini.`)
       : L(`<strong>Figures are in today's money, with prices held still,</strong> so they read the same as the money of each year.`,
           `<strong>Angka dalam nilai hari ini, dengan harga tetap,</strong> jadi sama dengan nilai uang tiap tahun.`))
     : L(`<strong>Figures are in future's money,</strong> as the bank account will read them${g > 0 ? `. With prices rising ${pc(g)} a year, ${fmt.currency(100)} in year ${yrs} buys what ${fmt.currency(100/priceLevel(yrs))} does today` : ''}.`,
@@ -1391,8 +1400,8 @@ function renderAssumptions(state){
   if(S.rtbEnabled && state.rtbRows){
     const r = state.rtbRows;
     items.push(L(
-      `<strong>${T('nameRTB')} buys at the end of year ${S.rtbBuyYear}</strong> at ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, with the same ${pc(S.downPaymentPct)} deposit, setup costs scaled to that price, and a new loan on the same terms.`,
-      `<strong>${T('nameRTB')} membeli di akhir tahun ${S.rtbBuyYear}</strong> seharga ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, dengan DP ${pc(S.downPaymentPct)} yang sama, biaya awal disesuaikan dengan harga itu, dan pinjaman baru dengan syarat yang sama.`));
+      `<strong>${T('nameRTB')} buys at the end of year ${S.rtbBuyYear}</strong> at ${fmt.currency(r.rtbPropValueAtBuy||0,'words')}, with the same ${pc(S.downPaymentPct)} deposit, setup costs scaled to that price, and a new loan on the same terms.`,
+      `<strong>${T('nameRTB')} membeli di akhir tahun ${S.rtbBuyYear}</strong> seharga ${fmt.currency(r.rtbPropValueAtBuy||0,'words')}, dengan DP ${pc(S.downPaymentPct)} yang sama, biaya awal disesuaikan dengan harga itu, dan pinjaman baru dengan syarat yang sama.`));
   }
 
   items.push(S.sellingCostPct > 0
@@ -1481,7 +1490,7 @@ function updateDetailTable(rows, rtbRows){
         ${y0?`<td>${na}</td>`:inCell(r.ownYearInterestInc||0)}
         ${y0?`<td>${na}</td>`:signCell(r.ownYearSurplus||0)}
         <td class="td-sep-right">${c(r.ownCash)}</td>
-        <td>${hasLoanYr && r.ownRateYr!==undefined ? r.ownRateYr.toFixed(2)+'%' : na}</td>
+        <td>${hasLoanYr && r.ownRateYr!==undefined ? loc(r.ownRateYr.toFixed(2))+'%' : na}</td>
         <td>${c(r.ownPropValue)}</td>
         <td>${c(r.ownPrincipal)}</td>
         <td class="td-sep-right" style="color:${z(r.ownHouseEquity)>=0?pos:neg}">${c(r.ownHouseEquity)}</td>
@@ -1554,7 +1563,7 @@ function updateDetailTable(rows, rtbRows){
         ${y0?`<td>${na}</td>`:signCell(r.rtbYearSurplus||0)}
         ${y0?`<td>${na}</td>`:outCell(r.rtbPurchaseOutlay||0)}
         <td class="td-sep-right">${c(cash)}</td>
-        <td>${rtbHasLoanYr ? r.rtbRateYr.toFixed(2)+'%' : na}</td>
+        <td>${rtbHasLoanYr ? loc(r.rtbRateYr.toFixed(2))+'%' : na}</td>
         <td>${y0||!isOwning?na:c(r.rtbPropValue||0)}</td>
         <td>${y0||!isOwning?na:c(r.rtbPrincipal||0)}</td>
         <td class="td-sep-right" style="color:${y0||!isOwning?'inherit':z(r.rtbHouseEquity||0)>=0?pos:neg}">${y0||!isOwning?na:c(r.rtbHouseEquity||0)}</td>
@@ -2368,7 +2377,7 @@ function calcCAGR(){
   if(n<=0){ $('cagrResult').textContent=T('cagrEndYearError'); return; }
 
   const cagr=(Math.pow(last.p/first.p, 1/n)-1)*100;
-  $('cagrResult').textContent=T('cagrResult')(cagr.toFixed(2));
+  $('cagrResult').textContent=T('cagrResult')(loc(cagr.toFixed(2)));
   $('houseGrowth').value=cagr.toFixed(2);
   rerender();
 }
@@ -2737,7 +2746,7 @@ function agentCostText(cfg, list, api){
   const sym = api.field('currencySymbol') || '$';
   const per = { yearly: 'optPerYear', monthly: 'optPerMonth', weekly: 'optPerWeek' };
   return list.map(it => {
-    const amt = it.basis === 'pct' ? (+(+it.amount).toFixed(2)) + T(cfg.pctKey)
+    const amt = it.basis === 'pct' ? loc(+(+it.amount).toFixed(2)) + T(cfg.pctKey)
       : sym + formatMoneyValue(it.amount) + (per[it.basis] ? ' ' + T(per[it.basis]) : '');
     return (it.name ? it.name + ' ' : '') + amt;
   }).join(', ');

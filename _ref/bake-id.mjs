@@ -27,6 +27,7 @@ import { SECTION_RE } from './agent-lib.mjs';
 import { applyFaq } from './faq-bake.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const SHARED_ID_V = '20261113';
 
 // The maker of every tool: the one person node that www, the blog and the tool pages share.
 const AUTHOR = {
@@ -59,6 +60,7 @@ function gitcExtras() {
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
+    sharedId: true,
     title: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
     description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara pisah harta (PH atau MT) dan gabung harta, lengkap dengan PTKP, lapisan tarif, dan titik impas.',
     ogTitle: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
@@ -97,6 +99,7 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse',
+    sharedId: true,
     title: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     description: 'Simulasikan sewa vs beli rumah jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih dari asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
@@ -146,6 +149,7 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse/sensitivity',
+    sharedId: true,
     langVar: 'LANG_SENS',
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
     description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah untuk melihat asumsi mana yang paling memengaruhi kekayaan bersihmu. Gratis dan berjalan langsung di browser.',
@@ -453,7 +457,9 @@ function bake(tool) {
   if (tool.sharedId) {
     const tag = /<script src="((?:\.\.\/)+)shared\.js[^"]*"><\/script>/;
     if (!tag.test(html)) throw new Error(`${tool.dir}: no shared.js script tag for shared-id.js`);
-    html = html.replace(tag, (m, up) => `${m}\n<script src="${up}shared-id.js"></script>`);
+    // Both files carry SHARED_ID_V, so a browser never pairs a cached shared.js without SharedNum
+    // with the new shared-id.js. Bump it when either changes.
+    html = html.replace(tag, (m, up) => `<script src="${up}shared.js?v=${SHARED_ID_V}"></script>\n<script src="${up}shared-id.js?v=${SHARED_ID_V}"></script>`);
   }
 
   /* ── footer links go to the Indonesian Disclaimer and Privacy Policy ── */

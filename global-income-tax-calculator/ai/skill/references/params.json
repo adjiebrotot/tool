@@ -2816,7 +2816,7 @@
       },
       {
        "value": "sink",
-       "label": "Bukan penduduk pajak, SINK 22.5%"
+       "label": "Bukan penduduk pajak, SINK 22,5%"
       }
      ],
      "default": "res"
@@ -2997,7 +2997,7 @@
       },
       {
        "value": "nonres",
-       "label": "Bukan penduduk pajak, tarif tunggal 20.42%"
+       "label": "Bukan penduduk pajak, tarif tunggal 20,42%"
       }
      ],
      "default": "y2"
@@ -3068,11 +3068,11 @@
      "options": [
       {
        "value": "yes",
-       "label": "Ikut: 11.5% + 1%"
+       "label": "Ikut: 11,5% + 1%"
       },
       {
        "value": "no",
-       "label": "Karyawan asing: 11.5% saja"
+       "label": "Karyawan asing: 11,5% saja"
       }
      ],
      "default": "yes"
@@ -3877,23 +3877,23 @@
      "options": [
       {
        "value": "0.24",
-       "label": "0.24%, risiko sangat rendah"
+       "label": "0,24%, risiko sangat rendah"
       },
       {
        "value": "0.54",
-       "label": "0.54%, risiko rendah"
+       "label": "0,54%, risiko rendah"
       },
       {
        "value": "0.89",
-       "label": "0.89%, risiko sedang"
+       "label": "0,89%, risiko sedang"
       },
       {
        "value": "1.27",
-       "label": "1.27%, risiko tinggi"
+       "label": "1,27%, risiko tinggi"
       },
       {
        "value": "1.74",
-       "label": "1.74%, risiko sangat tinggi"
+       "label": "1,74%, risiko sangat tinggi"
       }
      ],
      "default": "0.24"
@@ -3920,11 +3920,11 @@
      "options": [
       {
        "value": "std",
-       "label": "Standar (48,013)"
+       "label": "Standar (48.013)"
       },
       {
        "value": "young",
-       "label": "Di bawah 30 tahun dengan gelar master (36,497)"
+       "label": "Di bawah 30 tahun dengan gelar master (36.497)"
       }
      ],
      "default": "std"
@@ -4043,7 +4043,7 @@
      "options": [
       {
        "value": "25",
-       "label": "25 sampai 34 (3.5%)"
+       "label": "25 sampai 34 (3,5%)"
       },
       {
        "value": "35",
@@ -4051,7 +4051,7 @@
       },
       {
        "value": "45",
-       "label": "45 sampai 54 (7.5%)"
+       "label": "45 sampai 54 (7,5%)"
       },
       {
        "value": "55",

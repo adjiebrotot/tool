@@ -406,25 +406,37 @@ const MAG = {
   en: { T: 'T', B: 'B', M: 'M', K: 'K' },
   id: { T: ' T', B: ' M', M: ' jt', K: ' rb' }
 };
+/* Figures are written in the page's own format (1,234.5 on the English page, 1.234,5 on the
+   Indonesian one: SharedNum, shared-id.js); what is stored stays English. Where a sentence
+   carries an amount, the Indonesian page writes it with the words (Rp 18,6 juta, Rp 1,5 miliar):
+   idr(v, 'words'). Cards, tiles, tables and chart ticks keep the short forms (jt, M). The English
+   page writes both the same way. */
+const MAG_WORDS = { en: MAG.en, id: { T: ' triliun', B: ' miliar', M: ' juta', K: ' ribu' } };
+const loc = x => SharedNum.show(String(x));
 const fmt = {
   idr(v, compact=false){
     const n=Number(v||0);const abs=Math.abs(n);const sign=n<0?'−':'';
-    const m=MAG[lang]||MAG.en;
-    if(compact&&abs>=1e12) return sign+'Rp '+(abs/1e12).toFixed(2)+m.T;
-    if(compact&&abs>=1e9) return sign+'Rp '+(abs/1e9).toFixed(2)+m.B;
-    if(compact&&abs>=1e6) return sign+'Rp '+(abs/1e6).toFixed(1)+m.M;
-    if(compact&&abs>=1e3) return sign+'Rp '+(abs/1e3).toFixed(0)+m.K;
-    return sign+'Rp '+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
+    const words=compact==='words';
+    const m=(words?MAG_WORDS:MAG)[lang]||MAG.en;
+    // In words the Indonesian page drops a trailing zero (Rp 1,5 miliar, not 1,50).
+    const f=(x,d)=>{ const t=x.toFixed(d); return loc(words&&lang==='id'?String(+t):t); };
+    if(compact&&abs>=1e12) return sign+'Rp '+f(abs/1e12,2)+m.T;
+    if(compact&&abs>=1e9) return sign+'Rp '+f(abs/1e9,2)+m.B;
+    if(compact&&abs>=1e6) return sign+'Rp '+f(abs/1e6,1)+m.M;
+    if(compact&&abs>=1e3) return sign+'Rp '+f(abs/1e3,0)+m.K;
+    return sign+'Rp '+loc(Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0}));
   },
-  full(v){ return 'Rp '+Math.round(Math.max(0,Number(v)||0)).toLocaleString('en-US'); },
-  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
-  num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
-  salaryLabel(mio){
-    const m=MAG[lang]||MAG.en;
-    if(mio>=1000) return 'Rp '+(mio/1000).toFixed(mio%1000===0?0:1)+m.B;
+  full(v){ return 'Rp '+loc(Math.round(Math.max(0,Number(v)||0)).toLocaleString('en-US')); },
+  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return loc(p.toFixed(d))+'%';},
+  num(v,d=0){return loc(Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}));},
+  salaryLabel(mio, words){
+    const m=(words?MAG_WORDS:MAG)[lang]||MAG.en;
+    if(mio>=1000) return 'Rp '+loc((mio/1000).toFixed(mio%1000===0?0:1))+m.B;
     return 'Rp '+fmt.num(mio)+m.M;
   }
 };
+// A whole number written into a field: the field's own format on this page (SharedNum.write takes the English form).
+const putNum = (el, n) => SharedNum.write(el, Number(n).toLocaleString('en-US'));
 
 /* ── Tax constants ── */
 const PTKP_BASE_DEFAULT    = 54000000;
@@ -591,8 +603,8 @@ function readInputs(){
     // Exact share, not rounded to a whole percent: the sweep, charts, table and
     // CSV all derive their grosses from this.
     S.splitPct = S.totalSalary > 0 ? (S.wifeSalary / S.totalSalary) * 100 : 50;
-    $('combinedLabel').textContent = 'Rp ' + S.totalSalary.toLocaleString('en-US');
-    $('splitDerivedLabel').textContent = (S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
+    $('combinedLabel').textContent = 'Rp ' + loc(S.totalSalary.toLocaleString('en-US'));
+    $('splitDerivedLabel').textContent = loc(S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
   } else {
     S.splitPct = Math.max(0,Math.min(100,parseFloat(els.splitPct.value)||0));
     S.totalSalary = Math.max(0, SharedFmt.parseFormatted(els.totalSalaryInput.value));
@@ -606,7 +618,7 @@ function readInputs(){
 // decimal and drop a trailing ".0".
 function splitPctLabel(){
   const r = Math.round(S.splitPct * 10) / 10;
-  return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  return Number.isInteger(r) ? String(r) : loc(r.toFixed(1));
 }
 
 function refreshSliderLabels(){
@@ -942,13 +954,13 @@ function renderVerdict(state){
   const diff=c.diff;
   let title;
   if(Math.abs(diff)<1000) title=T('verdictSame');
-  else if(diff>0) title=T('verdictPisah')(fmt.idr(diff,true));
-  else title=T('verdictGabung')(fmt.idr(-diff,true));
-  const body=[T('verdictTotals')(fmt.idr(c.pisahTax,true), fmt.pct(c.pisahRate), fmt.idr(c.gabungTax,true), fmt.pct(c.gabungRate))];
-  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
+  else if(diff>0) title=T('verdictPisah')(fmt.idr(diff,'words'));
+  else title=T('verdictGabung')(fmt.idr(-diff,'words'));
+  const body=[T('verdictTotals')(fmt.idr(c.pisahTax,'words'), fmt.pct(c.pisahRate), fmt.idr(c.gabungTax,'words'), fmt.pct(c.gabungRate))];
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary,true), hi=fmt.salaryLabel(rows[rows.length-1].salary,true);
   const sides=crossoverSides(state);
   if(sides){
-    const sal=fmt.salaryLabel(Math.round(state.summary.crossover));
+    const sal=fmt.salaryLabel(Math.round(state.summary.crossover),true);
     body.push(sides.gabungBelow
       ? T('verdictSwitch')(sal, T('optGabung'), T('optPisah'))
       : T('verdictSwitch')(sal, T('optPisah'), T('optGabung')));
@@ -981,7 +993,7 @@ function updateSummary(state){
   grid.innerHTML=tiles.map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div></div>`).join('');
 
   const info=$('crossoverInfo');
-  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary,true), hi=fmt.salaryLabel(rows[rows.length-1].salary,true);
   if(S.splitPct===0 || S.splitPct===100){
     // No income of the wife's to combine makes the two ways equal; no income
     // of the husband's leaves his PTKP unused under Gabung.
@@ -989,7 +1001,7 @@ function updateSummary(state){
     info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong> ${why}<br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
     const sides=crossoverSides(state);
-    const sal=fmt.salaryLabel(Math.round(s.crossover));
+    const sal=fmt.salaryLabel(Math.round(s.crossover),true);
     info.innerHTML='<strong>'+T('crossoverPoint')(sal)+'</strong><br>'+
       (sides.gabungBelow ? TF('crossoverBelowHtml')+' '+TF('crossoverAboveHtml')
                          : TF('crossoverBelowPisahHtml')+' '+TF('crossoverAboveGabungHtml'));
@@ -1079,7 +1091,7 @@ function updateDetailTable(rows){
 }
 
 /* ── Biaya jabatan cap warning, for deductions typed with the switch off ── */
-function capWarnMoney(v){ return 'Rp ' + Math.round(v).toLocaleString('en-US'); }
+function capWarnMoney(v){ return 'Rp ' + loc(Math.round(v).toLocaleString('en-US')); }
 function capWarnItem(who, amount, cap){
   return who + ' ' + capWarnMoney(amount) + T('warnCapOf') + capWarnMoney(cap);
 }
@@ -1209,17 +1221,17 @@ function resetAll(){
   S.brackets=JSON.parse(JSON.stringify(BRACKETS_DEFAULT));
   els.dependents.value=DEFAULTS.dependents;
   els.splitPct.value=DEFAULTS.splitPct;
-  els.totalSalaryInput.value=DEFAULTS.totalSalary.toLocaleString('en-US');
-  els.husbandSalaryInput.value=DEFAULTS.husbandSalary.toLocaleString('en-US');
-  els.wifeSalaryInput.value=DEFAULTS.wifeSalary.toLocaleString('en-US');
+  putNum(els.totalSalaryInput, DEFAULTS.totalSalary);
+  putNum(els.husbandSalaryInput, DEFAULTS.husbandSalary);
+  putNum(els.wifeSalaryInput, DEFAULTS.wifeSalary);
   els.deductionInput.value='0';
   els.husbandDeductionInput.value='0';
   els.wifeDeductionInput.value='0';
   els.biayaJabatan.checked=DEFAULTS.biayaJabatan;
-  els.ptkpBase.value=DEFAULTS.ptkpBase.toLocaleString('en-US');
-  els.ptkpMarried.value=DEFAULTS.ptkpMarried.toLocaleString('en-US');
-  els.ptkpSpouse.value=DEFAULTS.ptkpSpouse.toLocaleString('en-US');
-  els.ptkpDependent.value=DEFAULTS.ptkpDependent.toLocaleString('en-US');
+  putNum(els.ptkpBase, DEFAULTS.ptkpBase);
+  putNum(els.ptkpMarried, DEFAULTS.ptkpMarried);
+  putNum(els.ptkpSpouse, DEFAULTS.ptkpSpouse);
+  putNum(els.ptkpDependent, DEFAULTS.ptkpDependent);
   setInputMode('total');
   buildBracketEditor();
   rerender();
@@ -1240,11 +1252,11 @@ function applyQuickStart(key){
   resetAll();
   els.dependents.value = q.dependents;
   if (q.mode === 'total') {
-    els.totalSalaryInput.value = q.totalSalary.toLocaleString('en-US');
+    putNum(els.totalSalaryInput, q.totalSalary);
     els.splitPct.value = q.splitPct;
   } else {
-    els.husbandSalaryInput.value = q.husbandSalary.toLocaleString('en-US');
-    els.wifeSalaryInput.value = q.wifeSalary.toLocaleString('en-US');
+    putNum(els.husbandSalaryInput, q.husbandSalary);
+    putNum(els.wifeSalaryInput, q.wifeSalary);
   }
   setInputMode(q.mode);  // rerenders and schedules the save
   document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === key));
@@ -1262,13 +1274,13 @@ function setInputMode(mode){
 }
 
 /* ── Bracket number formatting helpers ── */
-function formatBracketNum(n){ return n===null||n===undefined?'':Number(n).toLocaleString('en-US'); }
+function formatBracketNum(n){ return n===null||n===undefined?'':loc(Number(n).toLocaleString('en-US')); }
 function parseBracketNum(str){ return str===''?null:parseInt(str.replace(/[^0-9]/g,''),10)||0; }
 function formatBracketInput(el){
   const raw=el.value.replace(/[^0-9]/g,'');
   if(raw===''){el.value='';return;}
   const n=parseInt(raw,10)||0;
-  el.value=n.toLocaleString('en-US');
+  el.value=loc(n.toLocaleString('en-US'));
 }
 
 /* ── Bracket editor ── */
@@ -1588,7 +1600,7 @@ function carryAcrossModes(to, keep){
   if(to === S.inputMode) return;
   const kept = id => !!keep && keep.indexOf(id) >= 0;
   const rp = el => Math.max(0, SharedFmt.parseFormatted(el.value) || 0);
-  const put = (el, n) => { if(!kept(el.id)) el.value = Math.round(n).toLocaleString('en-US'); };
+  const put = (el, n) => { if(!kept(el.id)) putNum(el, Math.round(n)); };
   if(to === 'individual'){
     const total = rp(els.totalSalaryInput), ded = rp(els.deductionInput);
     const share = Math.max(0, Math.min(100, parseFloat(els.splitPct.value) || 0)) / 100;
@@ -1748,7 +1760,7 @@ function agentBrackets(raw, extra, api){
   }
   if(!rows.length) return false;
   extra.brackets = rows;
-  const rp = n => 'Rp ' + n.toLocaleString('en-US'), pc = r => (+(r * 100).toFixed(2)) + '%';
+  const rp = n => 'Rp ' + loc(n.toLocaleString('en-US')), pc = r => loc(+(r * 100).toFixed(2)) + '%';
   return { value: rows.map((b, i) => pc(b.rate) + ' ' + (b.to !== null ? t.upTo + rp(b.to)
     : i ? t.above + rp(rows[i - 1].to) : t.flat)).join(', ') };
 }
