@@ -24,6 +24,9 @@ CASES = {
     "inputctrl.pscx": "tutorial/inputctrl.pscx",       # sliders, switches, dials, a button
     "multirun.pscx": "tutorial/multirun.pscx",         # a Multiple Run component and a fault
     "fft.pscx": "tutorial/fft.pscx",                   # harmonics in the time domain
+    # Timed Breaker Logic and Timed Fault Logic, and PSCAD 5's default output name
+    # "$(Namespace).out"
+    "PLL_Example_3.pscx": "CSMF/PLL/PLL_Example_3.pscx",
 }
 
 

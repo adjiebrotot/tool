@@ -348,7 +348,7 @@ bottom = <span class="py-f">min</span>(curve, key=<span class="py-k">lambda</spa
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Builder's PV curve Quick Start is the same sweep as a loop of blocks, ending at the first load flow that fails. On the Nine-bus example it gives the same 28 points and the same nose at 2.35 times the base load. This is its file for that example:</p>
-  <p class="dx-file"><span><code>pv_curve_by_load_scaling.py</code> as the Builder writes it: the settings and the workflow</span><a href="pv_curve_by_load_scaling.py" download>⬇ Download the full file (.py, 2,784 lines)</a></p>
+  <p class="dx-file"><span><code>pv_curve_by_load_scaling.py</code> as the Builder writes it: the settings and the workflow</span><a href="pv_curve_by_load_scaling.py" download>⬇ Download the full file (.py, 2,796 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># PV curve by load scaling</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
@@ -507,7 +507,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 2,625 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 2,637 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><strong>Step 2</strong> is a "For a range of numbers" loop over the scaling factor, from <code>LOAD_SCALING_FROM</code> to <code>LOAD_SCALING_TO</code> in steps of <code>LOAD_SCALING_STEP</code>; it puts the loads back after every pass.</li>

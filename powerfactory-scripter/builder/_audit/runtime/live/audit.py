@@ -12,11 +12,16 @@ ATTRS = ["outserv", "pgini", "qgini", "plini", "qlini", "usetp", "scale0", "nnta
          "tstop", "p_resvar", "p_event", "iopt_show", "iopt_fastsol", "iopt_fastout", "systemSolvingMode",
          "iopt_mde", "iopt_shc", "iopt_cur", "iopt_allbus", "shcobj", "Rf", "Xf",
          "time", "i_shc", "i_switch", "i_allph", "p_target", "dP", "dQ", "variable", "value", "outNgnum",
-         "R_f", "X_f", "shcLocation", "i_clearShc", "desc", "iStudyTime", "bus1"]
+         "R_f", "X_f", "shcLocation", "i_clearShc", "desc", "iStudyTime", "bus1",
+         # type data (a change here moves every element of the type, and every later result)
+         "sline", "uline", "rline", "xline", "strn", "uktr", "pcutr", "strn3_h", "sn_h0", "h", "xd", "xdss",
+         "ugn", "kpu", "kqu", "Smax", "Ibnom", "rearth", "ncapa", "dline"]
 CLASSES = {"ElmSym", "ElmLod", "ElmLne", "ElmTr2", "ElmTr3", "ElmTerm", "ElmGenstat", "ElmPvsys", "ElmXnet",
            "ElmShnt", "ElmCoup", "StaSwitch", "ElmComp", "ElmDsl", "ElmNet", "ElmVsc", "ElmAsm",
            "ComLdf", "ComInc", "ComSim", "ComShc", "ComHldf", "EvtShc", "EvtSwitch", "EvtLod", "EvtParam",
-           "EvtSym", "EvtOutage", "IntCase", "IntScenario", "IntScheme", "IntAcscheme", "IntRef", "StaCubic"}
+           "EvtSym", "EvtOutage", "IntCase", "IntScenario", "IntScheme", "IntAcscheme", "IntRef", "StaCubic",
+           "TypLne", "TypTr2", "TypTr3", "TypTr4", "TypSym", "TypAsm", "TypLod", "TypLodlv", "TypSwitch", "TypTow",
+           "ElmLnesec"}
 
 
 def _project(app, name):

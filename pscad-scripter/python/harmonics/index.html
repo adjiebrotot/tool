@@ -223,7 +223,7 @@ spectrum = <span class="py-f">list</span>(<span class="py-f">zip</span>(h.orders
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Harmonics and THD Quick Start runs the case for 1 s with a 20 us step and a 50 us plot step, takes two cycles of a voltage at the end of the run, tables the THD, the worst harmonic and its order, and draws the spectrum as a bar chart. This is the file with the case set to <code>C:/Studies/inverter/inverter.pscx</code>:</p>
-  <p class="dx-file"><span><code>harmonics_and_thd.py</code> as the Builder writes it: the settings and the workflow</span><a href="harmonics_and_thd.py" download>⬇ Download the full file (.py, 3,712 lines)</a></p>
+  <p class="dx-file"><span><code>harmonics_and_thd.py</code> as the Builder writes it: the settings and the workflow</span><a href="harmonics_and_thd.py" download>⬇ Download the full file (.py, 3,768 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Harmonics</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PSCAD Workflow Builder, https://tool.adjiebrotots.com/pscad-scripter/builder/
@@ -357,7 +357,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 3,578 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 3,634 lines of helper functions copied from the Builder's runtime (connecting, building, running, reading the channels, the checks, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li>The 50 us plot step holds frequencies up to 10 kHz, so the 50 harmonics asked for are well inside what the file has.</li>
@@ -414,5 +414,7 @@ CHECK_ONLY = <span class="py-k">False</span>
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
 </script>
 <!--/email_off-->
+<script src="../../../bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="THD within limits? My coffee level is the one out of range!" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
 </body>
 </html>

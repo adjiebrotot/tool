@@ -1250,18 +1250,6 @@ def _dft_window(ts, ys, f0, at=None, cycles=1.0, harmonics=50):
             im += v * math.sin(ang)
         mags.append(2.0 * math.sqrt(re * re + im * im) / n)
     return mags, dc
-
-
-def _sg_phasor(ts, ys, f0, t0):
-    """The fundamental phasor of a window, as (real, imaginary)."""
-    n = len(ys)
-    re = 0.0
-    im = 0.0
-    for t, v in zip(ts, ys):
-        ang = 2.0 * math.pi * f0 * (t - t0)
-        re += v * math.cos(ang)
-        im -= v * math.sin(ang)
-    return (2.0 * re / n, 2.0 * im / n)
 # @end
 
 # @helper spectrum
@@ -1344,14 +1332,32 @@ def sequence(a, b, c, frequency=None, cycles=1.0, which="negative", label="", un
         return Series([], [], label or "sequence", unit or _sg_unit(a))
     what = str(which or "negative").strip().lower()
     out_t, out_y = [], []
-    for end in range(win - 1, n):
-        start = end - win + 1
-        t0 = ta[start]
-        pa = _sg_phasor(ta[start:end + 1], ya[start:end + 1], f, t0)
-        pb = _sg_phasor(tb[start:end + 1], yb[start:end + 1], f, t0)
-        pc = _sg_phasor(tc[start:end + 1], yc[start:end + 1], f, t0)
-        out_t.append(ta[end])
-        out_y.append(_sequence_mag(pa, pb, pc, what))
+    # One pass: each sample's share of the phasor is worked out once, against one time
+    # reference for all three phases, and the window's sum slides along (a sample comes
+    # in, the one a window back goes out). A sequence magnitude does not depend on the
+    # reference, so this is the window-by-window sum without doing it again per window,
+    # which on an EMT run of 100 000 samples was minutes.
+    w = 2.0 * math.pi * f
+    t_ref = ta[0]
+    parts = []
+    for tt, yy in ((ta, ya), (tb, yb), (tc, yc)):
+        parts.append([(v * math.cos(w * (t - t_ref)), -v * math.sin(w * (t - t_ref)))
+                      for t, v in zip(tt[:n], yy[:n])])
+    sums = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+    scale = 2.0 / win
+    for end in range(n):
+        for k in range(3):
+            re, im = parts[k][end]
+            sums[k][0] += re
+            sums[k][1] += im
+            if end >= win:
+                re, im = parts[k][end - win]
+                sums[k][0] -= re
+                sums[k][1] -= im
+        if end >= win - 1:
+            pa, pb, pc = [(sm[0] * scale, sm[1] * scale) for sm in sums]
+            out_t.append(ta[end])
+            out_y.append(_sequence_mag(pa, pb, pc, what))
     return Series(out_t, out_y, label or ("%s sequence" % what),
                   unit or _sg_unit(a), getattr(a, "events", None))
 

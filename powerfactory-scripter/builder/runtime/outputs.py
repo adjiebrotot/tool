@@ -460,7 +460,19 @@ def _po_fit3d(fig, foot):
     gap = 4.0 * fig.dpi / 72.0
     for ax in [a for a in fig.axes if getattr(a, "name", "") == "3d"]:
         for _ in range(5):
+            # mplot3d places its numbers and titles while drawing: until the figure is drawn
+            # at this size, the box it reports is the axes' own and nothing looks cut. The
+            # box also leaves the axis titles out (it is the one tight_layout uses), so
+            # they are added here.
+            try:
+                fig.draw_without_rendering()
+            except Exception:
+                fig.canvas.draw()
             tb = ax.get_tightbbox(renderer)
+            for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+                lab = axis.label
+                if tb is not None and lab.get_visible() and lab.get_text():
+                    tb = tb.union([tb, lab.get_window_extent(renderer)])
             if tb is None:
                 break
             box = ax.get_window_extent(renderer)

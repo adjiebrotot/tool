@@ -50,6 +50,24 @@ const GTAG = `  <!-- Google tag (gtag.js) -->
 // page: { path: 'reference/master-resistor/' (under pscad-scripter/), title, h1 (html), desc,
 //   ogTitle, ogType, crumbs: [[name, path]], jsonld: [objects], body (html), script (inline js),
 //   builderLink (bool) }
+// The Buy Me a Coffee pair every page ends with (new-tool skill: one quip per page, about its
+// own subject, under about 90 characters). A page with no line of its own takes the tool's.
+const COFFEE = {
+  'reference/': 'Found the parameter name you needed? Buy me a coffee!',
+  'python/': 'Automated your EMT study? Spend the time saved buying me a coffee!',
+  'python/getting-started/': 'PSCAD answered your script? Next call: BuyMeACoffee()!',
+  'python/build-and-run/': 'Built and ran without a click? Run one coffee my way!',
+  'python/fault-studies/': 'Your case rode through the fault? I ride through on coffee!',
+  'python/parameter-sweep/': 'Swept every parameter? The only one I need is coffee!',
+  'python/harmonics/': 'THD within limits? My coffee level is the one out of range!',
+  'python/snapshots-and-batch/': 'Skipped the start-up on every run? I never skip a coffee!',
+  'python/control-tuning/': 'Damping tuned? My own settling time depends on coffee!',
+};
+function coffeeFor(path) {
+  if (COFFEE[path]) return COFFEE[path];
+  return /^reference\/[^/]+\/$/.test(path || '') ? 'Found the parameter you needed? Buy me a coffee!' : 'Saved you a weekend of EMT runs? Buy me a coffee!';
+}
+
 export function page(p) {
   const depth = p.path.split('/').filter(Boolean).length;      // reference/ElmLne/ -> 2
   const pf = '../'.repeat(depth);                               // to pscad-scripter/
@@ -137,6 +155,8 @@ ${p.body}
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });${p.script ? '\n' + p.script : ''}
 </script>
 <!--/email_off-->
+<script src="${root}bmc.js" defer></script>
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="adjiebrotot" data-description="Support me on Buy me a coffee!" data-message="${esc(coffeeFor(p.path))}" data-color="#FF813F" data-position="Right" data-x_margin="16" data-y_margin="16"></script>
 </body>
 </html>
 `;

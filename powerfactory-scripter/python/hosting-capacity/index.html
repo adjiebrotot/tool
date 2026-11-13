@@ -367,7 +367,7 @@ results = []
     <section class="dx-sec" aria-labelledby="builder">
   <h2 id="builder">The full Python script from the Builder</h2>
   <p>The Builder's Quick Start is the same study as blocks: a For each element loop over the busbars, a Find limit search inside it, a test generator, and three limit checks. Run on the 39-bus example with the busbars of 100 kV and above, it gives every busbar within 7.5 MW of the script above. This is its file for that example:</p>
-  <p class="dx-file"><span><code>hosting_capacity_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="hosting_capacity_at_every_busbar.py" download>⬇ Download the full file (.py, 3,731 lines)</a></p>
+  <p class="dx-file"><span><code>hosting_capacity_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="hosting_capacity_at_every_busbar.py" download>⬇ Download the full file (.py, 3,743 lines)</a></p>
   <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
 <span class="py-c"># Hosting capacity at every busbar</span>
 <span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
@@ -581,7 +581,7 @@ CHECK_ONLY = <span class="py-k">False</span>
     <span class="py-k">finally</span>:
         <span class="py-f">finish</span>(app)
 </code></pre>
-  <p class="dx-note">The file goes on with 3,517 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <p class="dx-note">The file goes on with 3,529 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
   <h3>How the script works</h3>
   <ul class="dx-prose">
     <li><strong>Step 2</strong> reads <code>pgini</code> of every synchronous generator, and "Total dispatch" adds them up: the existing generation that will make room.</li>

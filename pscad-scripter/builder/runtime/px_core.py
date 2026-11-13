@@ -745,10 +745,15 @@ def _restore_one(obj, param, old):
     """Put one recorded change back.
 
     Most records are a component parameter, but a few things a workflow changes are not
-    parameters at all: whether a component is enabled, a layer's state and a global
-    substitution each carry a marker name beginning with "#" and go back their own way."""
+    parameters at all: whether a component is enabled, a layer's state, a global
+    substitution and where an input control stands each carry a marker name beginning
+    with "#" and go back their own way."""
     if param == "#enabled":
         obj.enable(bool(old))
+        return
+    if param == "#control":
+        # A slider, switch or dial the workflow moved: back to the value the case holds.
+        obj.reset()
         return
     if param == "#layer":
         _PX["project"].set_layer_state(obj[1], old)

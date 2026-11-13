@@ -57,7 +57,9 @@ for P in SANDBOXES:
             if cls == "ElmRes" and not P.startswith("39"):
                 continue
         keep = []
-        for attr in set(re.findall(r'\w+\.SetAttribute\("(\w+)"', code)):
+        # Any receiver: a type snippet writes through types[0].SetAttribute(...), an element one
+        # through a name (load.SetAttribute(...)).
+        for attr in set(re.findall(r'\.SetAttribute\(\s*"(?:e:)?(\w+)"', code)):
             pool = equip.GetContents("*." + cls, 1) if cls.startswith("Typ") else app.GetCalcRelevantObjects("*." + (cls if cls.startswith("Elm") else "ElmLod"))
             for o in pool:
                 try:

@@ -548,7 +548,7 @@ def gs_save(app, path, set_name=""):
 # @end
 
 # @helper controls
-# @needs log, px_state, px_find, px_value
+# @needs log, px_state, px_find, px_value, px_set
 def control_set(app, defn="", name="", value=None, kind="auto", match="one"):
     """Set an input control of the model: a slider, a switch, a dial or a button.
 
@@ -556,7 +556,13 @@ def control_set(app, defn="", name="", value=None, kind="auto", match="one"):
     event list, so this is how a script changes a set point, closes a breaker logic switch
     or presses a fault button. `kind` "auto" reads what the control is; "slider" takes a
     number, "switch" a yes / no, "dial" a position (1 upwards), "button" clicks it.
-    Works before a run and while one is running."""
+    Works before a run and while one is running.
+
+    Where a control stands is not one of its parameters: PSCAD keeps it apart from the
+    value the case holds for it (Value), does not let a script read it, and uses it for
+    every run after. So the put-back at the end of a pass (and finish) resets the control
+    to the value the case holds, the one it has when the case is opened. A button has
+    nothing to put back."""
     ctrl = px_find(app, defn, name, match)
     if isinstance(ctrl, list):
         return [control_set(app, "", "", value, kind, "one") if False else
@@ -569,6 +575,8 @@ def _control_one(ctrl, value, kind):
     if what == "auto":
         what = _control_kind(ctrl)
     num, _ = px_split_value(value)
+    if what in ("slider", "switch", "dial"):
+        _record(ctrl, "#control", None)
     try:
         if what == "slider":
             if num is None:
@@ -597,6 +605,20 @@ def _control_one(ctrl, value, kind):
         raise PXError("[MODEL] Could not set %s %s: %s" % (what, _label(ctrl), err))
     raise PXError('[CODE] "%s" is not a control kind this step knows (slider, switch, dial, '
                   "button)." % kind)
+
+
+def _control_keep(ctrl, params):
+    """Record parameters of a control (a slider's Min and Max) so px_undo puts them back.
+
+    They are parameters of the component the control is linked to, which is what
+    parameters() of the control reads and writes."""
+    try:
+        have = ctrl.parameters() or {}
+    except Exception:
+        return
+    for param in params:
+        if param in have:
+            _record(ctrl, param, have[param])
 
 
 def _control_kind(ctrl):
@@ -632,6 +654,7 @@ def control_limits(app, defn="", name="", lower=None, upper=None, match="one"):
     hi = px_number(upper)
     if lo is None or hi is None:
         raise PXError("[CODE] A slider's limits need two numbers.")
+    _control_keep(ctrl, ("Min", "Max"))
     try:
         ctrl.limits(lo, hi)
     except Exception as err:
