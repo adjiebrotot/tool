@@ -107,7 +107,7 @@ Open the link to see the result.
 ## Files
 
 - `references/rentvsownhouse.md`: Rent vs Own. Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
-- `references/rentvsownhouse-id.md`: Rent vs Own (Indonesian page). Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
+- `references/rentvsownhouse-id.md`: Sewa vs Beli Rumah (Indonesian page). Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
 - `references/rentvsownhouse-sensitivity.md`: Rent vs Own: Sensitivity Tool. Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
 - `references/rentvsownhouse-sensitivity-id.md`: Sewa vs Beli: Analisis Sensitivitas (Indonesian page). Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.
 - `references/params.json`: the same keys as data (what the script checks against).

@@ -144,7 +144,8 @@ biayaJabatan: Biaya jabatan, dihitung otomatis
   most Rp 6,000,000 a year, taken off before PTKP. Keep it true. Send false only when the deductions
   the user gives already include biaya jabatan.
   Tip on the page: 5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun,
-  dikurangkan sebelum PTKP di samping pengurang di atas. Matikan untuk mengisinya sendiri.
+  dikurangkan sebelum PTKP, selain pengurang yang kamu isi di atas. Matikan kalau kamu ingin mengisi
+  biaya jabatan sendiri.
 
 [PTKP & Lapisan Pajak: Penghasilan tidak kena pajak per tahun (PTKP)]
 ptkpBase: ptkpBase

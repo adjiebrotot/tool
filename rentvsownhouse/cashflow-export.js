@@ -343,9 +343,13 @@ function exportChartSVGAtSize(src, opts){
 function chartCurrency(v, sym){
   sym = sym || '$';
   const n = Number(v||0), abs = Math.abs(n), sign = n<0 ? '−' : '';
-  if(abs>=1e9) return sign+sym+(abs/1e9).toFixed(2)+'b';
-  if(abs>=1e6) return sign+sym+(abs/1e6).toFixed(2)+'m';
-  if(abs>=1000) return sign+sym+(abs/1000).toFixed(0)+'k';
+  // The Indonesian page writes rb, jt and M (miliar) with a decimal comma (SharedNum); English as ever.
+  const id = (global.document.documentElement.lang || '').slice(0, 2) === 'id';
+  const mag = id ? {b:' M', m:' jt', k:' rb'} : {b:'b', m:'m', k:'k'};
+  const loc = x => global.SharedNum ? global.SharedNum.show(String(x)) : String(x);
+  if(abs>=1e9) return sign+sym+loc((abs/1e9).toFixed(2))+mag.b;
+  if(abs>=1e6) return sign+sym+loc((abs/1e6).toFixed(2))+mag.m;
+  if(abs>=1000) return sign+sym+loc((abs/1000).toFixed(0))+mag.k;
   return sign+sym+Math.round(abs);
 }
 

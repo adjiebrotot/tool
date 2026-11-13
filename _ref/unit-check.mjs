@@ -70,10 +70,13 @@ const setVals=(page, vals)=>page.evaluate(vals=>{
   Object.entries(vals).forEach(([id,v])=>{
     const el=document.getElementById(id); if(!el) throw new Error('no #'+id);
     if(el.type==='checkbox'){ el.checked=!!v; el.dispatchEvent(new Event('change',{bubbles:true})); return; }
-    el.value=String(v); ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true})));
+    // The values here are canonical (English, 1,234.5); an Indonesian page shows and reads its own form.
+    if(window.SharedNum) SharedNum.write(el, String(v)); else el.value=String(v);
+    ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true})));
   });
 }, vals);
-const val=(page, sel)=>page.inputValue(sel.startsWith('#')||sel.startsWith('.')?sel:'#'+sel);
+// A field's value in the canonical form, whatever page it is on.
+const val=(page, sel)=>page.$eval(sel.startsWith('#')||sel.startsWith('.')?sel:'#'+sel, el=>window.SharedNum ? SharedNum.read(el) : el.value);
 
 /* ════ Rent vs Own ═══════════════════════════════════════════════════════
    The answer is the page's own cashflow export, every table, every year. */
@@ -185,19 +188,19 @@ async function rvoChecks(rel, tag){
     const before = await rvoCsv(page);
     const row = '#ownSetupCostRows .cost-item-row:first-child';
     await page.selectOption(row+' .ci-basis','pct');
-    eq(tag+' R4 detailed setup row 32,000 -> 4% of price', await page.inputValue(row+' .ci-amount'), '4');
+    eq(tag+' R4 detailed setup row 32,000 -> 4% of price', await val(page, row+' .ci-amount'), '4');
     const pct = await rvoCsv(page);
     check(tag+' R4 detailed setup row: model unchanged', sameCsv(before,pct), diffAt(before,pct));
     await page.selectOption(row+' .ci-basis','fixed');
-    eq(tag+' R4 detailed setup row back to 32,000', await page.inputValue(row+' .ci-amount'), '32,000');
+    eq(tag+' R4 detailed setup row back to 32,000', await val(page, row+' .ci-amount'), '32,000');
     const orow = '#ownOngoingCostRows .cost-item-row:first-child';
     await page.selectOption(orow+' .ci-basis','monthly');
     await page.selectOption(orow+' .ci-basis','pct');
-    eq(tag+' R4 detailed owning row 500 a month -> 0.75% of value', await page.inputValue(orow+' .ci-amount'), '0.75');
+    eq(tag+' R4 detailed owning row 500 a month -> 0.75% of value', await val(page, orow+' .ci-amount'), '0.75');
     const opct = await rvoCsv(page);
     eq(tag+' R4 detailed owning row: year 1 owning costs unchanged', col(opct,'own','Ongoing_Exp')[1], col(before,'own','Ongoing_Exp')[1]);
     await page.selectOption(orow+' .ci-basis','yearly');
-    eq(tag+' R4 detailed owning row 0.75% -> 6,000 a year', await page.inputValue(orow+' .ci-amount'), '6,000');
+    eq(tag+' R4 detailed owning row 0.75% -> 6,000 a year', await val(page, orow+' .ci-amount'), '6,000');
     await page.click('#ownCostsModeGroup .seg-btn[data-val="simple"]');
     await page.waitForTimeout(100);
   }

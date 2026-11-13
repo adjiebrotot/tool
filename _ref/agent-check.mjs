@@ -317,7 +317,7 @@ function nudged(f, from) {
 // Type a value into a field as a person would: input, then change and blur.
 const type = (page, key, value) => page.__P && page.__P.virtual && page.__P.virtual.some(v => v.key === key) ? page.evaluate(page.__P.virtualWrite, [key, value]) : page.evaluate(([key, value]) => {
   const f = SharedAgent.fields().find(x => x.key === key);
-  f.el.value = value;
+  if (window.SharedNum) SharedNum.write(f.el, value); else f.el.value = value;   // the stored form in, whichever way the page shows it
   f.el.dispatchEvent(new Event('input', { bubbles: true }));
   f.el.dispatchEvent(new Event('change', { bubbles: true }));
   f.el.dispatchEvent(new FocusEvent('blur'));

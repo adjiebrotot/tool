@@ -212,13 +212,13 @@ const LANG = {
     wifeDeductionLabel: 'Pengurang istri',
     wifeDeductionTip: 'Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor istri, sebelum PTKP. Biaya jabatan punya tombol sendiri.',
     bjLabel: 'Biaya jabatan, dihitung otomatis',
-    bjTip: '5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP di samping pengurang di atas. Matikan untuk mengisinya sendiri.',
+    bjTip: '5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP, selain pengurang yang kamu isi di atas. Matikan kalau kamu ingin mengisi biaya jabatan sendiri.',
     ptkpSectionLabel: 'Penghasilan tidak kena pajak per tahun (PTKP)',
     ptkpTK0: 'Dasar, untuk tiap wajib pajak (TK/0)',
     ptkpK: 'Tambahan bila kawin (K)',
     ptkpI: 'Tambahan bila penghasilan istri digabung (I)',
     ptkpDep: 'Tambahan per tanggungan',
-    ptkpComputedPrefix: 'PTKP rumah tangga ini dengan Gabung Harta:',
+    ptkpComputedPrefix: 'PTKP rumah tangga ini di Gabung Harta:',
     ptkpHLabel: 'suami',
     ptkpWLabel: 'istri',
     ptkpGLabel: 'Pisah Harta (PH/MT):',
@@ -227,15 +227,15 @@ const LANG = {
     bracketTo: 'Sampai (Rp)',
     bracketRate: 'Tarif (%)',
     bracketTip: 'Ubah setiap batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Batas yang dinaikkan melewati lapisan berikutnya akan menghapus lapisan itu.',
-    infoBoxHtml: '<strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP {K}. Gaji istri dari satu pemberi kerja dipotong pajak oleh pemberi kerjanya dengan PTKP istri sendiri, {TK}, dan pajak itu final, jadi gaji istri menapaki lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT ({KI}):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP {KI} (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Satu lapisan tarif untuk seluruh penghasilan, dan biasanya ada kurang bayar saat melapor.',
+    infoBoxHtml: '<strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP {K}. Pajak atas gaji istri dari satu pemberi kerja dipotong dengan PTKP istri sendiri, {TK}, dan pajak itu final, jadi gaji istri menapaki lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT ({KI}):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP {KI} (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Seluruh penghasilan dikenai satu rangkaian lapisan tarif, dan biasanya ada kurang bayar saat melapor SPT.<br><br>Nama kedua cara ini mengikuti UU PPh Pasal 8, sehingga mungkin terasa terbalik: Pisah Harta menjumlahkan kedua penghasilan menjadi satu hitungan, sedangkan Gabung Harta memajaki gaji istri tersendiri.',
     quickStartLabel: 'Quick Start',
-    quickStartTip: 'Mengisi tab Rumah tangga dengan contoh, dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh yang tampil saat halaman dibuka.',
+    quickStartTip: 'Tombol ini mengisi tab Rumah tangga dengan contoh dan mengembalikan PTKP serta lapisan tarif ke ketentuan yang berlaku. Contoh awal yang tampil saat halaman dibuka adalah Penghasilan setara.',
     qsEven: 'Penghasilan setara, tanpa anak',
-    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 18,6 juta.',
+    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta menghemat Rp 18,6 juta per tahun.',
     qsSingle: 'Keluarga satu penghasilan',
-    qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.',
+    qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dan mereka punya dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.',
     qsDouble: 'Keluarga dua penghasilan',
-    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 33,5 juta.',
+    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Di Gabung Harta, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung Harta menghemat Rp 33,5 juta.',
     kpiSavingLabel: 'Penghematan pajak (opsi lebih murah)',
     kpiPisahLabel: 'Gabung Harta: total pajak',
     kpiPisahTip: 'SPT suami dengan PTKP K, ditambah gaji istri yang dipotong final oleh pemberi kerjanya dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.',
@@ -243,14 +243,14 @@ const LANG = {
     kpiGabungTip: 'Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan lalu dibagi sesuai penghasilan neto.',
     kpiRateSub: (pct) => `Per tahun, tarif efektif ${pct}`,
     noSignificantDiff: 'Tidak ada perbedaan signifikan',
-    pisahWins: 'Per tahun, dengan Gabung Harta',
-    gabungWins: 'Per tahun, dengan Pisah Harta',
+    pisahWins: 'Per tahun, kalau memilih Gabung Harta',
+    gabungWins: 'Per tahun, kalau memilih Pisah Harta',
     margFrom: 'mulai',
     verdictPisah: (amt) => `Gabung Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
     verdictGabung: (amt) => `Pisah Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
     verdictSame: 'Gabung Harta dan Pisah Harta menghasilkan pajak yang sama pada penghasilan ini.',
-    verdictTotals: (p, pr, g, gr) => `Total pajak per tahun: ${p} dengan Gabung Harta (tarif efektif ${pr}), ${g} dengan Pisah Harta (${gr}).`,
-    verdictSwitch: (sal, below, above) => `Pada porsi ini, ${below} lebih murah di bawah gaji rumah tangga sekitar ${sal} per tahun, dan ${above} di atasnya.`,
+    verdictTotals: (p, pr, g, gr) => `Total pajak per tahun: ${p} kalau memilih Gabung Harta (tarif efektif ${pr}), ${g} kalau memilih Pisah Harta (${gr}).`,
+    verdictSwitch: (sal, below, above) => `Pada porsi istri yang kamu isi, ${below} lebih murah selama gaji rumah tangga di bawah sekitar ${sal} per tahun, sedangkan di atasnya ${above} yang lebih murah.`,
     verdictAlways: (who, lo, hi) => `Pada porsi ini, ${who} sama atau lebih murah di setiap gaji rumah tangga dari ${lo} sampai ${hi} per tahun.`,
     optPisah: 'Gabung Harta',
     optGabung: 'Pisah Harta',
@@ -272,8 +272,8 @@ const LANG = {
     legendGabungWins: 'Pisah Harta lebih murah (di bawah nol)',
     legendDiffFull: 'Selisih, garis penuh',
     salaryLabel: 'Gaji rumah tangga',
-    pisahSavesPrefix: 'Gabung Harta hemat',
-    gabungSavesPrefix: 'Pisah Harta hemat',
+    pisahSavesPrefix: 'Gabung Harta menghemat',
+    gabungSavesPrefix: 'Pisah Harta menghemat',
     summaryTitle: 'Ringkasan pada gaji saat ini, per tahun',
     crossoverTitle: 'Analisis breakeven',
     tileGrosssalary: 'Gaji kotor',
@@ -286,20 +286,20 @@ const LANG = {
     tileTotalPtkpPisah: 'Total PTKP (Gabung)',
     tilePtkpGabungCode: 'PTKP Pisah ({KI})',
     tileTopBracket: 'Tarif marginal tertinggi',
-    tileTopBracketTip: 'Tarif pajak tertinggi yang dicapai penghasilan, dengan Gabung maupun Pisah.',
-    crossoverWith: 'Dengan porsi istri',
+    tileTopBracketTip: 'Tarif pajak tertinggi yang dicapai penghasilan, baik di Gabung maupun di Pisah.',
+    crossoverWith: 'Kalau porsi istri',
     crossoverWifePct: '%:',
-    crossoverWastedHtml: 'Suami tidak berpenghasilan. Dengan Gabung Harta, PTKP suami terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri. Pisah Harta memakai semua PTKP untuk penghasilan gabungan, jadi <span class="gabung-val">Pisah Harta</span> lebih murah pada porsi ini.',
+    crossoverWastedHtml: 'Suami tidak berpenghasilan. Kalau memilih Gabung Harta, PTKP suami terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri, sedangkan Pisah Harta memakai semua PTKP untuk penghasilan gabungan, jadi <span class="gabung-val">Pisah Harta</span> lebih murah pada porsi ini.',
     crossoverNoWifeHtml: 'Istri tidak berpenghasilan, jadi tidak ada penghasilan istri yang digabung: kedua cara memberi suami PTKP K dan hasilnya sama.',
     crossoverAdjust: 'Geser porsi istri untuk melihat kapan masing-masing cara jadi lebih murah.',
-    crossoverPoint: (sal) => `Breakeven: sekitar ${sal} per tahun gaji rumah tangga.`,
-    crossoverBelowHtml: 'Di bawahnya, <span class="gabung-val">Pisah Harta ({KI})</span> membayar lebih sedikit, karena PTKP pasangan berpenghasilan kecil yang tersisa ikut mengurangi penghasilan pasangannya.',
-    crossoverAboveHtml: 'Di atasnya, <span class="pisah-val">Gabung Harta ({GABUNG})</span> membayar lebih sedikit, karena gaji istri menapaki lapisan tarifnya sendiri.',
-    crossoverBelowPisahHtml: 'Di bawahnya, <span class="pisah-val">Gabung Harta ({GABUNG})</span> membayar lebih sedikit.',
-    crossoverAboveGabungHtml: 'Di atasnya, <span class="gabung-val">Pisah Harta ({KI})</span> membayar lebih sedikit.',
+    crossoverPoint: (sal) => `<em>Breakeven</em> ada di gaji rumah tangga sekitar ${sal} per tahun.`,
+    crossoverBelowHtml: 'Di bawahnya, pajak <span class="gabung-val">Pisah Harta ({KI})</span> lebih kecil, karena PTKP pasangan berpenghasilan kecil yang tidak terpakai ikut mengurangi penghasilan kena pajak pasangannya.',
+    crossoverAboveHtml: 'Di atasnya, pajak <span class="pisah-val">Gabung Harta ({GABUNG})</span> lebih kecil, karena gaji istri menapaki lapisan tarifnya sendiri.',
+    crossoverBelowPisahHtml: 'Di bawahnya, pajak <span class="pisah-val">Gabung Harta ({GABUNG})</span> lebih kecil.',
+    crossoverAboveGabungHtml: 'Di atasnya, pajak <span class="gabung-val">Pisah Harta ({KI})</span> lebih kecil.',
     crossoverNoneFound: (lo, hi) => `Tidak ada breakeven antara ${lo} dan ${hi} per tahun.`,
     crossoverPisahBetterPre: 'Pada porsi ini (',
-    crossoverPisahBetterPost: '%), <span class="pisah-val">Gabung Harta</span> sama atau lebih murah di setiap gaji. Dengan PTKP sesuai ketentuan, total PTKP kedua cara sama, dan Gabung Harta juga memajaki gaji istri dengan lapisan tarifnya sendiri.',
+    crossoverPisahBetterPost: '%), <span class="pisah-val">Gabung Harta</span> sama atau lebih murah di setiap gaji. Kalau PTKP mengikuti ketentuan, total PTKP kedua cara sama besar, dan di Gabung Harta gaji istri dikenai lapisan tarif dari awal.',
     crossoverGabungBetterHtml: 'Pada porsi ini, <span class="gabung-val">Pisah Harta</span> sama atau lebih murah di seluruh rentang. Ini terjadi bila salah satu pasangan berpenghasilan terlalu kecil untuk menghabiskan PTKP-nya sendiri.',
     crossoverSameHtml: 'Pada porsi ini, kedua cara sama di setiap gaji.',
     detailTitle: 'Rincian per gaji',
@@ -322,11 +322,11 @@ const LANG = {
     tblPisah: 'Gabung',
     tblGabung: 'Pisah',
     tblProportional: 'Pajak terutang (proporsional)',
-    tblSame: '—',
+    tblSame: 'Sama',
     tblPisahWin: 'Gabung',
     tblGabungWin: 'Pisah',
-    warnWife0: '⚠️ Dengan 0% penghasilan istri, tidak ada penghasilan istri yang digabung, jadi Gabung Harta dan Pisah Harta sama.',
-    warnHusband0: '⚠️ Dengan 100% penghasilan istri (suami 0%), Gabung Harta membuat PTKP suami ({K}) terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri. Pisah Harta memakainya. (Pemberi kerja bisa memakai PTKP K kalau istri menunjukkan suaminya tidak berpenghasilan; tool ini menganggap tidak.)',
+    warnWife0: '⚠️ Kalau porsi istri 0%, tidak ada penghasilan istri yang digabung, jadi Gabung Harta dan Pisah Harta sama.',
+    warnHusband0: '⚠️ Kalau porsi istri 100% (suami 0%) dan kamu memilih Gabung Harta, PTKP suami ({K}) terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri, sedangkan Pisah Harta justru memakai PTKP itu. (Pemberi kerja bisa memakai PTKP K kalau istri menunjukkan bahwa suaminya tidak berpenghasilan, tetapi hitungan tool ini mengasumsikan istri tidak menunjukkannya.)',
     warnDeductExceed: '⚠️ Pengurang melebihi gaji kotor, jadi penghasilan neto dihitung Rp 0.',
     warnSpouseExceed: '⚠️ Pengurang salah satu pasangan melebihi gaji kotornya, jadi penghasilan neto pasangan itu dihitung Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, paling banyak Rp 6 juta per tahun. Di atas batas: ',
@@ -406,25 +406,37 @@ const MAG = {
   en: { T: 'T', B: 'B', M: 'M', K: 'K' },
   id: { T: ' T', B: ' M', M: ' jt', K: ' rb' }
 };
+/* Figures are written in the page's own format (1,234.5 on the English page, 1.234,5 on the
+   Indonesian one: SharedNum, shared-id.js); what is stored stays English. Where a sentence
+   carries an amount, the Indonesian page writes it with the words (Rp 18,6 juta, Rp 1,5 miliar):
+   idr(v, 'words'). Cards, tiles, tables and chart ticks keep the short forms (jt, M). The English
+   page writes both the same way. */
+const MAG_WORDS = { en: MAG.en, id: { T: ' triliun', B: ' miliar', M: ' juta', K: ' ribu' } };
+const loc = x => SharedNum.show(String(x));
 const fmt = {
   idr(v, compact=false){
     const n=Number(v||0);const abs=Math.abs(n);const sign=n<0?'−':'';
-    const m=MAG[lang]||MAG.en;
-    if(compact&&abs>=1e12) return sign+'Rp '+(abs/1e12).toFixed(2)+m.T;
-    if(compact&&abs>=1e9) return sign+'Rp '+(abs/1e9).toFixed(2)+m.B;
-    if(compact&&abs>=1e6) return sign+'Rp '+(abs/1e6).toFixed(1)+m.M;
-    if(compact&&abs>=1e3) return sign+'Rp '+(abs/1e3).toFixed(0)+m.K;
-    return sign+'Rp '+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
+    const words=compact==='words';
+    const m=(words?MAG_WORDS:MAG)[lang]||MAG.en;
+    // In words the Indonesian page drops a trailing zero (Rp 1,5 miliar, not 1,50).
+    const f=(x,d)=>{ const t=x.toFixed(d); return loc(words&&lang==='id'?String(+t):t); };
+    if(compact&&abs>=1e12) return sign+'Rp '+f(abs/1e12,2)+m.T;
+    if(compact&&abs>=1e9) return sign+'Rp '+f(abs/1e9,2)+m.B;
+    if(compact&&abs>=1e6) return sign+'Rp '+f(abs/1e6,1)+m.M;
+    if(compact&&abs>=1e3) return sign+'Rp '+f(abs/1e3,0)+m.K;
+    return sign+'Rp '+loc(Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0}));
   },
-  full(v){ return 'Rp '+Math.round(Math.max(0,Number(v)||0)).toLocaleString('en-US'); },
-  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
-  num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
-  salaryLabel(mio){
-    const m=MAG[lang]||MAG.en;
-    if(mio>=1000) return 'Rp '+(mio/1000).toFixed(mio%1000===0?0:1)+m.B;
+  full(v){ return 'Rp '+loc(Math.round(Math.max(0,Number(v)||0)).toLocaleString('en-US')); },
+  pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return loc(p.toFixed(d))+'%';},
+  num(v,d=0){return loc(Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}));},
+  salaryLabel(mio, words){
+    const m=(words?MAG_WORDS:MAG)[lang]||MAG.en;
+    if(mio>=1000) return 'Rp '+loc((mio/1000).toFixed(mio%1000===0?0:1))+m.B;
     return 'Rp '+fmt.num(mio)+m.M;
   }
 };
+// A whole number written into a field: the field's own format on this page (SharedNum.write takes the English form).
+const putNum = (el, n) => SharedNum.write(el, Number(n).toLocaleString('en-US'));
 
 /* ── Tax constants ── */
 const PTKP_BASE_DEFAULT    = 54000000;
@@ -591,8 +603,8 @@ function readInputs(){
     // Exact share, not rounded to a whole percent: the sweep, charts, table and
     // CSV all derive their grosses from this.
     S.splitPct = S.totalSalary > 0 ? (S.wifeSalary / S.totalSalary) * 100 : 50;
-    $('combinedLabel').textContent = 'Rp ' + S.totalSalary.toLocaleString('en-US');
-    $('splitDerivedLabel').textContent = (S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
+    $('combinedLabel').textContent = 'Rp ' + loc(S.totalSalary.toLocaleString('en-US'));
+    $('splitDerivedLabel').textContent = loc(S.totalSalary > 0 ? (S.wifeSalary/S.totalSalary*100).toFixed(1) : '50.0') + '%';
   } else {
     S.splitPct = Math.max(0,Math.min(100,parseFloat(els.splitPct.value)||0));
     S.totalSalary = Math.max(0, SharedFmt.parseFormatted(els.totalSalaryInput.value));
@@ -606,7 +618,7 @@ function readInputs(){
 // decimal and drop a trailing ".0".
 function splitPctLabel(){
   const r = Math.round(S.splitPct * 10) / 10;
-  return Number.isInteger(r) ? String(r) : r.toFixed(1);
+  return Number.isInteger(r) ? String(r) : loc(r.toFixed(1));
 }
 
 function refreshSliderLabels(){
@@ -942,13 +954,13 @@ function renderVerdict(state){
   const diff=c.diff;
   let title;
   if(Math.abs(diff)<1000) title=T('verdictSame');
-  else if(diff>0) title=T('verdictPisah')(fmt.idr(diff,true));
-  else title=T('verdictGabung')(fmt.idr(-diff,true));
-  const body=[T('verdictTotals')(fmt.idr(c.pisahTax,true), fmt.pct(c.pisahRate), fmt.idr(c.gabungTax,true), fmt.pct(c.gabungRate))];
-  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
+  else if(diff>0) title=T('verdictPisah')(fmt.idr(diff,'words'));
+  else title=T('verdictGabung')(fmt.idr(-diff,'words'));
+  const body=[T('verdictTotals')(fmt.idr(c.pisahTax,'words'), fmt.pct(c.pisahRate), fmt.idr(c.gabungTax,'words'), fmt.pct(c.gabungRate))];
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary,true), hi=fmt.salaryLabel(rows[rows.length-1].salary,true);
   const sides=crossoverSides(state);
   if(sides){
-    const sal=fmt.salaryLabel(Math.round(state.summary.crossover));
+    const sal=fmt.salaryLabel(Math.round(state.summary.crossover),true);
     body.push(sides.gabungBelow
       ? T('verdictSwitch')(sal, T('optGabung'), T('optPisah'))
       : T('verdictSwitch')(sal, T('optPisah'), T('optGabung')));
@@ -981,7 +993,7 @@ function updateSummary(state){
   grid.innerHTML=tiles.map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div></div>`).join('');
 
   const info=$('crossoverInfo');
-  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary,true), hi=fmt.salaryLabel(rows[rows.length-1].salary,true);
   if(S.splitPct===0 || S.splitPct===100){
     // No income of the wife's to combine makes the two ways equal; no income
     // of the husband's leaves his PTKP unused under Gabung.
@@ -989,7 +1001,7 @@ function updateSummary(state){
     info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong> ${why}<br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
     const sides=crossoverSides(state);
-    const sal=fmt.salaryLabel(Math.round(s.crossover));
+    const sal=fmt.salaryLabel(Math.round(s.crossover),true);
     info.innerHTML='<strong>'+T('crossoverPoint')(sal)+'</strong><br>'+
       (sides.gabungBelow ? TF('crossoverBelowHtml')+' '+TF('crossoverAboveHtml')
                          : TF('crossoverBelowPisahHtml')+' '+TF('crossoverAboveGabungHtml'));
@@ -1079,7 +1091,7 @@ function updateDetailTable(rows){
 }
 
 /* ── Biaya jabatan cap warning, for deductions typed with the switch off ── */
-function capWarnMoney(v){ return 'Rp ' + Math.round(v).toLocaleString('en-US'); }
+function capWarnMoney(v){ return 'Rp ' + loc(Math.round(v).toLocaleString('en-US')); }
 function capWarnItem(who, amount, cap){
   return who + ' ' + capWarnMoney(amount) + T('warnCapOf') + capWarnMoney(cap);
 }
@@ -1209,17 +1221,17 @@ function resetAll(){
   S.brackets=JSON.parse(JSON.stringify(BRACKETS_DEFAULT));
   els.dependents.value=DEFAULTS.dependents;
   els.splitPct.value=DEFAULTS.splitPct;
-  els.totalSalaryInput.value=DEFAULTS.totalSalary.toLocaleString('en-US');
-  els.husbandSalaryInput.value=DEFAULTS.husbandSalary.toLocaleString('en-US');
-  els.wifeSalaryInput.value=DEFAULTS.wifeSalary.toLocaleString('en-US');
+  putNum(els.totalSalaryInput, DEFAULTS.totalSalary);
+  putNum(els.husbandSalaryInput, DEFAULTS.husbandSalary);
+  putNum(els.wifeSalaryInput, DEFAULTS.wifeSalary);
   els.deductionInput.value='0';
   els.husbandDeductionInput.value='0';
   els.wifeDeductionInput.value='0';
   els.biayaJabatan.checked=DEFAULTS.biayaJabatan;
-  els.ptkpBase.value=DEFAULTS.ptkpBase.toLocaleString('en-US');
-  els.ptkpMarried.value=DEFAULTS.ptkpMarried.toLocaleString('en-US');
-  els.ptkpSpouse.value=DEFAULTS.ptkpSpouse.toLocaleString('en-US');
-  els.ptkpDependent.value=DEFAULTS.ptkpDependent.toLocaleString('en-US');
+  putNum(els.ptkpBase, DEFAULTS.ptkpBase);
+  putNum(els.ptkpMarried, DEFAULTS.ptkpMarried);
+  putNum(els.ptkpSpouse, DEFAULTS.ptkpSpouse);
+  putNum(els.ptkpDependent, DEFAULTS.ptkpDependent);
   setInputMode('total');
   buildBracketEditor();
   rerender();
@@ -1240,11 +1252,11 @@ function applyQuickStart(key){
   resetAll();
   els.dependents.value = q.dependents;
   if (q.mode === 'total') {
-    els.totalSalaryInput.value = q.totalSalary.toLocaleString('en-US');
+    putNum(els.totalSalaryInput, q.totalSalary);
     els.splitPct.value = q.splitPct;
   } else {
-    els.husbandSalaryInput.value = q.husbandSalary.toLocaleString('en-US');
-    els.wifeSalaryInput.value = q.wifeSalary.toLocaleString('en-US');
+    putNum(els.husbandSalaryInput, q.husbandSalary);
+    putNum(els.wifeSalaryInput, q.wifeSalary);
   }
   setInputMode(q.mode);  // rerenders and schedules the save
   document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === key));
@@ -1262,13 +1274,13 @@ function setInputMode(mode){
 }
 
 /* ── Bracket number formatting helpers ── */
-function formatBracketNum(n){ return n===null||n===undefined?'':Number(n).toLocaleString('en-US'); }
+function formatBracketNum(n){ return n===null||n===undefined?'':loc(Number(n).toLocaleString('en-US')); }
 function parseBracketNum(str){ return str===''?null:parseInt(str.replace(/[^0-9]/g,''),10)||0; }
 function formatBracketInput(el){
   const raw=el.value.replace(/[^0-9]/g,'');
   if(raw===''){el.value='';return;}
   const n=parseInt(raw,10)||0;
-  el.value=n.toLocaleString('en-US');
+  el.value=loc(n.toLocaleString('en-US'));
 }
 
 /* ── Bracket editor ── */
@@ -1588,7 +1600,7 @@ function carryAcrossModes(to, keep){
   if(to === S.inputMode) return;
   const kept = id => !!keep && keep.indexOf(id) >= 0;
   const rp = el => Math.max(0, SharedFmt.parseFormatted(el.value) || 0);
-  const put = (el, n) => { if(!kept(el.id)) el.value = Math.round(n).toLocaleString('en-US'); };
+  const put = (el, n) => { if(!kept(el.id)) putNum(el, Math.round(n)); };
   if(to === 'individual'){
     const total = rp(els.totalSalaryInput), ded = rp(els.deductionInput);
     const share = Math.max(0, Math.min(100, parseFloat(els.splitPct.value) || 0)) / 100;
@@ -1748,7 +1760,7 @@ function agentBrackets(raw, extra, api){
   }
   if(!rows.length) return false;
   extra.brackets = rows;
-  const rp = n => 'Rp ' + n.toLocaleString('en-US'), pc = r => (+(r * 100).toFixed(2)) + '%';
+  const rp = n => 'Rp ' + loc(n.toLocaleString('en-US')), pc = r => loc(+(r * 100).toFixed(2)) + '%';
   return { value: rows.map((b, i) => pc(b.rate) + ' ' + (b.to !== null ? t.upTo + rp(b.to)
     : i ? t.above + rp(rows[i - 1].to) : t.flat)).join(', ') };
 }

@@ -1,4 +1,4 @@
-Rent vs Own: use this tool with an AI assistant
+Sewa vs Beli Rumah: use this tool with an AI assistant
 https://tool.adjiebrotots.com/rentvsownhouse/id/
 
 This is the full reference for one page of the skill brotools-rentvsownhouse: read SKILL.md first.
@@ -159,7 +159,7 @@ setupCost: Biaya awal pembelian (BPHTB, notaris, dll.)  (most important)
   fees. An amount, or a % of the price, as setupCostType says. Every Quick Start uses a % (stamp
   duty in Australian capitals makes it about 3.5 to 6); the tool's own default is an amount.
   Tip on the page: Biaya sekali bayar saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan.
-  Saat Sewa Dulu membeli nanti, biaya ini mengikuti harga saat itu.
+  Ketika skenario Sewa Dulu membeli rumah nanti, biaya ini mengikuti harga saat itu.
 setupCostType: Biaya awal pembelian (BPHTB, notaris, dll.) ($ or %)
   One of: dollar ($), pct (%). Sets the unit of setupCost. Default dollar.
   dollar: setupCost is an amount. pct: setupCost is a % of the price. Send it with setupCost
@@ -230,22 +230,24 @@ rtbEnabled: Aktifkan Sewa Dulu, Beli Kemudian
   Checkbox: true or false. Default false.
   Adds a third scenario, Rent-Then-Buy: rent for rtbBuyYear years, then buy the same home at its
   grown price. Leave it out unless the user asks about buying later.
-  Tip on the page: Skenario ketiga: menyewa X tahun, lalu membeli pada harga saat itu, dengan
-  anggaran yang sama. Anggaran atau modal awal yang otomatis ikut naik untuk mendanainya, jadi Beli
-  dan Sewa juga berubah.
+  Tip on the page: Skenario ketiga: rumah disewa X tahun, lalu dibeli dengan harga saat itu dan
+  anggaran sama. Jika anggaran atau modal awal kosong, keduanya naik otomatis, sehingga hasil Beli
+  dan Sewa ikut berubah.
 rtbBuyYear: Beli di tahun
   Slider (thn). 1 to 29. Default 5.
   The year the Rent-Then-Buy scenario buys. Must be less than horizon.
-  Tip on the page: Membeli di akhir tahun ini, pada harga yang naik sesuai RPPI. KPR baru dimulai
-  saat itu: jangka waktu penuh, jadwal bunga dari tahun ke-1.
+  Tip on the page: Rumah dibeli di akhir tahun yang dipilih, dengan harga yang sudah naik sesuai
+  kenaikan harga properti. KPR baru dimulai saat itu, dengan jangka waktu penuh dan jadwal bunga
+  dari tahun ke-1.
 
 [Asumsi: Harga]
 generalInflation: Inflasi umum
   Slider (%/thn). 0 to 15. Default 2.5.
   Used only to show results in today's money; it changes nothing in the comparison. Typical 2 to 3;
   the local inflation target.
-  Tip on the page: Laju kenaikan harga umum per tahun (IHK). Rencananya tidak berubah: opsi
-  Tampilkan dalam nilai hari ini, di samping hasil, membagi setiap angka dengan laju ini.
+  Tip on the page: Laju kenaikan harga umum per tahun (IHK). Angka dalam skenario tidak berubah;
+  opsi Tampilkan dalam nilai hari ini hanya menampilkan setiap angka setelah disesuaikan dengan
+  inflasi umum.
 
 [Asumsi: Tabungan dan jangka waktu]
 riskFreeRate: Suku Bunga Bebas Risiko  (most important)
@@ -266,7 +268,7 @@ houseGrowth: Kenaikan harga properti (RPPI)  (most important)
   city, below the boom years: about 3 to 4.5 in Australian capitals, lower for apartments. With
   riskFreeRate, it moves the answer most.
   Tip on the page: Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli
-  Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.
+  pada skenario Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.
 sellingCostPct: Biaya penjualan
   Slider (% harga jual). 0 to 15. Default 2.5.
   Selling costs as a % of the sale price (agent, marketing, legal), taken off the home's value as if
@@ -279,16 +281,16 @@ initialCash: Modal awal (opsional)
   Amount ($ before it). 0 to 1,000,000,000,000. Default blank.
   Cash the user has today. Leave it out unless the user gives it: blank covers the deposit and setup
   cost, and the renter invests that same amount.
-  Tip on the page: Kas yang kamu punya sekarang. Beli memakainya untuk DP dan biaya awal, Sewa
-  menginvestasikan semuanya. Jika kosong, dipakai jumlah yang cukup untuk semua skenario, termasuk
-  DP Sewa Dulu nanti.
+  Tip on the page: Kas yang kamu punya sekarang. Di skenario Beli, kas ini dipakai untuk DP dan
+  biaya awal; di skenario Sewa, seluruhnya diinvestasikan. Jika kosong, dipakai jumlah yang cukup
+  untuk semua skenario.
 monthlyBudget: Anggaran perumahan bulanan (opsional)
   Amount ($ before it, /bln after it). 0 to 100,000,000,000. Default 0.
   Monthly cash for housing. 0 or blank (the default) is automatic: each year it follows whichever of
   renting and owning costs more, so both can pay and the cheaper one invests the difference. Set it
   only when the user gives a budget.
   Tip on the page: Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal
-  tiap tahun, dengan cicilan di batas atas bunga floating, jadi semua skenario sanggup membayar.
+  tiap tahun, dengan cicilan di batas atas bunga floating, sehingga biaya semua skenario tertutup.
 monthlyBudgetIncrease: Kenaikan anggaran tahunan
   Slider (%/thn). 0 to 25. Default 0.
   How fast a monthly budget the user set grows, % a year. Does nothing while monthlyBudget is
@@ -301,8 +303,8 @@ showReal: Tampilkan dalam nilai hari ini
   Checkbox: true or false. Default true.
   Display only: true shows results in today's money (divided by generalInflation), false in future
   money. Leave it out.
-  Tip on the page: Rencananya tetap sama. Aktif: semua angka dalam nilai hari ini, menurut inflasi
-  umum. Nonaktif: dalam nilai uang tiap tahun, seperti yang tertera di rekening.
+  Tip on the page: Angka dalam skenario tidak berubah. Aktif: semua angka dalam nilai hari ini,
+  menurut inflasi umum. Nonaktif: dalam nilai uang tiap tahun, seperti yang tertera di rekening.
 
 COMPACT LISTS
 - `ratePeriods=<years>:<rate>,<years>:<rate>,...`

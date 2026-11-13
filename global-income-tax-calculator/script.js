@@ -26,10 +26,12 @@ const MAX_JOBS = 4;
    One script for two pages: the English page and its Indonesian twin (id/, baked from
    index.html by _ref/bake-id.mjs, which sets window.DEFAULT_LANG = 'id'). Both read and
    write the same fields under the same Persist namespace, so a reader's work, a scenario
-   file, a Share link and an AI link open the same on either page. Only words change:
-   figures keep the form's own format (1,234.5) on both, as the fields do, so a value
-   saved on one page reads as the same number on the other. On the English page nothing
-   below is applied: the page shows index.html as it is.
+   file, a Share link and an AI link open the same on either page. Words change, and so does
+   the way a figure is written: the Indonesian page shows and takes 1.234,5 (shared-id.js,
+   SharedNum), the English one 1,234.5. What is stored is the English form on both (the jobs
+   below, the mini cache, a file, a link), and SharedNum.read / write turn a field's text into
+   it and back, so a value saved on one page reads as the same number on the other.
+   On the English page nothing below is applied: the page shows index.html as it is.
    The engine's own text (line labels, notes, the tax year) is worded on the Indonesian
    page by labels-id.js (GSCLabelsId), made from the country pages' content files. */
 const LANG = {
@@ -691,10 +693,10 @@ const LANG = {
     otip_seRes_res: "<strong>Penduduk pajak:</strong> orang yang tinggal di Swedia atau berada di sana 6 bulan atau lebih, termasuk pekerja asing dengan izin kerja.",
     opt_seRes_res: "Penduduk pajak",
     otip_seRes_sink: "<strong>Bukan penduduk pajak, SINK:</strong> orang yang bekerja di Swedia tetapi tinggal di luar negeri, misalnya pekerja lintas batas atau penugasan di bawah 6 bulan.",
-    opt_seRes_sink: "Bukan penduduk pajak, SINK 22.5%",
+    opt_seRes_sink: "Bukan penduduk pajak, SINK 22,5%",
     otip_fiRes_res: "<strong>Pajak biasa:</strong> karyawan yang dikenai tarif progresif, termasuk penduduk dan WNA yang tinggal lebih dari 6 bulan.",
     opt_fiRes_res: "Pajak biasa",
-    otip_fiRes_key: "<strong>Key employee:</strong> tenaga ahli asing yang direkrut dari luar negeri, bergaji minimal 5,800 sebulan, dan tidak menjadi penduduk Finlandia dalam 5 tahun terakhir.",
+    otip_fiRes_key: "<strong>Key employee:</strong> tenaga ahli asing yang direkrut dari luar negeri, bergaji minimal 5.800 sebulan, dan tidak menjadi penduduk Finlandia dalam 5 tahun terakhir.",
     opt_fiRes_key: "Key employee, tarif tunggal 25%",
     otip_itImp_none: "<strong>Penduduk pajak:</strong> orang yang tinggal di Italia dan dikenai tarif progresif biasa.",
     opt_itImp_none: "Penduduk pajak",
@@ -733,7 +735,7 @@ const LANG = {
     otip_jpRes_y1: "<strong>Penduduk pajak, tahun pertama:</strong> orang yang pindah ke Jepang tahun ini dengan visa kerja, sehingga belum beralamat di sana pada 1 Januari.",
     opt_jpRes_y1: "Penduduk pajak, tahun pertama",
     otip_jpRes_nonres: "<strong>Bukan penduduk pajak:</strong> orang tanpa tempat tinggal di Jepang yang berada di sana kurang dari setahun, misalnya karena penugasan singkat.",
-    opt_jpRes_nonres: "Bukan penduduk pajak, tarif tunggal 20.42%",
+    opt_jpRes_nonres: "Bukan penduduk pajak, tarif tunggal 20,42%",
     otip_krMethod_prog: "<strong>Tarif progresif:</strong> cara standar untuk semua karyawan, baik WNA maupun warga Korea.",
     opt_krMethod_prog: "Tarif progresif",
     otip_krMethod_flat: "<strong>Tarif tunggal 19%:</strong> WNA yang bekerja di Korea dan memilih cara ini, untuk pekerjaan sampai 31 Des 2026.",
@@ -747,9 +749,9 @@ const LANG = {
     otip_twRes_nonres: "<strong>Bukan penduduk pajak:</strong> WNA yang berada di Taiwan kurang dari 183 hari dalam setahun, misalnya karena penugasan singkat.",
     opt_twRes_nonres: "Bukan penduduk pajak",
     otip_twEi_yes: "<strong>Ikut asuransi ketenagakerjaan:</strong> warga negara, WNA yang menikah dengan warga negara dan terdaftar di kartu keluarga, serta penduduk tetap.",
-    opt_twEi_yes: "Ikut: 11.5% + 1%",
+    opt_twEi_yes: "Ikut: 11,5% + 1%",
     otip_twEi_no: "<strong>Tidak ikut:</strong> karyawan asing lain dengan izin kerja, yang hanya membayar asuransi tenaga kerja.",
-    opt_twEi_no: "Karyawan asing: 11.5% saja",
+    opt_twEi_no: "Karyawan asing: 11,5% saja",
     otip_gulfNat_expat: "<strong>Ekspatriat:</strong> pekerja asing dengan izin tinggal kerja yang disponsori pemberi kerja.",
     opt_gulfNat_expat: "Ekspatriat",
     otip_gulfNat_national: "<strong>Warga negara:</strong> warga negara tempatmu bekerja, yang ikut skema pensiun negara itu.",
@@ -774,17 +776,17 @@ const LANG = {
     opt_deChurch_0: "Tidak ada",
     opt_deChurch_8: "8% (Bavaria, Baden-Württemberg)",
     opt_deChurch_9: "9% (negara bagian lain)",
-    opt_idJkk_0_24: "0.24%, risiko sangat rendah",
-    opt_idJkk_0_54: "0.54%, risiko rendah",
-    opt_idJkk_0_89: "0.89%, risiko sedang",
-    opt_idJkk_1_27: "1.27%, risiko tinggi",
-    opt_idJkk_1_74: "1.74%, risiko sangat tinggi",
-    opt_nlNorm_std: "Standar (48,013)",
-    opt_nlNorm_young: "Di bawah 30 tahun dengan gelar master (36,497)",
+    opt_idJkk_0_24: "0,24%, risiko sangat rendah",
+    opt_idJkk_0_54: "0,54%, risiko rendah",
+    opt_idJkk_0_89: "0,89%, risiko sedang",
+    opt_idJkk_1_27: "1,27%, risiko tinggi",
+    opt_idJkk_1_74: "1,74%, risiko sangat tinggi",
+    opt_nlNorm_std: "Standar (48.013)",
+    opt_nlNorm_young: "Di bawah 30 tahun dengan gelar master (36.497)",
     opt_eeP2_0: "Tidak ikut",
-    opt_chAge_25: "25 sampai 34 (3.5%)",
+    opt_chAge_25: "25 sampai 34 (3,5%)",
     opt_chAge_35: "35 sampai 44 (5%)",
-    opt_chAge_45: "45 sampai 54 (7.5%)",
+    opt_chAge_45: "45 sampai 54 (7,5%)",
     opt_chAge_55: "55 sampai 65 (9%)",
     opt_jpSupport_12: "Setahun penuh",
     opt_jpSupport_9: "Tahun kalender 2026 (April sampai Desember)",
@@ -792,7 +794,7 @@ const LANG = {
     lbl_usState: "Negara bagian",
     tip_usState: "39 negara bagian dan DC. Sebelas negara bagian tidak tersedia karena aturan penghapusan bertahap potongannya belum dimuat di sini.",
     lbl_usNyc: "Tinggal di New York City",
-    tip_usNyc: "New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif 3.078% sampai 3.876%.",
+    tip_usNyc: "New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif 3,078% sampai 3,876%.",
     lbl_caProv: "Provinsi",
     lbl_ukRegion: "Tempat tinggal",
     tip_ukRegion: "Skotlandia punya lapisan tarif pajak penghasilan sendiri. National Insurance sama di seluruh Britania Raya.",
@@ -809,11 +811,11 @@ const LANG = {
     tip_nlRuling: "Untuk karyawan yang direkrut dari luar negeri dan sebelumnya tinggal lebih dari 150 km dari perbatasan Belanda. Sampai 30% gaji bebas pajak di atas salary norm, 27% mulai 2027.",
     lbl_noRes: "Skema",
     lbl_noNi: "Peserta asuransi nasional Norwegia",
-    tip_noNi: "Tarif PAYE 25% untuk peserta dan 17.4% untuk yang bukan peserta.",
+    tip_noNi: "Tarif PAYE 25% untuk peserta dan 17,4% untuk yang bukan peserta.",
     lbl_seRes: "Status penduduk",
     lbl_fiRes: "Skema",
     lbl_beExpat: "Rezim ekspatriat",
-    tip_beExpat: "Untuk karyawan yang direkrut atau ditugaskan dari luar negeri bergaji di atas 70,000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.",
+    tip_beExpat: "Untuk karyawan yang direkrut atau ditugaskan dari luar negeri bergaji di atas 70.000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.",
     lbl_itImp: "Rezim",
     lbl_frCadre: "Kontrak",
     lbl_frImp: "Rezim impatriat, forfait 30%",
@@ -821,33 +823,33 @@ const LANG = {
     lbl_esRegime: "Rezim",
     lbl_ptRegime: "Rezim",
     lbl_ptJovemYear: "Tahun kerja ke-",
-    tip_ptJovemYear: "Bagian yang dibebaskan: 100% di tahun ke-1, 75% di tahun ke-2 sampai ke-4, 50% di tahun ke-5 sampai ke-7, 25% di tahun ke-8 sampai ke-10, maksimal 29,542.15.",
+    tip_ptJovemYear: "Bagian yang dibebaskan: 100% di tahun ke-1, 75% di tahun ke-2 sampai ke-4, 50% di tahun ke-5 sampai ke-7, 25% di tahun ke-8 sampai ke-10, maksimal 29.542,15.",
     lbl_jpRes: "Status penduduk",
     lbl_krMethod: "Cara hitung pajak",
     lbl_cnRes: "Status",
     lbl_twRes: "Status penduduk",
     lbl_twGold: "Gold Card",
-    tip_twGold: "Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3,000,000 selama 5 tahun.",
+    tip_twGold: "Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3.000.000 selama 5 tahun.",
     lbl_twEi: "Asuransi ketenagakerjaan",
     lbl_gulfNat: "Kewarganegaraan",
     lbl_saScheme: "Skema GOSI",
     lbl_usFiling: "Status pelaporan",
     lbl_deKids: "Punya anak",
-    tip_deKids: "Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0.6 poin persentase.",
+    tip_deKids: "Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0,6 poin persentase.",
     lbl_idMarried: "Menikah",
     lbl_idDeps: "Tanggungan",
-    tip_idDeps: "Setiap tanggungan menambah PTKP sebesar 4,500,000, maksimal tiga orang.",
+    tip_idDeps: "Setiap tanggungan menambah PTKP sebesar 4.500.000, maksimal tiga orang.",
     lbl_thSpouse: "Pasangan tanpa penghasilan",
     lbl_thKids: "Anak lahir sebelum 2018",
     lbl_thKidsNew: "Anak lahir 2018 atau sesudahnya",
-    tip_thKidsNew: "Mulai anak kedua, anak yang lahir 2018 atau sesudahnya memberi potongan 60,000, bukan 30,000.",
+    tip_thKidsNew: "Mulai anak kedua, anak yang lahir 2018 atau sesudahnya memberi potongan 60.000, bukan 30.000.",
     lbl_mySpouse: "Pasangan tanpa penghasilan",
     lbl_myKids: "Anak",
     lbl_beStatus: "Rumah tangga",
-    tip_beStatus: "Pencari nafkah tunggal boleh memindahkan sampai 30% penghasilan (maksimal 11,780) ke pasangannya, yang dipajaki atas bagian itu dengan bagian bebas pajaknya sendiri.",
+    tip_beStatus: "Pencari nafkah tunggal boleh memindahkan sampai 30% penghasilan (maksimal 11.780) ke pasangannya, yang dipajaki atas bagian itu dengan bagian bebas pajaknya sendiri.",
     lbl_beKids: "Anak tanggungan",
     lbl_beSingleParent: "Orang tua tunggal",
-    tip_beSingleParent: "Orang tua tunggal dengan anak tanggungan mendapat tambahan 1,980 pada bagian bebas pajaknya.",
+    tip_beSingleParent: "Orang tua tunggal dengan anak tanggungan mendapat tambahan 1.980 pada bagian bebas pajaknya.",
     lbl_chStatus: "Rumah tangga",
     lbl_chKids: "Anak",
     lbl_frMarried: "Menikah atau PACS",
@@ -865,23 +867,23 @@ const LANG = {
     lbl_twStatus: "Rumah tangga",
     lbl_twKids: "Anak di bawah umur",
     lbl_krDeps: "Tanggungan",
-    tip_krDeps: "Setiap tanggungan menambah potongan dasar 1,500,000.",
+    tip_krDeps: "Setiap tanggungan menambah potongan dasar 1.500.000.",
     lbl_auCover: "Asuransi rumah sakit swasta",
-    tip_auCover: "Tanpa asuransi ini, Medicare levy surcharge 1% sampai 1.5% berlaku untuk penghasilan di atas 105,000.",
+    tip_auCover: "Tanpa asuransi ini, Medicare levy surcharge 1% sampai 1,5% berlaku untuk penghasilan di atas 105.000.",
     lbl_auSuper: "Jumlah sudah termasuk super",
     tip_auSuper: "<ul><li><strong>Aktif:</strong> jumlah yang kamu isi adalah paket gaji yang sudah memuat super guarantee 12%.</li><li><strong>Mati:</strong> super dibayar pemberi kerja di luar gaji.</li></ul>",
     lbl_ukLoan: "Pinjaman mahasiswa",
-    tip_ukLoan: "9% dari gaji di atas ambang tiap plan: 26,900, 29,385, 33,795 atau 25,000.",
+    tip_ukLoan: "9% dari gaji di atas ambang tiap plan: 26.900, 29.385, 33.795 atau 25.000.",
     lbl_ukPg: "Pinjaman pascasarjana",
-    tip_ukPg: "6% dari gaji di atas 21,000, di luar cicilan plan mana pun.",
+    tip_ukPg: "6% dari gaji di atas 21.000, di luar cicilan plan mana pun.",
     lbl_deChurch: "Pajak gereja",
     tip_deChurch: "Anggota gereja membayar sebagian dari pajak penghasilannya: 8% di Bavaria dan Baden-Württemberg, 9% di negara bagian lain.",
     lbl_deAddOn: "Iuran tambahan asuransi kesehatan",
-    tip_deAddOn: "Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2.9% pada 2026. Kamu menanggung separuhnya.",
+    tip_deAddOn: "Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2,9% pada 2026. Kamu menanggung separuhnya.",
     lbl_usLocal: "Pajak penghasilan lokal atau county",
     tip_usLocal: "Beberapa kota dan county juga memajaki gaji (county di Maryland, Philadelphia, Detroit). Isi tarifnya atas gaji kotor.",
     lbl_usNyDbl: "Pemberi kerja memotong iuran disabilitas NY (DBL)",
-    tip_usNyDbl: "0.5% dari gaji, maksimal 0.60 seminggu. Pemberi kerja boleh memotongnya dari gaji atau menanggung seluruhnya.",
+    tip_usNyDbl: "0,5% dari gaji, maksimal 0,60 seminggu. Pemberi kerja boleh memotongnya dari gaji atau menanggung seluruhnya.",
     lbl_usFicaExempt: "Bebas Social Security dan Medicare",
     tip_usFicaExempt: "Pemegang visa F, J, M, dan Q (pelajar dan peneliti) biasanya dibebaskan.",
     lbl_idJkk: "Tarif JKK (kecelakaan kerja)",
@@ -896,16 +898,16 @@ const LANG = {
     lbl_nlPension: "Iuran pensiun, bagianmu",
     tip_nlPension: "Dipotong sebelum pajak. Diisi sebagai persentase gaji kotor; skema yang hanya menghitung iuran di atas bagian gaji yang dikecualikan (franchise) memotong lebih sedikit.",
     lbl_seMun: "Tarif pajak kota",
-    tip_seMun: "Stockholm 30.55%; rata-rata nasional 32.38%.",
+    tip_seMun: "Stockholm 30,55%; rata-rata nasional 32,38%.",
     lbl_seBurial: "Biaya penguburan",
-    tip_seBurial: "Rata-rata nasional 0.292%. Anggota Gereja Swedia membayar iuran gereja sebagai gantinya.",
+    tip_seBurial: "Rata-rata nasional 0,292%. Anggota Gereja Swedia membayar iuran gereja sebagai gantinya.",
     lbl_eeP2: "Pilar pensiun kedua",
     lbl_eePension: "Sudah usia pensiun",
     tip_eePension: "Penghasilan bebas pajak menjadi 776 sebulan, bukan 700.",
     lbl_fiMun: "Tarif pajak kota",
-    tip_fiMun: "Helsinki 5.30%.",
+    tip_fiMun: "Helsinki 5,30%.",
     lbl_fiChurch: "Tarif pajak gereja",
-    tip_fiChurch: "Untuk anggota gereja: 1.00% di Helsinki untuk gereja Lutheran.",
+    tip_fiChurch: "Untuk anggota gereja: 1,00% di Helsinki untuk gereja Lutheran.",
     lbl_beMun: "Pajak tambahan kota",
     tip_beMun: "Dihitung dari pajak federal. Kebanyakan kota menetapkan 6% sampai 8%.",
     lbl_chChurch: "Anggota gereja",
@@ -919,9 +921,9 @@ const LANG = {
     lbl_frMutuelle: "Asuransi kesehatan perusahaan, bagianmu",
     tip_frMutuelle: "Asuransi kesehatan dan perlindungan wajib dari perusahaan. Bagianmu dipotong dari gaji dan dikurangkan sebelum pajak.",
     lbl_esTemp: "Kontrak sementara",
-    tip_esTemp: "Iuran asuransi pengangguran 1.60%, bukan 1.55%.",
+    tip_esTemp: "Iuran asuransi pengangguran 1,60%, bukan 1,55%.",
     lbl_ptHealth: "Biaya kesehatan",
-    tip_ptHealth: "15% mengurangi pajak, maksimal 1,000.",
+    tip_ptHealth: "15% mengurangi pajak, maksimal 1.000.",
     lbl_ptEdu: "Biaya pendidikan",
     tip_ptEdu: "30% mengurangi pajak, maksimal 800.",
     lbl_ptRent: "Sewa rumah tinggalmu",
@@ -929,9 +931,9 @@ const LANG = {
     lbl_ptColeta: "Pengurang biaya keluarga umum",
     tip_ptColeta: "35% dari belanja sehari-hari yang tercatat di faktur e-Fatura, maksimal 250. Kebanyakan orang mencapai batas itu.",
     lbl_jpCare: "Usia 40 sampai 64",
-    tip_jpCare: "Menambah premi perawatan jangka panjang: iuran kesehatan menjadi 11.47%, bukan 9.85%, ditanggung separuh-separuh.",
+    tip_jpCare: "Menambah premi perawatan jangka panjang: iuran kesehatan menjadi 11,47%, bukan 9,85%, ditanggung separuh-separuh.",
     lbl_jpSupport: "Iuran dukungan anak",
-    tip_jpSupport: "Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk melihat tahun ketika iuran ini sudah berjalan normal.",
+    tip_jpSupport: "Iuran 0,23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk melihat tahun ketika iuran ini sudah berjalan normal.",
     lbl_cnHf: "Tarif dana perumahan",
     tip_cnHf: "Pemberi kerja menetapkannya antara 5% dan 7%.",
     lbl_cnAllow: "Tunjangan bebas pajak",
@@ -939,7 +941,7 @@ const LANG = {
     lbl_cnSpecial: "Potongan tambahan khusus",
     tip_cnSpecial: "Anak, perawatan orang tua, sewa rumah atau bunga KPR, dan pendidikan lanjutan.",
     lbl_hkMpf: "Peserta MPF",
-    tip_hkMpf: "5% dari gaji, maksimal 1,500 sebulan, dan nol untuk gaji di bawah 7,100 sebulan. Bisa dikurangkan dari penghasilan sampai 18,000.",
+    tip_hkMpf: "5% dari gaji, maksimal 1.500 sebulan, dan nol untuk gaji di bawah 7.100 sebulan. Bisa dikurangkan dari penghasilan sampai 18.000.",
     lbl_gulfWagePct: "Porsi gaji yang dikenai iuran",
     tip_gulfWagePct: "Iuran dihitung dari upah yang dikenai iuran (di Arab Saudi, gaji pokok ditambah tunjangan perumahan). Turunkan angka ini kalau tunjangan tidak ikut dihitung.",
     sub_1: "Aturan untuk Kota Zürich. Kanton lain belum dimuat.",
@@ -962,15 +964,15 @@ const LANG = {
     qsLabel: "Quick Start",
     qsTip: "Mengganti semua pekerjaan dengan satu contoh perbandingan. Setelah itu, ubah angka mana pun sesukamu.",
     qs_asia: "Kota bisnis Asia",
-    qsTip_asia: "Empat tawaran untuk ekspatriat: S$180,000 di Singapura, HK$1,300,000 di Hong Kong (Tiongkok), ¥15 juta di Tokyo, dan AED 600,000 di Dubai, dibandingkan dalam dolar AS.",
+    qsTip_asia: "Empat tawaran untuk ekspatriat: S$180,000 di Singapura, HK$1,300,000 di Hong Kong (Tiongkok), ¥15 juta di Tokyo, dan AED 600.000 di Dubai, dibandingkan dalam dolar AS.",
     qs_europe: "Insinyur di Eropa",
-    qsTip_europe: "Satu insinyur senior di empat kota: £95,000 di London, €95,000 di Amsterdam dengan 30% ruling, €95,000 di Berlin, dan CHF 140,000 di Zürich.",
+    qsTip_europe: "Satu insinyur senior di empat kota: £95.000 di London, €95.000 di Amsterdam dengan 30% ruling, €95.000 di Berlin, dan CHF 140.000 di Zürich.",
     qs_us: "Negara bagian AS",
     qsTip_us: "US$150,000, lajang, di Texas, California, New York City, dan Illinois. Pajak federalnya sama, pajak negara bagian dan kotanya berbeda.",
     qs_net: "Gaji bersih sama, Eropa Selatan",
-    qsTip_net: "Gaji kotor yang menyisakan €4,000 sebulan di Paris, Madrid, Lisbon, dan Milan untuk penduduk pajak lajang.",
+    qsTip_net: "Gaji kotor yang menyisakan €4.000 sebulan di Paris, Madrid, Lisbon, dan Milan untuk penduduk pajak lajang.",
     qs_family: "Keluarga empat orang",
-    qsTip_family: "Satu pencari nafkah bergaji €80,000, pasangan di rumah, dan dua anak, di Belgia, Prancis, Jerman, dan Belanda.",
+    qsTip_family: "Satu pencari nafkah bergaji €80.000, pasangan di rumah, dan dua anak, di Belgia, Prancis, Jerman, dan Belanda.",
     jobsLabel: "Pekerjaan",
     addJob: "+ Tambah pekerjaan",
     addJobTitle: "Tambah pekerjaan, dimulai dari salinan pekerjaan ini",
@@ -1177,7 +1179,8 @@ function TF(key, vars){ return T(key).replace(/\{(\w+)\}/g, (m, k) => vars && va
 function trE(text, cc){
   if(!ID || text == null || text === '' || !window.GSCLabelsId) return text;
   const t = window.GSCLabelsId.tr(text, cc);
-  return t == null ? text : t;
+  // The engine writes its figures in the English form (5,101.20); the page shows them in its own.
+  return SharedNum.text(t == null ? text : t);
 }
 // Country names as the reader says them (the country pages' names on the Indonesian page).
 const COUNTRY_ID = { AU: 'Australia', SG: 'Singapura', GB: 'Inggris', DE: 'Jerman', US: 'Amerika Serikat', CA: 'Kanada', FR: 'Prancis', NL: 'Belanda', BE: 'Belgia',
@@ -1190,6 +1193,8 @@ const MON_ID = { May: 'Mei', Aug: 'Agu', Oct: 'Okt', Dec: 'Des' };
 const dateW = d => ID ? String(d).replace(/\b(May|Aug|Oct|Dec)\b/g, m => MON_ID[m]) : d;
 // Short amounts use the page's own magnitude words: in Indonesian "M" is miliar (a billion), a million is "jt".
 const MAG = { en: { b: 'b', m: 'm', k: 'k' }, id: { b: ' M', m: ' jt', k: ' rb' } }[lang];
+// A figure written as JavaScript writes it, in the page's own form (1,234.5 or 1.234,5).
+const loc = x => SharedNum.show(String(x));
 
 // Words the page shows, in its language. Not on the English page, which shows index.html as written.
 function applyLang(){
@@ -1220,22 +1225,23 @@ function money(v, cur, compact){
   const n = Number(v), abs = Math.abs(n), sign = n < 0 ? '−' : '';
   if(!isFinite(n)) return '—';
   const s = symOf(cur);
-  if(compact && abs >= 1e9) return sign + s + (abs/1e9).toFixed(abs >= 1e10 ? 0 : 1) + MAG.b;
-  if(compact && abs >= 1e6) return sign + s + (abs/1e6).toFixed(abs >= 1e7 ? 0 : 1) + MAG.m;
-  if(compact && abs >= 1e4) return sign + s + (abs/1e3).toFixed(0) + MAG.k;
-  return sign + s + Math.round(abs).toLocaleString('en');
+  if(compact && abs >= 1e9) return sign + s + loc((abs/1e9).toFixed(abs >= 1e10 ? 0 : 1)) + MAG.b;
+  if(compact && abs >= 1e6) return sign + s + loc((abs/1e6).toFixed(abs >= 1e7 ? 0 : 1)) + MAG.m;
+  if(compact && abs >= 1e4) return sign + s + loc((abs/1e3).toFixed(0)) + MAG.k;
+  return sign + s + loc(Math.round(abs).toLocaleString('en'));
 }
-const pct = (v, d = 1) => isFinite(v) ? (v*100).toFixed(d) + '%' : '—';
+const pct = (v, d = 1) => isFinite(v) ? loc((v*100).toFixed(d)) + '%' : '—';
 
 /* ───────────────────────── Job fields ───────────────────────── */
 const scope = $('jobScope');
 let FIELDS = [];                 // every control inside the job scope
 const DEFAULTS = {};             // their values as the page ships them
 const handle = el => el.getAttribute('data-persist') || el.id;
-const valueOf = el => el.type === 'checkbox' ? !!el.checked : el.value;
+// A job keeps its figures in the English form on both pages: SharedNum.read / write cross from and to the field.
+const valueOf = el => el.type === 'checkbox' ? !!el.checked : SharedNum.read(el);
 function setValue(el, v){
   if(el.type === 'checkbox') el.checked = v === true || v === 'true' || v === 1 || v === '1' || v === 'on';
-  else el.value = String(v);
+  else SharedNum.write(el, String(v));
 }
 // Every field is kept, the other countries' too, so a job that goes to Germany
 // and back still has its Australian settings, and a reload gives back exactly what was saved.
@@ -1273,7 +1279,7 @@ function knobsOf(job){
   const k = {};
   Object.entries(job).forEach(([h, v]) => {
     const el = FIELDS.find(f => handle(f) === h);
-    if(el && (el.classList.contains('fmt-num') || el.classList.contains('fmt-pct'))) k[h] = SharedFmt.parseFormatted(String(v)) || 0;
+    if(el && (el.classList.contains('fmt-num') || el.classList.contains('fmt-pct'))) k[h] = SharedNum.parse(v) || 0;
     else k[h] = v;
   });
   return k;
@@ -1422,7 +1428,7 @@ function renderJobs(results){
     chip.setAttribute('aria-selected', i === ACTIVE ? 'true' : 'false');
     chip.title = TF('chipTitle', { n: i + 1 });
     const r = results[i];
-    const amt = SharedFmt.parseFormatted(String(job.amount)) || 0;
+    const amt = SharedNum.parse(job.amount) || 0;
     const pay = money(amt, E.C[job.country].cur, true) + T(job.period === 'monthly' ? 'chipMo' : 'chipYr') + (job.dir === 'net' ? T('chipNet') : '');
     chip.innerHTML = '<span class="job-dot" style="background:' + colourOf(i) + '"></span><span class="job-name">' + esc(jobTitle(job, i)) + '</span>'
       + '<span class="job-pay">' + esc(r && r.notSupported ? T('notLoaded') : pay) + '</span>';
@@ -1443,7 +1449,7 @@ function renderJobs(results){
 /* ───────────────────────── Compute ───────────────────────── */
 function computeJob(job){
   const k = knobsOf(job), country = job.country;
-  const amt = Math.max(0, SharedFmt.parseFormatted(String(job.amount)) || 0);
+  const amt = Math.max(0, SharedNum.parse(job.amount) || 0);
   const annual = amt*(job.period === 'monthly' ? 12 : 1);
   let r;
   if(job.dir === 'net'){
@@ -1715,7 +1721,7 @@ function updateChart(results){
   const jobCur = i => disp().cur === 'local' ? sw.series[i].r.cur : cc;
   const yText = (it, short) => {
     if(it.parsed.y == null) return T('notLoaded');
-    if(!amt) return it.parsed.y.toFixed(1) + (short ? '%' : T('takenHomePct'));
+    if(!amt) return loc(it.parsed.y.toFixed(1)) + (short ? '%' : T('takenHomePct'));
     const s = sw.series[it.datasetIndex], c = jobCur(it.datasetIndex);
     return money(E.convert(it.raw.net, s.r.cur, c), c) + (short ? '' : T('takenHome'));
   };
@@ -1759,7 +1765,7 @@ function updateChart(results){
     },
     scales: Object.assign(xScales, {
       y: { title: { display: true, text: amt ? TF('axTakeCur', { c: cc }) : T('axTakePct'), color: muted, font: { size: 11 } },
-        ticks: { color: muted, font: { size: 11 }, callback: v => amt ? money(v, cc, true) : v + '%' }, grid: { color: grid } }
+        ticks: { color: muted, font: { size: 11 }, callback: v => amt ? money(v, cc, true) : loc(v) + '%' }, grid: { color: grid } }
     })
   };
   $('chartTitle').textContent = chartTitle();
@@ -1845,7 +1851,7 @@ const SUMMED = ['tax', 'social', 'other', 'benefit'];
    bracket the base reaches, with the slice of income in it, its rate and its tax,
    then the credits or surcharges that turn their sum into the line, then any
    rounding the rules make. */
-const rateText = v => Array.isArray(v) ? rateText(v[0]) + T('rising') + rateText(v[1]) : +(v*100).toFixed(4) + '%';
+const rateText = v => Array.isArray(v) ? rateText(v[0]) + T('rising') + rateText(v[1]) : loc(+(v*100).toFixed(4)) + '%';
 function bracketRows(sec, l, cur, cc){
   const b = l.brackets, out = [];
   if(!b || !(b.base > 0)) return out;   // nothing taxable: no bracket is reached
@@ -2292,7 +2298,7 @@ function openFromComparator(){
     if(el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v)) return;
     if(k === 'amount'){
       const n = Number(v);
-      if(isFinite(n) && n > 0) job.amount = SharedFmt.formatThousands(String(Math.min(n, 1e11)), { maxDecimals: 2 });
+      if(isFinite(n) && n > 0) job.amount = SharedFmt.formatCanonical(String(Math.min(n, 1e11)), { maxDecimals: 2 });
       return;
     }
     job[k] = el.type === 'checkbox' ? v === 'true' : v;
@@ -2349,7 +2355,7 @@ function agentValue(el, raw, api, label){
   const lo = +el.getAttribute('data-min'), hi = +el.getAttribute('data-max');
   const used = Math.min(isFinite(hi) ? hi : Infinity, Math.max(isFinite(lo) ? lo : -Infinity, n));
   if(used !== n) api.clamp(label, n, used);
-  return SharedFmt.formatThousands(String(used), { maxDecimals: el.classList.contains('fmt-pct') ? 3 : 2 });
+  return SharedFmt.formatCanonical(String(used), { maxDecimals: el.classList.contains('fmt-pct') ? 3 : 2 });
 }
 function agentJsonJobs(obj, extra, api){
   const list = obj && (Array.isArray(obj.jobs) ? obj.jobs : Array.isArray(obj) ? obj : null);

@@ -115,7 +115,7 @@ usNyc: Tinggal di New York City
   Checkbox: true or false. Default false.
   US, New York only. true adds New York City resident tax.
   Tip on the page: New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif
-  3.078% sampai 3.876%.
+  3,078% sampai 3,876%.
 caProv: Provinsi  (most important)
   One of: ON (Ontario), BC (British Columbia), AB (Alberta), QC (Quebec). Default ON.
   Canada only. ON, BC, AB or QC. Other provinces are not loaded.
@@ -217,9 +217,9 @@ noRes: Skema (Pajak biasa or Skema PAYE, tarif tunggal 25%)
 noNi: Peserta asuransi nasional Norwegia
   Checkbox: true or false. Default true.
   Norway, PAYE only. false when not a member of Norwegian national insurance (17.4%).
-  Tip on the page: Tarif PAYE 25% untuk peserta dan 17.4% untuk yang bukan peserta.
-seRes: Status penduduk (Penduduk pajak or Bukan penduduk pajak, SINK 22.5%)
-  One of: res (Penduduk pajak), sink (Bukan penduduk pajak, SINK 22.5%). Default res.
+  Tip on the page: Tarif PAYE 25% untuk peserta dan 17,4% untuk yang bukan peserta.
+seRes: Status penduduk (Penduduk pajak or Bukan penduduk pajak, SINK 22,5%)
+  One of: res (Penduduk pajak), sink (Bukan penduduk pajak, SINK 22,5%). Default res.
   Sweden. res or sink (non-resident, 22.5% flat).
   Tip on the page: Penduduk pajak: orang yang tinggal di Swedia atau berada di sana 6 bulan atau
   lebih, termasuk pekerja asing dengan izin kerja. Bukan penduduk pajak, SINK: orang yang bekerja di
@@ -230,12 +230,12 @@ fiRes: Skema (Pajak biasa or Key employee, tarif tunggal 25%)
   Finland. res or key (key employee 25% flat, needs 5,800 a month or more).
   Tip on the page: Pajak biasa: karyawan yang dikenai tarif progresif, termasuk penduduk dan WNA
   yang tinggal lebih dari 6 bulan. Key employee: tenaga ahli asing yang direkrut dari luar negeri,
-  bergaji minimal 5,800 sebulan, dan tidak menjadi penduduk Finlandia dalam 5 tahun terakhir.
+  bergaji minimal 5.800 sebulan, dan tidak menjadi penduduk Finlandia dalam 5 tahun terakhir.
 beExpat: Rezim ekspatriat
   Checkbox: true or false. Default false.
   Belgium. true for the expat regime (35% of gross tax-free; needs more than 70,000 a year).
   Tip on the page: Untuk karyawan yang direkrut atau ditugaskan dari luar negeri bergaji di atas
-  70,000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.
+  70.000 setahun: sampai 35% gaji kotor dibayar sebagai penggantian bebas pajak dan bebas iuran.
 itImp: Rezim (Penduduk pajak, Impatriat, 50% dibebaskan or Impatriat dengan anak di bawah umur, 60% dibebaskan)
   One of: none (Penduduk pajak), imp50 (Impatriat, 50% dibebaskan), imp60 (Impatriat dengan anak di
   bawah umur, 60% dibebaskan). Default none.
@@ -278,10 +278,10 @@ ptJovemYear: Tahun kerja ke-
   ke-6), 7 (Tahun ke-7), 8 (Tahun ke-8), 9 (Tahun ke-9), 10 (Tahun ke-10). Default 1.
   Portugal, IRS Jovem only. Year of work, 1 to 10.
   Tip on the page: Bagian yang dibebaskan: 100% di tahun ke-1, 75% di tahun ke-2 sampai ke-4, 50% di
-  tahun ke-5 sampai ke-7, 25% di tahun ke-8 sampai ke-10, maksimal 29,542.15.
-jpRes: Status penduduk (Penduduk pajak, tahun ke-2 dan seterusnya, Penduduk pajak, tahun pertama or Bukan penduduk pajak, tarif tunggal 20.42%)
+  tahun ke-5 sampai ke-7, 25% di tahun ke-8 sampai ke-10, maksimal 29.542,15.
+jpRes: Status penduduk (Penduduk pajak, tahun ke-2 dan seterusnya, Penduduk pajak, tahun pertama or Bukan penduduk pajak, tarif tunggal 20,42%)
   One of: y2 (Penduduk pajak, tahun ke-2 dan seterusnya), y1 (Penduduk pajak, tahun pertama), nonres
-  (Bukan penduduk pajak, tarif tunggal 20.42%). Default y2.
+  (Bukan penduduk pajak, tarif tunggal 20,42%). Default y2.
   Japan. y2 (resident, year 2 or later), y1 (first year: no resident tax yet) or nonres (20.42%
   flat).
   Tip on the page: Penduduk pajak, tahun ke-2 dan seterusnya: orang yang sudah terdaftar beralamat
@@ -310,9 +310,9 @@ twRes: Status penduduk (Penduduk pajak (183 hari atau lebih) or Bukan penduduk p
 twGold: Gold Card
   Checkbox: true or false. Default false.
   Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
-  Tip on the page: Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3,000,000 selama 5 tahun.
+  Tip on the page: Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3.000.000 selama 5 tahun.
 twEi: Asuransi ketenagakerjaan
-  One of: yes (Ikut: 11.5% + 1%), no (Karyawan asing: 11.5% saja). Default yes.
+  One of: yes (Ikut: 11,5% + 1%), no (Karyawan asing: 11,5% saja). Default yes.
   Taiwan (China). yes (default: in employment insurance, so 11.5% + 1% labour and employment
   insurance: citizens, foreigners married to a citizen, permanent residents) or no (other foreign
   employees on a work permit: labour insurance 11.5% only).
@@ -340,14 +340,14 @@ usFiling: Status pelaporan  (most important)
 deKids: Punya anak
   Checkbox: true or false. Default false.
   Germany. true if the employee has children (lowers long-term care).
-  Tip on the page: Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0.6 poin persentase.
+  Tip on the page: Tanpa anak, iuran perawatan jangka panjang lebih tinggi 0,6 poin persentase.
 idMarried: Menikah
   Checkbox: true or false. Default false.
   Indonesia, residents. true if married.
 idDeps: Tanggungan (0, 1, 2 or 3)
   One of: 0, 1, 2, 3. Default 0.
   Indonesia, residents. Dependants, 0 to 3.
-  Tip on the page: Setiap tanggungan menambah PTKP sebesar 4,500,000, maksimal tiga orang.
+  Tip on the page: Setiap tanggungan menambah PTKP sebesar 4.500.000, maksimal tiga orang.
 thSpouse: Pasangan tanpa penghasilan
   Checkbox: true or false. Default false.
   Thailand. true for a spouse with no income.
@@ -357,8 +357,8 @@ thKids: Anak lahir sebelum 2018
 thKidsNew: Anak lahir 2018 atau sesudahnya
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
   Thailand. Children born 2018 or later, 0 to 6.
-  Tip on the page: Mulai anak kedua, anak yang lahir 2018 atau sesudahnya memberi potongan 60,000,
-  bukan 30,000.
+  Tip on the page: Mulai anak kedua, anak yang lahir 2018 atau sesudahnya memberi potongan 60.000,
+  bukan 30.000.
 mySpouse: Pasangan tanpa penghasilan
   Checkbox: true or false. Default false.
   Malaysia, residents. true for a spouse with no income.
@@ -369,7 +369,7 @@ beStatus: Rumah tangga (Lajang or Menikah atau kohabitasi resmi, satu pencari na
   One of: single (Lajang), married (Menikah atau kohabitasi resmi, satu pencari nafkah). Default
   single.
   Belgium. single or married (married or legal cohabitant, partner with no professional income).
-  Tip on the page: Pencari nafkah tunggal boleh memindahkan sampai 30% penghasilan (maksimal 11,780)
+  Tip on the page: Pencari nafkah tunggal boleh memindahkan sampai 30% penghasilan (maksimal 11.780)
   ke pasangannya, yang dipajaki atas bagian itu dengan bagian bebas pajaknya sendiri.
 beKids: Anak tanggungan
   One of: 0, 1, 2, 3, 4, 5, 6, 7, 8. Default 0.
@@ -377,7 +377,7 @@ beKids: Anak tanggungan
 beSingleParent: Orang tua tunggal
   Checkbox: true or false. Default false.
   Belgium, single with children. true for a single parent.
-  Tip on the page: Orang tua tunggal dengan anak tanggungan mendapat tambahan 1,980 pada bagian
+  Tip on the page: Orang tua tunggal dengan anak tanggungan mendapat tambahan 1.980 pada bagian
   bebas pajaknya.
 chStatus: Rumah tangga (Lajang or Menikah, satu pencari nafkah)
   One of: single (Lajang), married (Menikah, satu pencari nafkah). Default single.
@@ -426,15 +426,15 @@ twKids: Anak di bawah umur
 krDeps: Tanggungan
   One of: 0, 1, 2, 3, 4, 5, 6. Default 0.
   South Korea, progressive method. Dependants beyond the employee, 0 to 6.
-  Tip on the page: Setiap tanggungan menambah potongan dasar 1,500,000.
+  Tip on the page: Setiap tanggungan menambah potongan dasar 1.500.000.
 
 [Detail: Detail]
 auCover: Asuransi rumah sakit swasta
   Checkbox: true or false. Default true.
   Australia, citizens and PRs. false when there is no private hospital cover (adds the Medicare levy
   surcharge above 105,000).
-  Tip on the page: Tanpa asuransi ini, Medicare levy surcharge 1% sampai 1.5% berlaku untuk
-  penghasilan di atas 105,000.
+  Tip on the page: Tanpa asuransi ini, Medicare levy surcharge 1% sampai 1,5% berlaku untuk
+  penghasilan di atas 105.000.
 auSuper: Jumlah sudah termasuk super
   Checkbox: true or false. Default false.
   Australia. true when the amount is a package that includes the 12% super guarantee.
@@ -444,11 +444,11 @@ ukLoan: Pinjaman mahasiswa
   One of: none (Tidak ada), plan1 (Plan 1), plan2 (Plan 2), plan4 (Plan 4 (Skotlandia)), plan5 (Plan
   5). Default none.
   UK. none, plan1, plan2, plan4 or plan5 student loan.
-  Tip on the page: 9% dari gaji di atas ambang tiap plan: 26,900, 29,385, 33,795 atau 25,000.
+  Tip on the page: 9% dari gaji di atas ambang tiap plan: 26.900, 29.385, 33.795 atau 25.000.
 ukPg: Pinjaman pascasarjana
   Checkbox: true or false. Default false.
   UK. true for a postgraduate loan.
-  Tip on the page: 6% dari gaji di atas 21,000, di luar cicilan plan mana pun.
+  Tip on the page: 6% dari gaji di atas 21.000, di luar cicilan plan mana pun.
 deChurch: Pajak gereja
   One of: 0 (Tidak ada), 8 (8% (Bavaria, Baden-Württemberg)), 9 (9% (negara bagian lain)). Default
   0.
@@ -458,7 +458,7 @@ deChurch: Pajak gereja
 deAddOn: Iuran tambahan asuransi kesehatan
   Number (% after it). 0 to 5. Default 2.9.
   Germany. Health fund add-on rate in %, 2.9 on average.
-  Tip on the page: Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2.9%
+  Tip on the page: Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2,9%
   pada 2026. Kamu menanggung separuhnya.
 usLocal: Pajak penghasilan lokal atau county
   Number (% after it). 0 to 5. Default 0.
@@ -469,15 +469,15 @@ usLocal: Pajak penghasilan lokal atau county
 usNyDbl: Pemberi kerja memotong iuran disabilitas NY (DBL)
   Checkbox: true or false. Default true.
   US, New York. false if the employer does not take the disability contribution from pay.
-  Tip on the page: 0.5% dari gaji, maksimal 0.60 seminggu. Pemberi kerja boleh memotongnya dari gaji
+  Tip on the page: 0,5% dari gaji, maksimal 0,60 seminggu. Pemberi kerja boleh memotongnya dari gaji
   atau menanggung seluruhnya.
 usFicaExempt: Bebas Social Security dan Medicare
   Checkbox: true or false. Default false.
   US, nonresident alien only. true for F, J, M or Q status (no Social Security or Medicare).
   Tip on the page: Pemegang visa F, J, M, dan Q (pelajar dan peneliti) biasanya dibebaskan.
 idJkk: Tarif JKK (kecelakaan kerja)
-  One of: 0.24 (0.24%, risiko sangat rendah), 0.54 (0.54%, risiko rendah), 0.89 (0.89%, risiko
-  sedang), 1.27 (1.27%, risiko tinggi), 1.74 (1.74%, risiko sangat tinggi). Default 0.24.
+  One of: 0.24 (0,24%, risiko sangat rendah), 0.54 (0,54%, risiko rendah), 0.89 (0,89%, risiko
+  sedang), 1.27 (1,27%, risiko tinggi), 1.74 (1,74%, risiko sangat tinggi). Default 0.24.
   Indonesia, residents. Work accident premium rate: 0.24, 0.54, 0.89, 1.27 or 1.74 by the industry's
   risk.
   Tip on the page: Premi JKK, JKM, dan BPJS Kesehatan yang dibayar pemberi kerja ikut dihitung
@@ -491,7 +491,7 @@ myLindung: Klaim LINDUNG sebagai pengurang SOCSO
   Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini mati sejak
   awal. Pengaruhnya pada pajak paling banyak RM31.50.
 nlNorm: Salary norm
-  One of: std (Standar (48,013)), young (Di bawah 30 tahun dengan gelar master (36,497)). Default
+  One of: std (Standar (48.013)), young (Di bawah 30 tahun dengan gelar master (36.497)). Default
   std.
   Netherlands, with the 30% ruling. std (salary norm 48,013) or young (under 30 with a master's,
   36,497).
@@ -511,11 +511,11 @@ nlPension: Iuran pensiun, bagianmu
 seMun: Tarif pajak kota
   Number (% after it). 28 to 36. Default 30.55.
   Sweden, residents. Municipal tax rate in %: 30.55 for Stockholm, 32.38 national average.
-  Tip on the page: Stockholm 30.55%; rata-rata nasional 32.38%.
+  Tip on the page: Stockholm 30,55%; rata-rata nasional 32,38%.
 seBurial: Biaya penguburan
   Number (% after it). 0 to 1.5. Default 0.292.
   Sweden, residents. Burial fee in %, 0.292 on average.
-  Tip on the page: Rata-rata nasional 0.292%. Anggota Gereja Swedia membayar iuran gereja sebagai
+  Tip on the page: Rata-rata nasional 0,292%. Anggota Gereja Swedia membayar iuran gereja sebagai
   gantinya.
 eeP2: Pilar pensiun kedua
   One of: 0 (Tidak ikut), 2 (2%), 4 (4%), 6 (6%). Default 2.
@@ -527,11 +527,11 @@ eePension: Sudah usia pensiun
 fiMun: Tarif pajak kota
   Number (% after it). 4 to 11. Default 5.30.
   Finland, residents. Municipal tax rate in %, 5.30 for Helsinki.
-  Tip on the page: Helsinki 5.30%.
+  Tip on the page: Helsinki 5,30%.
 fiChurch: Tarif pajak gereja
   Number (% after it). 0 to 2.5. Default 0.
   Finland, residents. Church tax rate in %, 1.00 for a Lutheran member in Helsinki, else 0.
-  Tip on the page: Untuk anggota gereja: 1.00% di Helsinki untuk gereja Lutheran.
+  Tip on the page: Untuk anggota gereja: 1,00% di Helsinki untuk gereja Lutheran.
 beMun: Pajak tambahan kota
   Number (% after it). 0 to 9. Default 7.
   Belgium. Municipal surcharge in % of the federal tax, 7 by default.
@@ -541,7 +541,7 @@ chChurch: Anggota gereja
   Switzerland. true for a church member.
   Tip on the page: Pajak gereja sekitar 10% dari pajak dasar kanton di Kota Zürich.
 chAge: Usia (tarif pensiun)
-  One of: 25 sampai 34 (3.5%), 35 sampai 44 (5%), 45 sampai 54 (7.5%), 55 sampai 65 (9%). Default
+  One of: 25 sampai 34 (3,5%), 35 sampai 44 (5%), 45 sampai 54 (7,5%), 55 sampai 65 (9%). Default
   35.
   Switzerland. Age band for the pension rate: 25, 35, 45 or 55.
   Tip on the page: Kredit usia BVG dihitung atas gaji terkoordinasi, dan kamu menanggung separuhnya.
@@ -562,11 +562,11 @@ frMutuelle: Asuransi kesehatan perusahaan, bagianmu
 esTemp: Kontrak sementara
   Checkbox: true or false. Default false.
   Spain. true for a temporary contract.
-  Tip on the page: Iuran asuransi pengangguran 1.60%, bukan 1.55%.
+  Tip on the page: Iuran asuransi pengangguran 1,60%, bukan 1,55%.
 ptHealth: Biaya kesehatan
   Number (A$ before it, /thn after it). 0 to 1,000,000. Default 0.
   Portugal, residents. Health expenses a year, in euros.
-  Tip on the page: 15% mengurangi pajak, maksimal 1,000.
+  Tip on the page: 15% mengurangi pajak, maksimal 1.000.
 ptEdu: Biaya pendidikan
   Number (A$ before it, /thn after it). 0 to 1,000,000. Default 0.
   Portugal, residents. Education expenses a year, in euros.
@@ -584,13 +584,13 @@ ptColeta: Pengurang biaya keluarga umum
 jpCare: Usia 40 sampai 64
   Checkbox: true or false. Default false.
   Japan. true when aged 40 to 64 (long-term care premium).
-  Tip on the page: Menambah premi perawatan jangka panjang: iuran kesehatan menjadi 11.47%, bukan
-  9.85%, ditanggung separuh-separuh.
+  Tip on the page: Menambah premi perawatan jangka panjang: iuran kesehatan menjadi 11,47%, bukan
+  9,85%, ditanggung separuh-separuh.
 jpSupport: Iuran dukungan anak
   One of: 12 (Setahun penuh), 9 (Tahun kalender 2026 (April sampai Desember)). Default 12.
   Japan. 12 (a full steady year) or 9 (calendar 2026, April to December) months of the child-support
   levy.
-  Tip on the page: Iuran 0.23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk
+  Tip on the page: Iuran 0,23% ini mulai berlaku untuk gaji April 2026. Pilih Setahun penuh untuk
   melihat tahun ketika iuran ini sudah berjalan normal.
 cnHf: Tarif dana perumahan
   One of: 5 (5%), 6 (6%), 7 (7%). Default 7.
@@ -607,8 +607,8 @@ cnSpecial: Potongan tambahan khusus
 hkMpf: Peserta MPF
   Checkbox: true or false. Default true.
   Hong Kong (China). false when exempt from MPF.
-  Tip on the page: 5% dari gaji, maksimal 1,500 sebulan, dan nol untuk gaji di bawah 7,100 sebulan.
-  Bisa dikurangkan dari penghasilan sampai 18,000.
+  Tip on the page: 5% dari gaji, maksimal 1.500 sebulan, dan nol untuk gaji di bawah 7.100 sebulan.
+  Bisa dikurangkan dari penghasilan sampai 18.000.
 gulfWagePct: Porsi gaji yang dikenai iuran
   Number (% after it). 0 to 100. Default 100.
   Gulf states. Share of pay that contributions are charged on, in %; 100 by default (Saudi Arabia

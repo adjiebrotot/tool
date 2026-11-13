@@ -8,7 +8,7 @@ window.__TOUR = {
   launchLabel: '🧭 Tur',
   guide: '../guides/id/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur singkat tool ini',
             guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
             guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [
@@ -57,7 +57,7 @@ window.__TOUR = {
       },
       title: '④ Jawabannya',
       body: '<ul><li>Skema mana yang <strong>lebih murah</strong>, dan selisihnya per tahun</li>' +
-            '<li>Di mana titik breakeven-nya</li></ul>'
+            '<li>Di mana titik <em>breakeven</em>-nya</li></ul>'
     },
     {
       target: '.metrics',
@@ -75,7 +75,7 @@ window.__TOUR = {
     {
       target: '#detailSection',
       title: '⑦ Rinciannya',
-      body: '<ul><li>Tombol panah membuka pajak pada tiap gaji</li>' +
+      body: '<ul><li>Tombol panah membuka rincian pajak pada tiap tingkat gaji</li>' +
             '<li><strong>CSV</strong> mengunduhnya kapan saja</li></ul>'
     },
     {

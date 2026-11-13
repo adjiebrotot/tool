@@ -41,13 +41,13 @@
     {
       "q": "Dari mana asumsi bunga KPR 8,5% lalu 11% sampai 13% di Quick Start Jakarta?",
       "a": [
-        "Angkanya dari suku bunga KPR bank besar per Oktober 2026: BCA menawarkan fixed 5 tahun 8,5% untuk rumah bekas, lalu floating sekitar 11% (BCA) sampai 13% (Mandiri). Promo 3,81% BCA tidak dipakai karena hanya untuk rumah baru dari developer rekanan. Di tabel, periode floating memakai nilai tengah, 12%, dan setiap pergantian bunga menghitung ulang cicilan dari sisa pokok dan sisa tenor 20 tahun."
+        "Angkanya dari suku bunga KPR bank besar per Oktober 2026: BCA menawarkan fixed 5 tahun 8,5% untuk rumah bekas, lalu floating sekitar 11% (BCA) sampai 13% (Mandiri). Promo 3,81% BCA tidak dipakai karena hanya untuk rumah baru dari pengembang rekanan. Di tabel, periode floating memakai nilai tengah, 12%, dan setiap pergantian bunga menghitung ulang cicilan dari sisa pokok dan sisa tenor 20 tahun."
       ]
     },
     {
       "q": "Berapa biaya awal beli apartemen Rp 2 miliar di Jakarta menurut Quick Start?",
       "a": [
-        "Totalnya Rp 127,5 juta, atau 6,38% dari harga. Rinciannya: BPHTB 5% dikali (harga dikurangi Rp 250 juta, batas untuk perolehan pertama) sebesar Rp 87,5 juta, akta PPAT, balik nama dan biaya BPN sekitar 1% (Rp 20 juta), provisi bank 1% dari pinjaman 80% (Rp 16 juta), serta Rp 4 juta untuk appraisal, administrasi dan akta APHT. Rumah kedua tidak mendapat potongan BPHTB itu."
+        "Totalnya Rp 127,5 juta, atau 6,38% dari harga. Rinciannya: BPHTB 5% dikali (harga dikurangi Rp 250 juta, batas untuk perolehan pertama) sebesar Rp 87,5 juta, akta PPAT, balik nama dan biaya BPN sekitar 1% (Rp 20 juta), provisi bank 1% dari pinjaman 80% (Rp 16 juta), serta Rp 4 juta untuk penilaian (appraisal), administrasi dan akta APHT. Rumah kedua tidak mendapat potongan BPHTB itu."
       ]
     },
     {
@@ -71,7 +71,7 @@
     {
       "q": "Apakah perhitungannya memasukkan pajak, KPR subsidi, atau uang sewa dibayar di muka?",
       "a": [
-        "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka plus deposit. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
+        "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
       ]
     }
   ]

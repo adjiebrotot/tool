@@ -10,6 +10,8 @@
 // element so crawlers that don't execute JS still see Indonesian content, and
 // writes the result to <tool>/id/index.html.
 //
+// A tool with sharedId: true also loads shared-id.js (the Indonesian number format, 1.234,5).
+//
 // Re-run this script whenever <tool>/index.html or the LANG tables change.
 //
 // The AI-assistant section (<!-- agent:start --> to <!-- agent:end -->) is not baked: it is
@@ -25,6 +27,7 @@ import { SECTION_RE } from './agent-lib.mjs';
 import { applyFaq } from './faq-bake.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const SHARED_ID_V = '20261113';
 
 // The maker of every tool: the one person node that www, the blog and the tool pages share.
 const AUTHOR = {
@@ -57,10 +60,11 @@ function gitcExtras() {
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
+    sharedId: true,
     title: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
-    description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP, lapisan tarif, dan titik impas.',
+    description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara pisah harta (PH atau MT) dan gabung harta, lengkap dengan PTKP, lapisan tarif, dan titik impas.',
     ogTitle: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
-    ogDescription: 'Bandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK) di Indonesia.',
+    ogDescription: 'Bandingkan PPh 21 suami istri antara skema pisah harta (PH atau MT) dan gabung harta di Indonesia.',
     sameDirAssets: ['script.js', 'style.css', 'abbr.js'],
     extraReplacements: [],
     ldJson: [
@@ -69,13 +73,13 @@ const TOOLS = [
         '@type': 'WebApplication',
         name: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
         url: 'https://tool.adjiebrotots.com/pisahvsgabung/id/',
-        description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK) di Indonesia.',
+        description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara skema pisah harta (PH atau MT) dan gabung harta di Indonesia.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
         inLanguage: 'id',
-        alternateName: ['Kalkulator Pisah Harta vs Gabung Harta', 'Kalkulator PPh 21 Suami Istri', 'Kalkulator PH vs KK'],
-        keywords: 'pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH vs KK',
+        alternateName: ['Kalkulator Pisah Harta vs Gabung Harta', 'Kalkulator PPh 21 Suami Istri', 'Kalkulator PH atau MT vs Gabung Harta'],
+        keywords: 'pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH atau MT vs gabung harta',
         featureList: [
           'Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
           'Tersedia dalam bahasa Indonesia dan Inggris',
@@ -95,6 +99,7 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse',
+    sharedId: true,
     title: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     description: 'Simulasikan sewa vs beli rumah jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih dari asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
@@ -102,6 +107,7 @@ const TOOLS = [
     sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'quickstart-data.js', 'abbr.js'],
     extraReplacements: [
       ["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"],
+      ['</svg>Rent vs Own</h1>', '</svg>Sewa vs Beli Rumah</h1>'],
       // "Semua angka dan sumbernya" opens the Indonesian assumptions page (script.js keeps it there).
       ['id="qsAll" href="/rentvsownhouse/quickstart-assumptions/"', 'id="qsAll" href="/rentvsownhouse/quickstart-assumptions/id/"'],
     ],
@@ -119,10 +125,10 @@ const TOOLS = [
         alternateName: ['Kalkulator Sewa vs Beli Rumah', 'Kalkulator KPR vs Sewa', 'Simulasi Beli Rumah atau Ngontrak'],
         keywords: 'sewa vs beli rumah, kalkulator sewa vs beli, beli rumah atau ngontrak, simulasi KPR, kekayaan bersih properti',
         featureList: [
-          'Sangat komprehensif: bunga KPR fixed dan floating, biaya awal dan berjalan, serta skenario sewa-dulu-baru-beli',
+          'Mencakup bunga KPR fixed dan floating, biaya awal dan biaya rutin, serta skenario sewa dulu baru beli',
           'Analisis sensitivitas multi-skenario untuk membandingkan beberapa asumsi secara berdampingan',
           'Tersedia dalam bahasa Indonesia dan Inggris',
-          'Software komersial serupa bisa berharga puluhan ribu dolar, sedangkan di sini sepenuhnya gratis dengan kontrol penuh',
+          'Perangkat lunak komersial serupa bisa berharga puluhan ribu dolar, sedangkan di sini sepenuhnya gratis dengan kontrol penuh',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor grafik, CSV, PNG, dan SVG gratis tanpa paywall',
         ],
@@ -143,11 +149,12 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse/sensitivity',
+    sharedId: true,
     langVar: 'LANG_SENS',
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
     description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah untuk melihat asumsi mana yang paling memengaruhi kekayaan bersihmu. Gratis dan berjalan langsung di browser.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
-    ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.',
+    ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti yang dibuat khusus dan biasanya berbiaya mahal.',
     sameDirAssets: ['script.js', 'style.css', 'fx.js'],
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
@@ -165,7 +172,7 @@ const TOOLS = [
         '@type': 'WebApplication',
         name: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
         url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/',
-        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
+        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan yang dibuat khusus dan biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
@@ -176,7 +183,7 @@ const TOOLS = [
           'Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel',
           'Bandingkan rumah di kota dan mata uang berbeda dengan modal awal dan anggaran bulanan yang sama, dikonversi ke satu mata uang dasar dengan kurs terkini',
           'Uji bagaimana setiap asumsi (kenaikan harga, bunga KPR, inflasi sewa, biaya) mengubah hasilnya',
-          'Alternatif gratis untuk software analisis properti bespoke dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
+          'Alternatif gratis untuk perangkat lunak analisis properti yang dibuat khusus dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor CSV gratis tanpa paywall',
@@ -208,10 +215,10 @@ const TOOLS = [
           },
           {
             '@type': 'Question',
-            name: 'Apa bedanya dengan kalkulator Sewa vs Beli Rumah utama?',
+            name: 'Apa bedanya dengan tool Sewa vs Beli Rumah utama?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Kalkulator utama memodelkan satu skenario secara mendalam, sedangkan tool sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
+              text: 'Tool utama memodelkan satu skenario secara mendalam, sedangkan tool sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
             },
           },
           {
@@ -227,7 +234,7 @@ const TOOLS = [
             name: 'Adakah alternatif gratis untuk pemodelan skenario properti yang mahal dari analis properti atau agen pembeli?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet bespoke atau dijual sebagai layanan berbayar, sering seharga jutaan rupiah, tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun.',
+              text: 'Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet yang dibuat khusus atau dijual sebagai layanan berbayar, sering seharga jutaan rupiah, tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun.',
             },
           },
           {
@@ -302,6 +309,7 @@ const TOOLS = [
     // of country pages keeps that crawl path (gitcExtras). The engine's own text (line labels,
     // notes) is worded by labels-id.js, which only this page loads.
     dir: 'global-income-tax-calculator',
+    sharedId: true,
     title: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara | Adjie Brotools',
     description: 'Hitung gaji bersih setelah pajak penghasilan dan iuran jaminan sosial di 31 negara dan 39 negara bagian AS, lalu bandingkan hingga empat tawaran kerja.',
     ogTitle: 'Kalkulator Gaji Bersih dan Pajak Penghasilan di 31 Negara',
@@ -444,6 +452,16 @@ function bake(tool) {
   }
   for (const [from, to] of tool.extraReplacements) html = html.replaceAll(from, to);
 
+  /* ── a tool with sharedId reads and writes figures the Indonesian way (1.234,5): shared-id.js
+        switches SharedNum (shared.js) after it is loaded; the saved form stays English ── */
+  if (tool.sharedId) {
+    const tag = /<script src="((?:\.\.\/)+)shared\.js[^"]*"><\/script>/;
+    if (!tag.test(html)) throw new Error(`${tool.dir}: no shared.js script tag for shared-id.js`);
+    // Both files carry SHARED_ID_V, so a browser never pairs a cached shared.js without SharedNum
+    // with the new shared-id.js. Bump it when either changes.
+    html = html.replace(tag, (m, up) => `<script src="${up}shared.js?v=${SHARED_ID_V}"></script>\n<script src="${up}shared-id.js?v=${SHARED_ID_V}"></script>`);
+  }
+
   /* ── footer links go to the Indonesian Disclaimer and Privacy Policy ── */
   html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
     '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
@@ -524,4 +542,6 @@ function bake(tool) {
   console.log(`${tool.dir}/id/index.html written${missing ? ` (${missing} data-i18n keys without id translation left in English)` : ''}`);
 }
 
-TOOLS.forEach(bake);
+// node _ref/bake-id.mjs [<tool dir> ...] bakes only the tools named; none names every one.
+const ONLY = process.argv.slice(2);
+TOOLS.filter(t => !ONLY.length || ONLY.includes(t.dir)).forEach(bake);

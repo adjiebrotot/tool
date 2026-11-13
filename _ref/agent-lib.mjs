@@ -247,7 +247,7 @@ export function bcQuickStarts() {
     const o = {};
     fields.forEach(f => {
       if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
-      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      const v = window.SharedNum ? SharedNum.read(f.el) : f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));   // the stored form
       o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
     });
     Object.assign(o, window.__BC.UI);
@@ -329,7 +329,7 @@ export function ffQuickStarts() {
     fields.forEach(f => {
       if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
       if (f.type === 'r') { const r = f.els.filter(x => x.checked)[0]; o[f.key] = r ? r.value : ''; return; }
-      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      const v = window.SharedNum ? SharedNum.read(f.el) : f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));   // the stored form
       o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
     });
     return o;
@@ -408,7 +408,7 @@ export function pvgQuickStarts() {
     const o = {};
     fields.forEach(f => {
       if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
-      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      const v = window.SharedNum ? SharedNum.read(f.el) : f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));   // the stored form
       o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
     });
     o.inputMode = window.__PVG.state().inputMode;
@@ -1250,7 +1250,7 @@ export function readFields() {
         const strong = l && l.querySelector('strong, b, .radio-opt-title');
         return { value: r.value, label: strong ? text(strong) : text(l) };
       });
-    } else f.value = first.value;
+    } else f.value = window.SharedNum ? window.SharedNum.read(first) : first.value;   // the stored (English) form, on an Indonesian page too
     if (f.tag === 'select') {
       f.options = Array.from(first.options).map(o => ({ value: o.value, label: norm(o.textContent) }));
     }
