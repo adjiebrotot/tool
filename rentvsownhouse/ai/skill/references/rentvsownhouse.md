@@ -76,7 +76,7 @@ Open the link to see the result.
 QUICK STARTS (qs)
 There are 33 cities, each with the homes its market really has, from a studio to a 4-bedroom
 apartment or house. Each sets that city's typical price and rent for the home, the usual deposit,
-loan rate and term, setup and running costs, growth rates and risk-free rate, with sources listed at
+loan rate and term, setup and running costs, growth rates and savings rate, with sources listed at
 https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/ .
 Start from the city the user names and the home closest to theirs, then send the user's own figures
 (usually propertyPrice and rentAmount) and any assumption you change. For a city not listed, start
@@ -242,13 +242,13 @@ generalInflation: General inflation
   Show in today's money, beside the results, divides every figure by it.
 
 [Assumptions: Savings and time horizon]
-riskFreeRate: Risk-Free Rate  (most important)
+riskFreeRate: Savings Rate  (most important)
   Slider (%/yr). -10 to 25. Default 4.5.
   What spare cash earns, % a year, like a savings account or term deposit: the renter's deposit
   money and each year's surplus are invested at it. Use the local deposit or short government bond
   rate (about 4 to 5 in Australia in late 2026). With houseGrowth, it moves the answer most.
-  Tip on the page: What spare cash earns each year, like a savings account. It applies in every
-  scenario.
+  Tip on the page: What spare cash earns each year, like a savings account interest rate or the
+  expected return of stocks/ETFs. It applies in every scenario.
 horizon: Time horizon  (most important)
   Slider (yrs). 5 to 100. Default 30.
   The number of years compared. Use how long the user expects to stay; typical 10 to 30.

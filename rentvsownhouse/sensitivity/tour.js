@@ -24,7 +24,7 @@ window.__TOUR = {
     {
       target: '#tableWrap tr.group-sep-tr',
       title: '② Shared rows',
-      body: 'Horizon, risk-free rate, starting cash and budget are the same for every column, ' +
+      body: 'Horizon, savings rate, starting cash and budget are the same for every column, ' +
             'so no scenario wins with more money.' +
             '<ul><li>On <strong>Auto</strong>, cash and budget match the column that needs most</li></ul>'
     },

@@ -3,7 +3,7 @@
     {
       "q": "What does the renter do with the money they don't spend on a home?",
       "a": [
-        "The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
+        "The renter saves it at the Savings Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Savings Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
       ]
     },
     {
@@ -21,7 +21,7 @@
     {
       "q": "Does the model include tax on rental savings or on the sale of the home?",
       "a": [
-        "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
+        "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Savings Rate. To allow for tax, enter an after-tax savings rate as the Savings Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
       ]
     },
     {
@@ -53,7 +53,7 @@
     {
       "q": "Kenapa penyewa dianggap punya tabungan, dan bunganya berapa?",
       "a": [
-        "Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Bebas Risiko, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar."
+        "Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Tabungan, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar."
       ]
     },
     {
@@ -71,7 +71,7 @@
     {
       "q": "Apakah perhitungannya memasukkan pajak, KPR subsidi, atau uang sewa dibayar di muka?",
       "a": [
-        "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
+        "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Tabungan menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
       ]
     }
   ]

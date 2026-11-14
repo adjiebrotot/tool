@@ -87,7 +87,7 @@ QUICK STARTS (qs)
 There are 33 cities, each with the homes its market really has, from a studio to a 4-bedroom
 apartment or house. A Quick Start becomes the table's one column, the base case: that city's typical
 price and rent for the home, the usual deposit, loan rate and term, setup and running costs and
-growth, plus the figures every column shares (horizon, risk-free rate), with sources listed at
+growth, plus the figures every column shares (horizon, savings rate), with sources listed at
 https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/ .
 Start from the city and home closest to the user's, then send the user's own figures (usually
 propertyPrice and rentAmount), and vary the figures the user asks about. A link without vary opens
@@ -284,7 +284,7 @@ A list switches its section (the mortgage, the costs of owning, the costs of ren
 
 shared: `{"horizon":25,"riskFreeRate":4.5}` with the same keys as the shared figures above. modes: `{"mortgageMode":"detailed"}` with mortgageMode, ownCostsMode and rentCostsMode, each simple or detailed. view: `{"metric":"cash","year":10}`.
 
-fx: the multi-currency settings, `{"on":true,"base":"AUD","path":"parity","rfr":{"AUD":4.6,"SGD":2},"trend":{"SGD":-2}}`. Columns in more than one currency turn it on by themselves, with the first column's currency as the base. base is the ISO code every result is in. path is parity (the default), hold (today's rate for the whole run) or trend. rfr is the risk-free rate of each currency in % a year, used instead of riskFreeRate. trend is each currency's expected change against the base in % a year, -50 to 50, used with path trend.
+fx: the multi-currency settings, `{"on":true,"base":"AUD","path":"parity","rfr":{"AUD":4.6,"SGD":2},"trend":{"SGD":-2}}`. Columns in more than one currency turn it on by themselves, with the first column's currency as the base. base is the ISO code every result is in. path is parity (the default), hold (today's rate for the whole run) or trend. rfr is the savings rate of each currency in % a year, used instead of riskFreeRate. trend is each currency's expected change against the base in % a year, -50 to 50, used with path trend.
 
 At most 12 columns. An entry that is not an object, a figure out of its range or a key the table does not have is skipped or pulled into range, and the user is told.
 

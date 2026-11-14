@@ -31,7 +31,7 @@ const SID = 'perth/house-2br';
 // [label, field, low, high, how the step reads]
 const STEPS = [
   ['House price growth', 'houseGrowth', -1, 1, 'pp'],
-  ['Risk-Free Rate', 'riskFreeRate', -1, 1, 'pp'],
+  ['Savings Rate', 'riskFreeRate', -1, 1, 'pp'],
   ['Mortgage rate', 'mortgageRate', -1, 1, 'pp'],
   ['Rent growth', 'rentInflation', -1, 1, 'pp'],
   ['Rent amount', 'rentAmount', -0.1, 0.1, 'pct'],

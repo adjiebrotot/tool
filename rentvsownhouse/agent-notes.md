@@ -86,7 +86,7 @@ Whether buying a home with a mortgage or renting it and investing the difference
 
 ## Quick Starts
 
-There are 33 cities, each with the homes its market really has, from a studio to a 4-bedroom apartment or house. Each sets that city's typical price and rent for the home, the usual deposit, loan rate and term, setup and running costs, growth rates and risk-free rate, with sources listed at https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/ .
+There are 33 cities, each with the homes its market really has, from a studio to a 4-bedroom apartment or house. Each sets that city's typical price and rent for the home, the usual deposit, loan rate and term, setup and running costs, growth rates and savings rate, with sources listed at https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/ .
 
 Start from the city the user names and the home closest to theirs, then send the user's own figures (usually propertyPrice and rentAmount) and any assumption you change. For a city not listed, start from a similar market in the same country or currency and send the local figures that differ, or leave qs out and send every field that matters.
 
@@ -158,7 +158,7 @@ Assumptions:
 2. Biaya awal: {setupCost}% dari harga rumah, untuk BPHTB 5% atas harga di atas Rp250 juta (fasilitas rumah pertama), akta PPAT dan balik nama sekitar 1%, provisi bank 1% dari pinjaman, serta biaya appraisal dan akta KPR.
 3. Biaya kepemilikan: Rp{ownOngoingCost} setahun untuk PBB, perawatan, dan asuransi kebakaran.
 4. Sewa: naik {rentInflation}% setahun, ditambah biaya menyewa Rp{rentOngoingCost} setahun dari Quick Start.
-5. Pertumbuhan dan imbal hasil, dari Quick Start: harga rumah naik {houseGrowth}% setahun, uang yang tidak terpakai mendapat Suku Bunga Bebas Risiko {riskFreeRate}% setahun, biaya menjual rumah {sellingCostPct}%, dan perbandingannya dihitung selama {horizon} tahun.
+5. Pertumbuhan dan imbal hasil, dari Quick Start: harga rumah naik {houseGrowth}% setahun, uang yang tidak terpakai mendapat Suku Bunga Tabungan {riskFreeRate}% setahun, biaya menjual rumah {sellingCostPct}%, dan perbandingannya dihitung selama {horizon} tahun.
 
 ## Compact lists
 

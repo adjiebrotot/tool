@@ -116,7 +116,7 @@
       "name": "What does the renter do with the money they don't spend on a home?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
+        "text": "The renter saves it at the Savings Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Savings Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million."
       }
     },
     {
@@ -140,7 +140,7 @@
       "name": "Does the model include tax on rental savings or on the sale of the home?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
+        "text": "No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Savings Rate. To allow for tax, enter an after-tax savings rate as the Savings Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning."
       }
     },
     {
@@ -491,7 +491,7 @@
       <div class="group-title" data-i18n="sectionSavings">Savings and time horizon</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRiskFreeRate">Risk-Free Rate</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
+          <div class="field-label"><span data-i18n="labelRiskFreeRate">Savings Rate</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
           <span class="slider-value" id="riskFreeRateVal">4.50%/yr</span>
         </div>
         <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
@@ -552,7 +552,7 @@
           <span class="prefix" id="initialCashPrefix">$</span>
           <input class="affix-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
         </div>
-        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to the down payment plus setup cost. Any excess is invested at the risk-free rate.</div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to the down payment plus setup cost. Any excess is invested at the savings rate.</div>
         <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
       </div>
       <div class="field-row">
@@ -698,7 +698,7 @@
     <div class="faq-list">
       <div class="faq-item">
         <h3>What does the renter do with the money they don't spend on a home?</h3>
-        <p>The renter saves it at the Risk-Free Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Risk-Free Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million.</p>
+        <p>The renter saves it at the Savings Rate, compounded monthly and untaxed. Both scenarios start with the same cash (the deposit plus setup cost, so $192,000 at the starting values), and with the monthly housing budget left blank each year's budget is the dearer scenario's cost, so the cheaper one saves the gap. Raising the Savings Rate from 3% to 6% lifts the renter's year-30 net equity from about $756,000 to $1.70 million, while the owner's moves only from $3.62 million to $3.66 million.</p>
       </div>
       <div class="faq-item">
         <h3>How is net equity worked out for someone who owns?</h3>
@@ -710,7 +710,7 @@
       </div>
       <div class="faq-item">
         <h3>Does the model include tax on rental savings or on the sale of the home?</h3>
-        <p>No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Risk-Free Rate. To allow for tax, enter an after-tax savings rate as the Risk-Free Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning.</p>
+        <p>No. Savings interest is untaxed, no capital gains tax is taken when the home is sold, and there is no tax relief on the loan. The model also has no investment return other than the Savings Rate. To allow for tax, enter an after-tax savings rate as the Savings Rate, add any seller tax to Selling cost, and put land tax or similar into Ongoing costs of owning.</p>
       </div>
       <div class="faq-item">
         <h3>How does the model treat a fixed rate that later turns floating?</h3>

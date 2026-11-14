@@ -208,7 +208,7 @@
           </li>
           <li data-b="3">
             <h3>Shared by every scenario</h3>
-            <p><strong>Time horizon</strong>, <strong>Risk-Free Rate</strong>, <strong>Initial cash</strong> and <strong>Monthly housing budget</strong>: one figure for the whole table.</p>
+            <p><strong>Time horizon</strong>, <strong>Savings Rate</strong>, <strong>Initial cash</strong> and <strong>Monthly housing budget</strong>: one figure for the whole table.</p>
           </li>
           <li data-b="4">
             <h3>Each column's own home</h3>
@@ -295,7 +295,7 @@
       <div class="gd-demo" data-demo="assumptions" data-w="1280" data-h="800">
         <figure class="gd-screen"><span class="gd-cap">Perth, 2BR house: growth from past prices, then a set budget</span></figure>
         <ol class="gd-steps">
-          <li><h3>Prices and savings</h3><p><strong>General inflation</strong>, then <strong>Risk-Free Rate</strong> (what spare cash earns) and <strong>Time horizon</strong>.</p></li>
+          <li><h3>Prices and savings</h3><p><strong>General inflation</strong>, then <strong>Savings Rate</strong> (what spare cash earns) and <strong>Time horizon</strong>.</p></li>
           <li><h3>Property growth</h3><p><strong>House price growth (RPPI)</strong> and <strong>Selling cost</strong>. <strong>Show tool</strong> works the growth out from past prices: <strong>Calculate CAGR</strong> writes it in.</p></li>
           <li><h3>Cash and the budget</h3><p><strong>Initial cash</strong> and <strong>Monthly housing budget</strong>, both optional. Blank, each covers what every path needs.</p></li>
           <li><h3>The lead stays</h3><p>A budget moves what each path ends with, not the gap between them.</p></li>
@@ -406,7 +406,7 @@
             <tr><th scope="row">Rent amount, Rent growth</th><td data-l="Sensitivity">Rent frequency, Rent amount, Rent growth</td><td data-l="What differs">Per column.</td></tr>
             <tr><th scope="row">Ongoing costs of renting, Ongoing cost growth</th><td data-l="Sensitivity">Rent cost type, Rent cost frequency, Ongoing cost (rent), Rent cost growth</td><td data-l="What differs">Per column; Rent costs detail is one choice for every column.</td></tr>
             <tr><th scope="row">House price growth (RPPI), Selling cost</th><td data-l="Sensitivity">House price growth (RPPI), Selling cost</td><td data-l="What differs">On the Assumptions tab here, with the home's rows there: they belong to a home, so each column has its own.</td></tr>
-            <tr><th scope="row">Risk-Free Rate, Time horizon, Initial cash, Monthly housing budget, Budget annual increase</th><td data-l="Sensitivity">The same, under <strong>Shared by every scenario</strong></td><td data-l="What differs">One figure for every column, so no home wins with more money or more time. Blank cash and budget take the most any column needs.</td></tr>
+            <tr><th scope="row">Savings Rate, Time horizon, Initial cash, Monthly housing budget, Budget annual increase</th><td data-l="Sensitivity">The same, under <strong>Shared by every scenario</strong></td><td data-l="What differs">One figure for every column, so no home wins with more money or more time. Blank cash and budget take the most any column needs.</td></tr>
             <tr><th scope="row">Enable Rent-Then-Buy, Buy at year</th><td data-l="Sensitivity">None</td><td data-l="What differs">Rent-Then-Buy is on the main page only.</td></tr>
             <tr><th scope="row">General inflation, Show in today's money</th><td data-l="Sensitivity">None</td><td data-l="What differs">Sensitivity reads in future's money. Turn today's money off here to compare figure for figure.</td></tr>
             <tr><th scope="row">Net equity, Liquid cash, Accumulated cost</th><td data-l="Sensitivity">Compare on, At year</td><td data-l="What differs">One metric and one year for every column; Compare charts them all together.</td></tr>
@@ -462,7 +462,7 @@
 
     <section class="gd-sec card" id="model" aria-labelledby="model-h">
       <h2 id="model-h">The model in one picture</h2>
-      <p class="gd-sub">Two households start with the same cash and spend the same monthly housing budget for the same years. One buys: the deposit and setup costs leave its cash on day one, and the budget pays the mortgage and the owning costs. The other rents: it keeps all its cash and pays the rent and renting costs. Whatever either has left over each month is saved at the <strong>Risk-Free Rate</strong>. At the horizon the tool asks what each would own if the home were sold.</p>
+      <p class="gd-sub">Two households start with the same cash and spend the same monthly housing budget for the same years. One buys: the deposit and setup costs leave its cash on day one, and the budget pays the mortgage and the owning costs. The other rents: it keeps all its cash and pays the rent and renting costs. Whatever either has left over each month is saved at the <strong>Savings Rate</strong>. At the horizon the tool asks what each would own if the home were sold.</p>
       <div class="gd-eq"><span class="gd-eq-l">Own</span> = <var>V</var><sub><var>T</var></sub> × (1 − <var>s</var>) − <var>B</var><sub><var>T</var></sub> + <var>C</var><sub><var>T</var></sub><sup>own</sup><small>net equity, owning</small></div>
       <div class="gd-eq"><span class="gd-eq-l">Rent</span> = <var>C</var><sub><var>T</var></sub><sup>rent</sup><small>net equity, renting</small></div>
       <div class="gd-eq"><span class="gd-eq-l">Cash each month</span> <var>C</var><sub><var>m</var></sub> = <var>C</var><sub><var>m</var>−1</sub> × (1 + <var>i</var>)<sup>1/12</sup> + (budget<sub><var>m</var></sub> − outgoings<sub><var>m</var></sub>)</div>
@@ -471,7 +471,7 @@
         <li><var>s</var><strong>Selling cost</strong>, as a share of the sale</li>
         <li><var>B<sub>T</sub></var>the loan still owed</li>
         <li><var>C<sub>T</sub></var>each path's cash at the horizon</li>
-        <li><var>i</var>the <strong>Risk-Free Rate</strong> a year</li>
+        <li><var>i</var>the <strong>Savings Rate</strong> a year</li>
         <li><var>m</var>a month; budget and outgoings are that month's</li>
       </ul>
       <p class="gd-sub" style="margin-top:16px">The headline, <strong>Equity difference</strong>, is Own minus Rent. Both paths share the budget and the starting cash, so those cancel out of it, and what is left is the whole decision:</p>
@@ -483,7 +483,7 @@
         <li><var>N</var>months in the horizon, <var>T</var> × 12</li>
       </ul>
       <ul class="gd-facts">
-        <li><strong>Opportunity cost.</strong> The deposit is not free money: left in the bank it would have grown at the Risk-Free Rate. The middle term is that growth.</li>
+        <li><strong>Opportunity cost.</strong> The deposit is not free money: left in the bank it would have grown at the Savings Rate. The middle term is that growth.</li>
         <li><strong>The monthly gap compounds too.</strong> In year 1 owning usually costs more than renting, and the renter saves the difference. As rent grows and the repayment stays level, the gap closes and can turn; after the loan is repaid, owning costs only the running costs.</li>
         <li><strong>Leverage.</strong> The home's growth applies to the whole price, not just the deposit. That is why <strong>House price growth</strong> moves the answer most.</li>
       </ul>
@@ -508,9 +508,9 @@
           <tbody>
             <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol every amount wears.</td><td data-l="In the maths">A label only: nothing is converted.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
             <tr><th scope="row">Property price</th><td data-l="What it is">What the home costs today.</td><td data-l="In the maths"><var>P</var>: the loan, the deposit, a % setup cost, and the value the home grows from.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ home value</span><span class="gd-eff gd-eff-neg">▲ repayment</span><span class="gd-eff">rent held: ▼ owning's lead here</span></td></tr>
-            <tr><th scope="row">Down payment</th><td data-l="What it is">The share of the price paid upfront. 100% buys outright.</td><td data-l="In the maths"><var>d</var>: a smaller loan, and more cash leaving Own on day one. The renter keeps that cash invested. It helps owning while the mortgage rate is above the Risk-Free Rate.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ repayment</span><span class="gd-eff">▲ owning's lead here</span></td></tr>
+            <tr><th scope="row">Down payment</th><td data-l="What it is">The share of the price paid upfront. 100% buys outright.</td><td data-l="In the maths"><var>d</var>: a smaller loan, and more cash leaving Own on day one. The renter keeps that cash invested. It helps owning while the mortgage rate is above the Savings Rate.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ repayment</span><span class="gd-eff">▲ owning's lead here</span></td></tr>
             <tr><th scope="row">Detail</th><td data-l="What it is"><strong>Simple</strong>: one rate, principal and interest. <strong>Detailed</strong>: a loan type and a rate schedule.</td><td data-l="In the maths">Simple sets the type to principal and interest and Cost = interest only on, whatever the hidden fields hold.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
-            <tr><th scope="row">Mortgage type</th><td data-l="What it is"><strong>Principal &amp; Interest</strong> or <strong>Interest Only</strong> (Detailed).</td><td data-l="In the maths">Interest Only pays <var>L</var> × <var>r</var> and builds no equity; the whole balance is paid from cash at the end of the term. It costs owning while the mortgage rate is above the Risk-Free Rate.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">Interest Only: ▲ interest</span><span class="gd-eff">▼ owning's lead here</span></td></tr>
+            <tr><th scope="row">Mortgage type</th><td data-l="What it is"><strong>Principal &amp; Interest</strong> or <strong>Interest Only</strong> (Detailed).</td><td data-l="In the maths">Interest Only pays <var>L</var> × <var>r</var> and builds no equity; the whole balance is paid from cash at the end of the term. It costs owning while the mortgage rate is above the Savings Rate.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">Interest Only: ▲ interest</span><span class="gd-eff">▼ owning's lead here</span></td></tr>
             <tr><th scope="row">Cost = interest only</th><td data-l="What it is">What <strong>Accumulated cost</strong> counts (Detailed).</td><td data-l="In the maths">On: interest and owning costs, since principal becomes equity. Off: whole repayments. Net equity never reads it.</td><td data-l="Raise it"><span class="gd-eff">Accumulated cost only</span></td></tr>
             <tr><th scope="row">Mortgage rate</th><td data-l="What it is">The yearly rate on the loan.</td><td data-l="In the maths"><var>r</var> in the repayment; interest each month is <var>B</var> × <var>r</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ repayment</span><span class="gd-eff">▼ owning's lead</span></td></tr>
             <tr><th scope="row">Mortgage term</th><td data-l="What it is">The years the loan is repaid over.</td><td data-l="In the maths"><var>n</var>: longer means a smaller repayment but more interest. Once repaid, owning costs only its running costs.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ repayment</span><span class="gd-eff gd-eff-neg">▲ interest</span></td></tr>
@@ -518,7 +518,7 @@
           </tbody>
         </table>
       </div>
-      <p class="gd-note gd-note-warn"><strong>Watch out: a bigger deposit is not always better.</strong> Each dollar of deposit saves the mortgage rate and gives up the Risk-Free Rate. In the Perth example (6.4% against 4.6%) a 30% deposit lifts owning by $37k; if savings earned more than the loan cost, it would do the opposite.</p>
+      <p class="gd-note gd-note-warn"><strong>Watch out: a bigger deposit is not always better.</strong> Each dollar of deposit saves the mortgage rate and gives up the Savings Rate. In the Perth example (6.4% against 4.6%) a 30% deposit lifts owning by $37k; if savings earned more than the loan cost, it would do the opposite.</p>
     </section>
 
     <section class="gd-sec card" id="m-costs" aria-labelledby="m-costs-h">
@@ -581,7 +581,7 @@
 
     <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
       <h2 id="m-assume-h">Assumptions: growth, savings, time and money</h2>
-      <p class="gd-sub">The home grows at the end of each year. Cash earns the Risk-Free Rate, compounded monthly so a year earns exactly that rate. Net equity counts the home as sold that year, less selling costs.</p>
+      <p class="gd-sub">The home grows at the end of each year. Cash earns the Savings Rate, compounded monthly so a year earns exactly that rate. Net equity counts the home as sold that year, less selling costs.</p>
       <div class="gd-eq"><span class="gd-eq-l">Home value</span> <var>V</var><sub><var>t</var></sub> = <var>P</var> × (1 + <var>g</var>)<sup><var>t</var></sup></div>
       <div class="gd-eq"><span class="gd-eq-l">Today's money</span> = <span class="gd-frac"><span>figure in year <var>t</var></span><span>(1 + <var>π</var>)<sup><var>t</var></sup></span></span></div>
       <div class="gd-eq"><span class="gd-eq-l">Automatic budget, year <var>t</var></span> = max(<var>O</var><sub><var>t</var></sub>, <var>R</var><sub><var>t</var></sub>, Rent-Then-Buy's<sub><var>t</var></sub>)<small>repayments at the top of any floating range</small></div>
@@ -597,7 +597,7 @@
           <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
           <tbody>
             <tr><th scope="row">General inflation</th><td data-l="What it is">How fast prices in general rise.</td><td data-l="In the maths"><var>π</var>, in today's money only. No figure in the plan reads it.</td><td data-l="Raise it"><span class="gd-eff">▼ figures in today's money</span><span class="gd-eff">which path wins unchanged</span></td></tr>
-            <tr><th scope="row">Risk-Free Rate</th><td data-l="What it is">What spare cash earns, like a savings account. The same in every path.</td><td data-l="In the maths"><var>i</var>: every cash balance, the deposit's opportunity cost <var>D</var>(1 + <var>i</var>)<sup><var>T</var></sup>, and the monthly gap.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ savings</span><span class="gd-eff">▼ owning's lead</span></td></tr>
+            <tr><th scope="row">Savings Rate</th><td data-l="What it is">What spare cash earns, like a savings account. The same in every path.</td><td data-l="In the maths"><var>i</var>: every cash balance, the deposit's opportunity cost <var>D</var>(1 + <var>i</var>)<sup><var>T</var></sup>, and the monthly gap.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ savings</span><span class="gd-eff">▼ owning's lead</span></td></tr>
             <tr><th scope="row">Time horizon</th><td data-l="What it is">The years modelled, and the year net equity is read.</td><td data-l="In the maths"><var>T</var>.</td><td data-l="Raise it"><span class="gd-eff">usually ▲ owning's lead</span></td></tr>
             <tr><th scope="row">House price growth (RPPI)</th><td data-l="What it is">How fast the home's value rises a year.</td><td data-l="In the maths"><var>g</var>: the home's value, a % owning cost, and Rent-Then-Buy's price.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ home value</span><span class="gd-eff">▲ owning's lead</span></td></tr>
             <tr><th scope="row">Selling cost</th><td data-l="What it is">Agent, marketing, legal and seller taxes on a sale.</td><td data-l="In the maths"><var>s</var>: house equity is <var>V</var>(1 − <var>s</var>) − <var>B</var> in every year, as if sold that year.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ house equity</span><span class="gd-eff">▼ owning's lead</span></td></tr>
@@ -608,7 +608,7 @@
           </tbody>
         </table>
       </div>
-      <p class="gd-note gd-note-warn"><strong>Watch out: the renter earns the Risk-Free Rate, not the share market.</strong> "Invest the difference" here means a savings account. Raising the rate to a share market's average return adds the return without the risk, which flatters renting.</p>
+      <p class="gd-note gd-note-warn"><strong>Watch out: the renter earns one steady Savings Rate, with no market swings.</strong> "Invest the difference" here earns a fixed rate every year. Setting it to a share market's average return adds the return without the risk, which flatters renting.</p>
     </section>
 
     <section class="gd-sec card" id="m-sens" aria-labelledby="m-sens-h">
@@ -620,13 +620,13 @@
         <li><var>j</var>a column</li>
         <li><var>k</var>a month from today</li>
         <li><var>need<sub>j</sub></var>what column <var>j</var> alone would need that month</li>
-        <li><var>i<sub>j</sub></var>the Risk-Free Rate of the column's currency</li>
+        <li><var>i<sub>j</sub></var>the Savings Rate of the column's currency</li>
       </ul>
       <div class="gd-table-wrap">
         <table class="gd-table">
           <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Time horizon, Risk-Free Rate</th><td data-l="What it is">One run length and one savings rate (one per currency) for every column.</td><td data-l="In the maths">As on the main page, for each column.</td><td data-l="Raise it"><span class="gd-eff">as on the main page</span></td></tr>
+            <tr><th scope="row">Time horizon, Savings Rate</th><td data-l="What it is">One run length and one savings rate (one per currency) for every column.</td><td data-l="In the maths">As on the main page, for each column.</td><td data-l="Raise it"><span class="gd-eff">as on the main page</span></td></tr>
             <tr><th scope="row">Initial cash</th><td data-l="What it is">The same cash in every column. Auto: the most any column needs up front.</td><td data-l="In the maths">A cheaper home starts with the same cash and banks what it does not spend.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ every column</span><span class="gd-eff">Own minus rent unchanged</span></td></tr>
             <tr><th scope="row">Monthly housing budget</th><td data-l="What it is">The same monthly cash in every column. Auto: the most any column needs that month.</td><td data-l="In the maths">The formula above; a set budget grows by <strong>Budget annual increase</strong>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ every column</span><span class="gd-eff">Own minus rent unchanged</span></td></tr>
             <tr><th scope="row">Multi-currency</th><td data-l="What it is">Homes priced in different currencies.</td><td data-l="In the maths">Each column runs in its own currency; balances are read at that year's rate, and accumulated cost at the rate on the day each cost was paid.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
@@ -641,7 +641,7 @@
 
     <section class="gd-sec card" id="example" aria-labelledby="example-h">
       <h2 id="example-h">Worked example: Perth, two-bedroom house</h2>
-      <p class="gd-sub">The Quick Start figures: $855,000 price, 20% deposit, 6.4% over 30 years, 4.51% setup, $7,900 a year to own (growing 2.5%), $650 a week rent (growing 3.5%), $1,400 a year to rent (growing 2.5%), 4.5% house price growth, 2.8% selling cost, 4.6% Risk-Free Rate, 30 years, 2.5% general inflation.</p>
+      <p class="gd-sub">The Quick Start figures: $855,000 price, 20% deposit, 6.4% over 30 years, 4.51% setup, $7,900 a year to own (growing 2.5%), $650 a week rent (growing 3.5%), $1,400 a year to rent (growing 2.5%), 4.5% house price growth, 2.8% selling cost, 4.6% Savings Rate, 30 years, 2.5% general inflation.</p>
       <div class="gd-calc">
         <h3>Owning's lead after 30 years</h3>
         <p>By the identity in the model card: the home's equity, less the deposit and setup invested, less the monthly gap invested.</p>
@@ -681,7 +681,7 @@
           <li style="--lo:-0.76;--hi:1"><span class="gd-tn-name">House price growth<small>4.5% → 3.5% / 5.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$372k</span><span>+$491k</span></span></li>
           <li style="--lo:-0.5;--hi:0.59"><span class="gd-tn-name">Time horizon<small>30 → 25 / 35 years</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$245k</span><span>+$288k</span></span></li>
           <li style="--lo:-0.39;--hi:0.46"><span class="gd-tn-name">Rent growth<small>3.5% → 2.5% / 4.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$190k</span><span>+$227k</span></span></li>
-          <li style="--lo:0.33;--hi:-0.43"><span class="gd-tn-name">Risk-Free Rate<small>4.6% → 3.6% / 5.6%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$164k</span><span>−$213k</span></span></li>
+          <li style="--lo:0.33;--hi:-0.43"><span class="gd-tn-name">Savings Rate<small>4.6% → 3.6% / 5.6%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$164k</span><span>−$213k</span></span></li>
           <li style="--lo:0.32;--hi:-0.34"><span class="gd-tn-name">Mortgage rate<small>6.4% → 5.4% / 7.4%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$159k</span><span>−$166k</span></span></li>
           <li style="--lo:-0.32;--hi:0.32"><span class="gd-tn-name">Rent amount<small>$650 → $585 / $715 a week</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$157k</span><span>+$157k</span></span></li>
           <li style="--lo:0.09;--hi:-0.09"><span class="gd-tn-name">Property price<small>$855k → $770k / $941k</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$45k</span><span>−$45k</span></span></li>
@@ -716,12 +716,12 @@
       <ul class="gd-facts">
         <li><strong>No tax.</strong> None on the gain when the home is sold, none on the interest savings earn, no land tax or rental deductions unless you put them in the running costs.</li>
         <li><strong>One growth rate, every year.</strong> No cycles, no crash, no boom. Your home is one property, not the index its growth came from.</li>
-        <li><strong>The renter's savings earn the Risk-Free Rate.</strong> Savings in shares would earn more on average, with risk the tool does not model.</li>
+        <li><strong>The renter's savings earn the Savings Rate.</strong> Savings in shares would earn more on average, with risk the tool does not model.</li>
         <li><strong>The home is sold at the horizon.</strong> Net equity takes off the selling cost each year. If you would stay on, that cost is never paid.</li>
         <li><strong>The loan is plain.</strong> No refinancing, offset account, extra repayments, lender's mortgage insurance or fees beyond the setup cost. A floating rate runs at the middle of its range.</li>
         <li><strong>Rent is renewed forever</strong> at rent growth, with no forced moves beyond the renting costs.</li>
         <li><strong>A shortfall is refused, never borrowed.</strong> The mortgage is the only loan, so a set budget or cash that runs a path below zero stops the comparison until it covers every path. The automatic figures always do, except for an interest-only balance falling due at the end of its term: set a budget or initial cash that saves for it.</li>
-        <li><strong>Two rates, two conventions.</strong> The repayment uses the mortgage rate ÷ 12, as lenders quote it; savings compound monthly to exactly the Risk-Free Rate over a year.</li>
+        <li><strong>Two rates, two conventions.</strong> The repayment uses the mortgage rate ÷ 12, as lenders quote it; savings compound monthly to exactly the Savings Rate over a year.</li>
         <li><strong>Quick Start figures are local estimates</strong> as of the month shown, with sources on the <a href="../quickstart-assumptions/">Quick Start assumptions</a> page. General inflation stays at 2.5% for every city: set your own.</li>
       </ul>
       <p class="gd-note gd-note-warn"><strong>Do not lean on it when</strong> you may sell near the breakeven year, you cannot defend your growth figure within a point, an interest-only balance falls due that your savings cannot cover, or you compare homes in two currencies without thinking about the exchange rate path.</p>

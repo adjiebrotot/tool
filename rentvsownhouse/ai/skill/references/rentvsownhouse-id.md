@@ -81,7 +81,7 @@ Open the link to see the result.
 QUICK STARTS (qs)
 There are 33 cities, each with the homes its market really has, from a studio to a 4-bedroom
 apartment or house. Each sets that city's typical price and rent for the home, the usual deposit,
-loan rate and term, setup and running costs, growth rates and risk-free rate, with sources listed at
+loan rate and term, setup and running costs, growth rates and savings rate, with sources listed at
 https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/ .
 Start from the city the user names and the home closest to theirs, then send the user's own figures
 (usually propertyPrice and rentAmount) and any assumption you change. For a city not listed, start
@@ -250,13 +250,13 @@ generalInflation: Inflasi umum
   inflasi umum.
 
 [Asumsi: Tabungan dan jangka waktu]
-riskFreeRate: Suku Bunga Bebas Risiko  (most important)
+riskFreeRate: Suku Bunga Tabungan  (most important)
   Slider (%/thn). -10 to 25. Default 4.5.
   What spare cash earns, % a year, like a savings account or term deposit: the renter's deposit
   money and each year's surplus are invested at it. Use the local deposit or short government bond
   rate (about 4 to 5 in Australia in late 2026). With houseGrowth, it moves the answer most.
-  Tip on the page: Imbal hasil per tahun atas kas yang menganggur, seperti tabungan atau deposito.
-  Berlaku di semua skenario.
+  Tip on the page: Imbal hasil per tahun atas kas yang menganggur, seperti bunga deposito atau imbal
+  hasil yang diharapkan dari saham/reksadana. Berlaku di semua skenario.
 horizon: Jangka waktu  (most important)
   Slider (thn). 5 to 100. Default 30.
   The number of years compared. Use how long the user expects to stay; typical 10 to 30.
@@ -268,7 +268,7 @@ houseGrowth: Kenaikan harga properti (RPPI)  (most important)
   city, below the boom years: about 3 to 4.5 in Australian capitals, lower for apartments. With
   riskFreeRate, it moves the answer most.
   Tip on the page: Kenaikan harga properti per tahun (RPPI). Menentukan ekuitas rumah dan harga beli
-  pada skenario Sewa Dulu. Kalkulator CAGR di bawah menghitungnya dari harga historis.
+  pada skenario Sewa Dulu. Tool CAGR di bawah menghitungnya dari harga historis.
 sellingCostPct: Biaya penjualan
   Slider (% harga jual). 0 to 15. Default 2.5.
   Selling costs as a % of the sale price (agent, marketing, legal), taken off the home's value as if
