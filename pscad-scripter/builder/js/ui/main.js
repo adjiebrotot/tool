@@ -455,6 +455,8 @@ export async function boot() {
   mountPalette(app);
   mountInspector(app);
   const python = mountPython(app);
+  // A modal is open (Graph style or the larger Python view): the canvas keys stand aside.
+  app.graphStyleOpen = () => graphStyle.isOpen() || python.modalOpen();
   mountProblems(app);
   mountFiles(app);
   const templates = mountTemplates(app);
@@ -514,6 +516,8 @@ export async function boot() {
     flushGenerate: () => app.flushGenerate(),
     openGraphStyle: () => graphStyle.open(),
     closeGraphStyle: () => graphStyle.close(),
+    openPython: () => python.openModal(),
+    closePython: () => python.closeModal(),
     // Nothing worth keeping: only a Start block with its defaults (the tour leaves its demo then).
     isBlank: () => {
       const w = store.get().wf;

@@ -1,11 +1,12 @@
 // The Python tab (DESIGN 8): the script, written live as the workflow changes (the generator
 // runs about 120 ms after the last edit; the code view only redraws while the tab is open),
 // highlighted with highlight.js when it has arrived from the CDN and plain text otherwise
-// (the page never waits for it). ⧉ copies, ⬇ downloads, and "See its Python" from a block
+// (the page never waits for it). ⤢ opens the script in a larger view (a modal, like Graph style)
+// where ⧉ copies and ⬇ .py downloads it; ⬇ Download gives the package, and "See its Python" from a block
 // scrolls to its lines and marks them (the generator's spans; the "# -- Step n:" comments as a
 // fallback). A download with problems says so once and carries the count on its label.
 
-import { $, el, downloadText, downloadBlob } from './dom.js';
+import { $, el, iconButton, downloadText, downloadBlob } from './dom.js';
 import { fileNameFor } from '../core/codegen.js';
 import { buildPackage, packagedFiles } from './package.js';
 import { toast } from './toasts.js';
@@ -21,8 +22,11 @@ export function blockingCount(gen) {
 export function mountPython(app) {
   const store = app.store;
   const code = $('pxbCodeInner'), pre = $('pxbCode'), wrap = $('pxbCodeWrap'), status = $('pxbPyStatus');
-  const dl1 = $('pxbDownload'), dl2 = $('pxbDownload2'), copyBtn = $('pxbCopy');
+  const dl1 = $('pxbDownload'), expandBtn = $('pxbPyExpand');
   let shownCode = null, marked = null, askedFor = null;
+  // The larger view (built on first open): its own code element, status and buttons.
+  let overlay = null, dialog = null, bigCode = null, bigWrap = null, bigStatus = null, fileEl = null, adEl = null, adPushed = false, opener = null, bigShown = null;
+  const modalOpen = () => !!overlay && !overlay.hidden;
 
   const isOpen = () => store.get().tab === 'python';
   function highlight(text) {
@@ -41,12 +45,24 @@ export function mountPython(app) {
     if (!isOpen() && !force) return;
     if (!force && g.code === shownCode) return;
     shownCode = g.code;
-    const hl = highlight(g.code);
-    if (hl !== null) { code.innerHTML = hl; code.classList.add('hljs'); } else { code.textContent = g.code; code.classList.remove('hljs'); }
+    paintCode(code, g.code);
     if (marked) markNode(marked, false);
   }
+  function paintCode(target, text) {
+    const hl = highlight(text);
+    if (hl !== null) { target.innerHTML = hl; target.classList.add('hljs'); } else { target.textContent = text; target.classList.remove('hljs'); }
+  }
+  function renderBig(force) {
+    if (!modalOpen()) return;
+    const s = store.get(), g = s.gen;
+    fileEl.textContent = fileNameFor(s.wf);
+    if (!g) { bigCode.textContent = 'Writing the script…'; bigShown = null; return; }
+    if (!force && g.code === bigShown) return;
+    bigShown = g.code;
+    paintCode(bigCode, g.code);
+  }
   const hl = $('pxbHljs');
-  if (hl) hl.addEventListener('load', () => { if (shownCode !== null) { shownCode = null; render(true); } });
+  if (hl) hl.addEventListener('load', () => { if (shownCode !== null) { shownCode = null; render(true); } if (bigShown !== null) renderBig(true); });
 
   function labels() {
     const g = store.get().gen;
@@ -62,16 +78,19 @@ export function mountPython(app) {
     const what = 'Download the study package: the script, the workflow' + (data ? ' and ' + (data === 1 ? 'the data file' : data + ' data files') : '') + ', in one .zip.';
     dl1.title = n ? what + ' The script stops before it connects to PSCAD until the problems are fixed.' : what;
     dl1.classList.toggle('pxb-has-problems', !!n);
-    if (status) {
-      status.textContent = !g ? 'Writing the script…'
-        : n ? 'This script stops before it connects until ' + (n === 1 ? 'one problem is' : n + ' problems are') + ' fixed (see Problems).'
-        : 'Written as you build. Ready to run.';
-      status.classList.toggle('pxb-py-warn', !!n);
+    const words = !g ? 'Writing the script…'
+      : n ? 'This script stops before it connects until ' + (n === 1 ? 'one problem is' : n + ' problems are') + ' fixed (see Problems).'
+      : 'Written as you build. Ready to run.';
+    for (const st of [status, bigStatus]) {
+      if (!st) continue;
+      st.textContent = words;
+      st.classList.toggle('pxb-py-warn', !!n);
     }
   }
 
   store.subscribe((s, prev) => {
-    if (s.gen !== prev.gen) { labels(); render(false); }
+    if (s.gen !== prev.gen) { labels(); render(false); renderBig(false); }
+    if (s.wf !== prev.wf && modalOpen()) fileEl.textContent = fileNameFor(s.wf);
     if (s.tab !== prev.tab && s.tab === 'python') render(false);
   });
   labels();
@@ -177,9 +196,70 @@ export function mountPython(app) {
     if (!g || !askFirst()) return;
     downloadText(g.code, fileNameFor(s.wf), 'text/x-python');
   }
-  copyBtn.addEventListener('click', copy);
   dl1.addEventListener('click', download);
-  dl2.addEventListener('click', downloadPy);
 
-  return { render, seePython, download, downloadPy, copy, markNode };
+  // ---- The larger view: the script at full size, ⧉ Copy and ⬇ .py, and a display ad beside it
+  function build() {
+    fileEl = el('span', { class: 'pxb-gs-name pxb-pym-file' });
+    const close = iconButton('close', 'Close the larger view', 'pxb-gs-close');
+    close.addEventListener('click', closeModal);
+    bigCode = el('code', { class: 'language-python', id: 'pxbPymCodeInner' });
+    bigWrap = el('div', { class: 'pxb-pym-code', tabindex: '0', 'aria-label': 'The Python script' }, el('pre', { class: 'pxb-code' }, bigCode));
+    // Display ad (Display 3) beside the code: wide layout only, pushed once when the view first
+    // shows, and no room taken when Google leaves it unfilled or a blocker stops it.
+    adEl = el('div', { class: 'pxb-gs-ad pxb-pym-ad' });
+    adEl.innerHTML = '<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8730116101825381" data-ad-slot="9911594045" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+    bigStatus = el('span', { class: 'pxb-gs-note pxb-pym-status' });
+    const copyBtn = el('button', { type: 'button', class: 'btn-secondary', id: 'pxbCopy', text: '⧉ Copy', title: 'Copy the Python to the clipboard' });
+    copyBtn.addEventListener('click', copy);
+    const dl2 = el('button', { type: 'button', class: 'btn-primary', id: 'pxbDownload2', text: '⬇ .py', title: 'Download only the Python file (the ⬇ Download button gives the whole study package)' });
+    dl2.addEventListener('click', downloadPy);
+    dialog = el('div', { class: 'pxb-gs pxb-pym', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pxbPymTitle', tabindex: '-1' },
+      el('div', { class: 'pxb-gs-head' }, el('h2', { id: 'pxbPymTitle', text: 'Python script' }), fileEl, close),
+      el('div', { class: 'pxb-pym-body' }, bigWrap, adEl),
+      el('div', { class: 'pxb-gs-foot' }, bigStatus, copyBtn, dl2));
+    overlay = el('div', { class: 'pxb-gs-overlay', id: 'pxbPyModal', hidden: true, 'data-no-persist': true, 'data-no-abbr': true }, dialog);
+    overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (modalOpen()) onKey(e); });
+    document.body.appendChild(overlay);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape' && !e.defaultPrevented) { e.preventDefault(); closeModal(); return; }
+    if (e.key !== 'Tab') return;
+    const f = [...dialog.querySelectorAll('button, input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(x => !x.disabled && x.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  function showAd() {
+    if (adPushed || !adEl || !adEl.offsetWidth) return;      // hidden on a narrow screen: never pushed
+    adPushed = true;
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* no ad script */ }
+  }
+  function openModal(from) {
+    if (!overlay) build();
+    app.flushGenerate();
+    opener = from || document.activeElement;
+    overlay.hidden = false;
+    document.body.classList.add('pxb-gs-open');
+    labels();
+    renderBig(true);
+    bigWrap.scrollTop = 0;
+    requestAnimationFrame(() => {
+      showAd();
+      const b = dialog.querySelector('#pxbCopy');
+      if (b) b.focus({ preventScroll: true });
+    });
+  }
+  function closeModal() {
+    if (!modalOpen()) return;
+    overlay.hidden = true;
+    document.body.classList.remove('pxb-gs-open');
+    if (opener && document.body.contains(opener)) { try { opener.focus({ preventScroll: true }); } catch (e) { /* gone */ } }
+    opener = null;
+  }
+  if (expandBtn) expandBtn.addEventListener('click', () => openModal(expandBtn));
+
+  return { render, seePython, download, downloadPy, copy, markNode, openModal, closeModal, modalOpen };
 }

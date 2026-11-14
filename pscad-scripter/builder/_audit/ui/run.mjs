@@ -955,10 +955,18 @@ await test('Python tab', async () => {
   check('the preview follows the workflow (debounced)', /# Live check/.test(await D.page.textContent('#pxbCodeInner')));
   // copy
   await clearToasts(D);
+  check('the Python tab bar has ⤢ instead of ⧉ and ⬇ .py', await D.page.evaluate(() => !!document.getElementById('pxbPyExpand') && !document.querySelector('.pxb-py-bar #pxbCopy, .pxb-py-bar #pxbDownload2')));
+  await D.page.click('#pxbPyExpand');
+  await sleep(200);
+  const big = await D.page.evaluate(() => { const o = document.getElementById('pxbPyModal'); return { open: !!o && !o.hidden, code: (document.getElementById('pxbPymCodeInner') || {}).textContent || '', ad: !!(o && o.querySelector('.pxb-pym-ad ins.adsbygoogle')) }; });
+  check('⤢ opens the larger view with the script and an ad slot', big.open && /def main\(\):/.test(big.code) && big.ad, JSON.stringify({ open: big.open, ad: big.ad }));
   await D.page.click('#pxbCopy');
   await sleep(200);
   const clip = await D.page.evaluate(() => navigator.clipboard.readText().catch(() => ''));
   check('⧉ copies the script to the clipboard', /def main\(\):/.test(clip) && (await toastTexts(D)).some(t => /Copied/.test(t)));
+  await D.page.keyboard.press('Escape');
+  await sleep(100);
+  check('Escape closes the larger view, focus back on ⤢', await D.page.evaluate(() => document.getElementById('pxbPyModal').hidden && document.activeElement === document.getElementById('pxbPyExpand')));
   // See its Python
   await D.page.click('.ctrl-tab[data-tab="settings"]');
   await D.page.evaluate(() => PXB.select(['n4']));
@@ -1082,7 +1090,9 @@ await test('Save and Open (.json and .py)', async () => {
   const [d3] = await Promise.all([D.page.waitForEvent('download'), D.page.click('#pxbDownload')]);
   check('a download with problems asks once ("The script will stop before connecting")', D.dialogs.length === 1 && /The script will stop before connecting until these are fixed/.test(D.dialogs[0]) && !!d3);
   await D.page.click('.ctrl-tab[data-tab="python"]');
+  await D.page.click('#pxbPyExpand');
   await Promise.all([D.page.waitForEvent('download'), D.page.click('#pxbDownload2')]);
+  await D.page.keyboard.press('Escape');
   await D.page.click('.ctrl-tab[data-tab="settings"]');
   check('and not again for the same problems', D.dialogs.length === 1);
   // A file from another tool is refused, the canvas untouched
