@@ -33,13 +33,13 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
-<link rel="stylesheet" href="../shared.css?v=20261110">   <!-- same ?v= as every page; see the note below -->
+<link rel="stylesheet" href="../shared.css?v=20261116">   <!-- same ?v= as every page; see the note below -->
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
 <script src="../dropdown.js"></script>     <!-- every dropdown's open list (dropdown.css comes via shared.css) -->
 <script src="../chart-kit.js"></script>    <!-- what a chart is drawn with: SharedLegend, SharedChartTip, SharedZoom, SharedPane, ChartKit -->
 <script src="chart-kit.js"></script>       <!-- only if the tool has chart pieces of its own (below) -->
-<script src="../shared.js?v=20261110"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
+<script src="../shared.js?v=20261116"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
 <script src="script.js"></script>
 ```
 

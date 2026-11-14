@@ -5024,4 +5024,125 @@
   } else {
     initShared();
   }
+
+  /* ── Saved dialog: the file first, then a note with an ad ────────────────
+     Every file a tool saves (a chart PNG, a CSV, a scenario file, a ZIP) is
+     an <a download> clicked, by the reader or by script. Both are seen here,
+     in one place, so no tool changes. The file saves at once, as it always
+     did; nothing waits on an ad. Then a dialog says what was saved and how to
+     use it, with the Display 2 ad unit below that, and closes at once (its
+     button, Esc, or a click outside). AdSense policy, kept on purpose: no
+     countdown or wait before the file (a prestitial), the note is real
+     content and comes before the ad, the ad is labelled and kept clear of
+     the close button. It shows after every download. Never in
+     an embed or a guide's demo frame (only the top page shows it). */
+  (function initSavedNote(){
+    if(global.__abtDownloadGate || typeof HTMLAnchorElement === 'undefined') return;
+    global.__abtDownloadGate = true;
+    if(global.self !== global.top) return;
+    var GATHER_MS = 600, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
+    var ID = /^id\b/i.test(document.documentElement.getAttribute('lang') || '');
+    var T = ID ? {
+      title: 'Tersimpan', close: 'Tutup', ad: 'Iklan', where: 'Ada di folder unduhan kamu.',
+      json: 'Ini file skenario: berisi input kamu saja. Buka lagi kapan pun dengan tombol folder di sebelah tombol simpan, dan kamu lanjut tepat dari sini. Tidak ada yang diunggah.',
+      image: 'Tempel ke slide, dokumen atau chat. Untuk grafik yang tetap hidup di situsmu, pakai Bagikan, lalu Sematkan sebagai HTML, kalau grafiknya menyediakannya.',
+      table: 'Bisa dibuka di Excel, Google Sheets atau Numbers. Angkanya persis yang ada di tabel.',
+      code: 'Jalankan di perangkat lunaknya. Komentar di bagian atas file menjelaskan apa yang dikerjakannya.',
+      other: 'File dibuat di browser kamu. Tidak ada yang diunggah.'
+    } : {
+      title: 'Saved', close: 'Close', ad: 'Advertisement', where: 'It is in your downloads folder.',
+      json: 'This is a scenario file: your inputs and nothing else. Open it any time with the folder button beside the save button and you pick up right where you are. Nothing was uploaded.',
+      image: 'Paste it into a slide, a document or a chat. For a chart that stays live on your site, use Share, then Embed as HTML, where the chart offers it.',
+      table: 'It opens in Excel, Google Sheets or Numbers, with the numbers exactly as the table shows them.',
+      code: 'Run it in its software. The comments at the top of the file say what it does.',
+      other: 'The file was made in your browser. Nothing was uploaded.'
+    };
+    var origClick = HTMLAnchorElement.prototype.click;
+    var names = [], gather = null, overlay = null, adPushed = false, lastFocus = null;
+
+    function want(a){
+      if(!a || !a.hasAttribute || !a.hasAttribute('download')) return false;
+      var href = a.getAttribute('href') || '';
+      return !!href && href.charAt(0) !== '#' && !/^javascript:/i.test(href);
+    }
+    function seen(a){
+      names.push(a.getAttribute('download') || '');
+      clearTimeout(gather);
+      gather = setTimeout(show, GATHER_MS);     // a burst of files gets one note
+    }
+    HTMLAnchorElement.prototype.click = function(){
+      var r = origClick.apply(this, arguments); // the file saves now, unchanged
+      if(want(this)) seen(this);
+      return r;
+    };
+    // A reader clicking a real <a download> on the page.
+    document.addEventListener('click', function(e){
+      if(e.defaultPrevented || e.button !== 0 || !e.isTrusted) return;
+      var a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
+      if(want(a)) seen(a);
+    }, true);
+
+    function kind(n){
+      var ext = (/\.([a-z0-9]+)$/i.exec(n) || [])[1] || '';
+      ext = ext.toLowerCase();
+      if(ext === 'json') return 'json';
+      if(/^(png|svg|gif|jpe?g|webp)$/.test(ext)) return 'image';
+      if(/^(csv|tsv|xlsx?)$/.test(ext)) return 'table';
+      if(/^(py|dpl|zip|txt|m|js)$/.test(ext)) return 'code';
+      return 'other';
+    }
+    function build(){
+      overlay = document.createElement('div');
+      overlay.className = 'dl-note-overlay';
+      overlay.innerHTML =
+        '<div class="dl-note card" role="dialog" aria-modal="true" aria-labelledby="dlNoteTitle">' +
+          '<div class="dl-note-head"><h2 id="dlNoteTitle"></h2>' +
+            '<button type="button" class="btn-secondary btn-sm dl-note-close"></button></div>' +
+          '<ul class="dl-note-files"></ul>' +
+          '<p class="dl-note-tip"></p>' +
+          '<div class="dl-note-ad"><span class="dl-note-ad-label"></span>' +
+            '<ins class="adsbygoogle" style="display:block" data-ad-client="' + AD_CLIENT + '" data-ad-slot="' + AD_SLOT + '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
+          '</div>' +
+        '</div>';
+      overlay.querySelector('#dlNoteTitle').textContent = '✓ ' + T.title;
+      overlay.querySelector('.dl-note-ad-label').textContent = T.ad;
+      var x = overlay.querySelector('.dl-note-close');
+      x.textContent = T.close;
+      x.addEventListener('click', close);
+      overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+      overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ e.preventDefault(); close(); } });
+      document.body.appendChild(overlay);
+    }
+    function show(){
+      var list = names; names = [];
+      if(!list.length) return;
+      if(!overlay) build();
+      var already = overlay.classList.contains('is-open');
+      var ul = overlay.querySelector('.dl-note-files');
+      if(!already) ul.textContent = '';      // open already: the new files join the list
+      list.forEach(function(n){ var li = document.createElement('li'); li.textContent = n || '—'; ul.appendChild(li); });
+      var k = kind(list[0]);
+      overlay.querySelector('.dl-note-tip').textContent = T.where + ' ' + T[k];
+      if(already) return;
+      lastFocus = document.activeElement;
+      overlay.classList.add('is-open');
+      overlay.querySelector('.dl-note-close').focus();
+      // The unit is pushed once, while visible, so AdSense can size it.
+      if(!adPushed){
+        adPushed = true;
+        try { (global.adsbygoogle = global.adsbygoogle || []).push({}); } catch(err){}
+        // No ad (a blocker, or none to fill): the note stands alone, no empty box.
+        setTimeout(function(){
+          var ins = overlay.querySelector('.dl-note-ad ins');
+          if(!ins.hasAttribute('data-adsbygoogle-status')) overlay.querySelector('.dl-note-ad').hidden = true;
+        }, 2500);
+      }
+    }
+    function close(){
+      if(!overlay) return;
+      overlay.classList.remove('is-open');
+      if(lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch(err){}
+      lastFocus = null;
+    }
+  })();
 })(window);
