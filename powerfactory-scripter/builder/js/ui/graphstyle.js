@@ -29,7 +29,7 @@ const COLOR_FIELDS = [
 
 export function mountGraphStyle(app) {
   const store = app.store;
-  let overlay = null, dialog = null, form = null, view = null, nameEl = null, capEl = null, opener = null;
+  let overlay = null, dialog = null, form = null, view = null, nameEl = null, capEl = null, adEl = null, adPushed = false, opener = null;
   let selfEdit = false;
   let kind = lsGet(LS_KIND, 'series');
   if (!PREVIEW_KINDS.some(([k]) => k === kind)) kind = 'series';
@@ -67,6 +67,10 @@ export function mountGraphStyle(app) {
     seg.addEventListener('change', () => { kind = seg.value; lsSet(LS_KIND, kind); paintPreview(); });
     view = el('div', { class: 'pfb-gs-canvas' });
     capEl = el('p', { class: 'pfb-gs-cap' });
+    // Display ad (Display 3) in the white space under the preview: wide layout only, pushed once when the
+    // dialog first shows, and no room taken when Google leaves it unfilled or a blocker stops it.
+    adEl = el('div', { class: 'pfb-gs-ad' });
+    adEl.innerHTML = '<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8730116101825381" data-ad-slot="9911594045" data-ad-format="auto" data-full-width-responsive="true"></ins>';
     const reset = el('button', { type: 'button', class: 'btn-secondary', text: '↺ Reset', title: 'Put the Adjie Brotools style back (Undo brings yours back)' });
     reset.addEventListener('click', () => {
       if (G.sameStyle(cur(), G.defaultStyle())) return;
@@ -79,7 +83,7 @@ export function mountGraphStyle(app) {
     dialog = el('div', { class: 'pfb-gs', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'pfbGsTitle', tabindex: '-1' },
       el('div', { class: 'pfb-gs-head' }, el('h2', { id: 'pfbGsTitle', text: 'Graph style' }), nameEl, close),
       el('div', { class: 'pfb-gs-body' },
-        el('div', { class: 'pfb-gs-view' }, seg, view, capEl),
+        el('div', { class: 'pfb-gs-view' }, seg, view, capEl, adEl),
         form),
       el('div', { class: 'pfb-gs-foot' },
         el('span', { class: 'pfb-gs-note', text: 'Every graph in this workflow draws in this style. Changes are kept as you make them.' }),
@@ -273,6 +277,12 @@ export function mountGraphStyle(app) {
     capEl.textContent = 'How the script draws it, at ' + G.pixelsOf(s).join(' × ') + ' px. ' + font;
   }
 
+  function showAd() {
+    if (adPushed || !adEl || !adEl.offsetWidth) return;      // hidden on a narrow screen: never pushed
+    adPushed = true;
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* no ad script */ }
+  }
+
   // ---- Open and close
   function open(from) {
     if (!overlay) build();
@@ -283,6 +293,7 @@ export function mountGraphStyle(app) {
     paint();
     requestAnimationFrame(() => {
       paintPreview();
+      showAd();
       const first = form.querySelector('.pfb-gs-tpl.on') || form.querySelector('.pfb-gs-tpl');
       if (first) first.focus({ preventScroll: true });
     });

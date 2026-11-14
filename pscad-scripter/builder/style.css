@@ -888,6 +888,14 @@ body.pxb-gs-open { overflow: hidden; }
 .pxb-gs-canvas svg { display: block; width: 100%; height: auto; }
 .pxb-gs-canvas.pxb-gs-clear { background: repeating-conic-gradient(color-mix(in srgb, var(--muted) 22%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px; }
 .pxb-gs-cap { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; }
+/* The display ad under the preview: only beside the form (the narrow preview is held at the top), gone when unfilled. */
+.pxb-gs-ad { display: none; }
+@media (min-width: 861px) {
+  .pxb-gs-ad { display: block; margin-top: 6px; text-align: center; }
+  .pxb-gs-ad::before { content: "Advertisement"; display: block; margin-bottom: 4px; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .pxb-gs-ad:has(ins.adsbygoogle[data-ad-status="unfilled"]) { display: none; }
+}
+@media print { .pxb-gs-ad { display: none !important; } }
 .pxb-gs-form { min-width: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 16px; }
 .pxb-gs-form .field-group { margin-top: 12px; }
 .pxb-gs-form .field-row { padding: 9px 0 11px; gap: 6px; }
