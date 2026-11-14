@@ -156,7 +156,6 @@ export function defnPages(all) {
       ['PSCAD name', esc(d.name)],
       ['Category', esc(catWords[d.group])],
       ['Parameters', `${n}, in ${nGroups} group${nGroups === 1 ? '' : 's'}${nUnit ? `; ${nUnit} carry a unit` : ''}`],
-      ['Read from', `PSCAD ${esc(all.pscad)}, ${esc(all.generated)}`],
     ];
     sections.push(`<section class="dx-sec dx-answer" aria-labelledby="what">
   <h2 id="what">What ${esc(key)} is</h2>
