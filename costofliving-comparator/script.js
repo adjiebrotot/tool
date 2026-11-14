@@ -2422,6 +2422,65 @@ window.__COL_TOUR = {
 };
 
 // ═══════════════════════════════════════════════════════════
+// FROM THE GLOBAL INCOME TAX CALCULATOR
+// The calculator's verdict links here (colLink in global-income-tax-calculator/
+// script.js) with each job's net pay, a month in its own currency:
+//   #from=gitc&cities=<city|country>;<city|country>...&nets=<n>;<n>...
+// The first city is From, the rest are destinations. It opens Detailed on
+// "I can save" and a starting budget for From of 30% rent, 10% groceries,
+// 10% eating out and 30% other, a 20% savings ratio, which the table carries
+// to each destination at its prices. The hash leaves the address so a reload
+// keeps the reader's own edits. A city not in the data, a repeat or a figure
+// that is not a positive number is skipped, never thrown on.
+// ═══════════════════════════════════════════════════════════
+const GITC_BUDGET=[['rent',0.30],['groceries',0.10],['eating_out',0.10],['other',0.30]];
+function openFromCalculator(){
+  const h=location.hash||'';
+  if(!/^#from=gitc(&|$)/.test(h))return;
+  window.__COL_FROM_GITC=true;
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  const q=new URLSearchParams(h.slice(1));
+  const keys=String(q.get('cities')||'').split(';'), nets=String(q.get('nets')||'').split(';');
+  const picks=[], seen={};
+  keys.slice(0,9).forEach((k,i)=>{
+    const n=Number(nets[i]);
+    if(!getCity(k)||seen[k]||!isFinite(n)||n<=0)return;
+    seen[k]=1;
+    picks.push({key:k,net:Math.round(Math.min(n,ColAI.MAX_AMOUNT)*100)/100});
+  });
+  if(!picks.length)return;
+  const from=picks[0], dests=picks.slice(1);
+  Object.keys(S).forEach(k=>{delete S[k];});
+  Object.assign(S,JSON.parse(JSON.stringify(S_DEFAULTS)));
+  S.mode='detailed'; S.goal='save'; S.housing='include'; S.savingsTarget='ratio';
+  S.detailFromKey=from.key;
+  S.detailFromSalary=from.net;
+  S.detailToCities=dests.length?dests.map(d=>d.key):[''];
+  S.detailToSalaries=dests.length?dests.map(d=>d.net):[0];
+  S.customFxDetailed=S.detailToCities.map(()=>null);
+  S.detailRows=GITC_BUDGET.map(([catId,p])=>({catId,fromAmount:Math.round(from.net*p*100)/100,overrides:{}}));
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
+  syncSegButtons();
+  render();
+  if(persist)persist.save();
+  const name=k=>getCity(k).city;
+  const note=document.createElement('div');
+  note.className='from-gitc card';
+  note.setAttribute('role','status');
+  note.innerHTML='<span class="from-gitc-text"><strong>From the Global Income Tax Calculator.</strong> '
+    +(dests.length
+      ? 'Your net pay in '+escAttr(picks.map(p=>name(p.key)).join(', '))+', with '+escAttr(name(from.key))+' as From'
+      : 'Your net pay in '+escAttr(name(from.key)))
+    +' and a starting budget of 30% rent, 10% groceries, 10% eating out and 30% other, so you save 20% there. '
+    +(dests.length?'Each row is scaled to the other cities\' prices. ':'Add a city to compare. ')
+    +'Change any row to your own figures.</span>'
+    +SharedIcon.button('close','Dismiss','from-gitc-close');
+  note.querySelector('.from-gitc-close').addEventListener('click',()=>note.remove());
+  const area=document.getElementById('analysisArea');
+  area.parentNode.insertBefore(note,area);
+}
+
+// ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
 function init(){
@@ -2452,6 +2511,7 @@ function init(){
     }
   });
   SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator', persist: persist });
+  openFromCalculator();
   agentReadyResolve();   // a #load link waits for the data, the pickers and the mini cache
 }
 
