@@ -17,7 +17,7 @@ import { buildField } from './fields.js';
 import { glyph, KIND_WORDS } from './glyphs.js';
 import { blockIcon } from './icons.js';
 import { readBytes, describe, decodeSig, fileBytes, toB64, looksExcel } from './attach.js';
-import { prime as primeAttrData, onLoad as onAttrData } from '../core/attrdata.js';
+import { prime as primeAttrData, onLoad as onAttrData, definitions as attrDefinitions, loadDefinitions } from '../core/attrdata.js';
 import { styleOf, styleName } from '../core/graphstyle.js';
 import { previewSvg } from './graphpreview.js';
 
@@ -103,7 +103,7 @@ export function mountInspector(app) {
     // which loops a block sits in: a block whose choices turn on that is drawn again then.
     if (s.sel === prev.sel && s.wf === prev.wf && s.gen === prev.gen) return;
     const shape = shapeOf(s);
-    if (selfEdit && shape === lastShape) { lastFull = fullOf(s); return; }
+    if (selfEdit && shape === lastShape) { lastFull = fullOf(s); syncRefs(); return; }
     const full = fullOf(s);
     if (!selfEdit && full === lastFull) return;
     render();
@@ -143,11 +143,55 @@ export function mountInspector(app) {
   // (_pages/definitions.mjs slugOf: "master:tpflt" -> "master-tpflt"); a definition of the case
   // itself has none, so it opens the reference's index.
   const refSlug = (cls) => String(cls).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  // Beside a parameter field: opens the parameter list for its definition in a new tab.
-  function refIcon(cls) {
-    const has = cls && /^master:/i.test(cls);
-    const label = has ? 'See the ' + cls + ' parameter list' : 'See the component reference';
-    return el('a', { class: 'pxb-ref', href: '../reference/' + (has ? refSlug(cls) + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
+  // Only a definition with parameters has a page (_pages/reference.mjs): the definitions list
+  // says how many each has. Until it is in, every Master Library definition is taken to have
+  // one; the page redraws when it lands (onAttrData).
+  let refDefs = null;
+  function refOf(cls) {
+    const want = cls.trim().toLowerCase();
+    const defs = attrDefinitions();
+    if (!defs) loadDefinitions();
+    else if (!refDefs) refDefs = new Map(defs.map(r => [String(r[0]).toLowerCase(), r]));
+    let key = '';
+    if (refDefs) {
+      const r = refDefs.get(want) || (want && !want.includes(':') ? refDefs.get('master:' + want) : null);
+      if (r && r[3] > 0) key = r[0];
+    } else if (/^master:./.test(want)) key = cls.trim();
+    return key ? { path: refSlug(key) + '/', label: 'See the ' + key + ' parameter list' } : { path: '', label: 'See the component reference' };
+  }
+  // The button takes the class as a function, read again whenever the panel is not redrawn
+  // (choosing a class in the element picker), so it always opens the page of the class chosen.
+  function refIcon(getCls) {
+    const a = el('a', { class: 'pxb-ref', target: '_blank', rel: 'noopener' }, 'i');
+    a._refCls = typeof getCls === 'function' ? getCls : () => getCls;
+    setRef(a);
+    return a;
+  }
+  function setRef(a) {
+    let cls = '';
+    try { cls = String(a._refCls() || ''); } catch (e) { /* the block is gone */ }
+    const r = refOf(cls);
+    a.setAttribute('href', '../reference/' + r.path);
+    a.title = r.label;
+    a.setAttribute('aria-label', r.label);
+  }
+  function syncRefs() { for (const a of host.querySelectorAll('.pxb-ref')) if (a._refCls) setRef(a); }
+  const rowOf = (nodeId, listKey, rowId) => {
+    const node = ops.nodeById(wf(), nodeId);
+    return ((node && settingsOf(node)[listKey]) || []).find(r => r.id === rowId) || {};
+  };
+  // Beside an attribute field (its element's class) and beside the element picker (the class
+  // chosen there, or the only one it takes).
+  function refFor(node, st) {
+    if (st.kind === 'attr') return refIcon(() => classOf(node.id, st));
+    if (st.kind !== 'element') return null;
+    return refIcon(() => {
+      const n = ops.nodeById(wf(), node.id) || node;
+      const v = settingsOf(n)[st.key];
+      if (isObj(v) && v.cls) return v.cls;
+      const k = kindsFor(n, st);
+      return k && k.length === 1 ? k[0] : '';
+    });
   }
   function reqMark() { return el('span', { class: 'pxb-req', text: 'Required' }); }
 
@@ -310,7 +354,7 @@ export function mountInspector(app) {
     }
     if (st.kind === 'list') return listRow(node, st, s);
     return el('div', { class: 'field-row pxb-set' + (empty ? ' pxb-todo' : ''), dataset: { key: st.key } },
-      el('div', { class: 'pxb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), st.kind === 'attr' ? refIcon(classOf(node.id, st)) : null, empty ? reqMark() : null, el('span', { class: 'pxb-lab-fill' }), pin),
+      el('div', { class: 'pxb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), refFor(node, st), empty ? reqMark() : null, el('span', { class: 'pxb-lab-fill' }), pin),
       buildField(specFor(node, st, value)));
   }
 
@@ -337,8 +381,10 @@ export function mountInspector(app) {
           columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
-        r.appendChild(el('div', { class: 'pxb-list-cell' + (col.kind === 'bool' ? ' pxb-list-bool' : '') }, col.kind === 'attr'
-          ? el('span', { class: 'pxb-list-labrow' }, el('span', { class: 'pxb-list-lab', text: cst.label }), refIcon(classOf(node.id, cst, row.id, st.key)))
+        r.appendChild(el('div', { class: 'pxb-list-cell' + (col.kind === 'bool' ? ' pxb-list-bool' : '') }, col.kind === 'attr' || col.kind === 'element'
+          ? el('span', { class: 'pxb-list-labrow' }, el('span', { class: 'pxb-list-lab', text: cst.label }), col.kind === 'attr'
+            ? refIcon(() => classOf(node.id, cst, row.id, st.key))
+            : refIcon(() => { const r = rowOf(node.id, st.key, row.id); return isObj(r[col.key]) && r[col.key].cls ? r[col.key].cls : (Array.isArray(col.kinds) && col.kinds.length === 1 ? col.kinds[0] : ''); }))
           : el('span', { class: 'pxb-list-lab', text: cst.label }), tipIcon(col.tip), field));
       }
       list.appendChild(r);
@@ -587,7 +633,7 @@ export function mountInspector(app) {
     const row = el('div', { class: 'pxb-in' + (missingValue ? ' pxb-todo' : ''), dataset: { port: p.id } },
       el('div', { class: 'pxb-lab' },
         el('span', { class: 'pxb-dot pxb-t-' + (TYPES[p.type] ? p.type : 'any') }),
-        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), missingValue ? reqMark() : null,
+        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), !edge && fst && visible.some(z => z.key === fst.key) ? refFor(node, fst) : null, missingValue ? reqMark() : null,
         el('span', { class: 'pxb-lab-fill' }),
         !edge && fst ? pinButton(node, fst) : null));
     if (p.stray) {
