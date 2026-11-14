@@ -5024,4 +5024,132 @@
   } else {
     initShared();
   }
+
+  /* ── Download gate: an ad, then the file ─────────────────────────────────
+     Every file a tool saves (a chart PNG, a CSV, a scenario file, a ZIP) is
+     an <a download> clicked, by the reader or by script. Both are caught
+     here, in one place, so no tool changes: the gate opens a dialog with the
+     Display 2 ad unit, counts down, then saves the file(s) as they were
+     asked for. Files asked for while it counts join the same wait. A blob
+     URL the tool revokes meanwhile is kept alive until its file is saved.
+     Never in an embed or a guide's demo frame (only the top page gates). */
+  (function initDownloadGate(){
+    if(global.__abtDownloadGate || typeof HTMLAnchorElement === 'undefined') return;
+    global.__abtDownloadGate = true;
+    if(global.self !== global.top) return;
+    var WAIT_MS = 3000, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
+    var ID = /^id\b/i.test(document.documentElement.getAttribute('lang') || '');
+    var T = ID
+      ? { title: 'Unduhan kamu sedang disiapkan', wait: 'Dimulai dalam {n} detik…', go: 'Mengunduh…', cancel: 'Batal', ad: 'Iklan' }
+      : { title: 'Preparing your download', wait: 'Starting in {n} seconds…', go: 'Downloading…', cancel: 'Cancel', ad: 'Advertisement' };
+    var origClick = HTMLAnchorElement.prototype.click;
+    var origRevoke = URL.revokeObjectURL ? URL.revokeObjectURL.bind(URL) : null;
+    var queue = [], pending = {}, revokeLater = {}, timer = null, overlay = null, adPushed = false, lastFocus = null;
+
+    function want(a){
+      if(!a || !a.hasAttribute || !a.hasAttribute('download')) return false;
+      var href = a.getAttribute('href') || '';
+      return !!href && href.charAt(0) !== '#' && !/^javascript:/i.test(href);
+    }
+    function save(item){
+      var a = document.createElement('a');
+      a.href = item.href; a.download = item.name; a.style.display = 'none';
+      a.__abtGatePass = true;                 // the listener below lets this one through
+      if(item.rel) a.rel = item.rel;
+      if(item.target) a.target = item.target;
+      document.body.appendChild(a); origClick.call(a); a.remove();
+    }
+    function enqueue(a){
+      var item = { href: a.href, name: a.getAttribute('download') || '', rel: a.rel, target: a.target };
+      if(/^blob:/.test(item.href)) pending[item.href] = (pending[item.href] || 0) + 1;
+      queue.push(item);
+      open();
+    }
+    if(origRevoke){
+      URL.revokeObjectURL = function(url){
+        if(pending[url]){ revokeLater[url] = true; return; }
+        return origRevoke(url);
+      };
+    }
+    HTMLAnchorElement.prototype.click = function(){
+      if(want(this)){ enqueue(this); return; }
+      return origClick.apply(this, arguments);
+    };
+    // A reader clicking a real <a download> on the page.
+    document.addEventListener('click', function(e){
+      if(e.defaultPrevented || e.button !== 0) return;
+      var a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
+      if(!want(a) || a.__abtGatePass) return;
+      e.preventDefault();
+      enqueue(a);
+    }, true);
+
+    function build(){
+      overlay = document.createElement('div');
+      overlay.className = 'dl-gate-overlay';
+      overlay.innerHTML =
+        '<div class="dl-gate card" role="dialog" aria-modal="true" aria-labelledby="dlGateTitle">' +
+          '<h2 id="dlGateTitle" class="dl-gate-title"></h2>' +
+          '<p class="dl-gate-count" aria-live="polite"></p>' +
+          '<div class="dl-gate-bar"><span></span></div>' +
+          '<div class="dl-gate-ad"><span class="dl-gate-ad-label"></span>' +
+            '<ins class="adsbygoogle" style="display:block" data-ad-client="' + AD_CLIENT + '" data-ad-slot="' + AD_SLOT + '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
+          '</div>' +
+          '<div class="dl-gate-row"><button type="button" class="btn-secondary btn-sm dl-gate-cancel"></button></div>' +
+        '</div>';
+      overlay.querySelector('.dl-gate-title').textContent = T.title;
+      overlay.querySelector('.dl-gate-ad-label').textContent = T.ad;
+      overlay.querySelector('.dl-gate-cancel').textContent = T.cancel;
+      overlay.querySelector('.dl-gate-cancel').addEventListener('click', cancel);
+      overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ e.preventDefault(); cancel(); } });
+      document.body.appendChild(overlay);
+    }
+    function open(){
+      if(timer) return;                       // already counting: this file joins the wait
+      if(!overlay) build();
+      lastFocus = document.activeElement;
+      overlay.classList.add('is-open');
+      var bar = overlay.querySelector('.dl-gate-bar span');
+      bar.style.transition = 'none'; bar.style.width = '0%';
+      void bar.offsetWidth;
+      bar.style.transition = 'width ' + WAIT_MS + 'ms linear'; bar.style.width = '100%';
+      overlay.querySelector('.dl-gate-cancel').focus();
+      // The unit is pushed once, while visible, so AdSense can size it.
+      if(!adPushed){
+        adPushed = true;
+        try { (global.adsbygoogle = global.adsbygoogle || []).push({}); } catch(err){}
+      }
+      var left = Math.ceil(WAIT_MS / 1000), count = overlay.querySelector('.dl-gate-count');
+      var say = function(n){ return T.wait.replace('{n}', n).replace('{s}', n === 1 ? 'second' : 'seconds'); };
+      count.textContent = say(left);
+      timer = setInterval(function(){
+        left -= 1;
+        if(left > 0){ count.textContent = say(left); return; }
+        count.textContent = T.go;
+        finish(true);
+      }, 1000);
+    }
+    function finish(go){
+      clearInterval(timer); timer = null;
+      var items = queue; queue = [];
+      if(go) items.forEach(function(it, i){ setTimeout(function(){ save(it); }, i * 250); });
+      // Let the browser take each blob before the tool's revoke goes through.
+      setTimeout(function(){
+        items.forEach(function(it){
+          if(!pending[it.href]) return;
+          if(--pending[it.href] > 0) return;
+          delete pending[it.href];
+          if(revokeLater[it.href]){ delete revokeLater[it.href]; origRevoke(it.href); }
+        });
+      }, items.length * 250 + 4000);
+      setTimeout(close, go ? 400 : 0);
+    }
+    function cancel(){ if(timer) finish(false); else close(); }
+    function close(){
+      if(timer || !overlay) return;
+      overlay.classList.remove('is-open');
+      if(lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch(err){}
+      lastFocus = null;
+    }
+  })();
 })(window);
