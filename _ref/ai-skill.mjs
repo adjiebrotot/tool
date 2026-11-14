@@ -563,7 +563,7 @@ ${JSON.stringify(ld, null, 2)}
 <link rel="stylesheet" href="${up}fonts.css">
 <link rel="stylesheet" href="${up}dark.css">
 <link rel="stylesheet" href="${up}light.css">
-<link rel="stylesheet" href="${up}shared.css?v=20261114">
+<link rel="stylesheet" href="${up}shared.css?v=20261115">
 <link rel="stylesheet" href="${up}guide-shared.css">
 <link rel="stylesheet" href="${up}ai-page.css">
 </head>
@@ -586,7 +586,7 @@ function pageEnd(up, lang = 'en') {
   </footer>
 </div>
 <script src="${up}dropdown.js" defer></script>
-<script src="${up}shared.js?v=20261114" defer></script>
+<script src="${up}shared.js?v=20261115" defer></script>
 <script src="${up}ai-page.js" defer></script>
 <!--/email_off-->
 </body>

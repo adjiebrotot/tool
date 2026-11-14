@@ -5025,128 +5025,125 @@
     initShared();
   }
 
-  /* ── Download gate: an ad, then the file ─────────────────────────────────
+  /* ── Saved dialog: the file first, then a note with an ad ────────────────
      Every file a tool saves (a chart PNG, a CSV, a scenario file, a ZIP) is
-     an <a download> clicked, by the reader or by script. Both are caught
-     here, in one place, so no tool changes: the gate opens a dialog with the
-     Display 2 ad unit, counts down, then saves the file(s) as they were
-     asked for. Files asked for while it counts join the same wait. A blob
-     URL the tool revokes meanwhile is kept alive until its file is saved.
-     Never in an embed or a guide's demo frame (only the top page gates). */
-  (function initDownloadGate(){
+     an <a download> clicked, by the reader or by script. Both are seen here,
+     in one place, so no tool changes. The file saves at once, as it always
+     did; nothing waits on an ad. Then a dialog says what was saved and how to
+     use it, with the Display 2 ad unit below that, and closes at once (its
+     button, Esc, or a click outside). AdSense policy, kept on purpose: no
+     countdown or wait before the file (a prestitial), the note is real
+     content and comes before the ad, the ad is labelled and kept clear of
+     the close button, and it shows at most once every few minutes. Never in
+     an embed or a guide's demo frame (only the top page shows it). */
+  (function initSavedNote(){
     if(global.__abtDownloadGate || typeof HTMLAnchorElement === 'undefined') return;
     global.__abtDownloadGate = true;
     if(global.self !== global.top) return;
-    var WAIT_MS = 3000, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
+    var COOLDOWN_MS = 3 * 60 * 1000, GATHER_MS = 600, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
+    var KEY = 'abt-saved-note';
     var ID = /^id\b/i.test(document.documentElement.getAttribute('lang') || '');
-    var T = ID
-      ? { title: 'Unduhan kamu sedang disiapkan', wait: 'Dimulai dalam {n} detik…', go: 'Mengunduh…', cancel: 'Batal', ad: 'Iklan' }
-      : { title: 'Preparing your download', wait: 'Starting in {n} seconds…', go: 'Downloading…', cancel: 'Cancel', ad: 'Advertisement' };
+    var T = ID ? {
+      title: 'Tersimpan', close: 'Tutup', ad: 'Iklan', where: 'Ada di folder unduhan kamu.',
+      json: 'Ini file skenario: berisi input kamu saja. Buka lagi kapan pun dengan tombol folder di sebelah tombol simpan, dan kamu lanjut tepat dari sini. Tidak ada yang diunggah.',
+      image: 'Tempel ke slide, dokumen atau chat. Untuk grafik yang tetap hidup di situsmu, pakai Bagikan, lalu Sematkan sebagai HTML, kalau grafiknya menyediakannya.',
+      table: 'Bisa dibuka di Excel, Google Sheets atau Numbers. Angkanya persis yang ada di tabel.',
+      code: 'Jalankan di perangkat lunaknya. Komentar di bagian atas file menjelaskan apa yang dikerjakannya.',
+      other: 'File dibuat di browser kamu. Tidak ada yang diunggah.'
+    } : {
+      title: 'Saved', close: 'Close', ad: 'Advertisement', where: 'It is in your downloads folder.',
+      json: 'This is a scenario file: your inputs and nothing else. Open it any time with the folder button beside the save button and you pick up right where you are. Nothing was uploaded.',
+      image: 'Paste it into a slide, a document or a chat. For a chart that stays live on your site, use Share, then Embed as HTML, where the chart offers it.',
+      table: 'It opens in Excel, Google Sheets or Numbers, with the numbers exactly as the table shows them.',
+      code: 'Run it in its software. The comments at the top of the file say what it does.',
+      other: 'The file was made in your browser. Nothing was uploaded.'
+    };
     var origClick = HTMLAnchorElement.prototype.click;
-    var origRevoke = URL.revokeObjectURL ? URL.revokeObjectURL.bind(URL) : null;
-    var queue = [], pending = {}, revokeLater = {}, timer = null, overlay = null, adPushed = false, lastFocus = null;
+    var names = [], gather = null, overlay = null, adPushed = false, lastFocus = null;
 
     function want(a){
       if(!a || !a.hasAttribute || !a.hasAttribute('download')) return false;
       var href = a.getAttribute('href') || '';
       return !!href && href.charAt(0) !== '#' && !/^javascript:/i.test(href);
     }
-    function save(item){
-      var a = document.createElement('a');
-      a.href = item.href; a.download = item.name; a.style.display = 'none';
-      a.__abtGatePass = true;                 // the listener below lets this one through
-      if(item.rel) a.rel = item.rel;
-      if(item.target) a.target = item.target;
-      document.body.appendChild(a); origClick.call(a); a.remove();
-    }
-    function enqueue(a){
-      var item = { href: a.href, name: a.getAttribute('download') || '', rel: a.rel, target: a.target };
-      if(/^blob:/.test(item.href)) pending[item.href] = (pending[item.href] || 0) + 1;
-      queue.push(item);
-      open();
-    }
-    if(origRevoke){
-      URL.revokeObjectURL = function(url){
-        if(pending[url]){ revokeLater[url] = true; return; }
-        return origRevoke(url);
-      };
+    function seen(a){
+      names.push(a.getAttribute('download') || '');
+      clearTimeout(gather);
+      gather = setTimeout(show, GATHER_MS);     // a burst of files gets one note
     }
     HTMLAnchorElement.prototype.click = function(){
-      if(want(this)){ enqueue(this); return; }
-      return origClick.apply(this, arguments);
+      var r = origClick.apply(this, arguments); // the file saves now, unchanged
+      if(want(this)) seen(this);
+      return r;
     };
     // A reader clicking a real <a download> on the page.
     document.addEventListener('click', function(e){
-      if(e.defaultPrevented || e.button !== 0) return;
+      if(e.defaultPrevented || e.button !== 0 || !e.isTrusted) return;
       var a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
-      if(!want(a) || a.__abtGatePass) return;
-      e.preventDefault();
-      enqueue(a);
+      if(want(a)) seen(a);
     }, true);
 
+    function lastShown(){ try { return +global.sessionStorage.getItem(KEY) || 0; } catch(err){ return 0; } }
+    var shownAt = 0;
+    function due(){ return Date.now() - Math.max(shownAt, lastShown()) >= COOLDOWN_MS; }
+    function kind(n){
+      var ext = (/\.([a-z0-9]+)$/i.exec(n) || [])[1] || '';
+      ext = ext.toLowerCase();
+      if(ext === 'json') return 'json';
+      if(/^(png|svg|gif|jpe?g|webp)$/.test(ext)) return 'image';
+      if(/^(csv|tsv|xlsx?)$/.test(ext)) return 'table';
+      if(/^(py|dpl|zip|txt|m|js)$/.test(ext)) return 'code';
+      return 'other';
+    }
     function build(){
       overlay = document.createElement('div');
-      overlay.className = 'dl-gate-overlay';
+      overlay.className = 'dl-note-overlay';
       overlay.innerHTML =
-        '<div class="dl-gate card" role="dialog" aria-modal="true" aria-labelledby="dlGateTitle">' +
-          '<h2 id="dlGateTitle" class="dl-gate-title"></h2>' +
-          '<p class="dl-gate-count" aria-live="polite"></p>' +
-          '<div class="dl-gate-bar"><span></span></div>' +
-          '<div class="dl-gate-ad"><span class="dl-gate-ad-label"></span>' +
+        '<div class="dl-note card" role="dialog" aria-modal="true" aria-labelledby="dlNoteTitle">' +
+          '<div class="dl-note-head"><h2 id="dlNoteTitle"></h2>' +
+            '<button type="button" class="btn-secondary btn-sm dl-note-close"></button></div>' +
+          '<ul class="dl-note-files"></ul>' +
+          '<p class="dl-note-tip"></p>' +
+          '<div class="dl-note-ad"><span class="dl-note-ad-label"></span>' +
             '<ins class="adsbygoogle" style="display:block" data-ad-client="' + AD_CLIENT + '" data-ad-slot="' + AD_SLOT + '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
           '</div>' +
-          '<div class="dl-gate-row"><button type="button" class="btn-secondary btn-sm dl-gate-cancel"></button></div>' +
         '</div>';
-      overlay.querySelector('.dl-gate-title').textContent = T.title;
-      overlay.querySelector('.dl-gate-ad-label').textContent = T.ad;
-      overlay.querySelector('.dl-gate-cancel').textContent = T.cancel;
-      overlay.querySelector('.dl-gate-cancel').addEventListener('click', cancel);
-      overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ e.preventDefault(); cancel(); } });
+      overlay.querySelector('#dlNoteTitle').textContent = '✓ ' + T.title;
+      overlay.querySelector('.dl-note-ad-label').textContent = T.ad;
+      var x = overlay.querySelector('.dl-note-close');
+      x.textContent = T.close;
+      x.addEventListener('click', close);
+      overlay.addEventListener('click', function(e){ if(e.target === overlay) close(); });
+      overlay.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ e.preventDefault(); close(); } });
       document.body.appendChild(overlay);
     }
-    function open(){
-      if(timer) return;                       // already counting: this file joins the wait
+    function show(){
+      var list = names; names = [];
+      if(!list.length || !due() || (overlay && overlay.classList.contains('is-open'))) return;
       if(!overlay) build();
+      var ul = overlay.querySelector('.dl-note-files');
+      ul.textContent = '';
+      list.forEach(function(n){ var li = document.createElement('li'); li.textContent = n || '—'; ul.appendChild(li); });
+      var k = kind(list[0]);
+      overlay.querySelector('.dl-note-tip').textContent = T.where + ' ' + T[k];
+      shownAt = Date.now();
+      try { global.sessionStorage.setItem(KEY, String(shownAt)); } catch(err){}
       lastFocus = document.activeElement;
       overlay.classList.add('is-open');
-      var bar = overlay.querySelector('.dl-gate-bar span');
-      bar.style.transition = 'none'; bar.style.width = '0%';
-      void bar.offsetWidth;
-      bar.style.transition = 'width ' + WAIT_MS + 'ms linear'; bar.style.width = '100%';
-      overlay.querySelector('.dl-gate-cancel').focus();
+      overlay.querySelector('.dl-note-close').focus();
       // The unit is pushed once, while visible, so AdSense can size it.
       if(!adPushed){
         adPushed = true;
         try { (global.adsbygoogle = global.adsbygoogle || []).push({}); } catch(err){}
+        // No ad (a blocker, or none to fill): the note stands alone, no empty box.
+        setTimeout(function(){
+          var ins = overlay.querySelector('.dl-note-ad ins');
+          if(!ins.hasAttribute('data-adsbygoogle-status')) overlay.querySelector('.dl-note-ad').hidden = true;
+        }, 2500);
       }
-      var left = Math.ceil(WAIT_MS / 1000), count = overlay.querySelector('.dl-gate-count');
-      var say = function(n){ return T.wait.replace('{n}', n).replace('{s}', n === 1 ? 'second' : 'seconds'); };
-      count.textContent = say(left);
-      timer = setInterval(function(){
-        left -= 1;
-        if(left > 0){ count.textContent = say(left); return; }
-        count.textContent = T.go;
-        finish(true);
-      }, 1000);
     }
-    function finish(go){
-      clearInterval(timer); timer = null;
-      var items = queue; queue = [];
-      if(go) items.forEach(function(it, i){ setTimeout(function(){ save(it); }, i * 250); });
-      // Let the browser take each blob before the tool's revoke goes through.
-      setTimeout(function(){
-        items.forEach(function(it){
-          if(!pending[it.href]) return;
-          if(--pending[it.href] > 0) return;
-          delete pending[it.href];
-          if(revokeLater[it.href]){ delete revokeLater[it.href]; origRevoke(it.href); }
-        });
-      }, items.length * 250 + 4000);
-      setTimeout(close, go ? 400 : 0);
-    }
-    function cancel(){ if(timer) finish(false); else close(); }
     function close(){
-      if(timer || !overlay) return;
+      if(!overlay) return;
       overlay.classList.remove('is-open');
       if(lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch(err){}
       lastFocus = null;
