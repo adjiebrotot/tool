@@ -103,7 +103,7 @@ export function mountInspector(app) {
     // which loops a block sits in: a block whose choices turn on that is drawn again then.
     if (s.sel === prev.sel && s.wf === prev.wf && s.gen === prev.gen) return;
     const shape = shapeOf(s);
-    if (selfEdit && shape === lastShape) { lastFull = fullOf(s); return; }
+    if (selfEdit && shape === lastShape) { lastFull = fullOf(s); syncRefs(); return; }
     const full = fullOf(s);
     if (!selfEdit && full === lastFull) return;
     render();
@@ -141,11 +141,42 @@ export function mountInspector(app) {
   }
   // Classes with a page in the attribute reference (../reference/<cls>/).
   const REF_CLASSES = new Set(["ElmArea", "ElmAsm", "ElmAsmsc", "ElmBbone", "ElmBmu", "ElmBoundary", "ElmBranch", "ElmCabsys", "ElmComp", "ElmCoup", "ElmDcu", "ElmDsl", "ElmFeeder", "ElmFile", "ElmFilter", "ElmGenstat", "ElmGndswt", "ElmIac", "ElmLne", "ElmLnesec", "ElmLod", "ElmLodlv", "ElmLodmv", "ElmMdl", "ElmNec", "ElmNet", "ElmPvsys", "ElmRecmono", "ElmRelay", "ElmRes", "ElmSecctrl", "ElmShnt", "ElmSind", "ElmStactrl", "ElmSubstat", "ElmSvs", "ElmSym", "ElmTerm", "ElmTow", "ElmTr2", "ElmTr3", "ElmTr4", "ElmTrain", "ElmTrb", "ElmTrfstat", "ElmTrmult", "ElmVac", "ElmVoltreg", "ElmVsc", "ElmVscmono", "ElmXnet", "ElmZone", "ElmZpu", "EvtGen", "EvtLod", "EvtOutage", "EvtParam", "EvtShc", "EvtSwitch", "EvtSym", "EvtTap", "StaPll", "TypAsm", "TypGeo", "TypLne", "TypLod", "TypLodlv", "TypSwitch", "TypSym", "TypTow", "TypTr2", "TypTr3", "TypTr4"]);
-  // Beside an attribute field: opens the attribute list for its element class in a new tab.
-  function refIcon(cls) {
-    const has = cls && REF_CLASSES.has(cls);
-    const label = has ? 'See the ' + cls + ' attribute list' : 'See the attribute reference';
-    return el('a', { class: 'pfb-ref', href: '../reference/' + (has ? cls + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
+  function refOf(cls) {
+    return cls && REF_CLASSES.has(cls) ? { path: cls + '/', label: 'See the ' + cls + ' attribute list' } : { path: '', label: 'See the attribute reference' };
+  }
+  // The button takes the class as a function, read again whenever the panel is not redrawn
+  // (choosing a class in the element picker), so it always opens the page of the class chosen.
+  function refIcon(getCls) {
+    const a = el('a', { class: 'pfb-ref', target: '_blank', rel: 'noopener' }, 'i');
+    a._refCls = typeof getCls === 'function' ? getCls : () => getCls;
+    setRef(a);
+    return a;
+  }
+  function setRef(a) {
+    let cls = '';
+    try { cls = String(a._refCls() || ''); } catch (e) { /* the block is gone */ }
+    const r = refOf(cls);
+    a.setAttribute('href', '../reference/' + r.path);
+    a.title = r.label;
+    a.setAttribute('aria-label', r.label);
+  }
+  function syncRefs() { for (const a of host.querySelectorAll('.pfb-ref')) if (a._refCls) setRef(a); }
+  const rowOf = (nodeId, listKey, rowId) => {
+    const node = ops.nodeById(wf(), nodeId);
+    return ((node && settingsOf(node)[listKey]) || []).find(r => r.id === rowId) || {};
+  };
+  // Beside an attribute field (its element's class) and beside the element picker (the class
+  // chosen there, or the only one it takes).
+  function refFor(node, st) {
+    if (st.kind === 'attr') return refIcon(() => classOf(node.id, st));
+    if (st.kind !== 'element') return null;
+    return refIcon(() => {
+      const n = ops.nodeById(wf(), node.id) || node;
+      const v = settingsOf(n)[st.key];
+      if (isObj(v) && v.cls) return v.cls;
+      const k = kindsFor(n, st);
+      return k && k.length === 1 ? k[0] : '';
+    });
   }
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
@@ -308,7 +339,7 @@ export function mountInspector(app) {
     }
     if (st.kind === 'list') return listRow(node, st, s);
     return el('div', { class: 'field-row pfb-set' + (empty ? ' pfb-todo' : ''), dataset: { key: st.key } },
-      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), st.kind === 'attr' ? refIcon(classOf(node.id, st)) : null, empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
+      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), refFor(node, st), empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
       buildField(specFor(node, st, value)));
   }
 
@@ -335,8 +366,10 @@ export function mountInspector(app) {
           columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
-        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, col.kind === 'attr'
-          ? el('span', { class: 'pfb-list-labrow' }, el('span', { class: 'pfb-list-lab', text: cst.label }), refIcon(classOf(node.id, cst, row.id, st.key)))
+        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, col.kind === 'attr' || col.kind === 'element'
+          ? el('span', { class: 'pfb-list-labrow' }, el('span', { class: 'pfb-list-lab', text: cst.label }), col.kind === 'attr'
+            ? refIcon(() => classOf(node.id, cst, row.id, st.key))
+            : refIcon(() => { const r = rowOf(node.id, st.key, row.id); return isObj(r[col.key]) && r[col.key].cls ? r[col.key].cls : (Array.isArray(col.kinds) && col.kinds.length === 1 ? col.kinds[0] : ''); }))
           : el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
       }
       list.appendChild(r);
@@ -585,7 +618,7 @@ export function mountInspector(app) {
     const row = el('div', { class: 'pfb-in' + (missingValue ? ' pfb-todo' : ''), dataset: { port: p.id } },
       el('div', { class: 'pfb-lab' },
         el('span', { class: 'pfb-dot pfb-t-' + (TYPES[p.type] ? p.type : 'any') }),
-        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), missingValue ? reqMark() : null,
+        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), !edge && fst && visible.some(z => z.key === fst.key) ? refFor(node, fst) : null, missingValue ? reqMark() : null,
         el('span', { class: 'pfb-lab-fill' }),
         !edge && fst ? pinButton(node, fst) : null));
     if (p.stray) {
