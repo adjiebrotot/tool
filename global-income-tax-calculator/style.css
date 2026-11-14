@@ -169,6 +169,9 @@ th .job-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-r
 .chart-controls .seg-group>.seg-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);box-shadow:none;}
 
 .verdict{margin-bottom:18px;}
+/* To the Cost of Living Comparator (colLink in script.js): its own line under the verdict. */
+.verdict-col{display:table;margin-top:8px;color:var(--accent-strong);font-weight:700;text-decoration:none;}
+.verdict-col:hover,.verdict-col:focus-visible{text-decoration:underline;}
 /* Opened from the Cost of Living Comparator (openFromComparator in script.js). */
 .from-col{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;margin-bottom:18px;font-size:.86rem;line-height:1.5;color:var(--muted);border-left:3px solid var(--accent);}
 .from-col strong{color:var(--text);}

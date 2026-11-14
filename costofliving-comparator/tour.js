@@ -18,6 +18,9 @@ window.__TOUR = {
   seenKey: 'col-tour-v3-seen',
   launchLabel: '🧭 Tour',
   guide: 'guides/',
+  // Opened from the Global Income Tax Calculator with the reader's own figures
+  // (openFromCalculator in script.js): the tour waits for the next visit.
+  holdFirstVisit: function () { return !!window.__COL_FROM_GITC || /^#from=gitc(&|$)/.test(location.hash); },
   // The steps overwrite the comparison on screen, so hand back whatever the
   // user had when the tour ends, however it ends.
   saveState: function () {

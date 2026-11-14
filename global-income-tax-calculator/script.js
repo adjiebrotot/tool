@@ -493,6 +493,9 @@ const LANG = {
     vBest: "{a} leaves the most: {v} {per}, {gap} more than {b}.",
     vShares: "Take-home as a share of gross: {list}.",
     vUsd: "Compared in US dollars at the rates of {date}.",
+    vColOne: "See what you'd save in {city} after living costs",
+    vColMany: "Compare what you'd save in each city after living costs",
+    vColTip: "Opens the Cost of Living Comparator with your net pay in {list}, and a starting budget of 30% rent, 10% groceries, 10% eating out and 30% other, so {from} saves 20%.",
     mTake: "Take-home pay",
     mTarget: ", the target you set",
     mGross: "Gross pay",
@@ -1061,6 +1064,9 @@ const LANG = {
     vBest: "{a} menyisakan gaji bersih paling besar: {v} {per}, {gap} lebih banyak daripada {b}.",
     vShares: "Porsi gaji bersih dari gaji kotor: {list}.",
     vUsd: "Dibandingkan dalam dolar AS dengan kurs {date}.",
+    vColOne: "Lihat berapa yang bisa kamu tabung di {city} setelah biaya hidup",
+    vColMany: "Bandingkan tabunganmu di tiap kota setelah biaya hidup",
+    vColTip: "Membuka Cost of Living Comparator dengan gaji bersihmu di {list}, dan anggaran awal 30% sewa, 10% belanja dapur, 10% makan di luar, dan 30% lainnya, jadi {from} menabung 20%.",
     mTake: "Gaji bersih",
     mTarget: ", sesuai target yang kamu isi",
     mGross: "Gaji kotor",
@@ -1609,6 +1615,54 @@ function commonCur(results){
 }
 
 /* ───────────────────────── Verdict ───────────────────────── */
+/* To the Cost of Living Comparator: each job's net pay in the city an expat there
+   most likely lives in, the first job's city as From and the others as
+   destinations. The comparator reads #from=gitc (openFromCalculator in
+   costofliving-comparator/script.js) and opens Detailed on "I can save" with a
+   budget of 30% rent, 10% groceries, 10% eating out and 30% other.
+   City names are the comparator's own, with its country names (E.C[..].name).
+   A place with no city in its data is left out. */
+const COL_CITY = {
+  AU: 'Sydney', SG: 'Singapore', DE: 'Berlin', FR: 'Paris', NL: 'Amsterdam', BE: 'Brussels', CH: 'Zurich',
+  IT: 'Milan', ES: 'Madrid', PT: 'Lisbon', NO: 'Oslo', SE: 'Stockholm', FI: 'Helsinki', EE: 'Tallinn',
+  JP: 'Tokyo', KR: 'Seoul', CN: 'Shanghai', TW: 'Taipei', HK: 'Hong Kong', ID: 'Jakarta', MY: 'Kuala Lumpur',
+  TH: 'Bangkok', AE: 'Dubai', SA: 'Riyadh', QA: 'Doha', BH: 'Manama', KW: 'Kuwait City', OM: 'Muscat'
+};
+const COL_CA = { ON: 'Toronto', BC: 'Vancouver', AB: 'Calgary', QC: 'Montreal' };
+const COL_US = {
+  AK: 'Anchorage', AL: 'Birmingham', AZ: 'Phoenix', CA: 'Los Angeles', CO: 'Denver', DC: 'Washington', FL: 'Miami',
+  GA: 'Atlanta', HI: 'Honolulu', ID: 'Boise', IL: 'Chicago', IN: 'Indianapolis', KY: 'Louisville', LA: 'New Orleans',
+  MA: 'Boston', MD: 'Baltimore', MI: 'Detroit', MN: 'Minneapolis', MO: 'Kansas City', NC: 'Charlotte', NE: 'Omaha',
+  NM: 'Albuquerque', NV: 'Las Vegas', NY: 'Buffalo', OH: 'Columbus', OK: 'Oklahoma City', OR: 'Portland',
+  PA: 'Philadelphia', TN: 'Nashville', TX: 'Houston', UT: 'Salt Lake City', VA: 'Richmond', WA: 'Seattle', WI: 'Milwaukee'
+};
+function colCity(job){
+  const c = job.country;
+  if(c === 'US'){
+    if(job.usState === 'NY' && (job.usNyc === true || job.usNyc === 'true')) return 'New York, NY';
+    return COL_US[job.usState] ? COL_US[job.usState] + ', ' + job.usState : null;
+  }
+  if(c === 'CA') return COL_CA[job.caProv] || null;
+  if(c === 'GB') return job.ukRegion === 'sco' ? 'Edinburgh' : 'London';
+  return COL_CITY[c] || null;
+}
+function colLink(ok){
+  const seen = {}, picks = [];
+  ok.forEach(x => {
+    const city = colCity(x.r.job);
+    if(!city || !(x.r.net > 0)) return;
+    const key = city + '|' + E.C[x.r.job.country].name;
+    if(seen[key]) return;
+    seen[key] = 1;
+    picks.push({ key, city, net: Math.round(x.r.net / 12 * 100) / 100 });
+  });
+  if(!picks.length) return '';
+  const href = '/costofliving-comparator/#from=gitc&cities=' + picks.map(p => encodeURIComponent(p.key)).join(';')
+    + '&nets=' + picks.map(p => p.net).join(';');
+  const label = picks.length > 1 ? T('vColMany') : TF('vColOne', { city: esc(picks[0].city) });
+  const tip = TF('vColTip', { list: picks.map(p => p.city).join(', '), from: picks[0].city });
+  return '<a class="verdict-col" href="' + href + '" target="_blank" rel="noopener" title="' + esc(tip) + '">' + label + ' <span aria-hidden="true">↗</span></a>';
+}
 function renderVerdict(results){
   const ok = results.map((r, i) => ({ r, i })).filter(x => !x.r.notSupported);
   if(!ok.length){
@@ -1626,6 +1680,7 @@ function renderVerdict(results){
     const body = [ TF('vBody', { tax: esc(showMoney(r.incomeTax, r)), soc: esc(showMoney(r.social + r.other, r)) }) ];
     if(r.marginal != null) body.push(TF('vMarg', { m: pct(r.marginal, 0) }));
     if(nsLine) body.push(nsLine);
+    body.push(colLink(ok));
     SharedVerdict.set('verdict', { tone: '', title, body: body.join(' ') });
     return;
   }
@@ -1650,6 +1705,7 @@ function renderVerdict(results){
   body.push(TF('vShares', { list: ok.map(x => esc(name(x)) + ' ' + pct(x.r.net/x.r.gross)).join(', ') }));
   if(disp().cur === 'local' && new Set(ok.map(x => x.r.cur)).size > 1) body.push(TF('vUsd', { date: dateW(E.FX_DATE) }));
   if(nsLine) body.push(nsLine);
+  body.push(colLink(ok));
   SharedVerdict.set('verdict', { tone: '', title, body: body.join(' ') });
 }
 
