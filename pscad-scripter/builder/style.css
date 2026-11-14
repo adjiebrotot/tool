@@ -928,6 +928,17 @@ body.pxb-gs-open { overflow: hidden; }
 .pxb-gs-foot { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--border); background: var(--panel); }
 .pxb-gs-note { margin-right: auto; color: var(--muted); font-size: .8rem; line-height: 1.4; }
 .pxb-gs-foot .btn-primary, .pxb-gs-foot .btn-secondary { padding: 8px 16px; flex-shrink: 0; white-space: nowrap; }
+/* The larger Python view (⤢ in the Python tab): the Graph style shell, the code filling it, the ad beside. */
+.pxb-pym { width: min(1280px, 100%); height: calc(100vh - 32px); height: calc(100dvh - 32px); }
+.pxb-pym-file { font-family: var(--pxb-mono); }
+.pxb-pym-body { flex: 1 1 auto; min-height: 0; display: flex; }
+.pxb-pym-code { flex: 1 1 auto; min-width: 0; overflow: auto; overscroll-behavior: contain; background: var(--bg-subtle); }
+.pxb-pym-code:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.pxb-pym-code .pxb-code { font-size: 13px; line-height: 20px; padding: 16px 20px 32px; }
+.pxb-pym-status.pxb-py-warn { color: var(--pxb-warn); }
+@media (min-width: 861px) {
+  .pxb-gs-ad.pxb-pym-ad { flex: none; width: 300px; margin: 0; padding: 16px; overflow-y: auto; border-left: 1px solid var(--border); background: var(--panel); }
+}
 /* Narrow: one column that scrolls, the preview held at the top so every change shows. */
 @media (max-width: 860px) {
   .pxb-gs-body { grid-template-columns: minmax(0, 1fr); overflow-y: auto; overscroll-behavior: contain; }
