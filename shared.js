@@ -5034,14 +5034,13 @@
      button, Esc, or a click outside). AdSense policy, kept on purpose: no
      countdown or wait before the file (a prestitial), the note is real
      content and comes before the ad, the ad is labelled and kept clear of
-     the close button, and it shows at most once every few minutes. Never in
+     the close button. It shows after every download. Never in
      an embed or a guide's demo frame (only the top page shows it). */
   (function initSavedNote(){
     if(global.__abtDownloadGate || typeof HTMLAnchorElement === 'undefined') return;
     global.__abtDownloadGate = true;
     if(global.self !== global.top) return;
-    var COOLDOWN_MS = 3 * 60 * 1000, GATHER_MS = 600, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
-    var KEY = 'abt-saved-note';
+    var GATHER_MS = 600, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
     var ID = /^id\b/i.test(document.documentElement.getAttribute('lang') || '');
     var T = ID ? {
       title: 'Tersimpan', close: 'Tutup', ad: 'Iklan', where: 'Ada di folder unduhan kamu.',
@@ -5083,9 +5082,6 @@
       if(want(a)) seen(a);
     }, true);
 
-    function lastShown(){ try { return +global.sessionStorage.getItem(KEY) || 0; } catch(err){ return 0; } }
-    var shownAt = 0;
-    function due(){ return Date.now() - Math.max(shownAt, lastShown()) >= COOLDOWN_MS; }
     function kind(n){
       var ext = (/\.([a-z0-9]+)$/i.exec(n) || [])[1] || '';
       ext = ext.toLowerCase();
@@ -5119,15 +5115,15 @@
     }
     function show(){
       var list = names; names = [];
-      if(!list.length || !due() || (overlay && overlay.classList.contains('is-open'))) return;
+      if(!list.length) return;
       if(!overlay) build();
+      var already = overlay.classList.contains('is-open');
       var ul = overlay.querySelector('.dl-note-files');
-      ul.textContent = '';
+      if(!already) ul.textContent = '';      // open already: the new files join the list
       list.forEach(function(n){ var li = document.createElement('li'); li.textContent = n || '—'; ul.appendChild(li); });
       var k = kind(list[0]);
       overlay.querySelector('.dl-note-tip').textContent = T.where + ' ' + T[k];
-      shownAt = Date.now();
-      try { global.sessionStorage.setItem(KEY, String(shownAt)); } catch(err){}
+      if(already) return;
       lastFocus = document.activeElement;
       overlay.classList.add('is-open');
       overlay.querySelector('.dl-note-close').focus();
