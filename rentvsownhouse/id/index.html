@@ -133,7 +133,7 @@
       "name": "Kenapa penyewa dianggap punya tabungan, dan bunganya berapa?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Bebas Risiko, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar."
+        "text": "Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Tabungan, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar."
       }
     },
     {
@@ -157,7 +157,7 @@
       "name": "Apakah perhitungannya memasukkan pajak, KPR subsidi, atau uang sewa dibayar di muka?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
+        "text": "Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Tabungan menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan."
       }
     }
   ]
@@ -490,7 +490,7 @@
       <div class="group-title" data-i18n="sectionSavings">Tabungan dan jangka waktu</div>
       <div class="field-row">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRiskFreeRate">Suku Bunga Bebas Risiko</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
+          <div class="field-label"><span data-i18n="labelRiskFreeRate">Suku Bunga Tabungan</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
           <span class="slider-value" id="riskFreeRateVal">4.50%/yr</span>
         </div>
         <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
@@ -551,7 +551,7 @@
           <span class="prefix" id="initialCashPrefix">$</span>
           <input class="affix-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
         </div>
-        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Jika dikosongkan, sebesar DP ditambah biaya awal pembelian. Kelebihannya mendapat suku bunga bebas risiko.</div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Jika dikosongkan, sebesar DP ditambah biaya awal pembelian. Kelebihannya mendapat suku bunga tabungan.</div>
         <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
       </div>
       <div class="field-row">
@@ -705,7 +705,7 @@
       </div>
       <div class="faq-item">
         <h3>Kenapa penyewa dianggap punya tabungan, dan bunganya berapa?</h3>
-        <p>Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Bebas Risiko, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar.</p>
+        <p>Selisih biaya antara menyewa dan membeli ditabung penyewa pada Suku Bunga Tabungan, berbunga majemuk bulanan dan tanpa pajak. Quick Start Jakarta memakai 5%, dibandingkan BI Rate 5,75% (September 2026), deposito 1 sampai 6 bulan rata-rata 5,1% sampai 5,8% (Agustus 2026), dan SBN ritel sekitar 6,75% sampai 7%. Pada apartemen 2 kamar tidur, 6,75% menaikkan kekayaan bersih sewa di tahun ke-20 dari sekitar Rp 5,4 miliar menjadi Rp 6,8 miliar.</p>
       </div>
       <div class="faq-item">
         <h3>Berapa kenaikan harga properti yang dibutuhkan agar membeli lebih unggul dari menyewa?</h3>
@@ -717,7 +717,7 @@
       </div>
       <div class="faq-item">
         <h3>Apakah perhitungannya memasukkan pajak, KPR subsidi, atau uang sewa dibayar di muka?</h3>
-        <p>Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Bebas Risiko menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan.</p>
+        <p>Tidak. Bunga tabungan dihitung tanpa pajak, tidak ada KPR subsidi FLPP, dan sewa dihitung per tahun berjalan, padahal di lapangan sering dibayar 6 sampai 12 bulan di muka ditambah uang jaminan. Pembebasan PBB 2026 juga tidak dipakai karena hanya berlaku satu tahun. Untuk memperhitungkannya, ubah Suku Bunga Tabungan menjadi bunga setelah pajak dan naikkan Biaya rutin menyewa atau Biaya rutin kepemilikan.</p>
       </div>
     </div>
   </section>

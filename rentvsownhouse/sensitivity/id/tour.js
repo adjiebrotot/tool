@@ -29,7 +29,7 @@ window.__TOUR = {
     {
       target: '#tableWrap tr.group-sep-tr',
       title: '② Baris bersama',
-      body: 'Jangka waktu, suku bunga bebas risiko, modal awal, dan anggaran sama untuk ' +
+      body: 'Jangka waktu, suku bunga tabungan, modal awal, dan anggaran sama untuk ' +
             'semua kolom, jadi tidak ada skenario yang unggul semata-mata karena modalnya lebih besar.' +
             '<ul><li>Jika <strong>Otomatis</strong>, modal dan anggaran mengikuti kolom ' +
             'yang kebutuhannya paling besar</li></ul>'

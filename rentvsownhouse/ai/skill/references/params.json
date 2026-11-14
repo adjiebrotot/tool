@@ -436,7 +436,7 @@
     },
     {
      "key": "riskFreeRate",
-     "label": "Risk-Free Rate",
+     "label": "Savings Rate",
      "group": "Assumptions: Savings and time horizon",
      "kind": "slider",
      "unit": "%/yr",
@@ -1727,7 +1727,7 @@
     },
     {
      "key": "riskFreeRate",
-     "label": "Suku Bunga Bebas Risiko",
+     "label": "Suku Bunga Tabungan",
      "group": "Asumsi: Tabungan dan jangka waktu",
      "kind": "slider",
      "unit": "%/thn",

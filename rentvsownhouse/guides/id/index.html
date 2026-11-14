@@ -209,7 +209,7 @@
           </li>
           <li data-b="3">
             <h3>Berlaku untuk semua skenario</h3>
-            <p><strong>Jangka waktu</strong>, <strong>Suku Bunga Bebas Risiko</strong>, <strong>Modal awal</strong>, dan <strong>Anggaran perumahan bulanan</strong>: satu angka untuk seluruh tabel.</p>
+            <p><strong>Jangka waktu</strong>, <strong>Suku Bunga Tabungan</strong>, <strong>Modal awal</strong>, dan <strong>Anggaran perumahan bulanan</strong>: satu angka untuk seluruh tabel.</p>
           </li>
           <li data-b="4">
             <h3>Rumah milik tiap kolom</h3>
@@ -296,7 +296,7 @@
       <div class="gd-demo" data-demo="assumptions" data-w="1280" data-h="800">
         <figure class="gd-screen"><span class="gd-cap">Perth, rumah tapak 2 kamar tidur: kenaikan dari harga historis, lalu anggaran tetap</span></figure>
         <ol class="gd-steps">
-          <li><h3>Harga dan tabungan</h3><p><strong>Inflasi umum</strong>, lalu <strong>Suku Bunga Bebas Risiko</strong> (imbal hasil kas yang menganggur) dan <strong>Jangka waktu</strong>.</p></li>
+          <li><h3>Harga dan tabungan</h3><p><strong>Inflasi umum</strong>, lalu <strong>Suku Bunga Tabungan</strong> (imbal hasil kas yang menganggur) dan <strong>Jangka waktu</strong>.</p></li>
           <li><h3>Kenaikan properti</h3><p><strong>Kenaikan harga properti (RPPI)</strong> dan <strong>Biaya penjualan</strong>. Lewat tombol <strong>Tampilkan tool</strong>, kenaikan itu bisa dihitung dari harga historis, lalu tombol <strong>Hitung CAGR</strong> mengisikan hasilnya ke isian ini.</p></li>
           <li><h3>Kas dan anggaran</h3><p><strong>Modal awal</strong> dan <strong>Anggaran perumahan bulanan</strong>, keduanya opsional. Kalau kosong, masing-masing menutup kebutuhan setiap jalur.</p></li>
           <li><h3>Selisihnya tetap</h3><p>Anggaran mengubah akhir tiap jalur, bukan selisih di antara keduanya.</p></li>
@@ -407,7 +407,7 @@
             <tr><th scope="row">Biaya sewa, Kenaikan sewa tahunan</th><td data-l="Analisis Sensitivitas">Frekuensi sewa, Biaya sewa, Kenaikan sewa tahunan</td><td data-l="Bedanya">Per kolom.</td></tr>
             <tr><th scope="row">Biaya rutin menyewa, Kenaikan biaya rutin</th><td data-l="Analisis Sensitivitas">Tipe biaya rutin sewa, Frekuensi biaya rutin sewa, Biaya rutin (sewa), Kenaikan biaya rutin sewa</td><td data-l="Bedanya">Per kolom; Rincian biaya sewa adalah satu pilihan untuk semua kolom.</td></tr>
             <tr><th scope="row">Kenaikan harga properti (RPPI), Biaya penjualan</th><td data-l="Analisis Sensitivitas">Kenaikan harga properti (RPPI), Biaya penjualan</td><td data-l="Bedanya">Di sini ada di tab Asumsi, di sana bersama baris-baris rumah: keduanya milik sebuah rumah, jadi tiap kolom punya sendiri.</td></tr>
-            <tr><th scope="row">Suku Bunga Bebas Risiko, Jangka waktu, Modal awal, Anggaran perumahan bulanan, Kenaikan anggaran tahunan</th><td data-l="Analisis Sensitivitas">Sama, di bawah <strong>Berlaku untuk semua skenario</strong></td><td data-l="Bedanya">Satu angka untuk semua kolom, sehingga tidak ada rumah yang unggul semata-mata karena uangnya lebih banyak atau waktunya lebih lama. Kas dan anggaran yang dikosongkan memakai kebutuhan terbesar di antara semua kolom.</td></tr>
+            <tr><th scope="row">Suku Bunga Tabungan, Jangka waktu, Modal awal, Anggaran perumahan bulanan, Kenaikan anggaran tahunan</th><td data-l="Analisis Sensitivitas">Sama, di bawah <strong>Berlaku untuk semua skenario</strong></td><td data-l="Bedanya">Satu angka untuk semua kolom, sehingga tidak ada rumah yang unggul semata-mata karena uangnya lebih banyak atau waktunya lebih lama. Kas dan anggaran yang dikosongkan memakai kebutuhan terbesar di antara semua kolom.</td></tr>
             <tr><th scope="row">Aktifkan Sewa Dulu, Beli Kemudian, Beli di tahun</th><td data-l="Analisis Sensitivitas">Tidak ada</td><td data-l="Bedanya">Sewa Dulu, Beli Kemudian hanya ada di halaman utama.</td></tr>
             <tr><th scope="row">Inflasi umum, Tampilkan dalam nilai hari ini</th><td data-l="Analisis Sensitivitas">Tidak ada</td><td data-l="Bedanya">Analisis Sensitivitas membaca dalam nilai masa depan. Matikan nilai hari ini di sini untuk membandingkan angka demi angka.</td></tr>
             <tr><th scope="row">Kekayaan bersih, Uang tunai, Biaya kumulatif</th><td data-l="Analisis Sensitivitas">Bandingkan, Tahun</td><td data-l="Bedanya">Satu metrik dan satu tahun untuk semua kolom; tombol Bandingkan menggambar semuanya bersama.</td></tr>
@@ -463,7 +463,7 @@
 
     <section class="gd-sec card" id="model" aria-labelledby="model-h">
       <h2 id="model-h">Modelnya dalam satu gambar</h2>
-      <p class="gd-sub">Dua rumah tangga memulai dengan kas yang sama dan membelanjakan anggaran perumahan bulanan yang sama selama tahun yang sama. Yang satu membeli: DP dan biaya awal keluar dari kasnya di hari pertama, lalu anggaran membayar cicilan dan biaya memiliki. Yang lain menyewa: seluruh kasnya tetap utuh, dan ia membayar sewa serta biaya menyewa. Sisa uang tiap bulan, di pihak mana pun, ditabung pada <strong>Suku Bunga Bebas Risiko</strong>. Di akhir jangka waktu, <em>tool</em> menghitung berapa yang dimiliki masing-masing seandainya rumah itu dijual.</p>
+      <p class="gd-sub">Dua rumah tangga memulai dengan kas yang sama dan membelanjakan anggaran perumahan bulanan yang sama selama tahun yang sama. Yang satu membeli: DP dan biaya awal keluar dari kasnya di hari pertama, lalu anggaran membayar cicilan dan biaya memiliki. Yang lain menyewa: seluruh kasnya tetap utuh, dan ia membayar sewa serta biaya menyewa. Sisa uang tiap bulan, di pihak mana pun, ditabung pada <strong>Suku Bunga Tabungan</strong>. Di akhir jangka waktu, <em>tool</em> menghitung berapa yang dimiliki masing-masing seandainya rumah itu dijual.</p>
       <div class="gd-eq"><span class="gd-eq-l">Beli</span> = <var>V</var><sub><var>T</var></sub> × (1 − <var>s</var>) − <var>B</var><sub><var>T</var></sub> + <var>C</var><sub><var>T</var></sub><sup>beli</sup><small>kekayaan bersih, membeli</small></div>
       <div class="gd-eq"><span class="gd-eq-l">Sewa</span> = <var>C</var><sub><var>T</var></sub><sup>sewa</sup><small>kekayaan bersih, menyewa</small></div>
       <div class="gd-eq"><span class="gd-eq-l">Kas tiap bulan</span> <var>C</var><sub><var>m</var></sub> = <var>C</var><sub><var>m</var>−1</sub> × (1 + <var>i</var>)<sup>1/12</sup> + (anggaran<sub><var>m</var></sub> − pengeluaran<sub><var>m</var></sub>)</div>
@@ -472,7 +472,7 @@
         <li><var>s</var><strong>Biaya penjualan</strong>, sebagai porsi dari harga jual</li>
         <li><var>B<sub>T</sub></var>sisa pokok KPR yang masih terutang</li>
         <li><var>C<sub>T</sub></var>kas tiap jalur di akhir jangka waktu</li>
-        <li><var>i</var><strong>Suku Bunga Bebas Risiko</strong> per tahun</li>
+        <li><var>i</var><strong>Suku Bunga Tabungan</strong> per tahun</li>
         <li><var>m</var>satu bulan; anggaran dan pengeluaran adalah milik bulan itu</li>
       </ul>
       <p class="gd-sub" style="margin-top:16px">Angka utamanya, <strong>Perbedaan kekayaan bersih</strong>, adalah Beli dikurangi Sewa. Kedua jalur memakai anggaran dan kas awal yang sama, jadi keduanya saling meniadakan, dan yang tersisa hanyalah dampak keputusan membeli itu sendiri:</p>
@@ -484,7 +484,7 @@
         <li><var>N</var>jumlah bulan dalam jangka waktu, <var>T</var> × 12</li>
       </ul>
       <ul class="gd-facts">
-        <li><strong><em>Opportunity cost</em>.</strong> DP bukan uang gratis: kalau disimpan di bank, uang itu akan berbunga sebesar Suku Bunga Bebas Risiko. Faktor pertumbuhan di tengah rumus itu menggambarkannya.</li>
+        <li><strong><em>Opportunity cost</em>.</strong> DP bukan uang gratis: kalau disimpan di bank, uang itu akan berbunga sebesar Suku Bunga Tabungan. Faktor pertumbuhan di tengah rumus itu menggambarkannya.</li>
         <li><strong>Selisih bulanannya juga berbunga majemuk.</strong> Di tahun 1, membeli biasanya lebih mahal daripada menyewa, dan penyewa menabung selisihnya. Seiring sewa naik sementara cicilan tidak berubah, selisih itu menyempit dan bisa berbalik; setelah KPR lunas, membeli hanya menanggung biaya rutin.</li>
         <li><strong><em>Leverage</em>.</strong> Kenaikan harga rumah berlaku atas seluruh harga, bukan hanya atas DP. Itulah sebabnya <strong>Kenaikan harga properti</strong> paling menggerakkan jawaban.</li>
       </ul>
@@ -509,9 +509,9 @@
           <tbody>
             <tr><th scope="row">Simbol Mata Uang</th><td data-l="Artinya">Simbol yang menempel pada setiap jumlah.</td><td data-l="Dalam hitungan">Hanya label: tidak ada yang dikonversi.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">tanpa efek</span></td></tr>
             <tr><th scope="row">Harga properti</th><td data-l="Artinya">Berapa harga rumah hari ini.</td><td data-l="Dalam hitungan"><var>P</var>: KPR, DP, biaya awal dalam %, dan nilai awal tempat rumah tumbuh.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ nilai rumah</span><span class="gd-eff gd-eff-neg">▲ cicilan</span><span class="gd-eff">sewa tetap: ▼ keunggulan membeli di sini</span></td></tr>
-            <tr><th scope="row">Uang Muka (DP)</th><td data-l="Artinya">Porsi harga yang dibayar di muka. 100% berarti membeli tunai.</td><td data-l="Dalam hitungan"><var>d</var>: KPR yang lebih kecil, dan lebih banyak kas keluar dari Beli di hari pertama. Penyewa tetap memegang kas itu dan menginvestasikannya. DP besar menguntungkan membeli selama bunga KPR berada di atas Suku Bunga Bebas Risiko.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▼ cicilan</span><span class="gd-eff">▲ keunggulan membeli di sini</span></td></tr>
+            <tr><th scope="row">Uang Muka (DP)</th><td data-l="Artinya">Porsi harga yang dibayar di muka. 100% berarti membeli tunai.</td><td data-l="Dalam hitungan"><var>d</var>: KPR yang lebih kecil, dan lebih banyak kas keluar dari Beli di hari pertama. Penyewa tetap memegang kas itu dan menginvestasikannya. DP besar menguntungkan membeli selama bunga KPR berada di atas Suku Bunga Tabungan.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▼ cicilan</span><span class="gd-eff">▲ keunggulan membeli di sini</span></td></tr>
             <tr><th scope="row">Rincian</th><td data-l="Artinya"><strong>Sederhana</strong>: satu bunga, pokok dan bunga. <strong>Rinci</strong>: jenis KPR dan jadwal bunga.</td><td data-l="Dalam hitungan">Sederhana menetapkan jenis KPR menjadi pokok dan bunga serta mengaktifkan Biaya = bunga saja, apa pun isi isian yang tersembunyi.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">sebuah mode</span></td></tr>
-            <tr><th scope="row">Jenis KPR</th><td data-l="Artinya"><strong>Pokok &amp; Bunga</strong> atau <strong>Bunga Saja</strong> (Rinci).</td><td data-l="Dalam hitungan">Bunga Saja membayar <var>L</var> × <var>r</var> dan tidak membangun ekuitas; seluruh saldo dilunasi dari kas di akhir jangka waktu. Ini merugikan membeli selama bunga KPR berada di atas Suku Bunga Bebas Risiko.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-neg">Bunga Saja: ▲ bunga</span><span class="gd-eff">▼ keunggulan membeli di sini</span></td></tr>
+            <tr><th scope="row">Jenis KPR</th><td data-l="Artinya"><strong>Pokok &amp; Bunga</strong> atau <strong>Bunga Saja</strong> (Rinci).</td><td data-l="Dalam hitungan">Bunga Saja membayar <var>L</var> × <var>r</var> dan tidak membangun ekuitas; seluruh saldo dilunasi dari kas di akhir jangka waktu. Ini merugikan membeli selama bunga KPR berada di atas Suku Bunga Tabungan.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-neg">Bunga Saja: ▲ bunga</span><span class="gd-eff">▼ keunggulan membeli di sini</span></td></tr>
             <tr><th scope="row">Biaya = bunga saja</th><td data-l="Artinya">Apa yang dihitung oleh <strong>Biaya kumulatif</strong> (Rinci).</td><td data-l="Dalam hitungan">Aktif: bunga dan biaya memiliki, karena pokok menjadi ekuitas. Nonaktif: seluruh cicilan. Kekayaan bersih tidak terpengaruh olehnya.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">Biaya kumulatif saja</span></td></tr>
             <tr><th scope="row">Bunga KPR</th><td data-l="Artinya">Bunga tahunan atas pinjaman.</td><td data-l="Dalam hitungan"><var>r</var> dalam cicilan; bunga tiap bulan adalah <var>B</var> × <var>r</var>.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-neg">▲ cicilan</span><span class="gd-eff">▼ keunggulan membeli</span></td></tr>
             <tr><th scope="row">Jangka waktu KPR</th><td data-l="Artinya">Berapa tahun pinjaman dilunasi.</td><td data-l="Dalam hitungan"><var>n</var>: makin panjang berarti cicilan makin kecil tetapi bunga makin banyak. Setelah lunas, membeli hanya menanggung biaya rutinnya.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▼ cicilan</span><span class="gd-eff gd-eff-neg">▲ bunga</span></td></tr>
@@ -519,7 +519,7 @@
           </tbody>
         </table>
       </div>
-      <p class="gd-note gd-note-warn"><strong>Awas: DP yang lebih besar tidak selalu lebih baik.</strong> Setiap dolar DP menghemat bunga KPR, tetapi mengorbankan Suku Bunga Bebas Risiko. Pada contoh Perth (6,4% dibanding 4,6%), DP 30% mengangkat keunggulan membeli sebesar $37 ribu; kalau tabungan menghasilkan lebih besar daripada biaya pinjaman, hasilnya justru sebaliknya.</p>
+      <p class="gd-note gd-note-warn"><strong>Awas: DP yang lebih besar tidak selalu lebih baik.</strong> Setiap dolar DP menghemat bunga KPR, tetapi mengorbankan Suku Bunga Tabungan. Pada contoh Perth (6,4% dibanding 4,6%), DP 30% mengangkat keunggulan membeli sebesar $37 ribu; kalau tabungan menghasilkan lebih besar daripada biaya pinjaman, hasilnya justru sebaliknya.</p>
     </section>
 
     <section class="gd-sec card" id="m-costs" aria-labelledby="m-costs-h">
@@ -582,7 +582,7 @@
 
     <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
       <h2 id="m-assume-h">Asumsi: kenaikan, tabungan, waktu, dan uang</h2>
-      <p class="gd-sub">Nilai rumah naik di akhir tiap tahun. Kas berbunga pada Suku Bunga Bebas Risiko, berbunga majemuk bulanan sehingga setahun menghasilkan persis laju itu. Kekayaan bersih dihitung seolah-olah rumah dijual pada tahun itu, setelah dikurangi biaya penjualan.</p>
+      <p class="gd-sub">Nilai rumah naik di akhir tiap tahun. Kas berbunga pada Suku Bunga Tabungan, berbunga majemuk bulanan sehingga setahun menghasilkan persis laju itu. Kekayaan bersih dihitung seolah-olah rumah dijual pada tahun itu, setelah dikurangi biaya penjualan.</p>
       <div class="gd-eq"><span class="gd-eq-l">Nilai rumah</span> <var>V</var><sub><var>t</var></sub> = <var>P</var> × (1 + <var>g</var>)<sup><var>t</var></sup></div>
       <div class="gd-eq"><span class="gd-eq-l">Nilai hari ini</span> = <span class="gd-frac"><span>angka di tahun <var>t</var></span><span>(1 + <var>π</var>)<sup><var>t</var></sup></span></span></div>
       <div class="gd-eq"><span class="gd-eq-l">Anggaran otomatis, tahun <var>t</var></span> = max(<var>O</var><sub><var>t</var></sub>, <var>R</var><sub><var>t</var></sub>, milik Sewa Dulu, Beli Kemudian<sub><var>t</var></sub>)<small>cicilan di batas atas rentang <em>floating</em> mana pun</small></div>
@@ -598,7 +598,7 @@
           <thead><tr><th>Isian</th><th>Artinya</th><th>Dalam hitungan</th><th>Kalau dinaikkan</th></tr></thead>
           <tbody>
             <tr><th scope="row">Inflasi umum</th><td data-l="Artinya">Seberapa cepat harga secara umum naik.</td><td data-l="Dalam hitungan"><var>π</var>, hanya dipakai untuk nilai hari ini. Tidak ada angka lain dalam hitungan yang memakainya.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">▼ angka dalam nilai hari ini</span><span class="gd-eff">skenario mana yang unggul tidak berubah</span></td></tr>
-            <tr><th scope="row">Suku Bunga Bebas Risiko</th><td data-l="Artinya">Imbal hasil kas yang menganggur, seperti rekening tabungan. Sama di setiap jalur.</td><td data-l="Dalam hitungan"><var>i</var>: setiap saldo kas, <em>opportunity cost</em> DP <var>D</var>(1 + <var>i</var>)<sup><var>T</var></sup>, dan selisih bulanan.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ tabungan</span><span class="gd-eff">▼ keunggulan membeli</span></td></tr>
+            <tr><th scope="row">Suku Bunga Tabungan</th><td data-l="Artinya">Imbal hasil kas yang menganggur, seperti rekening tabungan. Sama di setiap jalur.</td><td data-l="Dalam hitungan"><var>i</var>: setiap saldo kas, <em>opportunity cost</em> DP <var>D</var>(1 + <var>i</var>)<sup><var>T</var></sup>, dan selisih bulanan.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ tabungan</span><span class="gd-eff">▼ keunggulan membeli</span></td></tr>
             <tr><th scope="row">Jangka waktu</th><td data-l="Artinya">Jumlah tahun yang dimodelkan, dan tahun saat kekayaan bersih dibaca.</td><td data-l="Dalam hitungan"><var>T</var>.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">biasanya ▲ keunggulan membeli</span></td></tr>
             <tr><th scope="row">Kenaikan harga properti (RPPI)</th><td data-l="Artinya">Seberapa cepat nilai rumah naik tiap tahun.</td><td data-l="Dalam hitungan"><var>g</var>: nilai rumah, biaya memiliki dalam %, dan harga Sewa Dulu, Beli Kemudian.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ nilai rumah</span><span class="gd-eff">▲ keunggulan membeli</span></td></tr>
             <tr><th scope="row">Biaya penjualan</th><td data-l="Artinya">Komisi agen, pemasaran, notaris, dan pajak penjual saat rumah dijual.</td><td data-l="Dalam hitungan"><var>s</var>: ekuitas rumah adalah <var>V</var>(1 − <var>s</var>) − <var>B</var> di setiap tahun, seolah dijual di tahun itu.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-neg">▼ ekuitas rumah</span><span class="gd-eff">▼ keunggulan membeli</span></td></tr>
@@ -609,7 +609,7 @@
           </tbody>
         </table>
       </div>
-      <p class="gd-note gd-note-warn"><strong>Awas: penyewa mendapat Suku Bunga Bebas Risiko, bukan imbal hasil pasar saham.</strong> "Menginvestasikan selisihnya" di sini berarti menaruhnya di rekening tabungan. Menaikkan suku bunga itu ke rata-rata imbal hasil pasar saham menambahkan imbal hasilnya tanpa risikonya, sehingga menyewa tampak lebih menarik dari yang sebenarnya.</p>
+      <p class="gd-note gd-note-warn"><strong>Awas: penyewa mendapat satu Suku Bunga Tabungan yang tetap, tanpa gejolak pasar.</strong> "Menginvestasikan selisihnya" di sini berarti imbal hasilnya tetap tiap tahun. Mengisi suku bunga itu dengan rata-rata imbal hasil pasar saham menambahkan imbal hasilnya tanpa risikonya, sehingga menyewa tampak lebih menarik dari yang sebenarnya.</p>
     </section>
 
     <section class="gd-sec card" id="m-sens" aria-labelledby="m-sens-h">
@@ -621,13 +621,13 @@
         <li><var>j</var>sebuah kolom</li>
         <li><var>k</var>satu bulan dari hari ini</li>
         <li><var>need<sub>j</sub></var>yang dibutuhkan kolom <var>j</var> sendirian di bulan itu</li>
-        <li><var>i<sub>j</sub></var>Suku Bunga Bebas Risiko mata uang kolom itu</li>
+        <li><var>i<sub>j</sub></var>Suku Bunga Tabungan mata uang kolom itu</li>
       </ul>
       <div class="gd-table-wrap">
         <table class="gd-table">
           <thead><tr><th>Isian</th><th>Artinya</th><th>Dalam hitungan</th><th>Kalau dinaikkan</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Jangka waktu, Suku Bunga Bebas Risiko</th><td data-l="Artinya">Satu panjang simulasi dan satu suku bunga tabungan (satu per mata uang) untuk semua kolom.</td><td data-l="Dalam hitungan">Seperti di halaman utama, untuk tiap kolom.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">seperti di halaman utama</span></td></tr>
+            <tr><th scope="row">Jangka waktu, Suku Bunga Tabungan</th><td data-l="Artinya">Satu panjang simulasi dan satu suku bunga tabungan (satu per mata uang) untuk semua kolom.</td><td data-l="Dalam hitungan">Seperti di halaman utama, untuk tiap kolom.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">seperti di halaman utama</span></td></tr>
             <tr><th scope="row">Modal awal</th><td data-l="Artinya">Kas yang sama di setiap kolom. Otomatis: jumlah terbesar yang dibutuhkan satu kolom di awal.</td><td data-l="Dalam hitungan">Pada kolom dengan rumah yang lebih murah, kas awalnya sama dan bagian yang tidak terpakai ditabung.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ setiap kolom</span><span class="gd-eff">Beli dikurangi sewa tidak berubah</span></td></tr>
             <tr><th scope="row">Anggaran perumahan bulanan</th><td data-l="Artinya">Kas bulanan yang sama di setiap kolom. Otomatis: jumlah terbesar yang dibutuhkan satu kolom di bulan itu.</td><td data-l="Dalam hitungan">Rumus di atas; anggaran yang diisi naik sebesar <strong>Kenaikan anggaran tahunan</strong>.</td><td data-l="Kalau dinaikkan"><span class="gd-eff gd-eff-pos">▲ setiap kolom</span><span class="gd-eff">Beli dikurangi sewa tidak berubah</span></td></tr>
             <tr><th scope="row">Multi-mata uang</th><td data-l="Artinya">Rumah dengan harga dalam mata uang berbeda.</td><td data-l="Dalam hitungan">Tiap kolom berjalan dalam mata uangnya sendiri; saldo dibaca pada kurs tahun itu, dan biaya kumulatif pada kurs di hari tiap biaya dibayar.</td><td data-l="Kalau dinaikkan"><span class="gd-eff">sebuah mode</span></td></tr>
@@ -642,7 +642,7 @@
 
     <section class="gd-sec card" id="example" aria-labelledby="example-h">
       <h2 id="example-h">Contoh hitungan: Perth, rumah tapak 2 kamar tidur</h2>
-      <p class="gd-sub">Angka Quick Start: harga $855.000, DP 20%, bunga 6,4% selama 30 tahun, biaya awal 4,51%, $7.900 setahun untuk memiliki (naik 2,5%), sewa $650 seminggu (naik 3,5%), $1.400 setahun untuk menyewa (naik 2,5%), kenaikan harga rumah 4,5%, biaya penjualan 2,8%, Suku Bunga Bebas Risiko 4,6%, jangka waktu 30 tahun, dan inflasi umum 2,5%.</p>
+      <p class="gd-sub">Angka Quick Start: harga $855.000, DP 20%, bunga 6,4% selama 30 tahun, biaya awal 4,51%, $7.900 setahun untuk memiliki (naik 2,5%), sewa $650 seminggu (naik 3,5%), $1.400 setahun untuk menyewa (naik 2,5%), kenaikan harga rumah 4,5%, biaya penjualan 2,8%, Suku Bunga Tabungan 4,6%, jangka waktu 30 tahun, dan inflasi umum 2,5%.</p>
       <div class="gd-calc">
         <h3>Keunggulan membeli setelah 30 tahun</h3>
         <p>Rumusnya: ekuitas rumah, dikurangi DP dan biaya awal yang diinvestasikan, dikurangi selisih bulanan yang diinvestasikan.</p>
@@ -682,7 +682,7 @@
           <li style="--lo:-0.76;--hi:1"><span class="gd-tn-name">Kenaikan harga properti<small>4,5% → 3,5% / 5,5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$372 rb</span><span>+$491 rb</span></span></li>
           <li style="--lo:-0.5;--hi:0.59"><span class="gd-tn-name">Jangka waktu<small>30 → 25 / 35 tahun</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$245 rb</span><span>+$288 rb</span></span></li>
           <li style="--lo:-0.39;--hi:0.46"><span class="gd-tn-name">Kenaikan sewa tahunan<small>3,5% → 2,5% / 4,5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$190 rb</span><span>+$227 rb</span></span></li>
-          <li style="--lo:0.33;--hi:-0.43"><span class="gd-tn-name">Suku Bunga Bebas Risiko<small>4,6% → 3,6% / 5,6%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$164 rb</span><span>−$213 rb</span></span></li>
+          <li style="--lo:0.33;--hi:-0.43"><span class="gd-tn-name">Suku Bunga Tabungan<small>4,6% → 3,6% / 5,6%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$164 rb</span><span>−$213 rb</span></span></li>
           <li style="--lo:0.32;--hi:-0.34"><span class="gd-tn-name">Bunga KPR<small>6,4% → 5,4% / 7,4%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$159 rb</span><span>−$166 rb</span></span></li>
           <li style="--lo:-0.32;--hi:0.32"><span class="gd-tn-name">Biaya sewa<small>$650 → $585 / $715 seminggu</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$157 rb</span><span>+$157 rb</span></span></li>
           <li style="--lo:0.09;--hi:-0.09"><span class="gd-tn-name">Harga properti<small>$855 rb → $770 rb / $941 rb</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$45 rb</span><span>−$45 rb</span></span></li>
@@ -717,12 +717,12 @@
       <ul class="gd-facts">
         <li><strong>Tanpa pajak.</strong> Tidak ada pajak atas keuntungan saat rumah dijual, tidak ada atas bunga tabungan, dan tidak ada pajak tanah atau pengurang sewa kecuali kamu memasukkannya ke biaya rutin.</li>
         <li><strong>Satu laju kenaikan, di setiap tahun.</strong> Kenaikan harga dianggap sama setiap tahun, tanpa siklus, krisis, maupun lonjakan. Rumahmu hanya satu properti dan bisa bergerak berbeda dari indeks yang menjadi sumber angka kenaikan itu.</li>
-        <li><strong>Tabungan penyewa berbunga pada Suku Bunga Bebas Risiko.</strong> Tabungan dalam saham rata-rata menghasilkan lebih banyak, dengan risiko yang tidak dimodelkan oleh <em>tool</em>.</li>
+        <li><strong>Tabungan penyewa berbunga pada Suku Bunga Tabungan.</strong> Tabungan dalam saham rata-rata menghasilkan lebih banyak, dengan risiko yang tidak dimodelkan oleh <em>tool</em>.</li>
         <li><strong>Rumah dijual di akhir jangka waktu.</strong> Kekayaan bersih dihitung setelah dikurangi biaya penjualan pada setiap tahun. Kalau kamu akan terus tinggal, biaya itu tidak pernah dibayar.</li>
         <li><strong>KPR-nya sederhana.</strong> Tanpa <em>refinancing</em>, rekening <em>offset</em>, pelunasan tambahan, asuransi KPR, atau biaya di luar biaya awal. Bunga <em>floating</em> dihitung pada titik tengah rentangnya.</li>
         <li><strong>Sewa dianggap terus diperpanjang</strong> menurut laju kenaikan sewa, tanpa pindah rumah paksa di luar yang sudah termasuk biaya menyewa.</li>
         <li><strong>Kekurangan kas tidak ditutup dengan pinjaman.</strong> KPR adalah satu-satunya pinjaman, jadi anggaran atau kas yang kamu isi lalu membuat satu skenario berada di bawah nol akan menghentikan perbandingan sampai dananya cukup untuk semua skenario. Angka otomatis selalu cukup, kecuali untuk saldo bunga saja yang jatuh tempo di akhir jangka waktunya: isi anggaran atau modal awal yang cukup agar kamu bisa menabung untuk melunasinya.</li>
-        <li><strong>Bunga KPR dan bunga tabungan dihitung dengan cara berbeda.</strong> Cicilan memakai bunga KPR dibagi 12, seperti yang disebutkan bank, sedangkan tabungan berbunga majemuk bulanan sehingga dalam setahun menghasilkan tepat sebesar Suku Bunga Bebas Risiko.</li>
+        <li><strong>Bunga KPR dan bunga tabungan dihitung dengan cara berbeda.</strong> Cicilan memakai bunga KPR dibagi 12, seperti yang disebutkan bank, sedangkan tabungan berbunga majemuk bulanan sehingga dalam setahun menghasilkan tepat sebesar Suku Bunga Tabungan.</li>
         <li><strong>Angka Quick Start adalah perkiraan lokal</strong> per bulan yang tertera, dengan sumber di halaman <a href="../../quickstart-assumptions/id/">Asumsi Quick Start</a>. Inflasi umum tetap 2,5% untuk setiap kota: isi sendiri sesuai perkiraanmu.</li>
       </ul>
       <p class="gd-note gd-note-warn"><strong>Jangan mengandalkannya kalau</strong> kamu mungkin menjual dekat tahun <em>breakeven</em>, kalau kamu tidak bisa mempertanggungjawabkan angka kenaikanmu dalam selisih satu poin persentase, kalau ada saldo bunga saja yang jatuh tempo dan tabunganmu tidak cukup menutupnya, atau kalau kamu membandingkan rumah dalam dua mata uang tanpa memikirkan arah kurs.</p>

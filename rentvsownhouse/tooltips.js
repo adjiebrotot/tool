@@ -28,7 +28,7 @@ var RVO_TIPS_EN = {
   rentInflation:        "How fast rent rises each year, historically around CPI or a little above. Faster rent erodes the renter's surplus.",
   rentOngoingCost:      "Costs on top of the rent: contents and renters' insurance, connection fees. No rates or building upkeep, so well below the owner's.",
   rentOngoingInflation: "Yearly rise in fixed-dollar renting costs. A % of annual rent already grows with the rent.",
-  riskFreeRate:         "What spare cash earns each year, like a savings account. It applies in every scenario.",
+  riskFreeRate:         "What spare cash earns each year, like a savings account interest rate or the expected return of stocks/ETFs. It applies in every scenario.",
   generalInflation:     "How fast prices in general rise each year (CPI). It changes nothing in the plan: Show in today's money, beside the results, divides every figure by it.",
   initialCash:          "Cash you hold today. Owning spends it on the deposit and setup cost, renting invests all of it. Blank covers what every scenario needs up front, a later deposit included.",
   monthlyBudget:        "Monthly cash for housing. Blank follows the highest cost of any scenario each year, repayments at the top of a floating range, so every scenario can pay at any rate.",
@@ -43,7 +43,7 @@ var RVO_TIPS_EN = {
   cashflowTable:        "<ul><li><strong>Cash position:</strong> cash in and out that year.</li><li><strong>Mortgage position:</strong> the home and the loan.</li><li><strong>Financial position:</strong> net equity and accumulated cost.</li></ul>",
   // Sensitivity page: the figures every column shares, and multi-currency mode.
   sensRiskFree: {
-    single: "What spare cash earns each year, like a savings account. One rate for every column, so no column wins on interest alone.",
+    single: "What spare cash earns each year, like a savings account interest rate or the expected return of stocks/ETFs. One rate for every column, so no column wins on interest alone.",
     multi:  "What spare cash earns each year, one rate per currency. Every column in a currency shares its rate."
   },
   sensInitialCash: {
@@ -75,7 +75,7 @@ var RVO_TIPS_ID = {
   rentInflation:        "Laju kenaikan sewa per tahun, secara historis sekitar inflasi (IHK) atau sedikit di atasnya. Makin cepat naiknya, makin tergerus surplus penyewa.",
   rentOngoingCost:      "Biaya di luar sewa: asuransi isi rumah, biaya pasang listrik dan internet. Tanpa PBB atau perawatan gedung, jadi jauh di bawah biaya pemilik.",
   rentOngoingInflation: "Kenaikan tahunan biaya menyewa yang berupa jumlah tetap. Item % dari sewa tahunan sudah naik bersama kenaikan sewa.",
-  riskFreeRate:         "Imbal hasil per tahun atas kas yang menganggur, seperti tabungan atau deposito. Berlaku di semua skenario.",
+  riskFreeRate:         "Imbal hasil per tahun atas kas yang menganggur, seperti bunga deposito atau imbal hasil yang diharapkan dari saham/reksadana. Berlaku di semua skenario.",
   generalInflation:     "Laju kenaikan harga umum per tahun (IHK). Angka dalam skenario tidak berubah; opsi Tampilkan dalam nilai hari ini hanya menampilkan setiap angka setelah disesuaikan dengan inflasi umum.",
   initialCash:          "Kas yang kamu punya sekarang. Di skenario Beli, kas ini dipakai untuk DP dan biaya awal; di skenario Sewa, seluruhnya diinvestasikan. Jika kosong, dipakai jumlah yang cukup untuk semua skenario.",
   monthlyBudget:        "Kas bulanan untuk biaya perumahan. Jika kosong, mengikuti biaya skenario termahal tiap tahun, dengan cicilan di batas atas bunga floating, sehingga biaya semua skenario tertutup.",
@@ -89,7 +89,7 @@ var RVO_TIPS_ID = {
   graphMetric:          "<ul><li><strong>Kekayaan bersih:</strong> rumah jika dijual, dikurangi pinjaman, ditambah kas.</li><li><strong>Uang tunai:</strong> kas di bank.</li><li><strong>Biaya kumulatif:</strong> total biaya perumahan sejauh ini.</li></ul>",
   cashflowTable:        "<ul><li><strong>Posisi kas:</strong> kas masuk dan keluar tahun itu.</li><li><strong>Posisi KPR:</strong> rumah dan pinjaman.</li><li><strong>Posisi keuangan:</strong> kekayaan bersih dan biaya kumulatif.</li></ul>",
   sensRiskFree: {
-    single: "Imbal hasil kas yang tidak terpakai per tahun, seperti deposito. Satu suku bunga untuk semua kolom, jadi tidak ada skenario yang unggul semata-mata karena bunganya lebih tinggi.",
+    single: "Imbal hasil kas yang tidak terpakai per tahun, seperti bunga deposito atau imbal hasil yang diharapkan dari saham/reksadana. Satu suku bunga untuk semua kolom, jadi tidak ada skenario yang unggul semata-mata karena bunganya lebih tinggi.",
     multi:  "Imbal hasil kas yang tidak terpakai per tahun, satu suku bunga per mata uang. Semua kolom dalam mata uang yang sama memakai suku bunga yang sama."
   },
   sensInitialCash: {
