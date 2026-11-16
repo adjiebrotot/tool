@@ -462,9 +462,13 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   check('page: Esc again closes the ruler, the measurement stays drawn', await page.evaluate(() => document.getElementById('measurePanel').hidden && !window.__o3v.measure.active && window.__o3v.measure.items.length === 1));
 
   // PNG download.
+  await page.click('#dlBtn');
+  check('page: Download opens its menu: PNG, STEP, STL, GLB', await page.evaluate(() => document.getElementById('dlList').classList.contains('is-open') && ['pngBtn', 'stepBtn', 'stlBtn', 'glbBtn'].every(id => !document.getElementById(id).disabled)));
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#pngBtn')]);
   const pngPath = path.join(TMP, 'view.png');
   await dl.saveAs(pngPath);
+  // The site's "Saved" note follows every download; close it as a reader would.
+  await page.waitForSelector('.dl-note-overlay.is-open .dl-note-close', { timeout: 3000 }).then(x => x.click()).catch(() => {});
   const png = fs.readFileSync(pngPath);
   check('page: ⬇ PNG saves a PNG named after the model', png.subarray(1, 4).toString() === 'PNG' && dl.suggestedFilename() === 'box-ascii.png', dl.suggestedFilename() + ', ' + png.length + ' bytes');
   check('page: the PNG is at least twice the screen size', png.readUInt32BE(16) >= 2 * 1200, 'width ' + png.readUInt32BE(16));
@@ -545,6 +549,156 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   check('page (phone): the stage keeps most of the screen', await phone.page.evaluate(() => document.getElementById('stage').getBoundingClientRect().height >= 0.5 * innerHeight), String(await phone.page.evaluate(() => document.getElementById('stage').getBoundingClientRect().height)));
   await phone.page.screenshot({ path: path.join(TMP, 'phone.png') });
   await phone.context.close();
+}
+
+// ══════════════════════════ 2b. The converter ════════════════════════════
+/* Every model the viewer opens can be saved as STEP, STL or GLB. Each file is
+   read back here by a reader that is not the exporter: OpenCascade (in Node)
+   for STEP, a few lines of binary parsing for STL and GLB. */
+if (!REAL_ONLY && (!ONLY || 'convert'.includes(ONLY))) {
+  console.log('\n── The converter: STEP, STL and GLB ──');
+  const fx = p => path.join(FIX, p);
+  const occt = await createRequire(path.join(DEPS, 'package.json'))('occt-import-js')();
+  const { page, context, errors } = await freshPage();
+  await armCounter(page);
+  let loads = 0;
+  const openFx = async (...files) => { await page.setInputFiles('#fileInput', files.map(fx)); await settled(page, ++loads); };
+  const saveAs = async kind => {
+    await page.click('#dlBtn');
+    const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 60000 }), page.click('#' + kind + 'Btn')]);
+    const out = path.join(TMP, 'export-' + dl.suggestedFilename());
+    await dl.saveAs(out);
+    // The site's "Saved" note follows every download; close it as a reader would.
+    await page.waitForSelector('.dl-note-overlay.is-open .dl-note-close', { timeout: 3000 }).then(x => x.click()).catch(() => {});
+    return { name: dl.suggestedFilename(), bytes: fs.readFileSync(out) };
+  };
+  const stlBox = b => {
+    const n = b.readUInt32LE(80), lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+    for (let t = 0; t < n; t++) for (let k = 0; k < 9; k++) {
+      const v = b.readFloatLE(84 + t * 50 + 12 + k * 4), a = k % 3;
+      lo[a] = Math.min(lo[a], v); hi[a] = Math.max(hi[a], v);
+    }
+    return { n, size: hi.map((h, i) => +(h - lo[i]).toPrecision(6)), lo, ok: b.length === 84 + n * 50 };
+  };
+  const meshBox = meshes => {
+    const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+    let tris = 0, area = 0;
+    for (const m of meshes) {
+      const p = m.attributes.position.array, ix = m.index.array;
+      for (let i = 0; i < p.length; i++) { lo[i % 3] = Math.min(lo[i % 3], p[i]); hi[i % 3] = Math.max(hi[i % 3], p[i]); }
+      for (let t = 0; t < ix.length; t += 3) {
+        const [a, b, c] = [ix[t], ix[t + 1], ix[t + 2]].map(i => [p[i * 3], p[i * 3 + 1], p[i * 3 + 2]]);
+        const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], w = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+        area += Math.hypot(u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]) / 2;
+      }
+      tris += ix.length / 3;
+    }
+    return { tris, area: +area.toPrecision(6), size: hi.map((h, i) => +(h - lo[i]).toPrecision(6)) };
+  };
+  const glbJson = b => b.toString('latin1', 0, 4) === 'glTF' ? JSON.parse(b.toString('utf8', 20, 20 + b.readUInt32LE(12))) : null;
+  const sizeEq = (a, b) => a.every((v, i) => Math.abs(v - b[i]) <= 1e-3 * Math.max(1, Math.abs(b[i])));
+
+  // A Z-up STL box, no unit.
+  await openFx('stl/box-ascii.stl');
+  let f = await saveAs('step');
+  let step = f.bytes.toString('latin1');
+  let r = occt.ReadStepFile(new Uint8Array(f.bytes), null);
+  let mb = r.success ? meshBox(r.meshes) : null;
+  check('convert: STL → STEP opens in OpenCascade, 30 × 20 × 10, area 2200', !!mb && sizeEq(mb.size, [30, 20, 10]) && Math.abs(mb.area - 2200) < 1e-3, JSON.stringify(mb));
+  const st = await page.evaluate(() => window.__o3v.lastStep);
+  check('convert: the closed box is one solid of 6 faces (coplanar triangles merged)', st.solids === 1 && st.shells === 0 && st.faces === 6 && /FACETED_BREP/.test(step) && (step.match(/POLY_LOOP/g) || []).length === 6, JSON.stringify(st));
+  check('convert: the STEP is a well-formed exchange file named after the model', f.name === 'box-ascii.step' && /^ISO-10303-21;/.test(step) && /END-ISO-10303-21;\s*$/.test(step) && /AUTOMOTIVE_DESIGN/.test(step) && /SI_UNIT\(\.MILLI\.,\.METRE\.\)/.test(step));
+  check('convert: no unit in the file: a note says the numbers are kept', await page.evaluate(() => /names no unit/.test(document.getElementById('stageNoteText').textContent)));
+  f = await saveAs('stl');
+  let sb = stlBox(f.bytes);
+  check('convert: STL → STL keeps 12 triangles, 30 × 20 × 10', sb.ok && sb.n === 12 && sizeEq(sb.size, [30, 20, 10]) && f.name === 'box-ascii.stl', JSON.stringify(sb));
+  f = await saveAs('glb');
+  let gj = glbJson(f.bytes);
+  check('convert: STL → GLB is a glTF 2.0 binary with one mesh', !!gj && gj.asset.version === '2.0' && gj.meshes.length === 1 && f.bytes.readUInt32LE(8) === f.bytes.length, gj ? gj.meshes.length + ' meshes' : 'not glTF');
+  check('convert: GLB turns Z up into glTF\'s Y up', !!gj && JSON.stringify(gj.nodes[gj.scenes[0].nodes[0]].rotation.map(v => +v.toFixed(6))) === JSON.stringify([-0.707107, 0, 0, 0.707107]), gj && JSON.stringify(gj.nodes[0]));
+
+  // A Y-up OBJ: STEP and STL stand it on Z.
+  await openFx('obj-alone/box.obj');
+  sb = stlBox((await saveAs('stl')).bytes);
+  check('convert: a Y-up OBJ saved as STL stands Z up (30 × 10 × 20)', sizeEq(sb.size, [30, 10, 20]), JSON.stringify(sb.size));
+  await page.click('[data-up="z"]');
+  sb = stlBox((await saveAs('stl')).bytes);
+  check('convert: …or as the reader turned it with Up', sizeEq(sb.size, [30, 20, 10]), JSON.stringify(sb.size));
+
+  // Units: a 3MF in inches comes out in millimetres.
+  await openFx('3mf/box-inch.3mf');
+  sb = stlBox((await saveAs('stl')).bytes);
+  check('convert: a 3MF in inches saves its STL in millimetres (762 × 508 × 254)', sizeEq(sb.size, [762, 508, 254]), JSON.stringify(sb.size));
+  r = occt.ReadStepFile(new Uint8Array((await saveAs('step')).bytes), null);
+  mb = r.success ? meshBox(r.meshes) : null;
+  check('convert: …and its STEP too', !!mb && sizeEq(mb.size, [762, 508, 254]), JSON.stringify(mb && mb.size));
+
+  // A CAD part round trip, with its colour.
+  await openFx('step/box.stp');
+  f = await saveAs('step');
+  step = f.bytes.toString('latin1');
+  r = occt.ReadStepFile(new Uint8Array(f.bytes), null);
+  mb = r.success ? meshBox(r.meshes) : null;
+  // OpenCascade reports colours in linear light: the file's sRGB 0.8 reads 0.604.
+  check('convert: STEP → STEP keeps the solid and its colour', !!mb && sizeEq(mb.size, [30, 20, 10]) && /COLOUR_RGB\('',0\.8\d*,0\.1\d*,0\.1\d*\)/.test(step) && r.meshes[0].color && Math.abs(r.meshes[0].color[0] - ((0.8 + 0.055) / 1.055) ** 2.4) < 0.01, JSON.stringify(r.meshes && r.meshes[0] && r.meshes[0].color));
+
+  // An open surface (a box missing its top) is a surface model, not a solid.
+  await page.evaluate(() => {
+    const m = window.__o3v.viewer.model.content.getObjectByProperty('isMesh', true);
+    m.geometry.setDrawRange(0, 30);   // 10 of the 12 triangles
+  });
+  await saveAs('step');
+  const open = await page.evaluate(() => window.__o3v.lastStep);
+  check('convert: an open shell is saved as a surface model', open.solids === 0 && open.shells === 1, JSON.stringify(open));
+
+  // A hole: a square plate with a square hole, one flat face with two loops.
+  {
+    const tri = [];
+    const q = (a, b, c, d) => tri.push([a, b, c], [a, c, d]);
+    const P = (x, y, z) => [x, y, z];
+    // Outer 0..30, hole 10..20, at z = 0 (facing down) and z = 5 (up), walls between.
+    const ring = (z, r0, r1) => [P(r0, r0, z), P(r1, r0, z), P(r1, r1, z), P(r0, r1, z)];
+    const O0 = ring(0, 0, 30), O1 = ring(5, 0, 30), H0 = ring(0, 10, 20), H1 = ring(5, 10, 20);
+    for (let i = 0; i < 4; i++) {
+      const j = (i + 1) % 4;
+      q(O1[i], O1[j], H1[j], H1[i]);             // top, anticlockwise from above
+      q(O0[j], O0[i], H0[i], H0[j]);             // bottom
+      q(O0[i], O0[j], O1[j], O1[i]);             // outer wall
+      q(H0[j], H0[i], H1[i], H1[j]);             // hole wall
+    }
+    const txt = 'solid plate\n' + tri.map(t => 'facet normal 0 0 0\nouter loop\n' + t.map(v => 'vertex ' + v.join(' ')).join('\n') + '\nendloop\nendfacet').join('\n') + '\nendsolid plate\n';
+    const plate = path.join(TMP, 'plate-hole.stl');
+    fs.writeFileSync(plate, txt);
+    await page.setInputFiles('#fileInput', [plate]); await settled(page, ++loads);
+    f = await saveAs('step');
+    step = f.bytes.toString('latin1');
+    r = occt.ReadStepFile(new Uint8Array(f.bytes), null);
+    mb = r.success ? meshBox(r.meshes) : null;
+    const ps = await page.evaluate(() => window.__o3v.lastStep);
+    // Area: 2 × (900 − 100) + 4 × 30 × 5 + 4 × 10 × 5 = 2400.
+    check('convert: a plate with a hole: top and bottom are single faces with a hole loop', ps.solids === 1 && ps.faces === 10 && (step.match(/FACE_BOUND\(/g) || []).length === 2, JSON.stringify(ps));
+    check('convert: …and OpenCascade reads it back whole (area 2400)', !!mb && Math.abs(mb.area - 2400) < 1e-3 && sizeEq(mb.size, [30, 30, 5]), JSON.stringify(mb));
+  }
+
+  // A DGN line drawing: STEP holds its lines, STL has nothing to hold.
+  await openFx('dgn/box-3d.dgn');
+  check('convert: a line drawing greys out STL and says why', await page.evaluate(() => { document.getElementById('dlBtn').click(); const b = document.getElementById('stlBtn'); const ok = b.disabled && /lines only/.test(document.getElementById('stlSub').textContent); document.body.click(); return ok; }));
+  f = await saveAs('step');
+  step = f.bytes.toString('latin1');
+  const pts = [...step.matchAll(/CARTESIAN_POINT\('',\(([^)]*)\)\)/g)].map(m => m[1].split(',').map(Number)).slice(1);
+  const lo = [0, 1, 2].map(i => Math.min(...pts.map(p => p[i]))), hi = [0, 1, 2].map(i => Math.max(...pts.map(p => p[i])));
+  check('convert: DGN → STEP: the lines as polylines in two coloured curve sets, 30 × 20 × 10 mm', (step.match(/GEOMETRIC_CURVE_SET/g) || []).length === 2 && (step.match(/POLYLINE\(/g) || []).length === 7 && sizeEq(hi.map((h, i) => h - lo[i]), [30, 20, 10]) && /COLOUR_RGB\('',0\.784\d*,0\.117\d*,0\.156\d*\)/.test(step), (step.match(/POLYLINE\(/g) || []).length + ' polylines, ' + hi.map((h, i) => h - lo[i]).join(' × '));
+  gj = glbJson((await saveAs('glb')).bytes);
+  check('convert: DGN → GLB keeps the lines (mode LINES)', !!gj && gj.meshes.some(m => m.primitives.some(p => p.mode === 1)));
+
+  // The animated sample: GLB keeps the animation.
+  await page.evaluate(() => document.getElementById('sampleBtn').click()); await settled(page, ++loads);
+  check('convert: the GLB row says it keeps the animation', await page.evaluate(() => /animation/.test(document.getElementById('glbSub').textContent)));
+  gj = glbJson((await saveAs('glb')).bytes);
+  check('convert: sample → GLB keeps its animation and 14 parts', !!gj && (gj.animations || []).length === 1 && gj.meshes.length >= 1 && gj.nodes.filter(n => n.mesh !== undefined).length === 14, gj && (gj.animations || []).length + ' animations, ' + gj.nodes.filter(n => n.mesh !== undefined).length + ' mesh nodes');
+  check('convert: the model on screen stays in view while it saves', await page.evaluate(() => !!window.__o3v.viewer.model.content.parent));
+  check('convert: no uncaught page errors', errors.length === 0, errors.join(' | ').slice(0, 300));
+  await context.close();
 }
 
 // ══════════════════════════ 3. Real-world models ═════════════════════════

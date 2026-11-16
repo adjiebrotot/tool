@@ -73,7 +73,7 @@ const CARDS = {
   'sankeycreator': { desc: 'Lihat ke mana saja uang, energi, atau barang mengalir lewat diagram Sankey. Susun diagramnya langsung di <em>browser</em>, lalu ekspor sebagai SVG atau PNG.' },
   'jsonvisualiser': { desc: 'Tampilkan JSON sebagai pohon yang enak dibaca. Berkat pemuatan bertahap (<em>lazy loading</em>), jutaan <em>key</em> pun tetap lancar dibuka.' },
   'canvasbuilder': { desc: 'Susun Business Model Canvas ala CEO dan <em>founder</em> langsung di <em>browser</em> dengan menempelkan catatan satu demi satu, sampai siap dipresentasikan.' },
-  'online-3d-viewer': { desc: 'Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di <em>browser</em>.' },
+  'online-3d-viewer': { desc: 'Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, DGN, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di <em>browser</em>, lalu ubah ke STEP, STL, atau GLB.' },
   'costofliving-comparator': {
     desc: 'Gaji yang lebih tinggi di kota baru belum tentu berarti uang yang lebih banyak. Lihat daya beli penghasilanmu yang sebenarnya di kota tujuan.',
     menu: {

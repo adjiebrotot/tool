@@ -1185,5 +1185,75 @@
     "re": "readme\\.txt"
    }
   }
+ },
+ {
+  "name": "dgn-v7-3d-box",
+  "files": [
+   "dgn/box-3d.dgn"
+  ],
+  "expect": {
+   "formats": [
+    "DGN"
+   ],
+   "up": "z",
+   "units": "mm",
+   "triangles": 0,
+   "segments": 108,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "colour": [
+    0.784,
+    0.118,
+    0.157
+   ],
+   "warning": {
+    "re": "text label"
+   }
+  }
+ },
+ {
+  "name": "dgn-v7-2d-plan",
+  "files": [
+   "dgn/plan-2d.dgn"
+  ],
+  "expect": {
+   "formats": [
+    "DGN"
+   ],
+   "up": "z",
+   "units": "m",
+   "segments": 30,
+   "size": [
+    30,
+    20,
+    0
+   ],
+   "noWarnings": true
+  }
+ },
+ {
+  "name": "dgn-v8",
+  "files": [
+   "dgn/v8.dgn"
+  ],
+  "expect": {
+   "error": {
+    "re": "V8 DGN"
+   }
+  }
+ },
+ {
+  "name": "dgn-not-dgn",
+  "files": [
+   "dgn/not.dgn"
+  ],
+  "expect": {
+   "error": {
+    "re": "not a MicroStation DGN"
+   }
+  }
  }
 ]
