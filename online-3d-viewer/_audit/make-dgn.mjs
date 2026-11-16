@@ -9,8 +9,12 @@
 //   dgn/plan-2d.dgn  2D, metres (100 cm of 10 UORs), global origin moved: a
 //                    30 × 20 rectangle (a shape), a quarter arc of radius 10
 //                    from its corner, and a cell holding a line string.
-//   dgn/v8.dgn       an OLE compound file header, as MicroStation V8 writes
-//                    (refused, saying how to save V7).
+//   dgn/v8.dgn       an OLE compound file header (as MicroStation V8 files
+//                    start) holding no drawing: refused as not a DGN.
+//
+// Not written here: dgn/gdal-test_dgnv8.dgn, a real V8 file from GDAL's test
+// data (autotest/ogr/data/dgnv8, MIT licence), checked against the extents
+// in GDAL's own reference reading of it (test_dgnv8_ref.csv, read with ODA).
 //   dgn/not.dgn      text (refused).
 //
 //   node make-dgn.mjs

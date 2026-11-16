@@ -691,6 +691,14 @@ if (!REAL_ONLY && (!ONLY || 'convert'.includes(ONLY))) {
   gj = glbJson((await saveAs('glb')).bytes);
   check('convert: DGN → GLB keeps the lines (mode LINES)', !!gj && gj.meshes.some(m => m.primitives.some(p => p.mode === 1)));
 
+  // A DGN V8 drawing (GDAL's sample, in metres): STEP in millimetres, on GDAL's own extents.
+  await openFx('dgn/gdal-test_dgnv8.dgn');
+  step = (await saveAs('step')).bytes.toString('latin1');
+  const v8 = [...step.matchAll(/CARTESIAN_POINT\('',\(([^)]*)\)\)/g)].map(m => m[1].split(',').map(Number)).slice(1);
+  const v8lo = [0, 1, 2].map(i => Math.min(...v8.map(p => p[i]))), v8hi = [0, 1, 2].map(i => Math.max(...v8.map(p => p[i])));
+  check('convert: DGN V8 → STEP: polylines from -1958 to 6000, -1000 to 7000, 0 to 8000 mm (GDAL\'s extents)', (step.match(/POLYLINE\(/g) || []).length > 10
+    && [-1958.3, -1000, 0].every((v, i) => Math.abs(v8lo[i] - v) < 1) && [6000, 7000, 8000].every((v, i) => Math.abs(v8hi[i] - v) < 1), v8lo.map(Math.round) + ' → ' + v8hi.map(Math.round));
+
   // The animated sample: GLB keeps the animation.
   await page.evaluate(() => document.getElementById('sampleBtn').click()); await settled(page, ++loads);
   check('convert: the GLB row says it keeps the animation', await page.evaluate(() => /animation/.test(document.getElementById('glbSub').textContent)));
