@@ -6,6 +6,9 @@
    first model opens (and warmed up once the page is idle), so the drop
    screen itself loads almost nothing.
 
+   The Download menu saves a picture of the view, or the model itself as
+   STEP, STL or GLB (export.js), so the viewer converts too.
+
    window.__o3v reports the last load (state, stats, size, warnings) for the
    audit harness in _audit/run.mjs. */
 
@@ -19,6 +22,8 @@ const dom = {
   fileName: $('fileName'), fileFormat: $('fileFormat'),
   edges: $('edgesToggle'), wire: $('wireToggle'), grid: $('gridToggle'), upGroup: $('upGroup'), upTip: $('upTip'),
   playBtn: $('playBtn'), resetViewBtn: $('resetViewBtn'), pngBtn: $('pngBtn'), openBtn: $('openBtn'),
+  dlBtn: $('dlBtn'), dlList: $('dlList'), stepBtn: $('stepBtn'), stlBtn: $('stlBtn'), glbBtn: $('glbBtn'),
+  stepSub: $('stepSub'), stlSub: $('stlSub'), glbSub: $('glbSub'),
   infoFormat: $('infoFormat'), infoParts: $('infoParts'), infoTris: $('infoTris'), infoVerts: $('infoVerts'),
   infoPoints: $('infoPoints'), infoPointsRow: $('infoPointsRow'), infoLines: $('infoLines'), infoLinesRow: $('infoLinesRow'),
   infoSize: $('infoSize'), sizeTip: $('sizeTip'),
@@ -92,6 +97,7 @@ async function open(list) {
     if (ruler) { ruler.clear(); ruler.setUnit(model.units); }
 
     showInfo(model);
+    showExports(model);
     showNote(model.warnings, false);
     hook.loads++;
     report('ready', { model: summary(model) });
@@ -405,19 +411,156 @@ function showMeasure(st) {
   hook.measured = st.items;
 }
 
-dom.pngBtn.addEventListener('click', async () => {
-  if (!viewer || !current) return;
-  const blob = await viewer.snapshot();
-  if (!blob) return;
-  const base = (current.names.length === 1 ? current.names[0] : 'model').replace(/\.[^.]+$/, '') || 'model';
+// ── Download: a picture, or the model in another format ──────────────────
+function baseNameOf(model) {
+  return (model.names.length === 1 ? model.names[0] : 'model').replace(/\.[^.]+$/, '') || 'model';
+}
+function save(blob, name) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = base + '.png';
+  a.download = name;
   document.body.appendChild(a);
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  hook.saved = { name, size: blob.size, type: blob.type };
+}
+
+dom.pngBtn.addEventListener('click', async () => {
+  if (!viewer || !current) return;
+  const blob = await viewer.snapshot();
+  if (blob) save(blob, baseNameOf(current) + '.png');
 });
+
+/* What each format can carry from this model, said on its row before the
+   reader picks it (a line drawing has no surfaces for an STL). */
+function exportable(model) {
+  const s = model.stats;
+  const unit = model.units ? 'millimetres' : 'the file\'s own unit';
+  return {
+    step: s.triangles || s.segments
+      ? { ok: true, sub: 'For CAD: ' + (s.triangles ? 'faceted solids and surfaces' : 'the lines and curves') + (s.triangles && s.segments ? ', lines' : '') + ', in ' + unit }
+      : { ok: false, sub: 'Nothing to save: a point cloud has no surfaces or lines' },
+    stl: s.triangles
+      ? { ok: true, sub: 'For 3D printing: every triangle, in ' + unit }
+      : { ok: false, sub: 'No surfaces to save: this model is ' + (s.segments ? 'lines' : 'points') + ' only' },
+    glb: { ok: true, sub: model.animations.length ? 'The scene with its materials and animation' : 'The scene with its materials and textures' },
+  };
+}
+
+function showExports(model) {
+  const x = exportable(model);
+  for (const k of ['step', 'stl', 'glb']) {
+    dom[k + 'Btn'].disabled = !x[k].ok;
+    dom[k + 'Sub'].textContent = x[k].sub;
+  }
+}
+
+let exporter = null;
+const exportCore = () => exporter || (exporter = import('./export.js').catch(e => { exporter = null; throw e; }));
+
+async function saveAs(kind) {
+  if (!viewer || !current || busy) return;
+  const model = current;
+  busy = true;
+  setBusy('Writing the ' + { step: 'STEP', stl: 'STL', glb: 'glTF' }[kind] + ' file…');
+  try {
+    // Let the busy note paint before a large model ties up the page.
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+    const X = await exportCore();
+    const name = baseNameOf(model);
+    const up = viewer.up;   // the axis the reader sees as up
+    const known = model.units && X.TO_MM[model.units];
+    let blob, extra = [];
+    if (kind === 'glb') {
+      blob = await X.toGlb(model.content, model.animations, X.targetMatrix(up, 'y', known ? X.TO_MM[model.units] / 1000 : 1));
+    } else {
+      const toMm = known ? X.TO_MM[model.units] : 1;
+      const data = X.collect(model.content, X.targetMatrix(up, 'z', toMm));
+      if (kind === 'stl') {
+        blob = X.toStl(data, name + (known ? ', millimetres' : ''));
+        if (data.lines.length || data.points) extra.push('STL holds triangles only, so the ' + (data.lines.length ? 'lines' : 'points') + ' were left out.');
+      } else {
+        const size = model.size ? Math.max(model.size.x, model.size.y, model.size.z) * toMm : 1;
+        const r = X.toStep(data, name, size);
+        blob = r.blob;
+        hook.lastStep = { solids: r.solids, shells: r.shells, faces: r.faces, curves: r.curves };
+        if (data.triangles) extra.push('STEP from a mesh is faceted: flat faces as drawn here, not the exact curved surfaces' + (model.kinds.includes('cad') ? ' of the original CAD file' : '') + '.');
+        if (data.points) extra.push('STEP holds no point clouds, so the points were left out.');
+      }
+      if (!known) extra.push(model.formats.join(' and ') + ' names no unit, so the numbers are saved as they are (often millimetres already).');
+    }
+    save(blob, name + '.' + kind);
+    if (extra.length) showNote(extra, false);
+  } catch (err) {
+    console.error(err);
+    showNote(['The model could not be saved as ' + kind.toUpperCase() + ' (' + (err && err.message || err) + ').'], true);
+  } finally {
+    busy = false;
+    setBusy(null);
+  }
+}
+dom.stepBtn.addEventListener('click', () => saveAs('step'));
+dom.stlBtn.addEventListener('click', () => saveAs('stl'));
+dom.glbBtn.addEventListener('click', () => saveAs('glb'));
+hook.saveAs = saveAs;
+
+/* The menu: the site's dropdown list (as the Share menu on the other tools),
+   under the button, closed by a pick, a click elsewhere, Esc or Tab. */
+const dlRows = () => [...dom.dlList.querySelectorAll('.share-opt')].filter(b => !b.disabled);
+function dlOpen() {
+  if (!current) return;
+  showExports(current);
+  if (dom.dlList.parentNode !== document.body) document.body.appendChild(dom.dlList);
+  dom.dlList.classList.add('is-open');
+  dom.dlBtn.setAttribute('aria-expanded', 'true');
+  if (window.SharedDropdown) SharedDropdown.place(dom.dlBtn, dom.dlList, { minWidth: 300, align: 'end', maxHeight: 360 });
+}
+function dlClose(refocus) {
+  if (!dom.dlList.classList.contains('is-open')) return;
+  dom.dlList.classList.remove('is-open');
+  dom.dlBtn.setAttribute('aria-expanded', 'false');
+  if (refocus) dom.dlBtn.focus({ preventScroll: true });
+}
+const dlIsOpen = () => dom.dlList.classList.contains('is-open');
+dom.dlBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  if (dlIsOpen()) { dlClose(); return; }
+  dlOpen();
+  const r = dlRows()[0];
+  if (r) r.focus({ preventScroll: true });
+});
+dom.dlBtn.addEventListener('keydown', e => {
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  e.preventDefault();
+  dlOpen();
+  const r = dlRows(), to = e.key === 'ArrowDown' ? r[0] : r[r.length - 1];
+  if (to) to.focus({ preventScroll: true });
+});
+dom.dlList.addEventListener('click', e => {
+  e.stopPropagation();
+  const b = e.target.closest('.share-opt');
+  if (b && !b.disabled) dlClose(true);
+});
+dom.dlList.addEventListener('mousemove', e => {
+  const b = e.target.closest('.share-opt');
+  if (b && !b.disabled && b !== document.activeElement && dom.dlList.contains(document.activeElement)) b.focus({ preventScroll: true });
+});
+dom.dlList.addEventListener('keydown', e => {
+  const r = dlRows(), i = r.indexOf(document.activeElement);
+  let to = null;
+  if (e.key === 'ArrowDown') to = r[(i + 1) % r.length];
+  else if (e.key === 'ArrowUp') to = r[(i - 1 + r.length) % r.length];
+  else if (e.key === 'Home') to = r[0];
+  else if (e.key === 'End') to = r[r.length - 1];
+  else if (e.key === 'Escape' || e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); dlClose(true); return; }
+  else return;
+  e.preventDefault();
+  if (to) to.focus();
+});
+document.addEventListener('click', () => dlClose());
+window.addEventListener('resize', () => dlClose());
+window.addEventListener('scroll', e => { if (!dom.dlList.contains(e.target)) dlClose(); }, true);
 
 // ── Camera by button: the pad on the stage, and the keyboard ─────────────
 /* A click is one step (15°, a tenth of the view, 25% zoom) that glides into

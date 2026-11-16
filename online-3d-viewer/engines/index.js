@@ -19,6 +19,7 @@ export const FORMATS = [
   { id: 'step', label: 'STEP', exts: ['step', 'stp', 'p21'], kind: 'cad', up: 'z', load: () => import('./step.js') },
   { id: 'iges', label: 'IGES', exts: ['iges', 'igs'], kind: 'cad', up: 'z', load: () => import('./iges.js') },
   { id: 'brep', label: 'BREP', exts: ['brep', 'brp'], kind: 'cad', up: 'z', load: () => import('./brep.js') },
+  { id: 'dgn', label: 'DGN', exts: ['dgn'], kind: 'cad', up: 'z', load: () => import('./dgn.js') },
   { id: '3dm', label: 'Rhino 3DM', exts: ['3dm'], kind: 'cad', up: 'z', load: () => import('./3dm.js') },
   { id: 'stl', label: 'STL', exts: ['stl'], kind: 'mesh', up: 'z', load: () => import('./stl.js') },
   { id: 'obj', label: 'OBJ', exts: ['obj'], kind: 'mesh', up: 'y', load: () => import('./obj.js') },
@@ -45,6 +46,9 @@ export function formatOf(name) { return BY_EXT.get(extOf(name)) || null; }
 export function formatById(id) { return BY_ID.get(id) || null; }
 export const ACCEPT = [...FORMATS.flatMap(f => f.exts), ...COMPANIONS, 'zip'].map(e => '.' + e).join(',');
 
+// A MicroStation V7 design file starts with its header element: level 8 (2D) or C8 (3D), type 9, 766 words.
+const isDgnV7 = h => (h[0] === '\x08' || h[0] === '\xC8') && h.slice(1, 4) === '\x09\xFE\x02';
+
 /** The format a file's own signature names beyond doubt (a magic number or
     a header no other format starts with), or null. A file whose signature
     disagrees with its extension is opened by its signature. */
@@ -58,6 +62,7 @@ export function sniffStrong(buffer) {
   if (/^#VRML V2\.0/.test(h)) return 'vrml';
   if (h.startsWith('PXR-USDC') || /^#usda\s/.test(h)) return 'usd';
   if (h.startsWith('3D Geometry File Format')) return '3dm';
+  if (isDgnV7(h)) return 'dgn';
   if (/^\s*(<\?xml[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*<COLLADA[\s>]/i.test(h)) return 'dae';
   if (h.startsWith('PK') && /3D\/3dmodel\.model/i.test(h)) return '3mf';
   return null;
@@ -76,6 +81,7 @@ export function sniff(buffer, size = buffer ? buffer.byteLength : 0) {
   if (/^#VRML V2\.0/.test(h)) return 'vrml';
   if (/^#usda\s/.test(h) || h.startsWith('PXR-USDC')) return 'usd';
   if (h.startsWith('3D Geometry File Format')) return '3dm';
+  if (isDgnV7(h)) return 'dgn';
   if (/DBRep_DrawableShape|CASCADE Topology/.test(h.slice(0, 256))) return 'brep';
   if (/^(ST)?C?N?OFF(\s|$)/.test(h)) return 'off';
   if (/<COLLADA[\s>]/i.test(h)) return 'dae';

@@ -12,7 +12,7 @@ served from pinned local copies of the same versions (`serve.mjs` installs
 them once into a cache folder outside the repo), so a run tests exactly what
 the page pins and works offline after the first run.
 
-## 1. Fixtures (`fixtures/`, written by `make-fixtures.mjs`)
+## 1. Fixtures (`fixtures/`, written by `make-fixtures.mjs`; DGN by `make-dgn.mjs`)
 
 Every format gets the same known shape, written byte by byte from the format's
 own specification rather than by the library the viewer reads it with: a box
@@ -40,6 +40,7 @@ render with the model).
 | STEP | AP214 B-rep box with a colour (colour, unit and exact triangles checked), STEP-XML (refused), garbage (refused) |
 | IGES | six B-spline surfaces, not IGES (refused) |
 | Rhino 3DM | mesh + line + point in millimetres (written with rhino3dm), not 3DM (refused) |
+| DGN | MicroStation V7, written byte by byte by `make-dgn.mjs` and read back by GDAL's own DGN driver as a cross-check: a 3D box of 12 lines plus a circle in millimetres (the file's colour table, a text label noted, a deleted line ignored), a 2D plan in metres with a moved global origin (a shape, an arc, a cell holding a line string); V8 (refused, says how to save V7), not DGN (refused) |
 | Zip | an OBJ with its MTL and texture in a folder inside a .zip, with macOS junk entries |
 | Other | empty file, random bytes, a text file, an MTL alone, two models at once, a model beside a stray file, a 179,000-triangle STL (opens in seconds) |
 
@@ -48,7 +49,7 @@ render with the model).
 The drop screen first; a bad file explained on it; the workspace and info
 card; the Up switch (a Z-up box stands 10 tall, flipped to Y up 20 tall) and
 the model sitting centred on the grid; Edges (exactly the box's 12 edges),
-Wireframe and Grid; a drag turns the view and ⟳ puts it back exactly; ⬇ PNG
+Wireframe and Grid; a drag turns the view and ⟳ puts it back exactly; Download › PNG
 (a PNG named after the model, at twice the screen's pixels); the night theme
 repainting the stage; a real drop of OBJ + MTL + PNG; a folder (paths like
 `textures/x.png`); a bad file over an open model (the model stays, a note
@@ -73,6 +74,21 @@ whose edges come from its CAD faces: a corner, a midpoint, the top face's
 centre, and the triangle diagonal inside a face snapping to nothing.
 
 The last run: 439 checks passed, 0 failed.
+
+## 2b. The converter
+
+Download saves the open model as STEP, STL or GLB; each file is read back by
+something other than the exporter. STEP goes through OpenCascade in Node: an
+STL box comes back 30 × 20 × 10 with area 2200 as one solid of 6 faces (the
+coplanar triangles merged); a plate with a square hole keeps its top and
+bottom as single faces with a hole loop and reads back whole (area 2400); a box
+missing two triangles is saved as an open surface model; a STEP part keeps its
+colour round trip. STL and GLB are parsed in the harness: 12 triangles, a
+Y-up OBJ stood on Z (and as the reader turned it with Up), a 3MF in inches
+saved in millimetres (762 × 508 × 254), glTF's Y up on the GLB's root node,
+the DGN box as 7 coloured polylines in STEP and as lines in GLB (with STL
+greyed out and the reason given), and the animated sample's GLB keeping its
+animation and 14 parts while the model on screen stays in view.
 
 ## 3. Real-world models (`--real`)
 
