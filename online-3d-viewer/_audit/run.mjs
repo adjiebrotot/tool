@@ -467,6 +467,8 @@ if (!REAL_ONLY && (!ONLY || 'page'.includes(ONLY))) {
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#pngBtn')]);
   const pngPath = path.join(TMP, 'view.png');
   await dl.saveAs(pngPath);
+  // The site's "Saved" note follows every download; close it as a reader would.
+  await page.waitForSelector('.dl-note-overlay.is-open .dl-note-close', { timeout: 3000 }).then(x => x.click()).catch(() => {});
   const png = fs.readFileSync(pngPath);
   check('page: ⬇ PNG saves a PNG named after the model', png.subarray(1, 4).toString() === 'PNG' && dl.suggestedFilename() === 'box-ascii.png', dl.suggestedFilename() + ', ' + png.length + ' bytes');
   check('page: the PNG is at least twice the screen size', png.readUInt32BE(16) >= 2 * 1200, 'width ' + png.readUInt32BE(16));
