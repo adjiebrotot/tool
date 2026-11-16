@@ -73,7 +73,7 @@ and Shift drops it; hole centre to edge midpoint measures 25. On the STEP box,
 whose edges come from its CAD faces: a corner, a midpoint, the top face's
 centre, and the triangle diagonal inside a face snapping to nothing.
 
-The last run: 439 checks passed, 0 failed.
+The last run: 495 checks passed, 0 failed.
 
 ## 2b. The converter
 
