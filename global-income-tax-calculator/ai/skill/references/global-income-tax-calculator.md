@@ -70,9 +70,9 @@ Open the link to see the result.
 QUICK STARTS (qs)
 There are 5 Quick Starts, each four jobs side by side: Asia hubs (Singapore, Hong Kong (China),
 Tokyo, Dubai), European tech (London, Amsterdam with the 30% ruling, Berlin, Zurich), US states
-(US$150,000 single in Texas, California, New York City and Illinois), Same take-home, Southern
+(US$150,000 single in New York City, California, Illinois and Texas), Same take-home, Southern
 Europe (the gross for €4,000 a month net in Paris, Madrid, Lisbon and Milan) and Family of four (a
-sole earner on €80,000 with two children in Belgium, France, Germany and the Netherlands).
+sole earner on €80,000 with two children in the Netherlands, France, Belgium and Germany).
 Use one only when the user's question is that comparison: a field named in the link replaces the
 value in job 1 alone, and the other three jobs stay as the Quick Start has them. For the user's own
 jobs, send json instead.
