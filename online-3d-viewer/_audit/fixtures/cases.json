@@ -1235,13 +1235,13 @@
   }
  },
  {
-  "name": "dgn-v8",
+  "name": "dgn-ole-not-dgn",
   "files": [
    "dgn/v8.dgn"
   ],
   "expect": {
    "error": {
-    "re": "V8 DGN"
+    "re": "not a MicroStation DGN"
    }
   }
  },
@@ -1253,6 +1253,29 @@
   "expect": {
    "error": {
     "re": "not a MicroStation DGN"
+   }
+  }
+ },
+ {
+  "name": "dgn-v8-gdal-sample",
+  "files": [
+   "dgn/gdal-test_dgnv8.dgn"
+  ],
+  "expect": {
+   "formats": [
+    "DGN"
+   ],
+   "up": "z",
+   "units": "m",
+   "size": [
+    7.958308,
+    7.999689,
+    8
+   ],
+   "tol": 0.001,
+   "minSegments": 1000,
+   "warning": {
+    "re": "4 text labels"
    }
   }
  }

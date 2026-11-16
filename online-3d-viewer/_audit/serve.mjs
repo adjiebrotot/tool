@@ -17,7 +17,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(HERE, '..', '..');
 
 // Must match engines/cdn.js and the import map in index.html.
-export const PINNED = { three: '0.186.1', 'occt-import-js': '0.0.23', rhino3dm: '8.32.1' };
+export const PINNED = { three: '0.186.1', 'occt-import-js': '0.0.23', rhino3dm: '8.32.1', 'cadkit-wasm': '0.5.2' };
 export const DEPS = process.env.O3V_DEPS || path.join(os.tmpdir(), 'o3v-audit-deps');
 
 export function ensureDeps() {

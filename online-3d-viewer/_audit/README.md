@@ -7,7 +7,7 @@ ONLY=step node run.mjs  # only the cases whose name contains "step"
 ```
 
 The harness drives the real page in headless Chromium (WebGL through
-SwiftShader). The page's CDN libraries (three.js, OpenCascade, rhino3dm) are
+SwiftShader). The page's CDN libraries (three.js, OpenCascade, rhino3dm, cadkit) are
 served from pinned local copies of the same versions (`serve.mjs` installs
 them once into a cache folder outside the repo), so a run tests exactly what
 the page pins and works offline after the first run.
@@ -40,7 +40,7 @@ render with the model).
 | STEP | AP214 B-rep box with a colour (colour, unit and exact triangles checked), STEP-XML (refused), garbage (refused) |
 | IGES | six B-spline surfaces, not IGES (refused) |
 | Rhino 3DM | mesh + line + point in millimetres (written with rhino3dm), not 3DM (refused) |
-| DGN | MicroStation V7, written byte by byte by `make-dgn.mjs` and read back by GDAL's own DGN driver as a cross-check: a 3D box of 12 lines plus a circle in millimetres (the file's colour table, a text label noted, a deleted line ignored), a 2D plan in metres with a moved global origin (a shape, an arc, a cell holding a line string); V8 (refused, says how to save V7), not DGN (refused) |
+| DGN | MicroStation V7, written byte by byte by `make-dgn.mjs` and read back by GDAL's own DGN driver as a cross-check: a 3D box of 12 lines plus a circle in millimetres (the file's colour table, a text label noted, a deleted line ignored), a 2D plan in metres with a moved global origin (a shape, an arc, a cell holding a line string); MicroStation V8, GDAL's own test file (read by cadkit in a worker; its extents −1.958 to 6, −1 to 7, 0 to 8 m match GDAL's ODA-based reference reading, 4 text labels noted); an OLE file that is not a DGN (refused), not DGN (refused) |
 | Zip | an OBJ with its MTL and texture in a folder inside a .zip, with macOS junk entries |
 | Other | empty file, random bytes, a text file, an MTL alone, two models at once, a model beside a stray file, a 179,000-triangle STL (opens in seconds) |
 
@@ -73,7 +73,7 @@ and Shift drops it; hole centre to edge midpoint measures 25. On the STEP box,
 whose edges come from its CAD faces: a corner, a midpoint, the top face's
 centre, and the triangle diagonal inside a face snapping to nothing.
 
-The last run: 495 checks passed, 0 failed.
+The last run: 503 checks passed, 0 failed.
 
 ## 2b. The converter
 
@@ -87,7 +87,8 @@ colour round trip. STL and GLB are parsed in the harness: 12 triangles, a
 Y-up OBJ stood on Z (and as the reader turned it with Up), a 3MF in inches
 saved in millimetres (762 × 508 × 254), glTF's Y up on the GLB's root node,
 the DGN box as 7 coloured polylines in STEP and as lines in GLB (with STL
-greyed out and the reason given), and the animated sample's GLB keeping its
+greyed out and the reason given), the DGN V8 sample's STEP on GDAL's extents in
+millimetres, and the animated sample's GLB keeping its
 animation and 14 parts while the model on screen stays in view.
 
 ## 3. Real-world models (`--real`)

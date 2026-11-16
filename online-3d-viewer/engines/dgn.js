@@ -22,11 +22,14 @@
    is a wireframe. Lines are grouped by level and coloured from the file's
    colour table, or MicroStation's default table when it has none.
 
-   MicroStation V8 files (since 2001) are a different, undocumented format
-   inside an OLE compound file; they are recognised and explained. */
+   MicroStation V8 files (since 2001) are a different format inside an OLE
+   compound file, which Bentley never published. They are read by cadkit
+   (WebAssembly, in dgn8-worker.js), downloaded only when one is opened, and
+   drawn the same way: levels, colours, lines, plus filled faces and meshes. */
 
 import * as THREE from 'three';
-import { requireBytes, ModelError } from './common.js';
+import { requireBytes, ModelError, defaultMaterial, colourMaterial } from './common.js';
+import { CADKIT_BASE } from './cdn.js';
 
 // Element types (IGDS).
 const T = {
@@ -278,10 +281,7 @@ export async function load(entry, ctx) {
   const buffer = await ctx.files.buffer(entry);
   requireBytes(buffer, 4, 'DGN');
   const head = new Uint8Array(buffer, 0, Math.min(8, buffer.byteLength));
-  if (isOle(head)) {
-    throw new ModelError('This is a MicroStation V8 DGN file, which this viewer cannot read yet: only V7 DGN is supported. '
-      + 'In MicroStation, File › Save As › V7 DGN, or export it as STEP, IGES or DWG, and open that.');
-  }
+  if (isOle(head)) return loadV8(entry, buffer, ctx);
   if (!isV7(head)) throw new ModelError('This is not a MicroStation DGN file: it does not start with a V7 design file header.');
   requireBytes(buffer, 1536, 'DGN');
 
@@ -344,4 +344,98 @@ export async function load(entry, ctx) {
     root.add(g);
   }
   return { object: root, units: d.unit };
+}
+
+// ── V8: cadkit in a worker ───────────────────────────────────────────────
+
+let worker = null, warm = false, seq = 0;
+const waiting = new Map();
+function getWorker() {
+  if (worker) return worker;
+  worker = new Worker(new URL('./dgn8-worker.js', import.meta.url), { type: 'module' });
+  worker.onmessage = e => {
+    const job = waiting.get(e.data.id);
+    if (!job) return;
+    waiting.delete(e.data.id);
+    if (e.data.ok) { warm = true; job.resolve(e.data.result); } else job.reject(e.data);
+  };
+  worker.onerror = e => {
+    // A trap or a failed import: this worker is spent; the next file gets a new one.
+    for (const job of waiting.values()) job.reject({ error: e.message || 'worker-failed' });
+    waiting.clear();
+    worker = null;
+  };
+  return worker;
+}
+
+const UNIT_BY_METRES = [[1e-6, 'µm'], [0.001, 'mm'], [0.01, 'cm'], [1, 'm'], [1000, 'km'], [0.0254, 'in'], [0.3048, 'ft'], [1609.344, 'mi']];
+
+async function loadV8(entry, buffer, ctx) {
+  ctx.progress(warm ? 'Reading the DGN V8 drawing…' : 'Loading the DGN V8 reader (cadkit, about 1.3 MB, once), then reading the drawing…');
+  let r;
+  try {
+    r = await new Promise((resolve, reject) => {
+      const id = ++seq;
+      waiting.set(id, { resolve, reject });
+      getWorker().postMessage({ id, buffer, base: CADKIT_BASE }, [buffer]);
+    });
+  } catch (e) {
+    const err = e && e.error;
+    if (err === 'download-failed') throw new ModelError('The DGN V8 reader could not be downloaded. Check the internet connection and try again (it is kept for offline use once loaded).');
+    if (err === 'not-dgn') throw new ModelError('This file is an OLE compound document (like an old Word or Excel file), not a MicroStation DGN.');
+    if (err === 'read-failed') throw new ModelError('This DGN V8 file could not be read: it is damaged, protected, or uses a part of the format the reader does not know (' + (e.detail || 'no detail') + ').');
+    throw new ModelError('The DGN V8 file could not be read (' + err + ').');
+  }
+  const segs = r.groups.reduce((n, g) => n + g.lines.length, 0), tris = r.groups.reduce((n, g) => n + g.tris.length, 0);
+  if (!segs && !tris) throw new ModelError('This DGN file has no lines, shapes or surfaces to draw in its design model' + (r.texts ? ' (only text)' : '') + '.');
+  if (r.texts) ctx.warn(r.texts + ' text label' + (r.texts === 1 ? ' is' : 's are') + ' not shown: the viewer draws the geometry only.');
+  if (r.skipped) ctx.warn(r.skipped + ' element' + (r.skipped === 1 ? '' : 's') + ' (hatching, dimensions, images or points) ' + (r.skipped === 1 ? 'is' : 'are') + ' not shown.');
+  if (r.otherModels) ctx.warn('The file holds ' + (r.otherModels + 1) + ' design models; "' + r.modelName + '" is shown.');
+
+  const mpu = r.metersPerUnit;
+  const hit = mpu ? UNIT_BY_METRES.find(([m]) => Math.abs(mpu / m - 1) < 1e-9) : null;
+  const units = hit ? hit[1] : null;
+  if (mpu && !hit) ctx.warn('The drawing\'s unit is ' + mpu + ' m, which is not a unit the viewer names, so sizes are given in that unit.');
+
+  const root = new THREE.Group();
+  root.name = entry.name;
+  root.position.fromArray(r.anchor || [0, 0, 0]);
+  const levels = new Map();
+  const lineMats = new Map(), meshMats = new Map();
+  const key = rgb => rgb ? rgb.join(',') : '';
+  const white = rgb => !rgb || (rgb[0] > 245 && rgb[1] > 245 && rgb[2] > 245);
+  const lineMat = rgb => {
+    if (!lineMats.has(key(rgb))) {
+      const m = new THREE.LineBasicMaterial();
+      if (white(rgb)) { m.color.set(0xffffff); m.userData.o3vDefault = true; }
+      else m.color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255, THREE.SRGBColorSpace);
+      lineMats.set(key(rgb), m);
+    }
+    return lineMats.get(key(rgb));
+  };
+  const meshMat = rgb => {
+    if (!meshMats.has(key(rgb))) meshMats.set(key(rgb), white(rgb) ? defaultMaterial() : colourMaterial(rgb.map(v => v / 255)));
+    return meshMats.get(key(rgb));
+  };
+  for (const g of r.groups.sort((a, b) => String(a.level).localeCompare(String(b.level), undefined, { numeric: true }))) {
+    let lv = levels.get(g.level);
+    if (!lv) { lv = new THREE.Group(); lv.name = g.level; levels.set(g.level, lv); root.add(lv); }
+    const label = g.level + (g.rgb ? ', ' + g.rgb.join(' ') : '');
+    if (g.lines.length) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(g.lines, 3));
+      const ls = new THREE.LineSegments(geo, lineMat(g.rgb));
+      ls.name = label;
+      lv.add(ls);
+    }
+    if (g.tris.length) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(g.tris, 3));
+      geo.computeVertexNormals();
+      const mesh = new THREE.Mesh(geo, meshMat(g.rgb));
+      mesh.name = label;
+      lv.add(mesh);
+    }
+  }
+  return { object: root, units };
 }

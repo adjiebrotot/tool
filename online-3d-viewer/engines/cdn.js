@@ -16,3 +16,6 @@ export const OCCT_BASE = 'https://cdn.jsdelivr.net/npm/occt-import-js@0.0.23/dis
 
 // Rhino 3DM: rhino3dm compiled to WebAssembly.
 export const RHINO_BASE = 'https://cdn.jsdelivr.net/npm/rhino3dm@8.32.1/';
+
+// MicroStation V8 DGN: cadkit compiled to WebAssembly (about 4 MB, 1.3 MB compressed).
+export const CADKIT_BASE = 'https://cdn.jsdelivr.net/npm/cadkit-wasm@0.5.2/';
