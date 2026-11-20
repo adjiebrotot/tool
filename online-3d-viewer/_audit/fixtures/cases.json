@@ -1278,5 +1278,192 @@
     "re": "4 text labels"
    }
   }
+ },
+ {
+  "name": "ifc4-wall-box-mm",
+  "files": [
+   "ifc/box.ifc"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "mm",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "colour": [
+    0.8,
+    0.1,
+    0.1
+   ],
+   "noWarnings": true
+  }
+ },
+ {
+  "name": "ifc-zip",
+  "files": [
+   "ifc/box.ifczip"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "mm",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "colour": [
+    0.8,
+    0.1,
+    0.1
+   ]
+  }
+ },
+ {
+  "name": "ifc-named-stp",
+  "files": [
+   "ifc/box-named.stp"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "mm",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "holds IFC"
+   }
+  }
+ },
+ {
+  "name": "ifc2x3-slab-feet",
+  "files": [
+   "ifc/feet.ifc"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "ft",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "ifc-far-from-origin",
+  "files": [
+   "ifc/far.ifc"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "m",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "tol": 0.000001
+  }
+ },
+ {
+  "name": "ifc-opening-cut",
+  "files": [
+   "ifc/opening.ifc"
+  ],
+  "expect": {
+   "formats": [
+    "IFC"
+   ],
+   "units": "mm",
+   "up": "z",
+   "parts": 1,
+   "vertices": 16,
+   "minTriangles": 24,
+   "size": [
+    30,
+    20,
+    10
+   ]
+  }
+ },
+ {
+  "name": "step-named-ifc",
+  "files": [
+   "ifc/part-named.ifc"
+  ],
+  "expect": {
+   "formats": [
+    "STEP"
+   ],
+   "units": "mm",
+   "up": "z",
+   "triangles": 12,
+   "vertices": 8,
+   "parts": 1,
+   "size": [
+    30,
+    20,
+    10
+   ],
+   "warning": {
+    "re": "holds STEP"
+   }
+  }
+ },
+ {
+  "name": "ifc-no-elements",
+  "files": [
+   "ifc/empty.ifc"
+  ],
+  "expect": {
+   "error": {
+    "re": "no elements"
+   }
+  }
+ },
+ {
+  "name": "ifc-xml",
+  "files": [
+   "ifc/box.ifcxml.ifc"
+  ],
+  "expect": {
+   "error": {
+    "re": "XML"
+   }
+  }
  }
 ]
