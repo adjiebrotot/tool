@@ -699,6 +699,23 @@ if (!REAL_ONLY && (!ONLY || 'convert'.includes(ONLY))) {
   check('convert: DGN V8 → STEP: polylines from -1958 to 6000, -1000 to 7000, 0 to 8000 mm (GDAL\'s extents)', (step.match(/POLYLINE\(/g) || []).length > 10
     && [-1958.3, -1000, 0].every((v, i) => Math.abs(v8lo[i] - v) < 1) && [6000, 7000, 8000].every((v, i) => Math.abs(v8hi[i] - v) < 1), v8lo.map(Math.round) + ' → ' + v8hi.map(Math.round));
 
+  // IFC: a slab in feet comes out in millimetres; a wall with an opening cut is a solid with a hole.
+  await openFx('ifc/feet.ifc');
+  sb = stlBox((await saveAs('stl')).bytes);
+  check('convert: an IFC2X3 slab in feet saves its STL in millimetres (9144 × 6096 × 3048)', sizeEq(sb.size, [9144, 6096, 3048]), JSON.stringify(sb.size));
+  await openFx('ifc/opening.ifc');
+  f = await saveAs('step');
+  r = occt.ReadStepFile(new Uint8Array(f.bytes), null);
+  mb = r.success ? meshBox(r.meshes) : null;
+  // Area: 2 × (600 − 100) + 2 × 30 × 10 + 2 × 20 × 10 + 4 × 10 × 10 = 2400.
+  check('convert: IFC wall with an opening → STEP reads back in OpenCascade, 30 × 20 × 10, area 2400', !!mb && sizeEq(mb.size, [30, 20, 10]) && Math.abs(mb.area - 2400) < 1e-3, JSON.stringify(mb));
+  // (STEP, not STL: STL's 32-bit floats round a box 9,000 km from the origin.)
+  await openFx('ifc/far.ifc');
+  step = (await saveAs('step')).bytes.toString('latin1');
+  const far = [...step.matchAll(/CARTESIAN_POINT\('',\(([^)]*)\)\)/g)].map(m => m[1].split(',').map(Number)).slice(1);
+  const flo = [0, 1, 2].map(i => Math.min(...far.map(p => p[i]))), fhi = [0, 1, 2].map(i => Math.max(...far.map(p => p[i])));
+  check('convert: an IFC box at site coordinates → STEP keeps its place and size (500 km E, 9000 km N, 30000 × 20000 × 10000 mm)', sizeEq(fhi.map((h, i) => h - flo[i]), [30000, 20000, 10000]) && sizeEq(flo, [5e8, 9e9, 120000]), flo + ' → ' + fhi);
+
   // The animated sample: GLB keeps the animation.
   await page.evaluate(() => document.getElementById('sampleBtn').click()); await settled(page, ++loads);
   check('convert: the GLB row says it keeps the animation', await page.evaluate(() => /animation/.test(document.getElementById('glbSub').textContent)));

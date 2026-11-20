@@ -19,6 +19,7 @@ export const FORMATS = [
   { id: 'step', label: 'STEP', exts: ['step', 'stp', 'p21'], kind: 'cad', up: 'z', load: () => import('./step.js') },
   { id: 'iges', label: 'IGES', exts: ['iges', 'igs'], kind: 'cad', up: 'z', load: () => import('./iges.js') },
   { id: 'brep', label: 'BREP', exts: ['brep', 'brp'], kind: 'cad', up: 'z', load: () => import('./brep.js') },
+  { id: 'ifc', label: 'IFC', exts: ['ifc', 'ifczip'], kind: 'cad', up: 'z', load: () => import('./ifc.js') },
   { id: 'dgn', label: 'DGN', exts: ['dgn'], kind: 'cad', up: 'z', load: () => import('./dgn.js') },
   { id: '3dm', label: 'Rhino 3DM', exts: ['3dm'], kind: 'cad', up: 'z', load: () => import('./3dm.js') },
   { id: 'stl', label: 'STL', exts: ['stl'], kind: 'mesh', up: 'z', load: () => import('./stl.js') },
@@ -49,6 +50,9 @@ export const ACCEPT = [...FORMATS.flatMap(f => f.exts), ...COMPANIONS, 'zip'].ma
 // A MicroStation V7 design file starts with its header element: level 8 (2D) or C8 (3D), type 9, 766 words.
 const isDgnV7 = h => (h[0] === '\x08' || h[0] === '\xC8') && h.slice(1, 4) === '\x09\xFE\x02';
 
+// IFC is STEP text with a building schema: told apart by its FILE_SCHEMA.
+const isIfc = h => /^\s*ISO-10303-21/.test(h) && /FILE_SCHEMA\s*\(\s*\(\s*'IFC/i.test(h);
+
 /** The format a file's own signature names beyond doubt (a magic number or
     a header no other format starts with), or null. A file whose signature
     disagrees with its extension is opened by its signature. */
@@ -57,6 +61,7 @@ export function sniffStrong(buffer) {
   const h = headText(buffer, 2048);
   if (h.startsWith('glTF')) return 'gltf';
   if (h.startsWith('Kaydara FBX Binary')) return 'fbx';
+  if (isIfc(h)) return 'ifc';
   if (/^\s*ISO-10303-21;/.test(h)) return 'step';
   if (/^ply\r?\n/.test(h)) return 'ply';
   if (/^#VRML V2\.0/.test(h)) return 'vrml';
@@ -76,6 +81,7 @@ export function sniff(buffer, size = buffer ? buffer.byteLength : 0) {
   const u8 = new Uint8Array(buffer, 0, Math.min(buffer.byteLength, 2048));
   if (h.startsWith('glTF')) return 'gltf';
   if (h.startsWith('Kaydara FBX Binary') || /^\s*;\s*FBX \d/.test(h)) return 'fbx';
+  if (isIfc(h)) return 'ifc';
   if (/^\s*ISO-10303-21/.test(h)) return 'step';
   if (/^ply\s/.test(h)) return 'ply';
   if (/^#VRML V2\.0/.test(h)) return 'vrml';
@@ -91,6 +97,7 @@ export function sniff(buffer, size = buffer ? buffer.byteLength : 0) {
     if (/3D\/3dmodel\.model/i.test(h)) return '3mf';
     if (/\.usd[ac]?/i.test(h)) return 'usd';
     if (/\.amf/i.test(h)) return 'amf';
+    if (/\.ifc/i.test(h)) return 'ifc';
     return null;
   }
   if (u8[0] === 0x4D && u8[1] === 0x4D && buffer.byteLength >= 6) {
