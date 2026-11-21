@@ -397,15 +397,15 @@ const LANG = {
     qsLabel: "Quick Start",
     qsTip: "Replaces every job with a worked comparison. Change any figure over the top of it.",
     qs_asia: "Asia hubs",
-    qsTip_asia: "Four expat offers: S$180,000 in Singapore, HK$1,300,000 in Hong Kong (China), ¥15 million in Tokyo and AED 600,000 in Dubai, side by side in US dollars.",
+    qsTip_asia: "Four expat offers: S$180,000 in Singapore, HK$1,300,000 in Hong Kong (China), ¥20 million in Tokyo and AED 600,000 in Dubai, side by side in US dollars.",
     qs_europe: "European tech",
     qsTip_europe: "One senior engineer, four cities: £95,000 in London, €95,000 in Amsterdam with the 30% ruling, €95,000 in Berlin and CHF 140,000 in Zurich.",
     qs_us: "US states",
-    qsTip_us: "US$150,000, single, in Texas, California, New York City and Illinois. Same federal tax, different state and city tax.",
+    qsTip_us: "US$150,000, single, in New York City, California, Illinois and Texas. Same federal tax, different state and city tax.",
     qs_net: "Same take-home, Southern Europe",
     qsTip_net: "What gross pay leaves €4,000 a month in Paris, Madrid, Lisbon and Milan, for a single resident.",
     qs_family: "Family of four",
-    qsTip_family: "A sole earner on €80,000 with a partner at home and two children, in Belgium, France, Germany and the Netherlands.",
+    qsTip_family: "A sole earner on €80,000 with a partner at home and two children, in the Netherlands, France, Belgium and Germany.",
     jobsLabel: "Jobs",
     addJob: "+ Add job",
     addJobTitle: "Add a job, starting as a copy of this one",
@@ -968,15 +968,15 @@ const LANG = {
     qsLabel: "Quick Start",
     qsTip: "Mengganti semua pekerjaan dengan satu contoh perbandingan. Setelah itu, ubah angka mana pun sesukamu.",
     qs_asia: "Kota bisnis Asia",
-    qsTip_asia: "Empat tawaran untuk ekspatriat: S$180,000 di Singapura, HK$1,300,000 di Hong Kong (Tiongkok), ¥15 juta di Tokyo, dan AED 600.000 di Dubai, dibandingkan dalam dolar AS.",
+    qsTip_asia: "Empat tawaran untuk ekspatriat: S$180,000 di Singapura, HK$1,300,000 di Hong Kong (Tiongkok), ¥20 juta di Tokyo, dan AED 600.000 di Dubai, dibandingkan dalam dolar AS.",
     qs_europe: "Insinyur di Eropa",
     qsTip_europe: "Satu insinyur senior di empat kota: £95.000 di London, €95.000 di Amsterdam dengan 30% ruling, €95.000 di Berlin, dan CHF 140.000 di Zürich.",
     qs_us: "Negara bagian AS",
-    qsTip_us: "US$150,000, lajang, di Texas, California, New York City, dan Illinois. Pajak federalnya sama, pajak negara bagian dan kotanya berbeda.",
+    qsTip_us: "US$150,000, lajang, di New York City, California, Illinois, dan Texas. Pajak federalnya sama, pajak negara bagian dan kotanya berbeda.",
     qs_net: "Gaji bersih sama, Eropa Selatan",
     qsTip_net: "Gaji kotor yang menyisakan €4.000 sebulan di Paris, Madrid, Lisbon, dan Milan untuk penduduk pajak lajang.",
     qs_family: "Keluarga empat orang",
-    qsTip_family: "Satu pencari nafkah bergaji €80.000, pasangan di rumah, dan dua anak, di Belgia, Prancis, Jerman, dan Belanda.",
+    qsTip_family: "Satu pencari nafkah bergaji €80.000, pasangan di rumah, dan dua anak, di Belanda, Prancis, Belgia, dan Jerman.",
     jobsLabel: "Pekerjaan",
     addJob: "+ Tambah pekerjaan",
     addJobTitle: "Tambah pekerjaan, dimulai dari salinan pekerjaan ini",
@@ -2214,7 +2214,7 @@ const QUICK_START = {
   asia: { dispCur: 'USD', jobs: [
     { country: 'SG', amount: '180,000', sgRes: 'ep' },
     { country: 'HK', amount: '1,300,000' },
-    { country: 'JP', amount: '15,000,000', jpRes: 'y2' },
+    { country: 'JP', amount: '20,000,000', jpRes: 'y2' },
     { country: 'AE', amount: '600,000', gulfNat: 'expat' } ] },
   europe: { dispCur: 'EUR', jobs: [
     { country: 'GB', amount: '95,000', ukRegion: 'ruk' },
@@ -2222,20 +2222,20 @@ const QUICK_START = {
     { country: 'DE', amount: '95,000', deClass: 'I' },
     { country: 'CH', amount: '140,000', chStatus: 'single' } ] },
   us: { dispCur: 'local', jobs: [
-    { country: 'US', amount: '150,000', usState: 'TX', usFiling: 'S' },
-    { country: 'US', amount: '150,000', usState: 'CA', usFiling: 'S' },
     { country: 'US', amount: '150,000', usState: 'NY', usNyc: true, usFiling: 'S' },
-    { country: 'US', amount: '150,000', usState: 'IL', usFiling: 'S' } ] },
+    { country: 'US', amount: '150,000', usState: 'CA', usFiling: 'S' },
+    { country: 'US', amount: '150,000', usState: 'IL', usFiling: 'S' },
+    { country: 'US', amount: '150,000', usState: 'TX', usFiling: 'S' } ] },
   net: { dispCur: 'local', dispPer: 'month', jobs: [
     { country: 'FR', dir: 'net', amount: '4,000', period: 'monthly', frCadre: 'cadre' },
     { country: 'ES', dir: 'net', amount: '4,000', period: 'monthly' },
     { country: 'PT', dir: 'net', amount: '4,000', period: 'monthly' },
     { country: 'IT', dir: 'net', amount: '4,000', period: 'monthly' } ] },
   family: { dispCur: 'local', jobs: [
-    { country: 'BE', amount: '80,000', beStatus: 'married', beKids: '2' },
+    { country: 'NL', amount: '80,000', nlHoliday: false },
     { country: 'FR', amount: '80,000', frCadre: 'cadre', frMarried: true, frKids: '2' },
-    { country: 'DE', amount: '80,000', deClass: 'III', deKids: true },
-    { country: 'NL', amount: '80,000', nlHoliday: false } ] }
+    { country: 'BE', amount: '80,000', beStatus: 'married', beKids: '2' },
+    { country: 'DE', amount: '80,000', deClass: 'III', deKids: true } ] }
 };
 function clearQuickStart(){ document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.remove('active')); }
 function applyQuickStart(key){
