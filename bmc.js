@@ -14,6 +14,9 @@
  *    bottom right, the button goes to the bottom left if that corner is free,
  *    else it rises above whatever is in the way; when tall panels fill both
  *    corners it takes the nearest free spot along the bottom;
+ *  - with data-bmc-pin on the bmc.js <script>, starts in the bottom-right corner
+ *    and stays there rather than moving out of the way (a full-screen editor
+ *    keeps that corner clear for it); pair it with data-bmc-drag;
  *  - on a canvas-style tool (the bmc.js <script> carries data-bmc-drag), lets the
  *    reader drag it anywhere; the spot is kept for that page in localStorage;
  *  - on a tool whose footer is a bar floating over the canvas (data-bmc-dock
@@ -38,6 +41,7 @@
   var EDGE = 16, SIZE = 52, GAP = 12, RESERVE = EDGE + SIZE + EDGE, PANEL_MIN = 380;
   var me = D.currentScript || D.querySelector('script[src$="bmc.js"]');
   var DRAG = !!(me && me.hasAttribute('data-bmc-drag'));
+  var PIN = !!(me && me.hasAttribute('data-bmc-pin'));
   var DOCK = me && me.getAttribute('data-bmc-dock'), DS = 32; /* the button's size inside a footer bar */
   var KEY = 'bmc-pos:' + location.pathname;
 
@@ -284,6 +288,7 @@
     }
     reserve();
     if (manual) { clampManual(); place(manual.left, manual.dx, manual.lift, false); return; }
+    if (PIN) return place(false, 0, 0, false);
     var still = !canScroll() || R.scrollHeight <= innerHeight + 2;
     var right = liftFor(false, 0, still);
     if (right === 0) return place(false, 0, 0, false);

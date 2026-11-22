@@ -25,12 +25,17 @@
   const $ = id => document.getElementById(id);
   const EPS = 1e-4;
   const MIN_CLIP = 0.05;          // shortest clip a split or trim may leave, seconds
+  const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+  const MIN_SPEED = 0.25, MAX_SPEED = 4;   // what browsers play with sound
+  // A clip plays at its own speed (1 when it has none: older saved edits).
+  const spd = c => (c && c.speed > 0 ? c.speed : 1);
+  const outLen = c => (c.b - c.a) / spd(c);
   const SRC_VARS = ['--line-a', '--gold', '--line-c', '--line-d', '--line-e'];
 
   // ── State ────────────────────────────────────────────────────────────────
   const S = {
     sources: [],   // { id, name, size, file, el, duration, w, h, fps }
-    clips: [],     // { id, src, a, b }   seconds in the source
+    clips: [],     // { id, src, a, b, speed }   seconds in the source; speed 1 is as filmed
     caps: [],      // { id, src, a, b, text }
     sel: null,     // selected clip id
     t: 0,          // playhead, seconds of the edit
@@ -93,7 +98,7 @@
   function layout() {
     if (layoutCache) return layoutCache;
     let t = 0;
-    const rows = S.clips.map((c, i) => { const r = { c, i, start: t, end: t + (c.b - c.a) }; t = r.end; return r; });
+    const rows = S.clips.map((c, i) => { const r = { c, i, start: t, end: t + outLen(c) }; t = r.end; return r; });
     return (layoutCache = { rows, total: t });
   }
   const total = () => layout().total;
@@ -102,7 +107,7 @@
     const L = layout();
     if (!L.rows.length) return null;
     t = clamp(t, 0, L.total);
-    for (const r of L.rows) if (t < r.end - EPS) return { i: r.i, c: r.c, start: r.start, srcT: r.c.a + (t - r.start) };
+    for (const r of L.rows) if (t < r.end - EPS) return { i: r.i, c: r.c, start: r.start, srcT: Math.min(r.c.b, r.c.a + (t - r.start) * spd(r.c)) };
     const r = L.rows[L.rows.length - 1];
     return { i: r.i, c: r.c, start: r.start, srcT: r.c.b };
   }
@@ -118,7 +123,7 @@
         if (cap.src !== c.src) continue;
         const a = Math.max(cap.a, c.a), b = Math.min(cap.b, c.b);
         if (b - a <= EPS) continue;
-        const s = r.start + (a - c.a), e = r.start + (b - c.a);
+        const s = r.start + (a - c.a) / spd(c), e = r.start + (b - c.a) / spd(c);
         const prev = out.length && out.filter(o => o.cap === cap).pop();
         if (prev && Math.abs(prev.e - s) < 1e-3) { prev.e = e; prev.lastI = r.i; continue; }
         out.push({ cap, s, e, i: r.i, lastI: r.i });
@@ -396,7 +401,7 @@
     const s = S.sources[0];
     return {
       fp: fingerprint(s),
-      clips: S.clips.map(c => [c.a, c.b]),
+      clips: S.clips.map(c => (spd(c) === 1 ? [c.a, c.b] : [c.a, c.b, spd(c)])),
       caps: S.caps.map(c => [c.a, c.b, c.text]),
     };
   }
@@ -409,7 +414,8 @@
     const clips = [];
     for (const r of p.clips) {
       const a = clamp(+r[0] || 0, 0, src.duration), b = clamp(+r[1] || 0, 0, src.duration);
-      if (b - a >= MIN_CLIP) clips.push({ id: uid('c'), src: src.id, a, b });
+      const sp = clamp(+r[2] || 1, MIN_SPEED, MAX_SPEED);
+      if (b - a >= MIN_CLIP) clips.push({ id: uid('c'), src: src.id, a, b, speed: sp });
     }
     if (!clips.length) return null;
     S.clips = clips;
@@ -434,7 +440,7 @@
     if (!loc) return;
     const c = loc.c;
     if (loc.srcT - c.a < MIN_CLIP || c.b - loc.srcT < MIN_CLIP) { setStatus('Move the playhead inside a clip, away from its ends, to split it.', 'err'); return; }
-    const right = { id: uid('c'), src: c.src, a: loc.srcT, b: c.b };
+    const right = { id: uid('c'), src: c.src, a: loc.srcT, b: c.b, speed: spd(c) };
     c.b = loc.srcT;
     S.clips.splice(loc.i + 1, 0, right);
     S.sel = right.id;
@@ -456,7 +462,7 @@
     const i = S.clips.findIndex(c => c.id === id);
     if (i < 0) return;
     const c = S.clips[i];
-    const copy = { id: uid('c'), src: c.src, a: c.a, b: c.b };
+    const copy = { id: uid('c'), src: c.src, a: c.a, b: c.b, speed: spd(c) };
     S.clips.splice(i + 1, 0, copy);
     S.sel = copy.id;
     invalidate(); commit(); renderAll(); seek(layout().rows[i + 1].start);
@@ -485,6 +491,18 @@
     invalidate(); commit(); renderAll();
     seek(which === 'in' ? layout().rows[loc.i].start : Math.max(0, layout().rows[loc.i].end - 0.001));
   }
+  // Speed as a multiplier: 2 plays the clip in half the time. Captions on it
+  // speed up with it, as they belong to the footage.
+  function setClipSpeed(c, x) {
+    x = clamp(Math.round(x * 1000) / 1000, MIN_SPEED, MAX_SPEED);
+    if (!isFinite(x)) return;
+    c.speed = x;
+    S.sel = c.id;
+    invalidate(); commit(); renderAll();
+    const r = layout().rows.find(r => r.c.id === c.id);
+    if (r) seek(r.start);
+    if (x !== 1) setStatus('Clip ' + (r.i + 1) + ' plays at ' + fmtSpeed(x) + ', ' + fmt(outLen(c)) + ' long.', 'ok');
+  }
   function setClipTime(c, which, v) {
     const src = srcOf(c.src);
     if (which === 'a') c.a = clamp(v, 0, c.b - MIN_CLIP);
@@ -497,8 +515,9 @@
     if (!loc) return;
     const src = srcOf(loc.c.src);
     let a = loc.srcT;
-    let b = Math.min(a + 2, loc.c.b);
-    if (b - a < 0.5) { a = Math.max(loc.c.a, loc.c.b - 2); b = loc.c.b; }
+    const k = spd(loc.c);
+    let b = Math.min(a + 2 * k, loc.c.b);
+    if (b - a < 0.5 * k) { a = Math.max(loc.c.a, loc.c.b - 2 * k); b = loc.c.b; }
     const cap = { id: uid('k'), src: src.id, a, b, text: '' };
     S.caps.push(cap);
     invalidate(); commit();
@@ -513,7 +532,7 @@
     const L = layout();
     const row = L.rows[which === 's' ? occ.i : occ.lastI];
     const src = srcOf(occ.cap.src);
-    const srcT = clamp(row.c.a + (t - row.start), 0, src.duration);
+    const srcT = clamp(row.c.a + (t - row.start) * spd(row.c), 0, src.duration);
     if (which === 's') occ.cap.a = Math.min(srcT, occ.cap.b - 0.05);
     else occ.cap.b = Math.max(srcT, occ.cap.a + 0.05);
     invalidate();
@@ -541,12 +560,22 @@
         '<span class="clip-times">' +
           '<label>From <input class="time-input" data-k="a" value="' + fmt(c.a, 3) + '" aria-label="Clip ' + (r.i + 1) + ' starts at"></label>' +
           '<label>to <input class="time-input" data-k="b" value="' + fmt(c.b, 3) + '" aria-label="Clip ' + (r.i + 1) + ' ends at"></label>' +
-          '<span class="dur">' + (c.b - c.a).toFixed(2) + ' s</span>' +
+        '</span>' +
+        '<span class="clip-times clip-speed">' +
+          '<label>Speed <select class="sel-sm speed-sel" data-k="speed" aria-label="Clip ' + (r.i + 1) + ' speed">' + speedOptions(spd(c)) + '</select></label>' +
+          '<label>Length <input class="time-input" data-k="len" value="' + fmt(outLen(c), 2) + '" aria-label="Clip ' + (r.i + 1) + ' plays for" title="Type the length you want and the speed follows"></label>' +
         '</span></div>';
     }).join('');
     const kept = L.total, full = S.sources.reduce((s, x) => s + x.duration, 0);
     $('clipTotal').textContent = S.clips.length + (S.clips.length === 1 ? ' clip, ' : ' clips, ') + fmt(kept) + ' in all' +
       (S.sources.length ? ' (the ' + (S.sources.length > 1 ? 'videos run ' : 'video runs ') + fmt(full) + ').' : '.');
+  }
+  const fmtSpeed = x => (Math.round(x * 100) / 100) + '×';
+  function speedOptions(cur) {
+    const list = SPEEDS.slice();
+    if (!list.some(x => Math.abs(x - cur) < 1e-6)) { list.push(cur); list.sort((a, b) => a - b); }
+    return list.map(x => '<option value="' + x + '"' + (Math.abs(x - cur) < 1e-6 ? ' selected' : '') + '>' +
+      fmtSpeed(x) + '</option>').join('');
   }
   const clipList = $('clipList');
   clipList.addEventListener('click', e => {
@@ -555,13 +584,28 @@
     const id = row.dataset.clip;
     if (e.target.closest('.clip-del')) { deleteClip(id); return; }
     if (e.target.closest('.clip-dup')) { duplicateClip(id); return; }
-    if (e.target.closest('input')) { if (S.sel !== id) selectClip(id, true); return; }
+    if (e.target.closest('input, select')) { if (S.sel !== id) selectClip(id, true); return; }
     selectClip(id, true);
   });
   clipList.addEventListener('change', e => {
+    const sel = e.target.closest('.speed-sel');
+    if (sel) {
+      const c = S.clips.find(c => c.id === sel.closest('.clip-row').dataset.clip);
+      if (!c) return;
+      setClipSpeed(c, +sel.value);
+      return;
+    }
     const inp = e.target.closest('.time-input');
     if (!inp) return;
     const c = S.clips.find(c => c.id === inp.closest('.clip-row').dataset.clip);
+    if (inp.dataset.k === 'len') {
+      const want = parseTime(inp.value);
+      if (!c || !isFinite(want) || want <= 0) { inp.classList.add('bad'); return; }
+      const raw = (c.b - c.a) / want;
+      setClipSpeed(c, raw);
+      if (raw < MIN_SPEED || raw > MAX_SPEED) setStatus('Clip speed goes from ' + MIN_SPEED + '× to ' + MAX_SPEED + '×, so this clip now plays for ' + fmt(outLen(c)) + '. Trim it to make it shorter.', 'err');
+      return;
+    }
     const v = parseTime(inp.value);
     if (!c || !isFinite(v)) { inp.classList.add('bad'); return; }
     setClipTime(c, inp.dataset.k, v);
@@ -733,7 +777,7 @@
     const L = layout(), T = L.total || 1;
     $('seqClips').innerHTML = L.rows.map(r =>
       '<div class="seq-clip' + (r.c.id === S.sel ? ' sel' : '') + '" data-clip="' + r.c.id + '" style="left:' + (r.start / T * 100) + '%;width:' + ((r.end - r.start) / T * 100) + '%;background:' + srcColour(r.c.src) + '" title="Clip ' + (r.i + 1) + ', ' + (r.end - r.start).toFixed(2) + ' s">' +
-        '<span>' + (r.i + 1) + '</span><span class="sc-dur">' + (r.end - r.start).toFixed(1) + 's</span></div>').join('');
+        '<span>' + (r.i + 1) + '</span><span class="sc-dur">' + (r.end - r.start).toFixed(1) + 's' + (spd(r.c) !== 1 ? ' · ' + fmtSpeed(spd(r.c)) : '') + '</span></div>').join('');
     $('seqCaps').innerHTML = occurrences().map(o =>
       '<div class="seq-cap" data-cap="' + o.cap.id + '" style="left:' + (o.s / T * 100) + '%;width:' + Math.max(0.3, (o.e - o.s) / T * 100) + '%"></div>').join('');
     $('seqInfo').textContent = S.clips.length + (S.clips.length === 1 ? ' clip · ' : ' clips · ') + fmt(L.total) +
@@ -751,7 +795,8 @@
     $('handleIn').style.left = (c.a / D * 100) + '%';
     $('handleOut').style.left = (c.b / D * 100) + '%';
     $('trimTitle').textContent = 'Trim clip ' + (i + 1);
-    $('trimInfo').textContent = fmt(c.a) + ' to ' + fmt(c.b) + ' of ' + (S.sources.length > 1 ? src.name + ' (' + fmt(D) + ')' : fmt(D));
+    $('trimInfo').textContent = fmt(c.a) + ' to ' + fmt(c.b) + ' of ' + (S.sources.length > 1 ? src.name + ' (' + fmt(D) + ')' : fmt(D)) +
+      (spd(c) !== 1 ? ' · plays at ' + fmtSpeed(spd(c)) + ', ' + fmt(outLen(c)) : '');
     updatePlayhead();
   }
   function updatePlayhead() {
@@ -809,7 +854,7 @@
       else if (mode === 'out') { setClipTime(c, 'b', v); invalidate(); renderSeq(); renderTrim(); seek(Math.max(layout().rows[i].start, layout().rows[i].end - 0.001)); }
       else {
         const r = layout().rows[i];
-        seek(r.start + clamp(v, c.a, c.b - 0.001) - c.a);
+        seek(r.start + (clamp(v, c.a, c.b - 0.001) - c.a) / spd(c));
       }
     }
     bar.addEventListener('pointerdown', e => {
@@ -840,6 +885,11 @@
     requestDraw();
   }
   if (window.ResizeObserver) new ResizeObserver(sizeStage).observe($('videoArea'));
+  // The workspace fills the window under the header (style.css reads --hdr-h).
+  const hdr = document.querySelector('.header');
+  const setHdr = () => document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px');
+  setHdr();
+  if (window.ResizeObserver) new ResizeObserver(setHdr).observe(hdr);
   window.addEventListener('resize', sizeStage);
 
   let drawQueued = false;
@@ -966,6 +1016,7 @@
     S.cur = loc.i;
     const v = srcOf(loc.c.src).el;
     v.currentTime = loc.srcT;
+    v.playbackRate = spd(loc.c);
     v.play().catch(() => {});
     requestAnimationFrame(tick);
   }
@@ -983,22 +1034,24 @@
     const r = L.rows[S.cur];
     if (!r) { pause(); return; }
     const src = srcOf(r.c.src), v = src.el;
-    const lead = 0.5 / (src.fps || 30);
+    const lead = 0.5 * spd(r.c) / (src.fps || 30);
     if (v.currentTime >= r.c.b - lead || v.ended) {
       const n = L.rows[S.cur + 1];
       if (!n) { pause(); S.t = L.total; updatePlayhead(); requestDraw(); return; }
       S.cur = n.i;
       if (n.c.src === r.c.src && Math.abs(n.c.a - v.currentTime) < 0.06) {
-        // The next clip carries straight on: keep playing.
+        // The next clip carries straight on: keep playing, at its own speed.
+        v.playbackRate = spd(n.c);
       } else {
         v.pause();
         const nv = srcOf(n.c.src).el;
         nv.currentTime = n.c.a;
+        nv.playbackRate = spd(n.c);
         nv.play().catch(() => {});
       }
       S.t = n.start;
     } else {
-      S.t = clamp(r.start + (v.currentTime - r.c.a), r.start, r.end);
+      S.t = clamp(r.start + (v.currentTime - r.c.a) / spd(r.c), r.start, r.end);
     }
     updatePlayhead();
     drawStage();
@@ -1129,6 +1182,83 @@
     return out;
   }
 
+  /* Speed without the chipmunk: WSOLA (waveform-similarity overlap-add).
+     Windows of the clip's sound are laid down at the output's pace and each one
+     is taken from where, within a short search, it best continues the last, so
+     the pitch stays as filmed (as the browser's own preview plays it).
+     chans: one Float32Array per channel. Returns the same at length n / speed. */
+  function timeStretch(chans, speed) {
+    const n = chans[0].length, outN = Math.max(1, Math.round(n / speed));
+    const N = 1024, Hs = N / 2, TOL = 256, L = Hs;
+    const out = chans.map(() => new Float32Array(outN));
+    if (n < N * 2) {                      // too short to stretch: resample it
+      chans.forEach((x, ch) => { for (let i = 0; i < outN; i++) out[ch][i] = x[Math.min(n - 1, Math.floor(i * speed))]; });
+      return out;
+    }
+    const w = new Float32Array(N);
+    for (let i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);   // periodic Hann: 50% overlap sums to 1
+    const mono = new Float32Array(n);
+    for (const x of chans) for (let i = 0; i < n; i++) mono[i] += x[i] / chans.length;
+    let prev = 0;
+    for (let k = 0, o = 0; o < outN; k++, o += Hs) {
+      let pos = Math.round(k * Hs * speed);
+      if (k > 0) {
+        // The natural continuation of the last window, and the best match near pos.
+        const nat = prev + Hs;
+        let best = pos, bestC = -Infinity;
+        const lo = Math.max(0, pos - TOL), hi = Math.min(n - N, pos + TOL);
+        for (let p = lo; p <= hi; p += 2) {
+          let c = 0;
+          for (let j = 0; j < L; j += 4) { const a = nat + j < n ? mono[nat + j] : 0; c += a * mono[p + j]; }
+          if (c > bestC) { bestC = c; best = p; }
+        }
+        pos = best;
+      }
+      pos = clamp(pos, 0, n - N);
+      for (let ch = 0; ch < chans.length; ch++) {
+        const x = chans[ch], y = out[ch];
+        for (let j = 0; j < N && o + j < outN; j++) y[o + j] += x[pos + j] * w[j];
+      }
+      prev = pos;
+    }
+    // The first half window has no partner overlapping it: lift it back up.
+    for (const y of out) for (let j = 0; j < Hs && j < outN; j++) y[j] /= Math.max(w[j], 0.05);
+    return out;
+  }
+  // A clip's sound as one block per channel, gaps in the source filled with silence.
+  async function gatherClipAudio(mb, at, a, b, check) {
+    const sink = new mb.AudioBufferSink(at);
+    let sr = 0, chCount = 0, parts = [], have = 0;
+    let cursor = a;
+    for await (const wb of sink.buffers(a, b)) {
+      check();
+      const buf = wb.buffer;
+      if (!sr) { sr = buf.sampleRate; chCount = buf.numberOfChannels; }
+      if (wb.timestamp > cursor + 2 / sr) {
+        const gap = Math.round((Math.min(wb.timestamp, b) - cursor) * sr);
+        if (gap > 0) { parts.push({ gap }); have += gap; cursor += gap / sr; }
+      }
+      const s0 = clamp(Math.round((cursor - wb.timestamp) * sr), 0, buf.length);
+      const s1 = clamp(Math.round((b - wb.timestamp) * sr), 0, buf.length);
+      if (s1 - s0 < 1) continue;
+      const chans = [];
+      for (let ch = 0; ch < chCount; ch++) chans.push(buf.getChannelData(Math.min(ch, buf.numberOfChannels - 1)).slice(s0, s1));
+      parts.push({ chans }); have += s1 - s0;
+      cursor = wb.timestamp + s1 / sr;
+    }
+    if (!sr) return null;
+    const total = Math.max(have, Math.round((b - a) * sr));
+    const chans = [];
+    for (let ch = 0; ch < chCount; ch++) chans.push(new Float32Array(total));
+    let at0 = 0;
+    for (const p of parts) {
+      if (p.gap) { at0 += p.gap; continue; }
+      for (let ch = 0; ch < chCount; ch++) chans[ch].set(p.chans[ch], at0);
+      at0 += p.chans[0].length;
+    }
+    return { sr, chans };
+  }
+
   async function exportVideo() {
     if (S.exporting || !S.clips.length) return;
     if (!('VideoEncoder' in window)) {
@@ -1207,7 +1337,7 @@
           const outTimes = [];
           while (k < nFrames && (grid[k] < r.end - EPS || r === L.rows[L.rows.length - 1])) {
             const T = grid[k];
-            times.push(clamp(r.c.a + (T - r.start), r.c.a, Math.max(r.c.a, r.c.b - 1e-6)));
+            times.push(clamp(r.c.a + (T - r.start) * spd(r.c), r.c.a, Math.max(r.c.a, r.c.b - 1e-6)));
             outTimes.push(T);
             k++;
           }
@@ -1241,7 +1371,22 @@
           check();
           const clipEnd = Math.min(r.end, end);
           const at = tracks[r.c.src].at;
-          if (at) {
+          if (at && spd(r.c) !== 1) {
+            // A sped-up or slowed clip: stretch its sound to the clip's new length.
+            const got = await gatherClipAudio(mb, at, r.c.a, r.c.b, check);
+            if (got) {
+              const st = timeStretch(got.chans, spd(r.c));
+              const len = st[0].length, step = got.sr;   // add a second at a time
+              for (let o = 0; o < len; o += step) {
+                check();
+                const m = Math.min(step, len - o);
+                const ab = new AudioBuffer({ length: m, numberOfChannels: st.length, sampleRate: got.sr });
+                st.forEach((y, ch) => ab.copyToChannel(y.subarray(o, o + m), ch));
+                await aSrc.add(ab);
+              }
+              written += len / got.sr;
+            }
+          } else if (at) {
             const sink = new mb.AudioBufferSink(at);
             let cursor = r.c.a;   // source second reached so far
             for await (const wb of sink.buffers(r.c.a, r.c.b)) {

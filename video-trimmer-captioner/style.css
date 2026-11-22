@@ -9,7 +9,6 @@ body.light {
 }
 
 *, *::before, *::after { box-sizing: border-box; min-width: 0; }
-html, body { height: 100%; }
 body {
   margin: 0;
   font-family: 'DM Sans', system-ui, sans-serif;
@@ -18,7 +17,7 @@ body {
   color: var(--text);
   background: var(--bg);
   transition: background 0.25s, color 0.25s;
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -27,7 +26,7 @@ body {
 .header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 22px; background: var(--panel); border-bottom: 1px solid var(--border);
-  flex-shrink: 0; gap: 16px; box-shadow: var(--shadow); z-index: 10;
+  flex-shrink: 0; gap: 16px; box-shadow: var(--shadow); z-index: 10; margin-bottom: 0;
 }
 .header-left { display: flex; align-items: center; gap: 14px; }
 .logo { margin: 0; line-height: inherit; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; }
@@ -40,8 +39,12 @@ body {
 .btn-theme:hover { border-color: var(--accent); color: var(--text); }
 
 /* ── DROP ZONE ── */
+/* Full screen: the tool fills the window under the header, the footer is a
+   short scroll below. --hdr-h is the header's height, kept by script.js. */
 #dropZone {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - var(--hdr-h, 61px) - 56px);
+  min-height: calc(100dvh - var(--hdr-h, 61px) - 56px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 12px; margin: 28px; padding: 24px; border: 2px dashed var(--border); border-radius: 16px;
   background: var(--card-bg); cursor: pointer; position: relative; overflow: hidden; text-align: center;
   transition: background-color 0.2s, border-color 0.2s;
@@ -70,7 +73,7 @@ body {
 }
 
 /* ── WORKSPACE ── */
-#workspace { flex: 1; display: none; overflow: hidden; min-height: 0; }
+#workspace { display: none; overflow: hidden; height: calc(100vh - var(--hdr-h, 61px)); height: calc(100dvh - var(--hdr-h, 61px)); }
 #workspace.active { display: grid; grid-template-columns: 350px 1fr; }
 
 /* ── SIDEBAR ── */
@@ -240,18 +243,21 @@ body {
 .out-info .oi-meta { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); }
 .btn-download { white-space: nowrap; flex-shrink: 0; padding: 8px 14px; }
 
+/* The coffee button rests in the bottom-right corner: keep it clear. */
+@media (min-width: 901px) {
+  .timeline-wrap, .controls-bar, .out-strip { padding-right: 84px; }
+}
+
 /* Footer */
-.page-footer { flex-shrink: 0; padding: 0 20px 16px; }
+.page-footer { flex-shrink: 0; padding: 16px 20px 16px; }
 .page-footer-info { padding: 14px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; }
 .page-footer-info p { margin: 0 0 10px; color: var(--muted); line-height: 1.55; font-size: 0.82rem; }
 .page-footer-info a { color: var(--accent); text-decoration: none; }
 
 /* Phones and narrow windows: the page scrolls, the player comes first */
 @media (max-width: 900px) {
-  body { overflow: auto; height: auto; }
-  html { height: auto; }
   #dropZone { margin: 16px; min-height: 70vh; }
-  #workspace.active { display: flex; flex-direction: column; overflow: visible; }
+  #workspace.active { display: flex; flex-direction: column; overflow: visible; height: auto; }
   .main-content { order: 1; overflow: visible; }
   .video-area { flex: none; height: 56vw; min-height: 200px; max-height: 60vh; }
   .sidebar { order: 2; border-right: none; border-top: 1px solid var(--border); overflow: visible; }
@@ -261,8 +267,10 @@ body {
   .timeline-wrap { padding: 8px 12px 12px; }
   .controls-bar { flex-wrap: wrap; }
   .keys-tip { display: none; }
-  #workspace.active ~ .page-footer { padding-top: 16px; }
 }
 
 /* SharedSeg draws counts in DM Mono; these options are words. */
 .sidebar .seg-count .seg-btn { font-family: 'DM Sans', system-ui, sans-serif; font-variant-numeric: normal; }
+
+/* Clip speed */
+.clip-speed .speed-sel { width: 76px; font-size: .76rem; padding: 3px 8px; --sel-pad: 24px; --sel-chev: 7px; }
