@@ -36,7 +36,7 @@ const LABELS = {
   'Property': 'Properti', 'Graphing': 'Grafik', 'Brainstorming Tool': 'Brainstorming', '3D': '3D', 'CAD': 'CAD',
   'Geoarbitrage': 'Geoarbitrase', 'Randomiser': 'Pengacak', 'Decision': 'Keputusan',
   'Time Zones': 'Zona waktu', 'Meetings': 'Rapat', 'Groceries': 'Belanja dapur', 'Pricing': 'Harga',
-  'Superannuation': 'Superannuation',
+  'Superannuation': 'Superannuation', 'Video': 'Video', 'Captions': 'Subtitle',
 };
 
 // ---- Each card, by its data-anim key (the tool's folder). `desc` is written for an
@@ -83,6 +83,7 @@ const CARDS = {
   },
   'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, name: 'Kalkulator Gaji Bersih dan Pajak Penghasilan', desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, termasuk 39 negara bagian AS dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, lalu baca penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
   'videotogif': { desc: 'Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat <em>tool</em> ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.' },
+  'video-trimmer-captioner': { desc: 'Potong bagian yang membosankan, sambungkan yang bagus, dan <em>subtitle</em>-nya ikut menyesuaikan setiap potongan. Edit dan beri teks videomu di perangkatmu sendiri, tanpa diunggah ke mana pun.' },
   'randompicker': { desc: 'Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.' },
   'worldclock': { desc: 'Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat yang terus berjalan, lengkap dengan <em>daylight saving</em>.' },
   'eggprice': { desc: 'Yang seharusnya kamu bayar adalah proteinnya, bukan kalsium cangkangnya, jadi hitung harga tiap kemasan telur per gram isinya.' },

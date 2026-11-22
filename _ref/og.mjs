@@ -56,6 +56,7 @@ export const CARDS = [
   ['rentvsownhouse-sensitivity-id', 'rentvsownhouse/sensitivity/id/'],
   ['sankeycreator', 'sankeycreator/'],
   ['valuateeverything', 'valuateeverything/'],
+  ['video-trimmer-captioner', 'video-trimmer-captioner/'],
   ['videotogif', 'videotogif/'],
   ['wemconstraint-checker', 'wemconstraint-checker/'],
   ['worldclock', 'worldclock/'],
