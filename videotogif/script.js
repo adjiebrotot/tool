@@ -828,4 +828,10 @@
      video is loaded). */
   if (window.Persist) Persist.init('videotogif');
 
+  /* The workspace fills the window under the header (style.css reads --hdr-h). */
+  const hdr = document.querySelector('.header');
+  const setHdr = () => document.documentElement.style.setProperty('--hdr-h', hdr.offsetHeight + 'px');
+  setHdr();
+  if (window.ResizeObserver) new ResizeObserver(setHdr).observe(hdr);
+
 })();

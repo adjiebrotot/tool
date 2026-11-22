@@ -1,0 +1,23 @@
+1
+00:00:00,300 --> 00:00:01,900
+Part A. Every landing goes boop.
+
+2
+00:00:02,100 --> 00:00:03,800
+Captions follow the footage they sit on.
+
+3
+00:00:04,200 --> 00:00:05,900
+Part B. Split at 4 s and 8 s, then delete it.
+
+4
+00:00:06,100 --> 00:00:07,800
+Its captions leave with it.
+
+5
+00:00:08,200 --> 00:00:09,900
+Part C. Move it first to swap the order.
+
+6
+00:00:10,100 --> 00:00:11,700
+Then export the new cut.

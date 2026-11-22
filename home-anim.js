@@ -312,6 +312,22 @@
       '<g class="gb oc"><rect class="fg sw t" x="70" y="74" width="34" height="18" rx="6"/>' +
         '<text class="fw" x="87" y="87" font-size="11">GIF</text></g>',
 
+    // The playhead plays across two clips (the frame's caption takes the colour of the clip under it); scissors
+    // snip the mint clip, the gold middle lifts out with its caption and the rest slides up, playhead and caption
+    // riding along; then it all rewinds. The still frame is the cut: three clips, scissors open over the gap.
+    'video-trimmer-captioner':
+      '<rect class="w" x="20" y="12" width="48" height="38" rx="6"/><path class="fm sm t" d="M40 20L50 26L40 32Z"/>' +
+      '<path class="ca oc sb" d="M32 39H56M36 44.5H52"/><path class="cb oc sm" d="M32 39H56M36 44.5H52"/>' +
+      '<rect class="fb" x="14" y="70" width="39" height="16" rx="4"/><path class="sb" stroke-width="4" d="M19 94H48"/>' +
+      '<g class="b1 oc"><rect class="fg" x="56" y="70" width="24" height="16" rx="4"/><path class="sg" stroke-width="4" d="M61 94H75"/></g>' +
+      '<g class="b2"><rect class="fm" x="84" y="70" width="22" height="16" rx="4"/><path class="sm" stroke-width="4" d="M89 94H101"/></g>' +
+      '<rect class="wb fm" x="56" y="70" width="50" height="16" rx="4"/>' +
+      '<g class="sl"><circle class="w t" cx="74" cy="47" r="3.5"/><path class="sB" d="M76.1 49.8L82 58L86 68"/></g>' +
+      '<g class="sr"><circle class="w t" cx="90" cy="47" r="3.5"/><path class="sB" d="M87.9 49.8L82 58L78 68"/></g>' +
+      '<circle class="fg" cx="82" cy="58" r="2"/>' +
+      '<g class="ph"><path class="sw" stroke-width="5" d="M30 66V100"/><path class="sB t" d="M30 66V100"/>' +
+        '<path class="fB sB t" d="M26 61H34L30 66Z"/></g>',
+
     // An egg wobbles, its top lifts to show the yolk; a price tag swings beside it.
     eggprice:
       '<ellipse class="fb" cx="46" cy="101" rx="20" ry="3" fill-opacity=".14"/><g class="eg ob">' +
@@ -467,6 +483,19 @@
     videotogif: '&{--d:4s}&.fs{animation-name:taVg1}&.gb{animation-name:taVg2}' +
       '@keyframes taVg1{0%{transform:none}40%,50%{transform:translateX(-28px)}90%,100%{transform:translateX(-56px)}}' +
       '@keyframes taVg2{0%,36%,56%,86%,100%{transform:none}45%,95%{transform:scale(1.12)}}',
+
+    'video-trimmer-captioner': '&{--d:7s}&.ph{animation-name:taVt1}&.sl,&.sr{transform-box:view-box;transform-origin:82px 58px}' +
+      '&.sl{animation-name:taVt2}&.sr{animation-name:taVt3}&.wb{opacity:0;animation-name:taVt4}&.b1{animation-name:taVt5}' +
+      '&.b2{animation-name:taVt6}&.ca{animation-name:taVt7}&.cb{opacity:0;animation-name:taVt8}' +
+      '@keyframes taVt1{0%,4%{transform:translateX(-12px)}28%,52%{transform:translateX(66px)}60%{transform:translateX(36px)}' +
+        '64%,74%{transform:translateX(38px)}90%,100%{transform:translateX(-12px)}}' +
+      '@keyframes taVt2{0%,32%,40%,100%{transform:none}36%{transform:rotate(20deg)}}' +
+      '@keyframes taVt3{0%,32%,40%,100%{transform:none}36%{transform:rotate(-20deg)}}' +
+      '@keyframes taVt4{0%,35%{opacity:1}36%,93.5%{opacity:0}94.5%,100%{opacity:1}}' +
+      '@keyframes taVt5{0%,40%{transform:none;opacity:1}52%,80%{transform:translate(-4px,-14px) rotate(-8deg);opacity:0}93%,100%{transform:none;opacity:1}}' +
+      '@keyframes taVt6{0%,52%{transform:none}60%{transform:translateX(-30px)}64%,76%{transform:translateX(-28px)}88%,100%{transform:none}}' +
+      '@keyframes taVt7{0%,13%,83%,100%{opacity:1;transform:none}17%,79%{opacity:0;transform:scaleX(.4)}}' +
+      '@keyframes taVt8{0%,13%,83%,100%{opacity:0;transform:scaleX(.4)}17%,79%{opacity:1;transform:none}}',
 
     eggprice: '&{--d:5s}&.eg{animation-name:taEp1}&.tg{animation-name:taEp3}' +
       '&.cap{transform-box:fill-box;transform-origin:0 100%;transform:translate(-2px,-14px) rotate(-22deg);animation-name:taEp2}' +
