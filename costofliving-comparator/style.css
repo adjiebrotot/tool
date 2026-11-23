@@ -212,7 +212,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .gitc-hint:hover,.gitc-hint:focus-visible{border-style:solid;border-color:var(--accent);background:var(--bg-subtle);color:var(--text);}
 .gitc-hint .gitc-ico{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--accent-strong);}
 .gitc-hint strong{color:var(--text);font-weight:600;}
-.gitc-hint .gitc-go{color:var(--accent-strong);font-weight:700;white-space:nowrap;}
+.gitc-hint .gitc-text{flex:1;min-width:0;overflow-wrap:anywhere;}
+.gitc-hint .gitc-go{color:var(--accent-strong);font-weight:700;}
 .gitc-hint:hover .gitc-go{text-decoration:underline;}
 .gitc-hint.compact{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 7px;font-size:.72rem;font-weight:600;color:var(--accent-strong);white-space:nowrap;}
 .gitc-hint.compact .gitc-ico{width:12px;height:12px;margin-top:0;}
