@@ -9,6 +9,9 @@
    The Download menu saves a picture of the view, or the model itself as
    STEP, STL or GLB (export.js), so the viewer converts too.
 
+   A file with levels or layers (STEP layers, DGN levels; model.js gathers
+   them) gets a Levels list on the stage: a legend that shows or hides each.
+
    window.__o3v reports the last load (state, stats, size, warnings) for the
    audit harness in _audit/run.mjs. */
 
@@ -31,6 +34,8 @@ const dom = {
   measureHint: $('measureHint'), measureList: $('measureList'), measureFoot: $('measureFoot'),
   measureUndo: $('measureUndo'), measureClear: $('measureClear'), measureTip: $('measureTip'), themeToggle: $('themeToggle'), header: document.querySelector('.header'),
   navPad: $('navPad'), navToggle: $('navToggle'), navBody: $('navBody'),
+  infoCard: $('infoCard'), levelPad: $('levelPad'), levelToggle: $('levelToggle'), levelBody: $('levelBody'), levelCount: $('levelCount'),
+  levelList: $('levelList'), levelShown: $('levelShown'), levelAll: $('levelAll'), levelNone: $('levelNone'), levelTip: $('levelTip'),
 };
 
 const hook = window.__o3v = { state: 'idle', model: null, error: null, viewer: null, loads: 0 };
@@ -97,6 +102,7 @@ async function open(list) {
     if (ruler) { ruler.clear(); ruler.setUnit(model.units); }
 
     showInfo(model);
+    showLevels(model);
     showExports(model);
     showNote(model.warnings, false);
     hook.loads++;
@@ -130,6 +136,7 @@ function summary(model) {
     stats: Object.assign({}, model.stats),
     warnings: model.warnings.slice(),
     animations: model.animations.length,
+    levels: model.levels.map(l => ({ name: l.name, none: l.none, parts: l.parts, colour: l.colour, shown: levelOn(l) })),
   };
 }
 
@@ -338,6 +345,106 @@ dom.playBtn.addEventListener('click', () => {
   setPlayLabel(viewer.playing);
 });
 
+// ── Levels: the file's levels or layers, as a legend that shows and hides them ──
+/* Each level's objects are shown or hidden as a whole; the ruler snaps to
+   what is shown, and Download saves what is shown. Which levels are on is
+   kept for the model on screen only: the next model opens with all shown. */
+const levelOn = l => l.objects.some(o => o.visible);
+const levelLabel = l => l.none ? 'On no level' : /^\d+$/.test(l.name) ? 'Level ' + l.name : l.name;
+
+function showLevels(model) {
+  const list = model.levels || [];
+  dom.levelPad.hidden = !list.length;
+  if (!list.length) { dom.levelList.replaceChildren(); sizeInfo(); return; }
+  const named = list.filter(l => !l.none).length;
+  dom.levelCount.textContent = String(named);
+  dom.levelList.replaceChildren(...list.map((l, i) => {
+    const li = document.createElement('li');
+    li.className = 'lv-row' + (l.none ? ' none' : '');
+    li.dataset.level = String(i);
+    const label = document.createElement('label');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = true;
+    box.dataset.level = String(i);
+    box.setAttribute('data-no-persist', '');
+    const sw = document.createElement('span');
+    sw.className = 'lv-swatch';
+    if (l.colour) sw.style.background = l.colour;
+    sw.setAttribute('aria-hidden', 'true');
+    const name = document.createElement('span');
+    name.className = 'lv-name';
+    name.textContent = levelLabel(l);
+    name.title = levelLabel(l) + ': ' + NUM.format(l.parts) + ' part' + (l.parts === 1 ? '' : 's') + (l.colour ? ', ' + l.colour.toUpperCase() : '');
+    const n = document.createElement('span');
+    n.className = 'lv-n';
+    n.textContent = NUM.format(l.parts);
+    label.append(box, sw, name, n);
+    const only = document.createElement('button');
+    only.type = 'button';
+    only.className = 'btn-bare lv-only';
+    only.dataset.only = String(i);
+    only.textContent = 'Only';
+    only.title = 'Show ' + levelLabel(l) + ' alone';
+    li.append(label, only);
+    return li;
+  }));
+  dom.levelTip.setAttribute('data-tip', 'The ' + (model.formats.includes('STEP') ? 'layers (levels) the STEP file' : 'levels the file') + ' puts its parts on, each in the colour most of its parts are drawn in. Untick one to hide it; Only shows that level alone. Measure and Download take what is shown.');
+  syncLevels();
+  sizeInfo();
+}
+
+function syncLevels() {
+  if (!current) return;
+  const list = current.levels;
+  let on = 0;
+  list.forEach((l, i) => {
+    const shown = levelOn(l);
+    if (shown) on++;
+    const box = dom.levelList.querySelector('input[data-level="' + i + '"]');
+    if (box) box.checked = shown;
+    const row = box && box.closest('.lv-row');
+    if (row) row.classList.toggle('off', !shown);
+  });
+  dom.levelShown.textContent = on + ' of ' + list.length;
+  dom.levelAll.disabled = on === list.length;
+  dom.levelNone.disabled = on === 0;
+  if (hook.model) hook.model.levels = summary(current).levels;
+}
+
+function setLevels(fn) {
+  if (!current || !viewer) return;
+  current.levels.forEach((l, i) => { const v = !!fn(l, i); for (const o of l.objects) o.visible = v; });
+  syncLevels();
+  viewer.request();
+}
+hook.setLevels = names => setLevels(l => names.includes(l.name));
+
+dom.levelList.addEventListener('change', e => {
+  const box = e.target.closest('input[data-level]');
+  if (!box || !current) return;
+  const i = +box.dataset.level;
+  setLevels((l, k) => (k === i ? box.checked : levelOn(l)));
+});
+dom.levelList.addEventListener('click', e => {
+  const b = e.target.closest('[data-only]');
+  if (b) { const i = +b.dataset.only; setLevels((l, k) => k === i); }
+});
+dom.levelAll.addEventListener('click', () => setLevels(() => true));
+dom.levelNone.addEventListener('click', () => setLevels(() => false));
+
+function setLevelsOpen(open) {
+  dom.levelBody.hidden = !open;
+  dom.levelToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  dom.levelToggle.title = open ? 'Hide the levels' : 'Show the levels: a legend of the file\'s levels, to show or hide each';
+}
+dom.levelToggle.addEventListener('click', () => setLevelsOpen(dom.levelBody.hidden));
+// Open on a wide screen; on a phone it would cover the model, so it waits to be asked for.
+setLevelsOpen(!window.matchMedia('(max-width: 720px)').matches);
+
+// The levels stop above the info card, which shares the left side.
+function sizeInfo() { dom.stage.style.setProperty('--o3v-info-h', (dom.infoCard.offsetHeight || 0) + 'px'); }
+
 // ── Measure (the ruler) ──────────────────────────────────────────────────
 function setMeasuring(on) {
   if (!ruler) return;
@@ -462,6 +569,8 @@ const exportCore = () => exporter || (exporter = import('./export.js').catch(e =
 async function saveAs(kind) {
   if (!viewer || !current || busy) return;
   const model = current;
+  const lvOn = model.levels.filter(levelOn).length;
+  if (model.levels.length && !lvOn) { showNote(['Every level is hidden, so there is nothing to save. Tick the levels to save in the Levels list.'], true); return; }
   busy = true;
   setBusy('Writing the ' + { step: 'STEP', stl: 'STL', glb: 'glTF' }[kind] + ' file…');
   try {
@@ -490,6 +599,7 @@ async function saveAs(kind) {
       }
       if (!known) extra.push(model.formats.join(' and ') + ' names no unit, so the numbers are saved as they are (often millimetres already).');
     }
+    if (lvOn < model.levels.length) extra.unshift('Only the levels shown were saved (' + lvOn + ' of ' + model.levels.length + ').');
     save(blob, name + '.' + kind);
     if (extra.length) showNote(extra, false);
   } catch (err) {
@@ -672,6 +782,7 @@ dom.themeToggle.addEventListener('click', () => {
 function sizeToHeader() {
   document.documentElement.style.setProperty('--o3v-header', dom.header.offsetHeight + 'px');
   if (dom.navPad) sizeNav();
+  if (dom.infoCard) sizeInfo();
 }
 window.addEventListener('resize', sizeToHeader);
 sizeToHeader();

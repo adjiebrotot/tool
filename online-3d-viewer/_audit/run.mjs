@@ -149,6 +149,16 @@ function judge(name, c, r, secs, errors) {
     const hit = r.colours.some(h => [h >> 16 & 255, h >> 8 & 255, h & 255].every((v, i) => Math.abs(v - want[i]) <= 3));
     check(tag + 'colour from the file', hit, 'colours ' + r.colours.map(h => '#' + h.toString(16).padStart(6, '0')).join(' '));
   }
+  if (e.levels) {
+    // [name, parts, '#rrggbb'] per level, in the list's order; colours within 2 per channel.
+    const got = (m.levels || []).filter(l => !l.none);
+    const hex = h => h ? [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) : null;
+    const same = got.length === e.levels.length && e.levels.every(([name, parts, colour], i) => {
+      const g = got[i], a = hex(g.colour), b = hex(colour);
+      return g.name === name && g.parts === parts && (a && b ? a.every((v, k) => Math.abs(v - b[k]) <= 2) : a === b);
+    });
+    check(tag + 'levels (name, parts, colour)', same && !(m.levels || []).some(l => l.none), JSON.stringify(m.levels));
+  }
   if ('textures' in e && e.textures) check(tag + 'textures decoded', r.texturesLoaded === r.texturesTotal && r.texturesTotal >= e.textures, r.texturesLoaded + ' of ' + r.texturesTotal);
   if (e.warning) check(tag + 'warns', m.warnings.some(w => re(e.warning).test(w)), JSON.stringify(m.warnings));
   if (e.noWarnings) check(tag + 'no warnings', m.warnings.length === 0, JSON.stringify(m.warnings));
@@ -641,7 +651,6 @@ if (!REAL_ONLY && (!ONLY || 'convert'.includes(ONLY))) {
   mb = r.success ? meshBox(r.meshes) : null;
   // OpenCascade reports colours in linear light: the file's sRGB 0.8 reads 0.604.
   check('convert: STEP → STEP keeps the solid and its colour', !!mb && sizeEq(mb.size, [30, 20, 10]) && /COLOUR_RGB\('',0\.8\d*,0\.1\d*,0\.1\d*\)/.test(step) && r.meshes[0].color && Math.abs(r.meshes[0].color[0] - ((0.8 + 0.055) / 1.055) ** 2.4) < 0.01, JSON.stringify(r.meshes && r.meshes[0] && r.meshes[0].color));
-
   // An open surface (a box missing its top) is a surface model, not a solid.
   await page.evaluate(() => {
     const m = window.__o3v.viewer.model.content.getObjectByProperty('isMesh', true);
@@ -650,6 +659,34 @@ if (!REAL_ONLY && (!ONLY || 'convert'.includes(ONLY))) {
   await saveAs('step');
   const open = await page.evaluate(() => window.__o3v.lastStep);
   check('convert: an open shell is saved as a surface model', open.solids === 0 && open.shells === 1, JSON.stringify(open));
+
+  check('levels: a STEP without layers shows no Levels list', await page.evaluate(() => document.getElementById('levelPad').hidden));
+
+  // Levels: a part whose two solids lie on two STEP layers.
+  await openFx('step/layers.stp');
+  const lv = () => page.evaluate(() => ({
+    shown: window.__o3v.model.levels.map(l => l.shown),
+    rows: [...document.querySelectorAll('#levelList .lv-row')].map(r => r.querySelector('.lv-name').textContent + '|' + r.querySelector('input').checked),
+    count: document.getElementById('levelShown').textContent,
+  }));
+  let L = await lv();
+  check('levels: the list shows both layers, checked, with the part count', await page.evaluate(() => !document.getElementById('levelPad').hidden) && JSON.stringify(L.rows) === JSON.stringify(['Insulator é|true', 'p_plant-main|true']) && L.count === '2 of 2', JSON.stringify(L));
+  check('levels: each swatch is its layer\'s colour', JSON.stringify(await page.evaluate(() => [...document.querySelectorAll('#levelList .lv-swatch')].map(s => getComputedStyle(s).backgroundColor))) === JSON.stringify(['rgb(255, 0, 0)', 'rgb(0, 102, 255)']));
+  await page.click('#levelList input[data-level="1"]');
+  L = await lv();
+  sb = stlBox((await saveAs('stl')).bytes);
+  check('levels: unticking p_plant-main hides it, and STL saves only the red box (12 triangles, 30 × 20 × 10)', JSON.stringify(L.shown) === '[true,false]' && L.count === '1 of 2' && sb.n === 12 && sizeEq(sb.size, [30, 20, 10]) && sb.lo[0] > 39, JSON.stringify(L) + ' ' + JSON.stringify(sb));
+  check('levels: …and says what was left out', await page.evaluate(() => /Only the levels shown were saved \(1 of 2\)/.test(document.getElementById('stageNoteText').textContent)));
+  await page.hover('#levelList .lv-row[data-level="1"]');
+  await page.click('#levelList [data-only="1"]');
+  L = await lv();
+  check('levels: Only shows that level alone', JSON.stringify(L.shown) === '[false,true]', JSON.stringify(L));
+  await page.click('#levelNone');
+  L = await lv();
+  await page.click('#dlBtn'); await page.click('#stlBtn');
+  check('levels: None hides all, and saving then explains instead', JSON.stringify(L.shown) === '[false,false]' && await page.evaluate(() => /Every level is hidden/.test(document.getElementById('stageNoteText').textContent)), JSON.stringify(L));
+  await page.click('#levelAll');
+  check('levels: All shows every level again', JSON.stringify((await lv()).shown) === '[true,true]');
 
   // A hole: a square plate with a square hole, one flat face with two loops.
   {

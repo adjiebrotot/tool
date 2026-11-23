@@ -333,6 +333,7 @@ export async function load(entry, ctx) {
   for (const level of [...byLevel.keys()].sort((a, b) => a - b)) {
     const g = new THREE.Group();
     g.name = 'Level ' + level;
+    g.userData.o3vLevel = String(level);   // the Levels list (model.js)
     for (const [colour, arr] of byLevel.get(level)) {
       if (!arr.length) continue;
       const geo = new THREE.BufferGeometry();
@@ -419,7 +420,7 @@ async function loadV8(entry, buffer, ctx) {
   };
   for (const g of r.groups.sort((a, b) => String(a.level).localeCompare(String(b.level), undefined, { numeric: true }))) {
     let lv = levels.get(g.level);
-    if (!lv) { lv = new THREE.Group(); lv.name = g.level; levels.set(g.level, lv); root.add(lv); }
+    if (!lv) { lv = new THREE.Group(); lv.name = g.level; lv.userData.o3vLevel = String(g.level); levels.set(g.level, lv); root.add(lv); }
     const label = g.level + (g.rgb ? ', ' + g.rgb.join(' ') : '');
     if (g.lines.length) {
       const geo = new THREE.BufferGeometry();

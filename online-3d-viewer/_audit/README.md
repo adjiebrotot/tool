@@ -37,10 +37,10 @@ render with the model).
 | 3DS | box with a material, cut short (ends in a clear state) |
 | VRML | box beside a Background sky (the sky does not set the size), VRML 1.0 (refused) |
 | USD | USDA and USDZ, Z up in millimetres (read in metres, Y up) |
-| STEP | AP214 B-rep box with a colour (colour, unit and exact triangles checked), STEP-XML (refused), garbage (refused) |
+| STEP | AP214 B-rep box with a colour (colour, unit and exact triangles checked), one part's two solids on two layers in two colours (the Levels list: names, one with an accented letter written as `\X2\`, part counts and colours), STEP-XML (refused), garbage (refused) |
 | IGES | six B-spline surfaces, not IGES (refused) |
 | Rhino 3DM | mesh + line + point in millimetres (written with rhino3dm), not 3DM (refused) |
-| DGN | MicroStation V7, written byte by byte by `make-dgn.mjs` and read back by GDAL's own DGN driver as a cross-check: a 3D box of 12 lines plus a circle in millimetres (the file's colour table, a text label noted, a deleted line ignored), a 2D plan in metres with a moved global origin (a shape, an arc, a cell holding a line string); MicroStation V8, GDAL's own test file (read by cadkit in a worker; its extents −1.958 to 6, −1 to 7, 0 to 8 m match GDAL's ODA-based reference reading, 4 text labels noted); an OLE file that is not a DGN (refused), not DGN (refused) |
+| DGN | MicroStation V7, written byte by byte by `make-dgn.mjs` and read back by GDAL's own DGN driver as a cross-check: a 3D box of 12 lines plus a circle in millimetres (the file's colour table, its levels 5 and 7 in the Levels list, a text label noted, a deleted line ignored), a 2D plan in metres with a moved global origin (a shape, an arc, a cell holding a line string); MicroStation V8, GDAL's own test file (read by cadkit in a worker; its extents −1.958 to 6, −1 to 7, 0 to 8 m match GDAL's ODA-based reference reading, 4 text labels noted); an OLE file that is not a DGN (refused), not DGN (refused) |
 | IFC | written entity by entity by `make-ifc.mjs` (no IFC library) and read by web-ifc in a worker: IFC4 wall in millimetres (an extruded rectangle, its red surface style), the same zipped as .ifczip, the same named .stp (opened as IFC by its FILE_SCHEMA, warns), IFC2X3 slab in feet through a chain of placements, a wall at site coordinates 9,000 km from the origin (exact size kept), a wall with an opening cut through it (16 vertices), a STEP part named .ifc (opened as STEP, warns), a project with no elements (refused), ifcXML (refused) |
 | Zip | an OBJ with its MTL and texture in a folder inside a .zip, with macOS junk entries |
 | Other | empty file, random bytes, a text file, an MTL alone, two models at once, a model beside a stray file, a 179,000-triangle STL (opens in seconds) |
@@ -74,7 +74,7 @@ and Shift drops it; hole centre to edge midpoint measures 25. On the STEP box,
 whose edges come from its CAD faces: a corner, a midpoint, the top face's
 centre, and the triangle diagonal inside a face snapping to nothing.
 
-The last run (fixtures, page and converter): 569 checks passed, 0 failed.
+The last run (fixtures, page and converter): 585 checks passed, 0 failed.
 
 ## 2b. The converter
 
@@ -88,7 +88,8 @@ colour round trip. STL and GLB are parsed in the harness: 12 triangles, a
 Y-up OBJ stood on Z (and as the reader turned it with Up), a 3MF in inches
 saved in millimetres (762 × 508 × 254), glTF's Y up on the GLB's root node,
 the DGN box as 7 coloured polylines in STEP and as lines in GLB (with STL
-greyed out and the reason given), the DGN V8 sample's STEP on GDAL's extents in
+greyed out and the reason given), the layers part with one level unticked saving only
+the other box as STL (and saying so), Only, None (saving then explains there is nothing shown) and All, the DGN V8 sample's STEP on GDAL's extents in
 millimetres, and the animated sample's GLB keeping its
 animation and 14 parts while the model on screen stays in view. IFC: a slab in feet
 saves its STL in millimetres (9144 × 6096 × 3048); a wall with an opening reads back in

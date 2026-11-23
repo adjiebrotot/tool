@@ -10,7 +10,10 @@
      and every mesh has normals;
    - stats counted the same way for every format: parts, triangles, unique
      vertex positions, points, line segments, materials, textures;
-   - size: the bounding box along the file's own X, Y and Z, in its unit. */
+   - size: the bounding box along the file's own X, Y and Z, in its unit;
+   - levels: the file's levels or layers (STEP layers, DGN levels), each with
+     the colour most of its parts are drawn in and the objects to show or hide,
+     from the engines' userData.o3vLevel tags. */
 
 import * as THREE from 'three';
 
@@ -49,6 +52,7 @@ export function buildModel(loaded) {
     names: parts.map(p => p.name),
     animations: parts.flatMap(p => p.animations || []),
     stats: countStats(content),
+    levels: collectLevels(content),
     warnings: warnings.slice(),
   };
 }
@@ -85,6 +89,60 @@ function prepare(object, formatId) {
     }
     o.frustumCulled = !o.isSkinnedMesh;   // a skinned mesh's box is its bind pose; never cull it away
   });
+}
+
+// ── Levels ───────────────────────────────────────────────────────────────
+
+/* A tagged object is on its level with everything under it. Parts on no
+   level, in a model that has levels, are gathered as one more entry so they
+   can be hidden too. Levels are listed in natural order (2 before 10). */
+export function collectLevels(root) {
+  const byName = new Map();
+  const loose = [];
+  const levelOf = o => { for (let p = o; p; p = p.parent) if (p.userData && p.userData.o3vLevel != null) return p; return null; };
+  root.traverse(o => {
+    const g = o.geometry;
+    if (!(o.isMesh || o.isLine || o.isPoints) || !g || !g.getAttribute('position')) return;
+    const holder = levelOf(o);
+    if (!holder) { loose.push(o); return; }
+    const name = String(holder.userData.o3vLevel);
+    if (!byName.has(name)) byName.set(name, { name, objects: new Set(), drawables: [] });
+    const lv = byName.get(name);
+    lv.objects.add(holder);
+    lv.drawables.push(o);
+  });
+  if (!byName.size) return [];
+  const list = [...byName.values()].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  if (loose.length) list.push({ name: '', none: true, objects: new Set(loose), drawables: loose });
+  return list.map(lv => ({
+    name: lv.name,
+    none: !!lv.none,
+    objects: [...lv.objects],
+    parts: lv.drawables.length,
+    colour: mainColour(lv.drawables),
+  }));
+}
+
+/* The colour that covers most of a level (by triangles or segments), as
+   '#rrggbb' in sRGB; null when that is the page's model colour (no colour
+   in the file). */
+function mainColour(drawables) {
+  const weight = new Map();
+  for (const o of drawables) {
+    const g = o.geometry;
+    const n = g.index ? g.index.count : g.getAttribute('position').count;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    const groups = Array.isArray(o.material) && g.groups.length ? g.groups : [{ start: 0, count: n, materialIndex: 0 }];
+    for (const gr of groups) {
+      const m = mats[gr.materialIndex || 0];
+      if (!m) continue;
+      const key = m.userData && m.userData.o3vDefault ? '' : m.vertexColors || !m.color ? 'mixed' : '#' + m.color.getHexString();
+      weight.set(key, (weight.get(key) || 0) + Math.max(1, Math.min(gr.count, n)));
+    }
+  }
+  let best = '', most = -1;
+  for (const [k, w] of weight) if (w > most) { best = k; most = w; }
+  return best && best !== 'mixed' ? best : null;
 }
 
 // ── Stats ────────────────────────────────────────────────────────────────
