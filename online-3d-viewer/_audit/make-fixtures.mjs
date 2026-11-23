@@ -460,7 +460,10 @@ addCase('usda', [write('usd/box.usda', usda)], USD_EXPECT);
 addCase('usdz', [write('usd/box.usdz', Buffer.from(fflate.zipSync({ 'box.usda': [fflate.strToU8(usda), { level: 0 }] }, { mtime: new Date('2026-01-01T00:00:00Z') })))], USD_EXPECT);
 
 // ═════════════════════════════ STEP ══════════════════════════════════════
-function stepBox() {
+/* boxes: the solids of the one part, each moved by `at`, in its colour and,
+   with `layer`, on that layer (PRESENTATION_LAYER_ASSIGNMENT, as MicroStation
+   writes its levels). */
+function stepBox(boxes = [{ at: [0, 0, 0], colour: RED }]) {
   const lines = [];
   let n = 0;
   const e = s => { lines.push('#' + (++n) + '=' + s + ';'); return '#' + n; };
@@ -481,15 +484,17 @@ function stepBox() {
   const unc = e("UNCERTAINTY_MEASURE_WITH_UNIT(LENGTH_MEASURE(1.E-07)," + mm + ",'distance_accuracy_value','')");
   const ctx = e('(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((' + unc + '))GLOBAL_UNIT_ASSIGNED_CONTEXT((' + mm + ',' + rad + ',' + sr + "))REPRESENTATION_CONTEXT('Box','3D'))");
   const origin = e("AXIS2_PLACEMENT_3D(''," + pt([0, 0, 0]) + ',' + dir([0, 0, 1]) + ',' + dir([1, 0, 0]) + ')');
-  const vtx = V.map(p => e("VERTEX_POINT(''," + pt(p) + ')'));
+  const solidAt = at => {
+  const W = V.map(p => p.map((v, k) => v + at[k]));
+  const vtx = W.map(p => e("VERTEX_POINT(''," + pt(p) + ')'));
   const edges = new Map();
   const edge = (a, b) => {
     const key = Math.min(a, b) + '-' + Math.max(a, b);
     if (!edges.has(key)) {
       const [s, t] = [Math.min(a, b), Math.max(a, b)];
-      const d = sub(V[t], V[s]);
+      const d = sub(W[t], W[s]);
       const len = Math.hypot(...d);
-      const line = e("LINE(''," + pt(V[s]) + ',' + e("VECTOR(''," + dir(norm(d)) + ',' + r(len) + ')') + ')');
+      const line = e("LINE(''," + pt(W[s]) + ',' + e("VECTOR(''," + dir(norm(d)) + ',' + r(len) + ')') + ')');
       edges.set(key, { id: e("EDGE_CURVE(''," + vtx[s] + ',' + vtx[t] + ',' + line + ',.T.)'), s });
     }
     const ed = edges.get(key);
@@ -499,24 +504,38 @@ function stepBox() {
     const loop = e("EDGE_LOOP('',(" + q.map((a, i) => edge(a, q[(i + 1) % 4])).join(',') + '))');
     const bound = e("FACE_OUTER_BOUND(''," + loop + ',.T.)');
     const nrm = faceNormal(q[0], q[1], q[2]);
-    const plane = e("PLANE(''," + e("AXIS2_PLACEMENT_3D(''," + pt(V[q[0]]) + ',' + dir(nrm) + ',' + dir(norm(sub(V[q[1]], V[q[0]]))) + ')') + ')');
+    const plane = e("PLANE(''," + e("AXIS2_PLACEMENT_3D(''," + pt(W[q[0]]) + ',' + dir(nrm) + ',' + dir(norm(sub(W[q[1]], W[q[0]]))) + ')') + ')');
     return e("ADVANCED_FACE('',(" + bound + ')' + ',' + plane + ',.T.)');
   });
   const shell = e("CLOSED_SHELL('',(" + faceIds.join(',') + '))');
-  const solid = e("MANIFOLD_SOLID_BREP('Box'," + shell + ')');
-  const rep = e("ADVANCED_BREP_SHAPE_REPRESENTATION('Box',(" + origin + ',' + solid + '),' + ctx + ')');
+  return e("MANIFOLD_SOLID_BREP('Box'," + shell + ')');
+  };
+  const solids = boxes.map(b => solidAt(b.at));
+  const rep = e("ADVANCED_BREP_SHAPE_REPRESENTATION('Box',(" + origin + ',' + solids.join(',') + '),' + ctx + ')');
   e('SHAPE_DEFINITION_REPRESENTATION(' + pds + ',' + rep + ')');
-  // Colour the solid red.
-  const colour = e("COLOUR_RGB(''," + RED.map(r).join(',') + ')');
+  const styledItems = boxes.map((b, i) => {
+  const solid = solids[i];
+  // Colour the solid (red, for the single box).
+  const colour = e("COLOUR_RGB(''," + b.colour.map(r).join(',') + ')');
   const fill = e("FILL_AREA_STYLE('',(" + e("FILL_AREA_STYLE_COLOUR(''," + colour + ')') + '))');
   const side = e("SURFACE_SIDE_STYLE('',(" + e('SURFACE_STYLE_FILL_AREA(' + fill + ')') + '))');
   const psa = e('PRESENTATION_STYLE_ASSIGNMENT((' + e('SURFACE_STYLE_USAGE(.BOTH.,' + side + ')') + '))');
-  const styled = e("STYLED_ITEM('color',(" + psa + '),' + solid + ')');
-  e("MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',(" + styled + '),' + ctx + ')');
+  return e("STYLED_ITEM('color',(" + psa + '),' + solid + ')');
+  });
+  e("MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION('',(" + styledItems.join(',') + '),' + ctx + ')');
+  boxes.forEach((b, i) => { if (b.layer) e("PRESENTATION_LAYER_ASSIGNMENT('" + b.layer + "','',(" + solids[i] + '))'); });
   return 'ISO-10303-21;\nHEADER;\nFILE_DESCRIPTION((\'Online 3D Viewer test box\'),\'2;1\');\nFILE_NAME(\'box.stp\',\'2026-11-11T00:00:00\',(\'\'),(\'\'),\'make-fixtures.mjs\',\'\',\'\');\n'
     + 'FILE_SCHEMA((\'AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }\'));\nENDSEC;\nDATA;\n' + lines.join('\n') + '\nENDSEC;\nEND-ISO-10303-21;\n';
 }
 addCase('step-ap214-box', [write('step/box.stp', stepBox())], { formats: ['STEP'], up: 'z', units: 'mm', triangles: 12, vertices: 8, parts: 1, size: [30, 20, 10], colour: RED, tol: 1e-4 });
+// Two solids of one part on two layers (levels): the part's meshes come
+// unnamed in a group of its name, and the colours tell the layers apart. The
+// second layer's name carries an accented letter, written as STEP does (\X2\).
+addCase('step-layers', [write('step/layers.stp', stepBox([
+  { at: [0, 0, 0], colour: [0, 0.4, 1], layer: 'p_plant-main' },
+  { at: [40, 0, 0], colour: [1, 0, 0], layer: 'Insulator \\X2\\00E9\\X0\\' },
+]))], { formats: ['STEP'], units: 'mm', triangles: 24, parts: 2, size: [70, 20, 10], tol: 1e-4,
+  levels: [['Insulator é', 1, '#ff0000'], ['p_plant-main', 1, '#0066ff']] });
 addCase('step-xml', [write('step/box-xml.stp', '<?xml version="1.0"?>\n<iso_10303_28 version="2.0"></iso_10303_28>\n')], { error: /XML/ });
 addCase('step-garbage', [write('step/garbage.step', 'ISO-10303-21;\nHEADER;\nthis is not a real step file at all\nENDSEC;\n'.repeat(3))], { error: /STEP/ });
 

@@ -48,7 +48,7 @@
   "@type": "WebApplication",
   "name": "Online 3D Viewer",
   "url": "https://tool.adjiebrotots.com/online-3d-viewer/",
-  "description": "View and convert 3D CAD and mesh models in the browser: STEP, IGES, BREP, IFC (BIM), Rhino 3DM, MicroStation DGN (V7 and V8), STL, OBJ, 3MF, AMF, glTF, GLB, FBX, COLLADA, USDZ, PLY, 3DS, OFF and VRML, measure distances and areas on them, and save them as STEP, STL or GLB. Nothing is uploaded.",
+  "description": "View and convert 3D CAD and mesh models in the browser: STEP, IGES, BREP, IFC (BIM), Rhino 3DM, MicroStation DGN (V7 and V8), STL, OBJ, 3MF, AMF, glTF, GLB, FBX, COLLADA, USDZ, PLY, 3DS, OFF and VRML, show or hide their levels (layers), measure distances and areas on them, and save them as STEP, STL or GLB. Nothing is uploaded.",
   "applicationCategory": "DesignApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -56,7 +56,7 @@
   "screenshot": "https://tool.adjiebrotots.com/og/online-3d-viewer.jpg",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
-  "keywords": "online 3D viewer, STEP viewer, STP viewer online, STL viewer, OBJ viewer, glTF viewer, FBX viewer, 3MF viewer, IGES viewer, DGN viewer online, MicroStation DGN viewer, IFC viewer online, BIM viewer, open IFC file without Revit, convert STL to STEP, convert OBJ to STL, convert FBX to GLB, 3D file converter online, view CAD file in browser, 3D model viewer without upload, measure 3D model online",
+  "keywords": "online 3D viewer, STEP viewer, STP viewer online, STL viewer, OBJ viewer, glTF viewer, FBX viewer, 3MF viewer, IGES viewer, DGN viewer online, MicroStation DGN viewer, IFC viewer online, BIM viewer, open IFC file without Revit, convert STL to STEP, convert OBJ to STL, convert FBX to GLB, 3D file converter online, view CAD file in browser, 3D model viewer without upload, measure 3D model online, STEP layers viewer, MicroStation levels viewer",
   "author": {
     "@type": "Person",
     "@id": "https://www.adjiebrotots.com/#person",
@@ -93,6 +93,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes. Open the model in the Online 3D Viewer, then pick Download and STEP, STL or glTF binary (GLB). STEP and STL are written in millimetres with Z up; GLB keeps materials, textures and any animation. A STEP made from a mesh is faceted (flat faces, with coplanar triangles merged), and closed parts become solids. The conversion runs in your browser, so the model is never uploaded."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see and hide the levels or layers of a STEP or DGN file?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. When a STEP file carries layers (as MicroStation writes its levels, and other CAD programs their layers) or a DGN file has levels, a Levels list opens on the model: each level with its colour and number of parts, as a legend. Untick a level to hide it, or pick Only to see it alone. Measure snaps to the levels shown, and Download saves only those."
       }
     },
     {
@@ -218,6 +226,20 @@
       <div id="infoLinesRow" hidden><dt>Line segments</dt><dd id="infoLines">–</dd></div>
       <div><dt>Size <span class="tip-icon" id="sizeTip" data-tip="Width, depth and height along the file's own X, Y and Z axes.">?</span></dt><dd id="infoSize">–</dd></div>
     </dl>
+    <section class="level-pad" id="levelPad" aria-label="Levels" hidden>
+      <button type="button" class="btn-secondary btn-sm nav-toggle" id="levelToggle" aria-expanded="true" aria-controls="levelBody" title="Hide the levels">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg><span>Levels</span><span class="lv-count" id="levelCount"></span>
+      </button>
+      <div class="level-body" id="levelBody">
+        <div class="lv-head">
+          <span class="nav-label">Shown <span class="tip-icon" id="levelTip" data-tip="The levels (layers) the file puts its parts on, each in the colour most of its parts are drawn in. Untick one to hide it; Only shows that level alone. Measure and Download take what is shown.">?</span></span>
+          <span class="lv-shown" id="levelShown" data-no-abbr></span>
+          <button type="button" class="btn-bare lv-all" id="levelAll" title="Show every level">All</button>
+          <button type="button" class="btn-bare lv-all" id="levelNone" title="Hide every level">None</button>
+        </div>
+        <ul class="lv-list" id="levelList" data-no-abbr></ul>
+      </div>
+    </section>
     <section class="measure-panel" id="measurePanel" aria-label="Measure" hidden>
       <div class="mp-head">
         <div class="seg-group" id="measureMode" role="group" aria-label="What to measure" data-seg-fit="off">

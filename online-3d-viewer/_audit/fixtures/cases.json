@@ -1017,6 +1017,38 @@
   }
  },
  {
+  "name": "step-layers",
+  "files": [
+   "step/layers.stp"
+  ],
+  "expect": {
+   "formats": [
+    "STEP"
+   ],
+   "units": "mm",
+   "triangles": 24,
+   "parts": 2,
+   "size": [
+    70,
+    20,
+    10
+   ],
+   "tol": 0.0001,
+   "levels": [
+    [
+     "Insulator é",
+     1,
+     "#ff0000"
+    ],
+    [
+     "p_plant-main",
+     1,
+     "#0066ff"
+    ]
+   ]
+  }
+ },
+ {
   "name": "step-xml",
   "files": [
    "step/box-xml.stp"
@@ -1208,6 +1240,18 @@
     0.784,
     0.118,
     0.157
+   ],
+   "levels": [
+    [
+     "5",
+     1,
+     "#c81e28"
+    ],
+    [
+     "7",
+     1,
+     "#0000ff"
+    ]
    ],
    "warning": {
     "re": "text label"
