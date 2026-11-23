@@ -221,7 +221,8 @@ html.map-full-open{overflow:hidden;scrollbar-gutter:auto;}
 .gitc-hint:hover,.gitc-hint:focus-visible{border-style:solid;border-color:var(--accent);background:var(--bg-subtle);color:var(--text);}
 .gitc-hint .gitc-ico{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--accent-strong);}
 .gitc-hint strong{color:var(--text);font-weight:600;}
-.gitc-hint .gitc-go{color:var(--accent-strong);font-weight:700;white-space:nowrap;}
+.gitc-hint .gitc-text{flex:1;min-width:0;overflow-wrap:anywhere;}
+.gitc-hint .gitc-go{color:var(--accent-strong);font-weight:700;}
 .gitc-hint:hover .gitc-go{text-decoration:underline;}
 /* On a city's card: tighter, and clickable once the card is pinned. */
 .map-card-pop .gitc-hint{margin-top:8px;padding:6px 8px;font-size:.74rem;}
