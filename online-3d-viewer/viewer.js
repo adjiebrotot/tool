@@ -91,6 +91,7 @@ export class Viewer {
     this._raf = 0;
     this._tick = this._tick.bind(this);
     this.onFrame = null;    // called after each frame (the ruler draws its overlay)
+    this.onView = null;     // called after each frame (compare panes follow this camera)
     this.decorate = null;   // (ctx, w, h, scale): draws over the PNG (the ruler's lines and labels)
 
     this._ro = new ResizeObserver(() => this.resize());
@@ -111,6 +112,7 @@ export class Viewer {
     if (this.mixer && this.playing) this.mixer.update(dt);
     this.renderer.render(this.scene, this.camera);
     if (this.onFrame) this.onFrame();
+    if (this.onView) this.onView(this);
     if (moved || steering || (this.mixer && this.playing)) this.request();
   }
 
@@ -281,6 +283,41 @@ export class Viewer {
       this.camera.far = far;
       this.camera.updateProjectionMatrix();
     }
+  }
+
+  // ── Linked views (compare panes) ──
+  /** Where the camera stands, relative to the model: the same pose shown on a
+      model of another size reads as the same view of it. */
+  linkPose() {
+    if (!this.box) return null;
+    const p = this._pose(), c = this.box.getCenter(new THREE.Vector3());
+    return { quat: p.quat, axis: p.axis, dist: p.dist / this._fitDist(), offset: p.target.sub(c).divideScalar(this.radius) };
+  }
+
+  /** Take another view's linkPose, scaled to this model. */
+  followPose(lp) {
+    if (!lp || !this.box) return;
+    this._tween = null;
+    this._spin = null;
+    this._settle();
+    const c = this.box.getCenter(new THREE.Vector3());
+    this._apply({ quat: lp.quat.clone(), axis: lp.axis.clone(), dist: lp.dist * this._fitDist(), target: lp.offset.clone().multiplyScalar(this.radius).add(c) });
+    this.request();
+  }
+
+  /** How far back the camera stands to fit the model in this view's shape. */
+  _fitDist() { return this._framed(VIEW_DIR.clone(), Y.clone()).dist; }
+
+  /** Let go of the model, the canvas and its WebGL context. */
+  dispose() {
+    this.clear();
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._raf = 0;
+    this._ro.disconnect();
+    this.controls.dispose();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+    this.renderer.domElement.remove();
   }
 
   resize() {

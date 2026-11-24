@@ -12,6 +12,10 @@
    A file with levels or layers (STEP layers, DGN levels; model.js gathers
    them) gets a Levels list on the stage: a legend that shows or hides each.
 
+   The (+) button opens up to two more models in panes beside the stage, to
+   compare them side by side; their cameras follow whichever view is being
+   turned, each framed to its own model's size.
+
    window.__o3v reports the last load (state, stats, size, warnings) for the
    audit harness in _audit/run.mjs. */
 
@@ -24,7 +28,7 @@ const dom = {
   stageHint: $('stageHint'),
   fileName: $('fileName'), fileFormat: $('fileFormat'),
   edges: $('edgesToggle'), wire: $('wireToggle'), grid: $('gridToggle'), upGroup: $('upGroup'), upTip: $('upTip'),
-  playBtn: $('playBtn'), resetViewBtn: $('resetViewBtn'), pngBtn: $('pngBtn'), openBtn: $('openBtn'),
+  playBtn: $('playBtn'), addBtn: $('addBtn'), stageRow: $('stageRow'), resetViewBtn: $('resetViewBtn'), pngBtn: $('pngBtn'), openBtn: $('openBtn'),
   dlBtn: $('dlBtn'), dlList: $('dlList'), stepBtn: $('stepBtn'), stlBtn: $('stlBtn'), glbBtn: $('glbBtn'),
   stepSub: $('stepSub'), stlSub: $('stlSub'), glbSub: $('glbSub'),
   infoFormat: $('infoFormat'), infoParts: $('infoParts'), infoTris: $('infoTris'), infoVerts: $('infoVerts'),
@@ -84,6 +88,7 @@ async function open(list) {
       viewer.setGrid(dom.grid.checked);
       viewer.setWireframe(dom.wire.checked);
       viewer.opts.edges = dom.edges.checked;
+      linkView(viewer);
       ruler = hook.measure = new c.Measure(viewer, { format: fmtMeasure, onChange: showMeasure, onExit: () => setMeasuring(false) });
       applyTheme();
     }
@@ -320,10 +325,11 @@ dom.sampleBtn.addEventListener('click', async e => {
 // ── Toolbar ──────────────────────────────────────────────────────────────
 dom.edges.addEventListener('change', () => {
   if (!viewer) return;
+  for (const p of panes) p.viewer.setEdges(dom.edges.checked);
   if (!viewer.setEdges(dom.edges.checked)) showNote(['Edges are left off for models over 3 million triangles, to keep the view smooth.'], false);
 });
-dom.wire.addEventListener('change', () => { if (viewer) viewer.setWireframe(dom.wire.checked); });
-dom.grid.addEventListener('change', () => { if (viewer) viewer.setGrid(dom.grid.checked); });
+dom.wire.addEventListener('change', () => { if (viewer) viewer.setWireframe(dom.wire.checked); for (const p of panes) p.viewer.setWireframe(dom.wire.checked); });
+dom.grid.addEventListener('change', () => { if (viewer) viewer.setGrid(dom.grid.checked); for (const p of panes) p.viewer.setGrid(dom.grid.checked); });
 dom.upGroup.addEventListener('click', e => {
   const b = e.target.closest('[data-up]');
   if (!b || !viewer || !current) return;
@@ -331,7 +337,7 @@ dom.upGroup.addEventListener('click', e => {
   showUp();
   if (hook.model) hook.model.viewUp = viewer.up;
 });
-dom.resetViewBtn.addEventListener('click', () => { if (viewer) viewer.resetView(); });
+dom.resetViewBtn.addEventListener('click', () => { leader = viewer; if (viewer) viewer.resetView(); });
 
 function setPlayLabel(playing) {
   const t = playing ? 'Pause the animation' : 'Play the animation';
@@ -681,6 +687,7 @@ let navHold = null;       // { timer, btn, pointerId } while a pad button is dow
 
 function navStep(op, dir, steps) {
   if (!viewer || !current) return;
+  leader = viewer;
   hideHint();
   if (op === 'fit') viewer.fit();
   else viewer.nudge(op, dir * (steps || 1));
@@ -712,7 +719,7 @@ dom.navBody.addEventListener('click', e => {
   const b = e.target.closest('[data-nav]');
   if (b && e.detail === 0) navStep(b.dataset.nav, +b.dataset.dir || 1);
   const v = e.target.closest('[data-view]');
-  if (v && viewer && current) { hideHint(); viewer.view(v.dataset.view); }
+  if (v && viewer && current) { hideHint(); leader = viewer; viewer.view(v.dataset.view); }
 });
 
 function setNavOpen(open) {
@@ -752,7 +759,7 @@ window.addEventListener('keydown', e => {
   else if (k === '+' || k === '=') navStep('zoom', 1);
   else if (k === '-' || k === '_') navStep('zoom', -1);
   else if (k === 'f' || k === 'F') navStep('fit', 1);
-  else if (k in VIEW_KEYS) { hideHint(); viewer.view(VIEW_KEYS[k]); }
+  else if (k in VIEW_KEYS) { hideHint(); leader = viewer; viewer.view(VIEW_KEYS[k]); }
   else done = false;
   if (done) e.preventDefault();
 });
@@ -762,14 +769,133 @@ const hideHint = () => dom.stageHint.classList.add('gone');
 dom.stage.addEventListener('pointerdown', hideHint, { once: true });
 dom.stage.addEventListener('wheel', hideHint, { once: true, passive: true });
 
+// ── Compare: more models side by side ────────────────────────────────────
+/* Each pane is its own Viewer with its own model, beside the stage. The
+   display switches and the theme apply to all; the ruler, levels and Download
+   stay with the main model. The cameras are linked: whichever view the reader
+   last turned leads, and the others take the same angle and framing, each
+   scaled to its own model, so the models are seen from the same side. */
+const MAX_MODELS = 3;
+const panes = [];        // { el, viewer, model, files }
+let leader = null;       // the view the others follow
+hook.panes = panes;
+
+function linkView(v) {
+  const take = () => { leader = v; };
+  v.renderer.domElement.addEventListener('pointerdown', take);
+  v.renderer.domElement.addEventListener('wheel', take, { passive: true });
+  v.onView = src => {
+    if (src !== (leader || viewer) || !panes.length) return;
+    const lp = src.linkPose();
+    if (!lp) return;
+    for (const o of [viewer, ...panes.map(p => p.viewer)]) if (o && o !== src && o.model) o.followPose(lp);
+  };
+}
+
+function syncCompare() {
+  dom.addBtn.disabled = panes.length >= MAX_MODELS - 1;
+  dom.addBtn.title = dom.addBtn.disabled
+    ? 'Three models are open, the most that fit side by side. Close one (×) to open another.'
+    : 'Open another model beside this one, to compare them side by side (up to ' + MAX_MODELS + ')';
+  dom.stageRow.classList.toggle('comparing', panes.length > 0);
+  hook.compare = panes.map(p => p.model ? summary(p.model) : null);
+}
+
+function makePane() {
+  const el = document.createElement('div');
+  el.className = 'cmp-pane';
+  el.innerHTML = '<div class="cmp-head" data-no-abbr><span class="cmp-name">…</span><span class="fmt-badge"></span><span class="cmp-size"></span>'
+    + SharedIcon.button('close', 'Close this model', 'cmp-close') + '</div>'
+    + '<div class="busy visible" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span class="busy-msg">Reading…</span></div>';
+  dom.stageRow.appendChild(el);
+  return el;
+}
+
+function closePane(pane) {
+  const i = panes.indexOf(pane);
+  if (i < 0) return;
+  panes.splice(i, 1);
+  if (leader === pane.viewer) leader = viewer;
+  pane.viewer.dispose();
+  if (pane.files) pane.files.dispose();
+  pane.el.remove();
+  syncCompare();
+}
+
+async function openCompare(list) {
+  if (!list || !list.length || !current || panes.length >= MAX_MODELS - 1) return;
+  const c = await core();
+  const el = makePane();
+  const pane = { el, viewer: new c.Viewer(el), model: null, files: null };
+  if (!panes.length) setNavOpen(false);   // the main view narrows: the pad would cover its model
+  panes.push(pane);
+  syncCompare();
+  const v = pane.viewer;
+  v.setTheme(themeOf());
+  v.setGrid(dom.grid.checked);
+  v.setWireframe(dom.wire.checked);
+  v.opts.edges = dom.edges.checked;
+  linkView(v);
+  el.querySelector('.cmp-close').addEventListener('click', () => closePane(pane));
+  const msg = el.querySelector('.busy-msg');
+  try {
+    const loaded = await c.loadFiles(list, { renderer: v.renderer, progress: m => { msg.textContent = m; } });
+    if (!panes.includes(pane)) { loaded.files.dispose(); return; }
+    msg.textContent = 'Preparing the view…';
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+    const model = c.buildModel(loaded);
+    pane.model = model;
+    pane.files = loaded.files;
+    v.setModel(model);
+    if (dom.edges.checked) v.setEdges(true);
+    const name = model.names.length === 1 ? model.names[0] : model.names.length + ' models';
+    el.querySelector('.cmp-name').textContent = name;
+    el.querySelector('.cmp-name').title = model.names.join(', ');
+    el.querySelector('.fmt-badge').textContent = model.formats.join(' + ');
+    const z = model.size;
+    el.querySelector('.cmp-size').textContent = fmtLen(z.x) + ' × ' + fmtLen(z.y) + ' × ' + fmtLen(z.z) + (model.units ? ' ' + model.units : '');
+    // Every view just got narrower: fit the main model again from where it
+    // is seen, and the panes follow it there.
+    if (viewer && viewer.model) { viewer.resize(); v.followPose(viewer.linkPose()); leader = viewer; viewer.fit(); }
+    syncCompare();
+  } catch (err) {
+    const m = err && err.friendly ? err.message : 'This could not be opened (' + (err && err.message || err) + ').';
+    if (!(err && err.friendly)) console.error(err);
+    const p = document.createElement('p');
+    p.className = 'cmp-error';
+    p.setAttribute('role', 'alert');
+    p.textContent = m;
+    el.appendChild(p);
+  } finally {
+    el.querySelector('.busy').classList.remove('visible');
+  }
+}
+hook.openCompare = list => openCompare(list);
+
+dom.addBtn.addEventListener('click', () => {
+  if (dom.addBtn.disabled) return;
+  const fi = document.createElement('input');
+  fi.type = 'file';
+  fi.multiple = true;
+  fi.accept = dom.fileInput.accept;
+  fi.addEventListener('change', () => openCompare(fromInput(fi)));
+  fi.click();
+});
+syncCompare();
+
 // ── Theme and layout ─────────────────────────────────────────────────────
 function token(name) { return getComputedStyle(document.body).getPropertyValue(name).trim(); }
-function applyTheme() {
-  if (!viewer) return;
-  viewer.setTheme({
+function themeOf() {
+  return {
     bg: token('--o3v-stage'), bg2: token('--o3v-stage2'), model: token('--o3v-model'), grid: token('--o3v-grid'), grid2: token('--o3v-grid2'),
     line: token('--text'), edge: token('--o3v-edge'),
-  });
+  };
+}
+function applyTheme() {
+  if (!viewer) return;
+  const t = themeOf();
+  viewer.setTheme(t);
+  for (const p of panes) p.viewer.setTheme(t);
   if (ruler) ruler.setColours({ line: token('--o3v-measure'), halo: token('--panel'), text: token('--text'), panel: token('--panel'), border: token('--border') });
 }
 new MutationObserver(applyTheme).observe(document.body, { attributes: true, attributeFilter: ['class'] });

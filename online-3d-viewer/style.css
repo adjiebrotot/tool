@@ -413,3 +413,43 @@ body {
   .nav-body { width: 224px; padding: 8px 10px 10px; gap: 8px 10px; }
   .nav-grid { grid-template-columns: repeat(3, 30px); grid-auto-rows: 30px; }
 }
+
+/* ── COMPARE: up to two more models beside the stage, each in its own pane ── */
+.stage-row { flex: 1; min-height: 0; display: flex; }
+.stage-row > .stage { flex: 1 1 0; min-width: 0; }
+.cmp-pane {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  border-left: 1px solid var(--border);
+  background: linear-gradient(var(--o3v-stage), var(--o3v-stage2));
+  overflow: hidden;
+  touch-action: none;
+}
+.cmp-head {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px 5px 12px;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: 0.8rem;
+}
+.cmp-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.cmp-size { margin-left: auto; color: var(--muted); font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cmp-pane .busy { z-index: 3; }
+.cmp-pane .cmp-error { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 2; margin: 0; padding: 8px 12px; border-radius: var(--radius-lg); background: var(--error-bg); color: var(--error-text); font-size: 0.82rem; }
+/* With panes beside it the stage is narrow: its floating panels step back. */
+.stage-row.comparing .stage-hint { display: none; }
+@media (max-width: 720px) {
+  .stage-row { flex-direction: column; }
+  .stage-row > .stage, .cmp-pane { flex: 1 1 0; min-height: 0; }
+  .cmp-pane { border-left: 0; border-top: 1px solid var(--border); }
+  .cmp-size { display: none; }
+}
