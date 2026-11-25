@@ -22,14 +22,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Video Trimmer and Captioner | Adjie Brotools</title>
-<meta name="description" content="Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.">
+<meta name="description" content="Trim, cut and join video clips, add and cut music or sound, and edit captions (SRT or VTT) in your browser. Export MP4, WebM or the sound alone. Nothing is uploaded.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/video-trimmer-captioner/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Video Trimmer and Captioner">
-<meta property="og:description" content="Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.">
+<meta property="og:description" content="Trim, cut and join video clips, add and cut music or sound, and edit captions (SRT or VTT) in your browser. Export MP4, WebM or the sound alone. Nothing is uploaded.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/video-trimmer-captioner/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 <meta property="og:image" content="https://tool.adjiebrotots.com/og/video-trimmer-captioner.jpg">
@@ -38,7 +38,7 @@
 <meta property="og:image:alt" content="Video Trimmer and Captioner, a free tool on Adjie Brotools">
 
 <meta name="twitter:title" content="Video Trimmer and Captioner">
-<meta name="twitter:description" content="Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.">
+<meta name="twitter:description" content="Trim, cut and join video clips, add and cut music or sound, and edit captions (SRT or VTT) in your browser. Export MP4, WebM or the sound alone. Nothing is uploaded.">
 <meta name="twitter:image" content="https://tool.adjiebrotots.com/og/video-trimmer-captioner.jpg">
 
 <script type="application/ld+json">
@@ -47,19 +47,20 @@
   "@type": "WebApplication",
   "name": "Video Trimmer and Captioner",
   "url": "https://tool.adjiebrotots.com/video-trimmer-captioner/",
-  "description": "Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.",
+  "description": "Trim, cut and join video clips, add and cut music or sound, and edit captions (SRT or VTT) in your browser. Export MP4, WebM or the sound alone. Nothing is uploaded.",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
-  "dateModified": "2026-11-22",
+  "dateModified": "2026-11-25",
   "screenshot": "https://tool.adjiebrotots.com/og/video-trimmer-captioner.jpg",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
-  "keywords": "trim video online, cut video in browser, join video clips, caption editor, subtitle editor, SRT editor, burn subtitles into video, private video editor",
+  "keywords": "trim video online, cut video in browser, join video clips, add music to video, extract audio from video, caption editor, subtitle editor, SRT editor, burn subtitles into video, private video editor",
   "featureList": [
     "Split, trim, delete, duplicate and reorder clips, and join several videos into one",
     "Open an SRT or VTT caption file, or write captions from scratch, and they follow every cut",
     "Burn captions into the picture or add them as a subtitle track, and download the retimed SRT or VTT",
+    "Add music or a voice-over, split and move it, mute a clip or detach the video's sound, and download the sound as M4A or WAV",
     "Exports MP4 or WebM on your device: the video is never uploaded"
   ],
   "author": {
@@ -126,22 +127,25 @@
 
 <!-- ── STEP 1: DROP ZONE ── -->
 <div id="dropZone">
-  <input type="file" id="fileInput" accept="video/*,.srt,.vtt,text/vtt" multiple aria-label="Choose a video, and a caption file if you have one">
+  <input type="file" id="fileInput" accept="video/*,audio/*,.srt,.vtt,text/vtt" multiple aria-label="Choose a video, and a caption or audio file if you have one">
   <div class="drop-icon">🎬</div>
   <div class="drop-title">Drop your video here</div>
-  <div class="drop-sub">or click to browse. Drop its caption file with it if you have one. Nothing is uploaded.</div>
+  <div class="drop-sub">or click to browse. Drop its caption file or music with it if you have them. Nothing is uploaded.</div>
   <div class="drop-badges">
     <span class="fmt-badge">MP4</span>
     <span class="fmt-badge">WebM</span>
     <span class="fmt-badge">MOV</span>
     <span class="fmt-badge">MKV</span>
     <span class="fmt-sep" aria-hidden="true"></span>
+    <span class="fmt-badge">MP3</span>
+    <span class="fmt-badge">WAV</span>
+    <span class="fmt-sep" aria-hidden="true"></span>
     <span class="fmt-badge">SRT</span>
     <span class="fmt-badge">VTT</span>
   </div>
   <ol class="drop-steps">
     <li><b>1</b> Open the video, and its captions</li>
-    <li><b>2</b> Cut, trim and join, edit captions</li>
+    <li><b>2</b> Cut, trim and join, add sound and captions</li>
     <li><b>3</b> Export MP4 or WebM</li>
   </ol>
   <div class="drop-actions">
@@ -163,6 +167,9 @@
       <button class="ctrl-tab" data-tab="captions" role="tab">
         <svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.2"/><path d="M6.5 11.5h4M13 11.5h4.5M6.5 15h7M15.5 15h2"/></svg><span>Captions</span>
       </button>
+      <button class="ctrl-tab" data-tab="audio" role="tab">
+        <svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17.5V5.5l11-2v12"/><circle cx="6.5" cy="17.5" r="2.6"/><circle cx="17.5" cy="15.5" r="2.6"/></svg><span>Audio</span>
+      </button>
       <button class="ctrl-tab" data-tab="export" role="tab">
         <svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v11"/><path d="M7.5 10 12 14.5 16.5 10"/><path d="M4 15.5v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg><span>Export</span>
       </button>
@@ -176,7 +183,7 @@
           <button class="btn-secondary btn-sm" id="splitBtn" type="button" title="Split the clip at the playhead (S)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 7 4 12l4 5M16 7l4 5-4 5"/></svg> Split at playhead</button>
           <button class="btn-secondary btn-sm" id="addVideoBtn" type="button">+ Add video</button>
         </div>
-        <p class="panel-note">Split where a part starts and ends, then delete it. Drag <span class="grip-inline">⠿</span> to change the order. Speed up or slow a clip with its Speed, or type the Length it should play for. Adding another video joins it on the end.</p>
+        <p class="panel-note">Split where a part starts and ends, then delete it. Drag <span class="grip-inline">⠿</span> to change the order. Speed up or slow a clip with its Speed, or type the Length it should play for. The speaker mutes a clip. Adding another video joins it on the end.</p>
         <div class="clip-list" id="clipList"></div>
         <div class="clip-total" id="clipTotal"></div>
       </div>
@@ -229,6 +236,43 @@
           <button class="btn-secondary btn-sm" id="vttBtn" type="button">⬇ VTT</button>
           <span class="row-spacer"></span>
           <button class="btn-bare" id="clearCapsBtn" type="button" data-icon="trash" title="Remove every caption" aria-label="Remove every caption">Clear all</button>
+        </div>
+      </div>
+
+      <!-- AUDIO -->
+      <div class="ctrl-panel" id="tab-audio">
+        <div class="tool-row" data-no-persist>
+          <button class="btn-secondary btn-sm" id="addAudBtn" type="button" title="Add music, a voice-over or another video's sound at the playhead">+ Add audio</button>
+          <button class="btn-secondary btn-sm" id="splitAudBtn" type="button" title="Split the added audio at the playhead (A)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 7 4 12l4 5M16 7l4 5-4 5"/></svg> Split at playhead</button>
+        </div>
+        <p class="panel-note">Added audio plays under the edit from where it starts, on the lane under the clips. Split it at the playhead and delete the parts you do not want, or drag a part along the lane to move it.</p>
+        <div class="clip-list" id="audList" data-no-persist></div>
+        <div class="cap-empty" id="audEmpty">No added audio yet. Press <b>+ Add audio</b> for music or a voice-over: MP3, M4A, WAV, OGG, or the sound of another video.</div>
+
+        <div class="field-group">
+          <div class="group-title">Video sound</div>
+          <div class="slider-block">
+            <div class="slider-head">
+              <span class="slider-label">Volume of the video's own sound</span>
+              <span class="slider-value" id="vidVolVal">100%</span>
+            </div>
+            <input type="range" id="vidVol" min="0" max="100" step="5" value="100" aria-label="Volume of the video's own sound">
+          </div>
+          <div class="tool-row" data-no-persist>
+            <button class="btn-secondary btn-sm" id="detachBtn" type="button">Detach the video's sound</button>
+            <span class="tip-icon" data-tip="Moves each clip's own sound onto the audio lane and mutes the clip, so the sound can be cut, moved and faded apart from the picture.">?</span>
+          </div>
+        </div>
+
+        <div class="field-group" data-no-persist>
+          <div class="group-title">Download the sound</div>
+          <p class="mode-note">The whole edit's sound on its own, mixed as you hear it.</p>
+          <div class="tool-row end-row">
+            <button class="btn-secondary btn-sm" id="m4aBtn" type="button">⬇ M4A</button>
+            <button class="btn-secondary btn-sm" id="wavBtn" type="button">⬇ WAV</button>
+            <span class="row-spacer"></span>
+            <button class="btn-bare" id="clearAudBtn" type="button" data-icon="trash" title="Remove every added audio" aria-label="Remove every added audio">Clear all</button>
+          </div>
         </div>
       </div>
 
@@ -315,6 +359,7 @@
       <div class="seq-bar" id="seqBar">
         <div class="seq-clips" id="seqClips"></div>
         <div class="seq-caps" id="seqCaps"></div>
+        <div class="seq-auds" id="seqAuds"></div>
         <div class="tl-playhead" id="seqHead"></div>
       </div>
       <div class="tl-title trim-title"><span id="trimTitle">Trim clip 1</span><span class="tl-sub" id="trimInfo"></span></div>
@@ -335,7 +380,7 @@
       <div class="ctrl-sep"></div>
       <button class="btn-bare undo-btn" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
       <button class="btn-bare undo-btn" id="redoBtn" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
-      <span class="tip-icon keys-tip" data-tip="<strong>Keys:</strong> Space plays, S splits, Delete removes the clip, C adds a caption, I and O trim to the playhead, arrows step a frame (Shift: a second).">?</span>
+      <span class="tip-icon keys-tip" data-tip="<strong>Keys:</strong> Space plays, S splits, A splits the audio, M mutes the clip, Delete removes the selection, C adds a caption, I and O trim, arrows step a frame.">?</span>
       <div class="ctrl-spacer"></div>
       <button class="load-btn" id="loadBtn" data-icon="open">Open video</button>
     </div>
@@ -354,7 +399,7 @@
 
 <footer class="page-footer">
   <section class="page-footer-info">
-    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-22">22 November 2026</time></span></p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-11-25">25 November 2026</time></span></p>
     <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
