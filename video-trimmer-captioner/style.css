@@ -1,6 +1,7 @@
 /* Video Trimmer and Captioner. The layout follows Video to GIF: a drop zone,
    then a sidebar of controls beside a dark stage with the timeline under it. */
 :root {
+  --aud: var(--line-e);   /* added audio on the lane; a video's detached sound keeps its colour */
   --value-hi: #8DBBFF;
   --stage-bg: #05080F;
 }
@@ -82,7 +83,8 @@ body {
   display: flex; flex-direction: column; min-height: 0; overflow: hidden;
 }
 .sidebar .ctrl-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--panel); }
-.sidebar .ctrl-tab { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 8px; }
+/* Four tabs: each as wide as its words, so "Captions" keeps clear of its neighbour */
+.sidebar .ctrl-tab { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 11px 4px; flex: 1 1 auto; }
 .sb-scroll { flex: 1; overflow-y: auto; min-height: 0; }
 .sidebar .ctrl-panel { padding: 14px 16px 18px; }
 .sidebar .ctrl-panel > .field-group:first-child { margin-top: 0; }
@@ -127,6 +129,14 @@ body {
 }
 .time-input:focus { outline: none; border-color: var(--accent); }
 .time-input.bad { border-color: var(--negative-em); }
+/* Audio list: the clip rows' look, without the grip */
+.aud-row { grid-template-columns: 10px 1fr auto; padding-left: 10px; }
+.aud-row .clip-times { grid-column: 1 / 4; }
+.vol-range { width: 96px; }
+.vol-val { font-family: 'DM Mono', monospace; min-width: 34px; }
+.fade-input { width: 46px; }
+.clip-mute .ico { width: 15px; height: 15px; }
+.clip-mute.is-muted { color: var(--accent-strong); }
 .dur { font-family: 'DM Mono', monospace; color: var(--value-hi); margin-left: auto; }
 
 /* Caption list */
@@ -174,7 +184,7 @@ body {
 .tl-title { display: flex; gap: 10px; align-items: baseline; font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
 .tl-sub { font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.72rem; }
 .trim-title { margin-top: 10px; }
-.seq-bar { position: relative; height: 46px; cursor: pointer; user-select: none; touch-action: none; }
+.seq-bar { position: relative; height: 62px; cursor: pointer; user-select: none; touch-action: none; }
 .seq-clips { position: absolute; left: 0; right: 0; top: 0; height: 32px; background: var(--bg-subtle); border-radius: 6px; }
 .seq-clip {
   position: absolute; top: 0; bottom: 0; border-radius: 5px; overflow: hidden;
@@ -186,6 +196,14 @@ body {
 .seq-caps { position: absolute; left: 0; right: 0; top: 36px; height: 8px; }
 .seq-cap { position: absolute; top: 0; height: 8px; border-radius: 3px; background: var(--accent2); opacity: 0.75; }
 .seq-cap.live { opacity: 1; background: var(--accent-strong); }
+.seq-auds { position: absolute; left: 0; right: 0; top: 48px; height: 13px; overflow: hidden; background: var(--bg-subtle); border-radius: 4px; }
+.seq-aud {
+  position: absolute; top: 0; height: 13px; border-radius: 4px; opacity: 0.8; cursor: grab;
+  border: 1px solid var(--panel); font-size: 0.6rem; line-height: 11px; font-weight: 700; color: var(--text-inv);
+  padding: 0 4px; white-space: nowrap; overflow: hidden;
+}
+.seq-aud.sel { opacity: 1; outline: 2px solid var(--text); outline-offset: -2px; }
+.seq-aud.moving { cursor: grabbing; }
 
 .timeline-bar { position: relative; height: 26px; background: var(--bg-subtle); border-radius: 6px; cursor: pointer; user-select: none; touch-action: none; }
 .tl-region {
