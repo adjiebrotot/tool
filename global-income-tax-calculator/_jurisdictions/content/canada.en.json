@@ -120,6 +120,17 @@
         ]
       }
     ],
+    "places": {
+      "after": 1,
+      "h3": "Tax in each province",
+      "html": "<p>Open a province for its 2026 brackets, the credits and extras that change the bill, and the take-home pay on C$100,000. Manitoba, Saskatchewan, the Atlantic provinces and the territories are not in the calculator yet.</p>",
+      "items": {
+        "ON": "<p>Ontario's credits are worked out at 5.05% of the basic personal amount of C$12,989 plus your CPP and EI. A surtax adds 20% of Ontario tax above C$5,818 and a further 36% of Ontario tax above C$7,446. Lower incomes pay less through the Ontario Tax Reduction and the LIFT credit (up to C$875). The Ontario Health Premium, up to C$900 a year, is collected through payroll with the tax.</p>",
+        "BC": "<p>British Columbia's credits are worked out at 5.6% of the basic personal amount of C$13,216 plus your CPP and EI. A BC tax reduction of up to C$690 helps lower incomes, and it shrinks by 3.56% of income above C$25,570.</p>",
+        "AB": "<p>Alberta's basic personal amount of C$22,769, the highest of the four provinces here, is credited at 8% together with your CPP and EI. There is no provincial surtax or health premium.</p>",
+        "QC": "<p>Quebec runs its own return and its own contributions: QPP in place of CPP, a lower EI rate and QPIP parental insurance (see Quebec: a separate system). Its basic personal amount of C$18,952 is credited at 14%, a deduction for workers of 6% of pay (up to C$1,450) lowers Quebec taxable income, and federal tax is cut by the 16.5% Quebec abatement.</p>"
+      }
+    },
     "sources": [
       {
         "name": "CRA, current year tax rates and income brackets (2026), federal rate",

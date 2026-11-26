@@ -163,6 +163,17 @@
         ]
       }
     ],
+    "places": {
+      "after": 1,
+      "h3": "Pajak di tiap provinsi",
+      "html": "<p>Buka satu provinsi untuk melihat lapisan tarif 2026, kredit dan tambahan yang mengubah tagihannya, serta gaji bersih dari gaji C$100.000. Manitoba, Saskatchewan, provinsi-provinsi Atlantik, dan wilayah teritori belum ada di <em>tool</em> ini.</p>",
+      "items": {
+        "ON": "<p>Kredit Ontario dihitung 5,05% dari <em>basic personal amount</em> C$12.989 ditambah iuran CPP dan EI-mu. <em>Surtax</em> menambahkan 20% dari pajak Ontario di atas C$5.818, lalu 36% lagi dari pajak Ontario di atas C$7.446. Penghasilan rendah membayar lebih sedikit lewat Ontario Tax Reduction dan kredit LIFT (sampai C$875). Ontario Health Premium, paling banyak C$900 setahun, dipotong dari gaji bersama pajaknya.</p>",
+        "BC": "<p>Kredit British Columbia dihitung 5,6% dari <em>basic personal amount</em> C$13.216 ditambah iuran CPP dan EI-mu. Pengurangan pajak BC (<em>BC tax reduction</em>) sampai C$690 meringankan penghasilan rendah, lalu menyusut 3,56% dari penghasilan di atas C$25.570.</p>",
+        "AB": "<p><em>Basic personal amount</em> Alberta sebesar C$22.769, yang tertinggi di antara empat provinsi di sini, dikreditkan 8% bersama iuran CPP dan EI-mu. Alberta tidak memungut <em>surtax</em> maupun premi kesehatan provinsi.</p>",
+        "QC": "<p>Quebec punya SPT dan iuran sendiri: QPP sebagai pengganti CPP, tarif EI yang lebih rendah, dan asuransi orang tua QPIP (lihat bagian Quebec: sistem yang terpisah). <em>Basic personal amount</em> Quebec sebesar C$18.952 dikreditkan 14%, potongan untuk pekerja 6% dari gaji (sampai C$1.450) mengurangi penghasilan kena pajak Quebec, dan pajak federal dipangkas 16,5% lewat <em>Quebec abatement</em>.</p>"
+      }
+    },
     "sources": [
       {
         "name": "CRA, tarif dan bracket pajak tahun berjalan (2026), tarif federal",

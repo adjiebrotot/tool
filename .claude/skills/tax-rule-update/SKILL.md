@@ -1,6 +1,6 @@
 ---
 name: tax-rule-update
-description: Change one tax or social security rule in the Global Income Tax Calculator (global-income-tax-calculator/) when a country's law changes or a source shows a different figure. A rate, cap, band, threshold, allowance, effective date or a new component. Pinpoints every place the rule lives (engine, country pages, audit, AI docs) and changes exactly those, keeping saved state, Share and AI links and the audit intact. Use when the user says a figure is wrong, a reform changed a rule, gives an official source for a country's figure, or asks to update a country to a new tax year.
+description: Change one tax or social security rule in the Global Income Tax Calculator (global-income-tax-calculator/) when a country's law changes or a source shows a different figure. A rate, cap, band, threshold, allowance, effective date or a new component. Pinpoints every place the rule lives (engine, country pages, audit, AI docs) and changes exactly those, keeping saved state, Share and AI links and the audit intact. Use when the user says a figure is wrong, a reform changed a rule, gives an official source for a country's figure, or asks to update a country to a new tax year. Lists the official source page for every rule of all 31 countries and every US state and Canadian province (references/sources.md), so a change starts from the right page without a web search.
 ---
 
 # Updating a tax rule in the Global Income Tax Calculator
@@ -13,7 +13,8 @@ the same thing:
 | The engine | `global-income-tax-calculator/engine.js`, the country's section (`/* ═══ XX ... ═══ */`) | Constants (`BE_BR`, `TW_BR`), the country function and its lines `L('id', 'label', amount, kind, src, status, from)` |
 | The source badge | `engine.js`, `SRC` near the top | `{ name, url }` per key; each line names its key |
 | The page form | `global-income-tax-calculator/index.html`, rows with `data-show="XX"` | The knobs a reader sets, and their tooltips |
-| The country pages | `_jurisdictions/content/<slug>.en.json` and `.id.json` | Law blocks and tables, worked-example prose, tips, FAQs, `cite` lists, Indonesian `lineLabels` |
+| The country pages | `_jurisdictions/content/<slug>.en.json` and `.id.json` | Law blocks and tables, worked-example prose, tips, FAQs, `cite` lists, Indonesian `lineLabels`, and `law.places` (the prose of the "Tax in <state or province>" accordions) |
+| The place sources | `_jurisdictions/places.json` | The official page cited in each US state and Canadian province accordion |
 | The audit | `_audit/run.mjs`, `_audit/page.mjs`, `_audit/README.md` | Golden cases, anchors, caps, the `CHANGED` replays and why they changed |
 | The AI docs | `agent-notes.md`, regenerated into `ai/` | Every knob an AI link can name |
 
@@ -34,10 +35,25 @@ That list is the work list. A hit outside it (another country, another year) is 
 
 The official page that states it is the source of truth: tax authority, social security
 agency, ministry, official gazette or legal portal. When the owner gives a source, use it.
-Otherwise find one. Fetch it and read the figure yourself (`curl -sSL -A "Mozilla/5.0"`); a
-site that blocks automated access is never worked around, so ask the owner or use another
-official copy. Note what applies from when (a mid-year step needs both values, see 3c), who it
-covers (nationals only, new entrants only), and whether a cap is monthly or yearly.
+Otherwise **do not start with a web search**: the pages the country page already cites are the
+deep pages that state each rule, and they are listed for you.
+
+1. `rules.mjs <CC>` prints a **WHERE TO LOOK** section: every official page the country page
+   cites, grouped by the law block it backs (rates, social security, the regime), plus the
+   state or province pages from `places.json`. Open the one for your rule.
+2. [`references/sources.md`](references/sources.md) is the register for all 31 countries: the
+   agencies and hosts, every cited page with the rule it states, and whether the host lets an
+   agent in (ato.gov.au, canada.ca, revenuquebec.ca, ssa.gov, kwsp.gov.my and the Korean hosts
+   do not), with the page to use instead and the order to fall back in (same host with the
+   year changed, the law on the legal portal, then PwC Worldwide Tax Summaries as `secondary`).
+3. Search the web only when neither covers the rule or the page has moved. When you find a
+   new official page, cite it on the country page (step 6), so the next change finds it here.
+
+Fetch it and read the figure yourself (`curl -sSL -A "Mozilla/5.0"`; `--http1.1` when a
+transfer is reset). A site that blocks automated access is never worked around: use the
+other official copy or fallback the register names, or ask the owner. Note what applies from
+when (a mid-year step needs both values, see 3c), who it covers (nationals only, new entrants
+only), and whether a cap is monthly or yearly.
 
 ## 3. Change the engine at the exact place
 
@@ -117,7 +133,16 @@ node global-income-tax-calculator/_audit/page.mjs
    languages.
 4. A worked example's inputs live in `_jurisdictions/scenarios.mjs`. Keep its `key`; changing
    its inputs (setting a new knob for a foreign-employee example) is fine.
-5. `node _ref/jurisdiction-pages.mjs`, then `--check`, which must say 0 out of date with no
+5. A US state or a Canadian province is also drawn as a "Tax in <place>" accordion under Tax
+   rules at a glance. Its brackets, deductions, credits, tag and worked line come from the
+   engine (`E.places` in `engine.js`: `US_ST`, `CA_P`, `NY_P`, `IL_*`, `ON_BR`, `BC_BR`,
+   `AB_BR`, `QC_BR`), so they follow the engine change on their own. Only the prose in the
+   content file's `law.places.items[<code>]` (both languages) quotes figures by hand: the
+   figure search in step 1 lists it. A new state constant the accordion should show is added
+   to `E.places` and read in `placeFacts()` in `_ref/jurisdiction-pages.mjs`. A state moved
+   from gated to loaded (or back) changes its accordion by itself; add its official page to
+   `places.json` if it has none.
+6. `node _ref/jurisdiction-pages.mjs`, then `--check`, which must say 0 out of date with no
    problem lines.
 
 ## 7. Regenerate and check
