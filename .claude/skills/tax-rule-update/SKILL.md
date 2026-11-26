@@ -134,14 +134,14 @@ node global-income-tax-calculator/_audit/page.mjs
 4. A worked example's inputs live in `_jurisdictions/scenarios.mjs`. Keep its `key`; changing
    its inputs (setting a new knob for a foreign-employee example) is fine.
 5. A US state or a Canadian province is also drawn as a "Tax in <place>" accordion under Tax
-   rules at a glance. Its brackets, deductions, credits, tag and worked line come from the
+   rules at a glance. Its brackets, deductions, credits and worked line come from the
    engine (`E.places` in `engine.js`: `US_ST`, `CA_P`, `NY_P`, `IL_*`, `ON_BR`, `BC_BR`,
    `AB_BR`, `QC_BR`), so they follow the engine change on their own. Only the prose in the
    content file's `law.places.items[<code>]` (both languages) quotes figures by hand: the
    figure search in step 1 lists it. A new state constant the accordion should show is added
-   to `E.places` and read in `placeFacts()` in `_ref/jurisdiction-pages.mjs`. A state moved
-   from gated to loaded (or back) changes its accordion by itself; add its official page to
-   `places.json` if it has none.
+   to `E.places` and read in `placeFacts()` in `_ref/jurisdiction-pages.mjs`. Only states the
+   calculator works out get one: a state moved from gated to loaded gains its accordion by
+   itself (add its official page to `places.json` if it has none), and one gated again loses it.
 6. `node _ref/jurisdiction-pages.mjs`, then `--check`, which must say 0 out of date with no
    problem lines.
 

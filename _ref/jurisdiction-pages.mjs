@@ -96,10 +96,7 @@ const T = {
     bmc: 'Kept more of your pay? A coffee is deductible from my happiness, not your tax!',
     pl: {
       title: n => `Tax in ${n}`,
-      noneTag: 'No income tax', gatedTag: 'Not covered yet',
-      flatTag: r => `Flat ${r}`, rangeTag: (a, b) => `${a} to ${b}`,
       none: n => `${n} has no state income tax on wages. Federal income tax and FICA still apply in full, so take-home pay here follows the federal rules alone.`,
-      gatedMore: 'The state’s revenue department publishes its rates and forms.',
       sd: (s, j) => s === j ? `a standard deduction of ${s}, single or joint` : `a standard deduction of ${s} (${j} on a joint return)`,
       ex: (s, j) => s === j ? `a personal exemption of ${s}, single or joint` : `a personal exemption of ${s} (${j} on a joint return)`,
       ded: parts => `Taxable income is pay less ${parts.join(' and ')}.`,
@@ -154,10 +151,7 @@ const T = {
     bmc: 'Pajaknya sudah lebih hemat? Sisihkan sedikit untuk traktir saya kopi susu!',
     pl: {
       title: n => `Pajak di ${n}`,
-      noneTag: 'Tanpa pajak gaji', gatedTag: 'Belum dihitung',
-      flatTag: r => `Tarif tunggal ${r}`, rangeTag: (a, b) => `${a} sampai ${b}`,
       none: n => `${n} tidak memungut pajak penghasilan negara bagian atas gaji. Pajak penghasilan federal dan FICA tetap berlaku penuh, jadi gaji bersih di sini hanya mengikuti aturan federal.`,
-      gatedMore: 'Tarif dan formulirnya diterbitkan oleh otoritas pajak negara bagian tersebut.',
       sd: (s, j) => s === j ? `potongan standar (<em>standard deduction</em>) ${s}, baik lajang maupun gabungan` : `potongan standar (<em>standard deduction</em>) ${s} (${j} untuk SPT gabungan)`,
       ex: (s, j) => s === j ? `pembebasan pribadi (<em>personal exemption</em>) ${s}, baik lajang maupun gabungan` : `pembebasan pribadi (<em>personal exemption</em>) ${s} (${j} untuk SPT gabungan)`,
       ded: parts => `Penghasilan kena pajaknya adalah gaji dikurangi ${parts.join(' dan ')}.`,
@@ -308,6 +302,8 @@ const PLACES = {
   US: { knob: 'usState', names: () => E.US_STATES, ref: 100000, inputs: { usFiling: 'S', usRes: 'res' } },
   CA: { knob: 'caProv', names: () => ({ ON: 'Ontario', BC: 'British Columbia', AB: 'Alberta', QC: 'Quebec' }), ref: 100000, inputs: {} },
 };
+// Only the places the calculator works out: a US state whose rules are not loaded is left out.
+const placeNames = cc => Object.fromEntries(Object.entries(PLACES[cc].names()).filter(([code]) => !(cc === 'US' && E.US_ST_GATED[code])));
 const US_FED_FICA = new Set(['usFed', 'usSs', 'usMed', 'usAddMed']);
 const CA_PROV_LINES = new Set(['caOn', 'caOhp', 'caBc', 'caAb', 'caQc']);
 const slugOf = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -317,7 +313,6 @@ function placeFacts(cc, code, name, lang){
   const m = v => money(v, cc, lang);
   const rate = v => (lang === 'id' ? String(+(v*100).toFixed(4)).replace('.', ',') : String(+(v*100).toFixed(4))) + '%';
   const ranges = br => { let lo = 0; return br.map(([up, r]) => { const s = up == null ? t.over(m(lo)) : t.from(m(lo === 0 ? 0 : lo + 1), m(up)); lo = up; return [s, r]; }); };
-  const tag = br => br.length === 1 ? t.flatTag(rate(br[0][1])) : t.rangeTag(rate(Math.min(...br.map(x => x[1]))), rate(Math.max(...br.map(x => x[1]))));
   // One table for single and joint: one income column when the brackets are the same, two when only the edges differ.
   const tableSJ = (bs, bm) => {
     if(bs.length === 1 && bm.length === 1 && bs[0][1] === bm[0][1]) return [];
@@ -331,11 +326,7 @@ function placeFacts(cc, code, name, lang){
   };
   const p = [];
   if(cc === 'US'){
-    if(E.US_NO_TAX.includes(code)) return { tag: t.noneTag, html: `<p>${t.none(name)}</p>`, tables: [] };
-    if(E.US_ST_GATED[code]){
-      const r = E.compute('US', PLACES.US.ref, { usState: code });
-      return { tag: t.gatedTag, html: `<p>${esc(lang === 'id' ? trId(r.reason, 'US') : r.reason)} ${t.gatedMore}</p>`, tables: [], gated: true };
-    }
+    if(E.US_NO_TAX.includes(code)) return { html: `<p>${t.none(name)}</p>`, tables: [] };
     let sd = [0, 0], ex = [0, 0], cr = [0, 0], bs, bm, tables = [];
     if(code === 'CA'){ sd = [X.CA_P.S[0], X.CA_P.MFJ[0]]; bs = X.CA_P.S[1]; bm = X.CA_P.MFJ[1]; cr = [X.CA_P.S[2], X.CA_P.MFJ[2]]; }
     else if(code === 'NY'){ sd = [X.NY_P.S[0], X.NY_P.MFJ[0]]; bs = X.NY_P.S[1]; bm = X.NY_P.MFJ[1]; }
@@ -349,10 +340,10 @@ function placeFacts(cc, code, name, lang){
     tables = tableSJ(bs, bm);
     p.push(tables.length ? t.brackets : t.flat(name, rate(bs[0][1])));
     if(code === 'NY') tables.push({ head: [t.headCity, t.rate], rows: ranges(X.NY_P.S[2]).map(([s, r]) => [s, rate(r)]) });
-    return { tag: tag(bs), html: `<p>${p.join(' ')}</p>`, tables };
+    return { html: `<p>${p.join(' ')}</p>`, tables };
   }
   const br = { ON: X.ON_BR, BC: X.BC_BR, AB: X.AB_BR, QC: X.QC_BR }[code];
-  return { tag: tag(br), html: '', tables: [{ head: [t.headOne, t.rate], rows: ranges(br).map(([s, r]) => [s, rate(r)]) }] };
+  return { html: '', tables: [{ head: [t.headOne, t.rate], rows: ranges(br).map(([s, r]) => [s, rate(r)]) }] };
 }
 
 // The worked line, the engine's notes for the place, and the link that opens it in the calculator.
@@ -371,14 +362,14 @@ function placeRun(cc, code, name, lang){
 function placesHtml(p, c, lang, refs){
   const pl = c.law && c.law.places, P = PLACES[p.cc];
   if(!pl || !P) return '';
-  const t = T[lang].pl, names = P.names();
+  const t = T[lang].pl, names = placeNames(p.cc);
   const table = tb => `
           <div class="gd-table-wrap"><table class="gd-table jx-table">
             <thead><tr>${tb.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
             <tbody>${tb.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(tb.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n              ')}</tbody>
           </table></div>`;
   const items = Object.entries(names).map(([code, name]) => {
-    const f = placeFacts(p.cc, code, name, lang), run1 = f.gated ? null : placeRun(p.cc, code, name, lang);
+    const f = placeFacts(p.cc, code, name, lang), run1 = placeRun(p.cc, code, name, lang);
     const extra = (pl.items || {})[code], extraHtml = typeof extra === 'string' ? extra : (extra && extra.html) || '';
     const cites = [...(PLACE_SRC[p.cc][code] || []), ...((extra && extra.cite) || [])];
     // The rule, its brackets, then what the place adds and what it comes to; the sources mark the last paragraph.
@@ -386,7 +377,7 @@ function placesHtml(p, c, lang, refs){
     const id = (lang === 'id' ? 'pajak-di-' : 'tax-in-') + slugOf(name);
     return `
       <details class="jx-place" id="${id}">
-        <summary><span class="jx-place-n">${esc(t.title(name))}</span><span class="jx-place-tag">${f.tag}</span></summary>
+        <summary>${esc(t.title(name))}</summary>
         <div class="jx-place-body">
           ${f.html ? `<div class="jx-prose">${after ? f.html : refs.into(f.html, cites)}</div>` : ''}${f.tables.map(table).join('')}${after ? `
           <div class="jx-prose">${refs.into(after, cites)}</div>` : ''}
@@ -404,7 +395,7 @@ function placesHtml(p, c, lang, refs){
 function regPlaces(p, c, refs){
   const pl = c.law && c.law.places, P = PLACES[p.cc];
   if(!pl || !P) return;
-  for(const code of Object.keys(P.names())){
+  for(const code of Object.keys(placeNames(p.cc))){
     const extra = (pl.items || {})[code];
     refs.reg([...(PLACE_SRC[p.cc][code] || []), ...((extra && extra.cite) || [])], `place ${code}`);
   }
