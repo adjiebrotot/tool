@@ -1,0 +1,517 @@
+{
+  "_about": "Official sources for each state or province a country page draws as an accordion under Tax rules at a glance (_ref/jurisdiction-pages.mjs). Language-neutral: both pages cite these. Every URL was opened and loaded on 26 Nov 2026. Colorado, Massachusetts, Rhode Island and Utah block automated fetches, so their pages cite the Tax Foundation table only.",
+  "US": {
+    "AL": [
+      {
+        "name": "Alabama Department of Revenue, individual income tax",
+        "url": "https://www.revenue.alabama.gov/individual-corporate/individual-income-tax-filing-information/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "AK": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "AZ": [
+      {
+        "name": "Arizona Department of Revenue, individual income tax",
+        "url": "https://azdor.gov/individuals"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "AR": [
+      {
+        "name": "Arkansas Department of Finance and Administration, individual income tax",
+        "url": "https://www.dfa.arkansas.gov/office/taxes/income-tax-administration/individual-income-tax/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "CA": [
+      {
+        "name": "California FTB, 2026 California tax rate schedules",
+        "url": "https://www.ftb.ca.gov/forms/2026/2026-540-tax-rate-schedules.pdf"
+      },
+      {
+        "name": "California EDD, payroll tax rates and withholding (SDI)",
+        "url": "https://edd.ca.gov/en/payroll_taxes/rates_and_withholding/#:~:text=SDI%20Rate"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "CO": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "CT": [
+      {
+        "name": "Connecticut Department of Revenue Services, individual income tax",
+        "url": "https://portal.ct.gov/drs/individuals/individual-income-tax-portal"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "DE": [
+      {
+        "name": "Delaware Division of Revenue, personal income tax",
+        "url": "https://revenue.delaware.gov/frequently-asked-questions/personal-income-tax-faqs/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "DC": [
+      {
+        "name": "DC Office of Tax and Revenue, individual income tax rates",
+        "url": "https://otr.cfo.dc.gov/page/dc-individual-and-fiduciary-income-tax-rates"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "FL": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "GA": [
+      {
+        "name": "Georgia Department of Revenue, taxes for individuals",
+        "url": "https://dor.georgia.gov/taxes/taxes-individuals"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "HI": [
+      {
+        "name": "Hawaii Department of Taxation, individual income tax",
+        "url": "https://tax.hawaii.gov/forms/a1_b1_1income/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "ID": [
+      {
+        "name": "Idaho State Tax Commission, individual income tax",
+        "url": "https://tax.idaho.gov/taxes/income-tax/individual-income/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "IL": [
+      {
+        "name": "Illinois Department of Revenue, income tax rates",
+        "url": "https://tax.illinois.gov/research/taxrates/income.html#:~:text=Individual%20Income%20Tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "IN": [
+      {
+        "name": "Indiana Department of Revenue, individual income tax",
+        "url": "https://www.in.gov/dor/i-am-a/individual/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "IA": [
+      {
+        "name": "Iowa Department of Revenue, individual income tax",
+        "url": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "KS": [
+      {
+        "name": "Kansas Department of Revenue, individual income tax",
+        "url": "https://www.ksrevenue.gov/perstaxtypesii.html"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "KY": [
+      {
+        "name": "Kentucky Department of Revenue, individual income tax",
+        "url": "https://revenue.ky.gov/Individual/Individual-Income-Tax/Pages/default.aspx"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "LA": [
+      {
+        "name": "Louisiana Department of Revenue, individual income tax",
+        "url": "https://revenue.louisiana.gov/individuals/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "ME": [
+      {
+        "name": "Maine Revenue Services, income tax",
+        "url": "https://www.maine.gov/revenue/taxes/income-estate-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MD": [
+      {
+        "name": "Comptroller of Maryland, income tax rates and brackets",
+        "url": "https://services.marylandcomptroller.gov/taxes/en/maryland-income-tax-rates-and-brackets?id=kb_article_view&sysparm_article=KB0010014"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MA": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MI": [
+      {
+        "name": "Michigan Department of Treasury, individual income tax",
+        "url": "https://www.michigan.gov/taxes/iit"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MN": [
+      {
+        "name": "Minnesota Department of Revenue, income tax rates and brackets",
+        "url": "https://www.revenue.state.mn.us/minnesota-income-tax-rates-and-brackets"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MS": [
+      {
+        "name": "Mississippi Department of Revenue, individual income tax",
+        "url": "https://www.dor.ms.gov/individual"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MO": [
+      {
+        "name": "Missouri Department of Revenue, individual income tax",
+        "url": "https://dor.mo.gov/taxation/individual/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "MT": [
+      {
+        "name": "Montana Department of Revenue, individual income tax",
+        "url": "https://revenue.mt.gov/taxes/individual-income-tax/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NE": [
+      {
+        "name": "Nebraska Department of Revenue, individual income tax",
+        "url": "https://revenue.nebraska.gov/individuals/individual-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NV": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NH": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NJ": [
+      {
+        "name": "New Jersey Division of Taxation, income tax rates",
+        "url": "https://www.nj.gov/treasury/taxation/taxtables.shtml"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NM": [
+      {
+        "name": "New Mexico Taxation and Revenue Department, personal income tax",
+        "url": "https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NY": [
+      {
+        "name": "NY Department of Taxation and Finance, IT-2105-I (2026): New York State and City tax rates",
+        "url": "https://www.tax.ny.gov/pdf/current_forms/it/it2105i.pdf"
+      },
+      {
+        "name": "New York Paid Family Leave, 2026 updates and employee contribution rate",
+        "url": "https://paidfamilyleave.ny.gov/2026#:~:text=employees%20will%20contribute"
+      },
+      {
+        "name": "NY Workers' Compensation Board, employee disability benefits contribution",
+        "url": "https://www.wcb.ny.gov/content/main/DisabilityBenefits/employee-disability-benefits.jsp#:~:text=no%20more%20than%2060%20cents%20a%20week"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "NC": [
+      {
+        "name": "North Carolina Department of Revenue, individual income tax",
+        "url": "https://www.ncdor.gov/taxes-forms/individual-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "ND": [
+      {
+        "name": "North Dakota Office of State Tax Commissioner, individual income tax",
+        "url": "https://www.tax.nd.gov/individual-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "OH": [
+      {
+        "name": "Ohio Department of Taxation, annual tax rates",
+        "url": "https://tax.ohio.gov/individual/resources/annual-tax-rates/"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "OK": [
+      {
+        "name": "Oklahoma Tax Commission, individuals",
+        "url": "https://oklahoma.gov/tax/individuals.html"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "OR": [
+      {
+        "name": "Oregon Department of Revenue, personal income tax",
+        "url": "https://www.oregon.gov/dor/programs/individuals/pages/pit.aspx"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "PA": [
+      {
+        "name": "Pennsylvania Department of Revenue, personal income tax",
+        "url": "https://www.pa.gov/agencies/revenue/resources/tax-types-and-information/personal-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "RI": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "SC": [
+      {
+        "name": "South Carolina Department of Revenue, individual income tax",
+        "url": "https://dor.sc.gov/iit"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "SD": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "TN": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "TX": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "UT": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "VT": [
+      {
+        "name": "Vermont Department of Taxes, personal income tax",
+        "url": "https://tax.vermont.gov/personal-income-tax"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "VA": [
+      {
+        "name": "Virginia Tax, individual income tax filing",
+        "url": "https://www.tax.virginia.gov/individual-income-tax-filing"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "WA": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "WV": [
+      {
+        "name": "West Virginia Tax Division, individuals",
+        "url": "https://tax.wv.gov/Individuals/Pages/Individuals.aspx"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "WI": [
+      {
+        "name": "Wisconsin Department of Revenue, individuals",
+        "url": "https://www.revenue.wi.gov/Pages/Individuals/home.aspx"
+      },
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ],
+    "WY": [
+      {
+        "name": "Tax Foundation, state individual income tax rates and brackets for 2026",
+        "url": "https://taxfoundation.org/data/all/state/state-income-tax-rates-2026/#:~:text=States%20with%20No%20Income%20Tax"
+      }
+    ]
+  },
+  "CA": {
+    "ON": [
+      {
+        "name": "CRA, current year tax rates and income brackets (2026), provincial rates",
+        "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/tax-rates-brackets/current-year.html#:~:text=Ontario%20rate"
+      },
+      {
+        "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (Ontario surtax)",
+        "url": "https://www.canada.ca/content/dam/cra-arc/migration/cra-arc/tx/bsnss/tpcs/pyrll/t4032/2026/t4032-on-1-26e.pdf"
+      },
+      {
+        "name": "Ontario.ca, Health premium",
+        "url": "https://www.ontario.ca/page/health-premium#:~:text=The%20health%20premium%20ranges"
+      }
+    ],
+    "BC": [
+      {
+        "name": "Government of British Columbia, personal income tax rates",
+        "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/tax-rates#:~:text=Personal%20income%20tax%20brackets%20and%20rates"
+      },
+      {
+        "name": "Government of British Columbia, basic tax credits",
+        "url": "https://www2.gov.bc.ca/gov/content/taxes/income-taxes/personal/credits/basic"
+      }
+    ],
+    "AB": [
+      {
+        "name": "Government of Alberta, personal income tax",
+        "url": "https://www.alberta.ca/personal-income-tax#:~:text=2025%20and%202026%20tax%20brackets"
+      }
+    ],
+    "QC": [
+      {
+        "name": "Revenu Québec, income tax rates",
+        "url": "https://www.revenuquebec.ca/en/citizens/income-tax-return/completing-your-income-tax-return/income-tax-rates/"
+      },
+      {
+        "name": "CRA, T4127 Payroll Deductions Formulas (Quebec reduction of federal tax)",
+        "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan/t4127-jan-payroll-deductions-formulas-computer-programs.html#:~:text=Formula%20to%20calculate%20the%20annual%20federal%20tax%20payable"
+      }
+    ]
+  }
+}

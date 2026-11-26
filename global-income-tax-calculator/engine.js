@@ -336,6 +336,8 @@ function usFicaLines(g, fs, lines){
 }
 const CA_S = [[11456,.01],[27157,.02],[42861,.04],[59498,.06],[75197,.08],[384109,.093],[460927,.103],[768213,.113],[null,.123]];
 const CA_MFJ = [[22912,.01],[54314,.02],[85722,.04],[118996,.06],[150394,.08],[768218,.093],[921854,.103],[1536426,.113],[null,.123]];
+// California: standard deduction, brackets and the personal exemption credit, single and joint.
+const CA_P = { S: [5900, CA_S, 158], MFJ: [11800, CA_MFJ, 316] };
 const NY_S = [[8500,.039],[11700,.044],[13900,.0515],[80650,.054],[215400,.059],[1077550,.0685],[5e6,.0965],[25e6,.103],[null,.109]];
 const NYC_S = [[12000,.03078],[25000,.03762],[50000,.03819],[null,.03876]];
 const NY_MFJ = [[17150,.039],[23600,.044],[27900,.0515],[161550,.054],[323200,.059],[2155350,.0685],[5e6,.0965],[25e6,.103],[null,.109]];
@@ -420,7 +422,7 @@ function usStateLines(g, st, fs, k, lines){
   if(US_ST_GATED[st]) return null;
   let total = 0;
   if(st === 'CA'){
-    const [sd, br, cred] = fs === 'S' ? [5900, CA_S, 158] : [11800, CA_MFJ, 316];
+    const [sd, br, cred] = CA_P[fs];
     const base = max(0, prog(max(0, g - sd), br) - cred), bhst = 0.01*max(0, g - sd - 1e6);
     lines.push(bands(L('usState', 'California income tax', base, 'tax', 'ftb', fs === 'MFJ' ? 'official' : 'secondary', F), max(0, g - sd), br,
       { adj: [['Less the personal exemption credit', -cred]] }));
@@ -1404,7 +1406,9 @@ function marginal(country, g, knobs, base){
 
 const api = { C, SRC, FX, FX_DATE, US_STATES, US_ST_GATED, US_NO_TAX, US_LOCAL, compute, solveGross, marginal, convert,
   _: { prog, deEst, deSoli, auLito, auMedicare, nyRecaptureTax, beCsssQ, beBonusM, beFedTax, itDetr, chDbstSingle, chDbstMarried,
-       jpGrade, jpNat, jpEmpDed, jpBasic, krDed, krTax, krCredit, caOhp, cnIit, twTax, ptMinimo, ptDependants, ptExpenses, esArt20, esSmi, frTax, seGa, seJsa, ilTax } };
+       jpGrade, jpNat, jpEmpDed, jpBasic, krDed, krTax, krCredit, caOhp, cnIit, twTax, ptMinimo, ptDependants, ptExpenses, esArt20, esSmi, frTax, seGa, seJsa, ilTax },
+  // The rule tables the country pages draw their state and province accordions from (_ref/jurisdiction-pages.mjs).
+  places: { US_ST, CA_P, NY_P, IL_RATE, IL_EX, ON_BR, BC_BR, AB_BR, QC_BR } };
 global.GSCEngine = api;
 if(typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

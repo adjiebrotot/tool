@@ -9,6 +9,8 @@
 //   global-income-tax-calculator/_jurisdictions/scenarios.mjs   the worked examples' inputs
 //   global-income-tax-calculator/engine.js                       every amount on the page
 //   global-income-tax-calculator/_jurisdictions/content/<slug>.<lang>.json   the prose
+//   global-income-tax-calculator/_jurisdictions/places.json   the official page of each US state and
+//     Canadian province, cited in its "Tax in <place>" accordion (drawn from the engine's tables)
 // It also writes the list of country pages, between <!-- jurisdictions:start --> and
 // <!-- jurisdictions:end -->, into four pages: the calculator (index.html, English names to
 // the English pages) and its Indonesian twin (id/index.html, Indonesian names to the id/
@@ -27,8 +29,13 @@ import { fileURLToPath } from 'node:url';
 import { PAGES } from '../global-income-tax-calculator/_jurisdictions/scenarios.mjs';
 import { run, loadLink, E } from '../global-income-tax-calculator/_jurisdictions/compute.mjs';
 import { xhtmlLinks } from './hreflang.mjs';
+import { createRequire } from 'node:module';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// The Indonesian for a text the engine writes (a note, a reason), as the Indonesian calculator says it.
+const trId = createRequire(import.meta.url)(join(ROOT, 'global-income-tax-calculator', 'labels-id.js')).tr;
+// Official sources for each state or province accordion (both languages cite the same pages).
+const PLACE_SRC = JSON.parse(readFileSync(join(ROOT, 'global-income-tax-calculator', '_jurisdictions', 'places.json'), 'utf8'));
 const TOOL = 'global-income-tax-calculator';
 const SITE = 'https://tool.adjiebrotots.com';
 const BASE = `${SITE}/${TOOL}/`;
@@ -87,6 +94,26 @@ const T = {
     ogAlt: 'Global Income Tax Calculator, a free tool on Adjie Brotools',
     locale: 'en_AU',
     bmc: 'Kept more of your pay? A coffee is deductible from my happiness, not your tax!',
+    pl: {
+      title: n => `Tax in ${n}`,
+      none: n => `${n} has no state income tax on wages. Federal income tax and FICA still apply in full, so take-home pay here follows the federal rules alone.`,
+      sd: (s, j) => s === j ? `a standard deduction of ${s}, single or joint` : `a standard deduction of ${s} (${j} on a joint return)`,
+      ex: (s, j) => s === j ? `a personal exemption of ${s}, single or joint` : `a personal exemption of ${s} (${j} on a joint return)`,
+      ded: parts => `Taxable income is pay less ${parts.join(' and ')}.`,
+      noDed: 'There is no standard deduction: the rate applies from the first dollar of pay.',
+      credit: (s, j) => s === j ? `A personal credit of ${s} then comes off the tax.` : `A personal credit of ${s} (${j} on a joint return) then comes off the tax.`,
+      flat: (n, r) => `${n} taxes that at one flat rate of ${r}.`,
+      brackets: 'The brackets below apply to that taxable income.',
+      headSJ: ['Taxable income (single)', 'Taxable income (joint)', 'Rate'],
+      headBoth: 'Taxable income (single or joint)', headOne: 'Taxable income', rate: 'Rate',
+      headCity: 'Taxable income (New York City resident tax, single)',
+      from: (lo, hi) => `${lo} to ${hi}`, over: lo => `Over ${lo}`,
+      worked: {
+        US: (amt, take, net, month, has) => has ? `On ${amt} a year as a single resident, the state’s own taxes and contributions come to ${take}, and take-home pay is ${net} (${month} a month).` : `On ${amt} a year as a single resident, take-home pay is ${net} (${month} a month).`,
+        CA: (amt, take, net, month) => `On ${amt} a year, provincial taxes come to ${take}, and take-home pay after federal tax and contributions is ${net} (${month} a month).`,
+      },
+      open: n => `Open ${n} in the calculator`,
+    },
   },
   id: {
     tool: 'Kalkulator Gaji Bersih dan Pajak Penghasilan',
@@ -122,6 +149,26 @@ const T = {
     ogAlt: 'Global Income Tax Calculator, tool gratis di Adjie Brotools',
     locale: 'id_ID',
     bmc: 'Pajaknya sudah lebih hemat? Sisihkan sedikit untuk traktir saya kopi susu!',
+    pl: {
+      title: n => `Pajak di ${n}`,
+      none: n => `${n} tidak memungut pajak penghasilan negara bagian atas gaji. Pajak penghasilan federal dan FICA tetap berlaku penuh, jadi gaji bersih di sini hanya mengikuti aturan federal.`,
+      sd: (s, j) => s === j ? `potongan standar (<em>standard deduction</em>) ${s}, baik lajang maupun gabungan` : `potongan standar (<em>standard deduction</em>) ${s} (${j} untuk SPT gabungan)`,
+      ex: (s, j) => s === j ? `pembebasan pribadi (<em>personal exemption</em>) ${s}, baik lajang maupun gabungan` : `pembebasan pribadi (<em>personal exemption</em>) ${s} (${j} untuk SPT gabungan)`,
+      ded: parts => `Penghasilan kena pajaknya adalah gaji dikurangi ${parts.join(' dan ')}.`,
+      noDed: 'Tidak ada potongan standar, jadi tarifnya berlaku sejak dolar pertama gaji.',
+      credit: (s, j) => s === j ? `Setelah itu, kredit pribadi ${s} mengurangi pajaknya.` : `Setelah itu, kredit pribadi ${s} (${j} untuk SPT gabungan) mengurangi pajaknya.`,
+      flat: (n, r) => `${n} memajaki penghasilan itu dengan satu tarif tunggal ${r}.`,
+      brackets: 'Lapisan tarif di bawah ini berlaku untuk penghasilan kena pajak tersebut.',
+      headSJ: ['Penghasilan kena pajak (lajang)', 'Penghasilan kena pajak (gabungan)', 'Tarif'],
+      headBoth: 'Penghasilan kena pajak (lajang atau gabungan)', headOne: 'Penghasilan kena pajak', rate: 'Tarif',
+      headCity: 'Penghasilan kena pajak (pajak penduduk kota New York, lajang)',
+      from: (lo, hi) => `${lo} sampai ${hi}`, over: lo => `Di atas ${lo}`,
+      worked: {
+        US: (amt, take, net, month, has) => has ? `Dengan gaji ${amt} setahun sebagai wajib pajak lajang berstatus <em>resident</em>, pajak dan iuran negara bagian ini memotong ${take}, dan gaji bersihnya ${net} (${month} sebulan).` : `Dengan gaji ${amt} setahun sebagai wajib pajak lajang berstatus <em>resident</em>, gaji bersihnya ${net} (${month} sebulan).`,
+        CA: (amt, take, net, month) => `Dengan gaji ${amt} setahun, pajak provinsi memotong ${take}, dan gaji bersih setelah pajak federal serta iuran adalah ${net} (${month} sebulan).`,
+      },
+      open: n => `Buka ${n} di <em>tool</em>`,
+    },
   },
 };
 
@@ -246,6 +293,114 @@ function exampleHtml(p, ex, c, lang, refs){
       </article>`;
 }
 
+// ---- The accordions under Tax rules at a glance: one "Tax in <place>" per state or province the
+// calculator lets a reader choose. The rule tables come from the engine (E._.places and the state
+// lists), the worked line from running it, the sources from places.json; a content file's
+// law.places adds the heading, an intro, where the accordions sit (after: a law block's index)
+// and optional prose per place (items[code]: html, or { html, cite }).
+const PLACES = {
+  US: { knob: 'usState', names: () => E.US_STATES, ref: 100000, inputs: { usFiling: 'S', usRes: 'res' } },
+  CA: { knob: 'caProv', names: () => ({ ON: 'Ontario', BC: 'British Columbia', AB: 'Alberta', QC: 'Quebec' }), ref: 100000, inputs: {} },
+};
+// Only the places the calculator works out: a US state whose rules are not loaded is left out.
+const placeNames = cc => Object.fromEntries(Object.entries(PLACES[cc].names()).filter(([code]) => !(cc === 'US' && E.US_ST_GATED[code])));
+const US_FED_FICA = new Set(['usFed', 'usSs', 'usMed', 'usAddMed']);
+const CA_PROV_LINES = new Set(['caOn', 'caOhp', 'caBc', 'caAb', 'caQc']);
+const slugOf = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+function placeFacts(cc, code, name, lang){
+  const t = T[lang].pl, X = E.places;
+  const m = v => money(v, cc, lang);
+  const rate = v => (lang === 'id' ? String(+(v*100).toFixed(4)).replace('.', ',') : String(+(v*100).toFixed(4))) + '%';
+  const ranges = br => { let lo = 0; return br.map(([up, r]) => { const s = up == null ? t.over(m(lo)) : t.from(m(lo === 0 ? 0 : lo + 1), m(up)); lo = up; return [s, r]; }); };
+  // One table for single and joint: one income column when the brackets are the same, two when only the edges differ.
+  const tableSJ = (bs, bm) => {
+    if(bs.length === 1 && bm.length === 1 && bs[0][1] === bm[0][1]) return [];
+    const same = JSON.stringify(bs) === JSON.stringify(bm);
+    if(same) return [{ head: [t.headBoth, t.rate], rows: ranges(bs).map(([s, r]) => [s, rate(r)]) }];
+    if(bs.length === bm.length && bs.every((x, i) => x[1] === bm[i][1])){
+      const a = ranges(bs), b = ranges(bm);
+      return [{ head: t.headSJ, rows: a.map(([s, r], i) => [s, b[i][0], rate(r)]) }];
+    }
+    return [{ head: [t.headSJ[0], t.rate], rows: ranges(bs).map(([s, r]) => [s, rate(r)]) }, { head: [t.headSJ[1], t.rate], rows: ranges(bm).map(([s, r]) => [s, rate(r)]) }];
+  };
+  const p = [];
+  if(cc === 'US'){
+    if(E.US_NO_TAX.includes(code)) return { html: `<p>${t.none(name)}</p>`, tables: [] };
+    let sd = [0, 0], ex = [0, 0], cr = [0, 0], bs, bm, tables = [];
+    if(code === 'CA'){ sd = [X.CA_P.S[0], X.CA_P.MFJ[0]]; bs = X.CA_P.S[1]; bm = X.CA_P.MFJ[1]; cr = [X.CA_P.S[2], X.CA_P.MFJ[2]]; }
+    else if(code === 'NY'){ sd = [X.NY_P.S[0], X.NY_P.MFJ[0]]; bs = X.NY_P.S[1]; bm = X.NY_P.MFJ[1]; }
+    else if(code === 'IL'){ ex = [X.IL_EX, 2*X.IL_EX]; bs = bm = [[null, X.IL_RATE]]; }
+    else { const s = X.US_ST[code]; [bs, bm] = s; sd = s[2]; ex = s[3]; cr = s[4]; }
+    const parts = [];
+    if(sd[0] || sd[1]) parts.push(t.sd(m(sd[0]), m(sd[1])));
+    if(ex[0] || ex[1]) parts.push(t.ex(m(ex[0]), m(ex[1])));
+    p.push(parts.length ? t.ded(parts) : t.noDed);
+    if(cr[0] || cr[1]) p.push(t.credit(m(cr[0]), m(cr[1])));
+    tables = tableSJ(bs, bm);
+    p.push(tables.length ? t.brackets : t.flat(name, rate(bs[0][1])));
+    if(code === 'NY') tables.push({ head: [t.headCity, t.rate], rows: ranges(X.NY_P.S[2]).map(([s, r]) => [s, rate(r)]) });
+    return { html: `<p>${p.join(' ')}</p>`, tables };
+  }
+  const br = { ON: X.ON_BR, BC: X.BC_BR, AB: X.AB_BR, QC: X.QC_BR }[code];
+  return { html: '', tables: [{ head: [t.headOne, t.rate], rows: ranges(br).map(([s, r]) => [s, rate(r)]) }] };
+}
+
+// The worked line, the engine's notes for the place, and the link that opens it in the calculator.
+function placeRun(cc, code, name, lang){
+  const P = PLACES[cc], t = T[lang].pl;
+  const ex = { key: 'place-' + code, amount: P.ref, inputs: { ...P.inputs, [P.knob]: code } };
+  let r;
+  try { r = run(cc, ex); } catch(e){ return null; }
+  const take = r.lines.filter(l => ['tax', 'social', 'other'].includes(l.kind) && (cc === 'US' ? !US_FED_FICA.has(l.id) : CA_PROV_LINES.has(l.id))).reduce((a, l) => a + l.amount, 0);
+  const m = v => money(v, cc, lang);
+  const notes = (r.notes || []).map(n => lang === 'id' ? trId(n, cc) || n : n);
+  const href = (lang === 'id' ? '../../id/' : '../') + loadLink(cc, ex, `${NAMES[lang][cc]}: ${t.title(name)}`);
+  return { worked: t.worked[cc](m(P.ref), m(take), m(r.net), m(r.net / 12), take > 0.5), notes, href };
+}
+
+function placesHtml(p, c, lang, refs){
+  const pl = c.law && c.law.places, P = PLACES[p.cc];
+  if(!pl || !P) return '';
+  const t = T[lang].pl, names = placeNames(p.cc);
+  const table = tb => `
+          <div class="gd-table-wrap"><table class="gd-table jx-table">
+            <thead><tr>${tb.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
+            <tbody>${tb.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(tb.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n              ')}</tbody>
+          </table></div>`;
+  const items = Object.entries(names).map(([code, name]) => {
+    const f = placeFacts(p.cc, code, name, lang), run1 = placeRun(p.cc, code, name, lang);
+    const extra = (pl.items || {})[code], extraHtml = typeof extra === 'string' ? extra : (extra && extra.html) || '';
+    const cites = [...(PLACE_SRC[p.cc][code] || []), ...((extra && extra.cite) || [])];
+    // The rule, its brackets, then what the place adds and what it comes to; the sources mark the last paragraph.
+    const after = extraHtml + (run1 ? `<p>${run1.worked}</p>` + run1.notes.map(n => `<p class="jx-place-note">${esc(n)}</p>`).join('') : '');
+    const id = (lang === 'id' ? 'pajak-di-' : 'tax-in-') + slugOf(name);
+    return `
+      <details class="jx-place" id="${id}">
+        <summary>${esc(t.title(name))}</summary>
+        <div class="jx-place-body">
+          ${f.html ? `<div class="jx-prose">${after ? f.html : refs.into(f.html, cites)}</div>` : ''}${f.tables.map(table).join('')}${after ? `
+          <div class="jx-prose">${refs.into(after, cites)}</div>` : ''}
+          ${run1 ? `<p class="jx-open"><a href="${esc(run1.href)}">${t.open(esc(name))} →</a></p>` : ''}
+        </div>
+      </details>`;
+  });
+  return `
+      <h3 id="${lang === 'id' ? 'pajak-per-wilayah' : 'tax-by-place'}">${pl.h3}</h3>
+      ${pl.html ? `<div class="jx-prose">${pl.html}</div>` : ''}
+      <div class="jx-places">${items.join('')}
+      </div>`;
+}
+// The places' sources, registered in reading order (where the accordions sit), so the numbers run down the page.
+function regPlaces(p, c, refs){
+  const pl = c.law && c.law.places, P = PLACES[p.cc];
+  if(!pl || !P) return;
+  for(const code of Object.keys(placeNames(p.cc))){
+    const extra = (pl.items || {})[code];
+    refs.reg([...(PLACE_SRC[p.cc][code] || []), ...((extra && extra.cite) || [])], `place ${code}`);
+  }
+}
+
 function page(p, lang){
   const c = readContent(p.slug, lang);
   if(!c) return null;
@@ -292,7 +447,8 @@ function page(p, lang){
   const law = c.law || {};
   const refs = makeRefs(lang, `${p.slug}.${lang}`);
   refs.reg(law.introCite, 'law intro');
-  (law.blocks || []).forEach((b, i) => refs.reg(b.cite, `law block ${i + 1}`));
+  const placesAt = law.places ? (law.places.after == null ? (law.blocks || []).length - 1 : law.places.after) : -1;
+  (law.blocks || []).forEach((b, i) => { refs.reg(b.cite, `law block ${i + 1}`); if(i === placesAt) regPlaces(p, c, refs); });
   exs.forEach(e => refs.reg(e.cite, `example ${e.key}`));
   (c.strategies || []).forEach(x => refs.reg(x.cite, `tip "${strip(x.h3)}"`));
   (c.faq || []).forEach(x => refs.reg(x.cite, `question "${strip(x.q)}"`));
@@ -303,7 +459,7 @@ function page(p, lang){
       <div class="gd-table-wrap"><table class="gd-table jx-table">
         <thead><tr>${b.table.head.map(h => `<th scope="col">${h}</th>`).join('')}</tr></thead>
         <tbody>${b.table.rows.map(row => `<tr>${row.map((cell, i) => i === 0 ? `<th scope="row">${cell}</th>` : `<td data-l="${esc(strip(b.table.head[i]))}">${cell}</td>`).join('')}</tr>`).join('\n          ')}</tbody>
-      </table></div>` : ''}`).join('\n');
+      </table></div>` : ''}${bi === placesAt ? placesHtml(p, c, lang, refs) : ''}`).join('\n');
 
   const others = REGIONS.map(g => {
     const items = g.cc.filter(x => x !== cc).map(x => PAGES.find(q => q.cc === x)).filter(q => q && readContent(q.slug, lang))

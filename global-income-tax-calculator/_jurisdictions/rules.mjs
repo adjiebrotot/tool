@@ -166,6 +166,26 @@ if(page){
   console.log(`\nPAGES  ${page.slug}/ and ${page.slug}/id/ (written by node _ref/jurisdiction-pages.mjs)`);
   content.forEach(f => console.log(`  ${rel(f)}`));
   console.log(`  worked examples (${rel(join(HERE, 'scenarios.mjs'))}): ${page.ex.map(e => `${e.key} ${e.amount} ${JSON.stringify(e.inputs)}`).join(' | ')}`);
+  // Where to look: the official pages the country page already cites, rule by rule (each one was
+  // opened when it was cited). Start a change here before searching the web; the agencies, fetch
+  // notes and fallbacks for every country are in .claude/skills/tax-rule-update/references/sources.md.
+  const en = JSON.parse(readFileSync(content[0], 'utf8')), law = en.law || {};
+  console.log(`\nWHERE TO LOOK  official pages the ${page.slug} page cites, by rule (more: .claude/skills/tax-rule-update/references/sources.md)`);
+  const seenUrl = new Set();
+  const show = (title, cites) => {
+    const fresh = (cites || []).filter(s => s.url && !seenUrl.has(s.url));
+    if(!fresh.length) return;
+    console.log(`  ${title}`);
+    fresh.forEach(s => { seenUrl.add(s.url); console.log(`    ${s.name}\n      ${s.url}`); });
+  };
+  show('law intro', law.introCite);
+  (law.blocks || []).forEach(b => show(b.h3, b.cite));
+  show('law.sources', law.sources);
+  const placeSrc = JSON.parse(readFileSync(join(HERE, 'places.json'), 'utf8'))[cc];
+  if(placeSrc){
+    console.log(`  states or provinces (${rel(join(HERE, 'places.json'))}, the "Tax in <place>" accordions):`);
+    Object.entries(placeSrc).forEach(([code, cites]) => cites.filter(s => !/taxfoundation/.test(s.url)).forEach(s => console.log(`    ${code}  ${s.url}`)));
+  }
 }
 const gold = JSON.parse(readFileSync(join(TOOL, '_audit', 'golden-v11.json'), 'utf8'));
 const groups = [...new Set(Object.keys(gold).map(k => k.split('|')[0]))].filter(g => g.split(/[ (-]/)[0] === cc || (cc === 'GB' && g.startsWith('UK')) || (sec.arg && g === 'Gulf'));

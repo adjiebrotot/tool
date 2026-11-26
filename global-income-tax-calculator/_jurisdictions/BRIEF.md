@@ -149,6 +149,15 @@ site are absolute (`https://tool.adjiebrotots.com/...`), external links absolute
 - `law.blocks`: 2 to 5 blocks. A rate table wherever the country has brackets. Write
   amounts as the page's language writes them (A$18,200 in English, A$18.200 in Indonesian,
   with the decimal comma: 2,5%).
+- `law.places` (only where the calculator lets a reader choose a state or province: the
+  United States and Canada): the "Tax in <place>" accordions under Tax rules at a glance.
+  `{ "after": <index of the law block they follow>, "h3": "...", "html": "<p>intro</p>",
+  "items": { "<code>": "<p>what the engine table does not say</p>" } }`. The page draws one
+  accordion per place the calculator offers (`usState`, `caProv`) with its brackets,
+  deductions, credits, a worked line on 100,000 and the engine's notes, all from `engine.js`
+  (`E.places`), and cites the official page in `places.json`. An item adds prose for one
+  place (surcharges, extra contributions, a city tax), in both languages; a place without an
+  item shows the engine's facts alone.
 - `strategies`: 3 to 5, each with who it suits and a caveat.
 - `limits`: 4 to 7.
 - `faq`: 5 to 8. At least two are the country's own quirks, the questions people only ask
