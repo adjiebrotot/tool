@@ -38,7 +38,7 @@ window.__TOUR = {
     {
       target: '.quick-start-row',
       title: '① Mulai dari contoh',
-      body: 'Sekali klik memuat empat pekerjaan berdampingan, dari kota bisnis Asia sampai negara bagian AS. ' +
+      body: 'Satu klik langsung memuat empat pekerjaan untuk dibandingkan, dari kota bisnis Asia sampai negara bagian AS. ' +
             'Setelah itu, ganti angka mana pun. 💾 dan 📂 menyimpan perbandingan sebagai berkas.'
     },
     {
@@ -52,7 +52,7 @@ window.__TOUR = {
     {
       target: '#tab-salary',
       onEnter: gitcTab('salary'),
-      title: '③ Di mana dan berapa',
+      title: '③ Tempat kerja dan gaji',
       body: '<ul><li>Ketik beberapa huruf untuk <strong>mencari</strong> negara, negara bagian, atau provinsi</li>' +
             '<li><strong>Hitung dari</strong>: gaji kotor, atau gaji bersih yang kamu inginkan</li>' +
             '<li>Status penduduk atau rezim pajakmu, kalau berpengaruh</li></ul>'
@@ -60,14 +60,14 @@ window.__TOUR = {
     {
       target: '.ctrl-tabs',
       title: '④ Rumah tangga dan Detail',
-      body: 'Tab ini hanya menampilkan isian yang dipakai negara pekerjaan itu: anak, pasangan menikah, pajak gereja, ' +
-            'tarif pensiun, atau pinjaman mahasiswa. Tab yang tidak punya isian akan memberi tahu.'
+      body: 'Kedua tab ini hanya menampilkan isian yang berlaku di negara pekerjaan itu, misalnya anak, status menikah, pajak gereja, ' +
+            'tarif pensiun, atau pinjaman mahasiswa. Kalau tidak ada isian yang berlaku, tab akan memberi tahu.'
     },
     {
       target: '#verdict',
       onEnter: gitcSeed,
       title: '⑤ Jawabannya',
-      body: 'Jawabannya satu kalimat: pekerjaan mana yang menyisakan gaji bersih paling besar, atau gaji kotor yang dibutuhkan untuk gaji bersih tertentu. ' +
+      body: 'Satu kalimat langsung menjawab: pekerjaan mana yang menyisakan gaji bersih paling besar, atau berapa gaji kotor yang kamu perlukan untuk gaji bersih tertentu. ' +
             'Kartu di bawahnya menunjukkan gaji bersih, pajak, dan iuran tiap pekerjaan.'
     },
     {
@@ -76,20 +76,20 @@ window.__TOUR = {
       title: '⑥ Mata uang dan periode',
       body: '<ul><li><strong>Tampilkan dalam</strong>: mata uang tiap pekerjaan, atau satu mata uang untuk semuanya</li>' +
             '<li><strong>Per</strong>: tahun atau bulan</li>' +
-            '<li>Kurs yang dipakai adalah kurs hari ini, hanya untuk memudahkan membaca</li></ul>'
+            '<li>Kurs yang dipakai adalah kurs hari ini, hanya supaya angkanya mudah dibandingkan</li></ul>'
     },
     {
       target: '.chart-card',
       onEnter: gitcSeed,
-      title: '⑦ Di sepanjang rentang gaji',
-      body: 'Setiap garis menunjukkan porsi gaji kotor yang dibawa pulang seiring naiknya gaji, dan titiknya adalah pekerjaan sesuai isianmu. ' +
-            'Pekerjaan dengan mata uang berbeda mendapat <strong>satu sumbu per mata uang</strong>, yang disejajarkan dengan kurs.'
+      title: '⑦ Dari gaji rendah sampai tinggi',
+      body: 'Setiap garis menunjukkan berapa persen gaji kotor yang sampai ke tanganmu ketika gaji naik, dan titiknya adalah pekerjaan sesuai isianmu. ' +
+            'Kalau mata uangnya berbeda, grafik memakai <strong>satu sumbu per mata uang</strong>, yang disejajarkan dengan kurs.'
     },
     {
       target: '#linesSection',
       onEnter: gitcSeed,
       title: '⑧ Rincian gaji bersih',
-      body: 'Rincian ditampilkan untuk satu pekerjaan per kali, dipilih di samping judulnya: setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturannya mulai berlaku, ' +
+      body: 'Rincian ditampilkan untuk satu pekerjaan sekali waktu, yang kamu pilih di samping judulnya. Isinya setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturan mulai berlaku, ' +
             'dengan label Resmi, Sekunder, atau Asumsi. Buka lewat tanda panahnya.'
     },
     {
@@ -97,7 +97,7 @@ window.__TOUR = {
       title: '✅ Siap dipakai',
       body: '<ul><li>Ganti contohnya dengan pekerjaanmu sendiri</li>' +
             '<li>Semua data tetap di <em>browser</em>-mu</li>' +
-            '<li>Putar ulang tur ini lewat tombol 🧭</li></ul>'
+            '<li>Ulangi tur ini kapan saja lewat tombol 🧭</li></ul>'
     }
   ]
 };

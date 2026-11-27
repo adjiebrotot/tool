@@ -15,15 +15,15 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Selamat datang di Pisah vs Gabung Harta',
-      body: 'Cari skema PPh 21 suami istri dengan <strong>pajak lebih rendah</strong>: ' +
-            'Pisah Harta atau Gabung Harta. Sekitar satu menit.'
+      body: 'Cari tahu cara mana yang membuat PPh 21 suami istri <strong>lebih rendah</strong>: ' +
+            'Gabung Harta atau Pisah Harta. Cukup sekitar satu menit.'
     },
     {
       target: '.quick-start-row',
       title: '① Mulai dari contoh',
-      body: '<ul><li>Tiap contoh memuat satu rumah tangga</li>' +
-            '<li>Penghasilan setara, tanpa anak adalah contoh awal</li>' +
-            '<li>Tiap contoh mengembalikan PTKP dan lapisan tarif ke ketentuan</li></ul>'
+      body: '<ul><li>Setiap contoh berisi satu rumah tangga</li>' +
+            '<li>Contoh awalnya Penghasilan setara, tanpa anak</li>' +
+            '<li>Setiap contoh juga mengembalikan PTKP dan lapisan tarif ke ketentuan</li></ul>'
     },
     {
       target: '#tab-inputs',
@@ -56,14 +56,14 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '④ Jawabannya',
-      body: '<ul><li>Skema mana yang <strong>lebih murah</strong>, dan selisihnya per tahun</li>' +
-            '<li>Di mana titik <em>breakeven</em>-nya</li></ul>'
+      body: '<ul><li>Cara mana yang <strong>lebih murah</strong>, dan selisihnya per tahun</li>' +
+            '<li>Di gaji berapa <em>breakeven</em>-nya</li></ul>'
     },
     {
       target: '.metrics',
       title: '⑤ Angkanya',
-      body: '<ul><li>Penghematan pajak, dengan warna skema yang lebih murah</li>' +
-            '<li>Total pajak dan tarif efektif tiap skema</li></ul>'
+      body: '<ul><li>Penghematan pajak, dengan warna cara yang lebih murah</li>' +
+            '<li>Total pajak dan tarif efektif tiap cara</li></ul>'
     },
     {
       target: '.chart-card',
@@ -76,7 +76,7 @@ window.__TOUR = {
       target: '#detailSection',
       title: '⑦ Rinciannya',
       body: '<ul><li>Tombol panah membuka rincian pajak pada tiap tingkat gaji</li>' +
-            '<li><strong>CSV</strong> mengunduhnya kapan saja</li></ul>'
+            '<li>Tombol <strong>CSV</strong> mengunduh rincian itu kapan saja</li></ul>'
     },
     {
       target: null,
