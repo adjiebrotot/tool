@@ -23,7 +23,7 @@
   <meta name="google-adsense-account" content="ca-pub-8730116101825381">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="50UMav7esC2dSHXx5TNvjBPwYkYzXmS87Ezd7gfBotA" />
-  <title>Adjie Brotools: Free Finance and Power System Engineering Tools</title>
+  <title>Adjie Brotools</title>
   <meta name="description" content="Free finance and power system engineering tools by Adjie Brotosukmono: income tax, property, loans and investing, load flow, dispatch and PowerFactory and PSCAD scripts. Runs in your browser.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
@@ -41,7 +41,7 @@
   <script src="home-anim.js" defer></script>
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Adjie Brotools: Free Finance and Power System Engineering Tools">
+  <meta property="og:title" content="Adjie Brotools">
   <meta property="og:description" content="Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.">
   <meta property="og:url" content="https://tool.adjiebrotots.com/">
   <meta property="og:site_name" content="Adjie Brotot Tools">
@@ -53,7 +53,7 @@
   <meta property="og:locale:alternate" content="id_ID">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Adjie Brotools: Free Finance and Power System Engineering Tools">
+  <meta name="twitter:title" content="Adjie Brotools">
   <meta name="twitter:description" content="Free browser-based tools for finance, tax, property and power system engineering decisions. All calculations run locally: no uploads, no paywall.">
   <meta name="twitter:image" content="https://tool.adjiebrotots.com/og/home.jpg">
 
@@ -2807,14 +2807,12 @@
       const el = document.getElementById('typeText');
       if (!el) return;
 
-      // Build the rotating word list from the Engineering and Finance tools' domain + tags,
-      // excluding geography tags (separate attribute). The Quick Utilities stay out of it:
-      // the line says what the site is about.
+      // Build the rotating word list from each tool's domain + tags,
+      // excluding geography tags (separate attribute) and "others".
       const EXCLUDE = new Set(['other', 'others']);
       const words = [];
       const seen = new Set();
       document.querySelectorAll('.tool-card').forEach(card => {
-        if (card.dataset.domain === 'Quick Utilities') return;
         const raw = [card.dataset.domain || '', card.dataset.tags || ''].join(',');
         raw.split(',').forEach(part => {
           const label = homeLabel(part.trim());

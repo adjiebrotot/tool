@@ -106,8 +106,8 @@ const HOME_I18N = {
 
 const OG_DESC = 'Kumpulan tool yang membantu saya mengambil keputusan sehari-hari, termasuk urusan pekerjaan, dengan perhitungan yang matang. Saya bagikan secara gratis supaya kamu juga bisa memakainya.';
 
-const TITLE_EN = 'Adjie Brotools: Free Finance and Power System Engineering Tools';
-const TITLE_ID = 'Adjie Brotools: Tool Gratis untuk Keuangan dan Teknik Sistem Tenaga Listrik';
+const TITLE_EN = 'Adjie Brotools';
+const TITLE_ID = 'Adjie Brotools';
 
 // ---- The directory's groups: the two fields, then the Quick Utilities and their subsections.
 // `id` is the section's id on the page (and the #fragment of its ItemList in the structured data).

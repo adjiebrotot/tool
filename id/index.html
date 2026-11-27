@@ -24,7 +24,7 @@
   <meta name="google-adsense-account" content="ca-pub-8730116101825381">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="50UMav7esC2dSHXx5TNvjBPwYkYzXmS87Ezd7gfBotA" />
-  <title>Adjie Brotools: Tool Gratis untuk Keuangan dan Teknik Sistem Tenaga Listrik</title>
+  <title>Adjie Brotools</title>
   <meta name="description" content="Tool gratis dari Adjie Brotosukmono untuk keuangan dan teknik sistem tenaga listrik: pajak penghasilan, properti, pinjaman, investasi, aliran daya, dispatch, serta skrip PowerFactory dan PSCAD.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
@@ -42,7 +42,7 @@
   <script src="../home-anim.js" defer></script>
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Adjie Brotools: Tool Gratis untuk Keuangan dan Teknik Sistem Tenaga Listrik">
+  <meta property="og:title" content="Adjie Brotools">
   <meta property="og:description" content="Kumpulan tool yang membantu saya mengambil keputusan sehari-hari, termasuk urusan pekerjaan, dengan perhitungan yang matang. Saya bagikan secara gratis supaya kamu juga bisa memakainya.">
   <meta property="og:url" content="https://tool.adjiebrotots.com/id/">
   <meta property="og:site_name" content="Adjie Brotot Tools">
@@ -54,7 +54,7 @@
   <meta property="og:locale:alternate" content="en_AU">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Adjie Brotools: Tool Gratis untuk Keuangan dan Teknik Sistem Tenaga Listrik">
+  <meta name="twitter:title" content="Adjie Brotools">
   <meta name="twitter:description" content="Tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, dan teknik sistem tenaga listrik. Semua hitungan berjalan di perangkatmu tanpa ada data yang diunggah.">
   <meta name="twitter:image" content="https://tool.adjiebrotots.com/og/home-id.jpg">
 
@@ -2495,14 +2495,12 @@
       const el = document.getElementById('typeText');
       if (!el) return;
 
-      // Build the rotating word list from the Engineering and Finance tools' domain + tags,
-      // excluding geography tags (separate attribute). The Quick Utilities stay out of it:
-      // the line says what the site is about.
+      // Build the rotating word list from each tool's domain + tags,
+      // excluding geography tags (separate attribute) and "others".
       const EXCLUDE = new Set(['other', 'others']);
       const words = [];
       const seen = new Set();
       document.querySelectorAll('.tool-card').forEach(card => {
-        if (card.dataset.domain === 'Quick Utilities') return;
         const raw = [card.dataset.domain || '', card.dataset.tags || ''].join(',');
         raw.split(',').forEach(part => {
           const label = homeLabel(part.trim());
