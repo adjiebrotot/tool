@@ -6,11 +6,11 @@
   "description": "Bahrain tidak memajaki gaji. Pekerja asing hanya dipotong iuran SIO 1%, warga Bahrain 8%. Lihat gaji bersih BHD 24.000 dan bedanya dengan PPh 21.",
   "lede": "<p>Bahrain tidak memungut pajak penghasilan atas gaji, sehingga slip gajimu tidak memuat potongan setara PPh 21. Yang dipotong hanya iuran Social Insurance Organization (SIO): pekerja asing (<em>expat</em>) membayar 1% untuk asuransi pengangguran, sedangkan warga Bahrain membayar 8% untuk pensiun dan asuransi pengangguran. Pada gaji BHD 24.000 setahun, gaji bersih (<em>take-home pay</em>) pekerja asing adalah BHD 23.760 dan gaji bersih warga Bahrain BHD 22.080.</p>",
   "law": {
-    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 seperti yang dihitung <em>tool</em> ini. Karena gaji tidak dipajaki, satu-satunya potongan adalah iuran jaminan sosial ke SIO, lembaga yang perannya kira-kira setara BPJS Ketenagakerjaan di Indonesia. Di antara negara Teluk yang ada di <em>tool</em> ini, Bahrain satu-satunya yang memotong iuran dari gaji pekerja asing.</p>",
+    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 yang dipakai <em>tool</em> ini. Karena gaji tidak dipajaki, satu-satunya potongan adalah iuran jaminan sosial ke SIO, lembaga yang kira-kira setara BPJS Ketenagakerjaan di Indonesia. Dari semua negara Teluk di <em>tool</em> ini, hanya Bahrain yang memotong iuran dari gaji pekerja asing.</p>",
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
-        "html": "<p>Bahrain tidak memajaki penghasilan orang pribadi, baik gaji, tunjangan, maupun bonus. Artinya tidak ada tarif bertingkat (seperti di Pasal 17 UU PPh, 5% sampai 35%), tidak ada PTKP yang perlu dihitung, dan tidak ada pemotongan oleh pemberi kerja yang kelak harus kamu cocokkan dengan bukti potong. Pajak pertambahan nilai (PPN) memang ada, tetapi dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>",
+        "html": "<p>Bahrain tidak memajaki penghasilan orang pribadi, baik gaji, tunjangan, maupun bonus. Jadi tidak ada tarif bertingkat (seperti di Pasal 17 UU PPh, 5% sampai 35%), tidak ada PTKP yang perlu dihitung, dan tidak ada pemotongan oleh pemberi kerja yang kelak harus kamu cocokkan dengan bukti potong. Pajak pertambahan nilai (PPN) memang ada, tetapi dikenakan pada barang dan jasa yang kamu beli, bukan dipotong dari gaji, sehingga tidak masuk hitungan ini.</p>",
         "cite": [
           {
             "name": "PwC Worldwide Tax Summaries, Bahrain: pajak penghasilan pribadi",
@@ -70,7 +70,7 @@
       },
       {
         "h3": "Status pajakmu di Indonesia tidak ikut hilang",
-        "html": "<p>Gaji tanpa pajak di Bahrain tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan, dan tidak ada pajak Bahrain yang bisa dikreditkan karena memang tidak ada. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. <em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
+        "html": "<p>Gaji tanpa pajak di Bahrain tidak otomatis berarti tanpa urusan pajak di Indonesia: selama statusmu masih subjek pajak dalam negeri, gaji itu tetap dilaporkan di SPT Tahunan, dan karena Bahrain memang tidak memajaki gaji, tidak ada pajak di sana yang bisa dikreditkan. Menurut UU PPh, WNI yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan memenuhi syarat lainnya bisa menjadi subjek pajak luar negeri; kalau itu berlaku untukmu, tanyakan ke KPP atau DJP cara mengubah statusmu. <em>Tool</em> ini tidak menghitung pajak Indonesia atas penghasilan luar negeri maupun P3B.</p>"
       }
     ],
     "sources": [
@@ -106,8 +106,8 @@
     {
       "key": "expat",
       "title": "Berapa gaji bersih pekerja asing di Bahrain dengan gaji BHD 24.000?",
-      "intro": "<p>Contoh ini untuk kamu yang bekerja di Bahrain dengan gaji BHD 24.000 setahun, atau BHD 2.000 sebulan. Tidak ada potongan setara PPh 21. Satu-satunya yang berkurang adalah iuran asuransi pengangguran SIO sebesar 1%, yaitu BHD 240 setahun, sehingga gaji bersihnya BHD 23.760 atau 99,0% dari gaji kotor. Gaji sebulan masih jauh di bawah batas BHD 4.000, jadi setiap tambahan gaji juga dipotong 1,0%.</p>",
-      "after": "<p>Potongan sekecil ini hanya memberi perlindungan kalau kamu kehilangan pekerjaan, bukan dana pensiun. Tabungan hari tua tetap harus kamu siapkan sendiri, termasuk untuk saat kontrakmu selesai dan kamu pulang ke Indonesia.</p>",
+      "intro": "<p>Contoh ini untuk kamu yang bekerja di Bahrain dengan gaji BHD 24.000 setahun, atau BHD 2.000 sebulan. Tidak ada potongan setara PPh 21. Satu-satunya yang berkurang adalah iuran asuransi pengangguran SIO sebesar 1%, yaitu BHD 240 setahun, sehingga gaji bersihnya BHD 23.760 atau 99,0% dari gaji kotor. Gaji sebulannya masih jauh di bawah batas BHD 4.000, jadi setiap tambahan gaji juga dipotong 1,0%.</p>",
+      "after": "<p>Potongan sekecil ini hanya melindungimu kalau kehilangan pekerjaan dan tidak menjadi dana pensiun. Tabungan hari tua tetap harus kamu siapkan sendiri, termasuk untuk saat kontrakmu selesai dan kamu pulang ke Indonesia.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
@@ -126,7 +126,7 @@
     {
       "key": "national",
       "title": "Gaji bersih warga Bahrain dengan gaji BHD 24.000 setelah iuran SIO",
-      "intro": "<p>Warga Bahrain dengan gaji yang sama tetap tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu BHD 1.920 setahun, masuk ke SIO untuk pensiun dan asuransi pengangguran. Gaji bersihnya BHD 22.080, atau 92,0% dari gaji kotor. Potongan ini mirip JHT dan JP di BPJS Ketenagakerjaan: bukan pajak, melainkan tabungan jaminan hari tua, hanya saja persentasenya jauh lebih besar.</p>",
+      "intro": "<p>Warga Bahrain bergaji sama tetap tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu BHD 1.920 setahun, masuk ke SIO untuk pensiun dan asuransi pengangguran. Gaji bersihnya BHD 22.080, atau 92,0% dari gaji kotor. Potongan ini mirip JHT dan JP di BPJS Ketenagakerjaan: bukan pajak, tetapi tabungan jaminan hari tua, hanya saja persentasenya jauh lebih besar.</p>",
       "after": "<p>Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
       "cite": [
         {
@@ -140,7 +140,7 @@
       ]
     }
   ],
-  "strategyIntro": "<p>Ada empat hal praktis yang bisa kamu lakukan untuk mengatur gaji dan status pajakmu.</p>",
+  "strategyIntro": "<p>Ada empat langkah praktis untuk mengurus gaji dan status pajakmu.</p>",
   "strategies": [
     {
       "h3": "Urus status pajak Indonesiamu sebelum berangkat",
@@ -148,7 +148,7 @@
     },
     {
       "h3": "Siapkan sendiri dana pensiun dan tabunganmu",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja asing yang menerima gaji hampir utuh. Tanpa potongan pensiun, menabung untuk hari tua menjadi urusanmu sendiri, misalnya lewat DPLK, reksa dana, atau portofolio berbiaya rendah. Untuk menghitung berapa yang perlu kamu kumpulkan, pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja asing yang menerima gaji hampir utuh. Karena tidak ada potongan pensiun, menabung untuk hari tua menjadi urusanmu sendiri, misalnya lewat DPLK, reksa dana, atau portofolio berbiaya rendah. Untuk menghitung berapa yang perlu kamu kumpulkan, pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun.</p>"
     },
     {
       "h3": "Pahami uang akhir masa kerja sebelum meneken kontrak",
@@ -162,15 +162,15 @@
     },
     {
       "h3": "Kirim uang pulang lewat jalur resmi dan simpan buktinya",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang mengirim sebagian gaji ke keluarga di Indonesia. Transfer lewat bank atau penyedia remitansi berizin meninggalkan catatan yang berguna kalau suatu saat kamu perlu menunjukkan asal penghasilanmu, termasuk untuk SPT Tahunan.</p><p><strong>Catatan:</strong> biaya transfer dan kurs berbeda antarpenyedia, dan <em>tool</em> ini tidak memperhitungkannya.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang mengirim sebagian gaji ke keluarga di Indonesia. Transfer lewat bank atau penyedia jasa kiriman uang berizin meninggalkan catatan yang berguna kalau suatu saat kamu perlu menunjukkan asal penghasilanmu, termasuk untuk SPT Tahunan.</p><p><strong>Catatan:</strong> biaya transfer dan kurs berbeda antarpenyedia, dan <em>tool</em> ini tidak memperhitungkannya.</p>"
     }
   ],
   "limits": [
     "<strong>Hanya penghasilan dari kerja.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrak, jadi tidak ditambahkan ke angka di halaman ini.",
-    "<strong>Pajak Indonesia tidak dihitung.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Bahrain. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak dihitung.",
-    "<strong>Statusnya kamu yang memilih.</strong> <em>Tool</em> ini menerima pilihan warga negara atau pekerja asing dari kamu dan tidak menguji apakah kamu memenuhi syaratnya.",
-    "<strong>Paket versus tunai.</strong> Yang dihitung adalah gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrakmu tidak dipisahkan.",
+    "<strong>Pajak Indonesia tidak dihitung.</strong> <em>Tool</em> ini hanya menghitung potongan di Bahrain. Kewajiban SPT Tahunan, status subjek pajak, dan P3B tidak masuk hitungan.",
+    "<strong>Status sesuai pilihanmu.</strong> <em>Tool</em> ini mengikuti pilihanmu antara warga negara dan pekerja asing, dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Tunjangan di kontrak.</strong> Hitungan memakai gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrakmu tidak dipisahkan dari gaji itu.",
     "<strong>Iuran pemberi kerja.</strong> Bagian SIO yang dibayar pemberi kerja tidak ditampilkan."
   ],
   "faq": [
@@ -194,7 +194,7 @@
     },
     {
       "q": "Kenapa pekerja asing di Bahrain tetap dipotong 1% untuk asuransi pengangguran?",
-      "a": "<p>Berbeda dengan sebagian besar negara Teluk, Bahrain mewajibkan pekerja asing ikut asuransi pengangguran lewat SIO. Iurannya 1% dari gaji sampai BHD 4.000 sebulan dan dipotong dari gaji karyawan. Ini bukan pajak penghasilan, tetapi tetap mengurangi gaji bersihmu, dan imbalannya adalah perlindungan kalau kamu kehilangan pekerjaan menurut aturan skema tersebut. Warga Bahrain membayar 8% karena iurannya juga mencakup pensiun.</p>",
+      "a": "<p>Berbeda dengan sebagian besar negara Teluk lain, Bahrain mewajibkan pekerja asing ikut asuransi pengangguran lewat SIO. Iurannya 1% dari gaji sampai BHD 4.000 sebulan dan dipotong dari gaji karyawan. Ini bukan pajak penghasilan, tetapi tetap mengurangi gaji bersihmu, dan imbalannya adalah perlindungan kalau kamu kehilangan pekerjaan, sesuai aturan skema itu. Warga Bahrain membayar 8% karena iurannya juga mencakup pensiun.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
@@ -222,7 +222,7 @@
     },
     {
       "q": "Berapa iuran SIO kalau gajimu di atas BHD 4.000 sebulan?",
-      "a": "<p>Iuran dihitung hanya dari gaji sampai BHD 4.000 sebulan. Gaji yang lebih tinggi tidak menambah iuran, sehingga persentase potonganmu terhadap seluruh gaji justru mengecil.</p>",
+      "a": "<p>Iuran dihitung hanya dari gaji sampai BHD 4.000 sebulan. Gaji yang lebih tinggi tidak menambah iuran, sehingga persentase potongan terhadap seluruh gajimu justru mengecil.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Bahrain: pajak lain, iuran asuransi sosial",
@@ -250,7 +250,7 @@
     },
     {
       "q": "Apakah gaji di Bahrain lebih besar daripada gaji di Indonesia?",
-      "a": "<p>Tidak otomatis, karena gaji bersih yang lebih besar belum tentu berarti uang sisa yang lebih besar saat biaya hidup berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
+      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
     }
   ],
   "lineLabels": {
