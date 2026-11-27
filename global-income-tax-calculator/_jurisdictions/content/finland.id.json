@@ -11,7 +11,7 @@
     "blocks": [
       {
         "h3": "Pajak negara dan pajak kota",
-        "html": "<p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, mirip tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi tarif lapisan terbawahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan hitungan <em>tool</em> memakai tarif Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip biaya jabatan, tetapi berupa jumlah tetap, dan setelah iuran pensiun dan asuransimu.</p>",
+        "html": "<p>Pajak negara bersifat progresif, naik dari 12,64% sampai 37,5% dalam lima lapisan, mirip tarif Pasal 17 di Indonesia (5% sampai 35%), tetapi tarif lapisan terendahnya jauh lebih tinggi. Lapisan teratas mulai dari penghasilan kena pajak €52.100. Pajak kota adalah tarif seragam atas penghasilan kena pajak, dan hitungan <em>tool</em> memakai tarif Helsinki. Di Indonesia tidak ada pajak kota atas gaji, karena PPh 21 seluruhnya pajak pusat. Penghasilan kena pajak di sini adalah gaji setelah potongan biaya memperoleh penghasilan €750, mirip biaya jabatan, tetapi berupa jumlah tetap, dan setelah iuran pensiun dan asuransimu.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -157,7 +157,7 @@
     {
       "key": "resident-helsinki",
       "title": "Berapa gaji bersih di Helsinki kalau gaji setahun €55.000?",
-      "intro": "<p>Contoh ini untuk penduduk pajak Helsinki dengan gaji kotor €55.000 setahun. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, seorang penduduk pajak Helsinki bergaji kotor €55.000 setahun. Pertama, iuran dipotong dari gaji: pensiun TyEL €4.015, asuransi pengangguran €489,50 dan iuran tunjangan sakit €484. Setelah itu pajak negara, pajak kota 5,30%, iuran kesehatan dan pajak Yle €160 dihitung, lalu kredit pajak penghasilan kerja sebesar €3.119 mengurangi semuanya. Hasilnya sekitar €7.732 untuk pajak negara, €1.997 untuk pajak kota, €414 untuk iuran kesehatan dan €160 untuk Yle. Gaji bersihnya sekitar €39.708, atau 72,2% dari gaji kotor.</p>",
       "after": "<p>Tarif marginalmu 45,1%, jauh di atas tarif kota 5,30%, karena pajak negara sudah masuk lapisan tinggi dan iuran serta kredit yang menyusut ikut dihitung.</p>",
       "cite": [
         {
@@ -181,8 +181,8 @@
     {
       "key": "key-employee",
       "title": "Berapa gaji bersih key employee di Finlandia dengan gaji €90.000 dan pajak 25%?",
-      "intro": "<p>Contoh ini untuk <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600. Pajak tunggal 25% mencapai €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalnya 34,1%, yaitu pajak 25% ditambah iuran 9,07%. Rezim ini hemat atau tidak bergantung pada gaji dan potonganmu, jadi bandingkan dengan pajak biasa di <em>tool</em> ini.</p>",
+      "intro": "<p>Contohnya, seorang <em>key employee</em> bergaji €90.000, di atas batas minimum €69.600, dikenai pajak tunggal 25%, yaitu €22.500. Iuran tetap berlaku: pensiun TyEL €6.570, asuransi pengangguran €801 dan iuran tunjangan sakit €792. Gaji bersihnya sekitar €59.337, atau 65,9% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalnya 34,1%, yaitu pajak 25% ditambah iuran 9,07%. Hemat atau tidaknya rezim ini bergantung pada gaji dan potonganmu, jadi bandingkan dengan pajak biasa di <em>tool</em> ini.</p>",
       "cite": [
         {
           "name": "Vero.fi, key employee dari negara lain",
@@ -252,7 +252,7 @@
     },
     {
       "q": "Apa itu persentase pemotongan di kartu pajak Finlandia (verokortti)?",
-      "a": "<p>Kartu pajak memberi pemberi kerja satu persentase untuk dipakai pada tiap pembayaran gaji, ditentukan otoritas pajak dari perkiraan penghasilanmu dan bisa kamu ubah di tengah tahun. Selisihnya diselesaikan setelah penetapan pajak tahun berikutnya, sebagai pengembalian atau tagihan. Di Indonesia, polanya berupa potongan bulanan dengan tarif efektif rata-rata (TER) yang disesuaikan di Desember. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.</p>",
+      "a": "<p>Lewat kartu pajak, pemberi kerja mendapat satu persentase untuk dipakai pada tiap pembayaran gaji. Otoritas pajak menentukannya dari perkiraan penghasilanmu, dan kamu bisa mengubahnya di tengah tahun. Selisihnya diselesaikan setelah penetapan pajak tahun berikutnya, sebagai pengembalian atau tagihan. Di Indonesia, potongan bulanan memakai tarif efektif rata-rata (TER), lalu disesuaikan di Desember. Hitungan <em>tool</em> adalah pajak setahun penuh, jadi slip gaji bulananmu bisa berbeda darinya.</p>",
       "cite": [
         {
           "name": "Vero.fi, persentase pajak dan batas penghasilan (kartu pajak)",
@@ -304,7 +304,7 @@
     },
     {
       "q": "Apakah iuran pensiun TyEL bisa dicairkan kalau saya pulang ke Indonesia?",
-      "a": "<p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa kamu cairkan seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun, dan cara klaimnya dari luar negeri tanyakan ke Kela (badan jaminan sosial Finlandia) sebelum kamu pindah.</p>",
+      "a": "<p>Iuran TyEL 7,30% membentuk hak pensiun kerja di Finlandia, bukan saldo yang bisa kamu cairkan seperti JHT di BPJS Ketenagakerjaan. Hak itu pada umumnya dibayarkan saat usia pensiun. Untuk cara klaimnya dari luar negeri, tanyakan ke Kela (badan jaminan sosial Finlandia) sebelum kamu pindah.</p>",
       "cite": [
         {
           "name": "Vero.fi, iuran asuransi sosial",

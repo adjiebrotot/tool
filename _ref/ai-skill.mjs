@@ -453,10 +453,10 @@ const WORDS = {
     installNote: z => `Letak menu bisa berubah setiap kali aplikasinya diperbarui, jadi carilah <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT dan Grok: Plugins; Gemini: Customise; Copilot: di dalam sebuah <em>agent</em>). Gemini menerima folder hasil ekstrak, sementara yang lain menerima berkas zip apa adanya. Paket langgananmu belum mendukung <em>skill</em>? Lampirkan <code>${z}</code> atau <code>SKILL.md</code>-nya ke <em>chat</em>, lalu tulis "pakai <em>skill</em> ini".`,
     asof: d => `Per ${d}. AI cepat sekali berubah, jadi tampilan, paket, dan fitur yang dijelaskan di sini mungkin sudah berbeda ketika kamu membacanya.`,
     chatLabel: 'Contoh percakapan', usingSkill: 'Memakai skill', searched: 'Mencari: ', ran: 'Menjalankan <code>scripts/build_link.py</code>: tautan sudah dicek',
-    yourInputs: 'Input darimu', assumptions: 'Asumsi', yourScenario: 'Skenariomu', openOn: n => `Buka ${n} sesuai skenario ini`,
+    yourInputs: 'Inputmu', assumptions: 'Asumsi', yourScenario: 'Skenariomu', openOn: n => `Buka ${n} sesuai skenario ini`,
     openToSee: 'Buka tautannya untuk melihat hasilnya.', replay: 'Putar ulang', openScenario: 'Buka skenario ini',
     useH: 'Cara memakainya',
-    useSub: 'Tanyakan seperti kepada teman. Begitu <em>skill</em> terpasang, AI memakai angka yang kamu sebutkan apa adanya, mencari sendiri data lainnya, lalu memberimu tautan. AI sendiri tidak menghitung jawabannya. Hitungan baru berjalan di <em>tool</em> begitu kamu membuka tautan itu.',
+    useSub: 'Tanyakan saja seperti kepada teman. Begitu <em>skill</em> terpasang, AI memakai angka yang kamu sebutkan apa adanya, mencari sendiri data lainnya, lalu memberimu tautan. AI sendiri tidak menghitung jawabannya. Hitungan baru berjalan di <em>tool</em> begitu kamu membuka tautan itu.',
     facts: [
       '<strong>Angkamu tidak diubah.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.',
       '<strong>Dicek sebelum dikirim.</strong> Skrip di dalam <em>skill</em> memeriksa nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautan, jadi skenario yang terbuka sama dengan yang tertulis.',

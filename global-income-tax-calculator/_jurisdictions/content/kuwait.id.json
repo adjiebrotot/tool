@@ -4,7 +4,7 @@
   "title": "Pajak Gaji di Kuwait 2026: Gaji Bersih dan Iuran PIFSS",
   "h1": "Cara menghitung pajak gaji di Kuwait (2026): berapa gaji bersihmu?",
   "description": "Kuwait tidak memajaki gaji. Pekerja asing menerima gaji penuh, warga Kuwait membayar iuran PIFSS. Lihat contoh gaji KWD 18.000 dan bedanya dengan PPh 21.",
-  "lede": "<p>Kuwait tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>) bergaji KWD 18.000 setahun menerima gaji bersih (<em>take-home pay</em>), tanpa potongan setara PPh 21 dan tanpa iuran semacam BPJS. Warga Kuwait membayar iuran jaminan sosial ke PIFSS sebesar KWD 1.890 dan menerima gaji bersih KWD 16.110. Pekerja asing tidak ikut PIFSS, tetapi menerima uang akhir masa kerja dari pemberi kerja.</p>",
+  "lede": "<p>Kuwait tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>) bergaji KWD 18.000 setahun membawa pulang seluruhnya sebagai gaji bersih (<em>take-home pay</em>), tanpa potongan setara PPh 21 dan tanpa iuran semacam BPJS. Warga Kuwait membayar iuran jaminan sosial ke PIFSS sebesar KWD 1.890 dan menerima gaji bersih KWD 16.110. Pekerja asing tidak ikut PIFSS, tetapi menerima uang akhir masa kerja dari pemberi kerja.</p>",
   "law": {
     "intro": "<p>Angka di halaman ini mengikuti aturan 2026 yang dipakai <em>tool</em> ini. Gaji perorangan tidak dipajaki di Kuwait. Jaminan sosial dikelola Public Institution for Social Security (PIFSS), lembaga yang hanya mencakup warga negara Kuwait dan kira-kira setara BPJS Ketenagakerjaan di Indonesia.</p>",
     "blocks": [
@@ -114,7 +114,7 @@
     {
       "key": "expat",
       "title": "Apakah gaji KWD 18.000 di Kuwait kena pajak? Hitungan untuk pekerja asing",
-      "intro": "<p>Contoh ini untuk kamu yang bekerja di Kuwait dengan gaji KWD 18.000 setahun, atau KWD 1.500 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya tetap KWD 18.000, atau 100% dari gaji kotor. Karena tarif marginalnya 0%, setiap kenaikan gaji kamu terima utuh.</p>",
+      "intro": "<p>Contohnya, kamu bekerja di Kuwait dengan gaji KWD 18.000 setahun, atau KWD 1.500 sebulan. Tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya tetap KWD 18.000, atau 100% dari gaji kotor. Karena tarif marginalnya 0%, setiap kenaikan gaji kamu terima utuh.</p>",
       "after": "<p>Uang akhir masa kerja dibayar pemberi kerja secara terpisah dan tidak termasuk dalam angka ini. Di Indonesia, gaji kotor seorang karyawan biasanya menyusut karena PPh 21, JHT, JP, dan BPJS Kesehatan, sedangkan di Kuwait tidak ada potongan sama sekali.</p>",
       "cite": [
         {
@@ -126,7 +126,7 @@
     {
       "key": "national",
       "title": "Berapa iuran PIFSS warga Kuwait dengan gaji KWD 18.000 setahun?",
-      "intro": "<p>Warga Kuwait bergaji sama tidak membayar pajak penghasilan, tetapi KWD 1.890 setahun masuk ke PIFSS: 8% dari KWD 1.500 sebulan ditambah 2,5% dari KWD 1.500 yang sama. Gaji bersihnya KWD 16.110, atau 89,5% dari gaji kotor. Setiap tambahan gaji dipotong 8% sampai gaji sebulan mencapai KWD 2.750.</p>",
+      "intro": "<p>Contohnya, warga Kuwait bergaji KWD 18.000 setahun tidak membayar pajak penghasilan, tetapi KWD 1.890 setahun masuk ke PIFSS: 8% dari KWD 1.500 sebulan ditambah 2,5% dari KWD 1.500 yang sama. Gaji bersihnya KWD 16.110, atau 89,5% dari gaji kotor. Setiap tambahan gaji dipotong 8% sampai gaji sebulan mencapai KWD 2.750.</p>",
       "after": "<p>Iuran ini bukan pajak, tetapi pembayaran untuk hak jaminan sosial, mirip JHT dan JP di Indonesia. Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
       "cite": [
         {
@@ -246,7 +246,7 @@
     },
     {
       "q": "Apakah gaji di Kuwait lebih besar daripada gaji di Indonesia?",
-      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
+      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
     }
   ],
   "lineLabels": {

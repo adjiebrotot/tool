@@ -4,7 +4,7 @@
   "title": "Pajak Gaji di Oman 2026: Gaji Bersih dan Rencana Pajak 2028",
   "h1": "Cara menghitung pajak gaji di Oman (2026) dan rencana pajak mulai 2028",
   "description": "Oman belum memajaki gaji pada 2026, tetapi pajak penghasilan 5% direncanakan mulai 2028. Lihat gaji bersih pekerja asing dan warga Oman.",
-  "lede": "<p>Oman tidak memungut pajak penghasilan atas gaji pada 2026, jadi pekerja asing (<em>expat</em>) bergaji OMR 18.000 setahun menerima gaji bersih (<em>take-home pay</em>). Warga Oman membayar iuran 8% ke Social Protection Fund, yaitu OMR 1.440, dan menerima gaji bersih OMR 16.560. Pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun direncanakan berlaku mulai 1 Januari 2028.</p>",
+  "lede": "<p>Oman tidak memungut pajak penghasilan atas gaji pada 2026, jadi pekerja asing (<em>expat</em>) bergaji OMR 18.000 setahun membawa pulang seluruhnya sebagai gaji bersih (<em>take-home pay</em>). Warga Oman membayar iuran 8% ke Social Protection Fund, yaitu OMR 1.440, dan menerima gaji bersih OMR 16.560. Pajak penghasilan perorangan 5% atas penghasilan di atas OMR 42.000 setahun direncanakan berlaku mulai 1 Januari 2028.</p>",
   "law": {
     "intro": "<p>Angka di halaman ini mengikuti aturan 2026 yang dipakai <em>tool</em> ini. Aturan di Oman sedang berubah: dari semua negara Teluk di <em>tool</em> ini, hanya Oman yang berencana memajaki penghasilan perorangan. Sampai pajak itu berlaku, satu-satunya potongan dari gaji adalah iuran jaminan sosial untuk warga negaranya.</p>",
     "blocks": [
@@ -95,7 +95,7 @@
     {
       "key": "expat",
       "title": "Apakah gaji OMR 18.000 di Oman kena pajak? Hitungan untuk pekerja asing",
-      "intro": "<p>Contoh ini untuk kamu yang bekerja di Oman dengan gaji OMR 18.000 setahun, atau OMR 1.500 sebulan. Pada 2026 tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya OMR 18.000, atau 100% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, kamu bekerja di Oman dengan gaji OMR 18.000 setahun, atau OMR 1.500 sebulan. Pada 2026 tidak ada pajak penghasilan dan tidak ada iuran jaminan sosial yang dipotong, sehingga gaji bersihnya OMR 18.000, atau 100% dari gaji kotor.</p>",
       "after": "<p>Uang akhir masa kerja dibayar pemberi kerja secara terpisah dan tidak masuk dalam angka ini. Bandingkan dengan Indonesia, tempat gaji kotor karyawan biasanya menyusut karena PPh 21 dan iuran BPJS.</p>",
       "cite": [
         {
@@ -107,7 +107,7 @@
     {
       "key": "national",
       "title": "Berapa iuran Social Protection Fund untuk warga Oman bergaji OMR 18.000?",
-      "intro": "<p>Warga Oman bergaji OMR 18.000 tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu OMR 1.440 setahun, masuk ke Social Protection Fund. Gaji bersihnya OMR 16.560, atau 92,0% dari gaji kotor. Gaji sebulannya OMR 1.500, masih di bawah batas OMR 3.000, sehingga seluruh gaji dikenai iuran 8%.</p>",
+      "intro": "<p>Contohnya, warga Oman bergaji OMR 18.000 tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu OMR 1.440 setahun, masuk ke Social Protection Fund. Gaji bersihnya OMR 16.560, atau 92,0% dari gaji kotor. Gaji sebulannya OMR 1.500, masih di bawah batas OMR 3.000, sehingga seluruh gaji dikenai iuran 8%.</p>",
       "after": "<p>Iuran ini bukan pajak, tetapi pembayaran untuk hak perlindungan sosial, mirip JHT dan JP di Indonesia. Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
       "cite": [
         {
@@ -209,7 +209,7 @@
     },
     {
       "q": "Apakah gaji di Oman lebih besar daripada gaji di Indonesia?",
-      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
+      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
     }
   ],
   "lineLabels": {

@@ -143,7 +143,7 @@
             "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2875.htm#:~:text=%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%A8%E9%9D%9E%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%AE%E5%8C%BA%E5%88%86"
           }
         ],
-        "html": "<p>Orang yang bukan penduduk pajak tetapi dibayar untuk pekerjaan yang dilakukan di Jepang dikenai tarif tetap 20,42% (20% ditambah pajak tambahan rekonstruksi), dipotong langsung dari gaji tanpa potongan apa pun. <em>Tool</em> menerapkan tarif akhir ini pada gaji kotor. Kalau kamu orang Indonesia yang datang untuk bekerja setahun atau lebih, kamu dihitung sebagai penduduk pajak sejak hari pertama, sehingga blok ini jarang berlaku untukmu.</p>"
+        "html": "<p>Orang yang bukan penduduk pajak tetapi dibayar untuk pekerjaan yang dilakukan di Jepang dikenai tarif tetap 20,42% (20% ditambah pajak tambahan rekonstruksi), dipotong langsung dari gaji tanpa potongan apa pun. <em>Tool</em> menerapkan tarif final ini pada gaji kotor. Kalau kamu orang Indonesia yang datang untuk bekerja setahun atau lebih, kamu dihitung sebagai penduduk pajak sejak hari pertama, sehingga tarif ini jarang berlaku untukmu.</p>"
       }
     ],
     "sources": [
@@ -306,7 +306,7 @@
     "<strong>Tanpa bonus.</strong> Banyak kontrak kerja di Jepang membayar sebagian gaji sebagai bonus, dan iuran jaminan sosial atas bonus dihitung terpisah. <em>Tool</em> berasumsi gajimu sama besar selama dua belas bulan, sehingga slip gaji aslinya bisa berbeda.",
     "<strong>Hanya Tokyo.</strong> Tarif asuransi kesehatan dan pajak penduduk berbeda antarwilayah dan antarpenyelenggara, dan perusahaan dengan asuransi kesehatan sendiri memakai tarif lain.",
     "<strong>Potongan standar saja.</strong> Yang dipakai hanya potongan dasar. Tanggungan, asuransi jiwa, biaya berobat, iDeCo dan <em>furusato nozei</em> tidak dihitung.",
-    "<strong>Status dipilih sendiri.</strong> Kamu yang menentukan statusnya. <em>Tool</em> tidak menguji apakah kamu penduduk pajak, penduduk non-permanen atau bukan, padahal aturan penghasilan dari luar Jepang berbeda untuk tiap status.",
+    "<strong>Status dipilih sendiri.</strong> Kamu yang menentukan statusnya. <em>Tool</em> tidak memeriksa apakah kamu penduduk pajak, penduduk non-permanen atau bukan, padahal aturan penghasilan dari luar Jepang berbeda untuk tiap status.",
     "<strong>Pajak penduduk tahun kedua adalah perkiraan.</strong> <em>Tool</em> memakai penghasilan tahun ini sebagai pengganti penghasilan tahun lalu. Kalau gajimu berubah, tagihan aslinya akan berbeda.",
     "<strong>Tanpa P3B dan tanpa pajak Indonesia.</strong> <em>Tool</em> tidak menghitung persetujuan penghindaran pajak berganda (P3B) ataupun kewajiban pajak di Indonesia atas penghasilanmu di luar negeri. Yang tampil hanya pajak dan iuran di Jepang."
   ],
@@ -393,7 +393,7 @@
     },
     {
       "q": "Cukupkah gaji bersih ¥6.000.000 untuk hidup di Tokyo dibanding di Jakarta?",
-      "a": "<p>Gaji bersih baru separuh gambarnya. Lihat apa yang bisa dibeli di Tokyo dibanding kotamu sekarang di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan uji bagaimana tabungan yang lebih besar bertumbuh di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>. Untuk melihat di kota mana tabungan akhir bulan lebih tebal, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+      "a": "<p>Gaji bersih saja belum cukup untuk menilainya. Lihat apa yang bisa dibeli di Tokyo dibanding kotamu sekarang di <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan coba lihat bagaimana tabungan yang lebih besar bertumbuh di <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>. Untuk melihat di kota mana tabungan akhir bulan lebih tebal, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
     }
   ],
   "lineLabels": {

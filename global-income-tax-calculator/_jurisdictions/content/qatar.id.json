@@ -146,7 +146,7 @@
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong><em>Gratuity</em> tidak dihitung.</strong> Besarnya bergantung pada gaji pokok, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
     "<strong>Pajak Indonesia tidak dihitung.</strong> <em>Tool</em> ini hanya menghitung potongan di Qatar. Pajak Indonesia atas penghasilan di luar negeri dan persetujuan penghindaran pajak berganda (P3B) tidak dihitung.",
-    "<strong>Status sesuai pilihanmu.</strong> <em>Tool</em> ini mengikuti status yang kamu pilih (warga negara atau pekerja asing) dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Status sesuai pilihanmu.</strong> <em>Tool</em> ini mengikuti status yang kamu pilih (warga negara atau pekerja asing) dan tidak memeriksa apakah kamu memenuhi syaratnya.",
     "<strong>Tunjangan di kontrak.</strong> Hitungan memakai gaji kotor yang kamu masukkan. Tunjangan rumah, makan, atau tiket pulang di kontrak tidak dipisahkan dari gaji itu."
   ],
   "faq": [
@@ -204,7 +204,7 @@
     },
     {
       "q": "Berapa sisa gaji di Qatar dibandingkan dengan di Jakarta?",
-      "a": "<p>Gaji bersih baru separuh gambaran, apalagi kalau kontrak sudah termasuk tempat tinggal. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan daya beli gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
+      "a": "<p>Gaji bersih saja belum cukup untuk menilainya, apalagi kalau kontrak sudah termasuk tempat tinggal. <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a> membandingkan daya beli gaji di dua kota. Untuk gambaran tabungan akhir bulan, baca juga <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">#KaburAjaDulu</a>.</p>"
     }
   ],
   "lineLabels": {

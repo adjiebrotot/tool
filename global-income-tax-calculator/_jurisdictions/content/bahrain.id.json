@@ -106,7 +106,7 @@
     {
       "key": "expat",
       "title": "Berapa gaji bersih pekerja asing di Bahrain dengan gaji BHD 24.000?",
-      "intro": "<p>Contoh ini untuk kamu yang bekerja di Bahrain dengan gaji BHD 24.000 setahun, atau BHD 2.000 sebulan. Tidak ada potongan setara PPh 21. Satu-satunya yang berkurang adalah iuran asuransi pengangguran SIO sebesar 1%, yaitu BHD 240 setahun, sehingga gaji bersihnya BHD 23.760 atau 99,0% dari gaji kotor. Gaji sebulannya masih jauh di bawah batas BHD 4.000, jadi setiap tambahan gaji juga dipotong 1,0%.</p>",
+      "intro": "<p>Contohnya, kamu bekerja di Bahrain dengan gaji BHD 24.000 setahun, atau BHD 2.000 sebulan. Tidak ada potongan setara PPh 21. Satu-satunya yang berkurang adalah iuran asuransi pengangguran SIO sebesar 1%, yaitu BHD 240 setahun, sehingga gaji bersihnya BHD 23.760 atau 99,0% dari gaji kotor. Gaji sebulannya masih jauh di bawah batas BHD 4.000, jadi setiap tambahan gaji juga dipotong 1,0%.</p>",
       "after": "<p>Potongan sekecil ini hanya melindungimu kalau kehilangan pekerjaan dan tidak menjadi dana pensiun. Tabungan hari tua tetap harus kamu siapkan sendiri, termasuk untuk saat kontrakmu selesai dan kamu pulang ke Indonesia.</p>",
       "cite": [
         {
@@ -126,7 +126,7 @@
     {
       "key": "national",
       "title": "Gaji bersih warga Bahrain dengan gaji BHD 24.000 setelah iuran SIO",
-      "intro": "<p>Warga Bahrain bergaji sama tetap tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu BHD 1.920 setahun, masuk ke SIO untuk pensiun dan asuransi pengangguran. Gaji bersihnya BHD 22.080, atau 92,0% dari gaji kotor. Potongan ini mirip JHT dan JP di BPJS Ketenagakerjaan: bukan pajak, tetapi tabungan jaminan hari tua, hanya saja persentasenya jauh lebih besar.</p>",
+      "intro": "<p>Contohnya, warga Bahrain bergaji BHD 24.000 setahun tetap tidak membayar pajak penghasilan, tetapi 8% gajinya, yaitu BHD 1.920 setahun, masuk ke SIO untuk pensiun dan asuransi pengangguran. Gaji bersihnya BHD 22.080, atau 92,0% dari gaji kotor. Potongan ini mirip JHT dan JP di BPJS Ketenagakerjaan: bukan pajak, tetapi tabungan jaminan hari tua, hanya saja persentasenya jauh lebih besar.</p>",
       "after": "<p>Kamu sebagai warga negara Indonesia tidak masuk kelompok ini, jadi contoh ini hanya pembanding.</p>",
       "cite": [
         {
@@ -250,7 +250,7 @@
     },
     {
       "q": "Apakah gaji di Bahrain lebih besar daripada gaji di Indonesia?",
-      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">artikel #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
+      "a": "<p>Belum tentu. Gaji bersih yang lebih besar tidak selalu berarti uang sisa yang lebih besar, karena biaya hidup di tiap negara berbeda. Bandingkan dengan <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>, dan baca <a href=\"https://blog.adjiebrotots.com/id/kabur-aja-dulu/\">tulisan #KaburAjaDulu</a> untuk melihat tabungan akhir bulan di beberapa kota.</p>"
     }
   ],
   "lineLabels": {

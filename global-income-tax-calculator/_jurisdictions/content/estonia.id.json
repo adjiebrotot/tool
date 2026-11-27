@@ -49,7 +49,7 @@
     {
       "key": "employee",
       "title": "Cara menghitung pajak penghasilan Estonia untuk gaji €36.000 setahun",
-      "intro": "<p>Contohnya, karyawan bergaji €36.000 dengan iuran pilar II <em>default</em> 2%. Iuran asuransi pengangguran €576 dan iuran pilar II €720 dipotong dari gaji, lalu penghasilan bebas pajak €8.400 dikurangkan, sehingga penghasilan kena pajak tinggal €26.304. Pada tarif 22%, pajak penghasilannya €5.787. Gaji bersihnya sekitar €28.917, atau 80,3% dari gaji bruto.</p>",
+      "intro": "<p>Contohnya, seorang karyawan bergaji €36.000 setahun memakai iuran pilar II <em>default</em> 2%. Iuran asuransi pengangguran €576 dan iuran pilar II €720 dipotong dari gaji, lalu penghasilan bebas pajak €8.400 dikurangkan, sehingga penghasilan kena pajak tinggal €26.304. Pada tarif 22%, pajak penghasilannya €5.787. Gaji bersihnya sekitar €28.917, atau 80,3% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 24,8%: pajak 22% ditambah asuransi pengangguran 1,6% dan iuran pilar II 2%, dikurangi pajak yang dihemat oleh kedua iuran itu karena dipotong sebelum pajak dihitung.</p>",
       "cite": [
         { "name": "EMTA, tarif pajak", "url": "https://www.emta.ee/en/private-client/taxes-and-payment/declaration-income/tax-rates#:~:text=The%20rate%20of%20withheld%20income%20tax%20is%2022%25" },
@@ -60,7 +60,7 @@
     {
       "key": "no-second-pillar",
       "title": "Berapa gaji bersih di Estonia tanpa pilar pensiun kedua pada gaji €36.000?",
-      "intro": "<p>Contohnya, karyawan bergaji €36.000 yang memilih 0% untuk pilar II. Tanpa iuran €720, penghasilan kena pajaknya €27.024 dan pajak penghasilannya €5.945, sekitar €158 lebih besar daripada kalau ia ikut pilar II 2%. Iuran asuransi pengangguran €576 tetap dipotong. Gaji bersihnya sekitar €29.479, atau 81,9% dari gaji bruto, sekitar €562 lebih tinggi daripada kalau ia ikut pilar II.</p>",
+      "intro": "<p>Contohnya, seorang karyawan bergaji €36.000 setahun memilih 0% untuk pilar II. Tanpa iuran €720, penghasilan kena pajaknya €27.024 dan pajak penghasilannya €5.945, sekitar €158 lebih besar daripada kalau ia ikut pilar II 2%. Iuran asuransi pengangguran €576 tetap dipotong. Gaji bersihnya sekitar €29.479, atau 81,9% dari gaji bruto, sekitar €562 lebih tinggi daripada kalau ia ikut pilar II.</p>",
       "after": "<p>Tambahan gaji bersih itu ada harganya: uang pilar II masuk ke rekening pensiun atas namamu, jadi kamu memilih antara uang tunai sekarang dan tabungan pensiun nanti.</p>",
       "cite": [
         { "name": "EMTA, iuran pensiun wajib (pilar II)", "url": "https://www.emta.ee/en/business-client/taxes-and-payment/income-and-social-taxes/contributions-mandatory-funded-pension" }
@@ -137,7 +137,7 @@
     },
     {
       "q": "Kalau bekerja di Estonia, apakah saya masih kena pajak di Indonesia?",
-      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut PMK 18/2021 (setelah UU HPP), WNI yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan memenuhi syarat lain dapat menjadi subjek pajak luar negeri, sehingga gaji dari Estonia pada umumnya tidak lagi dipajaki di Indonesia. Kalau kamu masih subjek pajak dalam negeri, gaji itu dilaporkan di SPT Tahunan dan pajak yang sudah dibayar di sana umumnya dapat dikreditkan. Tanyakan prosedurnya ke KPP tempat NPWP-mu terdaftar. Apakah ada persetujuan penghindaran pajak berganda (P3B) antara Indonesia dan Estonia, tanyakan ke DJP.</p>"
+      "a": "<p>Itu bergantung pada statusmu di Indonesia. Menurut PMK 18/2021 (setelah UU HPP), WNI yang berada di luar Indonesia lebih dari 183 hari dalam dua belas bulan dan memenuhi syarat lain dapat menjadi subjek pajak luar negeri, sehingga gaji dari Estonia pada umumnya tidak lagi dipajaki di Indonesia. Kalau kamu masih subjek pajak dalam negeri, gaji itu dilaporkan di SPT Tahunan dan pajak yang sudah dibayar di sana umumnya dapat dikreditkan. Tanyakan prosedurnya ke KPP tempat NPWP-mu terdaftar. Untuk tahu apakah Indonesia dan Estonia punya persetujuan penghindaran pajak berganda (P3B), tanyakan ke DJP.</p>"
     }
   ],
   "lineLabels": {

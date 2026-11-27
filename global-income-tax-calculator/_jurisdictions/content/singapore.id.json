@@ -80,7 +80,7 @@
       },
       {
         "h3": "Pajak untuk non-resident",
-        "html": "<p>Penghasilan kerja non-resident dikenai pajak yang lebih besar dari dua hitungan: tarif tunggal 15%, atau tarif penduduk tanpa pengurang pajak. Pada kebanyakan tingkat gaji, tarif tunggal 15% lebih tinggi, jadi non-resident dengan gaji S$60.000 membayar S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950.</p>",
+        "html": "<p>Penghasilan kerja non-resident dikenai pajak dari hitungan yang hasilnya lebih besar: tarif tunggal 15% atau tarif penduduk tanpa pengurang pajak. Pada kebanyakan tingkat gaji, tarif tunggal 15% lebih tinggi, jadi non-resident dengan gaji S$60.000 membayar S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950.</p>",
         "cite": [
           {
             "name": "IRAS, Individual income tax rates",
@@ -210,8 +210,8 @@
     {
       "key": "non-resident",
       "title": "Berapa pajak pekerja non-resident di Singapura dengan gaji S$60.000?",
-      "intro": "<p>Pekerja yang tinggal di Singapura kurang dari 183 hari dikenai pajak yang lebih besar dari dua hitungan: tarif tunggal 15%, atau tarif penduduk tanpa pengurang pajak. Di sini 15% dari S$60.000 adalah S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950, sehingga yang berlaku S$9.000. Gaji bersih yang kamu terima S$51.000 setahun atau sekitar S$4.250 sebulan, yaitu 85,0% dari gaji kotor.</p>",
-      "after": "<p>Kalau rencana tinggalmu ternyata cukup lama untuk menjadi penduduk pajak, tagihan bisa turun tajam. IRAS punya aturan khusus untuk tinggal yang melintasi dua tahun kalender, jadi tanyakan ke IRAS dengan tanggal pastimu.</p>",
+      "intro": "<p>Pekerja yang tinggal di Singapura kurang dari 183 hari dikenai pajak dari hitungan yang hasilnya lebih besar: tarif tunggal 15% atau tarif penduduk tanpa pengurang pajak. Di sini 15% dari S$60.000 adalah S$9.000, sedangkan tarif penduduk hanya menghasilkan S$1.950, sehingga yang berlaku S$9.000. Gaji bersih yang kamu terima S$51.000 setahun atau sekitar S$4.250 sebulan, yaitu 85,0% dari gaji kotor.</p>",
+      "after": "<p>Kalau rencana tinggalmu ternyata cukup lama untuk menjadi penduduk pajak, tagihan bisa turun tajam. IRAS punya aturan khusus untuk masa tinggal yang melintasi dua tahun kalender, jadi tanyakan ke IRAS dengan tanggal pastimu.</p>",
       "cite": [
         {
           "name": "IRAS, Individual income tax rates",
@@ -258,7 +258,7 @@
     },
     {
       "h3": "Hitung jumlah hari tinggalmu sebelum tiba atau pergi",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang memulai atau mengakhiri penempatan di tengah tahun. Tinggal cukup lama membuatmu penduduk pajak, dan tarif penduduk dengan pengurang menghasilkan tagihan yang jauh lebih rendah daripada perlakuan non-resident.</p><p><strong>Perlu diingat:</strong> yang dihitung adalah hari tinggal sebenarnya, bukan tanggal di kontrak. Pemberi kerja juga wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan pajak bisa ditahan sampai urusannya selesai.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> orang yang memulai atau mengakhiri penempatan di tengah tahun. Masa tinggal yang cukup lama membuatmu menjadi penduduk pajak, dan tarif penduduk dengan pengurang menghasilkan tagihan yang jauh lebih rendah daripada perlakuan non-resident.</p><p><strong>Perlu diingat:</strong> yang dihitung adalah hari tinggal sebenarnya, bukan tanggal di kontrak. Pemberi kerja juga wajib memberi tahu IRAS sebelum pekerja asing berhenti, dan pajak bisa ditahan sampai urusannya selesai.</p>",
       "cite": [
         {
           "name": "IRAS, Working out my tax residency",
@@ -270,7 +270,7 @@
   "limits": [
     "<strong>Hanya penghasilan dari kerja.</strong> <em>Tool</em> menghitung satu gaji untuk satu tahun penuh, tanpa pendapatan sewa, investasi, usaha sendiri atau tahun yang hanya sebagian.",
     "<strong>Tanpa bonus dan saham.</strong> Bonus, hadiah saham dan tunjangan tidak dihitung terpisah.",
-    "<strong>Status sesuai isianmu.</strong> <em>Tool</em> tidak menguji apakah kamu penduduk pajak atau non-resident, dan tidak menghitung perpindahan status di tengah tahun. Employment Pass dan S Pass dihitung sama.",
+    "<strong>Status sesuai isianmu.</strong> <em>Tool</em> tidak memeriksa apakah kamu penduduk pajak atau non-resident, dan tidak menghitung perpindahan status di tengah tahun. Employment Pass dan S Pass dihitung sama.",
     "<strong>Pengurang pajak dasar.</strong> Pengurang untuk pasangan, anak, orang tua, biaya kursus, SRS dan setoran tambahan CPF tidak dihitung. <em>Tool</em> memakai <em>earned income relief</em> S$1.000 ditambah CPF.",
     "<strong>CPF disederhanakan.</strong> <em>Tool</em> memakai satu tarif bagian karyawan dan batas gaji S$8.000 sebulan, tanpa batas tahunan CPF, bagian pemberi kerja dan setoran sukarela.",
     "<strong>Pajak Indonesia dan P3B tidak dihitung.</strong> <em>Tool</em> tidak menghitung pajak di Indonesia atas penghasilan dari luar negeri, Persetujuan Penghindaran Pajak Berganda (P3B) maupun kredit pajak luar negeri.",
@@ -319,7 +319,7 @@
     },
     {
       "q": "Berapa pajak kalau saya tinggal kurang dari 183 hari di Singapura?",
-      "a": "<p>Kamu menjadi non-resident, dan penghasilan kerjamu dikenai pajak yang lebih besar dari dua hitungan: tarif tunggal 15%, atau tarif penduduk tanpa pengurang pajak. Pada gaji S$60.000 itu berarti S$9.000, bukan S$1.950, jadi menghitung hari sebelum berangkat sangat berguna.</p>",
+      "a": "<p>Kamu menjadi non-resident, dan penghasilan kerjamu dikenai pajak dari hitungan yang hasilnya lebih besar: tarif tunggal 15% atau tarif penduduk tanpa pengurang pajak. Pada gaji S$60.000 itu berarti S$9.000, bukan S$1.950, jadi menghitung hari sebelum berangkat sangat berguna.</p>",
       "cite": [
         {
           "name": "IRAS, Working out my tax residency",

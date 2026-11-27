@@ -285,11 +285,11 @@
   "limits": [
     "<strong>Hanya penghasilan dari satu pekerjaan setahun penuh.</strong> Penghasilan dari beberapa pemberi kerja, kerja paruh waktu, atau usaha sampingan tidak dihitung.",
     "<strong>THR dan bonus tidak dihitung.</strong> Keduanya ikut dipotong PPh 21 di bulan diterimanya dan menaikkan penghasilan bruto bulan itu, jadi potongan bulan tersebut bisa lebih besar dari angka di sini.",
-    "<strong>Zakat dan DPLK belum dihitung.</strong> Keduanya bisa menurunkan PKP, tetapi tidak ada kolomnya di hitungan ini.",
-    "<strong>Potongan bulanan tidak dihitung.</strong> <em>Tool</em> ini mengeluarkan angka setahun penuh, jadi slip gaji per bulan dengan TER bisa berbeda.",
+    "<strong>Zakat dan DPLK belum dihitung.</strong> Keduanya bisa menurunkan PKP, tetapi <em>tool</em> ini belum punya isian untuk keduanya.",
+    "<strong>Potongan bulanan tidak dihitung.</strong> <em>Tool</em> ini menghitung angka setahun penuh, jadi slip gaji bulananmu yang memakai TER bisa berbeda.",
     "<strong>P3B tidak dihitung.</strong> Pajak WNA bisa berubah menurut perjanjian penghindaran pajak berganda antara Indonesia dan negara asalnya.",
     "<strong>Penghasilan dari luar negeri dan perubahan status tidak dihitung.</strong> Kalau kamu pindah kerja ke luar negeri, status pajakmu bisa berubah menjadi subjek pajak luar negeri, dan itu perlu kamu urus sendiri di DJP. Untuk gambaran pajak di negara tujuan, lihat halaman <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/australia/id/\">Australia</a> atau <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/singapore/id/\">Singapura</a> di <em>tool</em> ini.",
-    "<strong>Hasil ini estimasi.</strong> Aturan bisa berubah, jadi cek bukti potong dan DJP untuk angka resminya."
+    "<strong>Hasil ini perkiraan.</strong> Aturan bisa berubah, jadi cek bukti potong dan DJP untuk angka resminya."
   ],
   "faq": [
     {
