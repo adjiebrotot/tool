@@ -3,10 +3,10 @@ https://tool.adjiebrotots.com/global-income-tax-calculator/id/
 
 This is the full reference for one page of the skill brotools-global-income-tax-calculator: read SKILL.md first.
 
-Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
-pertanyaanmu. Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap
-dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. Bagian di bawah ini ditulis
-untuk asisten AI, jadi tetap dalam bahasa Inggris.
+Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu tanyakan apa yang
+ingin kamu hitung. Asisten membalas dengan tautan yang membuka tool ini sesuai skenariomu, lengkap
+dengan daftar asumsinya, dan tool inilah yang menghitung hasilnya. Sisa halaman ini ditulis untuk
+asisten AI, jadi tetap dalam bahasa Inggris.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it
@@ -114,7 +114,7 @@ usState: Negara bagian  (most important)
 usNyc: Tinggal di New York City
   Checkbox: true or false. Default false.
   US, New York only. true adds New York City resident tax.
-  Tip on the page: New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif
+  Tip on the page: Selain pajak negara bagian, penduduk New York City juga kena pajak kota sebesar
   3,078% sampai 3,876%.
 caProv: Provinsi  (most important)
   One of: ON (Ontario), BC (British Columbia), AB (Alberta), QC (Quebec). Default ON.
@@ -310,7 +310,7 @@ twRes: Status penduduk (Penduduk pajak (183 hari atau lebih) or Bukan penduduk p
 twGold: Gold Card
   Checkbox: true or false. Default false.
   Taiwan (China) residents. true for a Gold Card holder (50% of salary above 3,000,000 excluded).
-  Tip on the page: Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3.000.000 selama 5 tahun.
+  Tip on the page: Pemegang Gold Card bebas pajak atas 50% gaji di atas 3.000.000 selama 5 tahun.
 twEi: Asuransi ketenagakerjaan
   One of: yes (Ikut: 11,5% + 1%), no (Karyawan asing: 11,5% saja). Default yes.
   Taiwan (China). yes (default: in employment insurance, so 11.5% + 1% labour and employment
@@ -439,7 +439,7 @@ auSuper: Jumlah sudah termasuk super
   Checkbox: true or false. Default false.
   Australia. true when the amount is a package that includes the 12% super guarantee.
   Tip on the page: Aktif: jumlah yang kamu isi adalah paket gaji yang sudah memuat super guarantee
-  12%. Mati: super dibayar pemberi kerja di luar gaji.
+  12%. Nonaktif: super dibayar pemberi kerja di luar gaji.
 ukLoan: Pinjaman mahasiswa
   One of: none (Tidak ada), plan1 (Plan 1), plan2 (Plan 2), plan4 (Plan 4 (Skotlandia)), plan5 (Plan
   5). Default none.
@@ -458,8 +458,8 @@ deChurch: Pajak gereja
 deAddOn: Iuran tambahan asuransi kesehatan
   Number (% after it). 0 to 5. Default 2.9.
   Germany. Health fund add-on rate in %, 2.9 on average.
-  Tip on the page: Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2,9%
-  pada 2026. Kamu menanggung separuhnya.
+  Tip on the page: Setiap dana kesehatan menetapkan iuran tambahannya sendiri, rata-rata 2,9% pada
+  2026. Kamu menanggung separuhnya.
 usLocal: Pajak penghasilan lokal atau county
   Number (% after it). 0 to 5. Default 0.
   US. Local or county income tax on wages in %, such as a Maryland county or Philadelphia. 0 when
@@ -488,8 +488,8 @@ idBpjs: Bayar BPJS seperti penduduk pajak
 myLindung: Klaim LINDUNG sebagai pengurang SOCSO
   Checkbox: true or false. Default false.
   Malaysia, expat residents. true to claim LINDUNG as SOCSO relief (unconfirmed for expats).
-  Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini mati sejak
-  awal. Pengaruhnya pada pajak paling banyak RM31.50.
+  Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini nonaktif
+  secara bawaan. Pengaruhnya pada pajak paling banyak RM31.50.
 nlNorm: Salary norm
   One of: std (Standar (48.013)), young (Di bawah 30 tahun dengan gelar master (36.497)). Default
   std.
@@ -497,7 +497,7 @@ nlNorm: Salary norm
   36,497).
   Tip on the page: Ruling ini tidak boleh membuat gaji turun di bawah salary norm, jadi bagian bebas
   pajaknya adalah gaji dikurangi norm itu bila hasilnya lebih kecil.
-nlHoliday: Uang liburan dibayar di atas gaji
+nlHoliday: Uang liburan dibayar terpisah dari gaji
   Checkbox: true or false. Default true.
   Netherlands. true (default): amount excludes the 8% holiday allowance and it is added. false:
   amount already includes it.

@@ -443,24 +443,24 @@ const WORDS = {
   id: {
     htmlLang: 'id', locale: 'id_ID', site: 'Situs',
     pageTitle: n => `Pakai ${n} di AI-mu`,
-    pageDesc: n => `Unduh skill ${n} untuk Claude, ChatGPT, Grok, Gemini, atau Copilot. AI-mu mencari sendiri asumsi yang dibutuhkan, lalu mengirim satu tautan yang membuka ${n} dengan skenariomu.`,
+    pageDesc: n => `Unduh skill ${n} untuk Claude, ChatGPT, Grok, Gemini, atau Copilot. AI akan mencari sendiri asumsi yang dibutuhkan, lalu mengirim satu tautan yang membuka ${n} sesuai skenariomu.`,
     stepDownload: 'Unduh skill-nya', stepDownloadText: z => `Unduh ${z} dari halaman ini.`,
-    stepInstall: 'Pasang di AI-mu', stepInstallText: 'Unggah berkas zip itu sebagai skill di Claude, ChatGPT, Grok, atau Copilot (di Gemini, unggah folder hasil ekstraknya), lalu aktifkan.',
-    stepAsk: 'Ajukan pertanyaanmu', stepAskText: n => `Tanyakan dengan kata-katamu sendiri. AI akan menuliskan input yang kamu sebutkan beserta asumsi yang dipakainya, lalu mengirim tautan yang membuka ${n} dengan skenariomu.`,
-    dlSkill: 'Unduh skill', dlZip: z => `Unduh ${z}`, openTool: 'Buka tool-nya', theme: '🌙 Gelap',
+    stepInstall: 'Pasang di AI-mu', stepInstallText: 'Unggah berkas .zip tadi sebagai skill di Claude, ChatGPT, Grok, atau Copilot (di Gemini, unggah folder hasil ekstraknya), lalu aktifkan.',
+    stepAsk: 'Ajukan pertanyaanmu', stepAskText: n => `Tanyakan dengan kata-katamu sendiri. AI akan mendaftar input yang kamu sebutkan beserta asumsi yang dipakainya, lalu mengirim tautan yang membuka ${n} sesuai skenariomu.`,
+    dlSkill: 'Unduh skill', dlZip: z => `Unduh ${z}`, openTool: 'Buka tool', theme: '🌙 Gelap',
     files: '<em>Skill</em> ini berupa berkas .zip: <code>SKILL.md</code> (cara menjawab), <code>references/</code> (setiap <em>input</em>, rentang nilainya, dan Quick Start) dan <code>scripts/build_link.py</code> (menyusun dan mengecek tautan).',
-    installH: 'Pasang skill-nya', installSub: 'Pilih asisten AI-mu. Demo di bawah memutar langkah-langkahnya, dan kamu bisa menekan satu langkah untuk langsung melompat ke sana.', assistant: 'Asisten', pause: 'Jeda',
-    installNote: z => `Letak menu bisa berpindah setiap kali aplikasinya diperbarui, jadi carilah <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT dan Grok: Plugins; Gemini: Customise; Copilot: di dalam sebuah <em>agent</em>). Gemini menerima folder hasil ekstrak, sementara yang lain menerima berkas zip apa adanya. Paket langgananmu belum mendukung <em>skill</em>? Lampirkan <code>${z}</code> atau <code>SKILL.md</code>-nya ke <em>chat</em>, lalu tulis "pakai <em>skill</em> ini".`,
-    asof: d => `Berlaku per ${d}. AI berubah dengan cepat, jadi tampilan, paket, dan fiturnya mungkin sudah berbeda saat kamu membaca ini.`,
+    installH: 'Pasang skill-nya', installSub: 'Pilih asisten AI-mu. Demo di bawah memutar langkah-langkahnya; tekan salah satu langkah untuk langsung ke sana.', assistant: 'Asisten', pause: 'Jeda',
+    installNote: z => `Letak menu bisa berubah setiap kali aplikasinya diperbarui, jadi carilah <strong>Skills</strong> (Claude: Settings, Customize; ChatGPT dan Grok: Plugins; Gemini: Customise; Copilot: di dalam sebuah <em>agent</em>). Gemini menerima folder hasil ekstrak, sementara yang lain menerima berkas zip apa adanya. Paket langgananmu belum mendukung <em>skill</em>? Lampirkan <code>${z}</code> atau <code>SKILL.md</code>-nya ke <em>chat</em>, lalu tulis "pakai <em>skill</em> ini".`,
+    asof: d => `Per ${d}. AI cepat sekali berubah, jadi tampilan, paket, dan fitur yang dijelaskan di sini mungkin sudah berbeda ketika kamu membacanya.`,
     chatLabel: 'Contoh percakapan', usingSkill: 'Memakai skill', searched: 'Mencari: ', ran: 'Menjalankan <code>scripts/build_link.py</code>: tautan sudah dicek',
-    yourInputs: 'Input dari kamu', assumptions: 'Asumsi', yourScenario: 'Skenariomu', openOn: n => `Buka ${n} dengan skenario ini`,
+    yourInputs: 'Input darimu', assumptions: 'Asumsi', yourScenario: 'Skenariomu', openOn: n => `Buka ${n} sesuai skenario ini`,
     openToSee: 'Buka tautannya untuk melihat hasilnya.', replay: 'Putar ulang', openScenario: 'Buka skenario ini',
     useH: 'Cara memakainya',
-    useSub: 'Bertanyalah seperti kamu bertanya kepada teman. Begitu <em>skill</em> ini terpasang, AI memakai angka yang kamu sebutkan apa adanya, mencari sendiri sisanya, lalu memberimu tautan. AI tidak menjawab sendiri, karena jawabannya baru dihitung oleh <em>tool</em> begitu tautan itu kamu buka.',
+    useSub: 'Tanyakan seperti kepada teman. Begitu <em>skill</em> terpasang, AI memakai angka yang kamu sebutkan apa adanya, mencari sendiri data lainnya, lalu memberimu tautan. AI sendiri tidak menghitung jawabannya. Hitungan baru berjalan di <em>tool</em> begitu kamu membuka tautan itu.',
     facts: [
       '<strong>Angkamu tidak diubah.</strong> Semua yang kamu sebutkan masuk persis seperti yang kamu tulis. Kalau ada asumsi yang keliru, koreksi saja, dan AI akan mengirim tautan baru.',
-      '<strong>Dicek sebelum sampai kepadamu.</strong> Skrip di dalam <em>skill</em> mengecek nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautannya, sehingga yang terbuka memang skenario yang tertulis.',
-      '<strong><em>Tool</em> menunjukkan pilihan AI.</strong> Begitu tautan dibuka, sebuah <em>banner</em> mencantumkan setiap nilai yang diisi AI beserta alasannya, lengkap dengan tombol untuk kembali ke <em>input</em>-mu sendiri.',
+      '<strong>Dicek sebelum dikirim.</strong> Skrip di dalam <em>skill</em> memeriksa nama, rentang, dan pilihan setiap <em>input</em> sebelum AI mengirim tautan, jadi skenario yang terbuka sama dengan yang tertulis.',
+      '<strong><em>Tool</em> menampilkan pilihan AI.</strong> Begitu tautan dibuka, <em>banner</em> di <em>tool</em> mencantumkan setiap nilai yang diisi AI beserta alasannya, dengan tombol untuk kembali ke <em>input</em>-mu sendiri.',
     ],
     ready: 'Siap mencobanya?', dlTheSkill: 'Unduh skill-nya', readGuide: 'Baca panduannya', allSkills: 'Semua skill Brotools',
     collab: '<strong>Ini proyek hobi saya dan terbuka untuk kolaborasi.</strong> <em>Tool</em> ini gratis dipakai. Kalau organisasimu butuh <em>tool</em> khusus atau pelatihan, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">mari ngobrol</a>. Kalau menemukan <em>bug</em> atau punya pertanyaan, kirim saja ke <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂',
@@ -469,14 +469,14 @@ const WORDS = {
     badge: 'Lencana Indonesia', made: 'Dibuat di Australia oleh <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, insinyur asal Indonesia.',
     toggle: '<a class="btn-theme" id="langToggle" href="../" hreflang="en" lang="en" title="Read in English">EN</a>',
     hubTitle: 'Pakai Adjie Brotools di AI-mu',
-    hubDesc: n => `Skill gratis untuk Claude, ChatGPT, Grok, Gemini, dan Copilot yang membuka ${n} tool Adjie Brotools dengan skenariomu sendiri lewat satu tautan: properti, pajak, investasi, pensiun, dan sistem tenaga listrik.`,
+    hubDesc: n => `Skill gratis untuk Claude, ChatGPT, Grok, Gemini, dan Copilot yang membuka ${n} tool Adjie Brotools sesuai skenariomu lewat satu tautan: properti, pajak, investasi, pensiun, dan sistem tenaga listrik.`,
     skillOf: n => `Skill ${n}`, hubHowTo: 'Pasang skill Brotools di AI-mu',
     hubPick: 'Pilih tool', hubPickText: 'Pilih salah satu tool di bawah, lalu unduh skill-nya (berkas .zip) dari halaman AI tool itu.',
-    hubAskText: 'Bertanyalah dengan bahasa sehari-hari. AI akan menuliskan input yang kamu sebutkan beserta asumsi yang dipakainya, lalu mengirim tautan yang membuka tool dengan skenariomu.',
+    hubAskText: 'Bertanyalah dengan bahasa sehari-hari. AI akan mendaftar input yang kamu sebutkan beserta asumsi yang dipakainya, lalu mengirim tautan yang membuka tool sesuai skenariomu.',
     crumbHome: 'Adjie Brotools', crumbAi: 'Pakai di AI', exampleWith: 'Contoh dengan',
-    getSkill: 'Ambil skill-nya', allTools: '← Semua tool', pickSkill: 'Pilih skill', seeSkills: n => `Lihat ${n} skill`, howInstall: 'Cara memasang',
+    getSkill: 'Unduh skill', allTools: '← Semua tool', pickSkill: 'Pilih skill', seeSkills: n => `Lihat ${n} skill`, howInstall: 'Cara memasang',
     hubFiles: 'Setiap <em>skill</em> berupa berkas .zip: <code>SKILL.md</code> (cara menjawab), <code>references/</code> (setiap <em>input</em>, rentang nilainya, dan Quick Start) dan <code>scripts/build_link.py</code> (menyusun dan mengecek tautan). Unduhannya ada di halaman AI setiap <em>tool</em>.',
-    toolsH: 'Tool yang punya skill', toolsSub: 'Buka <em>tool</em>-nya untuk memakainya sendiri, atau ambil <em>skill</em>-nya untuk memakainya lewat AI-mu. Di Copilot, satu <em>agent</em> bisa menampung semuanya.',
+    toolsH: 'Tool yang punya skill', toolsSub: 'Buka <em>tool</em> untuk memakainya langsung, atau unduh <em>skill</em>-nya untuk memakainya lewat AI-mu. Di Copilot, satu <em>agent</em> bisa menampung semuanya.',
     keyword: 'Kata kunci', searchPh: 'Cari skill', showing: n => `Menampilkan ${n} skill.`, noMatch: 'Tidak ada skill yang cocok dengan pencarian itu.', seeAllTools: 'Lihat semua tool',
     // The home page's category names (_ref/bake-home-id.mjs, LABELS)
     domain: d => ({ Engineering: 'Teknik', Finance: 'Keuangan', 'Quick Utilities': 'Tool Praktis', Visualisation: 'Visualisasi', Others: 'Lainnya' })[d] || d,
@@ -586,7 +586,7 @@ function pageEnd(up, lang = 'en') {
   </footer>
 </div>
 <script src="${up}dropdown.js" defer></script>
-<script src="${up}shared.js?v=20261116" defer></script>
+<script src="${up}shared.js?v=20261127" defer></script>
 <script src="${up}ai-page.js" defer></script>
 <!--/email_off-->
 </body>

@@ -61,9 +61,9 @@ const PEOPLE = {
   },
   id: {
     summary: 'Pakai tool ini dengan asisten AI',
-    lead: 'Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan pertanyaanmu. ' +
-      'Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. ' +
-      'Bagian di bawah ini ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.',
+    lead: 'Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu tanyakan apa yang ingin kamu hitung. ' +
+      'Asisten membalas dengan tautan yang membuka tool ini sesuai skenariomu, lengkap dengan daftar asumsinya, dan tool inilah yang menghitung hasilnya. ' +
+      'Sisa halaman ini ditulis untuk asisten AI, jadi tetap dalam bahasa Inggris.',
   },
 };
 

@@ -70,7 +70,7 @@
   ],
   "keywords": "pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH atau MT vs gabung harta",
   "featureList": [
-    "Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran",
+    "Belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran",
     "Tersedia dalam bahasa Indonesia dan Inggris",
     "Semua hitungan berjalan di browser-mu sendiri, jadi data penghasilanmu tidak pernah keluar dari perangkatmu",
     "Ekspor grafik dan CSV gratis tanpa paywall"
@@ -189,11 +189,11 @@
 <section class="layout">
     <aside class="controls card">
       <div class="quick-start-row">
-        <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Tombol ini mengisi tab Rumah tangga dengan contoh dan mengembalikan PTKP serta lapisan tarif ke ketentuan yang berlaku. Contoh awal yang tampil saat halaman dibuka adalah Penghasilan setara.">?</span>
+        <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Tiap tombol mengisi tab Rumah tangga dengan satu contoh, lalu mengembalikan PTKP dan lapisan tarif ke ketentuan yang berlaku. Saat halaman dibuka, yang terisi adalah contoh Penghasilan setara.">?</span>
         <div class="quick-start-btns">
           <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta menghemat Rp 18,6 juta per tahun.">Penghasilan setara, tanpa anak</button>
           <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dan mereka punya dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.">Keluarga satu penghasilan</button>
-          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Di Gabung Harta, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung Harta menghemat Rp 33,5 juta.">Keluarga dua penghasilan</button>
+          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Di Gabung Harta, gaji istri dikenai lapisan tarifnya sendiri, sehingga Gabung Harta menghemat Rp 33,5 juta.">Keluarga dua penghasilan</button>
         </div>
       </div>
       <div class="ctrl-scroll">
@@ -245,7 +245,7 @@
               <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti iuran pensiun, dikurangkan sebelum PTKP dan dibagi sesuai porsi penghasilan. Biaya jabatan punya tombol sendiri; jika dimatikan, masukkan di sini.">?</span></div>
+              <div class="field-label"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti iuran pensiun, dikurangkan sebelum PTKP dan dibagi sesuai porsi penghasilan. Biaya jabatan punya tombol sendiri; kalau dimatikan, isi di sini.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -330,7 +330,7 @@
         </div>
 
         <div class="bracket-info">
-          <div class="info-box" style="margin-top:14px" id="infoBoxContent"><strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP K/0. Pajak atas gaji istri dari satu pemberi kerja dipotong dengan PTKP istri sendiri, TK/0, dan pajak itu final, jadi gaji istri menapaki lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT (K/I/0):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP K/I/0 (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Seluruh penghasilan dikenai satu rangkaian lapisan tarif, dan biasanya ada kurang bayar saat melapor SPT.<br><br>Nama kedua cara ini mengikuti UU PPh Pasal 8, sehingga mungkin terasa terbalik: Pisah Harta menjumlahkan kedua penghasilan menjadi satu hitungan, sedangkan Gabung Harta memajaki gaji istri tersendiri.</div>
+          <div class="info-box" style="margin-top:14px" id="infoBoxContent"><strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP K/0. Pajak atas gaji istri dari satu pemberi kerja dipotong dengan PTKP istri sendiri, TK/0, dan pajak itu final, jadi gaji istri dikenai lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT (K/I/0):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP K/I/0 (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Seluruh penghasilan dikenai satu rangkaian lapisan tarif, dan biasanya ada kurang bayar saat melapor SPT.<br><br>Nama kedua cara ini mengikuti UU PPh Pasal 8, sehingga mungkin terasa terbalik: Pisah Harta menjumlahkan kedua penghasilan menjadi satu hitungan, sedangkan Gabung Harta mengenakan pajak atas gaji istri secara terpisah.</div>
         </div>
       </div>
 
@@ -350,7 +350,7 @@
           <div class="sub" id="kpiWinner"></div>
         </div>
         <div class="metric card">
-          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Gabung Harta: total pajak</span> <span class="tip-icon" data-i18n-tip="kpiPisahTip" data-tip="SPT suami dengan PTKP K, ditambah gaji istri yang dipotong final oleh pemberi kerjanya dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.">?</span></div>
+          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Gabung Harta: total pajak</span> <span class="tip-icon" data-i18n-tip="kpiPisahTip" data-tip="SPT suami dengan PTKP K, ditambah pajak final atas gaji istri, yang dipotong pemberi kerja dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.">?</span></div>
           <div class="value" id="kpiPisah">—</div>
           <div class="sub" id="kpiPisahRate"></div>
         </div>
@@ -487,8 +487,8 @@
 <script src="../../dropdown.js"></script>
 
 <script src="../../chart-kit.js"></script>
-<script src="../../shared.js?v=20261116"></script>
-<script src="../../shared-id.js?v=20261113"></script>
+<script src="../../shared.js?v=20261127"></script>
+<script src="../../shared-id.js?v=20261127"></script>
 <script src="../abbr.js"></script>
 <script>window.DEFAULT_LANG='id';</script>
 <script src="../script.js"></script>

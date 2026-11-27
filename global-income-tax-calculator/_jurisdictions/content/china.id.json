@@ -180,7 +180,7 @@
       ],
       "title": "Gaji CN¥360.000 di Shanghai: berapa pajak dan gaji bersihnya?",
       "intro": "<p>Contoh ini untuk karyawan lokal di Shanghai dengan gaji CN¥360.000 setahun. Iuran jaminan sosial 10,5% sebesar CN¥37.800 dan dana perumahan 7% sebesar CN¥25.200 dikurangkan lebih dulu. Penghasilan kena pajaknya adalah gaji dikurangi potongan dasar CN¥60.000 dan kedua iuran itu, yaitu CN¥237.000. Angka tersebut masuk lapisan 20%, sehingga pajaknya menjadi CN¥30.480. Gaji bersihmu menjadi sekitar CN¥266.520, atau 74,0% dari gaji kotor.</p>",
-      "after": "<p>Iuran memang mengurangi penghasilan kena pajak, tetapi tiap yuan tambahan gaji ikut menambah iuran. Karena itu tarif marjinalmu mencapai 34,0%, lebih tinggi daripada tarif pajaknya yang 20%. Hitungan ini tanpa pengurang tambahan khusus, jadi yang punya anak sekolah atau menyewa rumah membayar lebih sedikit.</p>"
+      "after": "<p>Iuran memang mengurangi penghasilan kena pajak, tetapi tiap yuan tambahan gaji ikut menambah iuran. Karena itu tarif marginalmu mencapai 34,0%, lebih tinggi daripada tarif pajaknya yang 20%. Hitungan ini tanpa pengurang tambahan khusus, jadi yang punya anak sekolah atau menyewa rumah membayar lebih sedikit.</p>"
     },
     {
       "key": "expat-allowances",
@@ -196,7 +196,7 @@
       ],
       "title": "Berapa gaji bersih ekspat di Shanghai dengan tunjangan bebas pajak CN¥120.000?",
       "intro": "<p>Contoh ini untuk pekerja asing bergaji CN¥600.000 setahun yang menerima tunjangan bebas pajak CN¥120.000, misalnya untuk sewa rumah atau sekolah anak. Iuran jaminan sosialnya sudah mentok di batas atas, yaitu CN¥47.271 dan dana perumahannya mencapai CN¥31.514. Setelah potongan dasar CN¥60.000, kedua iuran itu dan tunjangan, penghasilan kena pajaknya tinggal CN¥341.215. Angka ini masuk lapisan 25%, sehingga pajaknya menjadi CN¥53.384. Gaji bersihnya menjadi sekitar CN¥467.832, atau 78,0% dari gaji kotor.</p>",
-      "after": "<p>Tanpa tunjangan, penghasilan kena pajak akan CN¥120.000 lebih tinggi dan pajaknya sekitar CN¥32.000 lebih besar, karena bagian itu dikenai tarif 25% dan 30%. Tunjangan hanya dihitung kalau didokumentasikan dengan benar dan dibayar sesuai aturan, dan pilihannya berakhir setelah 2027 menurut pemberitahuan yang berlaku. Tarif marjinal pada gaji ini 25,0%, karena iuran sudah berhenti naik di batas atas.</p>"
+      "after": "<p>Tanpa tunjangan, penghasilan kena pajak akan CN¥120.000 lebih tinggi dan pajaknya sekitar CN¥32.000 lebih besar, karena bagian itu dikenai tarif 25% dan 30%. Tunjangan hanya dihitung kalau didokumentasikan dengan benar dan dibayar sesuai aturan, dan pilihannya berakhir setelah 2027 menurut pemberitahuan yang berlaku. Tarif marginal pada gaji ini 25,0%, karena iuran sudah berhenti naik di batas atas.</p>"
     }
   ],
   "strategyIntro": "<p>Beberapa langkah berikut legal dan lazim dipakai, dan mana yang cocok bergantung pada statusmu dan pemberi kerjamu.</p>",
@@ -319,7 +319,7 @@
       "a": "<p>Karyawan asing yang bekerja di Tiongkok dengan kontrak umumnya wajib ikut jaminan sosial, dengan porsi pemberi kerja dan porsi karyawan, dan <em>tool</em> ini memasukkannya. Sebagian negara punya perjanjian yang membebaskan warganya untuk jangka waktu tertentu. Tanyakan ke pemberi kerja dan ke kantor jaminan sosial setempat bagaimana ketentuannya untuk warga negara Indonesia.</p>"
     },
     {
-      "q": "Kenapa tarif marjinal saya pada gaji CN¥360.000 lebih tinggi dari 20%?",
+      "q": "Kenapa tarif marginal saya pada gaji CN¥360.000 lebih tinggi dari 20%?",
       "cite": [
         {
           "name": "Biro Pajak Shanghai, tabel tarif PPh penghasilan komprehensif (PDF)",
@@ -330,7 +330,7 @@
           "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
         }
       ],
-      "a": "<p>Iuran pensiun, kesehatan dan dana perumahan naik seiring gaji sampai batas atas, jadi tiap yuan tambahan gaji ikut menambah iuran. Dalam hitungan ini, 17,5% menjadi iuran dan pajak 20% dikenakan pada 82,5% sisanya, sehingga totalnya sekitar 34%. Di atas batas atas, seperti pada contoh ekspat, iuran berhenti naik dan tarif marjinal kembali ke tarif pajak saja (25%).</p>"
+      "a": "<p>Iuran pensiun, kesehatan dan dana perumahan naik seiring gaji sampai batas atas, jadi tiap yuan tambahan gaji ikut menambah iuran. Dalam hitungan ini, 17,5% menjadi iuran dan pajak 20% dikenakan pada 82,5% sisanya, sehingga totalnya sekitar 34%. Di atas batas atas, seperti pada contoh ekspat, iuran berhenti naik dan tarif marginal kembali ke tarif pajak saja (25%).</p>"
     },
     {
       "q": "Apakah saya masih kena pajak di Indonesia kalau bekerja di Tiongkok?",

@@ -222,7 +222,7 @@
       "key": "ontario",
       "title": "Berapa gaji bersih di Ontario (Toronto) dengan gaji C$90.000 setahun?",
       "intro": "<p>Misalkan seorang pekerja <em>resident</em> bergaji C$90.000 tinggal di Ontario, provinsi tempat Toronto berada. Dari slip gajinya terpotong CPP C$4.230, CPP2 C$416, dan EI C$1.123. Pajak federal setelah kredit dasar C$11.252, pajak Ontario C$5.032, dan masih ada <em>Ontario Health Premium</em> C$750. Gaji bersihnya sekitar C$67.197, atau 74,7% dari gaji kotor, dan total potongannya C$22.803.</p>",
-      "after": "<p>Tarif marjinalnya 29,7%. Setiap dolar yang kamu setor ke RRSP boleh dikurangkan dari penghasilan, sehingga menghemat pajak pada tarif gabungan federal dan Ontario itu.</p>",
+      "after": "<p>Tarif marginalnya 29,7%. Setiap dolar yang kamu setor ke RRSP boleh dikurangkan dari penghasilan, sehingga menghemat pajak pada tarif gabungan federal dan Ontario itu.</p>",
       "cite": [
         {
           "name": "CRA, T4032-ON Payroll Deductions Tables 2026 (surtax Ontario)",
@@ -238,7 +238,7 @@
       "key": "british-columbia",
       "title": "Berapa gaji bersih di British Columbia (Vancouver) dengan gaji C$90.000?",
       "intro": "<p>Pekerja bergaji C$90.000 di British Columbia membayar iuran CPP, CPP2, dan EI sebesar C$5.769 dan pajak federal C$11.252. Pajak provinsinya C$4.786 dan tidak ada premi kesehatan. Gaji bersihnya sekitar C$68.193, atau 75,8% dari gaji kotor, C$996 lebih besar daripada pekerja bergaji sama di Ontario.</p>",
-      "after": "<p>Tarif marjinalnya 28,2%. Tarif atas British Columbia lebih tinggi daripada Ontario, sehingga selisih itu menyempit pada penghasilan yang lebih besar.</p>",
+      "after": "<p>Tarif marginalnya 28,2%. Tarif atas British Columbia lebih tinggi daripada Ontario, sehingga selisih itu menyempit pada penghasilan yang lebih besar.</p>",
       "cite": [
         {
           "name": "Pemerintah British Columbia, tarif pajak penghasilan pribadi",
@@ -253,7 +253,7 @@
     {
       "key": "alberta",
       "title": "Gaji C$90.000 di Alberta (Calgary): berapa pajak dan gaji bersihnya?",
-      "intro": "<p>Di Alberta, gaji C$90.000 terkena iuran CPP, CPP2, dan EI sebesar C$5.769, pajak federal C$11.252, dan pajak provinsi C$5.470. Gaji bersihnya sekitar C$67.509, atau 75,0% dari gaji kotor, dengan tarif marjinal 30,5%.</p>",
+      "intro": "<p>Di Alberta, gaji C$90.000 terkena iuran CPP, CPP2, dan EI sebesar C$5.769, pajak federal C$11.252, dan pajak provinsi C$5.470. Gaji bersihnya sekitar C$67.509, atau 75,0% dari gaji kotor, dengan tarif marginal 30,5%.</p>",
       "after": "<p>Alberta memakai satu tarif 8% sampai C$61.200, lebih tinggi daripada tarif terendah Ontario dan British Columbia, sehingga pada penghasilan ini pajaknya sedikit lebih besar daripada di BC.</p>",
       "cite": [
         {
@@ -266,7 +266,7 @@
       "key": "quebec",
       "title": "Cara menghitung pajak Quebec, QPP, dan QPIP untuk gaji C$90.000",
       "intro": "<p>Pekerja <em>resident</em> Quebec dengan gaji C$90.000 membayar QPP C$4.479, QPP2 C$416, EI dengan tarif Quebec yang lebih rendah C$896, dan QPIP C$387. Pajak federal setelah <em>abatement</em> 16,5% menjadi C$9.347, sedangkan pajak Quebec C$11.240 setelah potongan pekerja C$1.450. Gaji bersihnya sekitar C$63.235, atau 70,3% dari gaji kotor, sekitar C$3.962 lebih kecil daripada di Ontario.</p>",
-      "after": "<p>Tarif marjinalnya 36,5%. Pajak Quebec memang lebih tinggi, dan sebagian diimbangi pengurangan pajak federal serta layanan provinsi seperti penitipan anak yang tidak dihitung <em>tool</em> ini.</p>",
+      "after": "<p>Tarif marginalnya 36,5%. Pajak Quebec memang lebih tinggi, dan sebagian diimbangi pengurangan pajak federal serta layanan provinsi seperti penitipan anak yang tidak dihitung <em>tool</em> ini.</p>",
       "cite": [
         {
           "name": "Revenu Québec, tarif pajak penghasilan",
@@ -287,7 +287,7 @@
   "strategies": [
     {
       "h3": "Registered Retirement Savings Plan (RRSP)",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memperkirakan tarif pajaknya sekarang lebih tinggi daripada saat menarik dana, terutama di atas lapisan federal 20,5%.</p><p>Setoran RRSP mengurangi penghasilan kena pajak sehingga menghemat pajak pada tarif marjinalmu, dan pertumbuhannya tidak dipajaki sampai ditarik. Batas setoranmu dihitung dari penghasilan tahun-tahun sebelumnya dan tercantum di <em>notice of assessment</em>. Rencana ini kira-kira setara DPLK di Indonesia.</p><p><strong>Catatan:</strong> penarikan dipajaki sebagai penghasilan, dan pendatang baru hanya punya ruang setor kecil pada tahun-tahun pertama. Kalau kamu meninggalkan Kanada, penarikan tetap dipajaki Kanada dengan tarif pemotongan (<em>withholding</em>).</p>",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang memperkirakan tarif pajaknya sekarang lebih tinggi daripada saat menarik dana, terutama di atas lapisan federal 20,5%.</p><p>Setoran RRSP mengurangi penghasilan kena pajak sehingga menghemat pajak pada tarif marginalmu, dan pertumbuhannya tidak dipajaki sampai ditarik. Batas setoranmu dihitung dari penghasilan tahun-tahun sebelumnya dan tercantum di <em>notice of assessment</em>. Rencana ini kira-kira setara DPLK di Indonesia.</p><p><strong>Catatan:</strong> penarikan dipajaki sebagai penghasilan, dan pendatang baru hanya punya ruang setor kecil pada tahun-tahun pertama. Kalau kamu meninggalkan Kanada, penarikan tetap dipajaki Kanada dengan tarif pemotongan (<em>withholding</em>).</p>",
       "cite": [
         {
           "name": "CRA, batas MP, DB, RRSP, DPSP, ALDA, TFSA, YMPE dan YAMPE",

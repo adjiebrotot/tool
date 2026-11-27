@@ -167,7 +167,7 @@
       ],
       "title": "Cara menghitung pajak di Taiwan (Tiongkok) untuk penduduk bergaji NT$1.200.000",
       "intro": "<p>Contoh ini untuk penduduk pajak lajang dengan gaji NT$1.200.000 setahun. Potongan khusus gaji sebesar NT$227.000, sedangkan pembebasan dan potongan standar bersama-sama mencapai NT$237.000, sehingga penghasilan neto kena pajaknya NT$736.000. Angka itu masuk lapisan 12%, jadi pajaknya menjadi NT$45.620. Asuransi tenaga kerja memotong NT$13.740 dan asuransi kesehatan NT$18.612. Gaji bersihmu menjadi sekitar NT$1.122.028, atau 93,5% dari gaji kotor.</p>",
-      "after": "<p>Tarif marjinalnya 13,6%. Iuran jaminan sosial kecil karena ada batas atas, dan dalam model ini tidak ada iuran pensiun yang dipotong dari gaji.</p>"
+      "after": "<p>Tarif marginalnya 13,6%. Iuran jaminan sosial kecil karena ada batas atas, dan dalam model ini tidak ada iuran pensiun yang dipotong dari gaji.</p>"
     },
     {
       "key": "non-resident",
@@ -203,7 +203,7 @@
       ],
       "title": "Berapa pajak pemegang Gold Card di Taiwan (Tiongkok) dengan gaji NT$5.000.000?",
       "intro": "<p>Contoh ini untuk penduduk pajak pemegang Gold Card dengan gaji NT$5.000.000. Setelah potongan khusus gaji, gajinya NT$4.773.000. Separuh dari bagian di atas NT$3.000.000 (NT$886.500) dikecualikan, dan pembebasan serta potongan standar NT$237.000 dikurangkan juga. Dari penghasilan neto kena pajak NT$3.649.500, pajaknya NT$664.750. Asuransi kesehatan memotong NT$58.256 dan asuransi tenaga kerja, tanpa asuransi kerja, NT$12.641. Gaji bersihmu menjadi sekitar NT$4.264.354, atau 85,3% dari gaji kotor.</p>",
-      "after": "<p>Tanpa pengecualian Gold Card, gaji yang sama akan dikenai pajak NT$930.700, jadi keringanan ini bernilai NT$265.950. Tarif marjinal untuk tambahan gaji adalah 15,0%, separuh dari lapisan 30%.</p>"
+      "after": "<p>Tanpa pengecualian Gold Card, gaji yang sama akan dikenai pajak NT$930.700, jadi keringanan ini bernilai NT$265.950. Tarif marginal untuk tambahan gaji adalah 15,0%, separuh dari lapisan 30%.</p>"
     }
   ],
   "strategyIntro": "<p>Beberapa langkah berikut legal dan lazim dipakai, dan mana yang cocok bergantung pada status tinggal dan visamu.</p>",

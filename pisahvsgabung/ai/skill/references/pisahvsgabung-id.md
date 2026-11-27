@@ -3,10 +3,10 @@ https://tool.adjiebrotots.com/pisahvsgabung/id/
 
 This is the full reference for one page of the skill brotools-pisahvsgabung: read SKILL.md first.
 
-Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
-pertanyaanmu. Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap
-dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. Bagian di bawah ini ditulis
-untuk asisten AI, jadi tetap dalam bahasa Inggris.
+Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu tanyakan apa yang
+ingin kamu hitung. Asisten membalas dengan tautan yang membuka tool ini sesuai skenariomu, lengkap
+dengan daftar asumsinya, dan tool inilah yang menghitung hasilnya. Sisa halaman ini ditulis untuk
+asisten AI, jadi tetap dalam bahasa Inggris.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it
@@ -118,7 +118,7 @@ deductionInput: Pengurang, suami dan istri  (most important)
   Biaya jabatan is separate (biayaJabatan). Leave at 0 unless the user gives them or says they pay
   these, and say so when you assume any. Counts only in Total and split.
   Tip on the page: Pengurang seperti iuran pensiun, dikurangkan sebelum PTKP dan dibagi sesuai porsi
-  penghasilan. Biaya jabatan punya tombol sendiri; jika dimatikan, masukkan di sini.
+  penghasilan. Biaya jabatan punya tombol sendiri; kalau dimatikan, isi di sini.
 husbandSalaryInput: Gaji kotor suami  (most important)
   Number (Rp before it, /thn after it). 0 to 1,000,000,000,000. Default 250,000,000.
   The husband's gross salary (gaji kotor suami) for a year, in rupiah, before any tax. A monthly

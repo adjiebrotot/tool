@@ -3931,7 +3931,7 @@
     },
     {
      "key": "nlHoliday",
-     "label": "Uang liburan dibayar di atas gaji",
+     "label": "Uang liburan dibayar terpisah dari gaji",
      "group": "Detail: Detail",
      "kind": "checkbox",
      "default": true
