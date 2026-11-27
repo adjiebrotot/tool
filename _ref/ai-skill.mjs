@@ -479,7 +479,7 @@ const WORDS = {
     toolsH: 'Tool yang punya skill', toolsSub: 'Buka <em>tool</em>-nya untuk memakainya sendiri, atau ambil <em>skill</em>-nya untuk memakainya lewat AI-mu. Di Copilot, satu <em>agent</em> bisa menampung semuanya.',
     keyword: 'Kata kunci', searchPh: 'Cari skill', showing: n => `Menampilkan ${n} skill.`, noMatch: 'Tidak ada skill yang cocok dengan pencarian itu.', seeAllTools: 'Lihat semua tool',
     // The home page's category names (_ref/bake-home-id.mjs, LABELS)
-    domain: d => ({ Engineering: 'Teknik', Finance: 'Keuangan', 'Quick Utilities': 'Utilitas Praktis', Visualisation: 'Visualisasi', Others: 'Lainnya' })[d] || d,
+    domain: d => ({ Engineering: 'Teknik', Finance: 'Keuangan', 'Quick Utilities': 'Tool Praktis', Visualisation: 'Visualisasi', Others: 'Lainnya' })[d] || d,
     // A card for a tool with no Indonesian page (as on the Indonesian home, id/index.html)
     enOnly: '<span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>',
   },

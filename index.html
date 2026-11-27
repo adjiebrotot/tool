@@ -1083,6 +1083,12 @@
       line-height: 1.45;
     }
 
+    /* A utility's drawing stays still: the moving drawings belong to the two fields.
+       Each drawing's un-animated markup is its best still frame (home-anim.js). */
+    .tool-grid-compact .tool-anim * {
+      animation: none !important;
+    }
+
     /* The Indonesian home's EN mark, beside the status. */
     .tool-grid-compact .tool-lang {
       margin-left: auto;
@@ -2509,7 +2515,6 @@
         <section class="tool-group tool-group-utilities" id="utilities" aria-labelledby="utilities-heading">
           <div class="group-head">
             <h3 class="group-heading" id="utilities-heading">Quick Utilities</h3>
-            <p class="group-lede">Small helpers I built along the way, for charts, files and the odd everyday question.</p>
           </div>
 
           <section class="tool-subgroup" id="utilities-visualisation" aria-labelledby="utilities-visualisation-heading">
@@ -2533,7 +2538,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">CEO and founder tooling on the web. Build a pitch-ready Business Model Canvas, one note at a time.</p>
+            <p class="tool-description" itemprop="description">Build a pitch-ready Business Model Canvas, one note at a time.</p>
           </div>
         </article>
 
@@ -2554,7 +2559,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Drop in a CSV or Excel file, get interactive charts, and look smart in the last-minute meeting.</p>
+            <p class="tool-description" itemprop="description">Turn a CSV or Excel file into interactive charts.</p>
           </div>
         </article>
 
@@ -2575,7 +2580,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">See JSON as a tree, designed for humans. Lazy loading copes with millions of keys.</p>
+            <p class="tool-description" itemprop="description">Browse JSON as a tree, even millions of keys.</p>
           </div>
         </article>
 
@@ -2596,7 +2601,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Got a STEP file and no CAD licence? Open STEP, IFC, DGN, STL, OBJ, glTF, FBX and more in 3D right in your browser, and convert to STEP, STL or GLB.</p>
+            <p class="tool-description" itemprop="description">Open STEP, STL, IFC and more in 3D, no CAD licence.</p>
           </div>
         </article>
 
@@ -2617,7 +2622,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">That cool flow diagram showing what goes where. Build a Sankey diagram live and export it as SVG or PNG.</p>
+            <p class="tool-description" itemprop="description">Draw a Sankey diagram and export it as SVG or PNG.</p>
           </div>
         </article>
             </div>
@@ -2644,7 +2649,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Your AI writes Markdown, your boss wants PDF. Turn it into a print-ready PDF, maths and diagrams included.</p>
+            <p class="tool-description" itemprop="description">Turn Markdown into a print-ready PDF, maths included.</p>
           </div>
         </article>
 
@@ -2665,7 +2670,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">I'm an engineer, not a video editor, but sometimes I need to clip and trim a video. No need for Adobe Premiere for that!</p>
+            <p class="tool-description" itemprop="description">Trim, join and caption videos without uploading them.</p>
           </div>
         </article>
 
@@ -2686,7 +2691,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Too cheap to subscribe, so I made one. Convert video to GIF on your device, free and never uploaded.</p>
+            <p class="tool-description" itemprop="description">Convert a video to a GIF on your own device.</p>
           </div>
         </article>
             </div>
@@ -2713,7 +2718,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Pay for the protein, not the calcium. See what each egg carton really costs per gram of egg, shell left out.</p>
+            <p class="tool-description" itemprop="description">Which egg carton is cheapest per gram of egg?</p>
           </div>
         </article>
 
@@ -2734,7 +2739,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Your decision fatigue solution! Spin a wheel, roll a dice, pull a slot or drop a ball to pick one.</p>
+            <p class="tool-description" itemprop="description">Spin a wheel or roll a dice to pick one.</p>
           </div>
         </article>
 
@@ -2755,7 +2760,7 @@
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">3pm in Perth is what time in Melbourne? A live world map of local times, daylight saving included.</p>
+            <p class="tool-description" itemprop="description">A live world map of local times, daylight saving included.</p>
           </div>
         </article>
             </div>

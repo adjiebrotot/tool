@@ -1084,6 +1084,12 @@
       line-height: 1.45;
     }
 
+    /* A utility's drawing stays still: the moving drawings belong to the two fields.
+       Each drawing's un-animated markup is its best still frame (home-anim.js). */
+    .tool-grid-compact .tool-anim * {
+      animation: none !important;
+    }
+
     /* The Indonesian home's EN mark, beside the status. */
     .tool-grid-compact .tool-lang {
       margin-left: auto;
@@ -1394,8 +1400,8 @@
   "mentions": {
     "@type": "ItemList",
     "@id": "https://tool.adjiebrotots.com/id/#utilities",
-    "name": "Utilitas Praktis",
-    "description": "Alat bantu kecil yang saya buat di sela-sela, untuk grafik, berkas, dan pertanyaan sehari-hari.",
+    "name": "Tool Praktis",
+    "description": "Alat bantu kecil di samping tool keuangan dan teknik, untuk grafik, berkas, dan pertanyaan sehari-hari.",
     "itemListElement": [
       {
         "@type": "ListItem",
@@ -1413,7 +1419,7 @@
                 "@type": "WebApplication",
                 "name": "Canvas Builder",
                 "url": "https://tool.adjiebrotots.com/canvasbuilder/",
-                "description": "Susun Business Model Canvas ala CEO dan founder langsung di browser dengan menempelkan catatan satu demi satu, sampai siap dipresentasikan.",
+                "description": "Susun Business Model Canvas siap presentasi, satu catatan demi satu.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1425,7 +1431,7 @@
                 "@type": "WebApplication",
                 "name": "Graph Visualiser",
                 "url": "https://tool.adjiebrotots.com/graphvisualiser/",
-                "description": "Masukkan berkas CSV atau Excel, lalu dapatkan grafik interaktif yang membuatmu tampil meyakinkan di rapat dadakan.",
+                "description": "Ubah berkas CSV atau Excel menjadi grafik interaktif.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1437,7 +1443,7 @@
                 "@type": "WebApplication",
                 "name": "JSON Visualiser",
                 "url": "https://tool.adjiebrotots.com/jsonvisualiser/",
-                "description": "Tampilkan JSON sebagai pohon yang enak dibaca. Berkat pemuatan bertahap (lazy loading), jutaan key pun tetap lancar dibuka.",
+                "description": "Jelajahi JSON sebagai pohon, jutaan key pun lancar.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1449,7 +1455,7 @@
                 "@type": "WebApplication",
                 "name": "Online 3D Viewer",
                 "url": "https://tool.adjiebrotots.com/online-3d-viewer/",
-                "description": "Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, IFC, DGN, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di browser, lalu ubah ke STEP, STL, atau GLB.",
+                "description": "Buka STEP, STL, IFC, dan lainnya dalam 3D tanpa lisensi CAD.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1461,7 +1467,7 @@
                 "@type": "WebApplication",
                 "name": "Sankey Diagram Creator",
                 "url": "https://tool.adjiebrotots.com/sankeycreator/",
-                "description": "Lihat ke mana saja uang, energi, atau barang mengalir lewat diagram Sankey. Susun diagramnya langsung di browser, lalu ekspor sebagai SVG atau PNG.",
+                "description": "Buat diagram Sankey, lalu ekspor sebagai SVG atau PNG.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1485,7 +1491,7 @@
                 "@type": "WebApplication",
                 "name": "Markdown to PDF Converter",
                 "url": "https://tool.adjiebrotots.com/mdtopdf/",
-                "description": "AI-mu menulis dalam Markdown, sementara atasanmu maunya PDF. Ubah tulisan itu menjadi PDF siap cetak, lengkap dengan rumus matematika dan diagram.",
+                "description": "Ubah Markdown menjadi PDF siap cetak, lengkap dengan rumus.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1497,7 +1503,7 @@
                 "@type": "WebApplication",
                 "name": "Video Trimmer and Captioner",
                 "url": "https://tool.adjiebrotots.com/video-trimmer-captioner/",
-                "description": "Saya insinyur, bukan editor video, tetapi sesekali saya perlu memotong dan merapikan video. Untuk itu, tidak perlu Adobe Premiere!",
+                "description": "Potong, gabung, dan beri subtitle video tanpa mengunggahnya.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1509,7 +1515,7 @@
                 "@type": "WebApplication",
                 "name": "Video to GIF Converter",
                 "url": "https://tool.adjiebrotots.com/videotogif/",
-                "description": "Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat tool ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.",
+                "description": "Ubah video menjadi GIF langsung di perangkatmu.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1533,7 +1539,7 @@
                 "@type": "WebApplication",
                 "name": "Egg Price",
                 "url": "https://tool.adjiebrotots.com/eggprice/",
-                "description": "Yang seharusnya kamu bayar adalah proteinnya, bukan kalsium cangkangnya, jadi hitung harga tiap kemasan telur per gram isinya.",
+                "description": "Kemasan telur mana yang termurah per gram isinya?",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1545,7 +1551,7 @@
                 "@type": "WebApplication",
                 "name": "Random Picker",
                 "url": "https://tool.adjiebrotots.com/randompicker/",
-                "description": "Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.",
+                "description": "Putar roda atau lempar dadu untuk memilih satu.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -1557,7 +1563,7 @@
                 "@type": "WebApplication",
                 "name": "World Clock",
                 "url": "https://tool.adjiebrotots.com/worldclock/",
-                "description": "Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat yang terus berjalan, lengkap dengan daylight saving.",
+                "description": "Peta dunia dengan jam setempat yang terus berjalan.",
                 "inLanguage": "en",
                 "isAccessibleForFree": true
               }
@@ -2184,8 +2190,7 @@
 
         <section class="tool-group tool-group-utilities" id="utilities" aria-labelledby="utilities-heading">
           <div class="group-head">
-            <h3 class="group-heading" id="utilities-heading">Utilitas Praktis</h3>
-            <p class="group-lede">Alat bantu kecil yang saya buat di sela-sela, untuk grafik, berkas, dan pertanyaan sehari-hari.</p>
+            <h3 class="group-heading" id="utilities-heading">Tool Praktis</h3>
           </div>
 
           <section class="tool-subgroup" id="utilities-visualisation" aria-labelledby="utilities-visualisation-heading">
@@ -2210,7 +2215,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Susun Business Model Canvas ala CEO dan <em>founder</em> langsung di <em>browser</em> dengan menempelkan catatan satu demi satu, sampai siap dipresentasikan.</p>
+            <p class="tool-description" itemprop="description">Susun Business Model Canvas siap presentasi, satu catatan demi satu.</p>
           </div>
         </article>
 
@@ -2232,7 +2237,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Masukkan berkas CSV atau Excel, lalu dapatkan grafik interaktif yang membuatmu tampil meyakinkan di rapat dadakan.</p>
+            <p class="tool-description" itemprop="description">Ubah berkas CSV atau Excel menjadi grafik interaktif.</p>
           </div>
         </article>
 
@@ -2254,7 +2259,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Tampilkan JSON sebagai pohon yang enak dibaca. Berkat pemuatan bertahap (<em>lazy loading</em>), jutaan <em>key</em> pun tetap lancar dibuka.</p>
+            <p class="tool-description" itemprop="description">Jelajahi JSON sebagai pohon, jutaan <em>key</em> pun lancar.</p>
           </div>
         </article>
 
@@ -2276,7 +2281,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, IFC, DGN, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di <em>browser</em>, lalu ubah ke STEP, STL, atau GLB.</p>
+            <p class="tool-description" itemprop="description">Buka STEP, STL, IFC, dan lainnya dalam 3D tanpa lisensi CAD.</p>
           </div>
         </article>
 
@@ -2298,7 +2303,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Lihat ke mana saja uang, energi, atau barang mengalir lewat diagram Sankey. Susun diagramnya langsung di <em>browser</em>, lalu ekspor sebagai SVG atau PNG.</p>
+            <p class="tool-description" itemprop="description">Buat diagram Sankey, lalu ekspor sebagai SVG atau PNG.</p>
           </div>
         </article>
             </div>
@@ -2326,7 +2331,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">AI-mu menulis dalam Markdown, sementara atasanmu maunya PDF. Ubah tulisan itu menjadi PDF siap cetak, lengkap dengan rumus matematika dan diagram.</p>
+            <p class="tool-description" itemprop="description">Ubah Markdown menjadi PDF siap cetak, lengkap dengan rumus.</p>
           </div>
         </article>
 
@@ -2348,7 +2353,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Saya insinyur, bukan editor video, tetapi sesekali saya perlu memotong dan merapikan video. Untuk itu, tidak perlu Adobe Premiere!</p>
+            <p class="tool-description" itemprop="description">Potong, gabung, dan beri subtitle video tanpa mengunggahnya.</p>
           </div>
         </article>
 
@@ -2370,7 +2375,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat <em>tool</em> ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.</p>
+            <p class="tool-description" itemprop="description">Ubah video menjadi GIF langsung di perangkatmu.</p>
           </div>
         </article>
             </div>
@@ -2398,7 +2403,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Yang seharusnya kamu bayar adalah proteinnya, bukan kalsium cangkangnya, jadi hitung harga tiap kemasan telur per gram isinya.</p>
+            <p class="tool-description" itemprop="description">Kemasan telur mana yang termurah per gram isinya?</p>
           </div>
         </article>
 
@@ -2420,7 +2425,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.</p>
+            <p class="tool-description" itemprop="description">Putar roda atau lempar dadu untuk memilih satu.</p>
           </div>
         </article>
 
@@ -2442,7 +2447,7 @@
               <span class="status-badge status-active" title="Aktif"><span class="visually-hidden">Aktif</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat yang terus berjalan, lengkap dengan <em>daylight saving</em>.</p>
+            <p class="tool-description" itemprop="description">Peta dunia dengan jam setempat yang terus berjalan.</p>
           </div>
         </article>
             </div>
@@ -2477,7 +2482,7 @@
 </div>
   </footer>
 
-  <script>window.HOME_I18N = {"labels":{"Active":"Aktif","Coming soon":"Segera hadir","Deprecated":"Tidak dilanjutkan","Engineering":"Teknik","Finance":"Keuangan","Quick Utilities":"Utilitas Praktis","Visualisation":"Visualisasi","Others":"Lainnya","Universal":"Global","Indonesia":"Indonesia","Australia":"Australia","Converter":"Konverter","Documents":"Dokumen","Power Systems":"Sistem tenaga listrik","Tax":"Pajak","Financing":"Pembiayaan","Investment":"Investasi","Leveraging":"Leverage","Property":"Properti","Graphing":"Grafik","Brainstorming Tool":"Brainstorming","3D":"3D","CAD":"CAD","Geoarbitrage":"Geoarbitrase","Randomiser":"Pengacak","Decision":"Keputusan","Time Zones":"Zona waktu","Meetings":"Rapat","Groceries":"Belanja dapur","Pricing":"Harga","Superannuation":"Superannuation","Video":"Video","Captions":"Subtitle"},"everydayWork":"pekerjaan sehari-hari","advertisement":"Iklan","showingOne":"Menampilkan 1 tool.","showingMany":"Menampilkan {n} tool.","moreFilters":"Filter lainnya","fewerFilters":"Sembunyikan filter"};</script>
+  <script>window.HOME_I18N = {"labels":{"Active":"Aktif","Coming soon":"Segera hadir","Deprecated":"Tidak dilanjutkan","Engineering":"Teknik","Finance":"Keuangan","Quick Utilities":"Tool Praktis","Visualisation":"Visualisasi","Others":"Lainnya","Universal":"Global","Indonesia":"Indonesia","Australia":"Australia","Converter":"Konverter","Documents":"Dokumen","Power Systems":"Sistem tenaga listrik","Tax":"Pajak","Financing":"Pembiayaan","Investment":"Investasi","Leveraging":"Leverage","Property":"Properti","Graphing":"Grafik","Brainstorming Tool":"Brainstorming","3D":"3D","CAD":"CAD","Geoarbitrage":"Geoarbitrase","Randomiser":"Pengacak","Decision":"Keputusan","Time Zones":"Zona waktu","Meetings":"Rapat","Groceries":"Belanja dapur","Pricing":"Harga","Superannuation":"Superannuation","Video":"Video","Captions":"Subtitle"},"everydayWork":"pekerjaan sehari-hari","advertisement":"Iklan","showingOne":"Menampilkan 1 tool.","showingMany":"Menampilkan {n} tool.","moreFilters":"Filter lainnya","fewerFilters":"Sembunyikan filter"};</script>
   <script>
     // The words this script writes. The Indonesian home (id/) sets window.HOME_I18N before
     // this script (_ref/bake-home-id.mjs); the English home leaves it unset. A card's data-*

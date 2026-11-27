@@ -29,7 +29,7 @@ const PROBLEMS = [];
 // domain headings, the visible tags and the typewriter.
 const LABELS = {
   'Active': 'Aktif', 'Coming soon': 'Segera hadir', 'Deprecated': 'Tidak dilanjutkan',
-  'Engineering': 'Teknik', 'Finance': 'Keuangan', 'Quick Utilities': 'Utilitas Praktis',
+  'Engineering': 'Teknik', 'Finance': 'Keuangan', 'Quick Utilities': 'Tool Praktis',
   'Visualisation': 'Visualisasi', 'Others': 'Lainnya',
   'Universal': 'Global', 'Indonesia': 'Indonesia', 'Australia': 'Australia',
   'Converter': 'Konverter', 'Documents': 'Dokumen', 'Power Systems': 'Sistem tenaga listrik',
@@ -46,7 +46,7 @@ const LABELS = {
 // `menu` gives a split button's entries, by their English href.
 const T = 'https://tool.adjiebrotots.com/';
 const CARDS = {
-  'mdtopdf': { desc: 'AI-mu menulis dalam Markdown, sementara atasanmu maunya PDF. Ubah tulisan itu menjadi PDF siap cetak, lengkap dengan rumus matematika dan diagram.' },
+  'mdtopdf': { desc: 'Ubah Markdown menjadi PDF siap cetak, lengkap dengan rumus.' },
   'powerfactory-scripter': { desc: 'Susun skrip Python untuk DIgSILENT PowerFactory dalam hitungan menit, bukan berhari-hari, karena sebagian besar studi hanyalah urutan <em>input</em>, simulasi, dan <em>output</em>.' },
   'pscad-scripter': { desc: 'Susun skrip Python untuk mengotomatiskan PSCAD dalam hitungan menit dengan merangkai blok <em>build</em>, <em>run</em>, dan pengecekan EMT menjadi satu berkas yang siap dijalankan.' },
   'loadflow-simulator': { desc: 'Gambar diagram segaris lalu jalankan analisis aliran daya langsung di <em>browser</em>. Tegangan setiap bus dan animasi aliran dayanya bisa kamu ekspor atau sematkan.' },
@@ -70,11 +70,11 @@ const CARDS = {
     },
   },
   'financialfreedom': { desc: 'Berapa dana yang cukup, dan di usia berapa kamu mencapainya? Hitung angka dan usia kebebasan finansialmu, lalu uji ketahanan rencanamu di ribuan skenario masa depan.' },
-  'graphvisualiser': { desc: 'Masukkan berkas CSV atau Excel, lalu dapatkan grafik interaktif yang membuatmu tampil meyakinkan di rapat dadakan.' },
-  'sankeycreator': { desc: 'Lihat ke mana saja uang, energi, atau barang mengalir lewat diagram Sankey. Susun diagramnya langsung di <em>browser</em>, lalu ekspor sebagai SVG atau PNG.' },
-  'jsonvisualiser': { desc: 'Tampilkan JSON sebagai pohon yang enak dibaca. Berkat pemuatan bertahap (<em>lazy loading</em>), jutaan <em>key</em> pun tetap lancar dibuka.' },
-  'canvasbuilder': { desc: 'Susun Business Model Canvas ala CEO dan <em>founder</em> langsung di <em>browser</em> dengan menempelkan catatan satu demi satu, sampai siap dipresentasikan.' },
-  'online-3d-viewer': { desc: 'Punya berkas STEP, tetapi tidak punya lisensi CAD? Buka STEP, IFC, DGN, STL, OBJ, glTF, FBX, dan format lain dalam 3D langsung di <em>browser</em>, lalu ubah ke STEP, STL, atau GLB.' },
+  'graphvisualiser': { desc: 'Ubah berkas CSV atau Excel menjadi grafik interaktif.' },
+  'sankeycreator': { desc: 'Buat diagram Sankey, lalu ekspor sebagai SVG atau PNG.' },
+  'jsonvisualiser': { desc: 'Jelajahi JSON sebagai pohon, jutaan <em>key</em> pun lancar.' },
+  'canvasbuilder': { desc: 'Susun Business Model Canvas siap presentasi, satu catatan demi satu.' },
+  'online-3d-viewer': { desc: 'Buka STEP, STL, IFC, dan lainnya dalam 3D tanpa lisensi CAD.' },
   'costofliving-comparator': {
     desc: 'Gaji yang lebih tinggi di kota baru belum tentu berarti uang yang lebih banyak. Lihat daya beli penghasilanmu yang sebenarnya di kota tujuan.',
     menu: {
@@ -83,11 +83,11 @@ const CARDS = {
     },
   },
   'global-income-tax-calculator': { id: `${T}global-income-tax-calculator/id/`, name: 'Kalkulator Gaji Bersih dan Pajak Penghasilan', desc: 'Berapa sisa gaji setelah pajak penghasilan di 31 negara, termasuk 39 negara bagian AS dan Washington DC? Bandingkan beberapa tawaran kerja secara berdampingan, lalu baca penjelasan aturan pajak tiap negara dalam bahasa Indonesia.' },
-  'videotogif': { desc: 'Saya enggan berlangganan aplikasi hanya untuk membuat GIF, jadi saya membuat <em>tool</em> ini sendiri. Ubah video menjadi GIF di perangkatmu, gratis dan tanpa diunggah ke mana pun.' },
-  'video-trimmer-captioner': { desc: 'Saya insinyur, bukan editor video, tetapi sesekali saya perlu memotong dan merapikan video. Untuk itu, tidak perlu Adobe Premiere!' },
-  'randompicker': { desc: 'Capek memutuskan? Putar roda, lempar dadu, tarik tuas mesin slot, atau jatuhkan bola, lalu biarkan undian yang memilih satu untukmu.' },
-  'worldclock': { desc: 'Kalau di Perth pukul 15.00, di Jakarta pukul berapa? Peta dunia ini menampilkan waktu setempat yang terus berjalan, lengkap dengan <em>daylight saving</em>.' },
-  'eggprice': { desc: 'Yang seharusnya kamu bayar adalah proteinnya, bukan kalsium cangkangnya, jadi hitung harga tiap kemasan telur per gram isinya.' },
+  'videotogif': { desc: 'Ubah video menjadi GIF langsung di perangkatmu.' },
+  'video-trimmer-captioner': { desc: 'Potong, gabung, dan beri subtitle video tanpa mengunggahnya.' },
+  'randompicker': { desc: 'Putar roda atau lempar dadu untuk memilih satu.' },
+  'worldclock': { desc: 'Peta dunia dengan jam setempat yang terus berjalan.' },
+  'eggprice': { desc: 'Kemasan telur mana yang termurah per gram isinya?' },
   'borrowingcapacity': { desc: 'Berapa besar pinjaman yang bersedia bank berikan di Australia, dan syarat mana yang membatasi plafonmu? Hitung dengan rumus yang dipakai bank-bank di sana.' },
   'valuateeverything': { desc: 'Setiap penjual mengaku harganya sudah pas. Susun model harga dari iklan yang sudah kamu lihat, lalu temukan harga wajarnya.' },
   'superdasp': { desc: 'Berencana meninggalkan Australia suatu hari nanti? Cek apakah <em>salary sacrifice</em> ke <em>super</em> masih menguntungkan setelah pajak DASP diperhitungkan.' },
@@ -118,9 +118,7 @@ const GROUPS = [
   { id: 'finance', domain: 'Finance', en: 'Finance', idName: 'Keuangan',
     enLede: 'Tax, property, lending and investing, modelled year by year: take-home pay in 31 countries, renting or buying, cash or finance, and when you can stop working.',
     idLede: 'Pajak, properti, pinjaman, dan investasi, dihitung tahun demi tahun: gaji bersih di 31 negara, sewa atau beli rumah, tunai atau kredit, sampai kapan kamu bisa berhenti bekerja.' },
-  { id: 'utilities', domain: 'Quick Utilities', en: 'Quick Utilities', idName: 'Utilitas Praktis',
-    enLede: 'Small helpers I built along the way, for charts, files and the odd everyday question.',
-    idLede: 'Alat bantu kecil yang saya buat di sela-sela, untuk grafik, berkas, dan pertanyaan sehari-hari.' },
+  { id: 'utilities', domain: 'Quick Utilities', en: 'Quick Utilities', idName: 'Tool Praktis' },
 ];
 const SUBGROUPS = [
   { id: 'utilities-visualisation', subgroup: 'Visualisation', en: 'Visualisation', idName: 'Visualisasi' },
@@ -162,7 +160,7 @@ const TEXT = [
    `        ${OG_DESC}\n`],
   ['<h2 id="tool-directory-heading">Tool directory</h2>', '<h2 id="tool-directory-heading">Daftar tool</h2>'],
   ...GROUPS.map(g => [`id="${g.id}-heading">${g.en}</h3>`, `id="${g.id}-heading">${g.idName}</h3>`]),
-  ...GROUPS.map(g => [`<p class="group-lede">${g.enLede}</p>`, `<p class="group-lede">${g.idLede}</p>`]),
+  ...GROUPS.filter(g => g.enLede).map(g => [`<p class="group-lede">${g.enLede}</p>`, `<p class="group-lede">${g.idLede}</p>`]),
   ...SUBGROUPS.map(g => [`id="${g.id}-heading">${g.en}</h4>`, `id="${g.id}-heading">${g.idName}</h4>`]),
   ['<h2 id="filter-heading" class="visually-hidden">Filter tools</h2>', '<h2 id="filter-heading" class="visually-hidden">Saring tool</h2>'],
   ['<label for="searchFilter">Keyword</label>', '<label for="searchFilter">Kata kunci</label>'],
@@ -289,7 +287,8 @@ function build(){
     // The two fields are the page's subject; the Quick Utilities are named beside them.
     mainEntity: GROUPS.filter(g => g.domain !== 'Quick Utilities').map(g => list(g, items.filter(it => it.domain === g.domain))),
     mentions: (g => ({
-      '@type': 'ItemList', '@id': `${SITE}id/#${g.id}`, name: g.idName, description: plain(g.idLede),
+      '@type': 'ItemList', '@id': `${SITE}id/#${g.id}`, name: g.idName,
+      description: 'Alat bantu kecil di samping tool keuangan dan teknik, untuk grafik, berkas, dan pertanyaan sehari-hari.',
       itemListElement: SUBGROUPS.map((sg, i) => ({ '@type': 'ListItem', position: i + 1,
         item: list(sg, items.filter(it => it.domain === g.domain && it.subgroup === sg.subgroup)) })),
     }))(GROUPS.find(g => g.domain === 'Quick Utilities')),
