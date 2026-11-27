@@ -4,13 +4,13 @@
   "title": "Cara Menghitung Pajak Penghasilan di Malaysia YA2026",
   "h1": "Cara menghitung pajak penghasilan di Malaysia (YA2026)",
   "description": "Pajak gaji di Malaysia YA2026 untuk warga negara, ekspat penduduk pajak dan non-resident: tarif 0% sampai 30%, EPF, PCB, aturan 182 hari dan tiga contoh.",
-  "lede": "<p>Malaysia memajaki penduduk pajak dengan tarif bertingkat 0% sampai 30% setelah pengurang pajak (<em>relief</em>), sedangkan non-resident dikenai tarif tunggal 30% tanpa pengurang. Kamu umumnya menjadi penduduk pajak kalau berada di Malaysia 182 hari atau lebih dalam satu tahun kalender. Dengan gaji RM180.000, ekspat penduduk pajak membayar pajak sekitar RM26.250 dan menerima gaji bersih (<em>take-home pay</em>) sekitar RM149.835, sedangkan non-resident dengan gaji RM60.000 membayar RM18.000 dan menerima sekitar RM40.538.</p>",
+  "lede": "<p>Malaysia memajaki penduduk pajak dengan tarif bertingkat 0% sampai 30% setelah pengurang pajak (<em>relief</em>), sedangkan non-resident dikenai tarif tunggal 30% tanpa pengurang. Kamu umumnya menjadi penduduk pajak kalau berada di Malaysia 182 hari atau lebih dalam satu tahun kalender. Pada gaji RM180.000, ekspat penduduk pajak membayar pajak sekitar RM26.250 dan menerima gaji bersih (<em>take-home pay</em>) sekitar RM149.835, sedangkan non-resident dengan gaji RM60.000 membayar RM18.000 dan menerima sekitar RM40.538.</p>",
   "law": {
-    "intro": "<p>Tahun pajak Malaysia sama dengan tahun kalender, dan angka di halaman ini adalah tarif serta pengurang pajak untuk Tahun Penilaian (<em>Year of Assessment</em>, YA) 2026 seperti yang dipakai <em>tool</em>. Status penduduk pajak menentukan tabel mana yang berlaku, bukan kewarganegaraan. Ujian dasarnya adalah berada di Malaysia selama 182 hari atau lebih dalam tahun kalender, dan ada ujian lain untuk tinggal yang melintasi dua tahun, jadi tanyakan tanggalmu ke LHDN (Lembaga Hasil Dalam Negeri, kantor pajak Malaysia).</p>",
+    "intro": "<p>Tahun pajak Malaysia sama dengan tahun kalender, dan angka di halaman ini memakai tarif serta pengurang pajak Tahun Penilaian (<em>Year of Assessment</em>, YA) 2026, sama seperti di <em>tool</em>. Status penduduk pajak menentukan tabel mana yang berlaku, bukan kewarganegaraan. Ujian dasarnya adalah berada di Malaysia selama 182 hari atau lebih dalam tahun kalender, dan ada ujian lain untuk masa tinggal yang membentang di dua tahun. Tanyakan tanggalmu ke LHDN (Lembaga Hasil Dalam Negeri, kantor pajak Malaysia).</p>",
     "blocks": [
       {
         "h3": "Tarif pajak untuk penduduk pajak",
-        "html": "<p>Penduduk pajak dikenai pajak atas penghasilan kena pajak (<em>chargeable income</em>), yaitu gaji dikurangi pengurang pajak, dan tiap bagian dikenai tarif tingkatnya sendiri. Cara kerjanya sama dengan tarif Pasal 17 di Indonesia, hanya dengan tingkat yang lebih banyak dan tarif tertinggi 30%.</p>",
+        "html": "<p>Penduduk pajak dikenai pajak atas penghasilan kena pajak (<em>chargeable income</em>), yaitu gaji dikurangi pengurang pajak, dan tiap lapisan dikenai tarifnya sendiri. Cara kerjanya sama dengan tarif Pasal 17 di Indonesia, hanya saja lapisannya lebih banyak dan tarif tertingginya 30%.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -88,7 +88,7 @@
       },
       {
         "h3": "EPF, SOCSO, EIS dan LINDUNG 24 Jam",
-        "html": "<p>Warga negara membayar 11% gaji ke Employees Provident Fund (EPF atau KWSP), dana pensiun wajib yang fungsinya mirip JHT. Mereka juga membayar SOCSO dan EIS (jaminan kecelakaan kerja dan jaminan kehilangan pekerjaan, mirip BPJS Ketenagakerjaan) sebesar 0,5% dan 0,2% dari gaji sampai batas RM6.000 sebulan. <em>Tool</em> menghitung bagian EPF ekspat dan non-resident sebesar 2%, tanpa SOCSO dan EIS. <em>Tool</em> juga mengenakan iuran LINDUNG 24 Jam sebesar 0,75% dari gaji sampai RM6.000 sebulan mulai 1 Juni 2026, yaitu tujuh bulan dalam setahun. Pemberi kerja menyetor bagiannya sendiri di atas gajimu.</p>",
+        "html": "<p>Warga negara membayar 11% gaji ke Employees Provident Fund (EPF atau KWSP), dana pensiun wajib yang fungsinya mirip JHT. Mereka juga membayar SOCSO dan EIS (jaminan kecelakaan kerja dan jaminan kehilangan pekerjaan, mirip BPJS Ketenagakerjaan) sebesar 0,5% dan 0,2% dari gaji sampai batas RM6.000 sebulan. <em>Tool</em> menghitung bagian EPF ekspat dan non-resident sebesar 2%, tanpa SOCSO dan EIS. <em>Tool</em> ini juga memasukkan iuran LINDUNG 24 Jam sebesar 0,75% dari gaji sampai RM6.000 sebulan mulai 1 Juni 2026, yaitu tujuh bulan dalam setahun. Pemberi kerja menyetor bagiannya sendiri di atas gajimu.</p>",
         "cite": [
           {
             "name": "KWSP, Contribute as a member",
@@ -156,7 +156,7 @@
     {
       "key": "citizen",
       "title": "Berapa pajak dan gaji bersih di Malaysia untuk gaji RM8.000 sebulan (RM96.000 setahun)?",
-      "intro": "<p>Contoh ini untuk warga negara Malaysia dengan gaji RM8.000 sebulan, dan berguna sebagai pembanding bagi pekerja asing yang membayar EPF lebih kecil. Gaji ini dipotong EPF 11% sebesar RM10.560, SOCSO dan EIS RM504, serta iuran LINDUNG 24 Jam RM315. Pengurang pajaknya RM13.350, yaitu RM9.000 untuk dirimu sendiri, batas EPF RM4.000 dan SOCSO RM350, sehingga penghasilan kena pajaknya RM82.650. Pajak penghasilannya RM6.103,50, dan gaji bersihmu sekitar RM78.518 setahun atau sekitar RM6.543 sebulan, yaitu 81,8% dari gaji kotor.</p>",
+      "intro": "<p>Ambil contoh warga negara Malaysia dengan gaji RM8.000 sebulan, yang berguna sebagai pembanding bagi pekerja asing yang membayar EPF lebih kecil. Dari gaji ini terpotong EPF 11% sebesar RM10.560, SOCSO dan EIS RM504, serta iuran LINDUNG 24 Jam RM315. Pengurang pajaknya RM13.350, yaitu RM9.000 untuk dirimu sendiri, batas EPF RM4.000 dan SOCSO RM350, sehingga penghasilan kena pajaknya RM82.650. Pajak penghasilannya RM6.103,50, dan gaji bersihmu sekitar RM78.518 setahun atau sekitar RM6.543 sebulan, yaitu 81,8% dari gaji kotor.</p>",
       "after": "<p>Tarif marginal pajakmu 19%. Kalau iuran EPF 11% ikut dihitung, setiap ringgit tambahan gaji terpotong sekitar 30%, tetapi EPF tetap tabunganmu sendiri. Pajaknya sendiri hanya sekitar 6% dari gaji kotor.</p>",
       "cite": [
         {
@@ -168,8 +168,8 @@
     {
       "key": "expat-resident",
       "title": "Berapa gaji bersih ekspat penduduk pajak di Malaysia dengan gaji RM15.000 sebulan?",
-      "intro": "<p>Contoh ini untuk pekerja asing yang tinggal cukup lama untuk menjadi penduduk pajak, dengan gaji RM15.000 sebulan atau RM180.000 setahun. Ia membayar EPF bagian karyawan 2% sebesar RM3.600 dan iuran LINDUNG 24 Jam RM315, tanpa SOCSO dan EIS. Pengurangnya RM12.600, yaitu RM9.000 untuk dirimu sendiri ditambah EPF, sehingga penghasilan kena pajaknya RM167.400. Tarif bertingkat menghasilkan pajak RM26.250, dan gaji bersihmu sekitar RM149.835 setahun atau sekitar RM12.486 sebulan, yaitu 83,2% dari gaji kotor.</p>",
-      "after": "<p>Tarif marginalmu 26,5%: 25% pajak, ditambah EPF 2% yang ikut naik bersama gaji. <em>Tool</em> tidak memasukkan pengurang SOCSO untuk ekspat dalam contoh ini. Untuk membayangkan apa arti gaji bersih ini di Kuala Lumpur dibandingkan dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>",
+      "intro": "<p>Ambil contoh pekerja asing yang tinggal cukup lama untuk menjadi penduduk pajak, dengan gaji RM15.000 sebulan atau RM180.000 setahun. Ekspat ini membayar EPF bagian karyawan 2% sebesar RM3.600 dan iuran LINDUNG 24 Jam RM315, tanpa SOCSO dan EIS. Pengurangnya RM12.600, yaitu RM9.000 untuk dirimu sendiri ditambah EPF, sehingga penghasilan kena pajaknya RM167.400. Tarif bertingkat menghasilkan pajak RM26.250, dan gaji bersihmu sekitar RM149.835 setahun atau sekitar RM12.486 sebulan, yaitu 83,2% dari gaji kotor.</p>",
+      "after": "<p>Tarif marginalmu 26,5%: 25% pajak, ditambah EPF 2% yang ikut naik bersama gaji. <em>Tool</em> tidak memasukkan pengurang SOCSO untuk ekspat dalam contoh ini. Untuk membandingkan daya beli gaji bersih ini di Kuala Lumpur dengan Jakarta, pakai <a href=\"https://tool.adjiebrotots.com/costofliving-comparator/\">Cost of Living Comparator</a>.</p>",
       "cite": [
         {
           "name": "LHDN, Individual tax rate",
@@ -184,7 +184,7 @@
     {
       "key": "non-resident",
       "title": "Berapa pajak pekerja non-resident di Malaysia dengan gaji RM5.000 sebulan?",
-      "intro": "<p>Contoh ini untuk pekerja yang tinggal di Malaysia kurang dari 182 hari dalam setahun, dengan gaji RM5.000 sebulan atau RM60.000 setahun, dan dikenai tarif tunggal 30%. Pajak penghasilannya RM18.000. Setelah EPF bagian karyawan 2% sebesar RM1.200 dan LINDUNG 24 Jam RM262,50, gaji bersihmu sekitar RM40.538 setahun atau sekitar RM3.378 sebulan, yaitu 67,6% dari gaji kotor. Penduduk pajak dengan gaji yang sama membayar jauh lebih sedikit.</p>",
+      "intro": "<p>Ambil contoh pekerja yang tinggal di Malaysia kurang dari 182 hari dalam setahun, dengan gaji RM5.000 sebulan atau RM60.000 setahun, yang dikenai tarif tunggal 30%. Pajak penghasilannya RM18.000. Setelah EPF bagian karyawan 2% sebesar RM1.200 dan LINDUNG 24 Jam RM262,50, gaji bersihmu sekitar RM40.538 setahun atau sekitar RM3.378 sebulan, yaitu 67,6% dari gaji kotor. Penduduk pajak dengan gaji yang sama membayar jauh lebih sedikit.</p>",
       "after": "<p>Kalau kamu ternyata tinggal 182 hari atau lebih, menjadi penduduk pajak bisa mengubah hasilnya secara drastis. Periksa tanggalmu dan ujian penduduk pajak lain ke LHDN.</p>",
       "cite": [
         {
@@ -208,7 +208,7 @@
     },
     {
       "h3": "Serahkan Borang TP1 ke pemberi kerja",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang punya pengurang di luar yang otomatis dihitung pemberi kerja, misalnya pasangan, anak atau biaya medis. Dengan formulir yang biasa disebut Borang TP1, PCB di slip gajimu bisa mengikuti pengurang itu, sehingga kamu tidak menunggu laporan tahunan untuk mendapatkan kelebihan potongan kembali.</p><p><strong>Perlu diingat:</strong> pemberi kerja hanya bisa memakai data yang kamu serahkan, dan pengurang itu tetap harus punya bukti kalau LHDN memeriksa.</p>"
+      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang punya pengurang di luar yang otomatis dihitung pemberi kerja, misalnya pasangan, anak atau biaya medis. Dengan formulir yang biasa disebut Borang TP1, PCB di slip gajimu bisa mengikuti pengurang itu, sehingga kelebihan potongan tidak perlu menunggu laporan tahunan untuk kembali.</p><p><strong>Perlu diingat:</strong> pemberi kerja hanya bisa memakai data yang kamu serahkan, dan pengurang itu tetap harus punya bukti kalau LHDN memeriksa.</p>"
     },
     {
       "h3": "Private Retirement Scheme (PRS) dan premi asuransi jiwa",
@@ -231,7 +231,7 @@
       ]
     },
     {
-      "h3": "Atur tanggal tiba dan pergi dengan memperhitungkan status penduduk pajak",
+      "h3": "Pertimbangkan status penduduk pajak saat menentukan tanggal tiba dan pergi",
       "html": "<p><strong>Siapa yang cocok:</strong> ekspat dan pekerja yang memulai atau mengakhiri penugasan di tengah tahun. Mencapai 182 hari memberimu tarif penduduk pajak dan pengurang, yang jauh lebih murah daripada tarif non-resident.</p><p><strong>Perlu diingat:</strong> hanya hari yang benar-benar kamu habiskan di Malaysia yang dihitung, dan LHDN memakai ujian lain juga. Pastikan statusmu sebelum mengandalkannya.</p>",
       "cite": [
         {
@@ -283,7 +283,7 @@
     },
     {
       "q": "Apakah pekerja asing membayar EPF di Malaysia?",
-      "a": "<p><em>Tool</em> menghitung bagian karyawan EPF sebesar 2% untuk pekerja non-warga negara, dibandingkan dengan 11% untuk warga negara, dan menghitungnya sebagai pengurang pajak sampai RM4.000. Aturan iuran untuk pekerja asing sudah berubah belakangan ini, jadi pastikan tarif terbarunya ke EPF dan pemberi kerjamu. Soal penarikan EPF saat pulang ke Indonesia, syaratnya ditetapkan EPF, jadi tanyakan langsung ke mereka sebelum berangkat.</p>",
+      "a": "<p><em>Tool</em> menghitung bagian karyawan EPF sebesar 2% untuk pekerja non-warga negara, dibandingkan dengan 11% untuk warga negara, dan memperlakukannya sebagai pengurang pajak sampai RM4.000. Aturan iuran untuk pekerja asing sudah berubah belakangan ini, jadi pastikan tarif terbarunya ke EPF dan pemberi kerjamu. Soal penarikan EPF saat pulang ke Indonesia, syaratnya ditetapkan EPF, jadi tanyakan langsung ke mereka sebelum berangkat.</p>",
       "cite": [
         {
           "name": "KWSP, Contribution for non-Malaysian citizen employees",
