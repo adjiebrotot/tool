@@ -5,7 +5,7 @@
   "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Jepang (2026)",
   "description": "Hitung pajak penghasilan, pajak penduduk dan iuran jaminan sosial di Jepang 2026, dengan empat contoh gaji bersih dalam yen untuk pekerja asing.",
   "place": "Tokyo",
-  "lede": "<p>Jepang memungut pajak penghasilan nasional 5% sampai 45% dari penduduk pajak (<em>resident</em>, di Indonesia disebut subjek pajak dalam negeri), ditambah pajak penduduk daerah sekitar 10% dan iuran jaminan sosial karyawan yang totalnya sekitar 15% dari gaji. Dengan gaji ¥6.000.000 setahun di Tokyo, pekerja di tahun kedua menerima gaji bersih (<em>take-home pay</em>) sekitar ¥4.662.100, atau 77,7% dari gaji kotor. Di tahun pertama sisanya sekitar ¥4.969.300, karena pajak penduduk belum mulai ditagih.</p>",
+  "lede": "<p>Jepang memungut pajak penghasilan nasional 5% sampai 45% dari penduduk pajak (<em>resident</em>, di Indonesia disebut subjek pajak dalam negeri), ditambah pajak penduduk daerah sekitar 10% dan iuran jaminan sosial karyawan yang totalnya sekitar 15% dari gaji. Untuk gaji ¥6.000.000 setahun di Tokyo, pekerja di tahun kedua menerima gaji bersih (<em>take-home pay</em>) sekitar ¥4.662.100, atau 77,7% dari gaji kotor. Di tahun pertama gaji bersihnya sekitar ¥4.969.300, karena pajak penduduk belum mulai ditagih.</p>",
   "law": {
     "introCite": [
       {
@@ -13,7 +13,7 @@
         "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2875.htm#:~:text=%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%A8%E9%9D%9E%E5%B1%85%E4%BD%8F%E8%80%85%E3%81%AE%E5%8C%BA%E5%88%86"
       }
     ],
-    "intro": "<p>Angka di bagian ini memakai aturan 2026 seperti yang dihitung <em>tool</em> ini, untuk karyawan di Tokyo. Kamu dianggap penduduk pajak di Jepang kalau sudah tinggal atau berniat tinggal di sana setahun atau lebih. Sebagai penduduk pajak, penghasilanmu dikenai tarif progresif nasional dan dipotong pemberi kerja dari setiap slip gaji, mirip PPh 21 yang dipotong kantor di Indonesia. Bedanya, di Jepang ada dua pajak yang berjalan berdampingan (pajak nasional dan pajak penduduk daerah), dan iuran jaminan sosial yang dipotong dari gaji jauh lebih besar daripada potongan BPJS Kesehatan dan BPJS Ketenagakerjaan di Indonesia.</p>",
+    "intro": "<p>Angka di bagian ini memakai aturan 2026 yang dipakai <em>tool</em> ini, untuk karyawan di Tokyo. Kamu dianggap penduduk pajak di Jepang kalau sudah tinggal atau berniat tinggal di sana setahun atau lebih. Sebagai penduduk pajak, penghasilanmu dikenai tarif progresif nasional, dan pemberi kerja memotongnya dari setiap slip gaji, mirip PPh 21 yang dipotong kantor di Indonesia. Bedanya, di Jepang ada dua pajak sekaligus (pajak nasional dan pajak penduduk daerah), dan iuran jaminan sosial yang dipotong dari gaji jauh lebih besar daripada potongan BPJS Kesehatan dan BPJS Ketenagakerjaan di Indonesia.</p>",
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan nasional",
@@ -111,7 +111,7 @@
             "url": "https://www.tax.metro.tokyo.lg.jp/kazei/life/kojin_ju#:~:text=%E5%9D%87%E7%AD%89%E5%89%B2"
           }
         ],
-        "html": "<p>Pajak ini masuk ke kas prefektur dan kota tempat kamu tinggal. Indonesia tidak punya padanannya, karena PPh orang pribadi di Indonesia hanya dipungut pemerintah pusat. Besarnya 10% dari penghasilan kena pajak (6% untuk kota dan 4% untuk prefektur) ditambah iuran per kepala yang jumlahnya kecil, dengan potongan dasar ¥430.000, bukan potongan dasar pajak nasional.</p><p>Yang paling sering mengejutkan pendatang baru adalah waktunya. Pajak penduduk dihitung dari penghasilan tahun kalender sebelumnya dan ditagih mulai Juni. Karena itu pendatang baru tidak membayarnya di tahun pertama, lalu tagihannya datang di tahun kedua.</p>"
+        "html": "<p>Pajak ini masuk ke kas prefektur dan kota tempat kamu tinggal. Indonesia tidak punya padanannya, karena PPh orang pribadi di Indonesia hanya dipungut pemerintah pusat. Besarnya 10% dari penghasilan kena pajak (6% untuk kota dan 4% untuk prefektur) ditambah iuran per kepala yang jumlahnya kecil, memakai potongan dasar ¥430.000, berbeda dari potongan dasar pajak nasional.</p><p>Yang paling sering mengejutkan pendatang baru adalah waktunya. Pajak penduduk dihitung dari penghasilan tahun kalender sebelumnya dan ditagih mulai Juni. Karena itu pendatang baru tidak membayarnya di tahun pertama, lalu tagihannya datang di tahun kedua.</p>"
       },
       {
         "h3": "Iuran jaminan sosial",
@@ -222,7 +222,7 @@
         }
       ],
       "title": "Gaji bersih tahun pertama di Jepang dengan gaji ¥6.000.000, sebelum ada pajak penduduk",
-      "intro": "<p>Gajimu ¥6.000.000, iuran jaminan sosialmu ¥881.400 dan pajak penghasilan nasionalmu ¥149.300 sama persis dengan penduduk tahun kedua. Bedanya, kamu belum dikenai pajak penduduk, yang baru ditagih mulai tahun kedua. Gaji bersihnya menjadi sekitar ¥4.969.300, atau 82,8% dari gaji kotor, lebih besar ¥307.200 daripada penduduk tahun kedua dengan gaji yang sama.</p>",
+      "intro": "<p>Gaji ¥6.000.000, iuran jaminan sosial ¥881.400 dan pajak penghasilan nasional ¥149.300 sama persis dengan penduduk tahun kedua. Bedanya, kamu belum dikenai pajak penduduk, yang baru ditagih mulai tahun kedua. Gaji bersihnya menjadi sekitar ¥4.969.300, atau 82,8% dari gaji kotor, lebih besar ¥307.200 daripada penduduk tahun kedua dengan gaji yang sama.</p>",
       "after": "<p>Jangan anggap angka ini gaji bersihmu yang tetap: di tahun kedua tagihan pajak penduduk datang (¥307.200 untuk gaji ini), sehingga gaji bersihmu turun padahal gajinya tidak berubah. Kalau kamu berencana tinggal lebih dari setahun, sisihkan selisih ini sejak awal.</p>"
     },
     {
@@ -303,7 +303,7 @@
   ],
   "limits": [
     "<strong>Hanya penghasilan dari gaji.</strong> Hitungannya satu gaji selama setahun penuh, tanpa penghasilan investasi, keuntungan penjualan aset atau usaha sendiri.",
-    "<strong>Tanpa bonus.</strong> Banyak kontrak kerja di Jepang membayar sebagian gaji sebagai bonus, dan iuran jaminan sosial atas bonus dihitung terpisah. <em>Tool</em> menganggap gajimu dua belas bulan yang sama besar, sehingga slip gaji aslinya bisa berbeda.",
+    "<strong>Tanpa bonus.</strong> Banyak kontrak kerja di Jepang membayar sebagian gaji sebagai bonus, dan iuran jaminan sosial atas bonus dihitung terpisah. <em>Tool</em> berasumsi gajimu sama besar selama dua belas bulan, sehingga slip gaji aslinya bisa berbeda.",
     "<strong>Hanya Tokyo.</strong> Tarif asuransi kesehatan dan pajak penduduk berbeda antarwilayah dan antarpenyelenggara, dan perusahaan dengan asuransi kesehatan sendiri memakai tarif lain.",
     "<strong>Potongan standar saja.</strong> Yang dipakai hanya potongan dasar. Tanggungan, asuransi jiwa, biaya berobat, iDeCo dan <em>furusato nozei</em> tidak dihitung.",
     "<strong>Status dipilih sendiri.</strong> Kamu yang menentukan statusnya. <em>Tool</em> tidak menguji apakah kamu penduduk pajak, penduduk non-permanen atau bukan, padahal aturan penghasilan dari luar Jepang berbeda untuk tiap status.",
@@ -375,7 +375,7 @@
     },
     {
       "q": "Apakah saya masih kena pajak di Indonesia kalau bekerja di Jepang?",
-      "a": "<p>Kalau kamu pindah ke Jepang dan tidak lagi berstatus subjek pajak dalam negeri, penghasilan dari pekerjaan di Jepang pada dasarnya tidak dikenai PPh Indonesia lagi. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di sana dapat menjadi subjek pajak luar negeri. Tetapi kalau kamu masih punya rumah atau keluarga yang tinggal di Indonesia, kamu bisa tetap dianggap subjek pajak dalam negeri. Langkah yang lazim adalah memberi tahu Direktorat Jenderal Pajak (DJP) lewat Kantor Pelayanan Pajak (KPP) tempat kamu terdaftar, supaya penghasilanmu tidak dipajaki dua kali.</p><p>Indonesia dan Jepang punya persetujuan penghindaran pajak berganda (P3B), tetapi <em>tool</em> ini tidak menghitungnya. Saat kamu kembali ke Indonesia, statusmu bisa bergeser lagi, jadi urus statusnya setiap kali kamu berpindah.</p>"
+      "a": "<p>Kalau kamu pindah ke Jepang dan tidak lagi berstatus subjek pajak dalam negeri, penghasilan dari pekerjaan di Jepang pada dasarnya tidak dikenai PPh Indonesia lagi. Menurut UU PPh, orang yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di sana dapat menjadi subjek pajak luar negeri. Namun kalau kamu masih punya rumah atau keluarga yang tinggal di Indonesia, kamu bisa tetap dianggap subjek pajak dalam negeri. Langkah yang lazim adalah memberi tahu Direktorat Jenderal Pajak (DJP) lewat Kantor Pelayanan Pajak (KPP) tempat kamu terdaftar, supaya penghasilanmu tidak dipajaki dua kali.</p><p>Indonesia dan Jepang punya persetujuan penghindaran pajak berganda (P3B), tetapi <em>tool</em> ini tidak menghitungnya. Saat kamu kembali ke Indonesia, statusmu bisa bergeser lagi, jadi urus statusnya setiap kali kamu berpindah.</p>"
     },
     {
       "q": "Bagaimana kalau saya tinggal di Jepang kurang dari setahun?",
