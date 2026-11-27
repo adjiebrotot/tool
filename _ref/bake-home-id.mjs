@@ -29,7 +29,8 @@ const PROBLEMS = [];
 // domain headings, the visible tags and the typewriter.
 const LABELS = {
   'Active': 'Aktif', 'Coming soon': 'Segera hadir', 'Deprecated': 'Tidak dilanjutkan',
-  'Engineering': 'Teknik', 'Finance': 'Keuangan', 'Visualisation': 'Visualisasi', 'Others': 'Lainnya',
+  'Engineering': 'Teknik', 'Finance': 'Keuangan', 'Quick Utilities': 'Utilitas Praktis',
+  'Visualisation': 'Visualisasi', 'Others': 'Lainnya',
   'Universal': 'Global', 'Indonesia': 'Indonesia', 'Australia': 'Australia',
   'Converter': 'Konverter', 'Documents': 'Dokumen', 'Power Systems': 'Sistem tenaga listrik',
   'Tax': 'Pajak', 'Financing': 'Pembiayaan', 'Investment': 'Investasi', 'Leveraging': 'Leverage',
@@ -105,16 +106,38 @@ const HOME_I18N = {
 
 const OG_DESC = 'Kumpulan tool yang membantu saya mengambil keputusan sehari-hari, termasuk urusan pekerjaan, dengan perhitungan yang matang. Saya bagikan secara gratis supaya kamu juga bisa memakainya.';
 
+const TITLE_EN = 'Adjie Brotools: Free Finance and Power System Engineering Tools';
+const TITLE_ID = 'Adjie Brotools: Tool Gratis untuk Keuangan dan Teknik Sistem Tenaga Listrik';
+
+// ---- The directory's groups: the two fields, then the Quick Utilities and their subsections.
+// `id` is the section's id on the page (and the #fragment of its ItemList in the structured data).
+const GROUPS = [
+  { id: 'engineering', domain: 'Engineering', en: 'Engineering', idName: 'Teknik',
+    enLede: 'Power system studies in the browser: load flow, economic dispatch and unit commitment, capacity expansion, and PowerFactory and PSCAD automation.',
+    idLede: 'Studi sistem tenaga listrik langsung di <em>browser</em>: aliran daya, <em>economic dispatch</em> dan <em>unit commitment</em>, perencanaan ekspansi kapasitas, serta otomasi PowerFactory dan PSCAD.' },
+  { id: 'finance', domain: 'Finance', en: 'Finance', idName: 'Keuangan',
+    enLede: 'Tax, property, lending and investing, modelled year by year: take-home pay in 31 countries, renting or buying, cash or finance, and when you can stop working.',
+    idLede: 'Pajak, properti, pinjaman, dan investasi, dihitung tahun demi tahun: gaji bersih di 31 negara, sewa atau beli rumah, tunai atau kredit, sampai kapan kamu bisa berhenti bekerja.' },
+  { id: 'utilities', domain: 'Quick Utilities', en: 'Quick Utilities', idName: 'Utilitas Praktis',
+    enLede: 'Small helpers I built along the way, for charts, files and the odd everyday question.',
+    idLede: 'Alat bantu kecil yang saya buat di sela-sela, untuk grafik, berkas, dan pertanyaan sehari-hari.' },
+];
+const SUBGROUPS = [
+  { id: 'utilities-visualisation', subgroup: 'Visualisation', en: 'Visualisation', idName: 'Visualisasi' },
+  { id: 'utilities-converters', subgroup: 'Converters &amp; Media', en: 'Converters &amp; Media', idName: 'Konverter &amp; Media' },
+  { id: 'utilities-everyday', subgroup: 'Fun &amp; Everyday', en: 'Fun &amp; Everyday', idName: 'Seru &amp; Sehari-hari' },
+];
+
 // ---- Fixed text: [English as it stands in index.html, Indonesian]. Each must occur exactly
 // once, so a change to the English page is noticed here.
 const GLOBE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
 const TEXT = [
   ['<html lang="en">', '<html lang="id">'],
-  ['<title>Adjie Brotools</title>', '<title>Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik</title>'],
-  ['<meta name="description" content="Free calculators and tools by Adjie Brotosukmono for tax, loans, property, power system engineering and data visualisation. Everything runs in your browser.">',
-   '<meta name="description" content="Tool gratis dari Adjie Brotosukmono untuk pajak, pinjaman, properti, teknik sistem tenaga listrik, dan visualisasi data. Semua hitungannya berjalan di browser-mu.">'],
+  [`<title>${TITLE_EN}</title>`, `<title>${TITLE_ID}</title>`],
+  ['<meta name="description" content="Free finance and power system engineering tools by Adjie Brotosukmono: income tax, property, loans and investing, load flow, dispatch and PowerFactory and PSCAD scripts. Runs in your browser.">',
+   '<meta name="description" content="Tool gratis dari Adjie Brotosukmono untuk keuangan dan teknik sistem tenaga listrik: pajak penghasilan, properti, pinjaman, investasi, aliran daya, dispatch, serta skrip PowerFactory dan PSCAD.">'],
   [`<link rel="canonical" href="${SITE}">`, `<link rel="canonical" href="${SITE}id/">`],
-  ['<meta property="og:title" content="Adjie Brotools">', '<meta property="og:title" content="Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik">'],
+  [`<meta property="og:title" content="${TITLE_EN}">`, `<meta property="og:title" content="${TITLE_ID}">`],
   ['<meta property="og:description" content="Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.">',
    `<meta property="og:description" content="${OG_DESC}">`],
   [`<meta property="og:url" content="${SITE}">`, `<meta property="og:url" content="${SITE}id/">`],
@@ -122,9 +145,9 @@ const TEXT = [
   ['<meta property="og:image:alt" content="Adjie Brotools, a free tool on Adjie Brotools">', '<meta property="og:image:alt" content="Adjie Brotools, kumpulan tool gratis">'],
   ['<meta property="og:locale" content="en_AU">', '<meta property="og:locale" content="id_ID">'],
   ['<meta property="og:locale:alternate" content="id_ID">', '<meta property="og:locale:alternate" content="en_AU">'],
-  ['<meta name="twitter:title" content="Adjie Brotools">', '<meta name="twitter:title" content="Adjie Brotools: Tool Gratis untuk Pajak, Keuangan, dan Teknik">'],
-  ['<meta name="twitter:description" content="Free browser-based tools for finance, tax, property, and engineering decisions. All calculations run locally: no uploads, no paywall.">',
-   '<meta name="twitter:description" content="Tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, dan teknik. Semua hitungan berjalan di perangkatmu tanpa ada data yang diunggah.">'],
+  [`<meta name="twitter:title" content="${TITLE_EN}">`, `<meta name="twitter:title" content="${TITLE_ID}">`],
+  ['<meta name="twitter:description" content="Free browser-based tools for finance, tax, property and power system engineering decisions. All calculations run locally: no uploads, no paywall.">',
+   '<meta name="twitter:description" content="Tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, dan teknik sistem tenaga listrik. Semua hitungan berjalan di perangkatmu tanpa ada data yang diunggah.">'],
   [`<meta name="twitter:image" content="${SITE}og/home.jpg">`, `<meta name="twitter:image" content="${SITE}og/home-id.jpg">`],
   ['<a class="skip-link" href="#tool-directory">Skip to tool directory</a>', '<a class="skip-link" href="#tool-directory">Langsung ke daftar tool</a>'],
   ['<nav class="family-nav" aria-label="Adjie\'s sites">', '<nav class="family-nav" aria-label="Situs Adjie">'],
@@ -138,6 +161,9 @@ const TEXT = [
   ['        Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.\n',
    `        ${OG_DESC}\n`],
   ['<h2 id="tool-directory-heading">Tool directory</h2>', '<h2 id="tool-directory-heading">Daftar tool</h2>'],
+  ...GROUPS.map(g => [`id="${g.id}-heading">${g.en}</h3>`, `id="${g.id}-heading">${g.idName}</h3>`]),
+  ...GROUPS.map(g => [`<p class="group-lede">${g.enLede}</p>`, `<p class="group-lede">${g.idLede}</p>`]),
+  ...SUBGROUPS.map(g => [`id="${g.id}-heading">${g.en}</h4>`, `id="${g.id}-heading">${g.idName}</h4>`]),
   ['<h2 id="filter-heading" class="visually-hidden">Filter tools</h2>', '<h2 id="filter-heading" class="visually-hidden">Saring tool</h2>'],
   ['<label for="searchFilter">Keyword</label>', '<label for="searchFilter">Kata kunci</label>'],
   ['placeholder="Search tools"', 'placeholder="Cari tool"'],
@@ -181,13 +207,13 @@ function card(html){
   const enUrl = `${T}${key}/`;
 
   // Title and its link. A tool with no Indonesian page keeps its English name (lang="en").
-  html = html.replace(/<h3 itemprop="name">([\s\S]*?)<\/h3>/, (m, inner) => {
+  html = html.replace(/<(h[3-6]) itemprop="name">([\s\S]*?)<\/\1>/, (m, h, inner) => {
     const name = c.name || plain(inner).trim();
     if(/<a /.test(inner)){
-      const a = inner.replace(/href="([^"]+)"/, (x, h) => `href="${h === enUrl && c.id ? c.id : h}" hreflang="${lang}"`).replace(/>[^<]*<\/a>/, `>${esc(name)}</a>`);
-      return `<h3 itemprop="name"${c.name ? '' : ' lang="en"'}>${a}</h3>`;
+      const a = inner.replace(/href="([^"]+)"/, (x, u) => `href="${u === enUrl && c.id ? c.id : u}" hreflang="${lang}"`).replace(/>[^<]*<\/a>/, `>${esc(name)}</a>`);
+      return `<${h} itemprop="name"${c.name ? '' : ' lang="en"'}>${a}</${h}>`;
     }
-    return `<h3 itemprop="name" lang="en">${inner}</h3>`;
+    return `<${h} itemprop="name" lang="en">${inner}</${h}>`;
   });
   // The description.
   html = html.replace(/(<p class="tool-description" itemprop="description">)[\s\S]*?(<\/p>)/, (m, a, b) => a + c.desc + b);
@@ -207,9 +233,13 @@ function card(html){
   // The open button (and a split button's own menu).
   html = html.replace(/(<a class="tool-link" href=")([^"]+)("[^>]*>)Open tool<\/a>/, (m, a, h, b) =>
     `${a}${h === enUrl && c.id ? c.id : h}" hreflang="${lang}${b}Buka tool</a>`);
-  // A tool with no Indonesian page is marked EN beside its open button.
+  // A tool with no Indonesian page is marked EN beside its open button, or, on a Quick
+  // Utility (no button), beside its status.
+  const enMark = '<span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>';
   if(lang === 'en' && /class="tool-link"/.test(html))
-    html = html.replace(/(\n\s*)<\/div>(\n\s*<\/div>\n\s*<\/article>)/, (m, a, b) => `${a}  <span class="tool-lang" lang="en" title="Hanya tersedia dalam bahasa Inggris">EN</span>${a}</div>${b}`);
+    html = html.replace(/(\n\s*)<\/div>(\n\s*<\/div>\n\s*<\/article>)/, (m, a, b) => `${a}  ${enMark}${a}</div>${b}`);
+  else if(lang === 'en' && /<h[3-6] itemprop="name"[^>]*><a /.test(html))
+    html = html.replace(/(<\/h[3-6]>)(\n\s*)(<span class="status-badge)/, (m, h, a, b) => `${h}${a}${enMark}${a}${b}`);
   html = html.replace(/>Coming soon<\/span>/, '>Segera hadir</span>');
   html = html.replace(/aria-label="Choose which (.+?) tool to open"/, (m, n) => `aria-label="Pilih halaman ${esc(c.name || n)} yang ingin dibuka"`);
   html = html.replace(/<a class="combo-opt" role="menuitem" href="([^"]+)"([^>]*)><span class="combo-text"><span class="combo-main">([^<]+)<\/span><span class="combo-sub">([^<]+)<\/span>/g, (m, h, rest, main, sub) => {
@@ -219,9 +249,11 @@ function card(html){
     return `<a class="combo-opt" role="menuitem" href="${e.href || h}" hreflang="${l}"${rest}><span class="combo-text"><span class="combo-main"${l === 'en' ? ' lang="en"' : ''}>${e.main || main}</span><span class="combo-sub">${e.sub}</span>`;
   });
 
-  const nameNow = plain((html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/) || ['', ''])[1]).trim();
-  const url = (html.match(/<a class="tool-link" href="([^"]+)"/) || [])[1];
-  if(url) items.push({ name: nameNow, url, description: plain(c.desc), inLanguage: lang });
+  const nameNow = plain((html.match(/<(h[3-6]) itemprop="name"[^>]*>([\s\S]*?)<\/\1>/) || ['', '', ''])[2]).trim();
+  const url = (html.match(/<a class="tool-link" href="([^"]+)"/) || html.match(/<h[3-6] itemprop="name"[^>]*><a href="([^"]+)"/) || [])[1];
+  const domain = (html.match(/data-domain="([^"]+)"/) || [])[1];
+  const subgroup = (html.match(/data-subgroup="([^"]+)"/) || [])[1];
+  if(url) items.push({ name: nameNow, url, description: plain(c.desc), inLanguage: lang, domain, subgroup });
   return html;
 }
 
@@ -234,6 +266,15 @@ function build(){
   // the tag over lines, so the comment is never taken for one.)
   html = html.replace(/<article\s*\n\s*class="tool-card"[\s\S]*?<\/article>/g, card);
 
+  // One group's tools as an ItemList.
+  const list = (g, its) => ({
+    '@type': 'ItemList', '@id': `${SITE}id/#${g.id}`, name: plain(g.idName.replace(/&amp;/g, '&')), numberOfItems: its.length,
+    itemListElement: its.map((it, i) => ({
+      '@type': 'ListItem', position: i + 1,
+      item: { '@type': 'WebApplication', name: it.name, url: it.url, description: it.description, inLanguage: it.inLanguage, isAccessibleForFree: true },
+    })),
+  });
+
   // Structured data: this page as an Indonesian collection of every tool. The site and its
   // maker are described once, on the English home, and named here by their @id.
   const ld = {
@@ -241,18 +282,20 @@ function build(){
     '@type': 'CollectionPage',
     name: 'Adjie Brotools',
     url: `${SITE}id/`,
-    description: 'Kumpulan tool gratis berbasis browser untuk keputusan keuangan, pajak, properti, teknik, dan visualisasi data. Semua hitungan berjalan lokal di browser tanpa unggah data.',
+    description: 'Tool gratis berbasis browser untuk keuangan dan teknik sistem tenaga listrik: pajak penghasilan, properti, pinjaman, dan investasi, serta studi sistem tenaga listrik dan otomasi PowerFactory dan PSCAD, ditemani beberapa utilitas praktis. Semua hitungan berjalan lokal di browser tanpa unggah data.',
     inLanguage: 'id',
     isPartOf: { '@id': `${SITE}#website` },
     publisher: { '@id': 'https://www.adjiebrotots.com/#person' },
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: items.map((it, i) => ({
-        '@type': 'ListItem', position: i + 1,
-        item: { '@type': 'WebApplication', name: it.name, url: it.url, description: it.description, inLanguage: it.inLanguage, isAccessibleForFree: true },
-      })),
-    },
+    // The two fields are the page's subject; the Quick Utilities are named beside them.
+    mainEntity: GROUPS.filter(g => g.domain !== 'Quick Utilities').map(g => list(g, items.filter(it => it.domain === g.domain))),
+    mentions: (g => ({
+      '@type': 'ItemList', '@id': `${SITE}id/#${g.id}`, name: g.idName, description: plain(g.idLede),
+      itemListElement: SUBGROUPS.map((sg, i) => ({ '@type': 'ListItem', position: i + 1,
+        item: list(sg, items.filter(it => it.domain === g.domain && it.subgroup === sg.subgroup)) })),
+    }))(GROUPS.find(g => g.domain === 'Quick Utilities')),
   };
+  const listed = JSON.stringify(ld).match(/"@type":"WebApplication"/g).length;
+  if(listed !== items.length) PROBLEMS.push(`structured data lists ${listed} of ${items.length} tools: a card's data-domain or data-subgroup matches no group`);
   let n = 0;
   html = html.replace(/\s*<script type="application\/ld\+json">[\s\S]*?<\/script>/g, () =>
     n++ ? '' : `\n  <script type="application/ld+json">\n${JSON.stringify(ld, null, 2)}\n  </script>`);

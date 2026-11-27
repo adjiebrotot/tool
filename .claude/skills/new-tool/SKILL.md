@@ -217,7 +217,11 @@ The site's root `index.html` is the tool directory/landing page. **Do not add a 
 unless the user explicitly asks.** Build the tool in its own folder and stop there.
 
 When the user does ask, copy a card in `index.html` (the comment above the grid lists what
-to change). Its description is one or two short sentences in the words people search for,
+to change). The directory leads with the site's two fields, Engineering and Finance (full
+cards); any other tool is a Quick Utility (a small card in a Quick Utilities subsection, with
+`data-subgroup`), so utilities never read as a third specialism. Place the tool in the same
+group in the page's CollectionPage structured data and under the same heading in `llms.txt`.
+Its description is one or two short sentences in the words people search for,
 and its `data-anim` key needs a drawing in `home-anim.js`: hand that to the `tool-animator`
 agent (`.claude/agents/tool-animator.md`) rather than drawing it inline. The Indonesian home
 (`id/index.html`) is generated from `index.html`: add the card's Indonesian description (and
