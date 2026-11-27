@@ -125,15 +125,15 @@
   "strategies": [
     {
       "h3": "Urus status pajak Indonesiamu sebelum berangkat",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang sudah punya NPWP dan akan bekerja di Oman lebih dari enam bulan dalam 12 bulan. Tanyakan ke KPP atau DJP apakah statusmu berubah menjadi subjek pajak luar negeri, dan simpan kontrak serta bukti tanggal berangkat dan pulang.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang sudah punya NPWP dan akan bekerja di Oman lebih dari enam bulan dalam 12 bulan. Tanyakan ke KPP atau DJP apakah statusmu berubah menjadi subjek pajak luar negeri, dan simpan kontrak serta bukti tanggal berangkat dan pulang.</p>"
     },
     {
       "h3": "Siapkan sendiri dana pensiun dan tabunganmu",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja asing yang menerima gaji penuh tanpa potongan jaminan sosial. Karena tidak ada iuran pensiun yang dipotong, menabung untuk hari tua menjadi urusanmu sendiri, misalnya lewat DPLK, reksa dana, atau portofolio berbiaya rendah. Berapa yang perlu kamu kumpulkan bisa dihitung dengan <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun, dan tempat kamu menaruh dana menentukan pajak atas imbal hasilnya.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji penuh tanpa potongan jaminan sosial. Karena tidak ada iuran pensiun yang dipotong, menabung untuk hari tua menjadi urusanmu sendiri, misalnya lewat DPLK, reksa dana, atau portofolio berbiaya rendah. Berapa yang perlu kamu kumpulkan bisa dihitung dengan <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a>.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun, dan tempat kamu menaruh dana menentukan pajak atas imbal hasilnya.</p>"
     },
     {
       "h3": "Pahami uang akhir masa kerja sebelum meneken kontrak",
-      "html": "<p><strong>Siapa yang cocok:</strong> kamu yang sedang membandingkan beberapa tawaran. Uang ini adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja.</p><p><strong>Catatan:</strong> besarnya bergantung pada gaji, lama bekerja, dan kontrak, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> kamu yang sedang membandingkan beberapa tawaran. Uang ini adalah pembayaran dari pemberi kerja saat kamu berhenti bekerja.</p><p><strong>Catatan:</strong> besarnya bergantung pada gaji, lama bekerja, dan kontrak, jadi tanyakan cara menghitungnya dan minta jawabannya tertulis.</p>",
       "cite": [
         {
           "name": "Dekret Kerajaan 53/2023, UU Ketenagakerjaan (pesangon akhir masa kerja)",

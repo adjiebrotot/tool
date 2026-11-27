@@ -198,7 +198,7 @@
   "strategies": [
     {
       "h3": "Klaim semua pengurang pajak pribadi yang berhak kamu dapat",
-      "html": "<p><strong>Siapa yang cocok:</strong> semua penduduk pajak. Pengurang untuk pasangan, anak, biaya medis, pendidikan, gaya hidup dan asuransi masing-masing menurunkan penghasilan kena pajak, sehingga menghemat pajak sebesar tarif marginalmu.</p><p><strong>Perlu diingat:</strong> tiap pengurang punya batas dan syarat, dan kamu butuh kuitansi. <em>Tool</em> hanya menghitung pengurang pribadi, EPF, SOCSO, pasangan dan anak.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> semua penduduk pajak. Pengurang untuk pasangan, anak, biaya medis, pendidikan, gaya hidup dan asuransi masing-masing menurunkan penghasilan kena pajak, sehingga menghemat pajak sebesar tarif marginalmu.</p><p><strong>Catatan:</strong> tiap pengurang punya batas dan syarat, dan kamu butuh kuitansi. <em>Tool</em> hanya menghitung pengurang pribadi, EPF, SOCSO, pasangan dan anak.</p>",
       "cite": [
         {
           "name": "LHDN, Tax reliefs",
@@ -208,11 +208,11 @@
     },
     {
       "h3": "Serahkan Borang TP1 ke pemberi kerja",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang punya pengurang di luar yang otomatis dihitung pemberi kerja, misalnya pasangan, anak atau biaya medis. Dengan formulir yang biasa disebut Borang TP1, PCB di slip gajimu bisa mengikuti pengurang itu, sehingga kelebihan potongan tidak perlu menunggu laporan tahunan untuk kembali.</p><p><strong>Perlu diingat:</strong> pemberi kerja hanya bisa memakai data yang kamu serahkan, dan pengurang itu tetap harus punya bukti kalau LHDN memeriksa.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang punya pengurang di luar yang otomatis dihitung pemberi kerja, misalnya pasangan, anak atau biaya medis. Dengan formulir yang biasa disebut Borang TP1, PCB di slip gajimu bisa mengikuti pengurang itu, sehingga kelebihan potongan tidak perlu menunggu laporan tahunan untuk kembali.</p><p><strong>Catatan:</strong> pemberi kerja hanya bisa memakai data yang kamu serahkan, dan pengurang itu tetap harus punya bukti kalau LHDN memeriksa.</p>"
     },
     {
       "h3": "Private Retirement Scheme (PRS) dan premi asuransi jiwa",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang ingin menambah tabungan pensiun. Setoran ke PRS yang disetujui dan sebagian premi asuransi jiwa mendapat pengurang sampai batas tertentu, jadi cek batas terbarunya di LHDN.</p><p><strong>Perlu diingat:</strong> uang PRS ditujukan untuk pensiun, dan penarikan sebelum waktunya dikenai potongan.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang ingin menambah tabungan pensiun. Setoran ke PRS yang disetujui dan sebagian premi asuransi jiwa mendapat pengurang sampai batas tertentu, jadi cek batas terbarunya di LHDN.</p><p><strong>Catatan:</strong> uang PRS ditujukan untuk pensiun, dan penarikan sebelum waktunya dikenai potongan.</p>",
       "cite": [
         {
           "name": "LHDN, Tax reliefs",
@@ -222,7 +222,7 @@
     },
     {
       "h3": "Setoran EPF sukarela",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak yang iuran EPF wajibnya di bawah batas pengurang, misalnya karyawan bergaji lebih rendah yang bagian 11%-nya di bawah RM4.000. Setoran tambahan bisa memberi pengurang sampai batas itu (RM4.000 seperti dipakai <em>tool</em>) sekaligus menambah tabungan pensiun.</p><p><strong>Perlu diingat:</strong> pengurang berhenti di batasnya, dan uangnya terkunci sampai usia pensiun.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang iuran EPF wajibnya di bawah batas pengurang, misalnya karyawan bergaji lebih rendah yang bagian 11%-nya di bawah RM4.000. Setoran tambahan bisa memberi pengurang sampai batas itu (RM4.000 seperti dipakai <em>tool</em>) sekaligus menambah tabungan pensiun.</p><p><strong>Catatan:</strong> pengurang berhenti di batasnya, dan uangnya terkunci sampai usia pensiun.</p>",
       "cite": [
         {
           "name": "KWSP, Contribute as a member",
@@ -232,7 +232,7 @@
     },
     {
       "h3": "Pertimbangkan status penduduk pajak saat menentukan tanggal tiba dan pergi",
-      "html": "<p><strong>Siapa yang cocok:</strong> ekspat dan pekerja yang memulai atau mengakhiri penugasan di tengah tahun. Mencapai 182 hari memberimu tarif penduduk pajak dan pengurang, yang jauh lebih murah daripada tarif non-resident.</p><p><strong>Perlu diingat:</strong> hanya hari yang benar-benar kamu habiskan di Malaysia yang dihitung, dan LHDN juga memakai kriteria lain. Pastikan statusmu sebelum mengandalkannya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> ekspat dan pekerja yang memulai atau mengakhiri penugasan di tengah tahun. Mencapai 182 hari memberimu tarif penduduk pajak dan pengurang, yang jauh lebih murah daripada tarif non-resident.</p><p><strong>Catatan:</strong> hanya hari yang benar-benar kamu habiskan di Malaysia yang dihitung, dan LHDN juga memakai kriteria lain. Pastikan statusmu sebelum mengandalkannya.</p>",
       "cite": [
         {
           "name": "PwC Worldwide Tax Summaries, Malaysia individual residence",

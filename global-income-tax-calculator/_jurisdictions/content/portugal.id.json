@@ -223,7 +223,7 @@
   "strategies": [
     {
       "h3": "Pastikan status penduduk pajakmu",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang tiba di tengah tahun. Tarif tunggal 25% tanpa pengurang untuk <em>non-resident</em> lebih mahal daripada skala penduduk pajak pada penghasilan menengah, jadi ketahui sejak awal kapan kamu mulai dihitung sebagai penduduk pajak, dan simpan catatan hari tinggalmu.</p><p><strong>Perlu diingat:</strong> status ditentukan oleh aturan pajak, bukan oleh visa atau sebutan yang kamu pakai, dan pada tahun pertama kamu mungkin hanya dipajaki untuk sebagian tahun.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang tiba di tengah tahun. Tarif tunggal 25% tanpa pengurang untuk <em>non-resident</em> lebih mahal daripada skala penduduk pajak pada penghasilan menengah, jadi ketahui sejak awal kapan kamu mulai dihitung sebagai penduduk pajak, dan simpan catatan hari tinggalmu.</p><p><strong>Catatan:</strong> status ditentukan oleh aturan pajak, bukan oleh visa atau sebutan yang kamu pakai, dan pada tahun pertama kamu mungkin hanya dipajaki untuk sebagian tahun.</p>",
       "cite": [
         {
           "name": "Portal das Finanças, CIRS pasal 16 (status residen)",
@@ -233,7 +233,7 @@
     },
     {
       "h3": "Cek kelayakan IRS Jovem",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan muda dalam pekerjaan pertamanya, karena bagian yang dibebaskan paling besar pada tahun-tahun awal. Pada gaji €30.000 di tahun ke-1, IRS-nya nol.</p><p><strong>Perlu diingat:</strong> ada syarat usia, kualifikasi, dan waktu mulai bekerja, dan bagian yang dibebaskan menurun tiap periode, jadi rencanakan gaji bersih yang lebih rendah pada tahun-tahun berikutnya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan muda dalam pekerjaan pertamanya, karena bagian yang dibebaskan paling besar pada tahun-tahun awal. Pada gaji €30.000 di tahun ke-1, IRS-nya nol.</p><p><strong>Catatan:</strong> ada syarat usia, kualifikasi, dan waktu mulai bekerja, dan bagian yang dibebaskan menurun tiap periode, jadi rencanakan gaji bersih yang lebih rendah pada tahun-tahun berikutnya.</p>",
       "cite": [
         {
           "name": "Portal das Finanças, CIRS pasal 12-B (IRS Jovem)",
@@ -243,7 +243,7 @@
     },
     {
       "h3": "Cek rezim IFICI kalau jenis pekerjaanmu memenuhi syarat",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang pindah ke Portugal untuk riset, pendidikan tinggi, atau pekerjaan teknologi dan inovasi yang memenuhi syarat, terutama pada gaji tinggi.</p><p><strong>Perlu diingat:</strong> syarat soal jenis pekerjaan, domisili sebelumnya, dan pemberi kerja ketat, dan rezimnya sementara. Jangan menganggapnya berlaku sebelum ada konfirmasi.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> orang yang pindah ke Portugal untuk riset, pendidikan tinggi, atau pekerjaan teknologi dan inovasi yang memenuhi syarat, terutama pada gaji tinggi.</p><p><strong>Catatan:</strong> syarat soal jenis pekerjaan, domisili sebelumnya, dan pemberi kerja ketat, dan rezimnya sementara. Jangan menganggapnya berlaku sebelum ada konfirmasi.</p>",
       "cite": [
         {
           "name": "Portal das Finanças, EBF pasal 58-A (IFICI)",
@@ -253,7 +253,7 @@
     },
     {
       "h3": "Klaim pengeluaran dengan faktur ber-NIF",
-      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang punya biaya kesehatan, pendidikan, atau sewa. Sebagian biaya itu dipotongkan dari pajak sampai batas yang bergantung pada penghasilan. Minta faktur yang mencantumkan NIF-mu supaya pengeluaran itu tercatat di sistem pajak.</p><p><strong>Perlu diingat:</strong> tiap kategori punya batasnya sendiri, dan batas itu mengecil seiring naiknya penghasilan. <em>Tool</em> ini baru menghitungnya kalau kamu mengisi jumlahnya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak yang punya biaya kesehatan, pendidikan, atau sewa. Sebagian biaya itu dipotongkan dari pajak sampai batas yang bergantung pada penghasilan. Minta faktur yang mencantumkan NIF-mu supaya pengeluaran itu tercatat di sistem pajak.</p><p><strong>Catatan:</strong> tiap kategori punya batasnya sendiri, dan batas itu mengecil seiring naiknya penghasilan. <em>Tool</em> ini baru menghitungnya kalau kamu mengisi jumlahnya.</p>",
       "cite": [
         {
           "name": "Portal das Finanças, CIRS pasal 78-B (pengeluaran umum keluarga)",

@@ -170,7 +170,7 @@
   "strategies": [
     {
       "h3": "Setoran dana pensiun perusahaan (<em>provident fund</em>)",
-      "html": "<p><strong>Cocok untuk:</strong> karyawan yang perusahaannya punya <em>provident fund</em> terdaftar. Iuranmu bisa dikurangkan dari penghasilan sampai batas yang ditetapkan Revenue Department, dan pemberi kerja biasanya menambah bagiannya. Fungsinya mirip DPLK yang dikelola perusahaan di Indonesia.</p><p><strong>Perlu diingat:</strong> uangnya ditujukan untuk pensiun, dan keluar lebih awal dapat memengaruhi perlakuan pajaknya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang perusahaannya punya <em>provident fund</em> terdaftar. Iuranmu bisa dikurangkan dari penghasilan sampai batas yang ditetapkan Revenue Department, dan pemberi kerja biasanya menambah bagiannya. Fungsinya mirip DPLK yang dikelola perusahaan di Indonesia.</p><p><strong>Catatan:</strong> uangnya ditujukan untuk pensiun, dan keluar lebih awal dapat memengaruhi perlakuan pajaknya.</p>",
       "cite": [
         {
           "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
@@ -180,7 +180,7 @@
     },
     {
       "h3": "Dana investasi pensiun dan dana lain yang disetujui",
-      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak di lapisan tarif tinggi yang ingin menabung untuk pensiun. Setoran ke dana pensiun yang disetujui bisa dikurangkan dalam batas tahunan yang berubah dari waktu ke waktu.</p><p><strong>Perlu diingat:</strong> dana harus ditahan selama jangka minimum, dan menjual lebih awal bisa berarti mengembalikan manfaat pajaknya. Periksa aturan terbaru sebelum berinvestasi.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak di lapisan tarif tinggi yang ingin menabung untuk pensiun. Setoran ke dana pensiun yang disetujui bisa dikurangkan dalam batas tahunan yang berubah dari waktu ke waktu.</p><p><strong>Catatan:</strong> dana harus ditahan selama jangka minimum, dan menjual lebih awal bisa berarti mengembalikan manfaat pajaknya. Periksa aturan terbaru sebelum berinvestasi.</p>",
       "cite": [
         {
           "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
@@ -190,7 +190,7 @@
     },
     {
       "h3": "Klaim tunjangan dan potongan untuk keluarga, asuransi dan KPR",
-      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menanggung pasangan, anak atau orang tua, atau membayar premi asuransi jiwa dan kesehatan atau bunga KPR. Semua ini bisa kamu klaim sebagai pengurang di laporan tahunan.</p><p><strong>Perlu diingat:</strong> tiap potongan punya batas dan butuh dokumen. <em>Tool</em> hanya menghitung tunjangan pribadi, pasangan dan anak.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang menanggung pasangan, anak atau orang tua, atau membayar premi asuransi jiwa dan kesehatan atau bunga KPR. Semua ini bisa kamu klaim sebagai pengurang di laporan tahunan.</p><p><strong>Catatan:</strong> tiap potongan punya batas dan butuh dokumen. <em>Tool</em> hanya menghitung tunjangan pribadi, pasangan dan anak.</p>",
       "cite": [
         {
           "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
@@ -200,7 +200,7 @@
     },
     {
       "h3": "Donasi ke lembaga yang disetujui",
-      "html": "<p><strong>Cocok untuk:</strong> orang yang memang rutin berdonasi. Donasi ke lembaga yang disetujui bisa dikurangkan dalam batas yang bergantung pada penghasilanmu.</p><p><strong>Perlu diingat:</strong> hanya penerima yang diakui yang dihitung, dan kamu butuh kuitansinya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> orang yang memang rutin berdonasi. Donasi ke lembaga yang disetujui bisa dikurangkan dalam batas yang bergantung pada penghasilanmu.</p><p><strong>Catatan:</strong> hanya penerima yang diakui yang dihitung, dan kamu butuh kuitansinya.</p>",
       "cite": [
         {
           "name": "Departemen Pendapatan Thailand, panduan PND 91 (tabel tarif, pengurang 50% atau 100.000 baht, tunjangan)",
