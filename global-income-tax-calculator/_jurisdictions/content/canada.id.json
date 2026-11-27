@@ -116,7 +116,7 @@
       },
       {
         "h3": "CPP, CPP2, dan EI",
-        "html": "<p>Iuran Canada Pension Plan (CPP) sebesar 5,95% dari gaji antara C$3.500 dan C$74.600 dipotong dari slip gajimu. Fungsinya mirip JHT dan JP di BPJS Ketenagakerjaan, yaitu tabungan hari tua wajib. Iuran lapisan kedua, CPP2, sebesar 4% dari gaji antara C$74.600 dan C$85.000 juga dipotong dari slip gajimu. Begitu pula iuran Employment Insurance (EI) sebesar 1,63% dari gaji sampai C$68.900, yang melindungi pekerja yang kehilangan pekerjaan.</p><p>Bagian CPP tambahan (<em>enhanced CPP</em>) boleh dikurangkan dari penghasilan, dan sisanya memberi kredit pajak, sehingga iuran ini menurunkan pajakmu sedikit. Pemberi kerja membayar CPP dalam jumlah yang sama di luar gajimu.</p>",
+        "html": "<p>Iuran Canada Pension Plan (CPP) sebesar 5,95% dari gaji antara C$3.500 dan C$74.600 dipotong dari slip gajimu. Fungsinya mirip JHT dan JP di BPJS Ketenagakerjaan, yaitu tabungan hari tua wajib. Iuran lapisan kedua, CPP2, sebesar 4% dari gaji antara C$74.600 dan C$85.000 juga ikut dipotong. Begitu pula iuran Employment Insurance (EI) sebesar 1,63% dari gaji sampai C$68.900, yang melindungi pekerja yang kehilangan pekerjaan.</p><p>Bagian CPP tambahan (<em>enhanced CPP</em>) boleh dikurangkan dari penghasilan, dan sisanya memberi kredit pajak, sehingga iuran ini menurunkan pajakmu sedikit. Pemberi kerja membayar CPP dalam jumlah yang sama di luar gajimu.</p>",
         "cite": [
           {
             "name": "CRA, tarif, batas maksimum, dan pengecualian iuran CPP",
@@ -221,7 +221,7 @@
     {
       "key": "ontario",
       "title": "Berapa gaji bersih di Ontario (Toronto) dengan gaji C$90.000 setahun?",
-      "intro": "<p>Misalkan seorang pekerja <em>resident</em> bergaji C$90.000 tinggal di Ontario, provinsi tempat Toronto berada. Dari slip gajinya terpotong CPP C$4.230, CPP2 C$416, dan EI C$1.123. Pajak federal setelah kredit dasar C$11.252, pajak Ontario C$5.032, dan masih ada <em>Ontario Health Premium</em> C$750. Gaji bersihnya sekitar C$67.197, atau 74,7% dari gaji kotor, dan total potongannya C$22.803.</p>",
+      "intro": "<p>Contohnya, seorang pekerja <em>resident</em> bergaji C$90.000 tinggal di Ontario, provinsi tempat Toronto berada. Dari slip gajinya terpotong CPP C$4.230, CPP2 C$416, dan EI C$1.123. Pajak federalnya C$11.252 setelah kredit dasar, pajak Ontario C$5.032, dan ada pula <em>Ontario Health Premium</em> C$750. Gaji bersihnya sekitar C$67.197, atau 74,7% dari gaji kotor, dan total potongannya C$22.803.</p>",
       "after": "<p>Tarif marginalnya 29,7%. Setiap dolar yang kamu setor ke RRSP boleh dikurangkan dari penghasilan, sehingga menghemat pajak pada tarif gabungan federal dan Ontario itu.</p>",
       "cite": [
         {
@@ -237,7 +237,7 @@
     {
       "key": "british-columbia",
       "title": "Berapa gaji bersih di British Columbia (Vancouver) dengan gaji C$90.000?",
-      "intro": "<p>Pekerja bergaji C$90.000 di British Columbia membayar iuran CPP, CPP2, dan EI sebesar C$5.769 dan pajak federal C$11.252. Pajak provinsinya C$4.786 dan tidak ada premi kesehatan. Gaji bersihnya sekitar C$68.193, atau 75,8% dari gaji kotor, C$996 lebih besar daripada pekerja bergaji sama di Ontario.</p>",
+      "intro": "<p>Pekerja bergaji C$90.000 di British Columbia membayar iuran CPP, CPP2, dan EI sebesar C$5.769 dan pajak federal C$11.252. Pajak provinsinya C$4.786 dan tidak ada premi kesehatan. Gaji bersihnya sekitar C$68.193, atau 75,8% dari gaji kotor, C$996 lebih besar daripada gaji bersih pekerja di Ontario dengan gaji yang sama.</p>",
       "after": "<p>Tarif marginalnya 28,2%. Tarif atas British Columbia lebih tinggi daripada Ontario, sehingga selisih itu menyempit pada penghasilan yang lebih besar.</p>",
       "cite": [
         {
@@ -254,7 +254,7 @@
       "key": "alberta",
       "title": "Gaji C$90.000 di Alberta (Calgary): berapa pajak dan gaji bersihnya?",
       "intro": "<p>Di Alberta, gaji C$90.000 terkena iuran CPP, CPP2, dan EI sebesar C$5.769, pajak federal C$11.252, dan pajak provinsi C$5.470. Gaji bersihnya sekitar C$67.509, atau 75,0% dari gaji kotor, dengan tarif marginal 30,5%.</p>",
-      "after": "<p>Alberta memakai satu tarif 8% sampai C$61.200, lebih tinggi daripada tarif terendah Ontario dan British Columbia, sehingga pada penghasilan ini pajaknya sedikit lebih besar daripada di BC.</p>",
+      "after": "<p>Alberta mengenakan tarif 8% untuk penghasilan sampai C$61.200, lebih tinggi daripada tarif terendah Ontario dan British Columbia, sehingga pada penghasilan ini pajaknya sedikit lebih besar daripada di BC.</p>",
       "cite": [
         {
           "name": "Pemerintah Alberta, pajak penghasilan pribadi",

@@ -168,7 +168,7 @@
     {
       "key": "employee-milan",
       "title": "Berapa gaji bersih karyawan di Milan dengan gaji bruto €45.000?",
-      "intro": "<p>Ambil contoh karyawan lajang di Milan yang bekerja sepanjang tahun tanpa rezim khusus. Iuran INPS sebesar €4.136 (9,19%) dipotong lebih dulu, sehingga penghasilan kena pajak tinggal sekitar €40.865. IRPEF atas jumlah itu sekitar €10.685, tetapi kredit pekerja €793 menurunkannya menjadi €9.892. Tambahan pajak Lombardia €611 dan pajak Milan €327 membuat total yang dibayar sekitar €14.966, sehingga gaji bersihnya sekitar €30.034, atau 66,7% dari gaji bruto.</p>",
+      "intro": "<p>Contohnya, karyawan lajang di Milan yang bekerja sepanjang tahun tanpa rezim khusus. Iuran INPS sebesar €4.136 (9,19%) dipotong lebih dulu, sehingga penghasilan kena pajak tinggal sekitar €40.865. IRPEF atas jumlah itu sekitar €10.685, tetapi kredit pekerja €793 menurunkannya menjadi €9.892. Tambahan pajak Lombardia €611 dan pajak Milan €327 membuat total yang dibayar sekitar €14.966, sehingga gaji bersihnya sekitar €30.034, atau 66,7% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 49,3%, jauh di atas tarif IRPEF 33% pada lapis ini, karena euro berikutnya sekaligus terkena lapis 33%, kedua pajak tambahan, dan iuran INPS, sementara kredit pekerja masih menyusut.</p>",
       "cite": [
         {
@@ -184,7 +184,7 @@
     {
       "key": "impatriate",
       "title": "Cara menghitung pajak rezim impatriat Italia (50%) pada gaji €80.000",
-      "intro": "<p>Hitungannya dimulai dari iuran INPS €7.590 untuk karyawan bergaji €80.000 yang memenuhi syarat pengecualian 50%, sehingga tersisa €72.410. Separuhnya, €36.205, dikecualikan, jadi IRPEF hanya dihitung dari €36.205. Setelah kredit pekerja dan kredit <em>cuneo</em> sebesar €1.672, IRPEF menjadi €7.476. Tambahan Lombardia €531 dan tambahan Milan €290 ikut dibayar, sehingga gaji bersihnya sekitar €64.114, atau 80,1% dari gaji bruto.</p>",
+      "intro": "<p>Contohnya, karyawan bergaji bruto €80.000 yang memenuhi syarat pengecualian 50% lebih dulu membayar iuran INPS €7.590, sehingga tersisa €72.410. Separuhnya, €36.205, dikecualikan, jadi IRPEF hanya dihitung dari €36.205. Setelah kredit pekerja dan kredit <em>cuneo</em> sebesar €1.672, IRPEF menjadi €7.476. Tambahan Lombardia €531 dan tambahan Milan €290 ikut dibayar, sehingga gaji bersihnya sekitar €64.114, atau 80,1% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 35,7%. Kredit pajak dihitung dari penghasilan yang sudah dikurangi, jadi anggap hasil ini perkiraan dan pastikan ke bagian <em>payroll</em>.</p>",
       "cite": [
         {
@@ -197,7 +197,7 @@
       "key": "impatriate-with-child",
       "title": "Berapa gaji bersih di Italia dengan gaji bruto €80.000 dan pengecualian impatriat 60%?",
       "intro": "<p>Pada gaji bruto €80.000 dengan pengecualian 60% (€43.446, yaitu 60% dari €72.410 setelah INPS), penghasilan kena pajak tinggal €28.964. Kredit pekerja dan kredit <em>cuneo</em> sebesar €2.891 menekan IRPEF menjadi €3.867. Setelah itu masih ada tambahan Lombardia sebesar €406 dan tambahan Milan sebesar €232. Gaji bersihnya sekitar €67.905, atau 84,9% dari gaji bruto.</p>",
-      "after": "<p>Gaji bersihnya sekitar €3.800 lebih tinggi daripada pengecualian 50% pada gaji yang sama, dan tarif marginalnya turun menjadi 26,1%. Tarif 60% bergantung pada syarat tambahan, misalnya punya anak di bawah umur, jadi pastikan kelayakanmu sebelum mengandalkannya.</p>",
+      "after": "<p>Gaji bersihnya sekitar €3.800 lebih tinggi daripada gaji bersih dengan pengecualian 50% pada gaji yang sama, dan tarif marginalnya turun menjadi 26,1%. Tarif 60% bergantung pada syarat tambahan, misalnya punya anak di bawah umur, jadi pastikan kelayakanmu sebelum mengandalkannya.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, pekerja impatriati: rezim baru (sejak 2024)",
@@ -210,7 +210,7 @@
   "strategies": [
     {
       "h3": "Cek kelayakan rezim impatriat sebelum pindah",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang memindahkan domisili pajaknya ke Italia, seperti pekerja bergaji €80.000 yang memakai pengecualian 50% atau 60%. Inilah penghematan pajak terbesar di halaman ini.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat soal domisili sebelumnya, lama tinggal, dan jenis pekerjaan, dan sebagian syarat lebih mudah dipenuhi kalau direncanakan sejak awal. <em>Tool</em> ini tidak mengujinya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja yang memindahkan domisili pajaknya ke Italia, seperti pekerja bergaji €80.000 yang memakai pengecualian 50% atau 60%. Inilah penghematan pajak terbesar di halaman ini.</p><p><strong>Catatan:</strong> ada syarat soal domisili sebelumnya, lama tinggal, dan jenis pekerjaan, dan sebagian syarat lebih mudah dipenuhi kalau direncanakan sejak awal. <em>Tool</em> ini tidak mengujinya.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, pekerja impatriati: rezim baru (sejak 2024)",
@@ -220,7 +220,7 @@
     },
     {
       "h3": "Iuran ke dana pensiun tambahan (previdenza complementare)",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan pada lapis 33% ke atas. Iuran ke dana pensiun tambahan, yang fungsinya mirip DPLK, bisa dikurangkan dari penghasilan sampai batas tahunan tertentu, jadi cek batas terbarunya di Agenzia delle Entrate.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya terkunci sampai pensiun, kecuali dalam aturan penarikan dini yang terbatas, dan manfaatnya dikenai pajak saat dibayarkan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, pertimbangkan bahwa uang itu sulit diambil.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan pada lapis 33% ke atas. Iuran ke dana pensiun tambahan, yang fungsinya mirip DPLK, bisa dikurangkan dari penghasilan sampai batas tahunan tertentu, jadi cek batas terbarunya di Agenzia delle Entrate.</p><p><strong>Catatan:</strong> uangnya terkunci sampai pensiun, kecuali dalam aturan penarikan dini yang terbatas, dan manfaatnya dikenai pajak saat dibayarkan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, pertimbangkan bahwa uang itu sulit diambil.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, dana pensiun tambahan: pengurangan hingga 5.164,57 euro",
@@ -230,11 +230,11 @@
     },
     {
       "h3": "Manfaatkan tunjangan kesejahteraan dari perusahaan (<em>welfare aziendale</em>)",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang pemberi kerjanya menawarkan tunjangan seperti voucher makan, kartu transportasi, atau iuran ke dana kesehatan. Banyak di antaranya bebas pajak penghasilan sampai batas tertentu.</p><p><strong>Yang perlu diwaspadai:</strong> batasnya berubah-ubah dan bergantung pada situasi keluarga, jadi tanyakan ke penggajian perusahaan.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menawarkan tunjangan seperti voucher makan, kartu transportasi, atau iuran ke dana kesehatan. Banyak di antaranya bebas pajak penghasilan sampai batas tertentu.</p><p><strong>Catatan:</strong> batasnya berubah-ubah dan bergantung pada situasi keluarga, jadi tanyakan ke penggajian perusahaan.</p>"
     },
     {
       "h3": "Klaim pengurang dan kredit lewat modello 730",
-      "html": "<p><strong>Siapa yang cocok:</strong> setiap karyawan yang berstatus penduduk pajak. Biaya berobat, bunga KPR untuk rumah utama, tanggungan, dan sebagian biaya pendidikan memberi kredit atau pengurang saat kamu melapor.</p><p><strong>Yang perlu diwaspadai:</strong> kamu perlu menyimpan kuitansinya, dan tiap pos punya batasnya sendiri. Hitungan <em>tool</em> ini tidak memasukkan pos-pos tersebut.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> setiap karyawan yang berstatus penduduk pajak. Biaya berobat, bunga KPR untuk rumah utama, tanggungan, dan sebagian biaya pendidikan memberi kredit atau pengurang saat kamu melapor.</p><p><strong>Catatan:</strong> kamu perlu menyimpan kuitansinya, dan tiap pos punya batasnya sendiri. Hitungan <em>tool</em> ini tidak memasukkan pos-pos tersebut.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, kapan dan cara menyampaikan modello 730 2026",
@@ -245,7 +245,7 @@
   ],
   "limits": [
     "<strong>Hanya Milan dan Lombardia.</strong> Pajak tambahan wilayah dan kota di sini khusus untuk Lombardia dan Milan, sedangkan wilayah dan kota lain memungut tarif yang berbeda.",
-    "<strong>Hanya penghasilan kerja.</strong> Hitungannya satu gaji penuh setahun. Penghasilan investasi, sewa properti, pekerjaan lepas, dan tahun yang tidak penuh tidak dihitung.",
+    "<strong>Hanya penghasilan kerja.</strong> Hitungan memakai satu gaji selama setahun penuh. Penghasilan investasi, sewa properti, pekerjaan lepas, dan tahun yang tidak penuh tidak dihitung.",
     "<strong>Tanpa bonus dan saham.</strong> Bonus, opsi saham, dan pembayaran tambahan tidak dihitung terpisah.",
     "<strong>Tanpa uji kelayakan rezim impatriat.</strong> Kamu sendiri yang memilih 50% atau 60%. <em>Tool</em> ini tidak memeriksa riwayat domisili atau situasi keluargamu.",
     "<strong>Lajang tanpa tanggungan.</strong> Kredit dan pengurang untuk keluarga tidak dihitung.",

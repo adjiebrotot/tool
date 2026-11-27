@@ -10,7 +10,7 @@
     "blocks": [
       {
         "h3": "Tarif pajak penghasilan",
-        "html": "<p>Tarif Jerman tidak memakai tarif tetap per lapisan seperti tarif Pasal 17 di Indonesia (5% sampai 35%). Di dalam setiap lapisan, tarifnya naik berangsur-angsur mengikuti rumus, jadi daftar ini menunjukkan tarif marginal di awal dan akhir tiap lapisan. Penghasilan kena pajak sampai €12.348 bebas pajak, fungsinya mirip PTKP, dan angka itu dihitung dari gaji kotor dikurangi potongan tetap biaya kerja €1.230 (mirip biaya jabatan, tetapi nilainya tetap, bukan persentase), potongan tetap €36 untuk biaya khusus, serta iuran pensiun, kesehatan dan perawatan jangka panjang.</p>",
+        "html": "<p>Tarif Jerman tidak memakai tarif tetap per lapisan seperti tarif Pasal 17 di Indonesia (5% sampai 35%). Di dalam setiap lapisan, tarifnya naik berangsur-angsur mengikuti rumus, jadi daftar ini menunjukkan tarif marginal di awal dan akhir tiap lapisan. Penghasilan kena pajak sampai €12.348 bebas pajak, dan fungsinya mirip PTKP. Penghasilan kena pajak itu sendiri dihitung dari gaji kotor dikurangi potongan tetap biaya kerja €1.230 (mirip biaya jabatan, tetapi nilainya tetap, bukan persentase), potongan tetap €36 untuk biaya khusus, serta iuran pensiun, kesehatan dan perawatan jangka panjang.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -190,7 +190,7 @@
     {
       "key": "single",
       "title": "Cara menghitung pajak gaji €65.000 di Jerman untuk lajang (kelas I)",
-      "intro": "<p>Contoh ini untuk pekerja lajang tanpa anak di <em>Steuerklasse</em> I yang bukan anggota gereja, misalnya tenaga terampil dengan Blue Card. Setelah dikurangi potongan biaya kerja €1.230, potongan €36 dan iuran sosial yang boleh dikurangkan, penghasilan kena pajaknya sekitar €50.600. Pajak penghasilannya €10.772, dan Soli tidak dikenakan karena masih di bawah ambang. Iuran sosial totalnya €14.138: pensiun €6.045, pengangguran €845, kesehatan €5.688 dan perawatan jangka panjang €1.560. Gaji bersihmu sekitar €40.091 setahun (€3.341 per bulan), atau 61,7% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, pekerja lajang tanpa anak di <em>Steuerklasse</em> I yang bukan anggota gereja, misalnya tenaga terampil dengan Blue Card. Setelah dikurangi potongan biaya kerja €1.230, potongan €36 dan iuran sosial yang boleh dikurangkan, penghasilan kena pajaknya sekitar €50.600. Pajak penghasilannya €10.772, dan Soli tidak dikenakan karena masih di bawah ambang. Iuran sosial totalnya €14.138: pensiun €6.045, pengangguran €845, kesehatan €5.688 dan perawatan jangka panjang €1.560. Gaji bersihmu sekitar €40.091 setahun (€3.341 per bulan), atau 61,7% dari gaji kotor.</p>",
       "after": "<p>Tarif marginalmu di sini 50,1%, karena setiap euro tambahan kena tarif pajak penghasilan dan masih dikenai iuran sosial penuh. Bagian iuran yang dibayar pemberi kerja ada di luar angka ini.</p>",
       "cite": [
         {
@@ -206,7 +206,7 @@
     {
       "key": "nurse",
       "title": "Berapa gaji bersih perawat di Jerman dengan gaji kotor €42.000?",
-      "intro": "<p>Contoh ini untuk perawat yang direkrut ke Jerman dengan gaji kotor €42.000, di kelas I tanpa anak dan tanpa pajak gereja. Penghasilan kena pajaknya sekitar €32.300 dan pajak penghasilannya €4.866. Iuran sosial berjumlah €9.135, sekitar 21,75% dari gaji kotor: pensiun €3.906, pengangguran €546, kesehatan €3.675 dan perawatan jangka panjang €1.008. Gaji bersihmu sekitar €27.999 setahun (€2.333 per bulan), atau 66,7% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, perawat yang direkrut ke Jerman dengan gaji kotor €42.000, di kelas I tanpa anak dan tanpa pajak gereja. Penghasilan kena pajaknya sekitar €32.300 dan pajak penghasilannya €4.866. Iuran sosial berjumlah €9.135, sekitar 21,75% dari gaji kotor: pensiun €3.906, pengangguran €546, kesehatan €3.675 dan perawatan jangka panjang €1.008. Gaji bersihmu sekitar €27.999 setahun (€2.333 per bulan), atau 66,7% dari gaji kotor.</p>",
       "after": "<p>Gaji ini hanya ilustrasi, bukan upah resmi, karena gaji perawat berbeda menurut pemberi kerja, perjanjian kerja bersama dan pengalamanmu. Kalau kamu punya anak, tarif iuran perawatan jangka panjang turun dari 2,4% menjadi 1,8%.</p>",
       "cite": [
         {
@@ -222,7 +222,7 @@
     {
       "key": "married-sole-earner",
       "title": "Berapa pajak karyawan menikah di Jerman dengan gaji €65.000 dan pasangan tidak bekerja (kelas III)?",
-      "intro": "<p>Contoh ini untuk karyawan menikah di kelas III yang pasangannya tidak punya penghasilan, dan keluarga itu punya seorang anak, sehingga tarif iuran perawatan jangka panjangnya 1,8%. Penghasilan kena pajaknya sekitar €51.000. Tarif <em>splitting</em> memajaki setengahnya (sekitar €25.500) lalu menggandakan hasilnya, sehingga pajak penghasilan turun menjadi €5.972, dibanding €10.772 untuk lajang dengan gaji yang sama. Iuran sosialnya €13.748, dan gaji bersihmu sekitar €45.281 (€3.773 per bulan), atau 69,7% dari gaji kotor. Selisihnya sekitar €5.190 dari gaji bersih lajang (€40.091), sebagian karena iuran perawatan jangka panjang yang lebih rendah.</p>",
+      "intro": "<p>Contohnya, karyawan menikah di kelas III yang pasangannya tidak punya penghasilan, dan keluarga itu punya seorang anak, sehingga tarif iuran perawatan jangka panjangnya 1,8%. Penghasilan kena pajaknya sekitar €51.000. Tarif <em>splitting</em> memajaki setengahnya (sekitar €25.500) lalu menggandakan hasilnya, sehingga pajak penghasilan turun menjadi €5.972, dibanding €10.772 untuk lajang dengan gaji yang sama. Iuran sosialnya €13.748, dan gaji bersihmu sekitar €45.281 (€3.773 per bulan), atau 69,7% dari gaji kotor. Selisihnya sekitar €5.190 dari gaji bersih lajang (€40.091), sebagian karena iuran perawatan jangka panjang yang lebih rendah.</p>",
       "after": "<p>Karena potongan bulanan di kelas III dan V hanya perkiraan, pasangan di kelas itu wajib menyelesaikan pajaknya lewat <em>Steuererklärung</em>. Kalau kedua pasangan bekerja, hasil gabungannya bergantung pada kedua gaji dan kombinasi kelas pajak. <em>Tool</em> ini tidak menghitung pasangan yang bekerja, tunjangan anak, maupun tunjangan keluarga.</p>",
       "cite": [
         {
@@ -238,7 +238,7 @@
     {
       "key": "church-tax",
       "title": "Berapa pajak gereja (Kirchensteuer) di Jerman untuk gaji €65.000?",
-      "intro": "<p>Contoh ini untuk lajang bergaji kotor €65.000 yang menjadi anggota gereja di negara bagian dengan tarif 9%. Pajak gereja sebesar 9% dari pajak penghasilan €10.772, yaitu €969, sedangkan komponen lainnya sama seperti tanpa pajak gereja. Gaji bersihmu jadi sekitar €39.121 (€3.260 per bulan), atau 60,2% dari gaji kotor, sekitar €970 lebih kecil daripada tanpa keanggotaan gereja.</p>",
+      "intro": "<p>Contohnya, lajang bergaji kotor €65.000 yang menjadi anggota gereja di negara bagian dengan tarif 9%. Pajak gereja sebesar 9% dari pajak penghasilan €10.772, yaitu €969, sedangkan komponen lainnya sama seperti tanpa pajak gereja. Gaji bersihmu jadi sekitar €39.121 (€3.260 per bulan), atau 60,2% dari gaji kotor, sekitar €970 lebih kecil daripada gaji bersih tanpa pajak gereja.</p>",
       "after": "<p>Pada praktiknya, pajak gereja bisa dikurangkan sebagai pengeluaran khusus saat kamu mengisi <em>Steuererklärung</em>. <em>Tool</em> ini tidak menerapkannya, jadi beban sebenarnya sedikit lebih rendah. Di Bavaria dan Baden-Württemberg tarifnya 8%.</p>",
       "cite": [
         {
@@ -256,7 +256,7 @@
   "strategies": [
     {
       "h3": "Iuran pensiun perusahaan (<em>Entgeltumwandlung</em>)",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> karyawan yang pemberi kerjanya menawarkan pensiun perusahaan (<em>betriebliche Altersvorsorge</em>), mirip dana pensiun dari kantor (DPPK atau DPLK). Iurannya dipotong dari gaji kotor, sehingga bebas <em>Lohnsteuer</em> dan, sampai batas tertentu, bebas iuran sosial, jadi gaji bersihmu turun lebih kecil daripada nilai iurannya. Banyak pemberi kerja juga menambahkan subsidi.</p><p><strong>Catatan:</strong> uang ini disiapkan untuk pensiun dan dipajaki saat dicairkan. Tanyakan ke pemberi kerjamu syarat dan batas persisnya, termasuk apa yang terjadi kalau kamu pindah negara.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang pemberi kerjanya menawarkan pensiun perusahaan (<em>betriebliche Altersvorsorge</em>), mirip dana pensiun dari kantor (DPPK atau DPLK). Iurannya dipotong dari gaji kotor, sehingga bebas <em>Lohnsteuer</em> dan, sampai batas tertentu, bebas iuran sosial, jadi gaji bersihmu turun lebih kecil daripada nilai iurannya. Banyak pemberi kerja juga menambahkan subsidi.</p><p><strong>Catatan:</strong> uang ini disiapkan untuk pensiun dan dipajaki saat dicairkan. Tanyakan ke pemberi kerjamu syarat dan batas persisnya, termasuk apa yang terjadi kalau kamu pindah negara.</p>",
       "cite": [
         {
           "name": "BetrAVG § 1a, hak atas Entgeltumwandlung",
@@ -270,7 +270,7 @@
     },
     {
       "h3": "Klaim biaya kerja di atas potongan tetap €1.230",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang biaya kerjanya lebih besar, misalnya karena perjalanan ke kantor yang jauh, kerja dari rumah, peralatan, pelatihan, atau biaya pindah demi pekerjaan. Kantor pajak menerapkan potongan tetap €1.230 secara otomatis, dan kamu baru untung kalau mengisi <em>Steuererklärung</em> dengan bukti biaya yang lebih besar.</p><p><strong>Catatan:</strong> kamu perlu kuitansi, dan biayanya harus berkaitan dengan pekerjaan. <em>Tool</em> ini hanya memakai potongan tetap.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang biaya kerjanya lebih besar, misalnya karena perjalanan ke kantor yang jauh, kerja dari rumah, peralatan, pelatihan, atau biaya pindah demi pekerjaan. Kantor pajak menerapkan potongan tetap €1.230 secara otomatis, dan kamu baru untung kalau mengisi <em>Steuererklärung</em> dengan bukti biaya yang lebih besar.</p><p><strong>Catatan:</strong> kamu perlu kuitansi, dan biayanya harus berkaitan dengan pekerjaan. <em>Tool</em> ini hanya memakai potongan tetap.</p>",
       "cite": [
         {
           "name": "EStG § 9a, potongan tetap karyawan €1.230",
@@ -284,7 +284,7 @@
     },
     {
       "h3": "Pilih kombinasi kelas pajak untuk suami-istri dengan cermat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> pasangan menikah yang gajinya berbeda. Kombinasi kelas III dan V memberi pencari nafkah utama lebih banyak uang tunai tiap bulan, sedangkan kelas IV untuk keduanya lebih dekat ke pajak yang benar-benar terutang. Apa pun pilihannya, <em>Steuererklärung</em> menerapkan hasil gabungan yang sama, dan pasangan kelas III dan V wajib mengisinya.</p><p><strong>Catatan:</strong> pasangan di kelas V dipotong besar tiap bulan, dan pasangan yang memilih III dan V bisa kurang bayar di akhir tahun. Siapkan dana untuk itu dan periksa angkamu sendiri.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> pasangan menikah yang gajinya berbeda. Kombinasi kelas III dan V memberi pencari nafkah utama lebih banyak uang tunai tiap bulan, sedangkan kelas IV untuk keduanya lebih dekat ke pajak yang benar-benar terutang. Apa pun pilihannya, <em>Steuererklärung</em> menerapkan hasil gabungan yang sama, dan pasangan kelas III dan V wajib mengisinya.</p><p><strong>Catatan:</strong> pasangan di kelas V dipotong besar tiap bulan, dan pasangan yang memilih III dan V bisa kurang bayar di akhir tahun. Siapkan dana untuk itu dan periksa angkamu sendiri.</p>",
       "cite": [
         {
           "name": "EStG § 38b, kelas pajak (Lohnsteuerklassen)",
@@ -298,11 +298,11 @@
     },
     {
       "h3": "Rapikan status pajakmu di Indonesia sebelum berangkat",
-      "html": "<p><strong>Strategi ini cocok untuk</strong> siapa pun yang akan bekerja di Jerman lebih dari satu tahun, termasuk perawat, tenaga terampil dan peserta <em>Ausbildung</em> (pelatihan kerja bergaji). Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Jerman, tetapi <em>tool</em> ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang akan bekerja di Jerman lebih dari satu tahun, termasuk perawat, tenaga terampil dan peserta <em>Ausbildung</em> (pelatihan kerja bergaji). Secara umum, orang pribadi yang berada di luar Indonesia lebih dari 183 hari dalam 12 bulan dan tidak lagi tinggal di Indonesia dapat menjadi subjek pajak luar negeri. Supaya penghasilan yang sama tidak dipajaki dua kali, tanyakan ke KPP atau DJP soal langkahnya, termasuk menyelesaikan SPT Tahunan terakhirmu.</p><p><strong>Catatan:</strong> Indonesia punya persetujuan penghindaran pajak berganda (P3B) dengan Jerman, tetapi <em>tool</em> ini tidak menghitungnya. Halaman ini bukan nasihat hukum.</p>"
     }
   ],
   "limits": [
-    "<strong>Hanya penghasilan dari gaji.</strong> Dalam hitungan <em>tool</em> ini, ada satu gaji untuk satu tahun penuh. Penghasilan investasi, keuntungan jual aset, usaha, sewa properti, dan tahun yang tidak penuh tidak masuk.",
+    "<strong>Hanya penghasilan dari gaji.</strong> Hitungan memakai satu gaji selama setahun penuh. Penghasilan investasi, keuntungan jual aset, usaha, sewa properti, dan tahun yang tidak penuh tidak masuk.",
     "<strong>Tanpa bonus atau saham.</strong> Bonus, gaji ke-13, opsi saham dan tunjangan dalam bentuk barang tidak dihitung terpisah.",
     "<strong>Hanya kelas I dan III.</strong> Kelas II, IV, V dan VI mengubah potongan bulanan dan tidak dihitung. Kelas III mengasumsikan pasangan tanpa penghasilan sendiri.",
     "<strong>Anak disederhanakan.</strong> Pilihan jumlah anak hanya menurunkan tarif iuran perawatan jangka panjang. Tunjangan anak (<em>Kindergeld</em>) dan keringanan pajak untuk anak tidak dihitung.",

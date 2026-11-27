@@ -178,7 +178,7 @@
     {
       "key": "resident-madrid",
       "title": "Berapa gaji bersih dan IRPF di Madrid dengan gaji bruto €45.000?",
-      "intro": "<p>Bayangkan karyawan lajang di Madrid dengan gaji bruto €45.000. Jaminan sosial €2.925 (6,5%) dipotong lebih dulu, sehingga dasar pajaknya €40.075 setelah dikurangi jaminan sosial dan biaya lain €2.000. Bagian negara dari IRPF sebesar €4.737 dan bagian Madrid sebesar €4.144, sehingga IRPF totalnya €8.881. Gaji bersihnya sekitar €33.194, atau 73,8% dari gaji bruto.</p>",
+      "intro": "<p>Contohnya, karyawan lajang di Madrid dengan gaji bruto €45.000. Jaminan sosial €2.925 (6,5%) dipotong lebih dulu, sehingga dasar pajaknya €40.075 setelah dikurangi jaminan sosial dan biaya lain €2.000. Bagian negara dari IRPF sebesar €4.737 dan bagian Madrid sebesar €4.144, sehingga IRPF totalnya €8.881. Gaji bersihnya sekitar €33.194, atau 73,8% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 40,1%. Menjumlahkan 18,5% (negara), 17,4% (Madrid), dan 6,5% (jaminan sosial) memang menghasilkan 42,4%, tetapi jaminan sosial sekaligus mengurangi dasar pajak, sehingga totalnya lebih rendah.</p>",
       "cite": [
         {
@@ -206,7 +206,7 @@
     {
       "key": "resident-two-children",
       "title": "Berapa pajak penghasilan di Madrid untuk karyawan dengan dua anak dan gaji bruto €45.000?",
-      "intro": "<p>Ambil contoh karyawan di Madrid bergaji €45.000 dengan dua anak. Jaminan sosialnya €2.925, dan minimum keluarga naik karena dua anak. Pajak atas minimum itu dihitung dengan tarif lapis terbawah lalu dipotong dari pajak yang terutang, sehingga IRPF turun menjadi €7.932 (€4.253 bagian negara dan €3.679 bagian Madrid), sekitar €950 lebih rendah. Gaji bersihnya sekitar €34.143, atau 75,9% dari gaji bruto.</p>",
+      "intro": "<p>Contohnya, karyawan di Madrid bergaji €45.000 dengan dua anak. Jaminan sosialnya €2.925, dan minimum keluarga naik karena dua anak. Pajak atas minimum itu dihitung dengan tarif lapis terbawah lalu dipotong dari pajak yang terutang, sehingga IRPF turun menjadi €7.932 (€4.253 bagian negara dan €3.679 bagian Madrid), sekitar €950 lebih rendah. Gaji bersihnya sekitar €34.143, atau 75,9% dari gaji bruto.</p>",
       "after": "<p>Tarif marginalnya 40,1%, sama seperti karyawan lajang, karena anak mengurangi pajak sebesar jumlah tetap dan tidak mengubah lapis yang kamu masuki. Di Indonesia, padanannya adalah tambahan PTKP Rp4,5 juta untuk setiap tanggungan, sampai tiga orang.</p>",
       "cite": [
         {
@@ -224,7 +224,7 @@
   "strategies": [
     {
       "h3": "Cek kelayakan Beckham law sebelum atau sesaat setelah pindah",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama pada gaji tinggi, ketika tarif tunggal 24% lebih murah daripada skala biasa.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> pekerja yang pindah ke Spanyol dan sebelumnya bukan penduduk pajak di sana, terutama pada gaji tinggi, ketika tarif tunggal 24% lebih murah daripada skala biasa.</p><p><strong>Catatan:</strong> ada syarat dan batas waktu pengajuan, rezimnya sementara, dan pada penghasilan rendah rezim ini bisa lebih mahal daripada skala biasa. <em>Tool</em> ini tidak menguji kelayakan.</p>",
       "cite": [
         {
           "name": "Agencia Tributaria, Manual IRPF 2025: rezim pajak khusus pekerja yang dipindahkan (skala 24% dan 47%)",
@@ -234,7 +234,7 @@
     },
     {
       "h3": "Iuran ke rencana pensiun (<em>plan de pensiones</em>)",
-      "html": "<p><strong>Siapa yang cocok:</strong> penduduk pajak pada lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> penduduk pajak pada lapis tarif atas. Iuran ke rencana pensiun, yang fungsinya mirip DPLK, bisa mengurangi dasar pajak sampai batas tahunan tertentu, jadi cek batas terbaru di situs AEAT.</p><p><strong>Catatan:</strong> uangnya umumnya terkunci sampai pensiun, dengan sedikit pengecualian penarikan dini, dan pencairannya dipajaki sebagai penghasilan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>",
       "cite": [
         {
           "name": "Agencia Tributaria, Manual IRPF 2025: batas dan kelebihan iuran dana pensiun",
@@ -244,11 +244,11 @@
     },
     {
       "h3": "Manfaatkan remunerasi fleksibel dari perusahaan",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang perusahaannya menawarkan skema remunerasi fleksibel, misalnya untuk asuransi kesehatan, voucher makan, atau penitipan anak. Sebagian tunjangan yang dibayar lewat skema ini bebas pajak sampai batas tertentu.</p><p><strong>Yang perlu diwaspadai:</strong> pengecualian dan batasnya berubah, dan sebagian tunjangan mengurangi gaji tunai yang kamu terima. Tanyakan aturan terbarunya ke bagian penggajian (<em>payroll</em>).</p>"
+      "html": "<p><strong>Cocok untuk:</strong> karyawan yang perusahaannya menawarkan skema remunerasi fleksibel, misalnya untuk asuransi kesehatan, voucher makan, atau penitipan anak. Sebagian tunjangan yang dibayar lewat skema ini bebas pajak sampai batas tertentu.</p><p><strong>Catatan:</strong> pengecualian dan batasnya berubah, dan sebagian tunjangan mengurangi gaji tunai yang kamu terima. Tanyakan aturan terbarunya ke bagian penggajian (<em>payroll</em>).</p>"
     },
     {
       "h3": "Laporkan situasi keluargamu dengan benar",
-      "html": "<p><strong>Siapa yang cocok:</strong> siapa pun yang punya anak atau tanggungan. Minimum pribadi dan keluarga menurunkan IRPF dengan jumlah tetap (untuk dua anak, selisihnya sekitar €950 pada gaji €45.000), dan saat melapor kamu bisa mengklaim pengurang daerah.</p><p><strong>Yang perlu diwaspadai:</strong> aturan tentang siapa yang boleh mengklaim anak ketika orang tua melapor terpisah bergantung pada keadaanmu, jadi periksa rinciannya.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> siapa pun yang punya anak atau tanggungan. Minimum pribadi dan keluarga menurunkan IRPF dengan jumlah tetap (untuk dua anak, selisihnya sekitar €950 pada gaji €45.000), dan saat melapor kamu bisa mengklaim pengurang daerah.</p><p><strong>Catatan:</strong> aturan tentang siapa yang boleh mengklaim anak ketika orang tua melapor terpisah bergantung pada keadaanmu, jadi periksa rinciannya.</p>",
       "cite": [
         {
           "name": "Agencia Tributaria, Manual IRPF 2025: ringkasan minimum pribadi dan keluarga (negara)",
@@ -259,7 +259,7 @@
   ],
   "limits": [
     "<strong>Hanya Madrid.</strong> Bagian daerah memakai skala Madrid, sedangkan setiap daerah lain menetapkan skalanya sendiri.",
-    "<strong>Hanya penghasilan kerja.</strong> Hitungannya satu gaji penuh setahun. Penghasilan tabungan, sewa properti, pekerjaan mandiri, dan tahun yang tidak penuh tidak dihitung.",
+    "<strong>Hanya penghasilan kerja.</strong> Hitungan memakai satu gaji selama setahun penuh. Penghasilan tabungan, sewa properti, pekerjaan mandiri, dan tahun yang tidak penuh tidak dihitung.",
     "<strong>Tanpa bonus dan saham.</strong> Keduanya tidak dihitung terpisah.",
     "<strong>Tanpa uji kelayakan <em>Beckham law</em>.</strong> Kamu sendiri yang memilih rezimnya. <em>Tool</em> ini tidak memeriksa riwayat domisili atau isi kontrak kerjamu.",
     "<strong>Situasi keluarga disederhanakan.</strong> Hanya jumlah anak yang mengubah minimum. Orang tua yang ditanggung, disabilitas, dan pelaporan bersama tidak dihitung.",
