@@ -5,9 +5,9 @@
   "h1": "Cara menghitung pajak penghasilan dan gaji bersih di Italia (2026, Milan)",
   "description": "Hitung IRPEF Italia 2026 untuk karyawan di Milan: iuran INPS, pajak tambahan Lombardia dan Milan, rezim impatriat 50% atau 60%, plus tiga contoh.",
   "place": "Milan, Lombardia",
-  "lede": "<p>Italia memajaki penduduk pajaknya atas penghasilan dari seluruh dunia lewat IRPEF (<em>Imposta sul Reddito delle Persone Fisiche</em>, setara PPh orang pribadi) dengan tiga lapis tarif, yaitu 23%, 33%, dan 43%, ditambah pajak tambahan dari wilayah dan kota. Halaman ini menghitung karyawan yang tinggal di Milan, wilayah Lombardia. Dari gaji bruto €45.000, sekitar €14.966 habis untuk iuran INPS, IRPEF, dan pajak tambahan, sehingga gaji bersih (<em>take-home pay</em>) tinggal sekitar €30.034 atau 66,7% dari gaji. Pekerja yang pindah dari luar negeri bisa memakai rezim impatriat yang membebaskan 50% atau 60% penghasilan dari pajak, dan gaji bersih dari gaji bruto €80.000 naik menjadi sekitar €64.114 (pengecualian 50%) atau €67.905 (60%).</p>",
+  "lede": "<p>Italia memajaki penduduk pajaknya atas penghasilan dari seluruh dunia lewat IRPEF (<em>Imposta sul Reddito delle Persone Fisiche</em>, setara PPh orang pribadi) dengan tiga tarif bertingkat, yaitu 23%, 33%, dan 43%, ditambah pajak tambahan dari wilayah dan kota. Halaman ini menghitung karyawan yang tinggal di Milan, wilayah Lombardia. Dari gaji bruto €45.000, sekitar €14.966 habis untuk iuran INPS, IRPEF, dan pajak tambahan, sehingga gaji bersih (<em>take-home pay</em>) tinggal sekitar €30.034 atau 66,7% dari gaji. Kalau kamu pindah dari luar negeri, rezim impatriat membebaskan 50% atau 60% penghasilan dari pajak, sehingga dari gaji bruto €80.000 gaji bersihmu menjadi sekitar €64.114 (pengecualian 50%) atau €67.905 (60%).</p>",
   "law": {
-    "intro": "<p>Angka berikut adalah tarif 2026 sebagaimana dihitung <em>tool</em> ini untuk karyawan di Milan yang bekerja penuh setahun. Pajak Italia terdiri atas IRPEF nasional dan dua lapis pajak daerah, sehingga totalnya bergantung pada tempat tinggalmu: angka wilayah dan kota di sini hanya berlaku untuk Lombardia dan Milan. Kamu dihitung sebagai penduduk pajak kalau terdaftar di catatan sipil (<em>anagrafe</em>), atau kalau tempat tinggal utama atau pusat kepentinganmu ada di Italia untuk sebagian besar tahun, dan penduduk pajak dipajaki atas penghasilan dari seluruh dunia.</p>",
+    "intro": "<p>Angka di bawah ini adalah tarif 2026 yang dipakai <em>tool</em> ini untuk karyawan di Milan yang bekerja setahun penuh. Pajak Italia terdiri atas IRPEF nasional dan dua pajak daerah, sehingga totalnya bergantung pada tempat tinggalmu: angka wilayah dan kota di sini hanya berlaku untuk Lombardia dan Milan. Kamu menjadi penduduk pajak Italia kalau terdaftar di catatan sipil (<em>anagrafe</em>), atau kalau tempat tinggal utama atau pusat kepentinganmu ada di Italia untuk sebagian besar tahun. Penduduk pajak dipajaki atas penghasilan dari seluruh dunia.</p>",
     "introCite": [
       {
         "name": "Agenzia delle Entrate, aturan umum orang pribadi (residensi pajak)",
@@ -17,7 +17,7 @@
     "blocks": [
       {
         "h3": "Tarif IRPEF nasional dan kredit pekerja",
-        "html": "<p>IRPEF dikenakan pada penghasilan kena pajak, yaitu gaji setelah dipotong iuran jaminan sosial karyawan. Di Indonesia, tarif Pasal 17 berjalan dari 5% sampai 35%. Italia tidak memakai pengurang penghasilan semacam PTKP. Gantinya adalah kredit yang memotong pajak langsung, yaitu kredit pekerja (<em>detrazione per lavoro dipendente</em>), yang terbesar pada penghasilan rendah dan habis sama sekali di €50.000. Untuk penghasilan kena pajak sekitar €20.000 sampai €40.000 ada tambahan kredit hingga €1.000 (kredit <em>cuneo fiscale</em>, pemangkas selisih antara beban pemberi kerja dan gaji yang diterima), dan hitungan <em>tool</em> ini memasukkannya.</p>",
+        "html": "<p>IRPEF dikenakan pada penghasilan kena pajak, yaitu gaji setelah dipotong iuran jaminan sosial karyawan. Di Indonesia, tarif Pasal 17 berjalan dari 5% sampai 35%. Italia tidak memakai pengurang penghasilan semacam PTKP. Sebagai gantinya ada kredit yang langsung memotong pajak, yaitu kredit pekerja (<em>detrazione per lavoro dipendente</em>), yang paling besar untuk penghasilan rendah dan habis sepenuhnya di €50.000. Untuk penghasilan kena pajak sekitar €20.000 sampai €40.000 ada tambahan kredit hingga €1.000 (kredit <em>cuneo fiscale</em>, pemangkas selisih antara beban pemberi kerja dan gaji yang diterima karyawan), dan kredit itu sudah masuk hitungan <em>tool</em> ini.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -51,7 +51,7 @@
       },
       {
         "h3": "Pajak tambahan Lombardia dan Milan",
-        "html": "<p>Wilayah dan kota boleh menambah pajaknya sendiri di atas IRPEF nasional (<em>addizionale regionale</em> dan <em>addizionale comunale</em>), jadi dua orang dengan gaji sama bisa menerima gaji bersih berbeda kalau tinggal di kota berbeda. Indonesia tidak punya padanannya, karena PPh 21 hanya satu lapis nasional. Tambahan wilayah Lombardia bertingkat menurut penghasilan, sedangkan tambahan kota Milan dalam hitungan <em>tool</em> ini sebesar 0,8% dari penghasilan kena pajak begitu penghasilan itu melewati €23.000, dan nol di bawahnya.</p>",
+        "html": "<p>Wilayah dan kota boleh menambah pajaknya sendiri di atas IRPEF nasional (<em>addizionale regionale</em> dan <em>addizionale comunale</em>), jadi dua orang dengan gaji sama bisa menerima gaji bersih berbeda kalau tinggal di kota berbeda. Di Indonesia tidak ada pajak semacam ini, karena PPh 21 sepenuhnya pajak pusat. Tambahan wilayah Lombardia bertingkat menurut penghasilan. Tambahan kota Milan dalam hitungan <em>tool</em> ini 0,8% dari penghasilan kena pajak, tetapi hanya kalau penghasilan itu di atas €23.000 (di bawahnya nol).</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak",
@@ -89,7 +89,7 @@
       },
       {
         "h3": "Iuran INPS",
-        "html": "<p>Porsi karyawan untuk INPS (<em>Istituto Nazionale della Previdenza Sociale</em>, lembaga jaminan sosial Italia) adalah 9,19% dari gaji bruto, ditambah 1% untuk bagian gaji di atas €56.224, dengan batas atas €122.295. Iuran ini dipotong sebelum IRPEF dihitung, sehingga ikut menurunkan dasar pajak. Di Indonesia, porsi karyawan untuk JHT dan JP BPJS Ketenagakerjaan berjumlah 3% dari gaji. Pemberi kerja membayar bagian yang lebih besar di luar gajimu, dan bagian itu tidak masuk ke gaji bersih.</p>",
+        "html": "<p>Porsi karyawan untuk INPS (<em>Istituto Nazionale della Previdenza Sociale</em>, lembaga jaminan sosial Italia) adalah 9,19% dari gaji bruto, ditambah 1% untuk bagian gaji di atas €56.224, sampai batas atas €122.295. Iuran ini dipotong sebelum IRPEF dihitung, sehingga ikut menurunkan dasar pajak. Di Indonesia, porsi karyawan untuk JHT dan JP BPJS Ketenagakerjaan sebesar 3% dari gaji. Pemberi kerja membayar bagiannya sendiri, yang lebih besar, di luar gajimu, dan bagian itu tidak masuk hitungan gaji bersih.</p>",
         "cite": [
           {
             "name": "INPS, karyawan 2026: batas iuran dan tarif tambahan 1%",
@@ -103,7 +103,7 @@
       },
       {
         "h3": "Rezim impatriat (regime impatriati)",
-        "html": "<p>Pekerja yang memindahkan domisili pajaknya ke Italia bisa memakai rezim yang membebaskan sebagian penghasilan kerja dari IRPEF. <em>Tool</em> ini menyediakan pembebasan 50%, atau 60% untuk kasus dengan syarat tambahan, yaitu pekerja dengan anak di bawah umur. Bagian yang dibebaskan dibatasi €600.000. Rezim ini pada umumnya ditujukan bagi orang yang dalam beberapa tahun sebelumnya bukan penduduk pajak Italia dan berkomitmen tinggal serta bekerja di sana selama jangka minimum tertentu. <em>Tool</em> ini tidak menguji kelayakan, jadi pastikan syaratnya ke Agenzia delle Entrate atau bagian penggajian (<em>payroll</em>) di perusahaan.</p>",
+        "html": "<p>Pekerja yang memindahkan domisili pajaknya ke Italia bisa memakai rezim yang membebaskan sebagian penghasilan kerja dari IRPEF. Di <em>tool</em> ini tersedia pembebasan 50%, atau 60% untuk pekerja yang punya anak di bawah umur. Bagian yang dibebaskan maksimal €600.000. Rezim ini pada umumnya ditujukan bagi orang yang dalam beberapa tahun sebelumnya bukan penduduk pajak Italia dan bersedia tinggal serta bekerja di sana minimal selama jangka waktu tertentu. <em>Tool</em> ini tidak menguji kelayakan, jadi tanyakan syaratnya ke Agenzia delle Entrate atau bagian <em>payroll</em> di perusahaanmu.</p>",
         "cite": [
           {
             "name": "Agenzia delle Entrate, pekerja impatriati: rezim baru (sejak 2024)",
@@ -113,7 +113,7 @@
       },
       {
         "h3": "Pemotongan di slip gaji dan modello 730",
-        "html": "<p>Pemberi kerja memotong IRPEF dan pajak tambahan dari setiap slip gaji sebagai <em>sostituto d'imposta</em>, peran yang sama dengan pemotong PPh 21 di Indonesia, dan setelah tahun berakhir menerbitkan <em>Certificazione Unica</em> (CU) yang fungsinya seperti bukti potong 1721-A1. Laporan tahunan yang disederhanakan, <em>modello 730</em>, adalah padanan SPT Tahunan bagi karyawan: di sini kamu menambahkan pengurang dan kredit seperti biaya berobat atau tanggungan, lalu selisihnya ditagih atau dikembalikan lewat gaji. Untuk semua urusan ini kamu butuh <em>codice fiscale</em>, nomor identitas pajak yang berfungsi seperti NPWP. Hitungan <em>tool</em> ini adalah pajak setahun penuh, jadi cocok dengan tagihan akhir tahun, bukan dengan tiap slip gaji.</p>",
+        "html": "<p>Pemberi kerja memotong IRPEF dan pajak tambahan dari setiap slip gaji (<em>sostituto d'imposta</em>), sama seperti pemotong PPh 21 di Indonesia. Setelah tahun berakhir, pemberi kerja menerbitkan <em>Certificazione Unica</em> (CU) yang fungsinya seperti bukti potong 1721-A1. Laporan tahunan yang disederhanakan, <em>modello 730</em>, adalah padanan SPT Tahunan bagi karyawan. Di sini kamu menambahkan pengurang dan kredit seperti biaya berobat atau tanggungan, lalu selisihnya ditagih atau dikembalikan lewat gaji. Untuk semua urusan ini kamu butuh <em>codice fiscale</em>, nomor identitas pajak yang berfungsi seperti NPWP. Hitungan <em>tool</em> ini adalah pajak setahun penuh, jadi hasilnya sesuai tagihan akhir tahun dan bisa berbeda dari potongan di tiap slip gaji.</p>",
         "cite": [
           {
             "name": "Agenzia delle Entrate, kapan dan cara menyampaikan modello 730 2026",
@@ -184,8 +184,8 @@
     {
       "key": "impatriate",
       "title": "Cara menghitung pajak rezim impatriat Italia (50%) pada gaji €80.000",
-      "intro": "<p>Karyawan bergaji €80.000 yang memenuhi syarat pengecualian 50% mulai dari iuran INPS €7.590, sehingga tersisa €72.410. Separuhnya, €36.205, dikecualikan, jadi IRPEF hanya dihitung dari €36.205. Setelah kredit pekerja dan kredit <em>cuneo</em> sebesar €1.672, IRPEF menjadi €7.476. Tambahan Lombardia €531 dan tambahan Milan €290 melengkapi tagihannya, dan gaji bersihnya sekitar €64.114, atau 80,1% dari gaji bruto.</p>",
-      "after": "<p>Tarif marginalnya 35,7%. Kredit pajak dihitung dari penghasilan yang sudah dikurangi, jadi anggap hasil ini perkiraan dan konfirmasikan ke penggajian.</p>",
+      "intro": "<p>Hitungannya dimulai dari iuran INPS €7.590 untuk karyawan bergaji €80.000 yang memenuhi syarat pengecualian 50%, sehingga tersisa €72.410. Separuhnya, €36.205, dikecualikan, jadi IRPEF hanya dihitung dari €36.205. Setelah kredit pekerja dan kredit <em>cuneo</em> sebesar €1.672, IRPEF menjadi €7.476. Tambahan Lombardia €531 dan tambahan Milan €290 ikut dibayar, sehingga gaji bersihnya sekitar €64.114, atau 80,1% dari gaji bruto.</p>",
+      "after": "<p>Tarif marginalnya 35,7%. Kredit pajak dihitung dari penghasilan yang sudah dikurangi, jadi anggap hasil ini perkiraan dan pastikan ke bagian <em>payroll</em>.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, pekerja impatriati: rezim baru (sejak 2024)",
@@ -195,8 +195,8 @@
     },
     {
       "key": "impatriate-with-child",
-      "title": "Gaji bersih di Italia pada gaji €80.000 dengan pengecualian impatriat 60%",
-      "intro": "<p>Pada gaji bruto €80.000 dengan pengecualian 60% (€43.446, yaitu 60% dari €72.410 setelah INPS), penghasilan kena pajak tinggal €28.964. Kredit pekerja dan kredit <em>cuneo</em> sebesar €2.891 menekan IRPEF menjadi €3.867. Tambahan Lombardia sebesar €406 dan tambahan Milan sebesar €232 melengkapinya. Gaji bersihnya sekitar €67.905, atau 84,9% dari gaji bruto.</p>",
+      "title": "Berapa gaji bersih di Italia dengan gaji bruto €80.000 dan pengecualian impatriat 60%?",
+      "intro": "<p>Pada gaji bruto €80.000 dengan pengecualian 60% (€43.446, yaitu 60% dari €72.410 setelah INPS), penghasilan kena pajak tinggal €28.964. Kredit pekerja dan kredit <em>cuneo</em> sebesar €2.891 menekan IRPEF menjadi €3.867. Setelah itu masih ada tambahan Lombardia sebesar €406 dan tambahan Milan sebesar €232. Gaji bersihnya sekitar €67.905, atau 84,9% dari gaji bruto.</p>",
       "after": "<p>Gaji bersihnya sekitar €3.800 lebih tinggi daripada pengecualian 50% pada gaji yang sama, dan tarif marginalnya turun menjadi 26,1%. Tarif 60% bergantung pada syarat tambahan, misalnya punya anak di bawah umur, jadi pastikan kelayakanmu sebelum mengandalkannya.</p>",
       "cite": [
         {
@@ -210,7 +210,7 @@
   "strategies": [
     {
       "h3": "Cek kelayakan rezim impatriat sebelum pindah",
-      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang memindahkan domisili pajaknya ke Italia, seperti pekerja bergaji €80.000 yang memakai pengecualian 50% atau 60%. Inilah penghemat pajak terbesar di halaman ini.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat soal domisili sebelumnya, lama tinggal, dan jenis pekerjaan, dan sebagian syarat lebih mudah dipenuhi kalau direncanakan sejak awal. <em>Tool</em> ini tidak mengujinya.</p>",
+      "html": "<p><strong>Siapa yang cocok:</strong> pekerja yang memindahkan domisili pajaknya ke Italia, seperti pekerja bergaji €80.000 yang memakai pengecualian 50% atau 60%. Inilah penghematan pajak terbesar di halaman ini.</p><p><strong>Yang perlu diwaspadai:</strong> ada syarat soal domisili sebelumnya, lama tinggal, dan jenis pekerjaan, dan sebagian syarat lebih mudah dipenuhi kalau direncanakan sejak awal. <em>Tool</em> ini tidak mengujinya.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, pekerja impatriati: rezim baru (sejak 2024)",
@@ -220,7 +220,7 @@
     },
     {
       "h3": "Iuran ke dana pensiun tambahan (previdenza complementare)",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan pada lapis 33% ke atas. Iuran ke dana pensiun tambahan, yang fungsinya mirip DPLK, bisa dikurangkan dari penghasilan sampai batas tahunan tertentu, jadi cek batas terbarunya di Agenzia delle Entrate.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya terkunci sampai pensiun, kecuali dalam aturan penarikan dini yang terbatas, dan manfaatnya dikenai pajak saat dibayarkan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, uang yang sulit diambil ini perlu kamu pertimbangkan.</p>",
+      "html": "<p><strong>Siapa yang cocok:</strong> karyawan pada lapis 33% ke atas. Iuran ke dana pensiun tambahan, yang fungsinya mirip DPLK, bisa dikurangkan dari penghasilan sampai batas tahunan tertentu, jadi cek batas terbarunya di Agenzia delle Entrate.</p><p><strong>Yang perlu diwaspadai:</strong> uangnya terkunci sampai pensiun, kecuali dalam aturan penarikan dini yang terbatas, dan manfaatnya dikenai pajak saat dibayarkan. Kalau kamu berencana pulang ke Indonesia dalam beberapa tahun, pertimbangkan bahwa uang itu sulit diambil.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, dana pensiun tambahan: pengurangan hingga 5.164,57 euro",
@@ -229,8 +229,8 @@
       ]
     },
     {
-      "h3": "Manfaatkan tunjangan kesejahteraan dari perusahaan (welfare aziendale)",
-      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang pemberi kerjanya menawarkan tunjangan seperti voucher makan, pas transportasi, atau iuran ke dana kesehatan. Banyak di antaranya bebas pajak penghasilan sampai batas tertentu.</p><p><strong>Yang perlu diwaspadai:</strong> batasnya berubah-ubah dan bergantung pada situasi keluarga, jadi tanyakan ke penggajian perusahaan.</p>"
+      "h3": "Manfaatkan tunjangan kesejahteraan dari perusahaan (<em>welfare aziendale</em>)",
+      "html": "<p><strong>Siapa yang cocok:</strong> karyawan yang pemberi kerjanya menawarkan tunjangan seperti voucher makan, kartu transportasi, atau iuran ke dana kesehatan. Banyak di antaranya bebas pajak penghasilan sampai batas tertentu.</p><p><strong>Yang perlu diwaspadai:</strong> batasnya berubah-ubah dan bergantung pada situasi keluarga, jadi tanyakan ke penggajian perusahaan.</p>"
     },
     {
       "h3": "Klaim pengurang dan kredit lewat modello 730",
@@ -303,7 +303,7 @@
     },
     {
       "q": "Apa itu modello 730, dan apakah sama dengan SPT Tahunan?",
-      "a": "<p><em>Modello 730</em> adalah laporan pajak tahunan yang disederhanakan untuk karyawan, jadi memang padanan SPT Tahunan. Bedanya, pemberi kerja di Italia sudah memotong pajak tiap bulan sebagai <em>sostituto d'imposta</em> dan menerbitkan <em>Certificazione Unica</em> sebagai bukti potong, sehingga kamu mungkin tidak berutang apa-apa lagi. Dengan mengajukan 730, kamu bisa mengklaim biaya berobat, tanggungan, dan pos serupa, lalu selisihnya dikembalikan atau ditagih lewat penggajian. Siapa yang wajib melapor bergantung pada situasimu, jadi tanyakan ke kantor pajak atau pusat bantuan pajak setempat. Hitungan <em>tool</em> ini adalah pajak setahun penuh, sehingga pengembalian dari 730 akan mengubah hasilnya.</p>",
+      "a": "<p><em>Modello 730</em> adalah laporan pajak tahunan yang disederhanakan untuk karyawan, jadi memang padanan SPT Tahunan. Bedanya, pemberi kerja di Italia sudah memotong pajak tiap bulan sebagai <em>sostituto d'imposta</em> dan menerbitkan <em>Certificazione Unica</em> sebagai bukti potong, sehingga kamu mungkin tidak berutang apa-apa lagi. Lewat modello 730, kamu bisa mengklaim biaya berobat, tanggungan, dan pos serupa, lalu selisihnya dikembalikan atau ditagih lewat penggajian. Siapa yang wajib melapor bergantung pada situasimu, jadi tanyakan ke kantor pajak atau pusat bantuan pajak setempat. Hitungan <em>tool</em> ini adalah pajak setahun penuh, sehingga pengembalian dari 730 akan mengubah hasilnya.</p>",
       "cite": [
         {
           "name": "Agenzia delle Entrate, tarif dan perhitungan Irpef",
@@ -348,10 +348,10 @@
     "Employment credit and cuneo credit, inside IRPEF": "Kredit pekerja dan kredit <em>cuneo</em>, sudah termasuk di IRPEF",
     "Lombardy regional surtax": "Pajak tambahan wilayah Lombardia",
     "Milan municipal surtax (0.8% above 23,000)": "Pajak tambahan kota Milan (0,8% di atas €23.000)",
-    "Cuneo fiscale bonus, tax-free cash": "Bonus cuneo fiscale, tunai bebas pajak",
+    "Cuneo fiscale bonus, tax-free cash": "Bonus <em>cuneo fiscale</em>, tunai bebas pajak",
     "Impatriate regime, excluded share (50%)": "Rezim impatriat, bagian yang dibebaskan (50%)",
     "Impatriate regime, excluded share (60%)": "Rezim impatriat, bagian yang dibebaskan (60%)",
     "Milan, Lombardy": "Milan, Lombardia",
-    "Tax credits are worked out on the reduced income. Confirm with your payroll provider.": "Kredit pajak dihitung dari penghasilan yang sudah dikurangi. Pastikan angkanya dengan penyedia layanan penggajianmu."
+    "Tax credits are worked out on the reduced income. Confirm with your payroll provider.": "Kredit pajak dihitung dari penghasilan yang sudah dikurangi. Pastikan angkanya ke bagian <em>payroll</em> perusahaanmu."
   }
 }
