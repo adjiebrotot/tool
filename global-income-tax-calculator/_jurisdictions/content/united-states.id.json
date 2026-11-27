@@ -110,7 +110,7 @@
       },
       {
         "h3": "FICA: Social Security dan Medicare",
-        "html": "<p>Karyawan membayar Social Security 6,2% dari gaji sampai batas US$184.500, ditambah Medicare 1,45% dari seluruh gaji. Gaji di atas US$200.000 untuk wajib pajak lajang (US$250.000 untuk pasangan) dikenai Medicare tambahan 0,9%. FICA berlaku di semua negara bagian, termasuk yang tidak memungut pajak penghasilan, dan tidak berkurang oleh <em>standard deduction</em>. Pemberi kerja membayar bagiannya sendiri di luar gajimu.</p><p>Social Security paling dekat dengan JHT dan JP di BPJS Ketenagakerjaan. Medicare tidak sama dengan BPJS Kesehatan: programnya terutama menanggung lansia, sehingga pekerja usia produktif biasanya memakai asuransi kesehatan dari pemberi kerja, yang preminya tidak termasuk dalam hitungan ini.</p>",
+        "html": "<p>Karyawan membayar Social Security 6,2% dari gaji sampai batas US$184.500, ditambah Medicare 1,45% dari seluruh gaji. Gaji di atas US$200.000 untuk wajib pajak lajang (US$250.000 untuk pasangan) dikenai Medicare tambahan 0,9%. FICA berlaku di semua negara bagian, termasuk yang tidak memungut pajak penghasilan, dan tidak dikurangi <em>standard deduction</em>. Pemberi kerja membayar bagiannya sendiri di luar gajimu.</p><p>Social Security paling dekat dengan JHT dan JP di BPJS Ketenagakerjaan. Medicare tidak sama dengan BPJS Kesehatan: programnya terutama menanggung lansia, sehingga pekerja usia produktif biasanya memakai asuransi kesehatan dari pemberi kerja, yang preminya tidak termasuk dalam hitungan ini.</p>",
         "cite": [
           {
             "name": "Social Security Administration, batas gaji (Contribution and Benefit Base)",
@@ -189,7 +189,7 @@
       "html": "<p>Buka satu negara bagian untuk melihat aturannya tahun 2026 seperti yang dipakai <em>tool</em> ini: potongan sebelum tarif negara bagian berlaku, lapisan tarifnya, iuran tambahan dari negara bagian, dan gaji bersih dari gaji US$100.000. Pajak penghasilan <em>county</em> atau kota, di tempat yang memungutnya, dihitung terpisah.</p>",
       "items": {
         "CA": "<p>Selain lapisan tarif itu, ada pajak layanan kesehatan perilaku (<em>behavioral health services tax</em>) 1% atas penghasilan kena pajak di atas US$1.000.000, sehingga tarif tertingginya menjadi 13,3%. Asuransi disabilitas negara bagian (SDI) memotong 1,3% dari seluruh gaji, tanpa batas atas.</p>",
-        "NY": "<p>Begitu <em>adjusted gross income</em> melewati US$107.650, New York menarik kembali keringanan dari lapisan tarif bawahnya (<em>supplemental tax</em>). Penarikan itu bertahap sepanjang US$50.000 berikutnya, sampai seluruh penghasilan kena tarif tertinggi yang dicapainya. Penduduk kota New York juga membayar pajak penduduk kota di tabel kedua, dan <em>tool</em> ini menambahkannya kalau kamu memilih Live in New York City. Karyawan juga membayar Paid Family Leave 0,432% dari gaji, maksimal US$411,91 setahun, dan asuransi disabilitas (DBL) 0,5%, paling banyak US$0,60 seminggu.</p>",
+        "NY": "<p>Begitu <em>adjusted gross income</em> melewati US$107.650, New York menarik kembali keringanan dari lapisan tarif bawahnya (<em>supplemental tax</em>). Penarikan itu bertahap sepanjang US$50.000 berikutnya, sampai seluruh penghasilan dikenai tarif lapisan tertinggi yang kamu capai. Penduduk kota New York juga membayar pajak penduduk kota di tabel kedua, dan <em>tool</em> ini menambahkannya kalau kamu memilih Live in New York City. Karyawan juga membayar Paid Family Leave 0,432% dari gaji, maksimal US$411,91 setahun, dan asuransi disabilitas (DBL) 0,5%, paling banyak US$0,60 seminggu.</p>",
         "IL": "<p>Pembebasan pribadinya US$2.925 untuk setiap orang dalam SPT, dan pembebasan ini hilang sepenuhnya begitu <em>adjusted gross income</em> melewati US$250.000 (US$500.000 untuk SPT gabungan).</p>"
       }
     },
@@ -388,7 +388,7 @@
       ]
     },
     {
-      "h3": "Klaim status yang tepat, dan P3B atau pembebasan FICA jika berhak",
+      "h3": "Pastikan statusmu tepat, lalu klaim P3B atau pembebasan FICA kalau berhak",
       "html": "<p><strong>Cocok untuk:</strong> pemegang visa F-1, J-1, dan visa lain, serta orang yang ditugaskan sementara.</p><p>Status <em>nonresident</em>, P3B antara Indonesia dan Amerika Serikat, serta pembebasan FICA bagi status F, J, M, dan Q bisa menurunkan pajak.</p><p><strong>Catatan:</strong> masing-masing punya syarat dan formulirnya, misalnya Form 8233 untuk klaim P3B atas gaji. Salah menentukan status bisa berujung tagihan pajak susulan.</p>",
       "cite": [
         {
@@ -421,9 +421,9 @@
     "<strong>Tanpa bonus dan saham.</strong> Bonus, saham perusahaan, dan tunjangan tidak dihitung terpisah.",
     "<strong>Hanya <em>standard deduction</em>.</strong> <em>Resident</em> memakai potongan standar. Potongan terperinci, <em>child tax credit</em>, dan kredit pajak lain tidak dihitung. Hanya pajak negara bagian milik <em>nonresident alien</em> yang dikurangkan secara terperinci.",
     "<strong>P3B tidak dihitung.</strong> Pembebasan dalam P3B antara Indonesia dan Amerika Serikat tidak diterapkan. Pajak Indonesia atas penghasilan luar negeri dan kewajiban lapor di Indonesia juga tidak dihitung.",
-    "<strong>39 negara bagian dan DC.</strong> Sebelas negara bagian belum dimuat dan hanya menampilkan pesan. Beberapa negara bagian memakai angka tahun sebelumnya, dan hasilnya mencatat hal itu.",
+    "<strong>39 negara bagian dan DC.</strong> Sebelas negara bagian belum dimuat dan hanya menampilkan pesan. Beberapa negara bagian memakai angka tahun sebelumnya, dan hasilnya mencantumkan catatan tentang itu.",
     "<strong>Pajak lokal hanya jika kamu mengisinya.</strong> Pajak kota atau county di negara bagian seperti Maryland, Ohio, Pennsylvania, dan Indiana baru masuk kalau kamu memasukkan tarifnya. Program iuran di negara bagian lain tidak dihitung.",
-    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini tidak menguji apakah kamu <em>resident</em> atau <em>nonresident alien</em>."
+    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini tidak memeriksa apakah kamu <em>resident</em> atau <em>nonresident alien</em>."
   ],
   "faq": [
     {
