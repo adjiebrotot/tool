@@ -229,14 +229,14 @@ const LANG = {
     bracketTip: 'Ubah setiap batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Batas yang dinaikkan melewati lapisan berikutnya akan menghapus lapisan itu.',
     infoBoxHtml: '<strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP {K}. Pajak atas gaji istri dari satu pemberi kerja dipotong dengan PTKP istri sendiri, {TK}, dan pajak itu final, jadi gaji istri dikenai lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT ({KI}):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP {KI} (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Seluruh penghasilan dikenai satu rangkaian lapisan tarif, dan biasanya ada kurang bayar saat melapor SPT.<br><br>Nama kedua cara ini mengikuti UU PPh Pasal 8, sehingga mungkin terasa terbalik: Pisah Harta menjumlahkan kedua penghasilan menjadi satu hitungan, sedangkan Gabung Harta mengenakan pajak atas gaji istri secara terpisah.',
     quickStartLabel: 'Quick Start',
-    quickStartTip: 'Tiap tombol mengisi tab Rumah tangga dengan satu contoh, lalu mengembalikan PTKP dan lapisan tarif ke ketentuan yang berlaku. Saat halaman dibuka, yang terisi adalah contoh Penghasilan setara.',
+    quickStartTip: 'Tiap tombol mengisi tab Rumah tangga dengan satu contoh, lalu mengatur ulang PTKP dan lapisan tarif ke aturan yang berlaku. Saat halaman dibuka, yang terisi adalah contoh Penghasilan setara.',
     qsEven: 'Penghasilan setara, tanpa anak',
     qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta menghemat Rp 18,6 juta per tahun.',
     qsSingle: 'Keluarga satu penghasilan',
     qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dan mereka punya dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.',
     qsDouble: 'Keluarga dua penghasilan',
     qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Di Gabung Harta, gaji istri dikenai lapisan tarifnya sendiri, sehingga Gabung Harta menghemat Rp 33,5 juta.',
-    kpiSavingLabel: 'Penghematan pajak (opsi lebih murah)',
+    kpiSavingLabel: 'Penghematan pajak (cara yang lebih murah)',
     kpiPisahLabel: 'Gabung Harta: total pajak',
     kpiPisahTip: 'SPT suami dengan PTKP K, ditambah pajak final atas gaji istri, yang dipotong pemberi kerja dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.',
     kpiGabungLabel: 'Pisah Harta (PH/MT): total pajak',
@@ -1205,7 +1205,7 @@ function renderAssumptions(state){
       : ptkpEdited ? L('PTKP amounts', 'nilai PTKP') : L('tax brackets', 'lapisan tarif');
     items.push(L(
       `<strong>Your own ${what} apply,</strong> not the statutory ones.`,
-      `<strong>Hitungan ini memakai ${what} yang kamu ubah sendiri,</strong> bukan angka sesuai ketentuan.`));
+      `<strong>Hitungan ini memakai ${what} yang kamu ubah sendiri,</strong> bukan angka sesuai aturan yang berlaku.`));
   }
 
   items.push(L(

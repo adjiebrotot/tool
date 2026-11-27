@@ -1374,17 +1374,17 @@ function renderAssumptions(state){
         `<strong>${who.id} ${m(yr1)} per tahun,</strong> ${g ? 'naik ' + pc(g) + ' per tahun' : 'tetap, tanpa inflasi'}.`);
     }
     const notes = [];
-    if(on.some(it => it.basis === 'pct')) notes.push(L('the % items follow ' + pctOf.en, 'item % mengikuti ' + pctOf.id));
+    if(on.some(it => it.basis === 'pct')) notes.push(L('the % items follow ' + pctOf.en, 'pos persentase mengikuti ' + pctOf.id));
     const cash = on.filter(it => it.basis !== 'pct');
     if(cash.length){
       const rates = [...new Set(cash.map(it => Number(it.inflation)||0))];
       notes.push(rates.length > 1 ? L('the money items rise at their own rates', 'setiap pos biaya naik sesuai persentasenya masing-masing')
-        : rates[0] ? L('the money items rise ' + pc(rates[0]) + ' a year', 'item jumlah uang naik ' + pc(rates[0]) + ' per tahun')
+        : rates[0] ? L('the money items rise ' + pc(rates[0]) + ' a year', 'pos berjumlah tetap naik ' + pc(rates[0]) + ' per tahun')
         : L('the money items stay flat, with no inflation', 'setiap pos biaya tetap, tanpa inflasi'));
     }
     return L(
       `<strong>${who.en} ${m(yr1)} in year 1</strong> across ${on.length} items: ${notes.join('; ')}.`,
-      `<strong>${who.id} ${m(yr1)} di tahun 1</strong> dari ${on.length} item: ${notes.join('; ')}.`);
+      `<strong>${who.id} ${m(yr1)} di tahun 1</strong> dari ${on.length} pos: ${notes.join('; ')}.`);
   };
   const ownLine = costLine(
     S.ownCostsMode==='detailed' && Array.isArray(S.ownOngoingCosts) && S.ownOngoingCosts.length ? S.ownOngoingCosts

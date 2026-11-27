@@ -27,7 +27,7 @@
             "url": "https://shanghai.chinatax.gov.cn/zcfw/zcfgk/grsds/202402/P020240202362406243753.pdf"
           }
         ],
-        "html": "<p>Tarif tahunan yang sama berlaku untuk semua orang, dengan lapisan 3% sampai 45%, rentangnya lebih lebar daripada tarif Pasal 17 di Indonesia (5% sampai 35%). Penghasilan kena pajak adalah gaji dikurangi potongan dasar CN¥60.000 (CN¥5.000 per bulan, fungsinya mirip PTKP), iuran jaminan sosial dan dana perumahan, serta pengurang tambahan khusus (untuk karyawan lokal) atau tunjangan bebas pajak (untuk ekspat).</p>",
+        "html": "<p>Tarif tahunan yang sama berlaku untuk semua orang, berlapis dari 3% sampai 45%, jadi rentangnya lebih lebar daripada tarif Pasal 17 di Indonesia (5% sampai 35%). Penghasilan kena pajak adalah gaji dikurangi potongan dasar CN¥60.000 (CN¥5.000 per bulan, fungsinya mirip PTKP), iuran jaminan sosial dan dana perumahan, serta pengurang tambahan khusus (untuk karyawan lokal) atau tunjangan bebas pajak (untuk ekspat).</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak setahun",
@@ -100,7 +100,7 @@
             "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
           }
         ],
-        "html": "<p>Karyawan lokal boleh mengklaim pengurang tambahan khusus, misalnya untuk pendidikan anak, pendidikan lanjutan, bunga KPR atau sewa rumah, dan perawatan orang tua. Karyawan asing bisa memilih tunjangan bebas pajak untuk hal seperti perumahan, kursus bahasa dan sekolah anak, selama pemberi kerja membayarnya sesuai aturan. Menurut pemberitahuan yang dirujuk <em>tool</em> ini (pemberitahuan bersama Kementerian Keuangan atau MOF dan State Taxation Administration atau STA tahun 2023 No. 29), ekspat harus memilih salah satu, tidak boleh keduanya, dan pilihan itu terbuka sampai akhir 2027. <em>Tool</em> mengikuti aturan itu: tunjangan ekspat berupa angka yang kamu masukkan, dan pengurang khusus tidak dihitung untuk ekspat. Indonesia tidak punya padanan langsung untuk tunjangan seperti ini.</p>",
+        "html": "<p>Karyawan lokal boleh mengklaim pengurang tambahan khusus, misalnya untuk pendidikan anak, pendidikan lanjutan, bunga KPR atau sewa rumah, dan perawatan orang tua. Karyawan asing bisa memilih tunjangan bebas pajak untuk hal seperti perumahan, kursus bahasa dan sekolah anak, selama pemberi kerja membayarnya sesuai aturan. Menurut pemberitahuan yang menjadi acuan <em>tool</em> ini (pemberitahuan bersama Kementerian Keuangan atau MOF dan State Taxation Administration atau STA tahun 2023 No. 29), ekspat harus memilih salah satu, tidak boleh keduanya, dan pilihan itu terbuka sampai akhir 2027. <em>Tool</em> mengikuti aturan itu: tunjangan ekspat berupa angka yang kamu masukkan, dan pengurang khusus tidak dihitung untuk ekspat. Indonesia tidak punya padanan langsung untuk tunjangan seperti ini.</p>",
         "table": null
       },
       {
@@ -179,7 +179,7 @@
         }
       ],
       "title": "Gaji CN¥360.000 di Shanghai: berapa pajak dan gaji bersihnya?",
-      "intro": "<p>Contoh ini untuk karyawan lokal di Shanghai dengan gaji CN¥360.000 setahun. Iuran jaminan sosial 10,5% sebesar CN¥37.800 dan dana perumahan 7% sebesar CN¥25.200 dikurangkan lebih dulu. Penghasilan kena pajaknya adalah gaji dikurangi potongan dasar CN¥60.000 dan kedua iuran itu, yaitu CN¥237.000. Angka tersebut masuk lapisan 20%, sehingga pajaknya menjadi CN¥30.480. Gaji bersihmu menjadi sekitar CN¥266.520, atau 74,0% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, karyawan lokal di Shanghai bergaji CN¥360.000 setahun. Iuran jaminan sosial 10,5% sebesar CN¥37.800 dan dana perumahan 7% sebesar CN¥25.200 dikurangkan lebih dulu. Penghasilan kena pajaknya adalah gaji dikurangi potongan dasar CN¥60.000 dan kedua iuran itu, yaitu CN¥237.000. Angka tersebut masuk lapisan 20%, sehingga pajaknya menjadi CN¥30.480. Gaji bersihmu menjadi sekitar CN¥266.520, atau 74,0% dari gaji kotor.</p>",
       "after": "<p>Iuran memang mengurangi penghasilan kena pajak, tetapi tiap yuan tambahan gaji ikut menambah iuran. Karena itu tarif marginalmu mencapai 34,0%, lebih tinggi daripada tarif pajaknya yang 20%. Hitungan ini tanpa pengurang tambahan khusus, jadi yang punya anak sekolah atau menyewa rumah membayar lebih sedikit.</p>"
     },
     {
@@ -195,8 +195,8 @@
         }
       ],
       "title": "Berapa gaji bersih ekspat di Shanghai dengan tunjangan bebas pajak CN¥120.000?",
-      "intro": "<p>Contoh ini untuk pekerja asing bergaji CN¥600.000 setahun yang menerima tunjangan bebas pajak CN¥120.000, misalnya untuk sewa rumah atau sekolah anak. Iuran jaminan sosialnya sudah mentok di batas atas, yaitu CN¥47.271 dan dana perumahannya mencapai CN¥31.514. Setelah potongan dasar CN¥60.000, kedua iuran itu dan tunjangan, penghasilan kena pajaknya tinggal CN¥341.215. Angka ini masuk lapisan 25%, sehingga pajaknya menjadi CN¥53.384. Gaji bersihnya menjadi sekitar CN¥467.832, atau 78,0% dari gaji kotor.</p>",
-      "after": "<p>Tanpa tunjangan, penghasilan kena pajak akan CN¥120.000 lebih tinggi dan pajaknya sekitar CN¥32.000 lebih besar, karena bagian itu dikenai tarif 25% dan 30%. Tunjangan hanya dihitung kalau didokumentasikan dengan benar dan dibayar sesuai aturan, dan pilihannya berakhir setelah 2027 menurut pemberitahuan yang berlaku. Tarif marginal pada gaji ini 25,0%, karena iuran sudah berhenti naik di batas atas.</p>"
+      "intro": "<p>Contohnya, pekerja asing bergaji CN¥600.000 setahun menerima tunjangan bebas pajak CN¥120.000, misalnya untuk sewa rumah atau sekolah anak. Iuran jaminan sosialnya sudah mentok di batas atas sebesar CN¥47.271, dan dana perumahannya CN¥31.514. Setelah potongan dasar CN¥60.000, kedua iuran itu dan tunjangan, penghasilan kena pajaknya tinggal CN¥341.215. Angka ini masuk lapisan 25%, sehingga pajaknya menjadi CN¥53.384. Gaji bersihnya menjadi sekitar CN¥467.832, atau 78,0% dari gaji kotor.</p>",
+      "after": "<p>Tanpa tunjangan, penghasilan kena pajak akan naik CN¥120.000 dan pajaknya sekitar CN¥32.000 lebih besar, karena bagian itu dikenai tarif 25% dan 30%. Tunjangan hanya dihitung kalau didokumentasikan dengan benar dan dibayar sesuai aturan, dan pilihannya berakhir setelah 2027 menurut pemberitahuan yang berlaku. Tarif marginal pada gaji ini 25,0%, karena iuran sudah berhenti naik di batas atas.</p>"
     }
   ],
   "strategyIntro": "<p>Beberapa langkah berikut legal dan lazim dipakai, dan mana yang cocok bergantung pada statusmu dan pemberi kerjamu.</p>",
@@ -306,7 +306,7 @@
           "url": "https://www.gov.cn/zhengce/zhengceku/202308/content_6900701.htm#:~:text=%E4%B8%8D%E5%BE%97%E5%90%8C%E6%97%B6%E4%BA%AB%E5%8F%97"
         }
       ],
-      "a": "<p>Karyawan asing dulu boleh mengambil tunjangan bebas pajak untuk perumahan, kursus bahasa, pendidikan anak dan hal serupa. Kebijakan peralihan memberi ekspat pilihan antara tunjangan itu dan pengurang tambahan khusus. Pemberitahuan yang dipakai <em>tool</em> ini berlaku sampai akhir 2027, dan apa yang terjadi sesudahnya belum diatur dalam hitungan. <em>Tool</em> memperlakukan tunjangan sebagai angka yang kamu masukkan, jadi kamu bisa membandingkan hasilnya dengan dan tanpa tunjangan.</p>"
+      "a": "<p>Karyawan asing dulu boleh mengambil tunjangan bebas pajak untuk perumahan, kursus bahasa, pendidikan anak dan hal serupa. Kebijakan peralihan memberi ekspat pilihan antara tunjangan itu dan pengurang tambahan khusus. Pemberitahuan yang dipakai <em>tool</em> ini berlaku sampai akhir 2027, dan <em>tool</em> belum menghitung aturan sesudahnya. <em>Tool</em> memperlakukan tunjangan sebagai angka yang kamu masukkan, jadi kamu bisa membandingkan hasilnya dengan dan tanpa tunjangan.</p>"
     },
     {
       "q": "Apakah orang asing wajib ikut jaminan sosial Tiongkok?",
@@ -316,7 +316,7 @@
           "url": "https://taxsummaries.pwc.com/peoples-republic-of-china/individual/other-taxes#:~:text=applicable%20to%20local%20Chinese%20in%20Shanghai"
         }
       ],
-      "a": "<p>Karyawan asing yang bekerja di Tiongkok dengan kontrak umumnya wajib ikut jaminan sosial, dengan porsi pemberi kerja dan porsi karyawan, dan <em>tool</em> ini memasukkannya. Sebagian negara punya perjanjian yang membebaskan warganya untuk jangka waktu tertentu. Tanyakan ke pemberi kerja dan ke kantor jaminan sosial setempat bagaimana ketentuannya untuk warga negara Indonesia.</p>"
+      "a": "<p>Karyawan asing yang bekerja di Tiongkok dengan kontrak umumnya wajib ikut jaminan sosial, dengan porsi pemberi kerja dan porsi karyawan, dan <em>tool</em> ini memasukkan porsi karyawan. Sebagian negara punya perjanjian yang membebaskan warganya untuk jangka waktu tertentu. Tanyakan ke pemberi kerja dan ke kantor jaminan sosial setempat bagaimana ketentuannya untuk warga negara Indonesia.</p>"
     },
     {
       "q": "Kenapa tarif marginal saya pada gaji CN¥360.000 lebih tinggi dari 20%?",

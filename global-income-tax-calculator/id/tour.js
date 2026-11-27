@@ -19,7 +19,7 @@ window.__TOUR = {
   launchLabel: '🧭 Tur',
   guide: '../guides/id/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur singkat tool ini',
             guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap ada di sini',
             guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   saveState: function () {
@@ -47,7 +47,7 @@ window.__TOUR = {
       title: '② Hingga empat pekerjaan',
       body: '<ul><li>Setiap pekerjaan punya <strong>negara</strong>, status, dan mata uangnya sendiri</li>' +
             '<li>Klik satu pekerjaan untuk mengubahnya di tab di bawahnya</li>' +
-            '<li><strong>+ Tambah pekerjaan</strong> dimulai dari salinan pekerjaan yang dipilih</li></ul>'
+            '<li><strong>+ Tambah pekerjaan</strong> menyalin pekerjaan yang sedang dipilih</li></ul>'
     },
     {
       target: '#tab-salary',
@@ -61,7 +61,7 @@ window.__TOUR = {
       target: '.ctrl-tabs',
       title: '④ Rumah tangga dan Detail',
       body: 'Kedua tab ini hanya menampilkan isian yang berlaku di negara pekerjaan itu, misalnya anak, status menikah, pajak gereja, ' +
-            'tarif pensiun, atau pinjaman mahasiswa. Kalau tidak ada isian yang berlaku, tab akan memberi tahu.'
+            'iuran pensiun, atau pinjaman mahasiswa. Kalau tidak ada isian yang berlaku, tab akan memberi tahu.'
     },
     {
       target: '#verdict',
@@ -89,7 +89,7 @@ window.__TOUR = {
       target: '#linesSection',
       onEnter: gitcSeed,
       title: '⑧ Rincian gaji bersih',
-      body: 'Rincian ditampilkan untuk satu pekerjaan sekali waktu, yang kamu pilih di samping judulnya. Isinya setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturan mulai berlaku, ' +
+      body: 'Rincian ini menampilkan satu pekerjaan, yang bisa kamu pilih di samping judulnya. Isinya setiap pajak dan iuran, <strong>sumbernya</strong>, dan tanggal aturan itu mulai berlaku, ' +
             'dengan label Resmi, Sekunder, atau Asumsi. Buka lewat tanda panahnya.'
     },
     {

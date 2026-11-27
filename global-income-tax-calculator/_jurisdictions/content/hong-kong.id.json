@@ -6,11 +6,11 @@
   "description": "Pajak gaji Hong Kong (Tiongkok) 2026/27: tarif progresif atau standar, tunjangan, iuran MPF, dan tiga contoh hitungan dari HK$600.000 sampai HK$3 juta.",
   "lede": "<p>Hong Kong (Tiongkok) menghitung pajak gaji (<em>salaries tax</em>) dengan dua cara dan menagih yang lebih kecil: tarif progresif 2% sampai 17% atas penghasilan setelah tunjangan, atau tarif standar 15% atas penghasilan sebelum tunjangan. Pajaknya tidak dipotong dari slip gaji seperti PPh 21, dan keuntungan menjual aset (<em>capital gains</em>) tidak dipajaki. Untuk pekerja lajang bergaji HK$600.000 setahun, pajaknya sekitar HK$56.290 sehingga gaji bersih (<em>take-home pay</em>) tinggal HK$525.710. Pada gaji HK$3.000.000, yang berlaku adalah tarif standar, dengan pajak HK$447.300.</p>",
   "law": {
-    "intro": "<p>Tahun pajak Hong Kong berjalan dari 1 April sampai 31 Maret, dan angka di halaman ini memakai aturan 2026/27 seperti di <em>tool</em> ini. Indonesia memajaki penduduknya atas penghasilan dari seluruh dunia, sedangkan Hong Kong hanya memajaki penghasilan yang bersumber di Hong Kong. Karena itu gaji untuk pekerjaan yang kamu lakukan di sana pada umumnya kena pajak, apa pun paspor dan visamu. Orang yang bekerja sementara di Hong Kong tidak lebih dari 60 hari dalam satu tahun pajak dapat dibebaskan, dengan syarat tambahan. Cek ke Inland Revenue Department (IRD), kantor pajak Hong Kong.</p>",
+    "intro": "<p>Tahun pajak Hong Kong berjalan dari 1 April sampai 31 Maret, dan angka di halaman ini memakai aturan 2026/27 seperti di <em>tool</em> ini. Indonesia memajaki penduduknya atas penghasilan dari seluruh dunia, sedangkan Hong Kong hanya memajaki penghasilan yang bersumber di Hong Kong. Karena itu gaji untuk pekerjaan yang kamu lakukan di sana pada umumnya kena pajak, apa pun paspor dan visamu. Orang yang bekerja sementara di Hong Kong tidak lebih dari 60 hari dalam satu tahun pajak dapat dibebaskan, dengan syarat tambahan. Untuk memastikannya, tanyakan ke Inland Revenue Department (IRD), kantor pajak Hong Kong.</p>",
     "blocks": [
       {
         "h3": "Tarif progresif dan tarif standar",
-        "html": "<p>Pajak gaji dihitung dua kali, lalu kamu membayar angka yang lebih kecil. Hitungan pertama memakai tarif progresif atas penghasilan kena pajak bersih, yaitu gaji setelah dikurangi iuran MPF dan tunjangan. Hitungan kedua memakai tarif standar atas penghasilan bersih sebelum tunjangan: 15% untuk HK$5 juta pertama dan 16% di atasnya. Bagi kebanyakan orang tarif progresif lebih murah, dan tarif standar baru menang pada penghasilan yang sangat tinggi.</p><p>Indonesia hanya punya satu tabel tarif untuk gaji, yaitu tarif Pasal 17 UU PPh yang naik dari 5% sampai 35%. Tarif tertinggi progresif Hong Kong hanya 17%, tetapi empat <em>tax bracket</em> pertamanya masing-masing hanya selebar HK$50.000.</p>",
+        "html": "<p>Pajak gaji dihitung dua kali, lalu kamu membayar angka yang lebih kecil. Hitungan pertama memakai tarif progresif atas penghasilan kena pajak bersih, yaitu gaji setelah dikurangi iuran MPF dan tunjangan. Hitungan kedua memakai tarif standar atas penghasilan bersih sebelum tunjangan: 15% untuk HK$5 juta pertama dan 16% di atasnya. Bagi kebanyakan orang tarif progresif lebih murah, dan tarif standar baru menang pada penghasilan yang sangat tinggi.</p><p>Indonesia hanya punya satu tabel tarif untuk gaji, yaitu tarif Pasal 17 UU PPh yang naik dari 5% sampai 35%. Tarif tertinggi progresif Hong Kong hanya 17%, tetapi empat lapisan tarif pertamanya masing-masing hanya selebar HK$50.000.</p>",
         "table": {
           "head": [
             "Penghasilan kena pajak bersih (progresif)",
@@ -122,7 +122,7 @@
     {
       "key": "single",
       "title": "Cara menghitung pajak gaji lajang di Hong Kong dengan gaji HK$600.000",
-      "intro": "<p>Ambil contoh pekerja lajang dengan gaji HK$600.000 setahun, atau HK$50.000 sebulan. Iuran MPF dibatasi HK$1.500 sebulan, jadi totalnya HK$18.000 dan bukan 5% dari seluruh gaji. Setelah iuran itu, penghasilan bersih HK$582.000. Tunjangan dasar HK$145.000, yang fungsinya mirip PTKP TK/0, menyisakan penghasilan kena pajak HK$437.000. Tarif progresif menghasilkan pajak HK$56.290, lebih kecil daripada hitungan tarif standar sebesar HK$87.300, sehingga yang berlaku tarif progresif. Gaji bersihmu sekitar HK$525.710 (87,6% dari gaji kotor), dan tarif marginalnya 17,0%.</p>",
+      "intro": "<p>Contohnya, seorang pekerja lajang bergaji HK$600.000 setahun, atau HK$50.000 sebulan. Iuran MPF dibatasi HK$1.500 sebulan, jadi totalnya HK$18.000 dan bukan 5% dari seluruh gaji. Setelah iuran itu, penghasilan bersih HK$582.000. Tunjangan dasar HK$145.000, yang fungsinya mirip PTKP TK/0, menyisakan penghasilan kena pajak HK$437.000. Tarif progresif menghasilkan pajak HK$56.290, lebih kecil daripada hitungan tarif standar sebesar HK$87.300, sehingga yang berlaku tarif progresif. Gaji bersihmu sekitar HK$525.710 (87,6% dari gaji kotor), dan tarif marginalnya 17,0%.</p>",
       "after": "<p>Iuran MPF tidak hilang, karena tersimpan di rekening pensiunmu. Pajak HK$56.290 baru dibayar setelah tagihan IRD datang, jadi sisihkan sendiri dananya selama setahun.</p>",
       "cite": [
         {
@@ -134,7 +134,7 @@
     {
       "key": "married-two-children",
       "title": "Berapa pajak gaji di Hong Kong untuk keluarga dengan dua anak dan gaji HK$900.000?",
-      "intro": "<p>Contoh kedua: satu pencari nafkah yang sudah menikah dan punya dua anak, bergaji HK$900.000 setahun. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000. Tunjangannya mencapai HK$570.000, yaitu HK$290.000 untuk status menikah dan HK$140.000 untuk tiap anak. Penghasilan kena pajak tinggal HK$312.000, sehingga pajak progresifnya HK$35.040, jauh di bawah hitungan tarif standar sebesar HK$132.300. Gaji bersihmu sekitar HK$846.960, atau 94,1% dari gaji kotor.</p>",
+      "intro": "<p>Contohnya, satu pencari nafkah yang sudah menikah dan punya dua anak bergaji HK$900.000 setahun. Setelah iuran MPF HK$18.000, penghasilan bersihnya HK$882.000. Tunjangannya mencapai HK$570.000, yaitu HK$290.000 untuk status menikah dan HK$140.000 untuk tiap anak. Penghasilan kena pajak tinggal HK$312.000, sehingga pajak progresifnya HK$35.040, jauh di bawah hitungan tarif standar sebesar HK$132.300. Gaji bersihmu sekitar HK$846.960, atau 94,1% dari gaji kotor.</p>",
       "after": "<p>Tunjangan keluarga membuat sebagian besar penghasilan tidak lagi masuk lapisan 17%, sehingga tarif efektifnya di bawah 4%. Tarif marginalnya tetap 17,0% untuk tambahan penghasilan berikutnya. PTKP K/2 di Indonesia jauh lebih kecil, sehingga pajak di sini terlihat ringan dibandingkan PPh 21 untuk gaji setara.</p>",
       "cite": [
         {
@@ -150,7 +150,7 @@
     {
       "key": "high-earner",
       "title": "Gaji HK$3.000.000 di Hong Kong: kapan tarif standar 15% lebih murah?",
-      "intro": "<p>Pada gaji HK$3.000.000, penghasilan bersih setelah iuran MPF HK$18.000 adalah HK$2.982.000. Hitungan progresif akan menghasilkan pajak yang jauh lebih besar, sehingga yang berlaku adalah tarif standar 15% dengan pajak HK$447.300. Gaji bersihmu sekitar HK$2.534.700 (84,5% dari gaji kotor), dan tarif marginalnya 15,0%. Pada tarif standar tunjangan tidak dipakai, jadi tunjangan HK$145.000 tidak mengurangi pajak.</p>",
+      "intro": "<p>Contohnya, pada gaji HK$3.000.000 penghasilan bersih setelah iuran MPF HK$18.000 adalah HK$2.982.000. Hitungan progresif akan menghasilkan pajak yang jauh lebih besar, sehingga yang berlaku adalah tarif standar 15% dengan pajak HK$447.300. Gaji bersihmu sekitar HK$2.534.700 (84,5% dari gaji kotor), dan tarif marginalnya 15,0%. Pada tarif standar tunjangan tidak dipakai, jadi tunjangan HK$145.000 tidak mengurangi pajak.</p>",
       "after": "<p>Untuk lajang tanpa anak, tarif standar mulai lebih murah di gaji sekitar HK$2,15 juta menurut hitungan <em>tool</em> ini. Di bawah angka itu tarif progresif lebih kecil, karena tunjangan ikut mengurangi pajak.</p>",
       "cite": [
         {
@@ -160,7 +160,7 @@
       ]
     }
   ],
-  "strategyIntro": "<p><strong>Strategi menekan pajak.</strong> Cara-cara berikut sah dan lazim dipakai di Hong Kong. Mana yang cocok bergantung pada keluarga dan penghasilanmu.</p>",
+  "strategyIntro": "<p>Cara-cara berikut sah dan lazim dipakai di Hong Kong. Mana yang cocok bergantung pada keluarga dan penghasilanmu.</p>",
   "strategies": [
     {
       "h3": "Iuran sukarela MPF yang bisa dikurangkan",
@@ -194,7 +194,7 @@
     },
     {
       "h3": "Penilaian bersama atau pribadi untuk pasangan menikah",
-      "html": "<p><strong>Cocok untuk:</strong> pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD umumnya menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia; untuk logikanya, baca <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>",
+      "html": "<p><strong>Cocok untuk:</strong> pasangan yang salah satunya berpenghasilan rendah atau rugi. Pasangan bisa memilih penilaian pribadi (<em>personal assessment</em>) atau bersama (<em>joint assessment</em>), dan IRD umumnya menerapkan yang membuat total pajak lebih kecil. Pilihan ini mirip memilih NPWP gabung atau pisah di Indonesia. Logikanya dibahas di <a href=\"https://blog.adjiebrotots.com/id/pajak-suami-istri-gabung-atau-pisah/\">pajak suami istri, gabung atau pisah</a>.</p><p><strong>Catatan:</strong> pilihan dibuat di formulir pajak, dan <em>tool</em> ini hanya menghitung pajak satu orang.</p>",
       "cite": [
         {
           "name": "IRD, A brief guide to personal assessment",

@@ -1,4 +1,4 @@
-/* Konfigurasi tur berpemandu untuk alat Sewa vs Beli (versi Indonesia).
+/* Konfigurasi tur berpemandu untuk tool Sewa vs Beli (versi Indonesia).
    Mesin bersama (../../tour-shared.js) membaca objek ini. Setiap langkah
    menjelaskan apa yang ada di layar, jadi langkah tentang tab membukanya dulu.
    v4 meringkas tiap langkah menjadi satu kalimat pembuka dan daftar pendek. */
@@ -7,7 +7,7 @@ window.__TOUR = {
   launchLabel: '🧭 Tur',
   guide: '../guides/id/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur singkat tool ini',
             guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
             guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [

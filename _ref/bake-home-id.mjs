@@ -35,7 +35,7 @@ const LABELS = {
   'Converter': 'Konverter', 'Documents': 'Dokumen', 'Power Systems': 'Sistem tenaga listrik',
   'Tax': 'Pajak', 'Financing': 'Pembiayaan', 'Investment': 'Investasi', 'Leveraging': 'Leverage',
   'Property': 'Properti', 'Graphing': 'Grafik', 'Brainstorming Tool': 'Brainstorming', '3D': '3D', 'CAD': 'CAD',
-  'Geoarbitrage': 'Geoarbitrase', 'Randomiser': 'Acak', 'Decision': 'Keputusan',
+  'Geoarbitrage': 'Geo-arbitrage', 'Randomiser': 'Acak', 'Decision': 'Keputusan',
   'Time Zones': 'Zona waktu', 'Meetings': 'Rapat', 'Groceries': 'Belanja bulanan', 'Pricing': 'Harga',
   'Superannuation': 'Superannuation', 'Video': 'Video', 'Captions': 'Subtitle',
 };
@@ -49,16 +49,16 @@ const CARDS = {
   'mdtopdf': { desc: 'Ubah berkas Markdown menjadi PDF yang rapi dan siap cetak, rumus matematikanya pun ikut tampil.' },
   'powerfactory-scripter': { desc: 'Buat skrip Python untuk DIgSILENT PowerFactory dalam hitungan menit tanpa menulis kode dari nol, karena sebagian besar studi sebenarnya hanya rangkaian <em>input</em>, simulasi, dan <em>output</em>.' },
   'pscad-scripter': { desc: 'Buat skrip Python untuk otomasi PSCAD dalam hitungan menit: rangkai blok <em>build</em>, <em>run</em>, dan pengecekan EMT, lalu unduh hasilnya sebagai satu berkas yang siap dijalankan.' },
-  'loadflow-simulator': { desc: 'Gambar <em>single line diagram</em>, lalu jalankan <em>load flow</em> langsung di <em>browser</em>. Tegangan di setiap <em>bus</em> dan animasi aliran dayanya bisa kamu ekspor atau sematkan di situs lain.' },
+  'loadflow-simulator': { desc: 'Gambar <em>single line diagram</em>, lalu jalankan <em>load flow</em> langsung di <em>browser</em>. Tegangan di setiap <em>bus</em> dan animasi aliran dayanya bisa kamu ekspor atau <em>embed</em> di situs lain.' },
   'ed-uc-simulator': { desc: 'Simulasikan <em>economic dispatch</em> dan <em>unit commitment</em> di <em>browser</em>: gambar jaringannya, lihat pembangkit mana yang menyala di setiap jam beserta biayanya, lalu cek harga listrik di setiap <em>node</em>.' },
-  'capacity-expansion-planner': { desc: 'Pembangkit apa yang perlu dibangun, dan kapan? Temukan bauran pembangkit surya, angin, gas, dan baterai yang paling murah untuk mengejar beban yang terus naik dari tahun ke tahun.' },
+  'capacity-expansion-planner': { desc: 'Pembangkit apa yang perlu dibangun, dan kapan? Temukan bauran pembangkit surya, angin, gas, dan baterai yang paling murah untuk memenuhi kebutuhan listrik yang terus naik dari tahun ke tahun.' },
   'pisahvsgabung': { id: `${T}pisahvsgabung/id/`, desc: 'Pisah harta atau gabung harta? Bandingkan pajak penghasilan suami istri untuk kedua pilihan itu dan lihat mana yang lebih hemat bagi keluargamu.' },
   'financingvscash': { desc: 'Lebih baik bayar tunai, atau ambil kredit lalu investasikan uangnya? Hitung apakah cicilan itu benar-benar menguntungkanmu atau justru hanya menguntungkan bank.' },
   'rentvsownhouse': {
     id: `${T}rentvsownhouse/id/`, name: 'Sewa vs Beli Rumah',
     desc: 'Benarkah beli rumah selalu lebih baik daripada sewa? Simulasikan keduanya selama bertahun-tahun dan lihat pilihan mana yang membuat kekayaan bersihmu lebih besar.',
     menu: {
-      [`${T}rentvsownhouse/`]: { href: `${T}rentvsownhouse/id/`, lang: 'id', main: 'Sewa vs Beli Rumah', sub: 'Satu skenario, dihitung per tahun' },
+      [`${T}rentvsownhouse/`]: { href: `${T}rentvsownhouse/id/`, lang: 'id', main: 'Sewa vs Beli Rumah', sub: 'Hitung satu skenario per tahun' },
       [`${T}rentvsownhouse/sensitivity/`]: { href: `${T}rentvsownhouse/sensitivity/id/`, lang: 'id', main: 'Analisis Sensitivitas', sub: 'Bandingkan beberapa skenario sekaligus' },
     },
   },

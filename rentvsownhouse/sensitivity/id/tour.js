@@ -6,7 +6,7 @@ window.__TOUR = {
   launchLabel: '🧭 Tur',
   guide: '../../guides/id/#same',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur singkat tool ini',
             guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap',
             guideTitle: 'Cara memakai tool ini, langkah demi langkah' },
   steps: [

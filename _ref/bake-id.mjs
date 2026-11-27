@@ -154,7 +154,7 @@ const TOOLS = [
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
     description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah untuk melihat asumsi mana yang paling memengaruhi kekayaan bersihmu. Gratis dan berjalan langsung di browser.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
-    ogDescription: 'Bandingkan beberapa skenario sewa vs beli sekaligus dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti pesanan yang biasanya mahal.',
+    ogDescription: 'Bandingkan beberapa skenario sewa vs beli sekaligus dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti buatan khusus yang biasanya mahal.',
     sameDirAssets: ['script.js', 'style.css', 'fx.js'],
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
@@ -172,7 +172,7 @@ const TOOLS = [
         '@type': 'WebApplication',
         name: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
         url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/',
-        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan pesanan yang biasanya dijual analis properti dan penasihat keuangan dengan harga jutaan rupiah.',
+        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan buatan khusus yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
@@ -183,7 +183,7 @@ const TOOLS = [
           'Bandingkan beberapa skenario sewa vs beli sekaligus dalam satu tabel',
           'Bandingkan rumah di kota dan mata uang yang berbeda dengan modal awal dan anggaran bulanan yang sama, lalu konversikan ke satu mata uang dasar memakai kurs terkini',
           'Uji bagaimana setiap asumsi (kenaikan harga, bunga KPR, inflasi sewa, biaya) mengubah hasilnya',
-          'Alternatif gratis untuk perangkat lunak analisis properti pesanan dan jasa pemodelan skenario berbayar yang biasanya ditawarkan analis properti, agen pembeli, dan penasihat keuangan dengan harga jutaan rupiah',
+          'Alternatif gratis untuk perangkat lunak analisis properti buatan khusus dan jasa pemodelan skenario berbayar yang biasanya ditawarkan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor CSV gratis tanpa paywall',
@@ -234,7 +234,7 @@ const TOOLS = [
             name: 'Adakah alternatif gratis untuk pemodelan skenario properti yang mahal dari analis properti atau agen pembeli?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Ada. Analisis sensitivitas multi-skenario semacam ini biasanya dibuat analis properti, agen pembeli, atau penasihat keuangan sebagai spreadsheet pesanan atau layanan berbayar, sering seharga jutaan rupiah. Di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, analisis yang sama tersedia gratis, berjalan sepenuhnya di browser, dan hasilnya bisa diekspor ke CSV tanpa akun.',
+              text: 'Ada. Analisis sensitivitas multi-skenario semacam ini biasanya dibuat analis properti, agen pembeli, atau penasihat keuangan sebagai spreadsheet buatan khusus atau layanan berbayar, sering seharga jutaan rupiah. Di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, analisis yang sama tersedia gratis, berjalan sepenuhnya di browser, dan hasilnya bisa diekspor ke CSV tanpa akun.',
             },
           },
           {

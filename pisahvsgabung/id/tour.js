@@ -21,9 +21,9 @@ window.__TOUR = {
     {
       target: '.quick-start-row',
       title: '① Mulai dari contoh',
-      body: '<ul><li>Setiap contoh berisi satu rumah tangga</li>' +
-            '<li>Contoh awalnya Penghasilan setara, tanpa anak</li>' +
-            '<li>Setiap contoh juga mengembalikan PTKP dan lapisan tarif ke ketentuan</li></ul>'
+      body: '<ul><li>Setiap contoh mewakili satu rumah tangga</li>' +
+            '<li>Contoh yang terpilih pertama adalah Penghasilan setara, tanpa anak</li>' +
+            '<li>Setiap contoh juga mengatur ulang PTKP dan lapisan tarif ke aturan yang berlaku</li></ul>'
     },
     {
       target: '#tab-inputs',
@@ -46,7 +46,7 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '③ PTKP & Lapisan Pajak',
-      body: 'Sudah berisi nilai sesuai ketentuan. Ubah hanya kalau ingin menghitung aturan lain.'
+      body: 'Isinya sudah sesuai aturan yang berlaku. Ubah hanya kalau kamu ingin menghitung dengan aturan lain.'
     },
     {
       target: '#verdict',
@@ -57,12 +57,12 @@ window.__TOUR = {
       },
       title: '④ Jawabannya',
       body: '<ul><li>Cara mana yang <strong>lebih murah</strong>, dan selisihnya per tahun</li>' +
-            '<li>Di gaji berapa <em>breakeven</em>-nya</li></ul>'
+            '<li>Pada gaji berapa <em>breakeven</em> terjadi</li></ul>'
     },
     {
       target: '.metrics',
       title: '⑤ Angkanya',
-      body: '<ul><li>Penghematan pajak, dengan warna cara yang lebih murah</li>' +
+      body: '<ul><li>Penghematan pajak, berwarna sesuai cara yang lebih murah</li>' +
             '<li>Total pajak dan tarif efektif tiap cara</li></ul>'
     },
     {
@@ -82,7 +82,7 @@ window.__TOUR = {
       target: null,
       title: '✅ Selesai',
       body: '<ul><li>Gratis, privat, tanpa akun</li>' +
-            '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
+            '<li>Ulangi tur kapan saja lewat tombol 🧭</li></ul>'
     }
   ]
 };
