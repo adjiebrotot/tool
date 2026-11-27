@@ -13,7 +13,7 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Selamat datang di Analisis Sensitivitas Sewa vs Beli',
-      body: 'Bandingkan <strong>banyak skenario sewa vs beli</strong> berdampingan. ' +
+      body: 'Bandingkan <strong>banyak skenario sewa dan beli</strong> sekaligus dalam satu tabel. ' +
             'Sekitar satu menit.'
     },
     {
@@ -28,7 +28,7 @@ window.__TOUR = {
     },
     {
       target: '#tableWrap tr.group-sep-tr',
-      title: '② Baris bersama',
+      title: '② Isian untuk semua kolom',
       body: 'Jangka waktu, suku bunga tabungan, modal awal, dan anggaran sama untuk ' +
             'semua kolom, jadi tidak ada skenario yang unggul semata-mata karena modalnya lebih besar.' +
             '<ul><li>Jika <strong>Otomatis</strong>, modal dan anggaran mengikuti kolom ' +
@@ -53,15 +53,15 @@ window.__TOUR = {
     {
       target: '.csv-actions',
       title: '⑤ Bandingkan dan simpan',
-      body: '<ul><li><strong>Bandingkan</strong> menggambar semua skenario dalam satu grafik</li>' +
-            '<li>Unduh tabel sebagai CSV, atau unggah CSV untuk menyusunnya kembali</li></ul>'
+      body: '<ul><li>Tombol <strong>Bandingkan</strong> menampilkan semua skenario dalam satu grafik</li>' +
+            '<li>Unduh tabel sebagai CSV, atau unggah CSV untuk memuat ulang tabelnya</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: '<ul><li>Mau membedah satu kasus? Pakai tool <strong>Sewa vs Beli</strong> ' +
-            'utama lewat tautan Kembali</li>' +
-            '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
+      body: '<ul><li>Mau mengulas satu kasus lebih dalam? Buka <em>tool</em> <strong>Sewa vs Beli</strong> ' +
+            'lewat tombol Kembali</li>' +
+            '<li>Ulangi tur kapan saja lewat tombol 🧭</li></ul>'
     }
   ]
 };

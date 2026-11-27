@@ -50,22 +50,22 @@ window.__TOUR = {
     },
     {
       target: '.chart-card',
-      title: '⑤ Dari waktu ke waktu',
+      title: '⑤ Grafik per tahun',
       body: '<ul><li>Ganti antara Kekayaan bersih, Uang tunai, dan Biaya kumulatif</li>' +
             '<li>Tanda ? menjelaskan tiap metrik, dan grafiknya bisa diekspor sebagai SVG atau PNG</li></ul>'
     },
     {
       target: '#detailSection',
       title: '⑥ Rinciannya',
-      body: '<ul><li>Tombol panah membuka arus kas per tahun, dan CSV mengunduhnya</li>' +
-            '<li>Daftar Asumsi yang dipakai di bawahnya menjelaskan apa saja yang dihitung</li></ul>'
+      body: '<ul><li>Klik tanda panah untuk membuka arus kas per tahun, lalu unduh sebagai CSV</li>' +
+            '<li>Daftar Asumsi yang dipakai di bawahnya merinci apa saja yang masuk hitungan</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: '<ul><li>Banyak skenario sekaligus? Coba <strong>tool Analisis ' +
+      body: '<ul><li>Banyak skenario sekaligus? Coba <em>tool</em> <strong>Analisis ' +
             'Sensitivitas</strong> lewat tautan di bagian atas</li>' +
-            '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
+            '<li>Ulangi tur kapan saja lewat tombol 🧭</li></ul>'
     }
   ]
 };
