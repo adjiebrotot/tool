@@ -22,7 +22,7 @@
       decline: 'Decline'
     },
     id: {
-      body: 'Saya memakai cookie Google Analytics untuk menghitung kunjungan dan melihat tool mana yang dipakai. Apa pun yang Anda ketik di tool tidak ikut terkirim. Boleh?',
+      body: 'Saya memakai cookie Google Analytics untuk menghitung kunjungan dan melihat tool mana yang dipakai. Apa pun yang kamu ketik di tool tidak ikut terkirim. Boleh?',
       privacy: 'Kebijakan Privasi',
       accept: 'Terima',
       decline: 'Tolak'

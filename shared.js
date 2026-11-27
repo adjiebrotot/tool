@@ -1184,8 +1184,8 @@
       en: { save: 'Save scenario to a file', load: 'Open a saved scenario file',
             wrong: 'That file is not a saved scenario for this tool.',
             bad: 'Could not open that file: ' },
-      id: { save: 'Simpan skenario ke file', load: 'Buka file skenario tersimpan',
-            wrong: 'File itu bukan skenario tersimpan untuk tool ini.',
+      id: { save: 'Simpan skenario ke file', load: 'Buka file skenario',
+            wrong: 'File itu bukan skenario yang disimpan dari tool ini.',
             bad: 'File tidak bisa dibuka: ' }
     };
     function lang(){
@@ -1627,15 +1627,15 @@
        underlining them there would drown the terms that carry real meaning. */
     '*': {
       CAGR: { en: ['Compound Annual Growth Rate', 'the one yearly rate that turns the starting value into the ending value'],
-              id: ['Compound Annual Growth Rate', 'satu tarif tahunan yang mengubah nilai awal menjadi nilai akhir'] },
+              id: ['Compound Annual Growth Rate', 'laju pertumbuhan per tahun yang membawa nilai awal ke nilai akhir'] },
       ETF:  { en: ['Exchange-Traded Fund', 'a basket of assets that trades on an exchange like a single share'],
-              id: ['Exchange-Traded Fund', 'sekeranjang aset yang diperdagangkan di bursa layaknya satu saham'] },
+              id: ['Exchange-Traded Fund', 'sekumpulan aset yang diperdagangkan di bursa seperti satu saham'] },
       ROI:  { en: ['Return on Investment', 'profit measured as a share of what you put in'],
-              id: ['Return on Investment', 'keuntungan diukur sebagai porsi dari modal yang ditanam'] },
+              id: ['Return on Investment', 'keuntungan dalam persentase dari modal yang ditanam'] },
       /* Not an acronym, but the same problem: it sits next to a rate on half the
          tools and is never spelled out anywhere on the page. */
       'p.a.': { en: ['per annum', 'per year, so the rate is stated on a yearly basis'],
-                id: ['per annum', 'per tahun, tarif dinyatakan dalam basis tahunan'] }
+                id: ['per annum', 'per tahun, artinya tarif itu dihitung untuk satu tahun'] }
     }
 
     /* Every other scope is a tool's own: <tool>/abbr.js registers it through
@@ -2140,26 +2140,26 @@
                     embedNote: 'Paste this into any web page. The tool stays interactive and opens set up as you have it now, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it. Please keep the credit line under it.',
                     credit: ['Interactive tool: ', ' by '], noEmbed: 'This tool could not be embedded: ',
                     backlink: 'Make your own at', failed: 'This tool could not be loaded here.' } },
-      id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
+      id: { share: 'Bagikan', shareTitle: 'Unduh, salin, bagikan tautan, atau embed grafik ini',
             svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], gif: ['Unduh sebagai GIF'], copy: ['Salin ke clipboard'],
-            link: ['Bagikan sebagai tautan', 'Membuka tool ini dengan skenariomu'],
+            link: ['Bagikan sebagai tautan', 'Membuka tool ini sesuai skenariomu'],
             linkCopied: '✓ Tautan tersalin', linkPrompt: 'Salin tautan ini:', noLink: 'Tautan ini tidak bisa dibuat: ',
-            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situsmu'],
+            embed: ['Embed sebagai HTML', 'Grafik interaktif untuk situsmu'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
-            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan:',
-            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka dengan skenariomu, yang ikut tersimpan di dalam tautannya. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawah grafik.',
+            embedTitle: 'Embed grafik ini', close: 'Tutup', codeLabel: 'Kode embed', include: 'Sertakan:',
+            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka sesuai skenariomu, karena skenario itu ikut tersimpan di dalam tautannya. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Mohon jangan hapus baris kredit di bawah grafik.',
             credit: ['Grafik interaktif: ', ' oleh '],
-            copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
-            noEmbed: 'Grafik ini tidak bisa disematkan: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
+            copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyiapkan kode…',
+            noEmbed: 'Grafik ini tidak bisa di-embed: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
             backlink: 'Coba skenariomu sendiri di',
-            long: 'Kode ini {kb} KB, karena data yang digambar grafik ikut di dalamnya.',
-            tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
-            failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka tool-nya',
-            tool: { shareTitle: 'Tautkan atau sematkan tool ini', embed: ['Sematkan sebagai HTML', 'Tool interaktif untuk situsmu'],
-                    embedTitle: 'Sematkan tool ini',
-                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka persis seperti yang kamu atur sekarang, karena pengaturannya ikut tersimpan di dalam tautan. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Tolong biarkan baris kredit di bawahnya.',
-                    credit: ['Tool interaktif: ', ' oleh '], noEmbed: 'Tool ini tidak bisa disematkan: ',
+            long: 'Kode ini berukuran {kb} KB karena data grafiknya ikut disertakan.',
+            tooBig: 'Data grafik ini terlalu banyak untuk dimuat di tautan. Embed bagian yang lebih kecil saja.',
+            failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka tool',
+            tool: { shareTitle: 'Bagikan tautan atau embed tool ini', embed: ['Embed sebagai HTML', 'Tool interaktif untuk situsmu'],
+                    embedTitle: 'Embed tool ini',
+                    embedNote: 'Tempel kode ini di halaman web mana pun. Tool-nya tetap interaktif dan terbuka persis seperti pengaturanmu sekarang, karena pengaturan itu ikut tersimpan di dalam tautan. Tidak ada yang diunggah, tetapi siapa pun yang membuka halaman itu bisa membacanya. Mohon jangan hapus baris kredit di bawahnya.',
+                    credit: ['Tool interaktif: ', ' oleh '], noEmbed: 'Tool ini tidak bisa di-embed: ',
                     backlink: 'Buat versimu sendiri di', failed: 'Tool ini tidak bisa dimuat di sini.' } }
     };
     var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
@@ -3461,11 +3461,11 @@
             badJson: 'json could not be read', noJson: 'this tool takes no json',
             version: function(v){ return 'link version "' + v + '" is unknown, so it was read as version 1'; },
             failed: 'the link could not be applied in full' },
-      id: { head: 'Diatur oleh asisten AI. Periksa asumsi berikut:', qs: 'Dimulai dari Quick Start ',
+      id: { head: 'Disiapkan oleh asisten AI. Periksa asumsi berikut:', qs: 'Dimulai dari Quick Start ',
             unknown: 'Tidak dikenali:', clamped: 'Disesuaikan agar masuk rentang yang diizinkan:', errors: 'Tidak diterapkan:',
             undo: 'Kembali ke input saya sebelumnya', close: 'Tutup', on: 'Aktif', off: 'Nonaktif', blank: 'kosong',
             more: function(n){ return 'dan ' + n + ' lainnya'; },
-            tooLong: 'tautan lebih panjang dari 512 KB, jadi tidak ada isinya yang diterapkan',
+            tooLong: 'tautan lebih panjang dari 512 KB, jadi isinya tidak diterapkan sama sekali',
             noQs: function(k){ return 'tidak ada Quick Start "' + k + '"'; },
             notNumber: 'bukan angka', noOption: 'bukan salah satu pilihan', noBool: 'bukan aktif atau nonaktif', long: 'terlalu panjang',
             badJson: 'json tidak bisa dibaca', noJson: 'tool ini tidak menerima json',
@@ -5043,12 +5043,12 @@
     var GATHER_MS = 600, AD_CLIENT = 'ca-pub-8730116101825381', AD_SLOT = '4447514374';
     var ID = /^id\b/i.test(document.documentElement.getAttribute('lang') || '');
     var T = ID ? {
-      title: 'Tersimpan', close: 'Tutup', ad: 'Iklan', where: 'Ada di folder unduhan kamu.',
-      json: 'Ini file skenario: berisi input kamu saja. Buka lagi kapan pun dengan tombol folder di sebelah tombol simpan, dan kamu lanjut tepat dari sini. Tidak ada yang diunggah.',
-      image: 'Tempel ke slide, dokumen atau chat. Untuk grafik yang tetap hidup di situsmu, pakai Bagikan, lalu Sematkan sebagai HTML, kalau grafiknya menyediakannya.',
-      table: 'Bisa dibuka di Excel, Google Sheets atau Numbers. Angkanya persis yang ada di tabel.',
-      code: 'Jalankan di perangkat lunaknya. Komentar di bagian atas file menjelaskan apa yang dikerjakannya.',
-      other: 'File dibuat di browser kamu. Tidak ada yang diunggah.'
+      title: 'Tersimpan', close: 'Tutup', ad: 'Iklan', where: 'Ada di folder unduhanmu.',
+      json: 'Ini file skenario yang hanya berisi inputmu. Buka lagi kapan saja lewat tombol folder di sebelah tombol simpan, dan kamu bisa lanjut persis dari titik ini. Tidak ada yang diunggah.',
+      image: 'Tempel ke slide, dokumen, atau chat. Kalau ingin grafik yang tetap interaktif di situsmu, pakai Bagikan, lalu Embed sebagai HTML (kalau tersedia untuk grafik ini).',
+      table: 'Bisa dibuka di Excel, Google Sheets, atau Numbers. Angkanya sama persis dengan yang ada di tabel.',
+      code: 'Jalankan di perangkat lunak yang dituju. Komentar di bagian atas file menjelaskan fungsi kodenya.',
+      other: 'File ini dibuat di browser-mu. Tidak ada yang diunggah.'
     } : {
       title: 'Saved', close: 'Close', ad: 'Advertisement', where: 'It is in your downloads folder.',
       json: 'This is a scenario file: your inputs and nothing else. Open it any time with the folder button beside the save button and you pick up right where you are. Nothing was uploaded.',

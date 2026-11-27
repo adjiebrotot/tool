@@ -62,7 +62,7 @@
       "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/"
     }
   ],
-  "description": "Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan berdampingan.",
+  "description": "Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, lengkap dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan sekaligus.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -82,10 +82,10 @@
   "featureList": [
     "Pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, berdasarkan aturan tahun 2026",
     "Hitung dari gaji kotor ke gaji bersih, atau hitung balik gaji kotor yang dibutuhkan untuk gaji bersih tertentu",
-    "Hingga empat tawaran kerja berdampingan, masing-masing dengan negara dan mata uangnya sendiri",
+    "Bandingkan hingga empat tawaran kerja sekaligus, masing-masing dengan negara dan mata uangnya sendiri",
     "Setiap potongan dilengkapi sumber, tanggal berlaku, dan status Resmi, Sekunder, atau Asumsi",
     "Tersedia dalam bahasa Indonesia dan Inggris",
-    "Semua perhitungan berjalan lokal di browser, jadi data gajimu tidak pernah keluar dari perangkat"
+    "Semua hitungan berjalan di browser-mu, jadi data gajimu tidak pernah keluar dari perangkat"
   ],
   "author": {
     "@type": "Person",
@@ -196,18 +196,18 @@
 <section class="layout">
 <aside class="controls card">
   <div class="quick-start-row">
-    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> <span data-i18n="qsLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="qsTip" data-tip="Mengganti semua pekerjaan dengan satu contoh perbandingan. Setelah itu, ubah angka mana pun sesukamu.">?</span>
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> <span data-i18n="qsLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="qsTip" data-tip="Pakai satu contoh perbandingan sebagai pengganti semua pekerjaan di formulir. Setelah itu, ubah angka mana pun sesukamu.">?</span>
     <div class="quick-start-btns">
-      <button class="quick-start-btn" type="button" data-preset="asia" data-i18n="qs_asia" data-i18n-tip="qsTip_asia" data-tip="Empat tawaran untuk ekspatriat: S$180,000 di Singapura, HK$1,300,000 di Hong Kong (Tiongkok), ¥20 juta di Tokyo, dan AED 600.000 di Dubai, dibandingkan dalam dolar AS.">Kota bisnis Asia</button>
+      <button class="quick-start-btn" type="button" data-preset="asia" data-i18n="qs_asia" data-i18n-tip="qsTip_asia" data-tip="Empat tawaran untuk ekspatriat: S$180.000 di Singapura, HK$1.300.000 di Hong Kong (Tiongkok), ¥20 juta di Tokyo, dan AED 600.000 di Dubai, dibandingkan dalam dolar AS.">Kota bisnis Asia</button>
       <button class="quick-start-btn" type="button" data-preset="europe" data-i18n="qs_europe" data-i18n-tip="qsTip_europe" data-tip="Satu insinyur senior di empat kota: £95.000 di London, €95.000 di Amsterdam dengan 30% ruling, €95.000 di Berlin, dan CHF 140.000 di Zürich.">Insinyur di Eropa</button>
-      <button class="quick-start-btn" type="button" data-preset="us" data-i18n="qs_us" data-i18n-tip="qsTip_us" data-tip="US$150,000, lajang, di New York City, California, Illinois, dan Texas. Pajak federalnya sama, pajak negara bagian dan kotanya berbeda.">Negara bagian AS</button>
+      <button class="quick-start-btn" type="button" data-preset="us" data-i18n="qs_us" data-i18n-tip="qsTip_us" data-tip="US$150.000, lajang, di New York City, California, Illinois, dan Texas. Pajak federalnya sama, pajak negara bagian dan kotanya berbeda.">Negara bagian AS</button>
       <button class="quick-start-btn" type="button" data-preset="net" data-i18n="qs_net" data-i18n-tip="qsTip_net" data-tip="Gaji kotor yang menyisakan €4.000 sebulan di Paris, Madrid, Lisbon, dan Milan untuk penduduk pajak lajang.">Gaji bersih sama, Eropa Selatan</button>
       <button class="quick-start-btn" type="button" data-preset="family" data-i18n="qs_family" data-i18n-tip="qsTip_family" data-tip="Satu pencari nafkah bergaji €80.000, pasangan di rumah, dan dua anak, di Belanda, Prancis, Belgia, dan Jerman.">Keluarga empat orang</button>
     </div>
   </div>
   <div class="ctrl-scroll">
   <div class="jobs-bar" data-no-persist>
-    <div class="jobs-head"><span class="jobs-label" data-i18n="jobsLabel">Pekerjaan</span><button class="btn-secondary btn-sm" type="button" id="addJob" data-i18n="addJob" data-i18n-title="addJobTitle" title="Tambah pekerjaan, dimulai dari salinan pekerjaan ini">+ Tambah pekerjaan</button></div>
+    <div class="jobs-head"><span class="jobs-label" data-i18n="jobsLabel">Pekerjaan</span><button class="btn-secondary btn-sm" type="button" id="addJob" data-i18n="addJob" data-i18n-title="addJobTitle" title="Tambah pekerjaan dengan menyalin pekerjaan ini">+ Tambah pekerjaan</button></div>
     <div class="jobs-list" id="jobsList" role="tablist" data-i18n-title="jobsLabel" aria-label="Pekerjaan"></div>
   </div>
   <div class="ctrl-tabs stacked">
@@ -228,7 +228,7 @@
         <select class="sel-input" id="usState"><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA" selected>California</option><option value="CO">Colorado</option><option value="DE">Delaware</option><option value="DC">District of Columbia</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OK">Oklahoma</option><option value="PA">Pennsylvania</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WY">Wyoming</option></select>
       </div>
       <div class="toggle-row" data-show="US" data-if="usState=NY">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_usNyc">Tinggal di New York City</span> <i class="tip-icon" data-i18n-tip="tip_usNyc" data-tip="New York City juga memajaki penduduknya, selain pajak negara bagian, dengan tarif 3,078% sampai 3,876%.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_usNyc">Tinggal di New York City</span> <i class="tip-icon" data-i18n-tip="tip_usNyc" data-tip="Selain pajak negara bagian, penduduk New York City juga kena pajak kota sebesar 3,078% sampai 3,876%.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="usNyc"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="CA">
@@ -356,7 +356,7 @@
         <select class="sel-input" id="twRes"><option data-i18n-opt="opt_twRes_res" value="res" data-i18n-otip="otip_twRes_res" data-opt-tip="&lt;strong&gt;Penduduk pajak:&lt;/strong&gt; warga negara, dan WNA pemegang izin tinggal (ARC) yang berada di sana 183 hari atau lebih dalam setahun." selected>Penduduk pajak (183 hari atau lebih)</option><option data-i18n-opt="opt_twRes_nonres" value="nonres" data-i18n-otip="otip_twRes_nonres" data-opt-tip="&lt;strong&gt;Bukan penduduk pajak:&lt;/strong&gt; WNA yang berada di Taiwan kurang dari 183 hari dalam setahun, misalnya karena penugasan singkat.">Bukan penduduk pajak</option></select>
       </div>
       <div class="toggle-row" data-show="TW" data-if="twRes=res">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_twGold">Gold Card</span> <i class="tip-icon" data-i18n-tip="tip_twGold" data-tip="Pemegang Gold Card tidak dipajaki atas 50% gaji di atas 3.000.000 selama 5 tahun.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_twGold">Gold Card</span> <i class="tip-icon" data-i18n-tip="tip_twGold" data-tip="Pemegang Gold Card bebas pajak atas 50% gaji di atas 3.000.000 selama 5 tahun.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="twGold"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="TW">
@@ -494,7 +494,7 @@
         <label class="toggle-switch"><input type="checkbox" id="auCover" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="toggle-row" data-show="AU">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_auSuper">Jumlah sudah termasuk super</span> <i class="tip-icon" data-i18n-tip="tip_auSuper" data-tip="<ul><li><strong>Aktif:</strong> jumlah yang kamu isi adalah paket gaji yang sudah memuat super guarantee 12%.</li><li><strong>Mati:</strong> super dibayar pemberi kerja di luar gaji.</li></ul>">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_auSuper">Jumlah sudah termasuk super</span> <i class="tip-icon" data-i18n-tip="tip_auSuper" data-tip="<ul><li><strong>Aktif:</strong> jumlah yang kamu isi adalah paket gaji yang sudah memuat super guarantee 12%.</li><li><strong>Nonaktif:</strong> super dibayar pemberi kerja di luar gaji.</li></ul>">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="auSuper"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="GB">
@@ -510,7 +510,7 @@
         <select class="sel-input" id="deChurch"><option data-i18n-opt="opt_deChurch_0" value="0" selected>Tidak ada</option><option data-i18n-opt="opt_deChurch_8" value="8">8% (Bavaria, Baden-Württemberg)</option><option data-i18n-opt="opt_deChurch_9" value="9">9% (negara bagian lain)</option></select>
       </div>
       <div class="field-row" data-show="DE">
-        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_deAddOn">Iuran tambahan asuransi kesehatan</span> <i class="tip-icon" data-i18n-tip="tip_deAddOn" data-tip="Setiap dana kesehatan menetapkan iuran tambahannya sendiri, dengan rata-rata 2,9% pada 2026. Kamu menanggung separuhnya.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap"><span data-i18n="lbl_deAddOn">Iuran tambahan asuransi kesehatan</span> <i class="tip-icon" data-i18n-tip="tip_deAddOn" data-tip="Setiap dana kesehatan menetapkan iuran tambahannya sendiri, rata-rata 2,9% pada 2026. Kamu menanggung separuhnya.">?</i></span></div>
         <div class="affix-wrap"><input class="affix-input has-suffix fmt-pct" id="deAddOn" type="text" inputmode="decimal" data-min="0" data-max="5" value="2.9"><span class="suffix">%</span></div>
       </div>
       <div class="field-row" data-show="US">
@@ -534,7 +534,7 @@
         <label class="toggle-switch"><input type="checkbox" id="idBpjs" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="toggle-row" data-show="MY" data-if="myRes=expat">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_myLindung">Klaim LINDUNG sebagai pengurang SOCSO</span> <i class="tip-icon" data-i18n-tip="tip_myLindung" data-tip="Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini mati sejak awal. Pengaruhnya pada pajak paling banyak RM31.50.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_myLindung">Klaim LINDUNG sebagai pengurang SOCSO</span> <i class="tip-icon" data-i18n-tip="tip_myLindung" data-tip="Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini dimatikan dari awal. Pengaruhnya pada pajak paling banyak RM31,50.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="myLindung"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="NL" data-if="nlRuling=on">
@@ -542,7 +542,7 @@
         <select class="sel-input" id="nlNorm"><option data-i18n-opt="opt_nlNorm_std" value="std" selected>Standar (48.013)</option><option data-i18n-opt="opt_nlNorm_young" value="young">Di bawah 30 tahun dengan gelar master (36.497)</option></select>
       </div>
       <div class="toggle-row" data-show="NL">
-        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_nlHoliday">Uang liburan dibayar di atas gaji</span> <i class="tip-icon" data-i18n-tip="tip_nlHoliday" data-tip="Gaji di Belanda ditambah uang liburan 8%, biasanya dibayar pada bulan Mei. Kalau aktif, jumlah yang kamu isi belum termasuk uang liburan dan 8% ditambahkan.">?</i></span></div>
+        <div class="toggle-label"><span class="tip-wrap"><span data-i18n="lbl_nlHoliday">Uang liburan dibayar terpisah dari gaji</span> <i class="tip-icon" data-i18n-tip="tip_nlHoliday" data-tip="Gaji di Belanda ditambah uang liburan 8%, biasanya dibayar pada bulan Mei. Kalau aktif, jumlah yang kamu isi belum termasuk uang liburan dan 8% ditambahkan.">?</i></span></div>
         <label class="toggle-switch"><input type="checkbox" id="nlHoliday" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <div class="field-row" data-show="NL">
@@ -681,7 +681,7 @@
 
   <section class="chart-card card">
     <div class="chart-head">
-      <h2><span id="chartTitle" data-i18n="chartTitlePct">Porsi gaji bersih di sepanjang rentang gaji</span></h2>
+      <h2><span id="chartTitle" data-i18n="chartTitlePct">Porsi gaji bersih dari gaji rendah sampai tinggi</span></h2>
       <div class="chart-controls">
         <select class="sel-input seg-src" id="chartMeasure" data-i18n-title="chartMeasureAria" aria-label="Tampilkan gaji bersih sebagai"><option data-i18n-opt="opt_chartMeasure_pct" value="pct" selected>% dari gaji kotor</option><option data-i18n-opt="opt_chartMeasure_amount" value="amount">Jumlah</option></select>
       </div>
@@ -689,13 +689,13 @@
         <button class="btn-secondary btn-sm" id="svgBtn" type="button" data-i18n-title="svgTitle" title="Unduh grafik ini sebagai SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="pngBtn" type="button" data-i18n-title="pngTitle" title="Unduh grafik ini sebagai PNG">⬇ PNG</button>
         <button class="btn-secondary btn-sm btn-icon" id="copyBtn" type="button" data-i18n-title="copyTitle" title="Salin PNG ke clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="resetZoomBtn" type="button" data-i18n-title="resetZoomTitle" title="Kembalikan zoom">⟳</button>
+        <button class="btn-secondary btn-sm btn-icon" id="resetZoomBtn" type="button" data-i18n-title="resetZoomTitle" title="Atur ulang zoom">⟳</button>
       </div>
     </div>
     <div class="sub" id="chartSub" hidden></div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
-    <div class="hover-box" id="hoverBox" data-i18n="hoverHint">Arahkan kursor ke grafik untuk membaca gaji bersih tiap pekerjaan pada gaji kotor itu.</div>
+    <div class="hover-box" id="hoverBox" data-i18n="hoverHint">Arahkan kursor ke grafik untuk melihat gaji bersih tiap pekerjaan di tingkat gaji kotor tersebut.</div>
   </section>
 
   <section class="detail-section card" id="compareSection">
@@ -761,7 +761,7 @@
   <!-- Every country's own page: its rules, worked examples and tips (the list is written by _ref/jurisdiction-pages.mjs) -->
   <section class="detail-section card countries-card" id="countriesSection" aria-labelledby="countriesTitle">
     <h2 id="countriesTitle" data-i18n="countriesTitle">Pajak penghasilan per negara</h2>
-    <p class="countries-sub" data-i18n="countriesSub">Satu halaman untuk tiap negara: aturan pajaknya beserta sumber, contoh perhitungan, dan tips pajak.</p>
+    <p class="countries-sub" data-i18n="countriesSub">Setiap negara punya halaman sendiri berisi aturan pajak lengkap dengan sumbernya, contoh perhitungan, dan tips pajak.</p>
       <!-- jurisdictions:start (written by _ref/jurisdiction-pages.mjs) -->
       <div class="jx-regions">
           <div class="jx-region"><h3>Asia Pasifik</h3><ul><li><a href="../australia/id/">Australia</a></li><li><a href="../singapore/id/">Singapura</a></li><li><a href="../hong-kong/id/">Hong Kong (Tiongkok)</a></li><li><a href="../japan/id/">Jepang</a></li><li><a href="../south-korea/id/">Korea Selatan</a></li><li><a href="../china/id/">Tiongkok</a></li><li><a href="../taiwan/id/">Taiwan (Tiongkok)</a></li><li><a href="../indonesia/id/">Indonesia</a></li><li><a href="../malaysia/id/">Malaysia</a></li><li><a href="../thailand/id/">Thailand</a></li></ul></div>
@@ -796,8 +796,8 @@
 
 <script src="../../dropdown.js"></script>
 <script src="../../chart-kit.js"></script>
-<script src="../../shared.js?v=20261116"></script>
-<script src="../../shared-id.js?v=20261113"></script>
+<script src="../../shared.js?v=20261127"></script>
+<script src="../../shared-id.js?v=20261127"></script>
 <script src="../abbr.js"></script>
 <script src="../engine.js"></script>
 <script src="../labels-id.js"></script>

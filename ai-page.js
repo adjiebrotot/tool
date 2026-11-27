@@ -270,7 +270,7 @@
     };
     if (ID) NOTES = {
       claude: '<em>Skill</em> memakai fitur eksekusi kode Claude, jadi biarkan <strong>Code execution and file creation</strong> tetap aktif (Settings, Capabilities).',
-      chatgpt: 'Skills di ChatGPT tersedia untuk <em>workspace</em> <strong>Business, Enterprise, Healthcare, dan Edu</strong> yang memenuhi syarat, dan admin mungkin perlu mengizinkan unggahannya. Akun Free dan Plus pribadi biasanya belum bisa menambahkan <em>skill</em>, jadi kalau kamu memakai Plus atau yang lebih tinggi, gunakan Codex (langkah terakhir).',
+      chatgpt: 'Skills di ChatGPT tersedia untuk <em>workspace</em> <strong>Business, Enterprise, Healthcare, dan Edu</strong> yang memenuhi syarat, dan admin mungkin perlu mengizinkan unggahannya. Akun Free dan Plus pribadi biasanya belum bisa menambahkan <em>skill</em>. Kalau kamu berlangganan Plus atau yang lebih tinggi, pakai Codex sebagai gantinya (langkah terakhir).',
       gemini: 'Gemini mengunggah folder, bukan zip, jadi ekstrak dulu unduhannya.',
       copilot: 'Buat satu <em>agent</em> <strong>Brotools</strong>, lalu tambahkan semua <em>skill</em> Brotools ke dalamnya, supaya satu <em>chat</em> bisa menjangkau semua <em>tool</em>. <a href="' + HUB + '">Lihat semua skill Brotools</a>.'
     };

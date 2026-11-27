@@ -65,7 +65,7 @@ const LANG_QA = {
     /* ── static copy, baked into id/index.html ── */
     pageTitle: 'Asumsi Quick Start',
     btnBack: '← Sewa vs Beli Rumah',
-    introHtml: 'Setiap Quick Start adalah pasangan satu kota dan satu jenis hunian. Angkanya tersusun dalam dua lapis: syarat KPR, pajak, dan kondisi pasar yang berlaku di kota itu, lalu harga, sewa, dan biaya rutin untuk hunian tersebut. Jenis hunian yang tidak punya pasar nyata di sebuah kota sengaja tidak disediakan, dan alasannya muncul saat kamu mengarahkan kursor ke tanda strip atau mengetuknya. Catatan per kota, rincian hitungan, dan nama sumber ditulis dalam bahasa Inggris, mengikuti sumber datanya.',
+    introHtml: 'Setiap Quick Start adalah pasangan satu kota dan satu jenis hunian. Angkanya terdiri dari dua lapis: syarat KPR, pajak, dan kondisi pasar yang berlaku di kota itu, lalu harga, sewa, dan biaya rutin untuk hunian tersebut. Jenis hunian yang tidak punya pasar nyata di sebuah kota sengaja tidak disediakan, dan alasannya muncul saat kamu mengarahkan kursor ke tanda strip atau mengetuknya. Catatan per kota, rincian hitungan, dan nama sumber tetap berbahasa Inggris, mengikuti sumber datanya.',
     searchPh: 'Cari kota, negara, atau mata uang (misalnya tokyo, jepang, eur)',
     searchLabel: 'Cari kota',
     formLabel: 'Jenis hunian',
@@ -74,7 +74,7 @@ const LANG_QA = {
     csvTitle: 'Unduh nilai input setiap skenario sebagai CSV',
     glanceNoteHtml: 'Harga yang lazim dalam mata uang setempat, dengan <em>rental yield</em> kotor (sewa setahun dibagi harga) di bawahnya. Klik sebuah angka untuk melihat rinciannya.',
     noResults: 'Tidak ada kota yang cocok dengan pencarianmu.',
-    noscriptHtml: 'Tabel di halaman ini disusun langsung dari data Quick Start yang dipakai <em>tool</em>-nya, jadi JavaScript di <em>browser</em>-mu harus aktif.',
+    noscriptHtml: 'Tabel di halaman ini dibuat langsung dari data Quick Start yang dipakai <em>tool</em>-nya, jadi aktifkan JavaScript di <em>browser</em>-mu.',
     /* ── drawn by the script ── */
     locale: 'id-ID', units: {t:' T', b:' M', m:' jt', k:' rb'},
     months: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
@@ -111,7 +111,7 @@ const LANG_QA = {
     forTerm: v => v + ' sepanjang tenor',
     schedYear: n => 'tahun ' + n, schedYears: (a, b) => 'tahun ' + a + '-' + b,
     fixed: v => ' <em>fixed</em> ' + v, floating: (a, b) => ' <em>floating</em> ' + a + ' sampai ' + b,
-    scheduleBasis: 'Skenario ini terbuka di mode KPR <strong>Rinci</strong> karena bunganya bertahap, jadi setiap periode diisi dengan bunganya sendiri. Periode <em>floating</em> digambar sebagai rentang dan dihitung pada nilai tengahnya. Bunga KPR di baris atas adalah rata-rata bunga sepanjang tenor, yang dipakai di mode <strong>Sederhana</strong>.',
+    scheduleBasis: 'Skenario ini dibuka di mode KPR <strong>Rinci</strong> karena bunganya berubah per periode, jadi setiap periode punya bunganya sendiri. Periode <em>floating</em> digambar sebagai rentang dan dihitung dengan nilai tengahnya. Bunga KPR di baris atas adalah rata-rata bunga sepanjang tenor, yang dipakai di mode <strong>Sederhana</strong>.',
     perHome: 'Berbeda per hunian, lihat tabel di atas',
     notHere: 'Jenis hunian yang tidak tersedia',
     caveat: 'Yang tidak masuk hitungan:',

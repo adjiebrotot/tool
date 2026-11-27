@@ -27,7 +27,7 @@ import { SECTION_RE } from './agent-lib.mjs';
 import { applyFaq } from './faq-bake.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SHARED_ID_V = '20261113';
+const SHARED_ID_V = '20261127';
 
 // The maker of every tool: the one person node that www, the blog and the tool pages share.
 const AUTHOR = {
@@ -81,7 +81,7 @@ const TOOLS = [
         alternateName: ['Kalkulator Pisah Harta vs Gabung Harta', 'Kalkulator PPh 21 Suami Istri', 'Kalkulator PH atau MT vs Gabung Harta'],
         keywords: 'pisah harta vs gabung harta, kalkulator SPT suami istri, PPh 21 suami istri, SPT digabung atau dipisah, lebih baik pisah atau gabung harta, PH atau MT vs gabung harta',
         featureList: [
-          'Satu-satunya: belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
+          'Belum ada analisis skenario pisah harta vs gabung harta serupa di pasaran',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data penghasilanmu tidak pernah keluar dari perangkatmu',
           'Ekspor grafik dan CSV gratis tanpa paywall',
@@ -126,16 +126,16 @@ const TOOLS = [
         keywords: 'sewa vs beli rumah, kalkulator sewa vs beli, beli rumah atau ngontrak, simulasi KPR, kekayaan bersih properti',
         featureList: [
           'Mencakup bunga KPR fixed dan floating, biaya awal dan biaya rutin, serta skenario sewa dulu baru beli',
-          'Analisis sensitivitas multi-skenario untuk membandingkan beberapa asumsi secara berdampingan',
+          'Analisis sensitivitas multi-skenario untuk membandingkan beberapa asumsi sekaligus',
           'Tersedia dalam bahasa Indonesia dan Inggris',
-          'Perangkat lunak komersial serupa bisa berharga puluhan ribu dolar, sedangkan di sini sepenuhnya gratis dengan kontrol penuh',
+          'Perangkat lunak komersial semacam ini bisa berharga puluhan ribu dolar, sedangkan di sini gratis dan semua asumsinya bisa kamu atur sendiri',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor grafik, CSV, PNG, dan SVG gratis tanpa paywall',
         ],
         potentialAction: {
           '@type': 'UseAction',
           target: 'https://tool.adjiebrotots.com/rentvsownhouse/id/',
-          name: 'Bandingkan sewa dengan beli rumah',
+          name: 'Bandingkan sewa dan beli rumah',
         },
         hasPart: [
           { '@type': 'WebApplication', name: 'Analisis Sensitivitas Sewa vs Beli Rumah', url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
@@ -154,12 +154,12 @@ const TOOLS = [
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
     description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah untuk melihat asumsi mana yang paling memengaruhi kekayaan bersihmu. Gratis dan berjalan langsung di browser.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
-    ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti yang dibuat khusus dan biasanya berbiaya mahal.',
+    ogDescription: 'Bandingkan beberapa skenario sewa vs beli sekaligus dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti buatan khusus yang biasanya mahal.',
     sameDirAssets: ['script.js', 'style.css', 'fx.js'],
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
       ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
-      ['title="Open a sensitivity CSV to rebuild the scenarios"', 'title="Buka CSV sensitivitas untuk membangun ulang skenario"'],
+      ['title="Open a sensitivity CSV to rebuild the scenarios"', 'title="Buka CSV sensitivitas untuk memuat ulang skenario"'],
       ['title="Compare all scenarios in one chart"', 'title="Bandingkan semua skenario dalam satu grafik"'],
       // The currency picker carries no i18n keys on this page; name the two
       // options whose words differ, as the main page's LANG.id does.
@@ -172,7 +172,7 @@ const TOOLS = [
         '@type': 'WebApplication',
         name: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
         url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/',
-        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan yang dibuat khusus dan biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
+        description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan buatan khusus yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
@@ -180,10 +180,10 @@ const TOOLS = [
         alternateName: ['Analisis Sensitivitas Sewa vs Beli', 'Perbandingan Skenario Properti', 'Kalkulator Multi-Skenario Sewa vs Beli', 'Analisis Sensitivitas Investasi Properti'],
         keywords: 'analisis sensitivitas sewa vs beli, skenario sewa vs beli rumah, perbandingan asumsi properti, simulasi KPR vs sewa, analisis investasi properti, alternatif gratis software analis properti',
         featureList: [
-          'Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel',
-          'Bandingkan rumah di kota dan mata uang berbeda dengan modal awal dan anggaran bulanan yang sama, dikonversi ke satu mata uang dasar dengan kurs terkini',
+          'Bandingkan beberapa skenario sewa vs beli sekaligus dalam satu tabel',
+          'Bandingkan rumah di kota dan mata uang yang berbeda dengan modal awal dan anggaran bulanan yang sama, lalu konversikan ke satu mata uang dasar memakai kurs terkini',
           'Uji bagaimana setiap asumsi (kenaikan harga, bunga KPR, inflasi sewa, biaya) mengubah hasilnya',
-          'Alternatif gratis untuk perangkat lunak analisis properti yang dibuat khusus dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
+          'Alternatif gratis untuk perangkat lunak analisis properti buatan khusus dan jasa pemodelan skenario berbayar yang biasanya ditawarkan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah',
           'Tersedia dalam bahasa Indonesia dan Inggris',
           'Semua hitungan berjalan di browser-mu sendiri, jadi data keuanganmu tidak pernah keluar dari perangkatmu',
           'Ekspor CSV gratis tanpa paywall',
@@ -210,7 +210,7 @@ const TOOLS = [
             name: 'Apa fungsi tool Analisis Sensitivitas Sewa vs Beli Rumah?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Tool ini menyandingkan beberapa skenario sewa vs beli dalam satu tabel, sehingga kamu bisa melihat asumsi mana (kenaikan harga properti, bunga KPR, inflasi sewa, atau biaya rutin) yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Tool ini bisa dipakai gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/.',
+              text: 'Tool ini menampilkan beberapa skenario sewa vs beli dalam satu tabel, sehingga kamu bisa melihat asumsi mana (kenaikan harga properti, bunga KPR, inflasi sewa, atau biaya rutin) yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Tool ini bisa dipakai gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/.',
             },
           },
           {
@@ -218,7 +218,7 @@ const TOOLS = [
             name: 'Apa bedanya dengan tool Sewa vs Beli Rumah utama?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Tool utama memodelkan satu skenario secara mendalam, sedangkan tool sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih.',
+              text: 'Tool utama memodelkan satu skenario secara mendalam, sedangkan tool sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang kamu pilih.',
             },
           },
           {
@@ -226,7 +226,7 @@ const TOOLS = [
             name: 'Apa dampak membeli apartemen dibanding rumah tapak?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Masukkan apartemen dan rumah tapak sebagai skenario terpisah lalu bandingkan berdampingan. Keduanya biasanya berbeda dalam harga, pertumbuhan nilai, dan biaya rutin seperti service charge, dan tabel menunjukkan bagaimana perbedaan itu mengubah kekayaan bersih, kas, dan biaya kumulatif dari waktu ke waktu.',
+              text: 'Masukkan apartemen dan rumah tapak sebagai dua skenario terpisah, lalu bandingkan hasilnya sekaligus. Keduanya biasanya berbeda dalam harga, kenaikan nilai, dan biaya rutin seperti service charge. Tabel menunjukkan bagaimana perbedaan itu memengaruhi kekayaan bersih, kas, dan biaya kumulatif dari tahun ke tahun.',
             },
           },
           {
@@ -234,15 +234,15 @@ const TOOLS = [
             name: 'Adakah alternatif gratis untuk pemodelan skenario properti yang mahal dari analis properti atau agen pembeli?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet yang dibuat khusus atau dijual sebagai layanan berbayar, sering seharga jutaan rupiah, tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun.',
+              text: 'Ada. Analisis sensitivitas multi-skenario semacam ini biasanya dibuat analis properti, agen pembeli, atau penasihat keuangan sebagai spreadsheet buatan khusus atau layanan berbayar, sering seharga jutaan rupiah. Di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, analisis yang sama tersedia gratis, berjalan sepenuhnya di browser, dan hasilnya bisa diekspor ke CSV tanpa akun.',
             },
           },
           {
             '@type': 'Question',
-            name: 'Asumsi mana yang paling menentukan apakah menyewa atau membeli yang lebih unggul?',
+            name: 'Asumsi mana yang paling menentukan, sewa atau beli yang lebih untung?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Susun beberapa skenario yang masing-masing hanya mengubah satu input (kenaikan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin), lalu bandingkan hasilnya di tabel pada tahun dan metrik yang kamu pilih. Asumsi yang paling menggeser kekayaan bersih adalah asumsi yang paling menentukan, dan dari situ kamu bisa menguji seberapa kokoh keputusanmu untuk menyewa atau membeli.',
+              text: 'Buat beberapa skenario yang masing-masing hanya mengubah satu input (kenaikan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin), lalu bandingkan hasilnya di tabel untuk tahun dan metrik yang kamu pilih. Asumsi yang paling banyak menggeser kekayaan bersih adalah yang paling menentukan, dan dari situ kamu bisa menguji seberapa kokoh keputusanmu untuk menyewa atau membeli.',
             },
           },
         ],
@@ -264,7 +264,7 @@ const TOOLS = [
     dir: 'rentvsownhouse/quickstart-assumptions',
     langVar: 'LANG_QA',
     title: 'Asumsi Quick Start Sewa vs Beli Rumah | Adjie Brotools',
-    description: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, kota demi kota: harga, sewa, DP, bunga KPR, pajak pembelian, biaya rutin, dan kenaikan harga, lengkap dengan sumbernya.',
+    description: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, per kota: harga, sewa, DP, bunga KPR, pajak pembelian, biaya rutin, dan kenaikan harga, lengkap dengan sumbernya.',
     ogTitle: 'Asumsi Quick Start Sewa vs Beli Rumah: Harga Rumah, Sewa, dan Syarat KPR per Kota',
     ogDescription: 'Semua angka yang dimuat Quick Start Sewa vs Beli Rumah, per kota dan per jenis hunian, lengkap dengan sumbernya.',
     sameDirAssets: ['script.js', 'style.css', 'abbr.js'],
@@ -345,7 +345,7 @@ const TOOLS = [
         hasPart: [
           { '@type': 'WebPage', name: 'Cara memakai Kalkulator Gaji Bersih dan Pajak Penghasilan', url: 'https://tool.adjiebrotots.com/global-income-tax-calculator/guides/id/' },
         ],
-        description: 'Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan berdampingan.',
+        description: 'Hitung gaji bersih (take-home pay) setelah pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, lengkap dengan sumber untuk setiap potongan. Hitung dari gaji kotor ke gaji bersih atau sebaliknya, dan bandingkan hingga empat pekerjaan sekaligus.',
         applicationCategory: 'FinanceApplication',
         operatingSystem: 'Any',
         isAccessibleForFree: true,
@@ -362,10 +362,10 @@ const TOOLS = [
         featureList: [
           'Pajak penghasilan dan iuran jaminan sosial di 31 negara, 39 negara bagian AS, dan Washington DC, berdasarkan aturan tahun 2026',
           'Hitung dari gaji kotor ke gaji bersih, atau hitung balik gaji kotor yang dibutuhkan untuk gaji bersih tertentu',
-          'Hingga empat tawaran kerja berdampingan, masing-masing dengan negara dan mata uangnya sendiri',
+          'Bandingkan hingga empat tawaran kerja sekaligus, masing-masing dengan negara dan mata uangnya sendiri',
           'Setiap potongan dilengkapi sumber, tanggal berlaku, dan status Resmi, Sekunder, atau Asumsi',
           'Tersedia dalam bahasa Indonesia dan Inggris',
-          'Semua perhitungan berjalan lokal di browser, jadi data gajimu tidak pernah keluar dari perangkat',
+          'Semua hitungan berjalan di browser-mu, jadi data gajimu tidak pernah keluar dari perangkat',
         ],
         ...AUTHOR,
       },

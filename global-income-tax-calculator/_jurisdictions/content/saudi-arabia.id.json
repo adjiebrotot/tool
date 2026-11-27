@@ -6,7 +6,7 @@
   "description": "Arab Saudi tidak memungut pajak penghasilan atas gaji. Lihat gaji bersih WNI sebagai pekerja asing, iuran GOSI warga Saudi, dan uang akhir masa kerja.",
   "lede": "<p>Arab Saudi tidak memungut pajak penghasilan atas gaji, jadi pekerja asing (<em>expat</em>), termasuk WNI, dengan gaji SAR240.000 setahun menerima seluruh SAR240.000. Warga negara Saudi dalam skema lama General Organization for Social Insurance (GOSI) membayar 9,75% dari gaji, sekitar SAR23.400, sehingga gaji bersih (<em>take-home pay</em>) mereka SAR216.600. Pemberi kerja menanggung premi GOSI di luar gaji untuk kedua kelompok: 2% untuk risiko kecelakaan kerja bagi pekerja asing, dan porsi yang lebih besar bagi warga negara.</p>",
   "law": {
-    "intro": "<p>Angka di halaman ini adalah aturan 2026 seperti yang dihitung <em>tool</em> ini. Individu tidak membayar pajak atas gaji di Arab Saudi, jadi tidak ada PPh 21, SPT, maupun bukti potong. Yang membedakan satu pekerja dari yang lain adalah jaminan sosial lewat GOSI: warga negara Saudi membayar iuran pensiun dan asuransi pengangguran, sedangkan pekerja asing tidak.</p>",
+    "intro": "<p>Angka di halaman ini mengikuti aturan 2026 yang dipakai <em>tool</em> ini. Individu tidak membayar pajak atas gaji di Arab Saudi, jadi tidak ada PPh 21, SPT, maupun bukti potong. Satu-satunya pembeda adalah jaminan sosial GOSI: warga negara Saudi membayar iuran pensiun dan asuransi pengangguran, sedangkan pekerja asing tidak.</p>",
     "blocks": [
       {
         "h3": "Tidak ada pajak penghasilan atas gaji",
@@ -20,7 +20,7 @@
       },
       {
         "h3": "GOSI untuk warga negara Saudi: skema lama dan peserta baru",
-        "html": "<p>Warga negara Saudi membayar iuran GOSI untuk gaji sampai SAR45.000 sebulan. Skema lama memotong 9,75% dari pekerja untuk pensiun dan SANED, yaitu asuransi pengangguran. Pada skema untuk peserta baru, iuran pekerja 10,75% sejak Juli 2026 (sebelumnya 10,25%). Skema mana yang berlaku bergantung pada riwayat kepesertaanmu di GOSI. <em>Tool</em> ini memuat keduanya sebagai pilihan.</p>",
+        "html": "<p>Warga negara Saudi membayar iuran GOSI untuk gaji sampai SAR45.000 sebulan. Skema lama memotong 9,75% dari pekerja untuk pensiun dan SANED, yaitu asuransi pengangguran. Pada skema untuk peserta baru, iuran pekerja 10,75% sejak Juli 2026 (sebelumnya 10,25%). Skema mana yang berlaku bergantung pada riwayat kepesertaanmu di GOSI. Keduanya tersedia sebagai pilihan di <em>tool</em> ini.</p>",
         "table": {
           "head": [
             "Skema",
@@ -70,7 +70,7 @@
       },
       {
         "h3": "Pekerja asing: premi risiko kerja dari pemberi kerja dan uang akhir masa kerja",
-        "html": "<p>Pekerja asing tidak membayar iuran pensiun dan pengangguran GOSI. Pemberi kerja membayar premi risiko kecelakaan kerja 2% dari upah atas namamu, sampai batas upah yang sama. Premi itu dibayar di luar gaji dan tidak mengurangi gaji bersihmu. Di luar GOSI, hukum ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service award</em>). Aturan ini berlaku juga bagi warga Saudi, tetapi bagi pekerja asing uang inilah yang praktis menjadi pengganti pensiun. Besarnya setengah bulan upah untuk tiap tahun pada lima tahun pertama, lalu satu bulan upah untuk tiap tahun sesudahnya.</p><p>Berbeda dengan JHT yang kamu cicil tiap bulan, uang ini dibayar sekali saat kamu keluar, dan jumlahnya bisa berkurang kalau kamu yang mengundurkan diri.</p>",
+        "html": "<p>Pekerja asing tidak membayar iuran pensiun dan pengangguran GOSI. Pemberi kerja membayar premi risiko kecelakaan kerja 2% dari upah atas namamu, sampai batas upah yang sama. Premi itu dibayar di luar gaji dan tidak mengurangi gaji bersihmu. Di luar GOSI, hukum ketenagakerjaan mewajibkan pemberi kerja membayar uang akhir masa kerja (<em>end-of-service award</em>). Aturan ini berlaku juga bagi warga Saudi, tetapi bagi pekerja asing uang inilah yang praktis menjadi pengganti pensiun. Besarnya setengah bulan upah untuk setiap tahun kerja pada lima tahun pertama, lalu satu bulan upah untuk setiap tahun sesudahnya.</p><p>Berbeda dengan JHT yang kamu cicil tiap bulan, uang ini dibayar sekali saat kamu keluar, dan jumlahnya bisa berkurang kalau kamu yang mengundurkan diri.</p>",
         "cite": [
           {
             "name": "GOSI, FAQ peserta: Bahaya Kerja 2%, dibayar pemberi kerja",
@@ -139,7 +139,7 @@
       "key": "national",
       "title": "Berapa iuran GOSI warga Saudi dengan gaji SAR240.000 (skema lama)?",
       "intro": "<p>Contoh ini untuk warga negara Saudi, bukan WNI. Dalam skema lama tidak ada pajak penghasilan, tetapi 9,75% gaji masuk GOSI, yaitu SAR23.400 setahun. Gaji bersihnya SAR216.600 (90,3% dari gaji kotor), dan tarif marginalnya 9,8% (pembulatan dari 9,75%) selama gaji bulanan di bawah batas SAR45.000.</p>",
-      "after": "<p>Peserta baru GOSI membayar 10,75% sejak Juli 2026 (sebelumnya 10,25%), jadi sedikit lebih besar. Porsi iuran pemberi kerja untuk warga negara tidak dihitung oleh <em>tool</em> ini.</p>",
+      "after": "<p>Peserta baru GOSI membayar 10,75% sejak Juli 2026 (sebelumnya 10,25%), jadi sedikit lebih besar. <em>Tool</em> ini tidak menghitung porsi iuran pemberi kerja untuk warga negara.</p>",
       "cite": [
         {
           "name": "Saudi Press Agency, pengumuman GOSI 30 Juni 2025: iuran cabang pensiun naik 0,5% per tahun hingga 11% bagi peserta baru (Dekret Kerajaan M/273)",
@@ -167,7 +167,7 @@
       "html": "<p><strong>Cocok untuk:</strong> pekerja asing yang menerima gaji utuh. Tanpa iuran pensiun, tabungan hari tua jadi urusanmu, misalnya lewat DPLK, reksa dana, atau SBN. Pekerja migran Indonesia (PMI) juga punya program BPJS Ketenagakerjaan tersendiri; tanyakan syarat kepesertaannya ke BPJS Ketenagakerjaan.</p><p><strong>Catatan:</strong> uang akhir masa kerja bukan rencana pensiun. Pakai <a href=\"https://tool.adjiebrotots.com/financialfreedom/\">Financial Freedom Calculator</a> untuk menghitung dana yang kamu butuhkan.</p>"
     },
     {
-      "h3": "Pahami aturan uang akhir masa kerja sebelum menandatangani kontrak",
+      "h3": "Pahami aturan uang akhir masa kerja sebelum tanda tangan kontrak",
       "html": "<p><strong>Cocok untuk:</strong> calon pekerja yang membandingkan tawaran. Hukum ketenagakerjaan Saudi membedakan jumlah yang kamu terima menurut lama bekerja dan alasan berhenti, jadi tanyakan rinciannya sebelum menandatangani. Pastikan juga gaji dibayar lewat bank dalam program perlindungan upah (<em>Wage Protection System</em>).</p><p><strong>Catatan:</strong> pemutusan oleh pemberi kerja dihitung berbeda dari pengunduran diri. Minta aturannya ditulis jelas di kontrak.</p>",
       "cite": [
         {
@@ -185,13 +185,13 @@
     "<strong>Hanya penghasilan dari pekerjaan.</strong> Hitungannya satu gaji untuk satu tahun penuh, tanpa penghasilan lain, bonus, atau tahun yang tidak penuh.",
     "<strong>Uang akhir masa kerja tidak dihitung.</strong> Besarnya bergantung pada upah, lama bekerja, dan kontrakmu, jadi tidak ditambahkan ke angka di sini.",
     "<strong>Pajak Indonesia.</strong> <em>Tool</em> ini hanya menunjukkan apa yang diambil Arab Saudi. Pajak Indonesia atas penghasilan di luar negeri dan persetujuan penghindaran pajak berganda (P3B) tidak dihitung.",
-    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini memakai status yang kamu pilih (warga negara atau pekerja asing) dan tidak menguji apakah kamu memenuhi syaratnya.",
+    "<strong>Kamu yang memilih status.</strong> <em>Tool</em> ini memakai status yang kamu pilih (warga negara atau pekerja asing) dan tidak memeriksa apakah kamu memenuhi syaratnya.",
     "<strong>Paket versus tunai.</strong> Hitungannya memakai gaji kotor yang kamu masukkan. Tunjangan rumah, sekolah, atau tiket pulang di kontrak tidak dipisahkan.",
     "<strong>Porsi pemberi kerja untuk warga negara.</strong> Untuk warga negara hanya sisi pekerja GOSI yang ditampilkan, bukan iuran pemberi kerja."
   ],
   "faq": [
     {
-      "q": "Berapa pajak yang saya bayar dengan gaji SAR240.000 di Arab Saudi?",
+      "q": "Berapa pajak untuk gaji SAR240.000 di Arab Saudi?",
       "a": "<p>Pekerja asing tidak membayar pajak penghasilan maupun iuran GOSI, sehingga gaji SAR240.000 diterima utuh. Warga negara Saudi dalam skema lama membayar 9,75% ke GOSI dan menerima SAR216.600. Cobalah dengan angkamu sendiri di <a href=\"https://tool.adjiebrotots.com/global-income-tax-calculator/\">Global Income Tax Calculator</a>.</p>",
       "cite": [
         {
@@ -216,7 +216,7 @@
     },
     {
       "q": "Apakah pekerja asing membayar GOSI di Arab Saudi?",
-      "a": "<p>Tidak membayar iuran pensiun atau pengangguran, tetapi pemberi kerja membayar premi risiko kecelakaan kerja 2% (SAR4.800 untuk gaji SAR240.000) di luar gajimu, jadi gaji bersihmu tidak berkurang. Karena itu kamu tidak mendapat pensiun GOSI; yang kamu terima saat kontrak berakhir adalah uang akhir masa kerja dari pemberi kerja.</p>",
+      "a": "<p>Pekerja asing tidak membayar iuran pensiun atau pengangguran GOSI, tetapi pemberi kerja membayar premi risiko kecelakaan kerja 2% (SAR4.800 untuk gaji SAR240.000) di luar gajimu, jadi gaji bersihmu tidak berkurang. Karena itu kamu tidak mendapat pensiun GOSI. Yang kamu terima saat kontrak berakhir adalah uang akhir masa kerja dari pemberi kerja.</p>",
       "cite": [
         {
           "name": "GOSI, FAQ peserta: Bahaya Kerja 2%, dibayar pemberi kerja",

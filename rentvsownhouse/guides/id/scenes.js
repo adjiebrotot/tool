@@ -11,6 +11,6 @@ export const { TOOL, SCENES } = indonesian(EN, {
     '2BR house': 'Rumah 2KT',                 // quickstart-data.js, house-2br short.id
     'a month': 'per bulan',                   // the rent's period (#rentFreq)
     // The chart's Share menu (shared.js, makeShare's TEXT.id).
-    'Download as PNG': 'Unduh sebagai PNG', 'Share as link': 'Bagikan sebagai tautan', 'Embed as HTML': 'Sematkan sebagai HTML',
+    'Download as PNG': 'Unduh sebagai PNG', 'Share as link': 'Bagikan sebagai tautan', 'Embed as HTML': 'Embed sebagai HTML',
   },
 });

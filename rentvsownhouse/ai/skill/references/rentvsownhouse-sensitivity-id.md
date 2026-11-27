@@ -3,10 +3,10 @@ https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/
 
 This is the full reference for one page of the skill brotools-rentvsownhouse: read SKILL.md first.
 
-Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu ajukan
-pertanyaanmu. Asisten akan membalas dengan tautan yang membuka tool ini dengan skenariomu, lengkap
-dengan daftar asumsinya, lalu tool inilah yang menghitung hasilnya. Bagian di bawah ini ditulis
-untuk asisten AI, jadi tetap dalam bahasa Inggris.
+Pasang skill tool ini di asisten AI-mu (Claude, ChatGPT, Grok, dan lainnya), lalu tanyakan apa yang
+ingin kamu hitung. Asisten membalas dengan tautan yang membuka tool ini sesuai skenariomu, lengkap
+dengan daftar asumsinya, dan tool inilah yang menghitung hasilnya. Sisa halaman ini ditulis untuk
+asisten AI, jadi tetap dalam bahasa Inggris.
 
 For people: Install this tool's skill in your AI assistant (Claude, ChatGPT, Grok and others) and
 ask your question. It replies with a link that opens this tool on your scenario and lists what it

@@ -23,7 +23,7 @@
 (function(global){
   var doc = document, root = doc.documentElement;
   var SITE = location.origin + '/', HOME = 'https://tool.adjiebrotots.com';
-  var FAILED = { en: ['This chart could not load.', 'Open it, or get a fresh embed code, at '], id: ['Grafik ini gagal dimuat.', 'Buka, atau ambil kode embed baru, di '] };
+  var FAILED = { en: ['This chart could not load.', 'Open it, or get a fresh embed code, at '], id: ['Grafik ini gagal dimuat.', 'Buka grafiknya, atau ambil kode embed baru, di '] };
   var RESET = { en: 'Reset zoom', id: 'Reset zoom' }, PLAY = { en: ['Play', 'Pause'], id: ['Putar', 'Jeda'] };
   var snap = null, lang = 'en', pool = [], card, stage, legendBox, modesBox, resetBox, frameAt = -1, picks = [];
   // What the reader hid in the key, by entry, so it stays hidden in every view.

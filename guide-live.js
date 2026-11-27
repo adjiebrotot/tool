@@ -55,7 +55,7 @@
   var W = /^id\b/i.test(document.documentElement.lang || '') ? {
     play: 'Putar', pause: 'Jeda', playTitle: 'Putar atau jeda demo', full: 'Layar penuh', fullTitle: 'Tampilkan demo di layar penuh',
     exitFull: 'Keluar dari layar penuh', live: 'Demo langsung', trying: 'Dijeda: coba tool-nya di sini, atau tekan Putar',
-    tool: 'Tool-nya', step: 'Menuju langkah ', loading: 'Memuat tool…', failed: 'Demo tidak bisa dimuat. Buka tool-nya untuk mencobanya.'
+    tool: 'Tool', step: 'Ke langkah ', loading: 'Memuat tool…', failed: 'Demo tidak bisa dimuat. Buka tool-nya untuk mencobanya.'
   } : {
     play: 'Play', pause: 'Pause', playTitle: 'Play or pause the demo', full: 'Full screen', fullTitle: 'Show the demo full screen',
     exitFull: 'Exit full screen', live: 'Live demo', trying: 'Paused: try the tool here, or press Play',
