@@ -2036,19 +2036,49 @@ function renderLines(results){
 }
 
 /* ───────────────────────── What this assumes ───────────────────────── */
-const SIT_FIELDS = ['auRes','sgRes','usRes','deClass','idRes','myRes','noRes','seRes','fiRes','itImp','frCadre','esRegime','ptRegime','jpRes','krMethod','cnRes','twRes','twEi','gulfNat','beStatus','chStatus','usFiling','caProv','usState','ukRegion'];
+// The situation a job was worked out on: its place first, then the choices that shape its rules.
+const SIT_FIELDS = ['usState','caProv','ukRegion','auRes','sgRes','usRes','usFiling','deClass','idRes','myRes','noRes','seRes','fiRes','itImp','frCadre','esRegime','ptRegime','jpRes','krMethod','cnRes','twRes','twEi','gulfNat','beStatus','chStatus'];
 function optionText(id, v){
   const el = $(id);
   if(!el || el.tagName !== 'SELECT') return '';
   const o = [...el.options].find(o => o.value === String(v));
   return o ? o.textContent.trim() : '';
 }
+// A job holds a value for every country's fields (the page's defaults), so a field is told only
+// where its row would show for that job: its country, and its data-if read on the job's own values.
+function jobVal(job, id){
+  const v = job[id];
+  return typeof v === 'boolean' ? (v ? 'on' : 'off') : v == null ? '' : String(v);
+}
+function rowAppliesTo(row, job){
+  const show = row.getAttribute('data-show'), cond = row.getAttribute('data-if');
+  if(show && !show.split(/\s+/).includes(job.country)) return false;
+  if(cond) return cond.split(/\s+/).filter(Boolean).every(t => {
+    const m = /^([A-Za-z0-9]+)(!?=)(.*)$/.exec(t);
+    if(!m) return true;
+    const hit = m[3].split('|').includes(jobVal(job, m[1]));
+    return m[2] === '=' ? hit : !hit;
+  });
+  return true;
+}
+function situationOf(job){
+  return SIT_FIELDS.map(f => {
+    const el = $(f), row = el && el.closest('.field-row, .toggle-row');
+    if(!row || !rowAppliesTo(row, job)) return '';
+    const text = optionText(f, job[f]);
+    const lab = row.querySelector('.field-label [data-i18n]') || row.querySelector('.field-label');
+    return text ? (lab ? lab.textContent.trim() + ': ' : '') + text : '';
+  }).filter(Boolean);
+}
 function renderAssumptions(results){
   const li = [];
   results.forEach((r, i) => {
     const job = JOBS[i], c = E.C[job.country];
-    const sit = SIT_FIELDS.filter(f => Object.prototype.hasOwnProperty.call(job, f)).map(f => optionText(f, job[f])).filter(Boolean);
-    let line = '<strong>' + esc(jobTitle(job, i)) + ':</strong> ' + esc(TF('aRules', { year: trE(c.year, job.country) })) + (c.place ? esc(TF('aFor', { place: trE(c.place, job.country) })) : '') + (sit.length ? ', ' + esc(sit.join(', ').toLowerCase()) : '') + '.';
+    const year = trE(c.year, job.country), place = c.place ? trE(c.place, job.country) : '';
+    // A place the year already names ("Income 2026 (mainland)") is not said twice.
+    const forPlace = place && !year.toLowerCase().includes(place.toLowerCase()) ? TF('aFor', { place }) : '';
+    const sit = situationOf(job);
+    let line = '<strong>' + esc(jobTitle(job, i)) + ':</strong> ' + esc(TF('aRules', { year }) + forPlace) + '.' + (sit.length ? ' ' + esc(sit.join('; ')) + '.' : '');
     if(r.solved) line += esc(TF('aSolved', { x: money(r.target, r.cur) }));
     if(r.notSupported) line += esc(TF('aNotWorked', { reason: trE(r.reason, job.country) }));
     li.push(line);
