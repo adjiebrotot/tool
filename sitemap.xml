@@ -59,7 +59,7 @@
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/</loc>
@@ -83,7 +83,7 @@
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/guides/</loc>
@@ -173,7 +173,7 @@
     <loc>https://tool.adjiebrotots.com/eggprice/</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financialfreedom/</loc>
@@ -833,13 +833,13 @@
     <loc>https://tool.adjiebrotots.com/graphvisualiser/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/jsonvisualiser/</loc>
     <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/loadflow-simulator/</loc>
@@ -863,13 +863,13 @@
     <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
     <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/online-3d-viewer/</loc>
     <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/</loc>
@@ -3623,7 +3623,7 @@
     <loc>https://tool.adjiebrotots.com/randompicker/</loc>
     <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/</loc>
@@ -3719,7 +3719,7 @@
     <loc>https://tool.adjiebrotots.com/sankeycreator/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/valuateeverything/</loc>
@@ -3743,19 +3743,19 @@
     <loc>https://tool.adjiebrotots.com/video-trimmer-captioner/</loc>
     <lastmod>2026-11-25</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/wemconstraint-checker/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/wemconstraint-checker/guide/</loc>
@@ -3767,6 +3767,6 @@
     <loc>https://tool.adjiebrotots.com/worldclock/</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
 </urlset>

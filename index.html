@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="50UMav7esC2dSHXx5TNvjBPwYkYzXmS87Ezd7gfBotA" />
   <title>Adjie Brotools</title>
-  <meta name="description" content="Free calculators and tools by Adjie Brotosukmono for tax, loans, property, power system engineering and data visualisation. Everything runs in your browser.">
+  <meta name="description" content="Free finance and power system engineering tools by Adjie Brotosukmono: income tax, property, loans and investing, load flow, dispatch and PowerFactory and PSCAD scripts. Runs in your browser.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f172a">
   <link rel="canonical" href="https://tool.adjiebrotots.com/">
@@ -54,7 +54,7 @@
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Adjie Brotools">
-  <meta name="twitter:description" content="Free browser-based tools for finance, tax, property, and engineering decisions. All calculations run locally: no uploads, no paywall.">
+  <meta name="twitter:description" content="Free browser-based tools for finance, tax, property and power system engineering decisions. All calculations run locally: no uploads, no paywall.">
   <meta name="twitter:image" content="https://tool.adjiebrotots.com/og/home.jpg">
 
   <link rel="preload" href="assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
@@ -520,26 +520,69 @@
       gap: 1rem;
     }
 
-    .domain-group-heading {
-      grid-column: 1 / -1;
-      margin: 0.35rem 0 -0.2rem;
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.01em;
+    /* The directory leads with the two fields the site is about, Engineering and
+       Finance, as full cards under a heading and one line on what they cover. The
+       utilities follow as one quieter group: a muted heading over a hairline, small
+       subsection labels, and small cards three to a row, so they read as extras
+       beside the two specialisms, never as a third one. */
+    .tool-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
     }
 
-    .domain-group-heading.is-hidden {
+    .tool-group.is-hidden,
+    .tool-subgroup.is-hidden {
       display: none;
     }
 
-    /* The in-article ad between two domain groups (.ad-slot in shared.css): a full row,
-       shown only while every group is (no filter), so it never sits among a few results. */
-    .tool-grid > .ad-slot {
-      grid-column: 1 / -1;
+    .group-head {
+      margin: 0 0 0.9rem;
     }
 
-    .tool-grid > .ad-slot.is-hidden {
+    .group-heading {
+      margin: 0;
+      font-size: var(--fs-lg);
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .group-lede {
+      margin: 0.3rem 0 0;
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: var(--fs-sm);
+      line-height: 1.5;
+    }
+
+    .tool-group-utilities {
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .tool-group-utilities .group-heading {
+      font-size: var(--fs-md);
+      color: var(--muted);
+    }
+
+    .tool-subgroup + .tool-subgroup {
+      margin-top: 1.1rem;
+    }
+
+    .subgroup-heading {
+      margin: 0 0 0.5rem;
+      color: var(--muted);
+      font-size: var(--fs-xs);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* The in-article ad between two groups (.ad-slot in shared.css), shown only while
+       every group is (no filter), so it never sits among a few results. */
+    .tool-groups > .ad-slot.is-hidden {
       display: none;
     }
 
@@ -662,22 +705,22 @@
       gap: 0.75rem;
     }
 
-    .tool-top h3 {
+    .tool-top [itemprop="name"] {
       margin: 0;
       font-size: 1.2rem;
       line-height: 1.25;
       letter-spacing: -0.02em;
     }
 
-    .tool-top h3 a {
+    .tool-top [itemprop="name"] a {
       transition: color var(--motion-fast);
     }
 
-    .tool-top h3 a:hover {
+    .tool-top [itemprop="name"] a:hover {
       color: var(--accent-strong);
     }
 
-    .tool-top h3 a:focus-visible {
+    .tool-top [itemprop="name"] a:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
       border-radius: 4px;
@@ -980,6 +1023,78 @@
       top: 1rem;
     }
 
+    /* A Quick Utility card: a small drawing, the name and its line, three to a row.
+       No tags and no button: the whole card is its title's link. */
+    .tool-grid-compact {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .tool-grid-compact .tool-card {
+      grid-template-columns: 64px minmax(0, 1fr);
+      border-radius: var(--radius-lg);
+    }
+
+    .tool-grid-compact .tool-anim {
+      min-height: 0;
+      padding: 0.35rem;
+    }
+
+    .tool-grid-compact .tool-body {
+      gap: 0.2rem;
+      padding: 0.6rem 0.75rem 0.7rem;
+    }
+
+    .tool-grid-compact .tool-top {
+      gap: 0.5rem;
+    }
+
+    .tool-grid-compact .tool-top [itemprop="name"] {
+      font-size: 0.95rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .tool-grid-compact .tool-top [itemprop="name"] a::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .tool-grid-compact .status-badge {
+      width: 14px;
+      height: 14px;
+      margin-top: 0.1rem;
+    }
+
+    .tool-grid-compact .status-badge::before {
+      width: 12px;
+      height: 12px;
+    }
+
+    .tool-grid-compact .tool-description {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      margin: 0;
+      color: var(--muted);
+      font-size: var(--fs-xs);
+      line-height: 1.45;
+    }
+
+    /* A utility's drawing stays still: the moving drawings belong to the two fields.
+       Each drawing's un-animated markup is its best still frame (home-anim.js). */
+    .tool-grid-compact .tool-anim * {
+      animation: none !important;
+    }
+
+    /* The Indonesian home's EN mark, beside the status. */
+    .tool-grid-compact .tool-lang {
+      margin-left: auto;
+      margin-top: 0.1rem;
+    }
+
     @media (min-width: 641px) {
       .filter-fold { display: none; }
     }
@@ -987,6 +1102,10 @@
     @media (max-width: 900px) {
       .tool-grid {
         grid-template-columns: 1fr;
+      }
+
+      .tool-grid-compact {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .filter-grid {
@@ -1043,12 +1162,37 @@
         padding: 0.9rem 1rem 1rem;
       }
 
-      .tool-top h3 {
+      .tool-top [itemprop="name"] {
         font-size: 1.08rem;
       }
 
       .tool-description {
         font-size: 0.9rem;
+      }
+
+      .tool-grid-compact {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-grid-compact .tool-card {
+        grid-template-columns: 56px minmax(0, 1fr);
+      }
+
+      .tool-grid-compact .tool-anim {
+        min-height: 0;
+      }
+
+      .tool-grid-compact .tool-body {
+        padding: 0.55rem 0.75rem 0.65rem;
+      }
+
+      .tool-grid-compact .tool-top [itemprop="name"] {
+        font-size: 0.95rem;
+      }
+
+      .tool-grid-compact .tool-description {
+        font-size: var(--fs-xs);
+        -webkit-line-clamp: 2;
       }
     }
   </style>
@@ -1063,7 +1207,7 @@
         "name": "Adjie Brotools",
         "alternateName": ["Adjie Brotot Tools", "Adjie Brotosukmono Tools", "adjiebrotots tools"],
         "url": "https://tool.adjiebrotots.com/",
-        "description": "A collection of free, privacy-first, browser-based tools for finance, tax, property, engineering, and data-visualisation decisions. All calculations run locally in the user's browser — no uploads, no account, no paywall — and every tool offers free high-quality PDF, CSV, PNG, or SVG export.",
+        "description": "Free, privacy-first, browser-based tools for finance and power system engineering: income tax, property, lending and investing decisions, and power system studies and PowerFactory and PSCAD automation, with a few quick utilities alongside. All calculations run locally in the user's browser — no uploads, no account, no paywall — and every tool offers free high-quality PDF, CSV, PNG, or SVG export.",
         "disambiguatingDescription": "Adjie Brotools (also written Adjie Brotot Tools) is a collection of free web-based calculators and utilities at tool.adjiebrotots.com, created by Adjie Brotosukmono. It is NOT affiliated with, and has no relation to, 'BroTools' — the animation and rigging plugin suite for Autodesk Maya. Adjie Brotools contains no 3D animation scripts.",
         "inLanguage": ["en", "id"],
         "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
@@ -1079,6 +1223,7 @@
         "email": "mailto:hi@adjiebrotots.com",
         "jobTitle": "Senior Economics Consultant",
         "description": "Indonesian senior economics consultant and power system engineer at Mott MacDonald in Perth, Western Australia, a Professional Member of Engineers Australia, and the maker of Adjie Brotools.",
+        "knowsAbout": ["Power system engineering", "Power system studies", "DIgSILENT PowerFactory", "PSCAD", "Economics", "Electricity markets", "Personal finance", "Income tax", "Property finance"],
         "worksFor": { "@type": "Organization", "name": "Mott MacDonald", "url": "https://www.mottmac.com/" },
         "memberOf": { "@type": "Organization", "name": "Engineers Australia", "url": "https://www.engineersaustralia.org.au/" },
         "alumniOf": { "@type": "CollegeOrUniversity", "name": "Institut Teknologi Bandung", "alternateName": "ITB" },
@@ -1095,7 +1240,7 @@
             "name": "What is Adjie Brotools?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Adjie Brotools (Adjie Brotot Tools) is a collection of free, browser-based web tools at tool.adjiebrotots.com created by Adjie Brotosukmono, an Indonesian senior economics consultant and power system engineer based in Perth, Australia (https://www.adjiebrotots.com/about/). The tools cover finance, tax, property, engineering, and data-visualisation decisions — for example rent-vs-buy modelling, Indonesian PPh 21 pisah harta vs gabung harta comparison, DCA simulation, PowerFactory and PSCAD script generation, and Sankey diagram creation."
+              "text": "Adjie Brotools (Adjie Brotot Tools) is a collection of free, browser-based web tools at tool.adjiebrotots.com created by Adjie Brotosukmono, an Indonesian senior economics consultant and power system engineer based in Perth, Australia (https://www.adjiebrotots.com/about/). The tools cover two fields. Finance: income tax in 31 countries, Indonesian PPh 21 pisah harta vs gabung harta, rent-vs-buy modelling, Australian borrowing capacity, cash vs financing, DCA simulation and financial freedom. Power system engineering: load flow, economic dispatch and unit commitment, capacity expansion planning, and PowerFactory and PSCAD script generation. A few quick utilities (charts, file converters and everyday helpers) sit alongside."
             }
           },
           {
@@ -1103,7 +1248,7 @@
             "name": "Is Adjie Brotools related to BroTools for Autodesk Maya?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. Adjie Brotools has no relation or affiliation whatsoever with 'BroTools', the animation and rigging plugin suite for Autodesk Maya. Adjie Brotools contains no 3D animation scripts. It is an independent collection of free web-based calculators and utilities for finance, tax, property, engineering, and data visualisation, created by Adjie Brotosukmono."
+              "text": "No. Adjie Brotools has no relation or affiliation whatsoever with 'BroTools', the animation and rigging plugin suite for Autodesk Maya. Adjie Brotools contains no 3D animation scripts. It is an independent collection of free web-based finance and power system engineering tools, created by Adjie Brotosukmono."
             }
           },
           {
@@ -1133,41 +1278,495 @@
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Adjie Brotools",
-    "alternateName": ["Adjie Brotot Tools"],
+    "alternateName": [
+      "Adjie Brotot Tools"
+    ],
     "url": "https://tool.adjiebrotots.com/",
-    "description": "A collection of free, privacy-first, browser-based tools for finance, tax, property, engineering, data visualisation, and productivity decisions. All calculations run locally in the browser with no uploads, and every tool offers free PDF, CSV, PNG, or SVG export.",
+    "description": "Free, privacy-first tools for finance and power system engineering by Adjie Brotosukmono, an economics consultant and power system engineer: income tax, property, lending and investing, and load flow, economic dispatch, capacity expansion and PowerFactory and PSCAD automation. A few quick utilities for charts, files and everyday questions sit alongside. Everything runs locally in the browser with no uploads.",
     "publisher": { "@id": "https://www.adjiebrotots.com/#person" },
     "inLanguage": "en",
     "about": [
-      "Finance",
-      "Tax",
-      "Property",
-      "Engineering",
-      "Data visualisation",
-      "Productivity"
+      "Power system engineering",
+      "Electricity market and power system modelling",
+      "Personal finance",
+      "Income tax",
+      "Property and lending",
+      "Investing"
     ],
-    "mainEntity": {
+    "mainEntity": [
+      {
+        "@type": "ItemList",
+        "@id": "https://tool.adjiebrotots.com/#engineering",
+        "name": "Engineering tools",
+        "description": "Power system studies in the browser: load flow, economic dispatch and unit commitment, capacity expansion, WEM constraint equations, and PowerFactory and PSCAD automation.",
+        "numberOfItems": 6,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "WebApplication",
+              "name": "PowerFactory Scripter",
+              "url": "https://tool.adjiebrotots.com/powerfactory-scripter/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the PowerFactory Workflow Builder", "url": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/" }
+              ],
+              "description": "Generate DIgSILENT PowerFactory Python automation scripts for common power-system study workflows. Cuts scripting work that usually takes power system engineers hours to days down to minutes.",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Reduces PowerFactory scripting from hours or days to minutes",
+                "Generated Python script is yours to keep, modify, and run",
+                "Script generation runs locally in the browser with no upload, suiting security-restricted engineering environments",
+                "Optimised for huge iteration studies, built on years of power system engineering experience by Adjie Brotosukmono"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "WebApplication",
+              "name": "PSCAD Scripter",
+              "url": "https://tool.adjiebrotots.com/pscad-scripter/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "PSCAD Workflow Builder", "url": "https://tool.adjiebrotots.com/pscad-scripter/builder/" },
+                { "@type": "WebPage", "name": "How to use the PSCAD Workflow Builder", "url": "https://tool.adjiebrotots.com/pscad-scripter/guides/" },
+                { "@type": "WebPage", "name": "How to automate PSCAD studies with Python", "url": "https://tool.adjiebrotots.com/pscad-scripter/python/" },
+                { "@type": "WebPage", "name": "PSCAD component reference", "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/" }
+              ],
+              "description": "Write PSCAD Python automation scripts in minutes, not days. Wire build, run, channel and EMT check blocks into one ready-to-run Python file that drives PSCAD through its Automation Library (mhi.pscad).",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "No-code Workflow Builder that writes one ready-to-run Python file for PSCAD and EMTDC",
+                "Fault ride-through, critical clearing time, parameter sweeps, layers, harmonics and THD, snapshots and simulation sets",
+                "Builds the case with PSCAD's own compiler and hands back its error and warning lines",
+                "Script generation runs locally in the browser with no upload, suiting security-restricted engineering environments"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "WebApplication",
+              "name": "WEM Constraint Equation Checker",
+              "url": "https://tool.adjiebrotots.com/wemconstraint-checker/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to Invoke WEM Constraint Equations", "url": "https://tool.adjiebrotots.com/wemconstraint-checker/guide/" }
+              ],
+              "description": "Check Western Australia WEM constraint equations against generator and constraint data in your browser.",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Checks run locally in the browser — constraint and generator data is never uploaded",
+                "Free with no paywall or account"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Load Flow Simulator",
+              "url": "https://tool.adjiebrotots.com/loadflow-simulator/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Load Flow Simulator", "url": "https://tool.adjiebrotots.com/loadflow-simulator/guides/" }
+              ],
+              "description": "Draw a single-line diagram and run an AC Newton-Raphson or DC load flow in the browser, with animated power flows you can export or embed.",
+              "applicationCategory": "EngineeringApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Drag-and-drop single-line diagram with PyPSA's standard line and transformer types",
+                "AC Newton-Raphson or DC load flow by PSA.js, a JavaScript port of PyPSA",
+                "Voltages, loading, losses and animated active and reactive power flows on the diagram",
+                "Export as SVG, PNG or animated GIF, share a link or embed the live diagram",
+                "Runs entirely in the browser with nothing uploaded"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "WebApplication",
+              "name": "ED/UC Simulator",
+              "alternateName": "Economic Dispatch & Unit Commitment Simulator",
+              "url": "https://tool.adjiebrotots.com/ed-uc-simulator/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the ED/UC Simulator", "url": "https://tool.adjiebrotots.com/ed-uc-simulator/guides/" }
+              ],
+              "description": "Economic Dispatch & Unit Commitment in the browser: draw a network, decide which units run and how much each produces hour by hour, and read the nodal prices.",
+              "applicationCategory": "EngineeringApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Drag-and-drop single-line diagram with generators, solar, wind, loads, storage and HVDC links",
+                "Unit commitment as a mixed-integer problem or its linear relaxation, or plain economic dispatch",
+                "Start-up costs, minimum stable output, minimum up and down times and ramp limits",
+                "Nodal prices (LMP) from a DC optimal power flow, with line limits and congestion",
+                "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Capacity Expansion Planner",
+              "alternateName": "Generation Expansion Planner",
+              "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Capacity Expansion Planner", "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/guides/" }
+              ],
+              "description": "What to build, and when: find the size and year of every new power plant and battery that meets a growing peak demand at the least present cost.",
+              "applicationCategory": "EngineeringApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Least-cost size and year of new solar, wind, gas, coal, nuclear, geothermal, batteries and pumped hydro",
+                "Existing plants that retire, build limits, unit sizes, carbon prices and a net-zero year",
+                "Growing peak demand with a built-in, drawn or uploaded CSV or Excel load profile",
+                "Each decision year run hour by hour over typical days of every season, plus an optional still, overcast peak day",
+                "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "@type": "ItemList",
+        "@id": "https://tool.adjiebrotots.com/#finance",
+        "name": "Finance tools",
+        "description": "Tax, property, lending and investing decisions, modelled year by year: take-home pay in 31 countries, Indonesian PPh 21, renting or buying, cash or finance, Australian borrowing capacity, DCA and financial freedom.",
+        "numberOfItems": 9,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Pisah vs Gabung",
+              "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the PPh 21 Pisah vs Gabung", "url": "https://tool.adjiebrotots.com/pisahvsgabung/guides/" }
+              ],
+              "description": "Compare Indonesian PPh 21 personal income tax under separate (pisah harta) and joint (gabung harta) filing scenarios. A one-of-a-kind analysis not otherwise available on the market.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "inLanguage": [
+                "en",
+                "id"
+              ],
+              "featureList": [
+                "One of a kind: no comparable pisah harta vs gabung harta scenario analysis exists on the market",
+                "Available in English and Indonesian (Bahasa Indonesia)",
+                "All calculations run locally in the browser — sensitive income data never leaves your device",
+                "Free chart and CSV export with no paywall"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Finance vs Cash",
+              "url": "https://tool.adjiebrotots.com/financingvscash/",
+              "hasPart": [
+                { "@type": "WebApplication", "name": "Loan Types Explained", "url": "https://tool.adjiebrotots.com/financingvscash/loan-types/" },
+                { "@type": "WebPage", "name": "How to use Finance vs Cash", "url": "https://tool.adjiebrotots.com/financingvscash/guides/" }
+              ],
+              "description": "Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "All calculations run locally in the browser — your financial data never leaves your device",
+                "Free chart and CSV export with no paywall"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Rent vs Own Home",
+              "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
+              "hasPart": [
+                { "@type": "WebApplication", "name": "Rent vs Own Sensitivity Analysis", "url": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" },
+                { "@type": "WebPage", "name": "Rent vs Own Quick Start Assumptions", "url": "https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/" },
+                { "@type": "WebPage", "name": "How to use the Rent vs Own Home tool", "url": "https://tool.adjiebrotots.com/rentvsownhouse/guides/" }
+              ],
+              "description": "Model renting versus buying property over time by comparing cash, equity, and net wealth scenarios. Comparable commercial property-modelling software can cost tens of thousands of dollars; this is free with full control.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "inLanguage": [
+                "en",
+                "id"
+              ],
+              "featureList": [
+                "Comprehensive scenario modelling: fixed and floating mortgage rates, setup and ongoing costs, rent-then-buy paths",
+                "Multi-scenario sensitivity analysis comparing several assumptions side by side",
+                "Available in English and Indonesian (Bahasa Indonesia)",
+                "All calculations run locally in the browser — your financial data never leaves your device",
+                "Free chart, CSV, PNG, and SVG export with no paywall"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Borrowing Capacity Calculator (Australia)",
+              "url": "https://tool.adjiebrotots.com/borrowingcapacity/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Borrowing Capacity Calculator", "url": "https://tool.adjiebrotots.com/borrowingcapacity/guides/" }
+              ],
+              "description": "Work out how much an Australian bank would lend you for a home loan, and see which lending cap is the binding one. Runs the eight steps a lender's credit engine runs: income shading, tax, HEM living expenses, existing commitments, the APRA buffer, and the DTI, LVR, and deposit caps.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Shows which of the four caps is binding (serviceability, debt to income, loan to value, deposit) and how much room the other three have",
+                "Full serviceability build-up printed line by line, unlike bank calculators that return a single number with no working",
+                "HEM living-expense benchmark scales with city, household, and income band, cross-fed from the site's own Cost of Living Comparator dataset",
+                "Borrowing capacity charted across a range of incomes with your own scenario at the centre",
+                "All calculations run locally in the browser, so income and debt details never leave your device"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "WebApplication",
+              "name": "DCA Scenario Explorer",
+              "url": "https://tool.adjiebrotots.com/dcasimulator/",
+              "hasPart": [
+                { "@type": "WebApplication", "name": "Portfolio DCA Simulator", "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/" },
+                { "@type": "WebPage", "name": "Common yfinance Ticker Codes", "url": "https://tool.adjiebrotots.com/dcasimulator/ticker/" },
+                { "@type": "WebPage", "name": "How to use the DCA Scenario Explorer", "url": "https://tool.adjiebrotots.com/dcasimulator/guides/" }
+              ],
+              "description": "Compare dollar-cost averaging strategies across securities using market data or custom assumptions.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Simulations run locally in the browser — portfolio assumptions never leave your device",
+                "Free chart and CSV export with no paywall"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Cost of Living Comparator",
+              "url": "https://tool.adjiebrotots.com/costofliving-comparator/",
+              "hasPart": [
+                { "@type": "WebApplication", "name": "Cost of Living Comparator: Map View", "url": "https://tool.adjiebrotots.com/costofliving-comparator/map/" },
+                { "@type": "WebPage", "name": "How to use the Cost of Living Comparator", "url": "https://tool.adjiebrotots.com/costofliving-comparator/guides/" }
+              ],
+              "description": "Compare living costs across cities to understand how far your salary goes before relocating or negotiating pay.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Comparisons run locally in the browser — salary details never leave your device",
+                "Free with no paywall or account"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Global Income Tax Calculator",
+              "alternateName": "Global Salary Calculator",
+              "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Global Income Tax Calculator", "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/guides/" }
+              ],
+              "description": "Take-home pay after income tax and social contributions in 31 countries, 39 US states and DC, each line sourced. Gross to net or net to gross, up to four jobs side by side.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "2026 income tax and employee contributions for 31 countries, 39 US states and DC, four Canadian provinces and Scotland, each line with its source",
+                "Solves the gross pay that leaves a take-home you set",
+                "Up to four jobs side by side in their own currencies, at today's exchange rates",
+                "Runs locally in the browser: salary details never leave your device"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Financial Freedom Calculator",
+              "url": "https://tool.adjiebrotots.com/financialfreedom/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Financial Freedom Calculator", "url": "https://tool.adjiebrotots.com/financialfreedom/guides/" }
+              ],
+              "description": "Work out the pot you need before you can stop working, and the age you actually reach it, inflation-adjusted and tested against thousands of simulated futures.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Three definitions of freedom: run the pot to nothing, leave a set legacy, or spend only the real growth so it lasts forever",
+                "Monte Carlo confidence band from your own return and volatility, not a single average return",
+                "Retirement age on a slider, so you can watch every figure move as you stop earlier or later",
+                "Prices each way out when the plan fails: save more, spend less, earn more, or retire later",
+                "Year-by-year cash flow table that reconciles to the cent, in today’s money or the money of the day",
+                "Everything runs locally in the browser, so income and savings details never leave your device"
+              ]
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "item": {
+              "@type": "WebApplication",
+              "name": "Valuate Everything",
+              "url": "https://tool.adjiebrotots.com/valuateeverything/",
+              "hasPart": [
+                { "@type": "WebPage", "name": "How to use the Valuate Everything", "url": "https://tool.adjiebrotots.com/valuateeverything/guides/" }
+              ],
+              "description": "Is that listing a fair price? Fit a price model to the secondhand listings you have seen, then check the items you want to buy against it in 2D or 3D.",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Any",
+              "isAccessibleForFree": true,
+              "featureList": [
+                "Enter listings as a table, typed text or a CSV file",
+                "Years turned into ages, and older prices lifted to today's money for inflation",
+                "Linear, log-linear, ridge or quadratic price models on standardised features",
+                "Fair price, typical-error range and the gap to each asking price",
+                "2D and 3D price charts with the items highlighted against the listings"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "mentions": {
       "@type": "ItemList",
+      "@id": "https://tool.adjiebrotots.com/#utilities",
+      "name": "Quick Utilities",
+      "description": "Small helper utilities alongside the finance and engineering tools, for charts, files and everyday questions.",
       "itemListElement": [
         {
           "@type": "ListItem",
           "position": 1,
           "item": {
-            "@type": "WebApplication",
-            "name": "PowerFactory Scripter",
-            "url": "https://tool.adjiebrotots.com/powerfactory-scripter/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the PowerFactory Workflow Builder", "url": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/" }
-            ],
-            "description": "Generate DIgSILENT PowerFactory Python automation scripts for common power-system study workflows. Cuts scripting work that usually takes power system engineers hours to days down to minutes.",
-            "applicationCategory": "DeveloperApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Reduces PowerFactory scripting from hours or days to minutes",
-              "Generated Python script is yours to keep, modify, and run",
-              "Script generation runs locally in the browser with no upload, suiting security-restricted engineering environments",
-              "Optimised for huge iteration studies, built on years of power system engineering experience by Adjie Brotosukmono"
+            "@type": "ItemList",
+            "@id": "https://tool.adjiebrotots.com/#utilities-visualisation",
+            "name": "Visualisation",
+            "numberOfItems": 5,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Graph Visualiser",
+                  "url": "https://tool.adjiebrotots.com/graphvisualiser/",
+                  "description": "Upload CSV or spreadsheet data and create interactive charts and graphs in your browser without coding.",
+                  "applicationCategory": "MultimediaApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Data is processed locally in the browser and never uploaded, safe for confidential datasets",
+                    "Free high-quality PNG and SVG export with no paywall"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Sankey Diagram Creator",
+                  "url": "https://tool.adjiebrotots.com/sankeycreator/",
+                  "description": "Create polished Sankey flow diagrams from manual inputs or CSV data and export them as SVG or PNG.",
+                  "applicationCategory": "MultimediaApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Diagrams are built locally in the browser — budget or flow data is never uploaded",
+                    "Free high-quality SVG and PNG export with no paywall"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "JSON Visualiser",
+                  "url": "https://tool.adjiebrotots.com/jsonvisualiser/",
+                  "description": "Explore large nested JSON as an interactive, lazily loaded tree. Lazy loading lets it handle files with millions of JSON keys and values without crashing the browser.",
+                  "applicationCategory": "DeveloperApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Lazy-loaded tree handles millions of JSON keys and values without error — capacity rarely found in browser JSON viewers",
+                    "Files are processed locally in the browser and never uploaded, safe for confidential data",
+                    "Free with no paywall or account"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Canvas Builder",
+                  "url": "https://tool.adjiebrotots.com/canvasbuilder/",
+                  "description": "Build and export strategy frameworks like Business Model Canvas and Value Proposition Canvas directly in your browser. Beautiful, interactive, and downloadable in pitch-ready quality for business case competitions and client pitches.",
+                  "applicationCategory": "BusinessApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Beautiful, interactive canvases downloadable in presentation quality for business pitching, e.g. student business case competitions",
+                    "Business plans and strategy content stay local in the browser — nothing is uploaded",
+                    "Free export with no paywall or account"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Online 3D Viewer",
+                  "url": "https://tool.adjiebrotots.com/online-3d-viewer/",
+                  "description": "View and convert 3D CAD and mesh models in the browser: STEP, IGES, BREP, IFC, Rhino 3DM, DGN, STL, OBJ, 3MF, AMF, glTF, GLB, FBX, COLLADA, USDZ, PLY, 3DS, OFF and VRML, saved as STEP, STL or GLB.",
+                  "applicationCategory": "DesignApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "STEP and IGES opened with OpenCascade in WebAssembly, with assembly parts and colours",
+                    "Models are read locally in the browser and never uploaded",
+                    "Edges, wireframe, Y or Z up, animation playback and a PNG of the view",
+                    "Converts: saves any model it opens as STEP, STL or GLB"
+                  ]
+                }
+              }
             ]
           }
         },
@@ -1175,24 +1774,64 @@
           "@type": "ListItem",
           "position": 2,
           "item": {
-            "@type": "WebApplication",
-            "name": "PSCAD Scripter",
-            "url": "https://tool.adjiebrotots.com/pscad-scripter/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "PSCAD Workflow Builder", "url": "https://tool.adjiebrotots.com/pscad-scripter/builder/" },
-              { "@type": "WebPage", "name": "How to use the PSCAD Workflow Builder", "url": "https://tool.adjiebrotots.com/pscad-scripter/guides/" },
-              { "@type": "WebPage", "name": "How to automate PSCAD studies with Python", "url": "https://tool.adjiebrotots.com/pscad-scripter/python/" },
-              { "@type": "WebPage", "name": "PSCAD component reference", "url": "https://tool.adjiebrotots.com/pscad-scripter/reference/" }
-            ],
-            "description": "Write PSCAD Python automation scripts in minutes, not days. Wire build, run, channel and EMT check blocks into one ready-to-run Python file that drives PSCAD through its Automation Library (mhi.pscad).",
-            "applicationCategory": "DeveloperApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "No-code Workflow Builder that writes one ready-to-run Python file for PSCAD and EMTDC",
-              "Fault ride-through, critical clearing time, parameter sweeps, layers, harmonics and THD, snapshots and simulation sets",
-              "Builds the case with PSCAD's own compiler and hands back its error and warning lines",
-              "Script generation runs locally in the browser with no upload, suiting security-restricted engineering environments"
+            "@type": "ItemList",
+            "@id": "https://tool.adjiebrotots.com/#utilities-converters",
+            "name": "Converters & Media",
+            "numberOfItems": 3,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Markdown Reader & Markdown to PDF Converter",
+                  "url": "https://tool.adjiebrotots.com/mdtopdf/",
+                  "description": "Read Markdown and export it to a high-quality, print-ready PDF entirely in your browser — with LaTeX math, code highlighting, diagrams, and an auto table of contents.",
+                  "applicationCategory": "UtilitiesApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Documents are rendered locally in the browser and never uploaded, safe for confidential content",
+                    "Free high-quality, print-ready PDF export with LaTeX math, diagrams, and auto table of contents — no paywall"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Video to GIF Converter",
+                  "url": "https://tool.adjiebrotots.com/videotogif/",
+                  "description": "Convert video clips into animated GIFs entirely in your browser with no upload or account required.",
+                  "applicationCategory": "MultimediaApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Conversion happens entirely on your device — private videos are never uploaded to any server",
+                    "Free with no paywall, watermark, or account"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Video Trimmer and Captioner",
+                  "url": "https://tool.adjiebrotots.com/video-trimmer-captioner/",
+                  "description": "Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.",
+                  "applicationCategory": "MultimediaApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Split, trim, delete, duplicate and reorder clips, and join several videos into one",
+                    "Captions from an SRT or VTT file, or written from scratch, follow every cut",
+                    "Burns captions into the picture or adds a subtitle track, and saves the retimed SRT or VTT",
+                    "Exports MP4 or WebM on your device: the video is never uploaded"
+                  ]
+                }
+              }
             ]
           }
         },
@@ -1200,497 +1839,70 @@
           "@type": "ListItem",
           "position": 3,
           "item": {
-            "@type": "WebApplication",
-            "name": "Pisah vs Gabung",
-            "url": "https://tool.adjiebrotots.com/pisahvsgabung/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the PPh 21 Pisah vs Gabung", "url": "https://tool.adjiebrotots.com/pisahvsgabung/guides/" }
-            ],
-            "description": "Compare Indonesian PPh 21 personal income tax under separate (pisah harta) and joint (gabung harta) filing scenarios. A one-of-a-kind analysis not otherwise available on the market.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "inLanguage": ["en", "id"],
-            "featureList": [
-              "One of a kind: no comparable pisah harta vs gabung harta scenario analysis exists on the market",
-              "Available in English and Indonesian (Bahasa Indonesia)",
-              "All calculations run locally in the browser — sensitive income data never leaves your device",
-              "Free chart and CSV export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Finance vs Cash",
-            "url": "https://tool.adjiebrotots.com/financingvscash/",
-            "hasPart": [
-              { "@type": "WebApplication", "name": "Loan Types Explained", "url": "https://tool.adjiebrotots.com/financingvscash/loan-types/" },
-              { "@type": "WebPage", "name": "How to use Finance vs Cash", "url": "https://tool.adjiebrotots.com/financingvscash/guides/" }
-            ],
-            "description": "Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "All calculations run locally in the browser — your financial data never leaves your device",
-              "Free chart and CSV export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Rent vs Own Home",
-            "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
-            "hasPart": [
-              { "@type": "WebApplication", "name": "Rent vs Own Sensitivity Analysis", "url": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" },
-              { "@type": "WebPage", "name": "Rent vs Own Quick Start Assumptions", "url": "https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/" },
-              { "@type": "WebPage", "name": "How to use the Rent vs Own Home tool", "url": "https://tool.adjiebrotots.com/rentvsownhouse/guides/" }
-            ],
-            "description": "Model renting versus buying property over time by comparing cash, equity, and net wealth scenarios. Comparable commercial property-modelling software can cost tens of thousands of dollars; this is free with full control.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "inLanguage": ["en", "id"],
-            "featureList": [
-              "Comprehensive scenario modelling: fixed and floating mortgage rates, setup and ongoing costs, rent-then-buy paths",
-              "Multi-scenario sensitivity analysis comparing several assumptions side by side",
-              "Available in English and Indonesian (Bahasa Indonesia)",
-              "All calculations run locally in the browser — your financial data never leaves your device",
-              "Free chart, CSV, PNG, and SVG export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 6,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Borrowing Capacity Calculator (Australia)",
-            "url": "https://tool.adjiebrotots.com/borrowingcapacity/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Borrowing Capacity Calculator", "url": "https://tool.adjiebrotots.com/borrowingcapacity/guides/" }
-            ],
-            "description": "Work out how much an Australian bank would lend you for a home loan, and see which lending cap is the binding one. Runs the eight steps a lender's credit engine runs: income shading, tax, HEM living expenses, existing commitments, the APRA buffer, and the DTI, LVR, and deposit caps.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Shows which of the four caps is binding (serviceability, debt to income, loan to value, deposit) and how much room the other three have",
-              "Full serviceability build-up printed line by line, unlike bank calculators that return a single number with no working",
-              "HEM living-expense benchmark scales with city, household, and income band, cross-fed from the site's own Cost of Living Comparator dataset",
-              "Borrowing capacity charted across a range of incomes with your own scenario at the centre",
-              "All calculations run locally in the browser, so income and debt details never leave your device"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 7,
-          "item": {
-            "@type": "WebApplication",
-            "name": "DCA Scenario Explorer",
-            "url": "https://tool.adjiebrotots.com/dcasimulator/",
-            "hasPart": [
-              { "@type": "WebApplication", "name": "Portfolio DCA Simulator", "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/" },
-              { "@type": "WebPage", "name": "Common yfinance Ticker Codes", "url": "https://tool.adjiebrotots.com/dcasimulator/ticker/" },
-              { "@type": "WebPage", "name": "How to use the DCA Scenario Explorer", "url": "https://tool.adjiebrotots.com/dcasimulator/guides/" }
-            ],
-            "description": "Compare dollar-cost averaging strategies across securities using market data or custom assumptions.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Simulations run locally in the browser — portfolio assumptions never leave your device",
-              "Free chart and CSV export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 8,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Graph Visualiser",
-            "url": "https://tool.adjiebrotots.com/graphvisualiser/",
-            "description": "Upload CSV or spreadsheet data and create interactive charts and graphs in your browser without coding.",
-            "applicationCategory": "MultimediaApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Data is processed locally in the browser and never uploaded, safe for confidential datasets",
-              "Free high-quality PNG and SVG export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 9,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Sankey Diagram Creator",
-            "url": "https://tool.adjiebrotots.com/sankeycreator/",
-            "description": "Create polished Sankey flow diagrams from manual inputs or CSV data and export them as SVG or PNG.",
-            "applicationCategory": "MultimediaApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Diagrams are built locally in the browser — budget or flow data is never uploaded",
-              "Free high-quality SVG and PNG export with no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 10,
-          "item": {
-            "@type": "WebApplication",
-            "name": "JSON Visualiser",
-            "url": "https://tool.adjiebrotots.com/jsonvisualiser/",
-            "description": "Explore large nested JSON as an interactive, lazily loaded tree. Lazy loading lets it handle files with millions of JSON keys and values without crashing the browser.",
-            "applicationCategory": "DeveloperApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Lazy-loaded tree handles millions of JSON keys and values without error — capacity rarely found in browser JSON viewers",
-              "Files are processed locally in the browser and never uploaded, safe for confidential data",
-              "Free with no paywall or account"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 11,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Canvas Builder",
-            "url": "https://tool.adjiebrotots.com/canvasbuilder/",
-            "description": "Build and export strategy frameworks like Business Model Canvas and Value Proposition Canvas directly in your browser. Beautiful, interactive, and downloadable in pitch-ready quality for business case competitions and client pitches.",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Beautiful, interactive canvases downloadable in presentation quality for business pitching, e.g. student business case competitions",
-              "Business plans and strategy content stay local in the browser — nothing is uploaded",
-              "Free export with no paywall or account"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 12,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Cost of Living Comparator",
-            "url": "https://tool.adjiebrotots.com/costofliving-comparator/",
-            "hasPart": [
-              { "@type": "WebApplication", "name": "Cost of Living Comparator: Map View", "url": "https://tool.adjiebrotots.com/costofliving-comparator/map/" },
-              { "@type": "WebPage", "name": "How to use the Cost of Living Comparator", "url": "https://tool.adjiebrotots.com/costofliving-comparator/guides/" }
-            ],
-            "description": "Compare living costs across cities to understand how far your salary goes before relocating or negotiating pay.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Comparisons run locally in the browser — salary details never leave your device",
-              "Free with no paywall or account"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 13,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Global Income Tax Calculator",
-            "alternateName": "Global Salary Calculator",
-            "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Global Income Tax Calculator", "url": "https://tool.adjiebrotots.com/global-income-tax-calculator/guides/" }
-            ],
-            "description": "Take-home pay after income tax and social contributions in 31 countries, 39 US states and DC, each line sourced. Gross to net or net to gross, up to four jobs side by side.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "2026 income tax and employee contributions for 31 countries, 39 US states and DC, four Canadian provinces and Scotland, each line with its source",
-              "Solves the gross pay that leaves a take-home you set",
-              "Up to four jobs side by side in their own currencies, at today's exchange rates",
-              "Runs locally in the browser: salary details never leave your device"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 14,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Video to GIF Converter",
-            "url": "https://tool.adjiebrotots.com/videotogif/",
-            "description": "Convert video clips into animated GIFs entirely in your browser with no upload or account required.",
-            "applicationCategory": "MultimediaApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Conversion happens entirely on your device — private videos are never uploaded to any server",
-              "Free with no paywall, watermark, or account"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 15,
-          "item": {
-            "@type": "WebApplication",
-            "name": "WEM Constraint Equation Checker",
-            "url": "https://tool.adjiebrotots.com/wemconstraint-checker/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to Invoke WEM Constraint Equations", "url": "https://tool.adjiebrotots.com/wemconstraint-checker/guide/" }
-            ],
-            "description": "Check Western Australia WEM constraint equations against generator and constraint data in your browser.",
-            "applicationCategory": "BusinessApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Checks run locally in the browser — constraint and generator data is never uploaded",
-              "Free with no paywall or account"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 16,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Markdown Reader & Markdown to PDF Converter",
-            "url": "https://tool.adjiebrotots.com/mdtopdf/",
-            "description": "Read Markdown and export it to a high-quality, print-ready PDF entirely in your browser — with LaTeX math, code highlighting, diagrams, and an auto table of contents.",
-            "applicationCategory": "UtilitiesApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Documents are rendered locally in the browser and never uploaded, safe for confidential content",
-              "Free high-quality, print-ready PDF export with LaTeX math, diagrams, and auto table of contents — no paywall"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 17,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Random Picker",
-            "url": "https://tool.adjiebrotots.com/randompicker/",
-            "description": "Pick one option at random from your own list with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board, entirely in your browser.",
-            "applicationCategory": "UtilitiesApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Wheel mode gives every option an equal chance and always picks one",
-              "Slot machine and dice can come up empty, like the real machines they imitate",
-              "Galton board mode is deliberately uneven, so middle options win more often",
-              "Remove an option after it is picked to run a draw with no repeats"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 18,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Financial Freedom Calculator",
-            "url": "https://tool.adjiebrotots.com/financialfreedom/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Financial Freedom Calculator", "url": "https://tool.adjiebrotots.com/financialfreedom/guides/" }
-            ],
-            "description": "Work out the pot you need before you can stop working, and the age you actually reach it, inflation-adjusted and tested against thousands of simulated futures.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Three definitions of freedom: run the pot to nothing, leave a set legacy, or spend only the real growth so it lasts forever",
-              "Monte Carlo confidence band from your own return and volatility, not a single average return",
-              "Retirement age on a slider, so you can watch every figure move as you stop earlier or later",
-              "Prices each way out when the plan fails: save more, spend less, earn more, or retire later",
-              "Year-by-year cash flow table that reconciles to the cent, in today\u2019s money or the money of the day",
-              "Everything runs locally in the browser, so income and savings details never leave your device"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 19,
-          "item": {
-            "@type": "WebApplication",
-            "name": "World Clock",
-            "url": "https://tool.adjiebrotots.com/worldclock/",
-            "description": "A live world map with the local time in every country, state and time zone, daylight saving included, opening on your own region. Time Travel to any date to convert meeting times.",
-            "applicationCategory": "UtilitiesApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Live local time on every time jurisdiction: each country, state or territory that sets its own clock",
-              "Opens zoomed in on your own country, or on your neighbours when your country is one small time zone",
-              "Time Travel to any date and time in any place and every clock on the map follows, daylight saving included",
-              "Zoom out for a classic time zone map coloured by offset, with the time in each hour band",
-              "Shows when each place's clocks next change for daylight saving"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 20,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Egg Price",
-            "url": "https://tool.adjiebrotots.com/eggprice/",
-            "description": "Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside.",
-            "applicationCategory": "UtilitiesApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Price per gram of egg without the shell, next to the pack price per gram",
-              "Dollars paid for shell and for egg in every pack",
-              "3D eggs to scale, cut open to show the shell",
-              "Shell weight from the egg's shape: volume and surface area of a Hügelschäffer egg",
-              "Add any number of pack sizes"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 21,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Valuate Everything",
-            "url": "https://tool.adjiebrotots.com/valuateeverything/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Valuate Everything", "url": "https://tool.adjiebrotots.com/valuateeverything/guides/" }
-            ],
-            "description": "Is that listing a fair price? Fit a price model to the secondhand listings you have seen, then check the items you want to buy against it in 2D or 3D.",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Enter listings as a table, typed text or a CSV file",
-              "Years turned into ages, and older prices lifted to today's money for inflation",
-              "Linear, log-linear, ridge or quadratic price models on standardised features",
-              "Fair price, typical-error range and the gap to each asking price",
-              "2D and 3D price charts with the items highlighted against the listings"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 22,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Load Flow Simulator",
-            "url": "https://tool.adjiebrotots.com/loadflow-simulator/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Load Flow Simulator", "url": "https://tool.adjiebrotots.com/loadflow-simulator/guides/" }
-            ],
-            "description": "Draw a single-line diagram and run an AC Newton-Raphson or DC load flow in the browser, with animated power flows you can export or embed.",
-            "applicationCategory": "EngineeringApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Drag-and-drop single-line diagram with PyPSA's standard line and transformer types",
-              "AC Newton-Raphson or DC load flow by PSA.js, a JavaScript port of PyPSA",
-              "Voltages, loading, losses and animated active and reactive power flows on the diagram",
-              "Export as SVG, PNG or animated GIF, share a link or embed the live diagram",
-              "Runs entirely in the browser with nothing uploaded"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 23,
-          "item": {
-            "@type": "WebApplication",
-            "name": "ED/UC Simulator",
-            "alternateName": "Economic Dispatch & Unit Commitment Simulator",
-            "url": "https://tool.adjiebrotots.com/ed-uc-simulator/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the ED/UC Simulator", "url": "https://tool.adjiebrotots.com/ed-uc-simulator/guides/" }
-            ],
-            "description": "Economic Dispatch & Unit Commitment in the browser: draw a network, decide which units run and how much each produces hour by hour, and read the nodal prices.",
-            "applicationCategory": "EngineeringApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Drag-and-drop single-line diagram with generators, solar, wind, loads, storage and HVDC links",
-              "Unit commitment as a mixed-integer problem or its linear relaxation, or plain economic dispatch",
-              "Start-up costs, minimum stable output, minimum up and down times and ramp limits",
-              "Nodal prices (LMP) from a DC optimal power flow, with line limits and congestion",
-              "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 24,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Capacity Expansion Planner",
-            "alternateName": "Generation Expansion Planner",
-            "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/",
-            "hasPart": [
-              { "@type": "WebPage", "name": "How to use the Capacity Expansion Planner", "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/guides/" }
-            ],
-            "description": "What to build, and when: find the size and year of every new power plant and battery that meets a growing peak demand at the least present cost.",
-            "applicationCategory": "EngineeringApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Least-cost size and year of new solar, wind, gas, coal, nuclear, geothermal, batteries and pumped hydro",
-              "Existing plants that retire, build limits, unit sizes, carbon prices and a net-zero year",
-              "Growing peak demand with a built-in, drawn or uploaded CSV or Excel load profile",
-              "Each decision year run hour by hour over typical days of every season, plus an optional still, overcast peak day",
-              "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 25,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Online 3D Viewer",
-            "url": "https://tool.adjiebrotots.com/online-3d-viewer/",
-            "description": "View and convert 3D CAD and mesh models in the browser: STEP, IGES, BREP, IFC, Rhino 3DM, DGN, STL, OBJ, 3MF, AMF, glTF, GLB, FBX, COLLADA, USDZ, PLY, 3DS, OFF and VRML, saved as STEP, STL or GLB.",
-            "applicationCategory": "DesignApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "STEP and IGES opened with OpenCascade in WebAssembly, with assembly parts and colours",
-              "Models are read locally in the browser and never uploaded",
-              "Edges, wireframe, Y or Z up, animation playback and a PNG of the view",
-              "Converts: saves any model it opens as STEP, STL or GLB"
-            ]
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 26,
-          "item": {
-            "@type": "WebApplication",
-            "name": "Video Trimmer and Captioner",
-            "url": "https://tool.adjiebrotots.com/video-trimmer-captioner/",
-            "description": "Trim, cut and join video clips and edit their captions (SRT or VTT) in your browser, then export MP4 or WebM. Your video is never uploaded.",
-            "applicationCategory": "MultimediaApplication",
-            "operatingSystem": "Any",
-            "isAccessibleForFree": true,
-            "featureList": [
-              "Split, trim, delete, duplicate and reorder clips, and join several videos into one",
-              "Captions from an SRT or VTT file, or written from scratch, follow every cut",
-              "Burns captions into the picture or adds a subtitle track, and saves the retimed SRT or VTT",
-              "Exports MP4 or WebM on your device: the video is never uploaded"
+            "@type": "ItemList",
+            "@id": "https://tool.adjiebrotots.com/#utilities-everyday",
+            "name": "Fun & Everyday",
+            "numberOfItems": 3,
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Random Picker",
+                  "url": "https://tool.adjiebrotots.com/randompicker/",
+                  "description": "Pick one option at random from your own list with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board, entirely in your browser.",
+                  "applicationCategory": "UtilitiesApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Wheel mode gives every option an equal chance and always picks one",
+                    "Slot machine and dice can come up empty, like the real machines they imitate",
+                    "Galton board mode is deliberately uneven, so middle options win more often",
+                    "Remove an option after it is picked to run a draw with no repeats"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "World Clock",
+                  "url": "https://tool.adjiebrotots.com/worldclock/",
+                  "description": "A live world map with the local time in every country, state and time zone, daylight saving included, opening on your own region. Time Travel to any date to convert meeting times.",
+                  "applicationCategory": "UtilitiesApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Live local time on every time jurisdiction: each country, state or territory that sets its own clock",
+                    "Opens zoomed in on your own country, or on your neighbours when your country is one small time zone",
+                    "Time Travel to any date and time in any place and every clock on the map follows, daylight saving included",
+                    "Zoom out for a classic time zone map coloured by offset, with the time in each hour band",
+                    "Shows when each place's clocks next change for daylight saving"
+                  ]
+                }
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                  "@type": "WebApplication",
+                  "name": "Egg Price",
+                  "url": "https://tool.adjiebrotots.com/eggprice/",
+                  "description": "Compare egg cartons by the price of the egg you actually eat. See how much of each pack price pays for shell and how much for the egg inside.",
+                  "applicationCategory": "UtilitiesApplication",
+                  "operatingSystem": "Any",
+                  "isAccessibleForFree": true,
+                  "featureList": [
+                    "Price per gram of egg without the shell, next to the pack price per gram",
+                    "Dollars paid for shell and for egg in every pack",
+                    "3D eggs to scale, cut open to show the shell",
+                    "Shell weight from the egg's shape: volume and surface area of a Hügelschäffer egg",
+                    "Add any number of pack sizes"
+                  ]
+                }
+              }
             ]
           }
         }
@@ -1780,53 +1992,38 @@
       </section>
 
       <!--
-        To add a new tool later, duplicate one <article class="tool-card"> block below
-        and update these fields only:
+        The directory leads with the two fields the site is about, Engineering and Finance,
+        each a <section> of full cards. Everything else is a Quick Utility: a smaller card
+        in one of the Quick Utilities subsections (Visualisation, Converters & Media,
+        Fun & Everyday), so the utilities never read as a third specialism. Search engines
+        and AI crawlers read this order and these headings as they stand, without the script.
+
+        To add a new tool later, duplicate a card from the section it belongs in and
+        update these fields only:
         - data-status
-        - data-domain
+        - data-domain: Engineering, Finance, or Quick Utilities
+        - data-subgroup (Quick Utilities only): the subsection's name
         - data-geography
         - data-tags (other tags only)
         - data-anim on .tool-anim: the tool's folder name; the tool-animator
           agent (.claude/agents/tool-animator.md) draws it in home-anim.js
-        - h3 title and its link
+        - title (h4 in Engineering and Finance, h5 in a Quick Utilities subsection) and its link
         - status-badge class and title (status-active, status-coming-soon, status-deprecated)
         - description paragraph: one or two short sentences, what it does in the
           words people search for, no em-dashes
-        - visible tags list
-        - link/button
+        - Engineering and Finance: visible tags list and link/button.
+          A Quick Utility has neither: its title link (itemprop="url") opens it.
+        Then place it in the CollectionPage structured data in <head> (the same list as
+        its section) and in llms.txt under the same heading.
       -->
-      <div class="tool-grid" id="toolGrid">
+      <div class="tool-groups" id="toolGrid">
 
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Converter, Documents"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="mdtopdf" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer">Markdown to PDF Converter</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Your AI writes Markdown, your boss wants PDF. Turn it into a print-ready PDF, maths and diagrams included.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Converter</li>
-              <li>Documents</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
+        <section class="tool-group" id="engineering" aria-labelledby="engineering-heading">
+          <div class="group-head">
+            <h3 class="group-heading" id="engineering-heading">Engineering</h3>
+            <p class="group-lede">Power system studies in the browser: load flow, economic dispatch and unit commitment, capacity expansion, and PowerFactory and PSCAD automation.</p>
           </div>
-        </article>
+          <div class="tool-grid">
 
         <article
           class="tool-card"
@@ -1837,14 +2034,14 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="powerfactory-scripter" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="capacity-expansion-planner" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer">PowerFactory Scripter</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/capacity-expansion-planner/" target="_blank" rel="noopener noreferrer">Capacity Expansion Planner</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Write DIgSILENT PowerFactory Python scripts in minutes, not days. Most studies are just input, study, output.</p>
+            <p class="tool-description" itemprop="description">What power plants to build, and when. Find the least-cost mix of solar, wind, gas and batteries for a growing load, year by year.</p>
 
             <ul class="tool-tags" aria-label="Categories">
               <li>Engineering</li>
@@ -1853,67 +2050,7 @@
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Engineering"
-          data-geography="Universal"
-          data-tags="Power Systems"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="pscad-scripter" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/pscad-scripter/" target="_blank" rel="noopener noreferrer">PSCAD Scripter</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Write PSCAD Python automation scripts in minutes, not days. Wire build, run and EMT check blocks into one ready-to-run file.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Engineering</li>
-              <li>Universal</li>
-              <li>Power Systems</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/pscad-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Engineering"
-          data-geography="Universal"
-          data-tags="Power Systems"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="loadflow-simulator" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/loadflow-simulator/" target="_blank" rel="noopener noreferrer">Load Flow Simulator</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Draw a single-line diagram and run a load flow in your browser. See bus voltages and animated power flows, then export or embed it.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Engineering</li>
-              <li>Universal</li>
-              <li>Power Systems</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/loadflow-simulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <a class="tool-link" href="https://tool.adjiebrotots.com/capacity-expansion-planner/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
             </div>
           </div>
         </article>
@@ -1930,7 +2067,7 @@
           <div class="tool-anim" data-anim="ed-uc-simulator" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/ed-uc-simulator/" target="_blank" rel="noopener noreferrer">ED/UC Simulator</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/ed-uc-simulator/" target="_blank" rel="noopener noreferrer">ED/UC Simulator</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
@@ -1957,14 +2094,14 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="capacity-expansion-planner" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="loadflow-simulator" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/capacity-expansion-planner/" target="_blank" rel="noopener noreferrer">Capacity Expansion Planner</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/loadflow-simulator/" target="_blank" rel="noopener noreferrer">Load Flow Simulator</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">What power plants to build, and when. Find the least-cost mix of solar, wind, gas and batteries for a growing load, year by year.</p>
+            <p class="tool-description" itemprop="description">Draw a single-line diagram and run a load flow in your browser. See bus voltages and animated power flows, then export or embed it.</p>
 
             <ul class="tool-tags" aria-label="Categories">
               <li>Engineering</li>
@@ -1973,7 +2110,7 @@
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/capacity-expansion-planner/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <a class="tool-link" href="https://tool.adjiebrotots.com/loadflow-simulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
             </div>
           </div>
         </article>
@@ -1981,60 +2118,29 @@
         <article
           class="tool-card"
           data-status="Active"
-          data-domain="Finance"
-          data-geography="Indonesia"
-          data-tags="Tax"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="pisahvsgabung" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer">Pisah vs Gabung</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Pisah Harta or Gabung Harta? Compare your PPh 21 both ways and let the maths decide, not love.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Finance</li>
-              <li>Indonesia</li>
-              <li>Tax</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Finance"
+          data-domain="Engineering"
           data-geography="Universal"
-          data-tags="Financing, Investment, Leveraging"
+          data-tags="Power Systems"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="financingvscash" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="pscad-scripter" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer">Finance vs Cash</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/pscad-scripter/" target="_blank" rel="noopener noreferrer">PSCAD Scripter</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Pay cash, or finance it and invest what you kept? Take on debt that works for you, not for the bank.</p>
+            <p class="tool-description" itemprop="description">Write PSCAD Python automation scripts in minutes, not days. Wire build, run and EMT check blocks into one ready-to-run file.</p>
 
             <ul class="tool-tags" aria-label="Categories">
-              <li>Finance</li>
+              <li>Engineering</li>
               <li>Universal</li>
-              <li>Investment</li>
-              <li>Leveraging</li>
+              <li>Power Systems</li>
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <a class="tool-link" href="https://tool.adjiebrotots.com/pscad-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
             </div>
           </div>
         </article>
@@ -2042,254 +2148,69 @@
         <article
           class="tool-card"
           data-status="Active"
-          data-domain="Finance"
+          data-domain="Engineering"
           data-geography="Universal"
+          data-tags="Power Systems"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="powerfactory-scripter" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer">PowerFactory Scripter</a></h4>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Write DIgSILENT PowerFactory Python scripts in minutes, not days. Most studies are just input, study, output.</p>
+
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Engineering</li>
+              <li>Universal</li>
+              <li>Power Systems</li>
+            </ul>
+
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
+          </div>
+        </article>
+          </div>
+        </section>
+
+        <section class="tool-group" id="finance" aria-labelledby="finance-heading">
+          <div class="group-head">
+            <h3 class="group-heading" id="finance-heading">Finance</h3>
+            <p class="group-lede">Tax, property, lending and investing, modelled year by year: take-home pay in 31 countries, renting or buying, cash or finance, and when you can stop working.</p>
+          </div>
+          <div class="tool-grid">
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Finance"
+          data-geography="Australia"
           data-tags="Property, Leveraging"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="rentvsownhouse" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="borrowingcapacity" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer">Borrowing Capacity Calculator</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Is buying always better than renting? Model both over the years and see which leaves you wealthier.</p>
+            <p class="tool-description" itemprop="description">How much will an Australian bank lend you, and which cap is holding you back? Argue with the bank’s own maths.</p>
 
             <ul class="tool-tags" aria-label="Categories">
               <li>Finance</li>
-              <li>Universal</li>
+              <li>Australia</li>
               <li>Property</li>
               <li>Leveraging</li>
             </ul>
 
             <div class="tool-footer">
-              <div class="tool-actions">
-                <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-                <ul class="tool-options-menu combo-list" id="options-rentvsownhouse" role="menu">
-                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Rent vs Own Home</span><span class="combo-sub">One scenario, year by year</span></span></a></li>
-                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Sensitivity Analysis</span><span class="combo-sub">Several scenarios side by side</span></span></a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Finance"
-          data-geography="Universal"
-          data-tags="Investment"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="dcasimulator" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Volatility is less scary when you buy every month. Test dollar-cost averaging strategies on real market data.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Finance</li>
-              <li>Universal</li>
-              <li>Investment</li>
-            </ul>
-
-            <div class="tool-footer">
-              <div class="tool-actions">
-                <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-                <ul class="tool-options-menu combo-list" id="options-dcasimulator" role="menu">
-                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">DCA Scenario Explorer</span><span class="combo-sub">Compare single assets</span></span></a></li>
-                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Portfolio DCA Simulator</span><span class="combo-sub">Compare whole portfolios</span></span></a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </article>
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Finance"
-          data-geography="Universal"
-          data-tags="Investment"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="financialfreedom" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer">Financial Freedom Calculator</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">How much is enough, and when do you get there? Your freedom number and age, tested across thousands of futures.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Finance</li>
-              <li>Universal</li>
-              <li>Investment</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Visualisation"
-          data-geography="Universal"
-          data-tags="Graphing"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="graphvisualiser" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer">Graph Visualiser</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Drop in a CSV or Excel file, get interactive charts, and look smart in the last-minute meeting.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Visualisation</li>
-              <li>Universal</li>
-              <li>Graphing</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Visualisation"
-          data-geography="Universal"
-          data-tags="Graphing"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="sankeycreator" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer">Sankey Diagram Creator</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">That cool flow diagram showing what goes where. Build a Sankey diagram live and export it as SVG or PNG.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Visualisation</li>
-              <li>Universal</li>
-              <li>Graphing</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Visualisation"
-          data-geography="Universal"
-          data-tags="Graphing"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="jsonvisualiser" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer">JSON Visualiser</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">See JSON as a tree, designed for humans. Lazy loading copes with millions of keys.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Visualisation</li>
-              <li>Universal</li>
-              <li>Graphing</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Visualisation"
-          data-geography="Universal"
-          data-tags="Brainstorming Tool"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="canvasbuilder" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer">Canvas Builder</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">CEO and founder tooling on the web. Build a pitch-ready Business Model Canvas, one note at a time.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Visualisation</li>
-              <li>Universal</li>
-              <li>Brainstorming Tool</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Visualisation"
-          data-geography="Universal"
-          data-tags="3D, CAD"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="online-3d-viewer" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/online-3d-viewer/" target="_blank" rel="noopener noreferrer">Online 3D Viewer</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Got a STEP file and no CAD licence? Open STEP, IFC, DGN, STL, OBJ, glTF, FBX and more in 3D right in your browser, and convert to STEP, STL or GLB.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Visualisation</li>
-              <li>Universal</li>
-              <li>3D</li>
-              <li>CAD</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/online-3d-viewer/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <a class="tool-link" href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
             </div>
           </div>
         </article>
@@ -2306,7 +2227,7 @@
           <div class="tool-anim" data-anim="costofliving-comparator" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer">Cost of Living Comparator</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer">Cost of Living Comparator</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
@@ -2336,6 +2257,104 @@
           data-status="Active"
           data-domain="Finance"
           data-geography="Universal"
+          data-tags="Investment"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="dcasimulator" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer</a></h4>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Volatility is less scary when you buy every month. Test dollar-cost averaging strategies on real market data.</p>
+
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
+            </ul>
+
+            <div class="tool-footer">
+              <div class="tool-actions">
+                <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                <ul class="tool-options-menu combo-list" id="options-dcasimulator" role="menu">
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">DCA Scenario Explorer</span><span class="combo-sub">Compare single assets</span></span></a></li>
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Portfolio DCA Simulator</span><span class="combo-sub">Compare whole portfolios</span></span></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Finance"
+          data-geography="Universal"
+          data-tags="Financing, Investment, Leveraging"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="financingvscash" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer">Finance vs Cash</a></h4>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Pay cash, or finance it and invest what you kept? Take on debt that works for you, not for the bank.</p>
+
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
+              <li>Leveraging</li>
+            </ul>
+
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Finance"
+          data-geography="Universal"
+          data-tags="Investment"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="financialfreedom" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer">Financial Freedom Calculator</a></h4>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">How much is enough, and when do you get there? Your freedom number and age, tested across thousands of futures.</p>
+
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
+            </ul>
+
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Finance"
+          data-geography="Universal"
           data-tags="Tax, Geoarbitrage"
           itemscope
           itemtype="https://schema.org/WebApplication"
@@ -2343,7 +2362,7 @@
           <div class="tool-anim" data-anim="global-income-tax-calculator" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/global-income-tax-calculator/" target="_blank" rel="noopener noreferrer">Global Income Tax Calculator</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/global-income-tax-calculator/" target="_blank" rel="noopener noreferrer">Global Income Tax Calculator</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
@@ -2365,153 +2384,29 @@
         <article
           class="tool-card"
           data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Converter"
+          data-domain="Finance"
+          data-geography="Indonesia"
+          data-tags="Tax"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="videotogif" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="pisahvsgabung" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer">Video to GIF Converter</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer">Pisah vs Gabung</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Too cheap to subscribe, so I made one. Convert video to GIF on your device, free and never uploaded.</p>
+            <p class="tool-description" itemprop="description">Pisah Harta or Gabung Harta? Compare your PPh 21 both ways and let the maths decide, not love.</p>
 
             <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Converter</li>
+              <li>Finance</li>
+              <li>Indonesia</li>
+              <li>Tax</li>
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Video, Captions"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="video-trimmer-captioner" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/video-trimmer-captioner/" target="_blank" rel="noopener noreferrer">Video Trimmer and Captioner</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">I'm an engineer, not a video editor, but sometimes I need to clip and trim a video. No need for Adobe Premiere for that!</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Video</li>
-              <li>Captions</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/video-trimmer-captioner/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Randomiser, Decision"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="randompicker" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer">Random Picker</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Your decision fatigue solution! Spin a wheel, roll a dice, pull a slot or drop a ball to pick one.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Randomiser</li>
-              <li>Decision</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Time Zones, Meetings"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="worldclock" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer">World Clock</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">3pm in Perth is what time in Melbourne? A live world map of local times, daylight saving included.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Time Zones</li>
-              <li>Meetings</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="tool-card"
-          data-status="Active"
-          data-domain="Others"
-          data-geography="Universal"
-          data-tags="Groceries, Decision"
-          itemscope
-          itemtype="https://schema.org/WebApplication"
-        >
-          <div class="tool-anim" data-anim="eggprice" aria-hidden="true"></div>
-          <div class="tool-body">
-            <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer">Egg Price</a></h3>
-              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
-            </div>
-
-            <p class="tool-description" itemprop="description">Pay for the protein, not the calcium. See what each egg carton really costs per gram of egg, shell left out.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Others</li>
-              <li>Universal</li>
-              <li>Groceries</li>
-              <li>Decision</li>
-            </ul>
-
-            <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
             </div>
           </div>
         </article>
@@ -2520,29 +2415,66 @@
           class="tool-card"
           data-status="Active"
           data-domain="Finance"
-          data-geography="Australia"
+          data-geography="Universal"
           data-tags="Property, Leveraging"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="borrowingcapacity" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="rentvsownhouse" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer">Borrowing Capacity Calculator</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">How much will an Australian bank lend you, and which cap is holding you back? Argue with the bank’s own maths.</p>
+            <p class="tool-description" itemprop="description">Is buying always better than renting? Model both over the years and see which leaves you wealthier.</p>
 
             <ul class="tool-tags" aria-label="Categories">
               <li>Finance</li>
-              <li>Australia</li>
+              <li>Universal</li>
               <li>Property</li>
               <li>Leveraging</li>
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <div class="tool-actions">
+                <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                <ul class="tool-options-menu combo-list" id="options-rentvsownhouse" role="menu">
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Rent vs Own Home</span><span class="combo-sub">One scenario, year by year</span></span></a></li>
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Sensitivity Analysis</span><span class="combo-sub">Several scenarios side by side</span></span></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Coming soon"
+          data-domain="Finance"
+          data-geography="Australia"
+          data-tags="Superannuation, Tax"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="superdasp" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h4 itemprop="name">Superannuation DASP Simulator</h4>
+              <span class="status-badge status-coming-soon" title="Coming soon"><span class="visually-hidden">Coming soon</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Leaving Australia one day? See if salary sacrificing into super still pays once DASP tax applies.</p>
+
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Australia</li>
+              <li>Tax</li>
+            </ul>
+
+            <div class="tool-footer">
+              <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
             </div>
           </div>
         </article>
@@ -2559,7 +2491,7 @@
           <div class="tool-anim" data-anim="valuateeverything" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/valuateeverything/" target="_blank" rel="noopener noreferrer">Valuate Everything</a></h3>
+              <h4 itemprop="name"><a href="https://tool.adjiebrotots.com/valuateeverything/" target="_blank" rel="noopener noreferrer">Valuate Everything</a></h4>
               <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
@@ -2577,36 +2509,264 @@
             </div>
           </div>
         </article>
+          </div>
+        </section>
+
+        <section class="tool-group tool-group-utilities" id="utilities" aria-labelledby="utilities-heading">
+          <div class="group-head">
+            <h3 class="group-heading" id="utilities-heading">Quick Utilities</h3>
+          </div>
+
+          <section class="tool-subgroup" id="utilities-visualisation" aria-labelledby="utilities-visualisation-heading">
+            <h4 class="subgroup-heading" id="utilities-visualisation-heading">Visualisation</h4>
+            <div class="tool-grid tool-grid-compact">
 
         <article
           class="tool-card"
-          data-status="Coming soon"
-          data-domain="Finance"
-          data-geography="Australia"
-          data-tags="Superannuation, Tax"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Visualisation"
+          data-geography="Universal"
+          data-tags="Brainstorming Tool"
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-anim" data-anim="superdasp" aria-hidden="true"></div>
+          <div class="tool-anim" data-anim="canvasbuilder" aria-hidden="true"></div>
           <div class="tool-body">
             <div class="tool-top">
-              <h3 itemprop="name">Superannuation DASP Simulator</h3>
-              <span class="status-badge status-coming-soon" title="Coming soon"><span class="visually-hidden">Coming soon</span></span>
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer" itemprop="url">Canvas Builder</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
 
-            <p class="tool-description" itemprop="description">Leaving Australia one day? See if salary sacrificing into super still pays once DASP tax applies.</p>
-
-            <ul class="tool-tags" aria-label="Categories">
-              <li>Finance</li>
-              <li>Australia</li>
-              <li>Tax</li>
-            </ul>
-
-            <div class="tool-footer">
-              <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
-            </div>
+            <p class="tool-description" itemprop="description">Build a pitch-ready Business Model Canvas, one note at a time.</p>
           </div>
         </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Visualisation"
+          data-geography="Universal"
+          data-tags="Graphing"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="graphvisualiser" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Graph Visualiser</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Turn a CSV or Excel file into interactive charts.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Visualisation"
+          data-geography="Universal"
+          data-tags="Graphing"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="jsonvisualiser" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">JSON Visualiser</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Browse JSON as a tree, even millions of keys.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Visualisation"
+          data-geography="Universal"
+          data-tags="3D, CAD"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="online-3d-viewer" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/online-3d-viewer/" target="_blank" rel="noopener noreferrer" itemprop="url">Online 3D Viewer</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Open STEP, STL, IFC and more in 3D, no CAD licence.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Visualisation"
+          data-geography="Universal"
+          data-tags="Graphing"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="sankeycreator" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer" itemprop="url">Sankey Diagram Creator</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Draw a Sankey diagram and export it as SVG or PNG.</p>
+          </div>
+        </article>
+            </div>
+          </section>
+
+          <section class="tool-subgroup" id="utilities-converters" aria-labelledby="utilities-converters-heading">
+            <h4 class="subgroup-heading" id="utilities-converters-heading">Converters &amp; Media</h4>
+            <div class="tool-grid tool-grid-compact">
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Converters &amp; Media"
+          data-geography="Universal"
+          data-tags="Converter, Documents"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="mdtopdf" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer" itemprop="url">Markdown to PDF Converter</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Turn Markdown into a print-ready PDF, maths included.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Converters &amp; Media"
+          data-geography="Universal"
+          data-tags="Video, Captions"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="video-trimmer-captioner" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/video-trimmer-captioner/" target="_blank" rel="noopener noreferrer" itemprop="url">Video Trimmer and Captioner</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Trim, join and caption videos without uploading them.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Converters &amp; Media"
+          data-geography="Universal"
+          data-tags="Converter"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="videotogif" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer" itemprop="url">Video to GIF Converter</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Convert a video to a GIF on your own device.</p>
+          </div>
+        </article>
+            </div>
+          </section>
+
+          <section class="tool-subgroup" id="utilities-everyday" aria-labelledby="utilities-everyday-heading">
+            <h4 class="subgroup-heading" id="utilities-everyday-heading">Fun &amp; Everyday</h4>
+            <div class="tool-grid tool-grid-compact">
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Fun &amp; Everyday"
+          data-geography="Universal"
+          data-tags="Groceries, Decision"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="eggprice" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer" itemprop="url">Egg Price</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Which egg carton is cheapest per gram of egg?</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Fun &amp; Everyday"
+          data-geography="Universal"
+          data-tags="Randomiser, Decision"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="randompicker" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer" itemprop="url">Random Picker</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">Spin a wheel or roll a dice to pick one.</p>
+          </div>
+        </article>
+
+        <article
+          class="tool-card"
+          data-status="Active"
+          data-domain="Quick Utilities"
+          data-subgroup="Fun &amp; Everyday"
+          data-geography="Universal"
+          data-tags="Time Zones, Meetings"
+          itemscope
+          itemtype="https://schema.org/WebApplication"
+        >
+          <div class="tool-anim" data-anim="worldclock" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h5 itemprop="name"><a href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer" itemprop="url">World Clock</a></h5>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
+            </div>
+
+            <p class="tool-description" itemprop="description">A live world map of local times, daylight saving included.</p>
+          </div>
+        </article>
+            </div>
+          </section>
+
+        </section>
       </div>
 
       <div class="empty-state" id="emptyState" role="status" aria-live="polite">
@@ -2717,8 +2877,7 @@
         return (order[a] || 99) - (order[b] || 99);
       });
 
-      const uniqueDomains = [...new Set(cards.map(card => card.dataset.domain.trim()).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b));
+      const uniqueDomains = [...new Set(cards.map(card => card.dataset.domain.trim()).filter(Boolean))];
 
       const uniqueGeographies = [...new Set(cards.map(card => card.dataset.geography.trim()).filter(Boolean))]
         .sort((a, b) => a.localeCompare(b));
@@ -2744,18 +2903,15 @@
         geographyFilter.appendChild(option);
       });
 
-      const domainOrder = { 'Engineering': 0, 'Finance': 1, 'Visualisation': 2 };
-      cards.sort((a, b) => {
-        const da = a.dataset.domain, db = b.dataset.domain;
-        const oa = domainOrder[da] !== undefined ? domainOrder[da] : 99;
-        const ob = domainOrder[db] !== undefined ? domainOrder[db] : 99;
-        if (oa !== ob) return oa - ob;
-        return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
-      }).forEach(card => {
-        card.parentElement.appendChild(card);
+      // Each grid (a field, or a Quick Utilities subsection) lists its tools A to Z.
+      const nameOf = card => card.querySelector('[itemprop="name"]').textContent.trim();
+      toolGrid.querySelectorAll('.tool-grid').forEach(grid => {
+        Array.from(grid.querySelectorAll(':scope > .tool-card'))
+          .sort((a, b) => nameOf(a).localeCompare(nameOf(b)))
+          .forEach(card => grid.appendChild(card));
       });
 
-      // The in-article AdSense unit, between two domain groups.
+      // The in-article AdSense unit, between two groups.
       function makeAdSlot() {
         const slot = document.createElement('div');
         slot.className = 'ad-slot';
@@ -2770,29 +2926,20 @@
         return slot;
       }
 
-      // The first after the first group, then one only when 8 or more cards have passed, so the grid
-      // stays a list of tools with an ad now and then, never an ad at every heading.
-      let lastDomain = '';
+      // The first after the first group, then one only when 8 or more cards have passed, so the
+      // directory stays a list of tools with an ad now and then, never an ad at every heading.
+      const sections = Array.from(toolGrid.querySelectorAll(':scope > .tool-group'));
       let sinceAd = -1;
-      cards.forEach(card => {
-        const domain = card.dataset.domain.trim();
-        if (domain !== lastDomain) {
-          if (lastDomain && (sinceAd < 0 || sinceAd >= 8)) { toolGrid.insertBefore(makeAdSlot(), card); sinceAd = 0; }
-          const heading = document.createElement('h3');
-          heading.className = 'domain-group-heading';
-          heading.dataset.domainHeading = domain.toLowerCase();
-          heading.textContent = homeLabel(domain);
-          toolGrid.insertBefore(heading, card);
-          lastDomain = domain;
-        }
-        if (sinceAd >= 0) sinceAd++;
+      sections.forEach((section, i) => {
+        if (i > 0 && (sinceAd < 0 || sinceAd >= 8)) { toolGrid.insertBefore(makeAdSlot(), section); sinceAd = 0; }
+        if (sinceAd >= 0) sinceAd += section.querySelectorAll('.tool-card').length;
       });
       toolGrid.querySelectorAll('.ad-slot').forEach(() => {
         try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* blocked: the slot stays empty */ }
       });
 
-      // A domain group's last row is filled with in-feed tiles the size of a card, so no
-      // group ends on a lone card. The count follows the grid's columns (none on one column)
+      // An Engineering or Finance grid's last row is filled with in-feed tiles the size of a
+      // card, so neither ends on a lone card (the small Quick Utilities cards take none). The count follows the grid's columns (none on one column)
       // and the cards a filter leaves, so it is worked out again on a filter and a resize.
       // A tile is pushed to AdSense the first time it shows; one left unfilled is replaced
       // by the next unit. "Image on the side" first: the same shape as a tool card.
@@ -2803,10 +2950,8 @@
         { slot: '6995134169', key: '-gw-3+1f-3d+2z' }   // In-feed, text only
       ];
       const groups = new Map();
-      cards.forEach(card => {
-        const domain = card.dataset.domain.trim();
-        if (!groups.has(domain)) groups.set(domain, { cards: [], tiles: [], failed: 0 });
-        groups.get(domain).cards.push(card);
+      toolGrid.querySelectorAll('.tool-grid:not(.tool-grid-compact)').forEach(grid => {
+        groups.set(grid, { cards: Array.from(grid.querySelectorAll(':scope > .tool-card')), tiles: [], failed: 0 });
       });
 
       function makeAdTile(unit) {
@@ -2832,8 +2977,8 @@
       const tileSizes = new ResizeObserver(() => { clearTimeout(sizeTimer); sizeTimer = setTimeout(fillGaps, 100); });
 
       function fillGaps() {
-        const cols = getComputedStyle(toolGrid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
-        groups.forEach(group => {
+        groups.forEach((group, grid) => {
+          const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
           group.tiles = group.tiles.filter(tile => {
             const status = tile.querySelector('ins').getAttribute('data-ad-status');
             // Unfilled, or filled taller than the card it sits beside: try the next unit.
@@ -2867,22 +3012,11 @@
       let fillTimer;
       window.addEventListener('resize', () => { clearTimeout(fillTimer); fillTimer = setTimeout(fillGaps, 150); });
 
+      // A group, or a Quick Utilities subsection, with no tool left by the filters hides whole.
       function updateDomainHeadingsVisibility() {
-        const headings = Array.from(toolGrid.querySelectorAll('.domain-group-heading'));
-        headings.forEach((heading, index) => {
-          const nextHeading = headings[index + 1];
-          let sibling = heading.nextElementSibling;
-          let hasVisibleCard = false;
-
-          while (sibling && sibling !== nextHeading) {
-            if (sibling.classList.contains('tool-card') && !sibling.classList.contains('is-hidden')) {
-              hasVisibleCard = true;
-              break;
-            }
-            sibling = sibling.nextElementSibling;
-          }
-
-          heading.classList.toggle('is-hidden', !hasVisibleCard);
+        toolGrid.querySelectorAll('.tool-subgroup, .tool-group').forEach(part => {
+          const any = Array.from(part.querySelectorAll('.tool-card')).some(card => !card.classList.contains('is-hidden'));
+          part.classList.toggle('is-hidden', !any);
         });
         const filtered = cards.some(card => card.classList.contains('is-hidden'));
         toolGrid.querySelectorAll('.ad-slot').forEach(slot => slot.classList.toggle('is-hidden', filtered));
@@ -3028,7 +3162,7 @@
     // The animation panel is decoration; a click on it opens the tool, as the
     // title does.
     document.querySelectorAll('.tool-anim').forEach(panel => {
-      const link = panel.parentElement.querySelector('h3 a');
+      const link = panel.parentElement.querySelector('[itemprop="name"] a');
       if (!link) return;
       panel.classList.add('is-link');
       panel.addEventListener('click', () => link.click());
