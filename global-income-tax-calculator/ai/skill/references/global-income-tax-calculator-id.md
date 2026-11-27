@@ -488,8 +488,8 @@ idBpjs: Bayar BPJS seperti penduduk pajak
 myLindung: Klaim LINDUNG sebagai pengurang SOCSO
   Checkbox: true or false. Default false.
   Malaysia, expat residents. true to claim LINDUNG as SOCSO relief (unconfirmed for expats).
-  Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini nonaktif
-  secara bawaan. Pengaruhnya pada pajak paling banyak RM31.50.
+  Tip on the page: Belum pasti apakah ekspatriat boleh mengklaimnya, jadi pilihan ini dimatikan dari
+  awal. Pengaruhnya pada pajak paling banyak RM31,50.
 nlNorm: Salary norm
   One of: std (Standar (48.013)), young (Di bawah 30 tahun dengan gelar master (36.497)). Default
   std.
